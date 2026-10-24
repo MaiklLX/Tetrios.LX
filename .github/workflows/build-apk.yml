@@ -22,24 +22,30 @@ jobs:
 
       - name: Find and extract project
         run: |
-          ARCHIVE=$(find . -maxdepth 4 -type f -iname "BlockDrop_NoAds_Project.zip" -print -quit)
-          if [ -z "$ARCHIVE" ]; then
-            echo "ERROR: BlockDrop_NoAds_Project.zip not found"
-            exit 1
-          fi
           mkdir -p extracted
-          unzip -oq "$ARCHIVE" -d extracted
-          PROJECT_FILE=$(find extracted -type f -name settings.gradle -print -quit)
-          if [ -z "$PROJECT_FILE" ]; then
-            PROJECT_FILE=$(find extracted -type f -name settings.gradle.kts -print -quit)
+
+          ARCHIVE=$(find . -maxdepth 5 -type f -name "*.zip" \
+            ! -path "./extracted/*" -print -quit)
+
+          if [ -n "$ARCHIVE" ]; then
+            unzip -oq "$ARCHIVE" -d extracted
+            ROOT="extracted"
+          else
+            ROOT="."
           fi
+
+          PROJECT_FILE=$(find "$ROOT" -type f \
+            \( -name settings.gradle -o -name settings.gradle.kts \) \
+            -not -path "*/.gradle/*" -print -quit)
+
           if [ -z "$PROJECT_FILE" ]; then
-            echo "ERROR: Gradle settings file not found in archive"
+            echo "ERROR: Android project not found"
+            echo "Files in repository:"
+            find . -maxdepth 4 -type f | head -100
             exit 1
           fi
-          echo "PROJECT_DIR=$(dirname "$PROJECT_FILE")" >> "$GITHUB_ENV"
 
-      - name: Set up Android SDK
+          echo "PROJECT_DIR=$(dirname "$PROJECT_FILE")" >> "$GITHUB_ENV"      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
