@@ -4,7 +4,8 @@ name: Build Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
@@ -20,7 +21,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+
       - name: Find and extract project
+        shell: bash
         run: |
           mkdir -p extracted
 
@@ -28,6 +35,7 @@ jobs:
             ! -path "./extracted/*" -print -quit)
 
           if [ -n "$ARCHIVE" ]; then
+            echo "Found archive: $ARCHIVE"
             unzip -oq "$ARCHIVE" -d extracted
             ROOT="extracted"
           else
@@ -39,18 +47,13 @@ jobs:
             -not -path "*/.gradle/*" -print -quit)
 
           if [ -z "$PROJECT_FILE" ]; then
-            echo "ERROR: Android project not found"
-            echo "Files in repository:"
-            find . -maxdepth 4 -type f | head -100
+            echo "ERROR: Gradle settings file not found"
+            find . -maxdepth 5 -type f | head -100
             exit 1
           fi
 
-          echo "PROJECT_DIR=$(dirname "$PROJECT_FILE")" >> "$GITHUB_ENV"      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
-      - name: Install SDK packages
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          echo "PROJECT_DIR=$(dirname "$PROJECT_FILE")" >> "$GITHUB_ENV"
+          echo "Found project: $PROJECT_FILE"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -58,6 +61,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build APK
+        shell: bash
         run: |
           cd "$PROJECT_DIR"
           gradle assembleDebug
@@ -66,5 +70,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BlockDrop-debug-apk
-          path: extracted/**/app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
