@@ -26,34 +26,22 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
 
-      - name: Find and extract project
+
+      - name: Inspect project sources
         shell: bash
         run: |
-          mkdir -p extracted
-
-          ARCHIVE=$(find . -maxdepth 5 -type f -name "*.zip" \
-            ! -path "./extracted/*" -print -quit)
-
-          if [ -n "$ARCHIVE" ]; then
-            echo "Found archive: $ARCHIVE"
-            unzip -oq "$ARCHIVE" -d extracted
-            ROOT="extracted"
-          else
-            ROOT="."
-          fi
-
-          PROJECT_FILE=$(find "$ROOT" -type f \
-            \( -name settings.gradle -o -name settings.gradle.kts \) \
-            -not -path "*/.gradle/*" -print -quit)
-
-          if [ -z "$PROJECT_FILE" ]; then
-            echo "ERROR: Gradle settings file not found"
-            find . -maxdepth 5 -type f | head -100
-            exit 1
-          fi
-
-          echo "PROJECT_DIR=$(dirname "$PROJECT_FILE")" >> "$GITHUB_ENV"
-          echo "Found project: $PROJECT_FILE"
+          echo "PROJECT_DIR=$PROJECT_DIR"
+          echo "=== Project files ==="
+          find "$PROJECT_DIR" -maxdepth 5 -type f \
+            ! -path "*/.gradle/*" \
+            ! -path "*/build/*" \
+            | sort | head -300
+          echo "=== Android source files ==="
+          find "$PROJECT_DIR" -type f \
+            \( -name "*.kt" -o -name "*.java" -o -name "*.xml" -o -name "*.gradle" -o -name "*.kts" \) \
+            ! -path "*/.gradle/*" \
+            ! -path "*/build/*" \
+            | sort | head -300
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
