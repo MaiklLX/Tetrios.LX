@@ -1,1 +1,60 @@
 
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Find project archive
+        run: |
+          ARCHIVE=$(find . -maxdepth 3 -iname "BlockDrop_NoAds_Project.zip" -print -quit)
+          if [ -z "$ARCHIVE" ]; then
+            echo "Project ZIP not found"
+            exit 1
+          fi
+          mkdir extracted
+          unzip -q "$ARCHIVE" -d extracted
+          PROJECT=$(find extracted -name settings.gradle -print -quit)
+          if [ -z "$PROJECT" ]; then
+            echo "settings.gradle not found"
+            exit 1
+          fi
+          echo "PROJECT_DIR=$(dirname "$PROJECT")" >> "$GITHUB_ENV"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        run: |
+          cd "$PROJECT_DIR"
+          gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BlockDrop-debug-apk
+          path: extracted/**/app/build/outputs/apk/debug/app-debug.apk
+
