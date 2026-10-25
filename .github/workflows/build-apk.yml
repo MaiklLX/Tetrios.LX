@@ -1,69 +1,48 @@
-name: Build Block Buddies Android APK
-
-on:
-workflow_dispatch:
-push:
-branches:
-- main
-paths:
-- 'Block_Buddies_Android_APK_Project.zip'
-- '.github/workflows/build-apk.yml'
-
-permissions:
-contents: read
-
-jobs:
-build:
-name: Build debug APK
-runs-on: ubuntu-24.04
-timeout-minutes: 30
-
 steps:
   - name: Checkout repository
     uses: actions/checkout@v4
 
-  - name: Check and extract Android project archive
-    shell: bash
+  - name: Install unzip
     run: |
-      set -Eeuo pipefail
-      ZIP_FILE="Block_Buddies_Android_APK_Project.zip"
-
-      if [[ ! -f "$ZIP_FILE" ]]; then
-        echo "::error::Archive not found: $ZIP_FILE"
-        ls -la
-        exit 1
-      fi
-
       sudo apt-get update
       sudo apt-get install -y unzip
+
+  - name: Extract Android project
+    shell: bash
+    run: |
+      set -euo pipefail
+      ZIP_FILE="$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project.zip"
+
+      if [ ! -f "$ZIP_FILE" ]; then
+        echo "::error::ZIP archive not found: $ZIP_FILE"
+        ls -la "$GITHUB_WORKSPACE"
+        exit 1
+      fi
 
       mkdir -p "$GITHUB_WORKSPACE/android-project"
       unzip -oq "$ZIP_FILE" -d "$GITHUB_WORKSPACE/android-project"
 
-      echo "Extracted files:"
-      find "$GITHUB_WORKSPACE/android-project" -maxdepth 5 -type f | head -150
-
       PROJECT_DIR="$(find "$GITHUB_WORKSPACE/android-project" -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit | xargs -r dirname)"
 
-      if [[ -z "$PROJECT_DIR" ]]; then
-        echo "::error::settings.gradle or settings.gradle.kts not found in archive"
+      if [ -z "$PROJECT_DIR" ]; then
+        echo "::error::No settings.gradle or settings.gradle.kts found inside the ZIP"
+        find "$GITHUB_WORKSPACE/android-project" -maxdepth 5 -type f | head -150
         exit 1
       fi
 
-      if [[ ! -f "$PROJECT_DIR/app/build.gradle" && ! -f "$PROJECT_DIR/app/build.gradle.kts" ]]; then
-        echo "::error::app/build.gradle(.kts) not found in $PROJECT_DIR"
+      if [ ! -f "$PROJECT_DIR/app/build.gradle" ] && [ ! -f "$PROJECT_DIR/app/build.gradle.kts" ]; then
+        echo "::error::Android app module build file is missing"
         exit 1
       fi
 
       echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-      echo "Project root: $PROJECT_DIR"
+      echo "Found project: $PROJECT_DIR"
 
-  - name: Set up Java 17
+  - name: Set up Java
     uses: actions/setup-java@v4
     with:
       distribution: temurin
       java-version: '17'
-      cache: gradle
 
   - name: Set up Android SDK
     uses: android-actions/setup-android@v3
@@ -71,34 +50,22 @@ steps:
   - name: Build APK
     shell: bash
     run: |
-      set -Eeuo pipefail
+      set -euo pipefail
       cd "$PROJECT_DIR"
 
-      if [[ -f ./gradlew ]]; then
-        chmod +x ./gradlew
+      if [ -f gradlew ]; then
+        chmod +x gradlew
         ./gradlew --no-daemon --stacktrace assembleDebug
       else
-        echo "Gradle Wrapper missing; using Gradle 8.9"
-        sudo apt-get update
-        sudo apt-get install -y wget unzip
-        wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip -O /tmp/gradle-8.9-bin.zip
-        unzip -q /tmp/gradle-8.9-bin.zip -d /tmp
-        /tmp/gradle-8.9/bin/gradle --no-daemon --stacktrace assembleDebug
-      fi
-
-  - name: Verify APK
-    shell: bash
-    run: |
-      set -Eeuo pipefail
-      APK_PATH="$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
-
-      if [[ ! -f "$APK_PATH" ]]; then
-        echo "::error::APK not found: $APK_PATH"
-        find "$PROJECT_DIR" -type f -name '*.apk' -print
+        echo "::error::Gradle Wrapper (gradlew) is missing from the Android project"
+        echo "Add the Gradle Wrapper to the project ZIP and run again."
         exit 1
       fi
 
-      ls -lh "$APK_PATH"
+  - name: Check APK
+    run: |
+      test -f "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
+      ls -lh "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
 
   - name: Upload APK
     uses: actions/upload-artifact@v4
