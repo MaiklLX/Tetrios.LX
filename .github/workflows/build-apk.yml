@@ -1,53 +1,44 @@
-
-name: Build Block Buddies APK
-
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: read
-
-jobs:
-  build:
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.9'
-
-      - name: Verify project
+      - name: Extract Android project
         run: |
-          test -f settings.gradle
-          test -f build.gradle
-          test -f app/build.gradle
-          test -f app/src/main/AndroidManifest.xml
-          test -f app/src/main/java/com/maikllx/blockbuddies/MainActivity.java
+          set -eux
+          ZIP="Block_Buddies_Android_APK_Project.zip"
+          test -f "$ZIP"
+          mkdir -p android-project
+          unzip -o "$ZIP" -d android-project
+
+          echo "Содержимое архива:"
+          find android-project -maxdepth 4 -type f | head -100
+
+          PROJECT_DIR="$(find android-project -type f -name settings.gradle -printf '%h\n' | head -1)"
+          if [ -z "$PROJECT_DIR" ]; then
+            PROJECT_DIR="$(find android-project -type f -name settings.gradle.kts -printf '%h\n' | head -1)"
+          fi
+          test -n "$PROJECT_DIR"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Verify Android project
+        run: |
+          set -eux
+          test -f "$PROJECT_DIR/app/build.gradle" || \
+            test -f "$PROJECT_DIR/app/build.gradle.kts"
+          test -f "$PROJECT_DIR/gradlew" || \
+            echo "Gradle Wrapper отсутствует; будет использован установленный Gradle"
 
       - name: Build APK
-        run: gradle --no-daemon assembleDebug
+        working-directory: .
+        run: |
+          set -eux
+          cd "$PROJECT_DIR"
+          if [ -f ./gradlew ]; then
+            chmod +x ./gradlew
+            ./gradlew --no-daemon assembleDebug
+          else
+            gradle --no-daemon assembleDebug
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Block-Buddies-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
