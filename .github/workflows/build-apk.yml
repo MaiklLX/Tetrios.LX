@@ -98,6 +98,7 @@ jobs:
             "platforms;android-35" \
             "build-tools;35.0.0"
 
+
       - name: Build APK
         shell: bash
         env:
@@ -107,10 +108,13 @@ jobs:
 
           cd "$PROJECT_DIR"
 
-          if [ ! -f gradlew ]; then
-            echo "::error::gradlew is missing from ZIP archive"
-            find . -maxdepth 3 -type f
+          if ! command -v gradle >/dev/null 2>&1; then
+            echo "::error::Gradle is not installed"
             exit 1
+          fi
+
+          if [ ! -f gradlew ]; then
+            gradle wrapper --gradle-version 8.9
           fi
 
           chmod +x gradlew
