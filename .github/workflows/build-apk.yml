@@ -1,29 +1,62 @@
+name: Build Block Buddies Android APK
+
+'on':
+workflow_dispatch:
+push:
+branches:
+- main
+paths:
+- 'Block_Buddies_Android_APK_Project.zip'
+- '.github/workflows/build-apk.yml'
+
+permissions:
+contents: read
+
+jobs:
+build:
+name: Build debug APK
+runs-on: ubuntu-24.04
+timeout-minutes: 30
+
 steps:
   - name: Checkout repository
     uses: actions/checkout@v4
 
-  - name: Check ZIP archive
-    run: |
-      ls -la
-      test -f Block_Buddies_Android_APK_Project.zip
-
-  - name: Extract project
+  - name: Install unzip
     run: |
       sudo apt-get update
       sudo apt-get install -y unzip
-      mkdir -p android-project
-      unzip -oq Block_Buddies_Android_APK_Project.zip -d android-project
-      find android-project -maxdepth 5 -type f | head -150
 
-  - name: Find Android project
+  - name: Extract Android project
+    shell: bash
     run: |
-      PROJECT_DIR="$(find "$GITHUB_WORKSPACE/android-project" -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit | xargs -r dirname)"
-      if [ -z "$PROJECT_DIR" ]; then
-        echo "ERROR: settings.gradle not found inside ZIP"
+      set -euo pipefail
+      ZIP_FILE="$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project.zip"
+
+      if [ ! -f "$ZIP_FILE" ]; then
+        echo "::error::ZIP archive not found: $ZIP_FILE"
+        ls -la "$GITHUB_WORKSPACE"
         exit 1
       fi
+
+      mkdir -p "$GITHUB_WORKSPACE/android-project"
+      unzip -oq "$ZIP_FILE" -d "$GITHUB_WORKSPACE/android-project"
+
+      PROJECT_DIR="$(find "$GITHUB_WORKSPACE/android-project" -type f \( -name settings.gradle -o -name settings.gradle.kts \) -print -quit | xargs -r dirname)"
+
+      if [ -z "$PROJECT_DIR" ]; then
+        echo "::error::No settings.gradle or settings.gradle.kts found inside the ZIP"
+        find "$GITHUB_WORKSPACE/android-project" -maxdepth 5 -type f | head -150
+        exit 1
+      fi
+
+      if [ ! -f "$PROJECT_DIR/app/build.gradle" ] && [ ! -f "$PROJECT_DIR/app/build.gradle.kts" ]; then
+        echo "::error::Android app module build file is missing"
+        exit 1
+      fi
+
       echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
-      echo "Project directory: $PROJECT_DIR"
+      echo "Found project: $PROJECT_DIR"
 
   - name: Set up Java
     uses: actions/setup-java@v4
@@ -35,14 +68,24 @@ steps:
     uses: android-actions/setup-android@v3
 
   - name: Build APK
+    shell: bash
     run: |
+      set -euo pipefail
       cd "$PROJECT_DIR"
-      if [ ! -f gradlew ]; then
-        echo "ERROR: gradlew is missing from the archive"
+
+      if [ -f gradlew ]; then
+        chmod +x gradlew
+        ./gradlew --no-daemon --stacktrace assembleDebug
+      else
+        echo "::error::Gradle Wrapper (gradlew) is missing from the Android project"
+        echo "Add the Gradle Wrapper to the project ZIP and run again."
         exit 1
       fi
-      chmod +x gradlew
-      ./gradlew --no-daemon assembleDebug
+
+  - name: Check APK
+    run: |
+      test -f "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
+      ls -lh "$PROJECT_DIR/app/build/outputs/apk/debug/app-debug.apk"
 
   - name: Upload APK
     uses: actions/upload-artifact@v4
@@ -50,3 +93,4 @@ steps:
       name: Block-Buddies-debug-apk
       path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
       if-no-files-found: error
+      retention-days: 14
