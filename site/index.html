@@ -247,6 +247,69 @@ let bbCampaignRun = { maxClear: 0, passed: false };function bbGetNodeGoals(node)
   return goals;
 }
 
+
+let bbNodeCompleted = false;
+
+function bbCheckCampaignCompletion() {
+  if (mode !== 'campaign' || !started || gameOver || bbNodeCompleted) {
+    return false;
+  }
+
+  const goals = bbGetNodeGoals(campaignNode);
+  if (!goals.every(g => g.value() >= g.target)) {
+    return false;
+  }
+
+  bbNodeCompleted = true;
+  gameOver = true;
+  paused = true;
+  started = false;
+
+  clearInterval(dropTimer);
+  clearInterval(tickTimer);
+
+  const completedNode = campaignNode;
+  const nextNode = Math.min(
+    bbTotalNodes,
+    Math.max(bbGetUnlockedNode(), completedNode + 1)
+  );
+
+  localStorage.nrNode = nextNode;
+  campaignNode = nextNode;
+  updateStats();
+
+  overlay(
+    '<div class="modalhead">' +
+    '<div class="bigicon">🏆</div>' +
+    '<div class="eyebrow">УЗЕЛ ПРОЙДЕН</div>' +
+    '<h3>Узел ' + String(completedNode).padStart(3, '0') + '</h3>' +
+    '<p>Все цели выполнены! Следующий узел открыт.</p>' +
+    '</div>' +
+    '<button class="action" id="nextNode">СЛЕДУЮЩИЙ УЗЕЛ</button>' +
+    '<button class="action secondary" id="mapAfterWin">К КАРТЕ</button>'
+  );
+
+  const next = $('nextNode');
+  if (next) {
+    next.onclick = () => {
+      closeOverlay();
+      mode = 'campaign';
+      startGame();
+    };
+  }
+
+  const map = $('mapAfterWin');
+  if (map) {
+    map.onclick = () => {
+      closeOverlay();
+      show('map');
+      buildMap();
+    };
+  }
+
+  tone(620, 0.28, 'triangle', 0.05);
+  return true;
+}
 function bbRenderGoals() {
   if (mode !== 'campaign') {
     const old = $('campaignGoals');
