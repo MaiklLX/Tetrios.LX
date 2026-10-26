@@ -353,6 +353,29 @@ map.onclick = () => {
   return true;
 }
 function bbRenderGoals() {
+    if (mode === 'rogue') {
+    const game = $('game');
+    if (!game) return;
+
+    let panel = $('rogueGoals');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'rogueGoals';
+      panel.style.cssText = 'margin:10px 0;padding:12px;border:1px solid #9d7cff;border-radius:14px;background:#111a30;color:#f2f5ff;font-size:12px;line-height:1.5;';
+      const layout = game.querySelector('.playlayout');
+      if (layout) game.insertBefore(panel, layout);
+    }
+
+    panel.innerHTML = '<strong style="font-size:14px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
+      bbRogueGoals.map(g => {
+        const value = g.value();
+        return '<div style="margin:6px 0">' +
+          (g.claimed ? '✅ ' : '◯ ') + g.label +
+          '<span style="float:right">' + Math.min(value, g.target) + '/' + g.target +
+          ' · 🪙 ' + g.reward + '</span></div>';
+      }).join('');
+    return;
+  }
   if (mode !== 'campaign') {
     const old = $('campaignGoals');
     if (old) old.remove();
