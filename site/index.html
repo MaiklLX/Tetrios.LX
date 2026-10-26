@@ -737,6 +737,240 @@ input,select,textarea{
   }
 }
 
+/* BLOCK BUDDIES — MAIN MENU REDESIGN v1 */
+#menu {
+  position: relative;
+  isolation: isolate;
+}
+
+#menu::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 55px;
+  left: -14px;
+  right: -14px;
+  height: 440px;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 35%, #673de755, transparent 48%),
+    radial-gradient(ellipse at 15% 55%, #18c9e822, transparent 35%),
+    radial-gradient(ellipse at 90% 25%, #ff5cae22, transparent 32%);
+}
+
+#menu .hero {
+  position: relative;
+  padding: 20px 8px 14px;
+  overflow: hidden;
+  border: 1px solid #6675d333;
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 100%, #613cbb55, transparent 58%),
+    linear-gradient(155deg, #182957e8, #10172fe8 70%);
+  box-shadow: 0 8px 0 #080d22, 0 0 32px #7256ff18;
+}
+
+#menu .hero::before,
+#menu .hero::after {
+  content: "✦";
+  position: absolute;
+  color: #ffe18b;
+  font-size: 23px;
+  text-shadow: 0 0 14px #ffcf6b;
+  pointer-events: none;
+}
+
+#menu .hero::before {
+  top: 46%;
+  left: 9%;
+}
+
+#menu .hero::after {
+  top: 28%;
+  right: 9%;
+  color: #62f4ff;
+  text-shadow: 0 0 14px #62f4ff;
+}
+
+#menu .hero .eyebrow {
+  color: #7ef5ff;
+  font-size: 9px;
+  letter-spacing: .16em;
+}
+
+#menu .hero h1 {
+  position: relative;
+  margin: 14px 0 12px;
+  font-size: clamp(43px, 11vw, 68px);
+  line-height: .9;
+  letter-spacing: -.06em;
+  font-weight: 1000;
+  background: linear-gradient(
+    135deg, #fffbd8 4%, #ffd36c 30%,
+    #ff83c8 61%, #6af5ff 92%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 5px 0 #39226e);
+}
+
+#menu .hero p {
+  color: #c4d3ff;
+  max-width: 300px;
+}
+
+#menu .orb {
+  width: 190px;
+  height: 142px;
+  margin-top: 10px;
+}
+
+#menu .orb::before {
+  width: 112px;
+  height: 112px;
+  border: 3px solid #58efff;
+  border-radius: 34px;
+  background: linear-gradient(145deg, #293f91, #743baf);
+  box-shadow:
+    0 7px 0 #0a1230,
+    0 0 30px #4cecff55,
+    inset 0 0 22px #ffffff1c;
+  transform: rotate(-8deg);
+}
+
+#menu .orb::after {
+  width: 158px;
+  height: 66px;
+  border: 2px dashed #ffcf69;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #ffcf6922;
+}
+
+#menu .relic {
+  position: relative;
+  z-index: 1;
+  font-size: 66px;
+  filter: drop-shadow(0 5px 0 #40236f)
+          drop-shadow(0 0 16px #b39bff);
+}
+
+#menu .sectionlabel {
+  margin-top: 24px;
+  color: #86f5ff;
+}
+
+#menu .sectionlabel::after {
+  background: linear-gradient(90deg, #4d65c5, transparent);
+}
+
+#menu .modes {
+  gap: 12px;
+}
+
+#menu .mode {
+  min-height: 88px;
+  padding: 14px;
+  border: 2px solid #344d9d;
+  border-radius: 21px;
+  background:
+    radial-gradient(ellipse at 0% 50%, var(--glow), transparent 68%),
+    linear-gradient(145deg, #1b2b59, #101832 75%);
+  box-shadow: 0 5px 0 #080e24, inset 0 1px #ffffff12;
+}
+
+#menu .mode::before {
+  opacity: .22;
+}
+
+#menu .mode:hover {
+  transform: translateY(-2px);
+  border-color: #5ceeff;
+  box-shadow: 0 7px 0 #080e24, 0 0 22px #40eaff35;
+}
+
+#menu .modeicon {
+  width: 52px;
+  height: 52px;
+  border: 2px solid #ffffff30;
+  border-radius: 17px;
+  background: linear-gradient(145deg, #344f9e, #773db0);
+  box-shadow: inset 0 -4px #090f2a66, 0 3px 12px #0004;
+  color: #fff5cf;
+}
+
+#menu .modetitle {
+  color: #fff4d1;
+  font-size: 15px;
+  font-weight: 950;
+}
+
+#menu .modesub {
+  color: #b8c9f7;
+}
+
+#menu .modearrow {
+  color: #6af2ff;
+  font-size: 28px;
+}
+
+#menu .tag {
+  border: 1px solid #5878c5;
+  border-radius: 7px;
+  background: #183b70;
+  color: #91f6ff;
+}
+
+#menu #rpgPanel {
+  border: 2px solid #675bc0;
+  border-radius: 21px;
+  background:
+    radial-gradient(ellipse at 0% 50%, #9d7cff30, transparent 70%),
+    linear-gradient(145deg, #202d60, #111832);
+  box-shadow: 0 5px 0 #080e24, 0 0 22px #8b70ff20;
+}
+
+#menu .bottomstats .stat {
+  border: 1px solid #3c559b;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #1b2d5b, #101831);
+  box-shadow: 0 4px 0 #080e24;
+}
+
+#menu .bottomstats .stat strong {
+  color: #fff4d1;
+}
+
+#menu .bottomstats .stat span {
+  color: #9dbcf5;
+}
+
+@media (max-width: 380px) {
+  #menu .hero {
+    padding: 17px 6px 12px;
+    border-radius: 22px;
+  }
+
+  #menu .hero h1 {
+    font-size: clamp(39px, 11vw, 48px);
+  }
+
+  #menu .orb {
+    height: 122px;
+  }
+
+  #menu .mode {
+    min-height: 80px;
+    padding: 11px;
+    gap: 10px;
+  }
+
+  #menu .modeicon {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div id="dailyQuestsPanel" style="margin:14px 0;padding:16px;border:1px solid #5cf5e855;border-radius:16px;background:linear-gradient(135deg,#11172a,#152438)">
