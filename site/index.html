@@ -966,15 +966,20 @@ function bbDailyAddLines(cleared) {
   bbRenderDailyQuests();
 }
 
+
 function bbDailyRecordGame() {
   if (bbDailyQuestDate !== bbGetTodayKey()) {
     bbLoadDailyQuests();
   }
 
   bbDailyQuests.forEach(q => {
-if (q.id === 'lines') q.progress += Math.max(0, Number(lines) || 0);
-    if (q.id === 'score') q.progress += Math.max(0, Number(score) || 0);
-    if (q.id === 'games') q.progress += 1;
+    if (q.id === 'score') {
+      q.progress += Math.max(0, Number(score) || 0);
+    }
+
+    if (q.id === 'games') {
+      q.progress += 1;
+    }
 
     if (!q.claimed && q.progress >= q.target) {
       q.claimed = true;
@@ -988,6 +993,7 @@ if (q.id === 'lines') q.progress += Math.max(0, Number(lines) || 0);
   bbRefresh();
   bbRenderDailyQuests();
 }
+
 
 
 const bbDailyOldEnd = endGame;
