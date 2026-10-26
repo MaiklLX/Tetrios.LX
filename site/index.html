@@ -318,6 +318,58 @@ function bbSaveDailyQuests() {
   }));
 }
 
+function bbRenderDailyQuests() {
+  const list = document.getElementById('dailyQuestsList');
+  if (!list) return;
+
+  if (bbDailyQuestDate !== bbGetTodayKey()) {
+    bbLoadDailyQuests();
+  }
+
+  list.innerHTML = '';
+
+  bbDailyQuests.forEach(q => {
+    const item = document.createElement('div');
+    item.style.cssText =
+      'padding:11px;margin-top:8px;border-radius:12px;' +
+      'background:#ffffffa8;border:1px solid #efd8c4;';
+
+    const title = document.createElement('div');
+    title.textContent = q.title;
+    title.style.cssText =
+      'font-size:12px;font-weight:900;color:#59405d;';
+
+    const progress = document.createElement('div');
+    progress.textContent =
+      Math.min(q.progress, q.target) + ' / ' + q.target;
+    progress.style.cssText =
+      'font-size:11px;color:#8e7892;margin-top:5px;';
+
+    const track = document.createElement('div');
+    track.style.cssText =
+      'height:6px;background:#eaddec;border-radius:8px;' +
+      'overflow:hidden;margin-top:7px;';
+
+    const fill = document.createElement('div');
+    fill.style.cssText =
+      'height:100%;width:' +
+      Math.min(100, q.progress / q.target * 100) +
+      '%;background:linear-gradient(90deg,#a786ed,#68d9c6);';
+
+    track.appendChild(fill);
+
+    const reward = document.createElement('div');
+    reward.textContent = q.claimed
+      ? '✓ Выполнено · награда получена'
+      : 'Награда: ' + q.reward + ' 🪙';
+    reward.style.cssText =
+      'font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px;';
+
+    item.append(title, progress, track, reward);
+    list.appendChild(item);
+  });
+}
+
 let bbRogueGoals = [];
 let bbRogueGoalId = 0;
 
