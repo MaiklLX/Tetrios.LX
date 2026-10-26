@@ -249,6 +249,42 @@ let bbCampaignRun = { maxClear: 0, passed: false };function bbGetNodeGoals(node)
 
 let bbRogueGoals = [];
 let bbRogueGoalId = 0;
+      function bbCreateRogueGoal() {
+  const id = bbRogueGoalId++;
+  const types = [
+    {
+      label: 'Очистить линии',
+      target: 3 + Math.floor(Math.random() * 5),
+      value: () => lines
+    },
+    {
+      label: 'Набрать очки',
+      target: 500 + Math.floor(Math.random() * 1000),
+      value: () => score
+    },
+    {
+      label: 'Продержаться, секунд',
+      target: 20 + Math.floor(Math.random() * 31),
+      value: () => runSeconds
+    },
+    {
+      label: 'Достичь уровня',
+      target: 2 + Math.floor(Math.random() * 3),
+      value: () => level
+    }
+  ];
+
+  const goal = types[Math.floor(Math.random() * types.length)];
+
+  return {
+    id,
+    label: goal.label,
+    target: goal.target,
+    value: goal.value,
+    reward: 10 + Math.floor(Math.random() * 16),
+    claimed: false
+  };
+}
 let bbNodeCompleted = false;
 
 function bbCheckCampaignCompletion() {
