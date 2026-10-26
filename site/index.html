@@ -942,6 +942,28 @@ while (heroXp >= 200 + (heroLevel - 1) * 100) {
 
 let bbDailyRecordedThisGame = false;
 
+function bbDailyAddLines(cleared) {
+  if (bbDailyQuestDate !== bbGetTodayKey()) {
+    bbLoadDailyQuests();
+  }
+
+  const q = bbDailyQuests.find(item => item.id === 'lines');
+  if (!q || q.claimed || cleared <= 0) return;
+
+  q.progress += cleared;
+
+  if (q.progress >= q.target) {
+    q.claimed = true;
+    bbCoins += q.reward;
+    bbPut('coins', bbCoins);
+    toast('Ежедневное задание выполнено! +' + q.reward + ' 🪙');
+  }
+
+  bbSaveDailyQuests();
+  bbRefresh();
+  bbRenderDailyQuests();
+}
+
 function bbDailyRecordGame() {
   if (bbDailyQuestDate !== bbGetTodayKey()) {
     bbLoadDailyQuests();
