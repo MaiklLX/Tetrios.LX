@@ -586,6 +586,7 @@ function bbRefresh() {
 
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
   const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+    const trainCost = 50 + (heroLevel - 1) * 25;
   const heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
 
   const levelEl = $('heroLevel');
@@ -616,6 +617,7 @@ function bbHero(){
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
   const heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
   const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+    const trainCost = 50 + (heroLevel - 1) * 25;
 
   bbModal(`
     <div class="modalhead">
