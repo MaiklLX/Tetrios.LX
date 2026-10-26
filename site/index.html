@@ -369,6 +369,13 @@ function bbRenderGoals() {
     panel.innerHTML = '<strong style="font-size:14px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
       bbRogueGoals.map(g => {
         const value = g.value();
+                if (!g.claimed && value >= g.target) {
+          g.claimed = true;
+          bbCoins += g.reward;
+          bbPut('coins', bbCoins);
+          toast('Цель выполнена! +' + g.reward + ' монет');
+          bbRogueGoals[bbRogueGoals.indexOf(g)] = bbCreateRogueGoal();
+        }
         return '<div style="margin:6px 0">' +
           (g.claimed ? '✅ ' : '◯ ') + g.label +
           '<span style="float:right">' + Math.min(value, g.target) + '/' + g.target +
