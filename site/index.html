@@ -15,6 +15,124 @@ html,body{background:#fff0d7;color:#44364d}.app{background:radial-gradient(ellip
 .rpgpanel{display:flex;align-items:center;gap:12px;margin:14px 0 10px;padding:12px;border:2px solid #f0cfac;border-radius:20px;background:linear-gradient(110deg,#fff9e9,#e9fff5);box-shadow:0 5px 0 #e8cbb1}.avatar{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:33px;background:#ffdfa2;box-shadow:inset 0 -4px #efc47e}.rpginfo{flex:1;min-width:0}.rpgname{font-weight:950;font-size:13px}.rpgname span{float:right;color:#8e69c7;font-size:10px}.xpbar{height:7px;background:#eaddec;border-radius:10px;margin:7px 0;overflow:hidden}.xpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a786ed,#ffb45c);border-radius:10px;transition:width .3s}.wallet{display:flex;justify-content:space-between;font-size:11px;color:#826a88}.shopbuttons{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:7px}.shopbutton{border:2px solid #e8cbb7;border-radius:14px;background:#fffaf1;padding:11px 5px;color:#684d72;font-size:10px;font-weight:900;box-shadow:0 4px 0 #e8cbb7;transition:transform .15s}.shopbutton:active{transform:translateY(3px);box-shadow:0 1px 0 #e8cbb7}.shopbutton.chest{background:#fff0bd;border-color:#efc56b;box-shadow:0 4px 0 #e8bf66}.shopgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.shopitem{border:2px solid #edd0b8;border-radius:16px;background:#fff9ef;padding:12px;text-align:center}.shopitem .emoji{font-size:28px}.shopitem strong{display:block;font-size:12px;margin:5px 0}.shopitem p{font-size:10px;line-height:1.4;color:#8d7891;min-height:28px;margin:0 0 8px}.shopitem button{width:100%;padding:9px;border-radius:10px;background:#dff8ee;color:#34796f;font-size:10px;font-weight:900;border:1px solid #b8e8d9}.heroCard{display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #efd1b7;border-radius:18px;background:#fff9ef;margin-bottom:10px}.heroCard .avatar{width:66px;height:66px;font-size:42px}.heroCard p{font-size:11px;color:#8d7891;margin:5px 0 0}
 @media(max-width:380px){.playlayout{grid-template-columns:minmax(0,1fr) 82px;gap:7px}.shopbutton{font-size:9px}.wallet{font-size:10px}}
 
+/* BLOCK BUDDIES — компактный мобильный игровой экран */
+@media (max-width: 520px) {
+  .app {
+    padding: 8px 9px 14px;
+    min-height: 100dvh;
+  }
+
+  .topbar {
+    margin-bottom: 6px;
+  }
+
+  #game .screenhead {
+    margin: 2px 0 8px;
+  }
+
+  #game .screenhead h2 {
+    font-size: 17px;
+  }
+
+  #game .screenhead p {
+    font-size: 10px;
+  }
+
+  .gamehud {
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .hudbox {
+    padding: 6px 8px;
+    border-radius: 11px;
+  }
+
+  .hudbox strong {
+    font-size: 17px;
+  }
+
+  .playlayout {
+    grid-template-columns: minmax(0, 1fr) 76px;
+    gap: 6px;
+  }
+
+  .boardframe {
+    padding: 4px;
+    border-radius: 13px;
+  }
+
+  .board {
+    border-radius: 8px;
+  }
+
+  .sidecol {
+    gap: 6px;
+  }
+
+  .sidecard {
+    padding: 6px 4px;
+    border-radius: 11px;
+  }
+
+  .sidecard label {
+    font-size: 7px;
+    letter-spacing: .05em;
+  }
+
+  .boosticon {
+    margin: 4px 0 2px;
+    font-size: 19px;
+  }
+
+  .boostname {
+    font-size: 8px;
+  }
+
+  .smallbtn {
+    margin-top: 5px;
+    padding: 7px 2px;
+    font-size: 9px;
+  }
+
+  .progresswrap {
+    margin: 7px 0;
+  }
+
+  .controls {
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  .control {
+    height: 43px;
+    border-radius: 11px;
+  }
+
+  .hint {
+    margin-top: 7px;
+    font-size: 9px;
+  }
+}
+
+@media (max-height: 760px) and (max-width: 520px) {
+  #game .screenhead {
+    margin-bottom: 5px;
+  }
+
+  .hudbox strong {
+    font-size: 15px;
+  }
+
+  .control {
+    height: 39px;
+  }
+
+  .hint {
+    margin-top: 5px;
+  }
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div><div class="shopbuttons"><button class="shopbutton" id="openShop">🛍️ МАГАЗИН</button><button class="shopbutton chest" id="openBox">🎁 СЮРПРИЗ-БОКС</button><button class="shopbutton" id="openHero">🧸 ГЕРОЙ</button></div><div class="bottomstats"><div class="stat"><strong id="bestScore">0</strong><span>РЕКОРД</span></div><div class="stat"><strong id="runsCount">0</strong><span>ЗАБЕГИ</span></div><div class="stat"><strong id="relicCount">0</strong><span>РЕЛИКВИИ</span></div></div></section><section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Звёздная карта</h2><p>Сектор I · Путь первооткрывателя</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждый очищенный узел открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ УЗЛЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div><button class="action" id="dailyStart">Начать испытание</button></section><section id="game" class="screen" hidden><div class="screenhead"><button class="back" id="gameBack">Ⅱ</button><div style="flex:1"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn" id="pauseBtn">Ⅱ</button></div><div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div><div class="progresswrap"><div class="progressmeta"><span id="progressLabel">ЗАРЯД УРОВНЯ</span><span id="progressText">0 / 5 линий</span></div><div class="progressbar"><div class="progressfill" id="progressFill"></div></div></div></div><aside class="sidecol"><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button><button class="control primary drop" data-act="drop">DROP ↓</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div>
 <script>
