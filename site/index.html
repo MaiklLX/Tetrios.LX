@@ -302,8 +302,13 @@ function bbCheckCampaignCompletion() {
   if (map) {
 map.onclick = () => {
   closeOverlay();
-  show('campaign');
-  buildMap();
+  const campaignButton = document.querySelector('[data-mode="campaign"]');
+  if (campaignButton) {
+    campaignButton.click();
+  } else {
+    show('campaign');
+    buildMap();
+  }
 };
   }
 
