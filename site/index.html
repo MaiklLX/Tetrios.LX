@@ -573,9 +573,13 @@ toast('Цель выполнена! +' + g.reward + ' монет');
         Math.min(100, value / g.target * 100) +
         '%;background:' + (complete ? '#72d6a0' : '#82aaff') +
         '"></div></div></div>';
+
     }).join('');
+
+  bbCheckCampaignCompletion();
 }
 function buildMap() {
+
   const g = $('mapgrid');
   if (!g) return;
 
