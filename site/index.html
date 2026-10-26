@@ -353,6 +353,10 @@ map.onclick = () => {
   return true;
 }
 function bbRenderGoals() {
+    if (mode !== 'rogue') {
+    const rogueOld = $('rogueGoals');
+    if (rogueOld) rogueOld.remove();
+  }
     if (mode === 'rogue') {
     const game = $('game');
     if (!game) return;
