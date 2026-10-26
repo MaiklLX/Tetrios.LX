@@ -192,7 +192,7 @@ function bbGetUnlockedNode() {
 }
 
 
-function bbGetNodeGoals(node) {
+let bbCampaignRun = { maxClear: 0 };function bbGetNodeGoals(node) {
   const info = bbGetNodeInfo(node);
   const local = info.localNumber;
   const difficulty = Math.floor((node - 1) / 30);
