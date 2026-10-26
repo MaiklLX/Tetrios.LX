@@ -426,6 +426,8 @@ node.onclick = () => {
 
   campaignNode = n;
   mode = 'campaign';
+  closeOverlay();
+  show('game');
   startGame();
 };
         g.appendChild(node);
