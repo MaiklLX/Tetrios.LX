@@ -707,7 +707,65 @@ function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.w
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
 function restartDrop(){if(dropTimer)clearInterval(dropTimer);dropTimer=setInterval(()=>{if(started&&!paused&&!gameOver)move(0,1)},dropMs)}
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><h3>Пауза</h3><p>Герой отдыхает! Возвращайся, когда будешь готов.</p></div><button class="action" id="resume">ПРОДОЛЖИТЬ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else closeOverlay()}
-document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(boosts.includes('hold')?2:1)){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;render();tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});let touch=null;const cv=$('board');cv.addEventListener('touchstart',e=>{if(!started||paused)return;let t=e.changedTouches[0];touch={x:t.clientX,y:t.clientY,at:Date.now(),lastX:t.clientX,lastY:t.clientY};audioCtx()},{passive:true});cv.addEventListener('touchmove',e=>{if(!touch||!started||paused)return;let t=e.changedTouches[0],dx=t.clientX-touch.lastX,dy=t.clientY-touch.lastY;if(Math.abs(dx)>20){move(dx>0?1:-1);touch.lastX=t.clientX}if(dy>23){move(0,1);touch.lastY=t.clientY}},{passive:true});cv.addEventListener('touchend',e=>{if(!touch)return;let t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;if(Math.abs(dx)<18&&Math.abs(dy)<18&&Date.now()-touch.at<230)rotatePiece();else if(dy<-40)rotatePiece();touch=null},{passive:true});document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(boosts.includes('hold')?2:1)){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;render();tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});
+let touch = null;
+const cv = $('game');
+
+cv.addEventListener('touchstart', e => {
+  if (!started || paused || gameOver) return;
+  if (e.target.closest('button, input, select, textarea')) return;
+
+  const t = e.changedTouches[0];
+  touch = {
+    x: t.clientX,
+    y: t.clientY,
+    lastX: t.clientX,
+    lastY: t.clientY,
+    at: Date.now()
+  };
+  audioCtx();
+}, { passive: true });
+
+cv.addEventListener('touchmove', e => {
+  if (!touch || !started || paused || gameOver) return;
+
+  const t = e.changedTouches[0];
+  const dx = t.clientX - touch.lastX;
+  const dy = t.clientY - touch.lastY;
+
+  if (Math.abs(dx) >= 24) {
+    move(dx > 0 ? 1 : -1);
+    touch.lastX = t.clientX;
+  }
+
+  if (dy >= 28) {
+    move(0, 1);
+    touch.lastY = t.clientY;
+  }
+}, { passive: true });
+
+cv.addEventListener('touchend', e => {
+  if (!touch) return;
+
+  const t = e.changedTouches[0];
+  const dx = t.clientX - touch.x;
+  const dy = t.clientY - touch.y;
+  const elapsed = Date.now() - touch.at;
+
+  if (Math.abs(dx) < 18 && Math.abs(dy) < 18 && elapsed < 230) {
+    rotatePiece();
+  } else if (dy < -45) {
+    hardDrop();
+  }
+
+  touch = null;
+}, { passive: true });
+
+cv.addEventListener('touchcancel', () => {
+  touch = null;
+}, { passive: true });
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
 
 // Persistent RPG economy, shop, character, surprise boxes and fast-flick hard drop.
 const bbGet=(k,d=0)=>{try{return JSON.parse(localStorage.getItem('bb_'+k))??d}catch{return d}};
