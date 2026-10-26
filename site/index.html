@@ -671,17 +671,6 @@ function bbHero(){
     bbHero();
   };
 
-bbCoins -= 50;
-
-const newXp = heroXp + 40;
-const newLevel = Math.max(1, Math.floor(newXp / 200) + 1);
-
-bbPut('coins', bbCoins);
-bbPut('xp_' + hero.id, newXp);
-bbPut('heroLevel_' + hero.id, newLevel);
-bbRefresh();
-bbHero();
-  };
 
   $('bbHeroClose').onclick = closeOverlay;
 }
