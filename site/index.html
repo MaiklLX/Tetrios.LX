@@ -961,15 +961,13 @@ function bbDailyRecordGame() {
 
 const bbDailyOldEnd = endGame;
 endGame = function() {
-  const wasGameOver = gameOver;
-  bbDailyOldEnd();
+if (!bbDailyRecordedThisGame) {
+bbDailyRecordedThisGame = true;
+bbDailyRecordGame();
+}
 
-  if (!wasGameOver && gameOver && !bbDailyRecordedThisGame) {
-    bbDailyRecordedThisGame = true;
-    bbDailyRecordGame();
-  }
+bbDailyOldEnd();
 };
-
 
 const bbOldStart=startGame;startGame=function(){bbDailyRecordedThisGame=false;bbOldStart();if(bbInventory.quick>0){bbInventory.quick--;if(!boosts.includes('mult'))boosts.push('mult');dropMs=Math.max(150,dropMs-90);restartDrop()}if(bbInventory.shield>0){bbInventory.shield--;if(!boosts.includes('shield'))boosts.push('shield')}if(bbInventory.magnet>0){bbInventory.magnet--;if(!boosts.includes('magnet'))boosts.push('magnet')}bbSave();updateHud();render()};
 let bbGesture=null;const bbCanvas=$('board');bbCanvas.addEventListener('touchstart',e=>{let t=e.changedTouches[0];bbGesture={y:t.clientY,time:performance.now()}},{passive:true});bbCanvas.addEventListener('touchend',e=>{if(!bbGesture)return;let t=e.changedTouches[0],dy=t.clientY-bbGesture.y,dt=performance.now()-bbGesture.time;if(dy>65&&dt<330&&started&&!paused&&!gameOver){hardDrop();tone(700,.12,'triangle',.04)}bbGesture=null},{passive:true});
