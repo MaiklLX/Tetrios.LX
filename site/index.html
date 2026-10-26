@@ -180,6 +180,94 @@ const bbPut=(k,v)=>localStorage.setItem('bb_'+k,JSON.stringify(v));
 let bbCoins=bbGet('coins',80),bbGems=bbGet('gems',3),bbXp=bbGet('xp',0),bbHeroLevel=bbGet('heroLevel',1),bbInventory=bbGet('inventory',{quick:1,shield:0,magnet:0}),bbPerks=bbGet('perks',[]),bbMusicLoop=null,bbMusicStep=0;
 const bbCatalog=[{id:'quick',emoji:'⚡',name:'Молниеносный старт',desc:'Бонус скорости и очков на один забег.',cost:35,currency:'coins'},{id:'shield',emoji:'🛡️',name:'Плюшевый щит',desc:'Спасает от одного проигрыша.',cost:55,currency:'coins'},{id:'magnet',emoji:'🧲',name:'Магнит монет',desc:'Больше монет за очищенные линии.',cost:75,currency:'coins'},{id:'lucky',emoji:'🍀',name:'Удача новичка',desc:'Постоянное улучшение удачи.',cost:2,currency:'gems'},{id:'heart',emoji:'💖',name:'Сердечко героя',desc:'Постоянно даёт +5% к наградам.',cost:3,currency:'gems'},{id:'rainbow',emoji:'🌈',name:'Радужный стиль',desc:'Косметическое улучшение героя.',cost:4,currency:'gems'}];
 function bbSave(){bbPut('coins',bbCoins);bbPut('gems',bbGems);bbPut('xp',bbXp);bbPut('heroLevel',bbHeroLevel);bbPut('inventory',bbInventory);bbPut('perks',bbPerks);bbRefresh()}
+/* BLOCK BUDDIES — выбор и сохранение персонажа */
+const bbHeroes = [
+  { id: 'plush', name: 'Капитан Плюш', emoji: '🐻', color: '#e9a66d', desc: 'Храбрый лидер команды' },
+  { id: 'prism', name: 'Призма', emoji: '🟦', color: '#63b8f5', desc: 'Мастер точных комбинаций' },
+  { id: 'blip', name: 'Блип', emoji: '🟪', color: '#b69af8', desc: 'Любитель неожиданных ходов' },
+  { id: 'pixel', name: 'Пиксель', emoji: '🟩', color: '#73d6a0', desc: 'Спокойный и надёжный' },
+  { id: 'spark', name: 'Искра', emoji: '🟨', color: '#f5ce62', desc: 'Энергия каждой битвы' }
+];
+
+let bbSelectedHero = localStorage.getItem('bbSelectedHero') || 'plush';
+
+function bbApplyHero() {
+  const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
+  bbSelectedHero = hero.id;
+
+  const panel = document.getElementById('rpgPanel');
+  if (!panel) return;
+
+  const avatar = panel.querySelector('.avatar');
+  const name = panel.querySelector('.rpgname');
+
+  if (avatar) {
+    avatar.textContent = hero.emoji;
+    avatar.style.background = hero.color;
+    avatar.style.borderRadius = '14px';
+  }
+
+  if (name) name.textContent = hero.name;
+
+  let picker = document.getElementById('bbHeroPicker');
+  if (!picker) {
+    picker = document.createElement('div');
+    picker.id = 'bbHeroPicker';
+    picker.style.cssText = 'margin-top:12px;padding:12px;border-radius:16px;background:rgba(120,140,160,.10);';
+
+    const title = document.createElement('div');
+    title.textContent = 'ВЫБЕРИ СВОЕГО ГЕРОЯ';
+    title.style.cssText = 'font-size:11px;font-weight:900;letter-spacing:.08em;margin-bottom:9px;';
+    picker.appendChild(title);
+
+    const list = document.createElement('div');
+    list.id = 'bbHeroChoices';
+    list.style.cssText = 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;';
+    picker.appendChild(list);
+
+    const desc = document.createElement('div');
+    desc.id = 'bbHeroDesc';
+    desc.style.cssText = 'font-size:11px;opacity:.8;margin-top:9px;';
+    picker.appendChild(desc);
+
+    panel.appendChild(picker);
+  }
+
+  const list = document.getElementById('bbHeroChoices');
+  if (list && !list.dataset.ready) {
+    bbHeroes.forEach(h => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.hero = h.id;
+      btn.title = h.name;
+      btn.setAttribute('aria-label', 'Выбрать героя: ' + h.name);
+      btn.style.cssText = 'min-width:0;padding:7px 2px;border:2px solid transparent;border-radius:12px;background:rgba(255,255,255,.75);font-size:23px;cursor:pointer;';
+      btn.textContent = h.emoji;
+      btn.addEventListener('click', () => {
+        bbSelectedHero = h.id;
+        localStorage.setItem('bbSelectedHero', h.id);
+        bbApplyHero();
+      });
+      list.appendChild(btn);
+    });
+    list.dataset.ready = '1';
+  }
+
+  if (list) {
+    list.querySelectorAll('button').forEach(btn => {
+      const active = btn.dataset.hero === hero.id;
+      btn.style.borderColor = active ? hero.color : 'transparent';
+      btn.style.boxShadow = active ? '0 0 0 2px ' + hero.color + '33' : 'none';
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  const desc = document.getElementById('bbHeroDesc');
+  if (desc) desc.textContent = hero.desc;
+}
+
+bbApplyHero();
+
 function bbRefresh(){if($('coins'))$('coins').textContent=bbCoins;if($('gems'))$('gems').textContent=bbGems;if($('heroLevel'))$('heroLevel').textContent='УР. '+bbHeroLevel;if($('heroXpBar'))$('heroXpBar').style.width=(bbXp/Math.max(100,bbHeroLevel*100)*100)+'%'}
 function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}
 function bbShop(){bbModal(`<div class="modalhead"><div class="bigicon">🛍️</div><h3>Лавка Плюшевого Лиса</h3><p>Покупай бусты и постоянные улучшения. <b>🪙 ${bbCoins} · 💎 ${bbGems}</b></p></div><div class="shopgrid">${bbCatalog.map(it=>`<div class="shopitem"><div class="emoji">${it.emoji}</div><strong>${it.name}</strong><p>${it.desc}${bbInventory[it.id]?' · В запасе: '+bbInventory[it.id]:bbPerks.includes(it.id)?' · Уже открыто':''}</p><button data-bb-buy="${it.id}">${bbPerks.includes(it.id)?'ОТКРЫТО':'КУПИТЬ · '+it.cost+(it.currency==='gems'?' 💎':' 🪙')}</button></div>`).join('')}</div><button class="action secondary" id="bbShopClose">НАЗАД</button>`);$('modal').querySelectorAll('[data-bb-buy]').forEach(b=>b.onclick=()=>bbBuy(b.dataset.bbBuy));$('bbShopClose').onclick=closeOverlay}
