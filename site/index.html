@@ -1020,6 +1020,15 @@ bbRefresh();
 bbLoadDailyQuests();
 bbRenderDailyQuests();
 
+window.addEventListener('load', () => {
+  bbLoadDailyQuests();
+  bbRenderDailyQuests();
+  setTimeout(() => {
+    bbLoadDailyQuests();
+    bbRenderDailyQuests();
+  }, 300);
+});
+
 
 })();
 </script></body></html>
