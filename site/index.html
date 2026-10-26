@@ -148,7 +148,21 @@ const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc
 function audioCtx(){if(!audio){try{audio=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(audio&&audio.state==='suspended')audio.resume();return audio}
 function tone(freq=440,dur=.08,type='sine',vol=.035){if(!soundOn)return;const a=audioCtx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+dur)}
 function chime(){tone(520,.07,'triangle');setTimeout(()=>tone(760,.12,'sine'),55)}function music(){if(!musicOn||!soundOn)return;const a=audioCtx();if(!a)return;const notes=[110,164.81,220,164.81,130.81,196,246.94,196];let i=0;const pulse=()=>{if(!musicOn||!started||paused||gameOver)return;tone(notes[i%notes.length],.24,'sine',.012);i++;setTimeout(pulse,420)};pulse()}
-function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900)}
+function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900)}function bbRewardFloat(amount){
+  const el=document.createElement('div');
+  el.textContent='+'+amount+' 🪙';
+  el.style.cssText='position:fixed;left:50%;top:42%;transform:translate(-50%,0);z-index:99999;padding:12px 18px;border-radius:14px;background:#211b0e;color:#ffd166;border:1px solid #ffd166;font-size:24px;font-weight:900;box-shadow:0 0 24px #ffc85766;opacity:0;transition:transform .85s ease,opacity .85s ease;pointer-events:none';
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>{
+    el.style.opacity='1';
+    el.style.transform='translate(-50%,-35px)';
+  });
+  setTimeout(()=>{
+    el.style.opacity='0';
+    el.style.transform='translate(-50%,-85px)';
+  },700);
+  setTimeout(()=>el.remove(),1600);
+}
 function show(id){['menu','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);$(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen')}
 function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
