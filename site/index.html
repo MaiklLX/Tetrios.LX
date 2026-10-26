@@ -641,10 +641,35 @@ function bbHero(){
   `);
 
   $('bbTrain').onclick = () => {
-if (bbCoins < 50) {
-  toast('Нужно 50 монет для тренировки');
-  return;
-}
+    const trainCost = 50 + (heroLevel - 1) * 25;
+
+    if (bbCoins < trainCost) {
+      toast('Для тренировки нужно ' + trainCost + ' монет');
+      return;
+    }
+
+    bbCoins -= trainCost;
+
+    let newXp = heroXp + 40;
+    let newLevel = heroLevel;
+
+    while (newXp >= 200 + (newLevel - 1) * 100) {
+      newXp -= 200 + (newLevel - 1) * 100;
+      newLevel++;
+    }
+
+    bbPut('coins', bbCoins);
+    bbPut('xp_' + hero.id, newXp);
+    bbPut('heroLevel_' + hero.id, newLevel);
+
+    if (hero.id === 'plush') {
+      bbXp = newXp;
+      bbHeroLevel = newLevel;
+    }
+
+    bbSave();
+    bbHero();
+  };
 
 bbCoins -= 50;
 
