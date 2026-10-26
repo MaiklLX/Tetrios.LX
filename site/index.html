@@ -423,6 +423,81 @@ html,body{background:#fff0d7;color:#44364d}.app{background:radial-gradient(ellip
     font-size: 9px;
   }
 }
+  background:linear-gradient(145deg,#142451f5,#0b1537f5)!important;
+  color:#f5f4ff!important;border:1px solid #3157a2!important;
+  box-shadow:0 4px 0 #07102b,0 0 16px #2467ff16!important;
+}
+.mode,.sidecard,.hudbox,.stat,.shopitem,.heroCard,.worldcard{border-radius:16px!important}
+.mode:before{opacity:.16!important}
+.modeicon{
+  border:1px solid #456bd1!important;
+  background:linear-gradient(145deg,#233f87,#642c9d)!important;
+  box-shadow:inset 0 -3px #060d25!important;
+}
+.mode:hover,.iconbtn:hover,.back:hover,.shopitem:hover{
+  border-color:#40e7ff!important;box-shadow:0 4px 0 #07102b,0 0 18px #30dfff35!important;
+}
+.modesub,.hero p,.screenhead p,.muted,.sidecard p{color:#b1c1f0!important}
+.tag{
+  background:#173b69!important;color:#5beaff!important;
+  border:1px solid #286ba7;border-radius:7px!important;
+}
+.bottomstats .stat,.stat{background:linear-gradient(145deg,#172a59,#0b1535)!important}
+button,.action,.primary,.control,.smallbtn,.shopbutton{
+  color:#fff!important;border:1px solid #4678d9!important;
+  background:linear-gradient(180deg,#245bd0,#12328a)!important;
+  box-shadow:0 4px 0 #07102a,0 0 12px #246bff22!important;
+}
+button.primary,.primary,.action:not(.secondary),#startGame,.playbutton{
+  background:linear-gradient(180deg,#57f76c,#08a83d)!important;
+  border-color:#7cff91!important;color:#042b21!important;
+  box-shadow:0 4px 0 #08622f,0 0 18px #23ff7040!important;
+}
+button.secondary,.action.secondary,.back{
+  background:linear-gradient(180deg,#263b79,#111d4b)!important;color:#eaf1ff!important;
+}
+#game .boardframe{
+  background:linear-gradient(145deg,#0b1740,#10103a)!important;
+  border:2px solid #3477ef!important;
+  box-shadow:0 0 0 3px #101d4d,0 0 24px #1c65ff35,inset 0 0 22px #05091e!important;
+}
+#game .hudbox strong{color:#fff!important}
+#game .hudbox small,#game .hudbox span{color:#a9c2ff!important}
+#game .sidecard{background:linear-gradient(145deg,#142451,#0b1537)!important}
+#game .control{
+  border-radius:13px!important;font-weight:900;
+  background:linear-gradient(180deg,#2468ee,#12358f)!important;
+  border-color:#58caff!important;
+}
+#game .control:nth-child(3){background:linear-gradient(180deg,#bb54ff,#6426bd)!important;border-color:#df9bff!important}
+#game .control.drop{background:linear-gradient(180deg,#47f46a,#078a37)!important;border-color:#8cff9d!important;color:#052b19!important}
+#game .hint{
+  color:#c1d0ff!important;background:#111d43bb;
+  border:1px solid #294d91;border-radius:10px;padding:6px 8px;
+}
+#game #gameCoins{
+  color:#ffe17a!important;background:linear-gradient(90deg,#38265d,#152651)!important;
+  border:1px solid #8055d8!important;border-radius:12px!important;
+}
+#overlay{background:#030719d9!important;backdrop-filter:blur(7px)}
+#overlay .modal,.modal{
+  background:linear-gradient(145deg,#17295a,#0a1232)!important;
+  color:#f5f4ff!important;border:1px solid #456bd1!important;
+  box-shadow:0 0 0 3px #101a43,0 18px 55px #0009!important;
+}
+.modal p,.shopitem p,.heroCard p{color:#b6c6f4!important}
+.modalhead .bigicon,.shopitem .emoji,.heroCard .avatar{filter:drop-shadow(0 0 12px #8e5dff66)}
+input,select,textarea{
+  background:#0a1433!important;color:#fff!important;
+  border:1px solid #345ba6!important;border-radius:10px!important;
+}
+.progresswrap{background:#101b42!important;border-color:#2d4f91!important}
+.progressbar,.progressfill{background:linear-gradient(90deg,#36e8ff,#a45cff,#ff65b8)!important}
+.toast{
+  background:#142653!important;color:#fff!important;
+  border:1px solid #42cfff!important;box-shadow:0 8px 30px #0008!important;
+}
+/* Keep existing phone/tablet auto-sizing rules unchanged. */
 
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
