@@ -592,9 +592,11 @@ function bbRefresh() {
   if (levelEl) levelEl.textContent = 'УР. ' + heroLevel;
 
   const xpBar = $('heroXpBar');
+  const xpNeeded = 200 + (heroLevel - 1) * 100;
+
   if (xpBar) {
-    xpBar.style.width = Math.min(100, heroXp / Math.max(100, heroLevel * 100) * 100) + '%';
-    xpBar.title = heroXp + ' / ' + (heroLevel * 100) + ' опыта';
+    xpBar.style.width = Math.min(100, heroXp / xpNeeded * 100) + '%';
+    xpBar.title = heroXp + ' / ' + xpNeeded + ' опыта';
   }
 
   const panel = document.getElementById('rpgPanel');
