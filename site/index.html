@@ -246,6 +246,51 @@ let bbCampaignRun = { maxClear: 0 };function bbGetNodeGoals(node) {
 
   return goals;
 }
+
+function bbRenderGoals() {
+  if (mode !== 'campaign') {
+    const old = $('campaignGoals');
+    if (old) old.remove();
+    return;
+  }
+
+  const game = $('game');
+  if (!game) return;
+
+  let panel = $('campaignGoals');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'campaignGoals';
+    panel.style.cssText =
+      'margin:10px 0;padding:12px;border:1px solid #52658d;' +
+      'border-radius:14px;background:#111a30;color:#f2f5ff;' +
+      'font-size:12px;line-height:1.5;';
+    const layout = game.querySelector('.playlayout');
+    if (layout) game.insertBefore(panel, layout);
+  }
+
+  const goals = bbGetNodeGoals(campaignNode);
+  const done = goals.filter(g => g.value() >= g.target).length;
+
+  panel.innerHTML =
+    '<strong style="font-size:14px">🎯 ЦЕЛИ УЗЛА ' +
+    String(campaignNode).padStart(3, '0') + '</strong>' +
+    '<div style="color:#aab6d2;margin:3px 0 8px">' +
+    done + ' из ' + goals.length + ' выполнено</div>' +
+    goals.map(g => {
+      const value = g.value();
+      const complete = value >= g.target;
+      return '<div style="margin:6px 0">' +
+        '<div style="display:flex;justify-content:space-between;gap:8px">' +
+        '<span>' + (complete ? '✅ ' : '◯ ') + g.label + '</span>' +
+        '<strong>' + Math.min(value, g.target) + '/' + g.target + '</strong>' +
+        '</div><div style="height:4px;background:#293550;border-radius:4px;overflow:hidden">' +
+        '<div style="height:100%;width:' +
+        Math.min(100, value / g.target * 100) +
+        '%;background:' + (complete ? '#72d6a0' : '#82aaff') +
+        '"></div></div></div>';
+    }).join('');
+}
 function buildMap() {
   const g = $('mapgrid');
   if (!g) return;
