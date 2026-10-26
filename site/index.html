@@ -645,9 +645,13 @@ if (bbCoins < 50) {
 }
 
 bbCoins -= 50;
+
+const newXp = heroXp + 40;
+const newLevel = Math.max(1, Math.floor(newXp / 200) + 1);
+
 bbPut('coins', bbCoins);
-bbPut('xp_' + hero.id, heroXp - 100);
-bbPut('heroLevel_' + hero.id, heroLevel + 1);
+bbPut('xp_' + hero.id, newXp);
+bbPut('heroLevel_' + hero.id, newLevel);
 bbRefresh();
 bbHero();
   };
