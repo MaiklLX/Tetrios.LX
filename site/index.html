@@ -300,11 +300,11 @@ function bbCheckCampaignCompletion() {
 
   const map = $('mapAfterWin');
   if (map) {
-    map.onclick = () => {
-      closeOverlay();
-      show('map');
-      buildMap();
-    };
+map.onclick = () => {
+  closeOverlay();
+  show('campaign');
+  buildMap();
+};
   }
 
   tone(620, 0.28, 'triangle', 0.05);
