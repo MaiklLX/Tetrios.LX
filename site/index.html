@@ -151,6 +151,45 @@ function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('sho
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function setupDaily(){let d=new Date(),rule=dailyRules[d.getDay()];$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ'}
+
+const bbBiomes = [
+  { id: 0, name: 'Зелёные равнины', icon: '🌿', start: 1, end: 30, color: '#72d6a0' },
+  { id: 1, name: 'Шепчущий лес', icon: '🌲', start: 31, end: 60, color: '#53c9a2' },
+  { id: 2, name: 'Огненные земли', icon: '🌋', start: 61, end: 90, color: '#ff956b' },
+  { id: 3, name: 'Ледяная корона', icon: '❄️', start: 91, end: 120, color: '#82d8ff' },
+  { id: 4, name: 'Пески времени', icon: '🏜️', start: 121, end: 150, color: '#f4c66b' },
+  { id: 5, name: 'Затонувшее королевство', icon: '🌊', start: 151, end: 180, color: '#65aaff' },
+  { id: 6, name: 'Небесный архипелаг', icon: '☁️', start: 181, end: 210, color: '#b5a2ff' },
+  { id: 7, name: 'Мрачные топи', icon: '🌑', start: 211, end: 240, color: '#a58bc5' },
+  { id: 8, name: 'Кристальные пещеры', icon: '💎', start: 241, end: 270, color: '#78e8ef' },
+  { id: 9, name: 'Механический город', icon: '⚙️', start: 271, end: 300, color: '#d5b58b' },
+  { id: 10, name: 'Космический разлом', icon: '🌌', start: 301, end: 330, color: '#a99aff' },
+  { id: 11, name: 'Сердце пустоты', icon: '✨', start: 331, end: 360, color: '#ff8ed1' },
+];
+
+const bbTotalNodes = 360;
+
+function bbGetBiome(node) {
+  return bbBiomes.find(b => node >= b.start && node <= b.end)
+    || bbBiomes[0];
+}
+
+function bbGetNodeInfo(node) {
+  const biome = bbGetBiome(node);
+  return {
+    number: node,
+    name: 'Узел ' + String(node).padStart(3, '0'),
+    biome,
+    localNumber: node - biome.start + 1,
+    boss: (node - biome.start + 1) % 10 === 0,
+    finalBoss: node === biome.end,
+  };
+}
+
+function bbGetUnlockedNode() {
+  const saved = Number(localStorage.getItem('nrNode') || 1);
+  return Math.max(1, Math.min(bbTotalNodes, saved));
+}
 function buildMap(){let g=$('mapgrid');g.innerHTML='';for(let i=1;i<=9;i++){let unlocked=i<=campaignNode;let b=document.createElement('button');b.className='node '+(i===campaignNode?'active ':'')+(!unlocked?'locked':'');b.innerHTML=`<span>${unlocked?(i===campaignNode?'✦':'◇'):'🔒'}</span><strong>${i<9?'УЗЕЛ 0'+i:'УЗЕЛ ∞'}</strong><small>${unlocked?(i===campaignNode?'ДОСТУПЕН':'ОЧИЩЕН'):'ЗАКРЫТ'}</small>`;b.onclick=()=>{if(unlocked){campaignNode=i;mode='campaign';startGame();}else toast('Сначала очисти предыдущий узел');};g.appendChild(b)}$('campaignProgress').textContent=campaignNode+' / ∞'}
 function startGame(){modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;boosts=[];holdUsed=0;combo=0;lastClear=0;board=Array.from({length:H},()=>Array(W).fill(0));nextType=randomType();piece=newPiece(randomType());if(mode==='daily'){$('gameTitle').textContent=dailyRules[new Date().getDay()].title;$('gameSub').textContent='Ежедневный вызов · '+dailyRules[new Date().getDay()].goal;}else if(mode==='campaign'){$('gameTitle').textContent='Узел '+String(campaignNode).padStart(2,'0');$('gameSub').textContent='Кампания · Сектор '+Math.ceil(campaignNode/3)}else{$('gameTitle').textContent='Весёлый блок-ран';$('gameSub').textContent='Каждый уровень приносит новые сюрпризы!'}show('game');render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&dailyRules[new Date().getDay()].mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&dailyRules[new Date().getDay()].mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
 function fmt(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
