@@ -917,6 +917,35 @@ while (heroXp >= 200 + (heroLevel - 1) * 100) {
   }
 };
 
+function bbDailyRecordGame() {
+  if (bbDailyQuestDate !== bbGetTodayKey()) {
+    bbLoadDailyQuests();
+  }
+
+  bbDailyQuests.forEach(q => {
+    if (q.id === 'lines') q.progress += Math.max(0, Number(lines) || 0);
+    if (q.id === 'score') q.progress += Math.max(0, Number(score) || 0);
+    if (q.id === 'games') q.progress += 1;
+
+    if (!q.claimed && q.progress >= q.target) {
+      q.claimed = true;
+      bbCoins += q.reward;
+      bbPut('coins', bbCoins);
+      toast('Ежедневное задание выполнено! +' + q.reward + ' 🪙');
+    }
+  });
+
+  bbSaveDailyQuests();
+  bbRefresh();
+  bbRenderDailyQuests();
+}
+
+const bbDailyOldEnd = endGame;
+endGame = function() {
+  bbDailyOldEnd();
+  bbDailyRecordGame();
+};
+
 const bbOldStart=startGame;startGame=function(){bbOldStart();if(bbInventory.quick>0){bbInventory.quick--;if(!boosts.includes('mult'))boosts.push('mult');dropMs=Math.max(150,dropMs-90);restartDrop()}if(bbInventory.shield>0){bbInventory.shield--;if(!boosts.includes('shield'))boosts.push('shield')}if(bbInventory.magnet>0){bbInventory.magnet--;if(!boosts.includes('magnet'))boosts.push('magnet')}bbSave();updateHud();render()};
 let bbGesture=null;const bbCanvas=$('board');bbCanvas.addEventListener('touchstart',e=>{let t=e.changedTouches[0];bbGesture={y:t.clientY,time:performance.now()}},{passive:true});bbCanvas.addEventListener('touchend',e=>{if(!bbGesture)return;let t=e.changedTouches[0],dy=t.clientY-bbGesture.y,dt=performance.now()-bbGesture.time;if(dy>65&&dt<330&&started&&!paused&&!gameOver){hardDrop();tone(700,.12,'triangle',.04)}bbGesture=null},{passive:true});
 function bbTune(){if(bbMusicLoop)clearInterval(bbMusicLoop);if(!musicOn||!soundOn)return;const melody=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,523.25,587.33,659.25,523.25];bbMusicLoop=setInterval(()=>{if(!musicOn||!soundOn||document.hidden)return;let f=melody[bbMusicStep++%melody.length];tone(f,.16,'triangle',.016);if(bbMusicStep%4===0)tone(f/2,.22,'sine',.01)},280)}
