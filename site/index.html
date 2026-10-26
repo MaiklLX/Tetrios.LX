@@ -272,7 +272,50 @@ function bbRefresh(){if($('coins'))$('coins').textContent=bbCoins;if($('gems'))$
 function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}
 function bbShop(){bbModal(`<div class="modalhead"><div class="bigicon">🛍️</div><h3>Лавка Плюшевого Лиса</h3><p>Покупай бусты и постоянные улучшения. <b>🪙 ${bbCoins} · 💎 ${bbGems}</b></p></div><div class="shopgrid">${bbCatalog.map(it=>`<div class="shopitem"><div class="emoji">${it.emoji}</div><strong>${it.name}</strong><p>${it.desc}${bbInventory[it.id]?' · В запасе: '+bbInventory[it.id]:bbPerks.includes(it.id)?' · Уже открыто':''}</p><button data-bb-buy="${it.id}">${bbPerks.includes(it.id)?'ОТКРЫТО':'КУПИТЬ · '+it.cost+(it.currency==='gems'?' 💎':' 🪙')}</button></div>`).join('')}</div><button class="action secondary" id="bbShopClose">НАЗАД</button>`);$('modal').querySelectorAll('[data-bb-buy]').forEach(b=>b.onclick=()=>bbBuy(b.dataset.bbBuy));$('bbShopClose').onclick=closeOverlay}
 function bbBuy(id){let it=bbCatalog.find(x=>x.id===id);if(!it)return;let wallet=it.currency==='gems'?bbGems:bbCoins;if(wallet<it.cost){toast('Не хватает валюты — сыграй ещё забег!');return}if((id==='heart'||id==='rainbow'||id==='lucky')&&bbPerks.includes(id)){toast('Улучшение уже открыто');return}if(it.currency==='gems')bbGems-=it.cost;else bbCoins-=it.cost;if(['heart','rainbow','lucky'].includes(id))bbPerks.push(id);else bbInventory[id]=(bbInventory[id]||0)+1;bbSave();chime();bbShop()}
-function bbHero(){bbModal(`<div class="modalhead"><div class="bigicon">🧸</div><h3>Капитан Плюш</h3><p>Твой постоянный персонаж. Опыт и улучшения сохраняются в этом браузере.</p></div><div class="heroCard"><div class="avatar">🐻</div><div><strong>Капитан Плюш · Уровень ${bbHeroLevel}</strong><p>Опыт: ${bbXp} / ${bbHeroLevel*100}<br>Пассивный бонус: +${Math.min(25,(bbHeroLevel-1)*2)}% к монетам</p></div></div><div class="shopitem"><div class="emoji">🧪</div><strong>Тренировка героя</strong><p>Потрать 100 опыта и 50 монет, чтобы повысить уровень.</p><button id="bbTrain">ТРЕНИРОВАТЬ · 50 🪙</button></div><button class="action secondary" id="bbHeroClose">НАЗАД</button>`);$('bbTrain').onclick=()=>{if(bbCoins<50||bbXp<100){toast('Нужно 100 опыта и 50 монет');return}bbCoins-=50;bbXp-=100;bbHeroLevel++;bbSave();bbHero()};$('bbHeroClose').onclick=closeOverlay}
+
+function bbHero(){
+  const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
+  const heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
+  const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+
+  bbModal(`
+    <div class="modalhead">
+      <div class="bigicon">${hero.emoji}</div>
+      <h3>${hero.name}</h3>
+      <p>${hero.desc}. Прогресс сохраняется отдельно для каждого героя.</p>
+    </div>
+    <div class="heroCard">
+      <div class="avatar" style="background:${hero.color}">${hero.emoji}</div>
+      <div>
+        <strong>${hero.name} · Уровень ${heroLevel}</strong>
+        <p>Опыт: ${heroXp} / ${heroLevel * 100}<br>
+        Пассивный бонус: +${Math.min(25,(heroLevel-1)*2)}% к монетам</p>
+      </div>
+    </div>
+    <div class="shopitem">
+      <div class="emoji">🧪</div>
+      <strong>Тренировка: ${hero.name}</strong>
+      <p>Потрать 100 опыта и 50 монет, чтобы повысить уровень этого героя.</p>
+      <button id="bbTrain">ТРЕНИРОВАТЬ · 50 🪙</button>
+    </div>
+    <button class="action secondary" id="bbHeroClose">НАЗАД</button>
+  `);
+
+  $('bbTrain').onclick = () => {
+    if (bbCoins < 50 || heroXp < 100) {
+      toast('Нужно 100 опыта и 50 монет');
+      return;
+    }
+
+    bbCoins -= 50;
+    bbSave('coins', bbCoins);
+    bbSave('xp_' + hero.id, heroXp - 100);
+    bbSave('heroLevel_' + hero.id, heroLevel + 1);
+    bbHero();
+  };
+
+  $('bbHeroClose').onclick = closeOverlay;
+}
 function bbBox(){if(bbCoins<60){toast('Сюрприз-бокс стоит 60 монет');return}bbCoins-=60;let r=Math.random(),reward;if(r<.58){let n=35+Math.floor(Math.random()*60);bbCoins+=n;reward=`🪙 +${n} монет`}else if(r<.82){let n=1+Math.floor(Math.random()*2);bbGems+=n;reward=`💎 +${n} самоцвета`}else if(r<.95){let id=['quick','shield','magnet'][Math.floor(Math.random()*3)];bbInventory[id]=(bbInventory[id]||0)+1;reward=`${bbCatalog.find(x=>x.id===id).emoji} ${bbCatalog.find(x=>x.id===id).name}`}else{let n=100+Math.floor(Math.random()*100);bbXp+=n;reward=`⭐ +${n} опыта`}bbSave();chime();bbModal(`<div class="modalhead"><div class="bigicon" style="animation:float 1s infinite">🎁</div><div class="eyebrow">ТА-ДААА!</div><h3>Сюрприз-бокс открыт!</h3><p>Внутри оказалось: <b>${reward}</b></p></div><button class="action" id="bbBoxOk">КЛАСС!</button>`);$('bbBoxOk').onclick=closeOverlay}
 $('openShop').onclick=bbShop;$('openBox').onclick=bbBox;$('openHero').onclick=bbHero;
 const bbOldEnd=endGame;endGame=function(){bbOldEnd();let earned=Math.max(8,Math.floor(lines*2+score/250+level*3));if(bbPerks.includes('heart'))earned=Math.round(earned*1.05);bbCoins+=earned;bbXp+=Math.max(10,lines*5+level*8);while(bbXp>=bbHeroLevel*100){bbXp-=bbHeroLevel*100;bbHeroLevel++}bbSave();let m=$('modal');if(m&&!m.querySelector('.rewardline'))m.insertAdjacentHTML('beforeend',`<div class="rewardline" style="text-align:center;margin-top:12px;padding:10px;background:#e1f8ed;border-radius:12px;color:#4c796c;font-weight:900;font-size:12px">Награда: +${earned} 🪙 · опыт героя сохранён ⭐</div>`)};
