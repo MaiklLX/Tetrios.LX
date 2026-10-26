@@ -319,7 +319,46 @@ bbHero();
 }
 function bbBox(){if(bbCoins<60){toast('Сюрприз-бокс стоит 60 монет');return}bbCoins-=60;let r=Math.random(),reward;if(r<.58){let n=35+Math.floor(Math.random()*60);bbCoins+=n;reward=`🪙 +${n} монет`}else if(r<.82){let n=1+Math.floor(Math.random()*2);bbGems+=n;reward=`💎 +${n} самоцвета`}else if(r<.95){let id=['quick','shield','magnet'][Math.floor(Math.random()*3)];bbInventory[id]=(bbInventory[id]||0)+1;reward=`${bbCatalog.find(x=>x.id===id).emoji} ${bbCatalog.find(x=>x.id===id).name}`}else{let n=100+Math.floor(Math.random()*100);bbXp+=n;reward=`⭐ +${n} опыта`}bbSave();chime();bbModal(`<div class="modalhead"><div class="bigicon" style="animation:float 1s infinite">🎁</div><div class="eyebrow">ТА-ДААА!</div><h3>Сюрприз-бокс открыт!</h3><p>Внутри оказалось: <b>${reward}</b></p></div><button class="action" id="bbBoxOk">КЛАСС!</button>`);$('bbBoxOk').onclick=closeOverlay}
 $('openShop').onclick=bbShop;$('openBox').onclick=bbBox;$('openHero').onclick=bbHero;
-const bbOldEnd=endGame;endGame=function(){bbOldEnd();let earned=Math.max(8,Math.floor(lines*2+score/250+level*3));if(bbPerks.includes('heart'))earned=Math.round(earned*1.05);bbCoins+=earned;bbXp+=Math.max(10,lines*5+level*8);while(bbXp>=bbHeroLevel*100){bbXp-=bbHeroLevel*100;bbHeroLevel++}bbSave();let m=$('modal');if(m&&!m.querySelector('.rewardline'))m.insertAdjacentHTML('beforeend',`<div class="rewardline" style="text-align:center;margin-top:12px;padding:10px;background:#e1f8ed;border-radius:12px;color:#4c796c;font-weight:900;font-size:12px">Награда: +${earned} 🪙 · опыт героя сохранён ⭐</div>`)};
+
+const bbOldEnd = endGame;
+endGame = function() {
+  bbOldEnd();
+
+  const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
+  let earned = Math.max(8, Math.floor(lines * 2 + score / 250 + level * 3));
+
+  if (bbPerks.includes('heart')) earned = Math.round(earned * 1.05);
+  bbCoins += earned;
+
+  let heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+  let heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
+
+  heroXp += Math.max(10, lines * 5 + level * 8);
+
+  while (heroXp >= heroLevel * 100) {
+    heroXp -= heroLevel * 100;
+    heroLevel++;
+  }
+
+  bbPut('xp_' + hero.id, heroXp);
+  bbPut('heroLevel_' + hero.id, heroLevel);
+
+  if (hero.id === 'plush') {
+    bbXp = heroXp;
+    bbHeroLevel = heroLevel;
+  }
+
+  bbSave();
+
+  const m = $('modal');
+  if (m && !m.querySelector('.rewardline')) {
+    m.insertAdjacentHTML(
+      'beforeend',
+      `<div class="rewardline" style="text-align:center;margin-top:12px;padding:10px;background:#e1f8ed;border-radius:12px;color:#4c796c;font-weight:900;font-size:12px">Награда: +${earned} 🪙 · ${hero.name} получил опыт ⭐</div>`
+    );
+  }
+};
+
 const bbOldStart=startGame;startGame=function(){bbOldStart();if(bbInventory.quick>0){bbInventory.quick--;if(!boosts.includes('mult'))boosts.push('mult');dropMs=Math.max(150,dropMs-90);restartDrop()}if(bbInventory.shield>0){bbInventory.shield--;if(!boosts.includes('shield'))boosts.push('shield')}if(bbInventory.magnet>0){bbInventory.magnet--;if(!boosts.includes('magnet'))boosts.push('magnet')}bbSave();updateHud();render()};
 let bbGesture=null;const bbCanvas=$('board');bbCanvas.addEventListener('touchstart',e=>{let t=e.changedTouches[0];bbGesture={y:t.clientY,time:performance.now()}},{passive:true});bbCanvas.addEventListener('touchend',e=>{if(!bbGesture)return;let t=e.changedTouches[0],dy=t.clientY-bbGesture.y,dt=performance.now()-bbGesture.time;if(dy>65&&dt<330&&started&&!paused&&!gameOver){hardDrop();tone(700,.12,'triangle',.04)}bbGesture=null},{passive:true});
 function bbTune(){if(bbMusicLoop)clearInterval(bbMusicLoop);if(!musicOn||!soundOn)return;const melody=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,523.25,587.33,659.25,523.25];bbMusicLoop=setInterval(()=>{if(!musicOn||!soundOn||document.hidden)return;let f=melody[bbMusicStep++%melody.length];tone(f,.16,'triangle',.016);if(bbMusicStep%4===0)tone(f/2,.22,'sine',.01)},280)}
