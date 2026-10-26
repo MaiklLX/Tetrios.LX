@@ -380,9 +380,11 @@ function bbRenderGoals() {
         const value = g.value();
                 if (!g.claimed && value >= g.target) {
           g.claimed = true;
-          bbCoins += g.reward;
-          bbPut('coins', bbCoins);
-          toast('Цель выполнена! +' + g.reward + ' монет');
+bbCoins += g.reward;
+bbPut('coins', bbCoins);
+const coinsValue = $('gameCoinsValue');
+if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');
+toast('Цель выполнена! +' + g.reward + ' монет');
           bbRogueGoals[bbRogueGoals.indexOf(g)] = bbCreateRogueGoal();
         }
         return '<div style="margin:6px 0">' +
