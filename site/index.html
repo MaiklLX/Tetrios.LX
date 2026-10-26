@@ -1883,7 +1883,7 @@ function buildMap() {
 '</small>' +
 '<span style="display:block;width:88%;min-width:44px;height:8px;flex-shrink:0;border-radius:99px;background:#aab6d255;overflow:hidden;margin:4px 0">' +
 '<span style="display:block;height:100%;min-width:' +
-    (current < b.start ? 0 : 4) + 'px;width:' + Math.min(100, ((Math.min(current, b.end) - b.start + 1) / (b.end - b.start + 1)) * 100)) +
+(current < b.start ? 0 : Math.min(100, ((Math.min(current, b.end) - b.start + 1) / (b.end - b.start + 1)) * 100)) +
     '%;background:' + b.color + ';border-radius:99px;transition:width .3s ease"></span>' +
 '</span>' +
 '<small style="font-size:8px;color:' + b.color + ';font-weight:900">' +
