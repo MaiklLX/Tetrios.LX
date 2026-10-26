@@ -192,7 +192,9 @@ function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');cle
   },700);
   setTimeout(()=>el.remove(),1600);
 }
-function show(id){['menu','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);$(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen')}
+
+function show(id){['menu','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);$(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests()}
+
 function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
@@ -946,7 +948,7 @@ function bbDailyRecordGame() {
   }
 
   bbDailyQuests.forEach(q => {
-    if (q.id === 'lines') q.progress += Math.max(0, Number(lines) || 0);
+if (q.id === 'lines') q.progress += Math.max(0, Number(lines) || 0);
     if (q.id === 'score') q.progress += Math.max(0, Number(score) || 0);
     if (q.id === 'games') q.progress += 1;
 
