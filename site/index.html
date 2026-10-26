@@ -439,6 +439,11 @@ function bbCheckCampaignCompletion() {
   }
 
   bbNodeCompleted = true;
+  
+  if (!bbDailyRecordedThisGame) {
+  bbDailyRecordedThisGame = true;
+  bbDailyRecordGame();
+}
 
   gameOver = true;
   paused = true;
