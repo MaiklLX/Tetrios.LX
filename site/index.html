@@ -676,10 +676,10 @@ endGame = function() {
 
   heroXp += Math.max(10, lines * 5 + level * 8);
 
-  while (heroXp >= heroLevel * 100) {
-    heroXp -= heroLevel * 100;
-    heroLevel++;
-  }
+while (heroXp >= 200 + (heroLevel - 1) * 100) {
+  heroXp -= 200 + (heroLevel - 1) * 100;
+  heroLevel++;
+}
 
   bbPut('xp_' + hero.id, heroXp);
   bbPut('heroLevel_' + hero.id, heroLevel);
