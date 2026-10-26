@@ -1878,8 +1878,17 @@ function buildMap() {
 '<strong style="font-size:11px;line-height:1.25;text-align:center;padding:0 3px">' +
   b.name +
 '</strong>' +
-      '<small style="font-size:9px;color:#aab6d2">' + b.start + '–' + b.end + '</small>' +
-      '<small style="font-size:8px;color:' + b.color + '">' + (active ? 'ТВОЙ БИОМ' : unlocked ? 'ОТКРЫТ' : 'ЗАКРЫТ') + '</small>';
+'<small style="font-size:9px;color:#68748f;font-weight:700">' +
+  'УРОВНИ ' + b.start + '–' + b.end +
+'</small>' +
+'<span style="display:block;width:78%;height:5px;border-radius:99px;background:#7c88a326;overflow:hidden;margin:2px 0">' +
+  '<span style="display:block;height:100%;width:' +
+    (current < b.start ? 0 : Math.min(100, ((Math.min(current, b.end) - b.start + 1) / (b.end - b.start + 1)) * 100)) +
+    '%;background:' + b.color + ';border-radius:99px;transition:width .3s ease"></span>' +
+'</span>' +
+'<small style="font-size:8px;color:' + b.color + ';font-weight:900">' +
+  (active ? 'ТВОЙ БИОМ' : unlocked ? 'ОТКРЫТ' : 'ЗАКРЫТ') +
+'</small>';
 
     card.onclick = () => {
       if (!unlocked) {
