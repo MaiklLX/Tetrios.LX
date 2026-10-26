@@ -507,6 +507,142 @@ input,select,textarea{
 }
 /* Keep existing phone/tablet auto-sizing rules unchanged. */
 
+/* BLOCK BUDDIES — мультяшное главное меню */
+#home .hero {
+  padding: 16px 8px 18px;
+  position: relative;
+}
+
+#home .hero h1 {
+  background: linear-gradient(
+    120deg, #fff7c2 0%, #ffc247 30%,
+    #ff78bc 62%, #62efff 100%
+  ) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  filter: drop-shadow(0 4px 0 #41226f);
+  letter-spacing: -.045em;
+}
+
+#home .hero p {
+  color: #bdcaff !important;
+  max-width: 340px;
+}
+
+#home .orb {
+  height: 126px;
+  margin: 12px auto 6px;
+}
+
+#home .orb:before {
+  width: 104px;
+  height: 104px;
+  border: 3px solid #42eaff;
+  border-radius: 32px;
+  background: linear-gradient(145deg, #253f91, #692d9c);
+  box-shadow: 0 6px 0 #10183f, 0 0 30px #42eaff55;
+}
+
+#home .orb:after {
+  width: 138px;
+  height: 64px;
+  border: 3px dashed #ffbd4a;
+  border-radius: 28px;
+}
+
+#home .relic {
+  font-size: 58px;
+  filter: drop-shadow(0 5px 0 #48257b)
+          drop-shadow(0 0 14px #8b7bff);
+}
+
+#home .sectionlabel {
+  color: #7deeff !important;
+}
+
+#home .sectionlabel:after {
+  background: linear-gradient(90deg, #426bd0, transparent);
+}
+
+#home .mode {
+  border: 2px solid #304e9b !important;
+  border-radius: 21px !important;
+  background: linear-gradient(145deg, #182958, #0c1535) !important;
+  box-shadow: 0 5px 0 #060c22, 0 0 18px #244dba22 !important;
+  padding: 15px;
+  transition: transform .18s, border-color .18s, box-shadow .18s;
+}
+
+#home .mode:hover {
+  transform: translateY(-2px);
+  border-color: #43eaff !important;
+  box-shadow: 0 7px 0 #060c22, 0 0 24px #43eaff35 !important;
+}
+
+#home .modeicon {
+  border: 2px solid #ffffff24;
+  border-radius: 16px;
+  box-shadow: inset 0 -4px #070d2540, 0 3px 10px #0003;
+}
+
+#home .modetitle {
+  color: #fff5d5 !important;
+  font-weight: 900;
+}
+
+#home .modesub {
+  color: #b6c7f4 !important;
+}
+
+#home .modearrow {
+  color: #53eaff !important;
+}
+
+#home .tag {
+  color: #ffe18a !important;
+  background: #65451e !important;
+  border: 1px solid #b88337;
+  border-radius: 7px;
+}
+
+#home .bottomstats .stat {
+  background: linear-gradient(145deg, #172653, #0b1432) !important;
+  border: 1px solid #304e91 !important;
+  border-radius: 15px !important;
+  box-shadow: 0 4px 0 #060c22 !important;
+}
+
+#home .bottomstats .stat strong {
+  color: #fff !important;
+}
+
+#home .bottomstats .stat span {
+  color: #9db6ef !important;
+}
+
+@media (max-width: 520px) {
+  #home .hero {
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+
+  #home .orb {
+    height: 106px;
+  }
+
+  #home .mode {
+    padding: 12px;
+    gap: 11px;
+  }
+
+  #home .modeicon {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div id="dailyQuestsPanel" style="margin:14px 0;padding:16px;border:1px solid #5cf5e855;border-radius:16px;background:linear-gradient(135deg,#11172a,#152438)">
