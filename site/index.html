@@ -1226,19 +1226,24 @@ input,select,textarea{
   transform: translateY(2px) scale(.97);
   box-shadow: 0 1px 0 #d7c8ec;
 }
-/* Компактная кнопка возврата ко всем биомам */
+/* Тонкая кнопка возврата ко всем биомам */
 .biome-back-button {
-  width: fit-content !important;
-  max-width: 100%;
-  justify-self: start;
-  padding: 9px 15px !important;
-  min-height: 38px;
-  border-radius: 13px !important;
-  font-size: 13px !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 34px !important;
+  height: 34px;
+  padding: 6px 12px !important;
+  justify-self: stretch;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px !important;
+  font-size: 12px !important;
   font-weight: 800;
-  letter-spacing: .3px;
-  line-height: 1.2;
-  box-shadow: 0 3px 0 #d9c8ee !important;
+  letter-spacing: .5px;
+  line-height: 1;
+  box-shadow: 0 2px 0 #d9c8ee !important;
   transition: transform .15s ease, box-shadow .15s ease;
 }
 
@@ -1247,7 +1252,7 @@ input,select,textarea{
 }
 
 .biome-back-button:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
   box-shadow: 0 1px 0 #d9c8ee !important;
 }
 </style></head>
