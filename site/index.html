@@ -398,6 +398,7 @@ bbCoins += g.reward;
 bbPut('coins', bbCoins);
 const coinsValue = $('gameCoinsValue');
 if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');
+bbRewardFloat(g.reward);
 toast('Цель выполнена! +' + g.reward + ' монет');
           bbRogueGoals[bbRogueGoals.indexOf(g)] = bbCreateRogueGoal();
         }
