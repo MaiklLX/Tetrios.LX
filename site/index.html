@@ -268,7 +268,33 @@ function bbApplyHero() {
 
 bbApplyHero();
 
-function bbRefresh(){if($('coins'))$('coins').textContent=bbCoins;if($('gems'))$('gems').textContent=bbGems;if($('heroLevel'))$('heroLevel').textContent='УР. '+bbHeroLevel;if($('heroXpBar'))$('heroXpBar').style.width=(bbXp/Math.max(100,bbHeroLevel*100)*100)+'%'}
+
+function bbRefresh() {
+  if ($('coins')) $('coins').textContent = bbCoins;
+  if ($('gems')) $('gems').textContent = bbGems;
+
+  const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
+  const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+  const heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
+
+  const levelEl = $('heroLevel');
+  if (levelEl) levelEl.textContent = 'УР. ' + heroLevel;
+
+  const xpBar = $('heroXpBar');
+  if (xpBar) {
+    xpBar.style.width = Math.min(100, heroXp / Math.max(100, heroLevel * 100) * 100) + '%';
+    xpBar.title = heroXp + ' / ' + (heroLevel * 100) + ' опыта';
+  }
+
+  const panel = document.getElementById('rpgPanel');
+  if (panel) {
+    const name = panel.querySelector('.rpgname');
+    if (name) {
+      name.childNodes[0].textContent = hero.name + ' ';
+    }
+  }
+}
+
 function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}
 function bbShop(){bbModal(`<div class="modalhead"><div class="bigicon">🛍️</div><h3>Лавка Плюшевого Лиса</h3><p>Покупай бусты и постоянные улучшения. <b>🪙 ${bbCoins} · 💎 ${bbGems}</b></p></div><div class="shopgrid">${bbCatalog.map(it=>`<div class="shopitem"><div class="emoji">${it.emoji}</div><strong>${it.name}</strong><p>${it.desc}${bbInventory[it.id]?' · В запасе: '+bbInventory[it.id]:bbPerks.includes(it.id)?' · Уже открыто':''}</p><button data-bb-buy="${it.id}">${bbPerks.includes(it.id)?'ОТКРЫТО':'КУПИТЬ · '+it.cost+(it.currency==='gems'?' 💎':' 🪙')}</button></div>`).join('')}</div><button class="action secondary" id="bbShopClose">НАЗАД</button>`);$('modal').querySelectorAll('[data-bb-buy]').forEach(b=>b.onclick=()=>bbBuy(b.dataset.bbBuy));$('bbShopClose').onclick=closeOverlay}
 function bbBuy(id){let it=bbCatalog.find(x=>x.id===id);if(!it)return;let wallet=it.currency==='gems'?bbGems:bbCoins;if(wallet<it.cost){toast('Не хватает валюты — сыграй ещё забег!');return}if((id==='heart'||id==='rainbow'||id==='lucky')&&bbPerks.includes(id)){toast('Улучшение уже открыто');return}if(it.currency==='gems')bbGems-=it.cost;else bbCoins-=it.cost;if(['heart','rainbow','lucky'].includes(id))bbPerks.push(id);else bbInventory[id]=(bbInventory[id]||0)+1;bbSave();chime();bbShop()}
