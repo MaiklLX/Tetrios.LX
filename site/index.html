@@ -625,7 +625,7 @@ function bbHero(){
       <div class="avatar" style="background:${hero.color}">${hero.emoji}</div>
       <div>
         <strong>${hero.name} · Уровень ${heroLevel}</strong>
-        <p>Опыт: ${heroXp} / ${heroLevel * 100}<br>
+<p>Опыт: ${heroXp} / ${200 + (heroLevel - 1) * 100}<br>
         Пассивный бонус: +${Math.min(25,(heroLevel-1)*2)}% к монетам</p>
       </div>
     </div>
