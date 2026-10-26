@@ -1841,8 +1841,12 @@ function buildMap() {
     card.type = 'button';
     card.style.cssText = 'grid-column:span 1;min-height:104px;padding:10px 5px;border:1px solid ' + (active ? b.color : '#334263') + ';border-radius:14px;background:' + (active ? b.color + '20' : '#131c32') + ';opacity:' + (unlocked ? '1' : '.48') + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;';
     card.innerHTML =
-      '<span style="font-size:24px">' + (unlocked ? b.icon : '🔒') + '</span>' +
-      '<strong style="font-size:10px;line-height:1.3">' + b.name + '</strong>' +
+'<span style="font-size:30px;line-height:1.2;filter:drop-shadow(0 2px 3px #0002)">' +
+  (unlocked ? b.icon : '🔒') +
+'</span>' +
+'<strong style="font-size:11px;line-height:1.25;text-align:center;padding:0 3px">' +
+  b.name +
+'</strong>' +
       '<small style="font-size:9px;color:#aab6d2">' + b.start + '–' + b.end + '</small>' +
       '<small style="font-size:8px;color:' + b.color + '">' + (active ? 'ТВОЙ БИОМ' : unlocked ? 'ОТКРЫТ' : 'ЗАКРЫТ') + '</small>';
 
