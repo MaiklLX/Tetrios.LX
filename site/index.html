@@ -277,6 +277,47 @@ let bbCampaignRun = { maxClear: 0, passed: false };function bbGetNodeGoals(node)
   return goals;
 }
 
+
+let bbDailyQuests = [];
+let bbDailyQuestDate = '';
+
+function bbGetTodayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
+function bbLoadDailyQuests() {
+  const today = bbGetTodayKey();
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('bbDailyQuests') || 'null');
+
+    if (saved && saved.date === today && Array.isArray(saved.quests)) {
+      bbDailyQuests = saved.quests;
+      bbDailyQuestDate = today;
+      return;
+    }
+  } catch (e) {}
+
+  bbDailyQuestDate = today;
+  bbDailyQuests = [
+    { id: 'lines', title: 'Очистить 10 линий', target: 10, progress: 0, reward: 25, claimed: false },
+    { id: 'score', title: 'Набрать 1500 очков', target: 1500, progress: 0, reward: 30, claimed: false },
+    { id: 'games', title: 'Сыграть 2 партии', target: 2, progress: 0, reward: 20, claimed: false }
+  ];
+
+  bbSaveDailyQuests();
+}
+
+function bbSaveDailyQuests() {
+  localStorage.setItem('bbDailyQuests', JSON.stringify({
+    date: bbDailyQuestDate,
+    quests: bbDailyQuests
+  }));
+}
+
 let bbRogueGoals = [];
 let bbRogueGoalId = 0;
 
