@@ -191,6 +191,61 @@ function bbGetUnlockedNode() {
   return Math.max(1, Math.min(bbTotalNodes, saved));
 }
 
+
+function bbGetNodeGoals(node) {
+  const info = bbGetNodeInfo(node);
+  const local = info.localNumber;
+  const difficulty = Math.floor((node - 1) / 30);
+  const count = Math.min(5, 1 + Math.floor((node - 1) / 72));
+  const goals = [];
+
+  const pool = [
+    {
+      id: 'lines',
+      label: 'Очистить линии',
+      target: 3 + difficulty * 2 + (local % 4),
+      value: () => lines
+    },
+    {
+      id: 'score',
+      label: 'Набрать очки',
+      target: 700 + node * 95,
+      value: () => score
+    },
+    {
+      id: 'level',
+      label: 'Достичь уровня',
+      target: 2 + Math.floor(node / 45),
+      value: () => level
+    },
+    {
+      id: 'time',
+      label: 'Продержаться, секунд',
+      target: 35 + difficulty * 8 + (local % 5) * 5,
+      value: () => runSeconds
+    },
+    {
+      id: 'combo',
+      label: 'Очистить линии в одном ходе',
+      target: local % 10 === 0 ? 3 : 2,
+      value: () => bbCampaignRun.maxClear
+    }
+  ];
+
+  const offset = (node * 7 + info.biome.id * 3) % pool.length;
+
+  for (let i = 0; i < count; i++) {
+    const goal = pool[(offset + i * 2) % pool.length];
+    goals.push({
+      id: goal.id,
+      label: goal.label,
+      target: goal.target,
+      value: goal.value
+    });
+  }
+
+  return goals;
+}
 function buildMap() {
   const g = $('mapgrid');
   if (!g) return;
