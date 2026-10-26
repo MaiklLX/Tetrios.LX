@@ -1346,9 +1346,40 @@ input,select,textarea{
   filter: grayscale(.55) saturate(.65);
 }
 
+
 #campaign #mapgrid > button.worldcard:not(.locked):hover {
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.025);
+  filter: brightness(1.04) saturate(1.08);
+  box-shadow:
+    0 7px 0 #a7d7c5,
+    0 10px 22px #8c73ed30 !important;
 }
+
+#campaign #mapgrid > button.worldcard:active {
+  transform: translateY(1px) scale(.99);
+  filter: brightness(.98);
+}
+
+#campaign #mapgrid > button.worldcard > span:first-child {
+  transition: transform .2s ease, filter .2s ease;
+}
+
+#campaign #mapgrid > button.worldcard:not(.locked):hover > span:first-child {
+  transform: translateY(-2px) rotate(-4deg) scale(1.08);
+  filter: drop-shadow(0 4px 5px #8c73ed40);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #campaign #mapgrid > button.worldcard {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  #campaign #mapgrid > button.worldcard > span:first-child {
+    transition: none !important;
+  }
+}
+
 
 @keyframes biomeGlow {
   0%, 100% {
