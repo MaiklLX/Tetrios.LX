@@ -307,11 +307,12 @@ function bbHero(){
       return;
     }
 
-    bbCoins -= 50;
-    bbSave('coins', bbCoins);
-    bbSave('xp_' + hero.id, heroXp - 100);
-    bbSave('heroLevel_' + hero.id, heroLevel + 1);
-    bbHero();
+bbCoins -= 50;
+bbPut('coins', bbCoins);
+bbPut('xp_' + hero.id, heroXp - 100);
+bbPut('heroLevel_' + hero.id, heroLevel + 1);
+bbRefresh();
+bbHero();
   };
 
   $('bbHeroClose').onclick = closeOverlay;
