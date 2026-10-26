@@ -133,6 +133,76 @@ html,body{background:#fff0d7;color:#44364d}.app{background:radial-gradient(ellip
   }
 }
 
+/* BLOCK BUDDIES: компактный игровой экран */
+#game {
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+#game .screenhead {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+#game .gamehud {
+  margin-bottom: 6px;
+  gap: 5px;
+}
+
+#game .hudbox {
+  padding: 6px 8px;
+}
+
+#game .hudbox strong {
+  font-size: 17px;
+}
+
+#game #gameCoins {
+  margin: 5px 0 !important;
+  padding: 6px 10px !important;
+}
+
+#game .controls {
+  margin-top: 6px;
+  gap: 5px;
+}
+
+#game .control {
+  height: 42px;
+}
+
+#game .hint {
+  margin-top: 6px;
+}
+
+@media (max-height: 760px) {
+  .app {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  #game .boardframe {
+    padding: 4px;
+  }
+
+  #game .sidecol {
+    gap: 5px;
+  }
+
+  #game .sidecard {
+    padding: 5px 4px;
+  }
+
+  #game .smallbtn {
+    padding: 6px 3px;
+    margin-top: 4px;
+  }
+
+  #game .progresswrap {
+    margin: 5px 0;
+  }
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div id="dailyQuestsPanel" style="margin:14px 0;padding:16px;border:1px solid #5cf5e855;border-radius:16px;background:linear-gradient(135deg,#11172a,#152438)">
