@@ -639,10 +639,10 @@ function bbHero(){
   `);
 
   $('bbTrain').onclick = () => {
-    if (bbCoins < 50 || heroXp < 100) {
-      toast('Нужно 100 опыта и 50 монет');
-      return;
-    }
+if (bbCoins < 50) {
+  toast('Нужно 50 монет для тренировки');
+  return;
+}
 
 bbCoins -= 50;
 bbPut('coins', bbCoins);
