@@ -247,7 +247,8 @@ let bbCampaignRun = { maxClear: 0, passed: false };function bbGetNodeGoals(node)
   return goals;
 }
 
-
+let bbRogueGoals = [];
+let bbRogueGoalId = 0;
 let bbNodeCompleted = false;
 
 function bbCheckCampaignCompletion() {
