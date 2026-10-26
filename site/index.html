@@ -418,16 +418,16 @@ function buildMap() {
           '<strong>' + String(n).padStart(3, '0') + '</strong>' +
           '<small>' + (n < current ? 'ПРОЙДЕН' : n === current ? 'ДОСТУПЕН' : 'ЗАКРЫТ') + '</small>';
 
-        node.onclick = () => {
-          if (n !== current) {
-            toast(n < current ? 'Повторное прохождение добавим позже' : 'Сначала пройди предыдущий узел');
-            return;
-          }
-          campaignNode = n;
-          localStorage.nrNode = n;
-          mode = 'campaign';
-          startGame();
-        };
+node.onclick = () => {
+  if (n > current) {
+    toast('Сначала пройди предыдущий узел');
+    return;
+  }
+
+  campaignNode = n;
+  mode = 'campaign';
+  startGame();
+};
         g.appendChild(node);
       }
     };
