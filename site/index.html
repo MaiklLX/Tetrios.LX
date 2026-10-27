@@ -2917,6 +2917,63 @@ font-weight: 900 !important;
   cursor: not-allowed;
   opacity: 1;
 }
+
+/* Подсказка о прокрутке магазина */
+#shopScreen {
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+#shopScreen .shop-scroll-hint {
+  position: sticky;
+  bottom: 18px;
+  z-index: 20;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: 18px auto 10px;
+  padding: 10px 17px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #a8b2ce;
+  background: rgba(14, 20, 38, .94);
+  border: 1px solid #3a5273;
+  border-radius: 14px;
+  box-shadow: 0 5px 22px #0006;
+  pointer-events: none;
+  animation: shopHintAppear .45s ease both;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+#shopScreen .shop-scroll-hint .shop-scroll-arrow {
+  color: #5cf5e8;
+  font-size: 25px;
+  line-height: 1;
+  animation: shopArrowDown 1.1s ease-in-out infinite;
+}
+
+#shopScreen .shop-scroll-hint span:last-child {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+#shopScreen .shop-scroll-hint.is-hidden {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+@keyframes shopArrowDown {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(5px); }
+}
+
+@keyframes shopHintAppear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -4057,7 +4114,38 @@ function bbShop(){
       $('shopGems').textContent = bbGems;
     }
   };
-  show('shopScreen');
+
+show('shopScreen');
+
+// При открытии магазина возвращаемся к его началу
+const shop = $('shopScreen');
+shop.scrollTop = 0;
+window.scrollTo({ top: 0, behavior: 'instant' });
+
+// Создаём подсказку о прокрутке, если её ещё нет
+let hint = shop.querySelector('.shop-scroll-hint');
+
+if (!hint) {
+  hint = document.createElement('div');
+  hint.className = 'shop-scroll-hint';
+  hint.innerHTML = `
+    <span class="shop-scroll-arrow">↓</span>
+    <span>Листай вниз</span>
+  `;
+  shop.appendChild(hint);
+}
+
+// Показываем стрелку при открытии магазина
+hint.classList.remove('is-hidden');
+
+// Прячем стрелку, когда пользователь прокручивает магазин
+shop.onscroll = () => {
+  if (shop.scrollTop > 40) {
+    hint.classList.add('is-hidden');
+  } else {
+    hint.classList.remove('is-hidden');
+  }
+};
 }
 
 $('shopBack').onclick = () => show('menu');
