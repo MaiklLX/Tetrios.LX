@@ -2980,51 +2980,83 @@ font-weight: 900 !important;
   to { opacity: 1; transform: translateY(0); }
 }
 
+
 /* =========================================
-   TETRIOS.LX — компактный игровой экран
-   Телефоны и планшеты в портретной ориентации
+   TETRIOS.LX — игровой экран без прокрутки
+   Поле слева, компактный HUD справа
    ========================================= */
 
 @media (max-width: 900px) and (orientation: portrait) {
-  /* Экономим вертикальное пространство */
-  body:has(#game:not([hidden])) .topbar {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-bottom: 4px;
+  /* Во время игры всё помещается в экран */
+  html:has(#game:not([hidden])),
+  body:has(#game:not([hidden])) {
+    height: 100%;
+    overflow: hidden;
   }
 
-  #game {
+  .app:has(#game:not([hidden])) {
     box-sizing: border-box;
-    min-height: 100dvh;
-    padding-bottom: max(6px, env(safe-area-inset-bottom));
-    overscroll-behavior: none;
+    height: 100dvh;
+    min-height: 0;
+    padding: 5px 8px max(5px, env(safe-area-inset-bottom));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .app:has(#game:not([hidden])) .topbar {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 2px 0;
+  }
+
+  #game[hidden] {
+    display: none !important;
+  }
+
+  #game:not([hidden]) {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    gap: 4px;
+    overflow: hidden;
+    animation: none;
   }
 
   #game .screenhead {
-    margin: 0 0 5px;
-    gap: 8px;
+    flex: 0 0 auto;
+    min-height: 28px;
+    margin: 0;
+    gap: 7px;
   }
 
   #game .screenhead h2 {
-    font-size: 15px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
   }
 
   #game .screenhead p {
     display: none;
   }
 
-  /* Счёт, линии и уровень — одна компактная строка */
   #game .gamehud {
+    flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 5px;
-    margin: 0 0 5px;
+    gap: 4px;
+    margin: 0;
   }
 
   #game .hudbox {
     min-width: 0;
-    padding: 4px 6px;
-    border-radius: 9px;
+    padding: 3px 5px;
+    border-radius: 8px;
   }
 
   #game .hudbox span {
@@ -3032,42 +3064,101 @@ font-weight: 900 !important;
   }
 
   #game .hudbox strong {
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.1;
   }
 
-  /* Монеты сохраняем, но делаем блок ниже */
   #game #gameCoins {
-    margin: 4px 0 !important;
-    padding: 5px 9px !important;
-    font-size: 11px;
+    flex: 0 0 auto;
+    margin: 0 !important;
+    padding: 4px 8px !important;
+    min-height: 0;
+    font-size: 10px;
+    border-radius: 8px;
   }
 
-  /* Все дополнительные элементы располагаются
-     над полем в компактной горизонтальной полосе */
+  /* Центральная область занимает всё оставшееся место */
   #game .playlayout {
+    flex: 1 1 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 74px;
+    align-items: stretch;
+    gap: 5px;
+    min-height: 0;
+    margin: 0;
+  }
+
+  /* Колонка игрового поля */
+  #game .playlayout > div:first-child {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 5px;
+    justify-content: center;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
   }
 
-  #game .sidecol {
-    order: 0;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 5px;
+  #game .boardframe {
+    flex: 1 1 auto;
     width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 3px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  #game .board {
+    display: block;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1 / 2;
+    flex: 0 1 auto;
+    object-fit: contain;
+    touch-action: none;
+  }
+
+  #game .progresswrap {
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 4px 0 0;
+  }
+
+  #game .progressmeta {
+    font-size: 8px;
+    gap: 3px;
+  }
+
+  /* Боковая панель использует пространство рядом с полем */
+  #game .sidecol {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 5px;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
   }
 
   #game .sidecard {
+    flex: 0 0 auto;
     min-width: 0;
     padding: 5px 3px;
     border-radius: 9px;
+    text-align: center;
   }
 
   #game .sidecard label {
     font-size: 7px;
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: 0;
   }
 
@@ -3076,23 +3167,25 @@ font-weight: 900 !important;
     width: 100%;
     max-width: 62px;
     height: auto;
-    max-height: 42px;
-    margin: 2px auto 0;
+    max-height: 48px;
+    margin: 3px auto 0;
   }
 
   #game .boosticon {
     margin: 2px 0;
-    font-size: 16px;
+    font-size: 17px;
+    line-height: 1.1;
   }
 
   #game .boostname {
     font-size: 8px;
-    line-height: 1.1;
+    line-height: 1.2;
     overflow-wrap: anywhere;
   }
 
   #game .boostnum {
-    display: none;
+    font-size: 8px;
+    line-height: 1.2;
   }
 
   #game #timer {
@@ -3101,67 +3194,72 @@ font-weight: 900 !important;
   }
 
   #game .smallbtn {
-    margin-top: 3px;
+    width: 100%;
+    margin-top: 4px;
     padding: 5px 2px;
     font-size: 8px;
+    line-height: 1.15;
   }
 
-  /* Игровое поле занимает максимум доступной высоты.
-     Пропорции 10:20 сохраняются, фигуры не растягиваются. */
-  #game .playlayout > div:first-child {
-    order: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    min-width: 0;
-  }
-
-  #game .boardframe {
-    box-sizing: border-box;
-    width: 100%;
-    height: clamp(260px, calc(100dvh - 300px), 720px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    overflow: hidden;
-  }
-
-  #game .board {
-    width: auto;
-    height: 100%;
-    max-width: 100%;
-    aspect-ratio: 1 / 2;
-    object-fit: contain;
-    flex: 0 1 auto;
-  }
-
-  /* Индикатор прогресса — сразу под полем */
-  #game .progresswrap {
-    width: 100%;
-    margin: 5px 0 0;
-  }
-
-  #game .progressmeta {
-    font-size: 9px;
-  }
-
-  /* Управление остаётся отдельным и не перекрывает поле */
+  /* Нижнее управление всегда остаётся вне игрового поля */
   #game .controls {
-    margin-top: 5px;
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 5px;
+    margin: 0;
   }
 
   #game .control {
     min-width: 0;
-    height: 40px;
+    height: 38px;
+    padding: 0 2px;
+    border-radius: 9px;
   }
 
   #game .hint {
-    margin-top: 4px;
+    flex: 0 0 auto;
+    margin: 0;
     font-size: 8px;
-    line-height: 1.2;
+    line-height: 1.15;
+    text-align: center;
+  }
+}
+
+/* На коротких экранах дополнительно экономим высоту */
+@media (max-width: 900px) and (orientation: portrait) and (max-height: 700px) {
+  .app:has(#game:not([hidden])) {
+    padding-top: 3px;
+    gap: 3px;
+  }
+
+  #game:not([hidden]) {
+    gap: 3px;
+  }
+
+  #game .playlayout {
+    grid-template-columns: minmax(0, 1fr) 68px;
+    gap: 4px;
+  }
+
+  #game .sidecol {
+    gap: 3px;
+  }
+
+  #game .sidecard {
+    padding: 3px 2px;
+  }
+
+  #game .controls {
+    gap: 4px;
+  }
+
+  #game .control {
+    height: 34px;
+  }
+
+  #game .hint {
+    font-size: 7px;
   }
 }
 </style></head>
