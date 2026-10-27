@@ -3425,6 +3425,22 @@ font-weight: 900 !important;
   outline: 2px solid #bba4ff;
   outline-offset: 2px;
 }
+
+/* Главный экран: магазин на месте выбора героя */
+#menu #rpgPanel {
+  padding: 10px;
+}
+
+#menu #rpgPanel #openShop {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+#menu .shopbuttons:empty {
+  display: none !important;
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -4491,62 +4507,16 @@ function bbApplyHero() {
   if (typeof bbRefresh === 'function') {
     bbRefresh();
   }
-  let picker = document.getElementById('bbHeroPicker');
-  if (!picker) {
-    picker = document.createElement('div');
-    picker.id = 'bbHeroPicker';
-    picker.style.cssText = 'margin-top:12px;padding:12px;border-radius:16px;background:rgba(120,140,160,.10);';
+ 
+  // Убираем старую панель выбора героя с главного экрана
+  const oldPicker = document.getElementById('bbHeroPicker');
+  if (oldPicker) oldPicker.remove();
 
-    const title = document.createElement('div');
-    title.textContent = 'ВЫБЕРИ СВОЕГО ГЕРОЯ';
-    title.style.cssText = 'font-size:11px;font-weight:900;letter-spacing:.08em;margin-bottom:9px;';
-    picker.appendChild(title);
-
-    const list = document.createElement('div');
-    list.id = 'bbHeroChoices';
-    list.style.cssText = 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;';
-    picker.appendChild(list);
-
-    const desc = document.createElement('div');
-    desc.id = 'bbHeroDesc';
-    desc.style.cssText = 'font-size:11px;opacity:.8;margin-top:9px;';
-    picker.appendChild(desc);
-
-    panel.appendChild(picker);
+  // Переносим существующую кнопку магазина на её место
+  const shopButton = document.getElementById('openShop');
+  if (shopButton && panel && shopButton.parentElement !== panel) {
+    panel.appendChild(shopButton);
   }
-
-  const list = document.getElementById('bbHeroChoices');
-  if (list && !list.dataset.ready) {
-    bbHeroes.forEach(h => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.dataset.hero = h.id;
-      btn.title = h.name;
-      btn.setAttribute('aria-label', 'Выбрать героя: ' + h.name);
-      btn.style.cssText = 'min-width:0;padding:7px 2px;border:2px solid transparent;border-radius:12px;background:rgba(255,255,255,.75);font-size:23px;cursor:pointer;';
-      btn.textContent = h.emoji;
-      btn.addEventListener('click', () => {
-        bbSelectedHero = h.id;
-        localStorage.setItem('bbSelectedHero', h.id);
-        bbApplyHero();
-      });
-      list.appendChild(btn);
-    });
-    list.dataset.ready = '1';
-  }
-
-  if (list) {
-    list.querySelectorAll('button').forEach(btn => {
-      const active = btn.dataset.hero === hero.id;
-      btn.style.borderColor = active ? hero.color : 'transparent';
-      btn.style.boxShadow = active ? '0 0 0 2px ' + hero.color + '33' : 'none';
-      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-  }
-
-  const desc = document.getElementById('bbHeroDesc');
-  if (desc) desc.textContent = hero.desc;
-}
 
 bbApplyHero();
 
