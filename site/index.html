@@ -2852,14 +2852,11 @@ function bbRefresh() {
 
   const xpBar = $('heroXpBar');
   const xpNeeded = 200 + (heroLevel - 1) * 100;
+  const xpPercent = Math.max(0, Math.min(100, (heroXp / xpNeeded) * 100));
 
-const xpPercent = Math.max(0, Math.min(100, (heroXp / xpNeeded) * 100));
-
-if (xpBar) {
-  xpBar.style.width = xpPercent + '%';
-  xpBar.style.maxWidth = '100%';
-  xpBar.title = heroXp + ' / ' + xpNeeded + ' опыта';
-}
+  if (xpBar) {
+    xpBar.style.width = xpPercent + '%';
+    xpBar.style.maxWidth = '100%';
     xpBar.title = heroXp + ' / ' + xpNeeded + ' опыта';
   }
 
