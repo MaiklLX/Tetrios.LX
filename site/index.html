@@ -2540,6 +2540,80 @@ font-weight: 900 !important;
     font-size: 10px;
   }
 }
+/* Карточка сюрприз-бокса в магазине */
+.surprise-shop-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 0 0 20px;
+  padding: 17px;
+  border: 1px solid #bd974b;
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 10% 0%, #d9ad4a22, transparent 65%),
+    linear-gradient(145deg, #24231f, #12141b);
+  box-shadow:
+    0 0 18px #d5a84412,
+    0 8px 20px #0005,
+    inset 0 1px 0 #fff2d51c;
+}
+
+.surprise-shop-icon {
+  display: flex;
+  flex: 0 0 62px;
+  height: 62px;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  border: 1px solid #a9843d;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #44351d, #211d16);
+  box-shadow: 0 0 18px #d5a84418;
+}
+
+.surprise-shop-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.surprise-shop-label {
+  color: #d8b966;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.surprise-shop-info h3 {
+  margin: 5px 0;
+  color: #f5d88e;
+  font-size: 17px;
+}
+
+.surprise-shop-info p {
+  margin: 0 0 12px;
+  color: #b8b2a2;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.surprise-shop-buy {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px;
+  color: #21190a;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .5px;
+  background: linear-gradient(100deg, #e4c16b, #f7dfa0);
+  border: 1px solid #f8dfa0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px #d5a84420;
+  cursor: pointer;
+}
+
+.surprise-shop-buy:active {
+  transform: scale(.98);
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -3662,7 +3736,16 @@ function bbShop(){
   $('shopContent').querySelectorAll('[data-bb-buy]').forEach(b => {
     b.onclick = () => bbBuy(b.dataset.bbBuy);
   });
+  $('shopBuyBox').onclick = () => {
+    const coinsBefore = bbCoins;
 
+    bbBox();
+
+    if (bbCoins !== coinsBefore) {
+      $('shopCoins').textContent = bbCoins;
+      $('shopGems').textContent = bbGems;
+    }
+  };
   show('shopScreen');
 }
 
