@@ -3483,7 +3483,6 @@ function bbRefresh() {
   }
 }
 
-```js
 function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}
 
 function bbShop(){
@@ -3513,7 +3512,6 @@ function bbShop(){
 }
 
 $('shopBack').onclick = () => show('menu');
-```
 function bbBuy(id){let it=bbCatalog.find(x=>x.id===id);if(!it)return;let wallet=it.currency==='gems'?bbGems:bbCoins;if(wallet<it.cost){toast('Не хватает валюты — сыграй ещё забег!');return}if((id==='heart'||id==='rainbow'||id==='lucky')&&bbPerks.includes(id)){toast('Улучшение уже открыто');return}if(it.currency==='gems')bbGems-=it.cost;else bbCoins-=it.cost;if(['heart','rainbow','lucky'].includes(id))bbPerks.push(id);else bbInventory[id]=(bbInventory[id]||0)+1;bbSave();chime();bbShop()}
 
 function bbHero(){
