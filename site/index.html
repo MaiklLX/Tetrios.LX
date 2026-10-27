@@ -5258,7 +5258,7 @@ function bbTune() {
 
   music();
 }
-if(!musicOn||!soundOn)return;const melody=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,523.25,587.33,659.25,523.25];bbMusicLoop=setInterval(()=>{if(!musicOn||!soundOn||document.hidden)return;let f=melody[bbMusicStep++%melody.length];tone(f,.16,'triangle',.016);if(bbMusicStep%4===0)tone(f/2,.22,'sine',.01)},280)}
+
 function bbSyncMusic() {
   if (!musicOn || !soundOn || document.hidden) {
     if (arcadeMusicTimer !== null) {
