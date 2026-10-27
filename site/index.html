@@ -2603,7 +2603,7 @@ function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');cle
   setTimeout(()=>el.remove(),1600);
 }
 
-function show(id){['menu','heroes','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);$(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests()}
+function show(id){['menu','shopScreen','heroes','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);$(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests()}
 
 function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
