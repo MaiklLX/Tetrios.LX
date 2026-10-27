@@ -2412,40 +2412,51 @@ window.addEventListener('load', () => {
   }, 300);
 });
 
-
  // Полный сброс прогресса игры
 const resetProgressBtn = $('resetProgressBtn');
 
 if (resetProgressBtn) {
   resetProgressBtn.addEventListener('click', () => {
-    const confirmed = window.confirm(
-      'Сбросить весь прогресс Block Buddies?\n\n' +
-      'Будут удалены монеты, самоцветы, уровни, предметы, ' +
-      'улучшения, рекорды, забеги, прогресс кампании и ' +
-      'ежедневные задания. Это действие нельзя отменить.'
-    );
+    bbModal(`
+      <div class="modalhead">
+        <div class="bigicon">⚠️</div>
+        <div class="eyebrow">ОСТОРОЖНО</div>
+        <h3>Начать с нуля?</h3>
+        <p>Все достижения, монеты, самоцветы, предметы,
+        уровни героев и прогресс кампании будут удалены.</p>
+        <p><strong>Это действие нельзя отменить.</strong></p>
+      </div>
+      <button class="action" id="confirmResetProgress"
+        style="background:linear-gradient(135deg,#ff6b6b,#d9365b)">
+        ДА, СБРОСИТЬ ВСЁ
+      </button>
+      <button class="action secondary" id="cancelResetProgress">
+        ОТМЕНА
+      </button>
+    `);
 
-    if (!confirmed) return;
+    $('cancelResetProgress').onclick = closeOverlay;
 
-    // Удаляем только данные этой игры.
-    for (let i = localStorage.length - 1; i >= 0; i--) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('bb_')) {
-        localStorage.removeItem(key);
+    $('confirmResetProgress').onclick = () => {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('bb_')) {
+          localStorage.removeItem(key);
+        }
       }
-    }
 
-    [
-      'bbDailyQuests',
-      'bbSelectedHero',
-      'nrBest',
-      'nrRuns',
-      'nrRelics',
-      'nrNode',
-      'nrDailyDone'
-    ].forEach(key => localStorage.removeItem(key));
+      [
+        'bbDailyQuests',
+        'bbSelectedHero',
+        'nrBest',
+        'nrRuns',
+        'nrRelics',
+        'nrNode',
+        'nrDailyDone'
+      ].forEach(key => localStorage.removeItem(key));
 
-    window.location.reload();
+      window.location.reload();
+    };
   });
 }
 
