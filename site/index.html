@@ -3172,6 +3172,7 @@ const bbHeroes = [
 
 let bbSelectedHero = localStorage.getItem('bbSelectedHero') || 'plush';
 let bbPreviewHero = bbSelectedHero;
+let bbPlushSaved = false;
 
 function bbRenderHeroes() {
   const roster = document.getElementById('heroesRoster');
