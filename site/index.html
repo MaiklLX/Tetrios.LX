@@ -4140,33 +4140,38 @@ if (!hint) {
   shop.appendChild(hint);
 }
 
-
- // Управление подсказкой прокрутки магазина
+ // Управление подсказкой при прокрутке всей страницы
 let shopScrollStopTimer;
 
-const shopIsAtBottom = () =>
-  shop.scrollTop + shop.clientHeight >= shop.scrollHeight - 8;
+const getPageScrollTop = () =>
+  window.scrollY || document.documentElement.scrollTop || 0;
+
+const pageIsAtBottom = () =>
+  getPageScrollTop() + window.innerHeight >=
+  Math.max(
+    document.documentElement.scrollHeight,
+    document.body.scrollHeight
+  ) - 8;
 
 const updateShopScrollHint = () => {
-  if (shopIsAtBottom()) {
+  if (pageIsAtBottom()) {
     hint.classList.add('is-hidden', 'is-at-bottom');
   } else {
     hint.classList.remove('is-at-bottom');
   }
 };
 
-// При открытии магазина показываем подсказку,
-// только если каталог можно прокручивать
+// При открытии магазина показываем стрелку,
+// если страница ещё не находится в самом низу
 hint.classList.remove('is-hidden', 'is-at-bottom');
 updateShopScrollHint();
 
-// Во время прокрутки скрываем стрелку.
-// После остановки показываем её снова, если есть куда листать.
-shop.onscroll = () => {
+// Отслеживаем прокрутку всей страницы
+window.addEventListener('scroll', () => {
   hint.classList.add('is-hidden');
   clearTimeout(shopScrollStopTimer);
 
-  if (shopIsAtBottom()) {
+  if (pageIsAtBottom()) {
     hint.classList.add('is-at-bottom');
     return;
   }
@@ -4176,13 +4181,13 @@ shop.onscroll = () => {
   shopScrollStopTimer = setTimeout(() => {
     updateShopScrollHint();
 
-    if (!shopIsAtBottom()) {
+    if (!pageIsAtBottom()) {
       hint.classList.remove('is-hidden');
     }
-  }, 180);
-};
+  }, 250);
+}, { passive: true });
 
-// Пересчитываем состояние после обновления отображения
+// Проверяем положение страницы после отрисовки
 requestAnimationFrame(updateShopScrollHint);
 
 }
