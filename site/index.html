@@ -4186,6 +4186,73 @@ node.onclick = () => {
   }
 }
 
+function bbChooseHeroBeforeStart() {
+  const currentHero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
+
+  overlay(`
+    <div class="modalhead">
+      <div class="eyebrow">НОВОЕ ПРИКЛЮЧЕНИЕ</div>
+      <h3>Кем отправимся в путь?</h3>
+      <p>Выбери героя для этого забега. У каждого свои особенности и способности.</p>
+    </div>
+
+    <div id="bbStartHeroList"
+      style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;">
+      ${bbHeroes.map(h => `
+        <button type="button" data-start-hero="${h.id}"
+          style="padding:12px 7px;border:2px solid ${h.id === currentHero.id ? h.color : 'rgba(150,170,200,.22)'};
+          border-radius:16px;background:${h.id === currentHero.id ? h.color + '22' : 'rgba(120,140,160,.08)'};
+          color:inherit;cursor:pointer;text-align:center;min-width:0;">
+          <div style="font-size:34px;margin-bottom:6px">${h.emoji}</div>
+          <strong style="display:block;font-size:13px">${h.name}</strong>
+          <div style="font-size:11px;opacity:.75;margin-top:4px">${h.role}</div>
+          <div style="font-size:10px;margin-top:7px">${h.skill}</div>
+        </button>
+      `).join('')}
+    </div>
+
+    <div id="bbStartHeroDescription"
+      style="font-size:12px;line-height:1.5;opacity:.85;margin-bottom:14px">
+      ${currentHero.skillDesc}
+    </div>
+
+    <button class="action" id="bbConfirmStartHero">⚔ НАЧАТЬ ИГРУ</button>
+    <button class="action secondary" id="bbCancelStartHero">ОТМЕНА</button>
+  `);
+
+  let chosenHero = currentHero.id;
+
+  const updateSelection = () => {
+    const hero = bbHeroes.find(h => h.id === chosenHero) || bbHeroes[0];
+
+    document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn => {
+      const selected = btn.dataset.startHero === chosenHero;
+      btn.style.borderColor = selected ? hero.color : 'rgba(150,170,200,.22)';
+      btn.style.background = selected ? hero.color + '22' : 'rgba(120,140,160,.08)';
+    });
+
+    const description = document.getElementById('bbStartHeroDescription');
+    if (description) description.textContent = hero.skillDesc;
+  };
+
+  document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn => {
+    btn.onclick = () => {
+      chosenHero = btn.dataset.startHero;
+      updateSelection();
+    };
+  });
+
+  document.getElementById('bbConfirmStartHero').onclick = () => {
+    bbSelectedHero = chosenHero;
+    localStorage.setItem('bbSelectedHero', chosenHero);
+    bbApplyHero();
+    closeOverlay();
+    startGameNow();
+  };
+
+  document.getElementById('bbCancelStartHero').onclick = closeOverlay;
+}
+
 function startGame(){bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
