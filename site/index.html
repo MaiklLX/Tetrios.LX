@@ -4250,7 +4250,18 @@ function bbChooseHeroBeforeStart() {
     startGameNow();
   };
 
-  document.getElementById('bbCancelStartHero').onclick = closeOverlay;
+document.getElementById('bbCancelStartHero').onclick = () => {
+  closeOverlay();
+
+  if (mode === 'campaign') {
+    show('campaign');
+    buildMap();
+  } else if (mode === 'daily') {
+    show('daily');
+  } else {
+    show('menu');
+  }
+};
 }
 
 function startGame() {
