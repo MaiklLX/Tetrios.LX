@@ -1476,6 +1476,43 @@ input,select,textarea{
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0;
+// Раннее подключение кнопки сброса прогресса
+document.addEventListener('click', function(event) {
+const button = event.target.closest('#resetProgressBtn');
+if (!button) return;
+
+event.preventDefault();
+
+const modal = document.getElementById('modal');
+const overlay = document.getElementById('overlay');
+
+if (!modal || !overlay) {
+alert('Не удалось открыть окно сброса. Попробуйте обновить игру.');
+return;
+}
+
+modal.innerHTML = "<div class="modalhead"> <div class="bigicon">⚠️</div> <div class="eyebrow">ОСТОРОЖНО</div> <h3>Начать с нуля?</h3> <p>Будут удалены монеты, самоцветы, предметы, улучшения и игровой прогресс.</p> <p><strong>Это действие нельзя отменить.</strong></p> </div> <button class="action" id="confirmResetProgress" style="background:linear-gradient(135deg,#ff6b6b,#d9365b)"> ДА, СБРОСИТЬ ВСЁ </button> <button class="action secondary" id="cancelResetProgress"> ОТМЕНА </button>";
+
+overlay.classList.add('show');
+
+document.getElementById('cancelResetProgress').onclick = function() {
+overlay.classList.remove('show');
+};
+
+document.getElementById('confirmResetProgress').onclick = function() {
+for (let i = localStorage.length - 1; i >= 0; i--) {
+const key = localStorage.key(i);
+if (key && (key.startsWith('bb_') ||
+['bbDailyQuests', 'bbSelectedHero', 'nrBest',
+'nrRuns', 'nrRelics', 'nrNode', 'nrDailyDone'].includes(key))) {
+localStorage.removeItem(key);
+}
+}
+
+location.reload();
+
+};
+});
 const W=10,H=20,colors=['#5cf5e8','#9d7cff','#ffc86b','#ff6f9e','#6ca8ff','#b6f27c','#ff9868'];const shapes=[[[1,1,1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1],[1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];const names=['Призма','Пульсар','Гравитация','Фантом','Кубит','Хронос','Сингулярность'];
 const upgrades=[
 ['✦','Ядро комбо','За каждую линию подряд +15% очков.','score',1],['◈','Квантовый щит','Один раз спасает от проигрыша.','shield',1],['⚡','Ускоритель мысли','Падение деталей быстрее, очки ×1.5.','mult',1],['⟲','Хроно-импульс','Замедляет падение на 20%.','slow',1],['✧','Резонанс','Каждая 4-я линия очищает случайную ячейку.','resonance',1],['⬡','Магнит линий','За двойную очистку +250 очков.','magnet',1],['☼','Солнечный заряд','Мягкое свечение деталей даёт бонус +10%.','glow',1],['◉','Эхо пустоты','Каждая пятая линия добавляет заряд уровня.','echo',1],['⌁','Нестабильный блок','Каждые 90 секунд +500 очков.','unstable',1],['✹','Звёздная пыль','За одиночную линию +100 очков.','dust',1],['⛨','Обшивка титана','Одна случайная клетка в поле становится бронёй.','armor',1],['↯','Двойной разряд','При тройной очистке +600 очков.','burst',1],['♢','Призма цвета','Новые детали переливаются разными оттенками.','prism',1],['⌬','Кристалл памяти','Порог следующего уровня растёт медленнее.','memory',1],['◌','Грави-якорь','Удержание детали доступно дважды.','hold',2],['✺','Реактор','Каждые 10 линий +1 уровень бонусом.','reactor',1],['☄','Кометный след','За быстрый уровень +300 очков.','comet',1],['⟁','Разлом','При входе на уровень случайная строка почти очищается.','rift',1],['⊹','Стабилизатор','Поворот деталей становится точнее.','stable',1],['❖','Артефакт удачи','Редкие детали приносят +20% очков.','luck',1],['◍','Тихая сингулярность','Раз в уровень поле слегка сжимает пустые промежутки.','void',1],['⚙','Механизм повторения','Каждый 5-й ход даёт +25 очков.','gear',1],['✴','Фотонный клинок','Очистка 2+ линий добавляет эффект вспышки.','flash',1],['⌘','Нейронный импульс','Первые 30 секунд уровня очки ×1.25.','neuron',1],['⟡','Код бесконечности','За каждую 10-ю линию +1 реликвия.','infinity',1],['⦿','Лунный прилив','Каждые 45 секунд +1 заряд уровня.','tide',1],['♜','Крепость данных','Уменьшает скорость роста сложности.','fortress',1],['✣','Сдвиг измерений','Поворот иногда даёт очки без очистки.','shift',1],['☷','Энергетический запас','После паузы падение медленнее 5 секунд.','reserve',1],['✵','Сверхновая','При проигрыше один раз очищает нижнюю линию.','nova',1],['♧','Живой кристалл','Усиления дают визуальную ауру детали.','aura',1],['⌖','Охотник за линиями','Линия в первые 2 секунды после падения +50%.','hunter',1],['◐','Зеркальная матрица','Каждые 7 линий зеркалит следующий блок.','mirror',1],['⚛','Квантовая петля','Порог уровня −1 линия (минимум 3).','loop',1],['❂','Плазменная волна','Сбрасывает задержку падения при очистке.','plasma',1]];
