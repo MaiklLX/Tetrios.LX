@@ -2992,7 +2992,7 @@ node.onclick = () => {
   }
 }
 
-function startGame(){bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;boosts=[];
+function startGame(){bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
 if(bbSelectedHero==='blip'&&upgrades.length){
   const starter=upgrades[Math.floor(Math.random()*upgrades.length)];
   if(starter)boosts.push(starter[3]);
