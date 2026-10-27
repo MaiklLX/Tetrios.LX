@@ -2055,6 +2055,33 @@ font-weight: 900 !important;
   color: #c6a8ff !important;
 }
 
+/* Чёткая шкала опыта героя */
+.rpginfo .xpbar {
+  display: block !important;
+  width: 100% !important;
+  height: 12px !important;
+  min-height: 12px !important;
+  margin: 8px 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  background: #080d1b !important;
+  border: 1px solid #526181 !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 3px #000 !important;
+}
+
+.rpginfo .xpbar #heroXpBar {
+  display: block !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #9d7cff, #5cf5e8) !important;
+  box-shadow: 0 0 8px #5cf5e888 !important;
+  transition: width .3s ease !important;
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"></div><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div>
 <div class="xpbar">
