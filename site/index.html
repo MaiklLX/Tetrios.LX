@@ -1901,6 +1901,83 @@ font-weight: 900 !important;
   text-shadow: none !important;
 }
 
+/* FIX 2: контраст и тёмные элементы карты биомов */
+#campaign,
+#campaign.screen,
+#campaign .screen,
+#campaign .screenhead,
+#campaign .mapgrid,
+#campaign .challengebox,
+#campaign .challengehero,
+#campaign .challengegoal {
+  color: #f4f5ff !important;
+  background-color: #0b1020 !important;
+}
+
+#campaign .screenhead h2 {
+  color: #ffffff !important;
+  text-shadow: 0 0 12px #5cf5e855 !important;
+  font-weight: 950 !important;
+}
+
+#campaign .screenhead p,
+#campaign .challengehero p,
+#campaign .challengegoal {
+  color: #b8c4e3 !important;
+}
+
+#campaign .mapgrid {
+  background-image:
+    radial-gradient(ellipse at 20% 15%, #183b5240, transparent 40%),
+    radial-gradient(ellipse at 80% 85%, #39234b40, transparent 40%),
+    linear-gradient(145deg, #111a30, #080d1b) !important;
+  border: 1px solid #354363 !important;
+  box-shadow: inset 0 0 25px #0005 !important;
+}
+
+#campaign .mapgrid > button,
+#campaign .mapgrid > .node,
+#campaign .mapgrid > button.locked,
+#campaign .mapgrid > .node.locked {
+  background-image: linear-gradient(145deg, #1a2540, #101629) !important;
+  background-color: #101629 !important;
+  color: #f4f5ff !important;
+  border-color: #354363 !important;
+  box-shadow: 0 4px 0 #080d1b !important;
+  filter: none !important;
+}
+
+#campaign .mapgrid > button strong,
+#campaign .mapgrid > .node strong {
+  color: #f4f5ff !important;
+}
+
+#campaign .mapgrid > button small,
+#campaign .mapgrid > .node small {
+  color: #a8b6d6 !important;
+}
+
+#campaign .mapgrid > button.active,
+#campaign .mapgrid > .node.active {
+  background-image: linear-gradient(145deg, #183b52, #17213b) !important;
+  background-color: #17213b !important;
+  border-color: #5cf5e8 !important;
+}
+
+#campaign .challengehero .symbol {
+  color: #ffffff !important;
+}
+
+#campaign #campaignStart {
+  color: #07111e !important;
+}
+
+#campaign .sectionlabel,
+#campaign label,
+#campaign small {
+  text-shadow: none !important;
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"></div><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div style="margin-top:16px">
