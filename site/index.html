@@ -4135,17 +4135,51 @@ if (!hint) {
   shop.appendChild(hint);
 }
 
-// Показываем стрелку при открытии магазина
-hint.classList.remove('is-hidden');
 
-// Прячем стрелку, когда пользователь прокручивает магазин
-shop.onscroll = () => {
-  if (shop.scrollTop > 40) {
-    hint.classList.add('is-hidden');
+ // Управление подсказкой прокрутки магазина
+let shopScrollStopTimer;
+
+const shopIsAtBottom = () =>
+  shop.scrollTop + shop.clientHeight >= shop.scrollHeight - 8;
+
+const updateShopScrollHint = () => {
+  if (shopIsAtBottom()) {
+    hint.classList.add('is-hidden', 'is-at-bottom');
   } else {
-    hint.classList.remove('is-hidden');
+    hint.classList.remove('is-at-bottom');
   }
 };
+
+// При открытии магазина показываем подсказку,
+// только если каталог можно прокручивать
+hint.classList.remove('is-hidden', 'is-at-bottom');
+updateShopScrollHint();
+
+// Во время прокрутки скрываем стрелку.
+// После остановки показываем её снова, если есть куда листать.
+shop.onscroll = () => {
+  hint.classList.add('is-hidden');
+  clearTimeout(shopScrollStopTimer);
+
+  if (shopIsAtBottom()) {
+    hint.classList.add('is-at-bottom');
+    return;
+  }
+
+  hint.classList.remove('is-at-bottom');
+
+  shopScrollStopTimer = setTimeout(() => {
+    updateShopScrollHint();
+
+    if (!shopIsAtBottom()) {
+      hint.classList.remove('is-hidden');
+    }
+  }, 180);
+};
+
+// Пересчитываем состояние после обновления отображения
+requestAnimationFrame(updateShopScrollHint);
+
 }
 
 $('shopBack').onclick = () => show('menu');
