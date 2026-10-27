@@ -4507,20 +4507,23 @@ function bbApplyHero() {
   if (typeof bbRefresh === 'function') {
     bbRefresh();
   }
- 
-  // Убираем старую панель выбора героя с главного экрана
+
+  // Убираем блок выбора героя с главного экрана
   const oldPicker = document.getElementById('bbHeroPicker');
   if (oldPicker) oldPicker.remove();
 
-  // Переносим существующую кнопку магазина на её место
+  // Переносим существующую кнопку магазина
   const shopButton = document.getElementById('openShop');
-  if (shopButton && panel && shopButton.parentElement !== panel) {
+  if (shopButton && shopButton.parentElement !== panel) {
     panel.appendChild(shopButton);
   }
 
+  // Скрываем старое место кнопки внизу меню
+  const shopWrap = document.querySelector('#menu .shopbuttons');
+  if (shopWrap) shopWrap.style.display = 'none';
+}
+
 bbApplyHero();
-
-
 function bbRefresh() {
   if ($('coins')) $('coins').textContent = bbCoins;
   if ($('gems')) $('gems').textContent = bbGems;
