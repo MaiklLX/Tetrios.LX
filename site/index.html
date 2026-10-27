@@ -1834,20 +1834,20 @@ font-weight: 900 !important;
 
 <div id="dailyQuestsList" style="margin-top:12px">
   <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
-    <div style="font-size:12px;font-weight:900;color:#59405d">Очистить 10 линий</div>
-    <div style="font-size:11px;color:#8e7892;margin-top:5px">0 / 10</div>
+    <div style="font-size:12px;font-weight:900;">Очистить 10 линий</div>
+    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 10</div>
     <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
     <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 25 🪙</div>
   </div>
   <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
-    <div style="font-size:12px;font-weight:900;color:#59405d">Набрать 1500 очков</div>
-    <div style="font-size:11px;color:#8e7892;margin-top:5px">0 / 1500</div>
+    <div style="font-size:12px;font-weight:900;color:#f4f5ff">Набрать 1500 очков</div>
+    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 1500</div>
     <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
     <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 30 🪙</div>
   </div>
   <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
-    <div style="font-size:12px;font-weight:900;color:#59405d">Сыграть 2 партии</div>
-    <div style="font-size:11px;color:#8e7892;margin-top:5px">0 / 2</div>
+    <div style="font-size:12px;font-weight:900;color:#f4f5ff">Сыграть 2 партии</div>
+    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 2</div>
     <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
     <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 20 🪙</div>
   </div>
@@ -2093,13 +2093,13 @@ function bbRenderDailyQuests() {
     const title = document.createElement('div');
     title.textContent = q.title;
     title.style.cssText =
-      'font-size:12px;font-weight:900;color:#59405d;';
+      'font-size:12px;font-weight:900;color:#f4f5ff;';
 
     const progress = document.createElement('div');
     progress.textContent =
       Math.min(q.progress, q.target) + ' / ' + q.target;
     progress.style.cssText =
-      'font-size:11px;color:#8e7892;margin-top:5px;';
+      'font-size:11px;color:#a8b2ce;margin-top:5px;';
 
     const track = document.createElement('div');
     track.style.cssText =
