@@ -2762,8 +2762,8 @@ function bbApplyHero() {
   const panel = document.getElementById('rpgPanel');
   if (!panel) return;
 
-  const avatar = panel.querySelector('.avatar');
-  const name = panel.querySelector('.rpgname');
+  const avatar = document.querySelector('#menu .avatar');
+  const name = document.querySelector('#menu .rpgname');
 
   if (avatar) {
     avatar.textContent = hero.emoji;
@@ -2771,8 +2771,13 @@ function bbApplyHero() {
     avatar.style.borderRadius = '14px';
   }
 
-  if (name) name.textContent = hero.name;
+  if (name) {
+    name.childNodes[0].textContent = hero.name + ' ';
+  }
 
+  if (typeof bbRefresh === 'function') {
+    bbRefresh();
+  }
   let picker = document.getElementById('bbHeroPicker');
   if (!picker) {
     picker = document.createElement('div');
@@ -2838,9 +2843,9 @@ function bbRefresh() {
   if ($('gems')) $('gems').textContent = bbGems;
 
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
-  const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
-    const trainCost = 50 + (heroLevel - 1) * 25;
   const heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
+  const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+  const trainCost = 50 + (heroLevel - 1) * 25;
 
   const levelEl = $('heroLevel');
   if (levelEl) levelEl.textContent = 'УР. ' + heroLevel;
