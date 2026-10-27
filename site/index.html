@@ -2860,6 +2860,63 @@ font-weight: 900 !important;
     grid-template-columns: 1fr;
   }
 }
+
+/* Единая высота карточек и ровная линия кнопок */
+#shopScreen .shopitem {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  box-sizing: border-box;
+}
+
+#shopScreen .shopitem strong {
+  display: block;
+  min-height: 34px;
+}
+
+#shopScreen .shopitem p {
+  flex: 1;
+  margin-bottom: 14px;
+}
+
+#shopScreen .shopitem button {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+/* Карточка будущего бонуса */
+#shopScreen .shopitem-coming {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 0%, #9d7cff12, transparent 70%),
+    linear-gradient(145deg, #11182a, #0b1020);
+  border: 1px dashed #53617e;
+  opacity: .82;
+}
+
+#shopScreen .shopitem-coming .emoji {
+  filter: grayscale(.55);
+  opacity: .8;
+}
+
+#shopScreen .shopitem-coming strong {
+  color: #aeb9d4;
+}
+
+#shopScreen .shopitem-coming p {
+  color: #8491b0;
+}
+
+#shopScreen .shopitem-coming button,
+#shopScreen .shopitem-coming button:disabled {
+  color: #9ba8c6;
+  background: linear-gradient(145deg, #202a42, #151d30);
+  border: 1px solid #3b4968;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 1;
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -3976,6 +4033,14 @@ function bbShop(){
           </button>
         </div>
       `).join('')}
+
+      <div class="shopitem shopitem-coming">
+        <div class="emoji">🔒</div>
+        <strong>Новый бонус</strong>
+        <p>Здесь скоро появится новое улучшение. Следи за обновлениями!</p>
+        <button type="button" disabled>СКОРО</button>
+      </div>
+
     </div>
   `;
 
