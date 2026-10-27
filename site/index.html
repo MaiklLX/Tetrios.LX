@@ -2979,6 +2979,191 @@ font-weight: 900 !important;
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* =========================================
+   TETRIOS.LX — компактный игровой экран
+   Телефоны и планшеты в портретной ориентации
+   ========================================= */
+
+@media (max-width: 900px) and (orientation: portrait) {
+  /* Экономим вертикальное пространство */
+  body:has(#game:not([hidden])) .topbar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 4px;
+  }
+
+  #game {
+    box-sizing: border-box;
+    min-height: 100dvh;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    overscroll-behavior: none;
+  }
+
+  #game .screenhead {
+    margin: 0 0 5px;
+    gap: 8px;
+  }
+
+  #game .screenhead h2 {
+    font-size: 15px;
+  }
+
+  #game .screenhead p {
+    display: none;
+  }
+
+  /* Счёт, линии и уровень — одна компактная строка */
+  #game .gamehud {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 5px;
+    margin: 0 0 5px;
+  }
+
+  #game .hudbox {
+    min-width: 0;
+    padding: 4px 6px;
+    border-radius: 9px;
+  }
+
+  #game .hudbox span {
+    font-size: 8px;
+  }
+
+  #game .hudbox strong {
+    font-size: 15px;
+  }
+
+  /* Монеты сохраняем, но делаем блок ниже */
+  #game #gameCoins {
+    margin: 4px 0 !important;
+    padding: 5px 9px !important;
+    font-size: 11px;
+  }
+
+  /* Все дополнительные элементы располагаются
+     над полем в компактной горизонтальной полосе */
+  #game .playlayout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+  }
+
+  #game .sidecol {
+    order: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    width: 100%;
+  }
+
+  #game .sidecard {
+    min-width: 0;
+    padding: 5px 3px;
+    border-radius: 9px;
+  }
+
+  #game .sidecard label {
+    font-size: 7px;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  #game .nextcanvas {
+    display: block;
+    width: 100%;
+    max-width: 62px;
+    height: auto;
+    max-height: 42px;
+    margin: 2px auto 0;
+  }
+
+  #game .boosticon {
+    margin: 2px 0;
+    font-size: 16px;
+  }
+
+  #game .boostname {
+    font-size: 8px;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+
+  #game .boostnum {
+    display: none;
+  }
+
+  #game #timer {
+    margin-top: 3px !important;
+    font-size: 12px !important;
+  }
+
+  #game .smallbtn {
+    margin-top: 3px;
+    padding: 5px 2px;
+    font-size: 8px;
+  }
+
+  /* Игровое поле занимает максимум доступной высоты.
+     Пропорции 10:20 сохраняются, фигуры не растягиваются. */
+  #game .playlayout > div:first-child {
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+
+  #game .boardframe {
+    box-sizing: border-box;
+    width: 100%;
+    height: clamp(260px, calc(100dvh - 300px), 720px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  #game .board {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    aspect-ratio: 1 / 2;
+    object-fit: contain;
+    flex: 0 1 auto;
+  }
+
+  /* Индикатор прогресса — сразу под полем */
+  #game .progresswrap {
+    width: 100%;
+    margin: 5px 0 0;
+  }
+
+  #game .progressmeta {
+    font-size: 9px;
+  }
+
+  /* Управление остаётся отдельным и не перекрывает поле */
+  #game .controls {
+    margin-top: 5px;
+    gap: 5px;
+  }
+
+  #game .control {
+    min-width: 0;
+    height: 40px;
+  }
+
+  #game .hint {
+    margin-top: 4px;
+    font-size: 8px;
+    line-height: 1.2;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
