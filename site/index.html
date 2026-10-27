@@ -3408,6 +3408,23 @@ font-weight: 900 !important;
     }
   }
 }
+
+/* Карточка активных бустов — интерактивная */
+#game .sidecol .sidecard:nth-child(2) {
+  cursor: pointer;
+  border-color: #9d7cff88;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+
+#game .sidecol .sidecard:nth-child(2):active {
+  transform: scale(.97);
+  background: rgba(90, 65, 150, .45);
+}
+
+#game .sidecol .sidecard:nth-child(2):focus-visible {
+  outline: 2px solid #bba4ff;
+  outline-offset: 2px;
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -4182,6 +4199,65 @@ function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.w
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
 function restartDrop(){if(dropTimer)clearInterval(dropTimer);dropTimer=setInterval(()=>{if(started&&!paused&&!gameOver)move(0,1)},dropMs)}
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><h3>Пауза</h3><p>Герой отдыхает! Возвращайся, когда будешь готов.</p></div><button class="action" id="resume">ПРОДОЛЖИТЬ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else closeOverlay()}
+
+/* Просмотр активных бустов с паузой */
+const boostCard = document.querySelector('#game .sidecol .sidecard:nth-child(2)');
+
+if (boostCard) {
+  boostCard.setAttribute('role', 'button');
+  boostCard.setAttribute('tabindex', '0');
+  boostCard.setAttribute('aria-label', 'Посмотреть активные усиления');
+
+  function openBoostList() {
+    if (!started || paused || gameOver) return;
+
+    paused = true;
+
+    const activeBoosts = boosts.map((id) => {
+      const item = upgrades.find((u) => u[3] === id);
+      return item
+        ? `<div class="choice">
+             <div class="choiceicon">${item[0]}</div>
+             <div class="choicetext">
+               <strong>${item[1]}</strong>
+               <span>${item[2]}</span>
+             </div>
+           </div>`
+        : '';
+    }).filter(Boolean);
+
+    overlay(`
+      <div class="modalhead">
+        <div class="bigicon">✧</div>
+        <div class="eyebrow">ТВОИ УСИЛЕНИЯ</div>
+        <h3>Активные бусты: ${activeBoosts.length}</h3>
+        <p>Здесь собраны все усиления текущего забега.</p>
+      </div>
+      <div class="choices">
+        ${activeBoosts.length
+          ? activeBoosts.join('')
+          : '<p style="text-align:center;padding:12px">Пока нет активных усилений. Новые можно получить при повышении уровня.</p>'}
+      </div>
+      <button class="action" id="closeBoostList">ПРОДОЛЖИТЬ</button>
+    `);
+
+    $('closeBoostList').onclick = () => {
+      closeOverlay();
+      paused = false;
+      restartDrop();
+    };
+  }
+
+  boostCard.addEventListener('click', openBoostList);
+
+  boostCard.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openBoostList();
+    }
+  });
+}
+
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('openHeroes').onclick=()=>show('heroes');
 $('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?2:(boosts.includes('hold')?2:1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
