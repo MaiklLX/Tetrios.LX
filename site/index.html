@@ -2182,6 +2182,83 @@ font-weight: 900 !important;
   margin: 4px 0 !important;
 }
 
+/* BLOCK BUDDIES — стильная горизонтальная шапка */
+#menu .hero {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 88px !important;
+  grid-template-rows: auto auto auto !important;
+  column-gap: 12px !important;
+  align-items: center !important;
+  text-align: left !important;
+  padding: 10px 6px 12px !important;
+}
+
+/* Маленькая надпись над названием */
+#menu .hero .eyebrow {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  font-size: 9px !important;
+  letter-spacing: .12em !important;
+  margin-bottom: 5px !important;
+}
+
+/* Название слева */
+#menu .hero h1 {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  align-self: center !important;
+  font-size: clamp(27px, 7vw, 38px) !important;
+  line-height: .92 !important;
+  letter-spacing: -.055em !important;
+  margin: 0 !important;
+}
+
+/* Медвежонок справа на уровне названия */
+#menu .hero .orb {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  width: 88px !important;
+  height: 82px !important;
+  margin: 0 !important;
+  justify-self: center !important;
+}
+
+#menu .hero .orb:before {
+  width: 62px !important;
+  height: 62px !important;
+  border-radius: 20px !important;
+  border: 2px solid #42eaff !important;
+  background: linear-gradient(145deg, #253f91, #692d9c) !important;
+}
+
+#menu .hero .orb:after {
+  width: 80px !important;
+  height: 34px !important;
+  border: 2px dashed #ffbd4a !important;
+}
+
+#menu .hero .relic {
+  font-size: 38px !important;
+}
+
+/* Описание — ниже, крупнее и на всю ширину */
+#menu .hero p {
+  grid-column: 1 / -1 !important;
+  grid-row: 3 !important;
+  max-width: none !important;
+  margin: 10px 0 0 !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+  color: #c6d2f1 !important;
+}
+
+#menu .sectionlabel {
+  margin: 8px 0 !important;
+  font-size: 12px !important;
+  letter-spacing: .08em !important;
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"></div><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div>
 <div class="xpbar">
