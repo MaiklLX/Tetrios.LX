@@ -1491,7 +1491,18 @@ alert('Не удалось открыть окно сброса. Попробу�
 return;
 }
 
-modal.innerHTML = "<div class="modalhead"> <div class="bigicon">⚠️</div> <div class="eyebrow">ОСТОРОЖНО</div> <h3>Начать с нуля?</h3> <p>Будут удалены монеты, самоцветы, предметы, улучшения и игровой прогресс.</p> <p><strong>Это действие нельзя отменить.</strong></p> </div> <button class="action" id="confirmResetProgress" style="background:linear-gradient(135deg,#ff6b6b,#d9365b)"> ДА, СБРОСИТЬ ВСЁ </button> <button class="action secondary" id="cancelResetProgress"> ОТМЕНА </button>";
+modal.innerHTML = `
+
+<div class="modalhead">
+  <div class="bigicon">⚠️</div>
+  <div class="eyebrow">ОСТОРОЖНО</div>
+  <h3>Начать с нуля?</h3>
+  <p>Будут удалены монеты, самоцветы, предметы, улучшения и игровой прогресс.</p>
+  <p><strong>Это действие нельзя отменить.</strong></p>
+</div>
+<button class="action" id="confirmResetProgress" style="background:linear-gradient(135deg,#ff6b6b,#d9365b)">ДА, СБРОСИТЬ ВСЁ</button>
+<button class="action secondary" id="cancelResetProgress">ОТМЕНА</button>
+`;
 
 overlay.classList.add('show');
 
