@@ -3470,6 +3470,164 @@ font-weight: 900 !important;
 #menu .shopbuttons {
   display: none !important;
 }
+
+/* BLOCK BUDDIES — панель игровых валют */
+#menu .currency-panel {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 12px 0 16px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 200, 107, .25);
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(255, 200, 107, .09), transparent 55%),
+    linear-gradient(145deg, #171d2d, #0c1221);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, .24),
+    inset 0 1px rgba(255, 255, 255, .035);
+}
+
+#menu .currency-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: #aebbd6;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+
+#menu .currency-heading span:first-child,
+#menu .currency-heading span:last-child {
+  color: #ffc86b;
+  font-size: 12px;
+}
+
+#menu .currency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#menu .currency-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 13px 10px;
+  overflow: hidden;
+  border: 1px solid;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #1c2538, #111827);
+}
+
+#menu .coins-card {
+  border-color: rgba(255, 200, 107, .38);
+}
+
+#menu .gems-card {
+  border-color: rgba(157, 124, 255, .4);
+}
+
+#menu .currency-icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 39px;
+  height: 39px;
+  border-radius: 12px;
+  font-size: 24px;
+  background: rgba(255, 255, 255, .045);
+}
+
+#menu .coins-card .currency-icon {
+  background: rgba(255, 200, 107, .12);
+  box-shadow: inset 0 0 14px rgba(255, 200, 107, .06);
+}
+
+#menu .gems-card .currency-icon {
+  background: rgba(157, 124, 255, .13);
+  box-shadow: inset 0 0 14px rgba(157, 124, 255, .08);
+}
+
+#menu .currency-info {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+#menu .currency-label {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  color: #8e9ab9;
+}
+
+#menu .currency-info strong {
+  overflow-wrap: anywhere;
+  font-size: clamp(17px, 4.5vw, 23px);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  color: #ffe0a0;
+}
+
+#menu .gems-card .currency-info strong {
+  color: #c9b8ff;
+}
+
+#menu .currency-caption {
+  font-size: 10px;
+  color: #8e9ab9;
+}
+
+#menu .currency-glow {
+  position: absolute;
+  right: -22px;
+  bottom: -30px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+#menu .coins-card .currency-glow {
+  background: rgba(255, 190, 75, .10);
+  filter: blur(18px);
+}
+
+#menu .gems-card .currency-glow {
+  background: rgba(157, 124, 255, .13);
+  filter: blur(18px);
+}
+
+@media (max-width: 360px) {
+  #menu .currency-grid {
+    gap: 7px;
+  }
+
+  #menu .currency-card {
+    gap: 7px;
+    padding: 10px 7px;
+  }
+
+  #menu .currency-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -3511,11 +3669,37 @@ font-weight: 900 !important;
     <span class="tag" style="color:#ffca8a;background:#ffb86b20">МОЯ КОМАНДА</span>
   </div>
   <div class="modearrow">›</div>
-</button><div id="rpgPanel" class="rpgpanel"></div><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div>
-<div class="xpbar">
-  <i id="heroXpBar" style="display:block;width:0%;height:100%;transition:width .25s ease"></i>
+</button><div id="rpgPanel" class="rpgpanel"></div>
+<div class="currency-panel">
+  <div class="currency-heading">
+    <span>✦</span>
+    <span>ТВОИ РЕСУРСЫ</span>
+    <span>✦</span>
+  </div>
+
+  <div class="currency-grid">
+    <div class="currency-card coins-card">
+      <div class="currency-icon">🪙</div>
+      <div class="currency-info">
+        <span class="currency-label">ЗОЛОТО</span>
+        <strong id="coins">0</strong>
+        <span class="currency-caption">Монеты</span>
+      </div>
+      <div class="currency-glow"></div>
+    </div>
+
+    <div class="currency-card gems-card">
+      <div class="currency-icon">💎</div>
+      <div class="currency-info">
+        <span class="currency-label">КРИСТАЛЛЫ</span>
+        <strong id="gems">0</strong>
+        <span class="currency-caption">Самоцветы</span>
+      </div>
+      <div class="currency-glow"></div>
+    </div>
+  </div>
+</div></div>
 </div>
-<div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div style="margin-top:16px">
 
   <button class="action" id="resetProgressBtn" style="width:100%;background:linear-gradient(135deg,#ff4d4f,#b5122b);color:#ffffff;border:1px solid #ff7779;box-shadow:0 4px 14px rgba(255,45,65,.28);font-weight:800">
