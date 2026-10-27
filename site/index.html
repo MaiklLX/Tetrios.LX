@@ -1978,6 +1978,58 @@ font-weight: 900 !important;
   text-shadow: none !important;
 }
 
+/* FIX 3: принудительно тёмная звёздная карта */
+#campaign .challengebox,
+#campaign .challengehero,
+#campaign .challengegoal,
+#campaign #mapgrid {
+  background: #101629 !important;
+  background-color: #101629 !important;
+  color: #f4f5ff !important;
+  border-color: #354363 !important;
+}
+
+#campaign #mapgrid > button.worldcard,
+#campaign #mapgrid > button.worldcard.active,
+#campaign #mapgrid > button.worldcard.locked,
+#campaign #mapgrid > button.worldcard:not(.active):not(.locked) {
+  background: linear-gradient(145deg, #1b2944, #101629) !important;
+  background-color: #101629 !important;
+  color: #f4f5ff !important;
+  border: 1px solid #354363 !important;
+  box-shadow: 0 4px 0 #080d1b !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+#campaign #mapgrid > button.worldcard.active {
+  background: linear-gradient(145deg, #174454, #17213b) !important;
+  border: 2px solid #5cf5e8 !important;
+  box-shadow: 0 0 18px #5cf5e833 !important;
+}
+
+#campaign #mapgrid > button.worldcard strong,
+#campaign #mapgrid > button.worldcard span,
+#campaign #mapgrid > button.worldcard small {
+  color: #f4f5ff !important;
+}
+
+#campaign .challengehero h3,
+#campaign .challengehero p,
+#campaign .challengegoal span,
+#campaign .challengegoal strong {
+  color: #f4f5ff !important;
+}
+
+#campaign .screenhead h2 {
+  color: #ffffff !important;
+}
+
+#campaign #campaignStart {
+  background: linear-gradient(135deg, #5cf5e8, #8c73ed) !important;
+  color: #07111e !important;
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"></div><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div style="margin-top:16px">
