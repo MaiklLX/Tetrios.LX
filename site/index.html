@@ -3853,9 +3853,112 @@ const W=10,H=20,colors=['#5cf5e8','#9d7cff','#ffc86b','#ff6f9e','#6ca8ff','#b6f2
 const upgrades=[
 ['✦','Ядро комбо','За каждую линию подряд +15% очков.','score',1],['◈','Квантовый щит','Один раз спасает от проигрыша.','shield',1],['⚡','Ускоритель мысли','Падение деталей быстрее, очки ×1.5.','mult',1],['⟲','Хроно-импульс','Замедляет падение на 20%.','slow',1],['✧','Резонанс','Каждая 4-я линия очищает случайную ячейку.','resonance',1],['⬡','Магнит линий','За двойную очистку +250 очков.','magnet',1],['☼','Солнечный заряд','Мягкое свечение деталей даёт бонус +10%.','glow',1],['◉','Эхо пустоты','Каждая пятая линия добавляет заряд уровня.','echo',1],['⌁','Нестабильный блок','Каждые 90 секунд +500 очков.','unstable',1],['✹','Звёздная пыль','За одиночную линию +100 очков.','dust',1],['⛨','Обшивка титана','Одна случайная клетка в поле становится бронёй.','armor',1],['↯','Двойной разряд','При тройной очистке +600 очков.','burst',1],['♢','Призма цвета','Новые детали переливаются разными оттенками.','prism',1],['⌬','Кристалл памяти','Порог следующего уровня растёт медленнее.','memory',1],['◌','Грави-якорь','Удержание детали доступно дважды.','hold',2],['✺','Реактор','Каждые 10 линий +1 уровень бонусом.','reactor',1],['☄','Кометный след','За быстрый уровень +300 очков.','comet',1],['⟁','Разлом','При входе на уровень случайная строка почти очищается.','rift',1],['⊹','Стабилизатор','Поворот деталей становится точнее.','stable',1],['❖','Артефакт удачи','Редкие детали приносят +20% очков.','luck',1],['◍','Тихая сингулярность','Раз в уровень поле слегка сжимает пустые промежутки.','void',1],['⚙','Механизм повторения','Каждый 5-й ход даёт +25 очков.','gear',1],['✴','Фотонный клинок','Очистка 2+ линий добавляет эффект вспышки.','flash',1],['⌘','Нейронный импульс','Первые 30 секунд уровня очки ×1.25.','neuron',1],['⟡','Код бесконечности','За каждую 10-ю линию +1 реликвия.','infinity',1],['⦿','Лунный прилив','Каждые 45 секунд +1 заряд уровня.','tide',1],['♜','Крепость данных','Уменьшает скорость роста сложности.','fortress',1],['✣','Сдвиг измерений','Поворот иногда даёт очки без очистки.','shift',1],['☷','Энергетический запас','После паузы падение медленнее 5 секунд.','reserve',1],['✵','Сверхновая','При проигрыше один раз очищает нижнюю линию.','nova',1],['♧','Живой кристалл','Усиления дают визуальную ауру детали.','aura',1],['⌖','Охотник за линиями','Линия в первые 2 секунды после падения +50%.','hunter',1],['◐','Зеркальная матрица','Каждые 7 линий зеркалит следующий блок.','mirror',1],['⚛','Квантовая петля','Порог уровня −1 линия (минимум 3).','loop',1],['❂','Плазменная волна','Сбрасывает задержку падения при очистке.','plasma',1]];
 const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
-function audioCtx(){if(!audio){try{audio=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(audio&&audio.state==='suspended')audio.resume();return audio}
-function tone(freq=440,dur=.08,type='sine',vol=.035){if(!soundOn)return;const a=audioCtx();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+dur)}
-function chime(){tone(520,.07,'triangle');setTimeout(()=>tone(760,.12,'sine'),55)}function music(){if(!musicOn||!soundOn)return;const a=audioCtx();if(!a)return;const notes=[110,164.81,220,164.81,130.81,196,246.94,196];let i=0;const pulse=()=>{if(!musicOn||!started||paused||gameOver)return;tone(notes[i%notes.length],.24,'sine',.012);i++;setTimeout(pulse,420)};pulse()}
+function audioCtx() {
+  if (!audio) {
+    try {
+      audio = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {}
+  }
+
+  if (audio && audio.state === 'suspended') {
+    audio.resume();
+  }
+
+  return audio;
+}
+
+function tone(freq = 440, dur = 0.08, type = 'sine', vol = 0.035) {
+  if (!soundOn) return;
+
+  const a = audioCtx();
+  if (!a) return;
+
+  const o = a.createOscillator();
+  const g = a.createGain();
+
+  o.type = type;
+  o.frequency.setValueAtTime(freq, a.currentTime);
+
+  g.gain.setValueAtTime(Math.max(0.0001, vol), a.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + dur);
+
+  o.connect(g);
+  g.connect(a.destination);
+
+  o.start();
+  o.stop(a.currentTime + dur);
+}
+
+function chime() {
+  tone(523.25, 0.07, 'square', 0.025);
+  setTimeout(() => tone(783.99, 0.11, 'square', 0.02), 55);
+}
+
+/* BLOCK BUDDIES — ORIGINAL RETRO ARCADE MUSIC */
+
+let arcadeMusicTimer = null;
+let arcadeMusicStep = 0;
+
+const arcadeMelody = [
+  523.25, null, 659.25, 783.99,
+  null, 659.25, 523.25, 392.00,
+  440.00, null, 523.25, 659.25,
+  783.99, 659.25, 523.25, null,
+
+  523.25, 659.25, 783.99, 1046.50,
+  null, 783.99, 659.25, 523.25,
+  587.33, null, 698.46, 880.00,
+  783.99, 659.25, 523.25, null
+];
+
+const arcadeBass = [
+  130.81, null, null, null,
+  130.81, null, 196.00, null,
+  110.00, null, null, null,
+  110.00, null, 164.81, null,
+
+  130.81, null, 130.81, null,
+  196.00, null, 164.81, null,
+  110.00, null, 110.00, null,
+  164.81, null, 196.00, null
+];
+
+function music() {
+  if (arcadeMusicTimer !== null) return;
+
+  arcadeMusicStep = 0;
+
+  arcadeMusicTimer = setInterval(() => {
+    if (!musicOn || !soundOn || !started || paused || gameOver) {
+      return;
+    }
+
+    const a = audioCtx();
+    if (!a) return;
+
+    const step = arcadeMusicStep % arcadeMelody.length;
+    const melodyNote = arcadeMelody[step];
+    const bassNote = arcadeBass[step];
+
+    // Основная аркадная мелодия
+    if (melodyNote !== null) {
+      const duration = step % 4 === 3 ? 0.16 : 0.105;
+      tone(melodyNote, duration, 'square', 0.018);
+    }
+
+    // Низкий электронный бас
+    if (bassNote !== null) {
+      tone(bassNote, 0.20, 'triangle', 0.035);
+    }
+
+    // Яркие акценты в начале музыкальной фразы
+    if (step === 0 || step === 16) {
+      tone(261.63, 0.12, 'square', 0.012);
+    }
+
+    arcadeMusicStep++;
+  }, 125);
+}
 function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900)}function bbRewardFloat(amount){
   const el=document.createElement('div');
   el.textContent='+'+amount+' 🪙';
