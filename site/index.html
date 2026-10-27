@@ -2694,6 +2694,172 @@ font-weight: 900 !important;
 .bb-reward-modal .action:active {
   transform: scale(.98);
 }
+
+/* BLOCK BUDDIES — магазин в стиле «Герои команды» */
+
+#shopScreen {
+  color: #f4f5ff;
+}
+
+#shopScreen .screenhead h2 {
+  color: #f4f5ff;
+  text-shadow: 0 0 24px #5cf5e81a;
+}
+
+#shopScreen .screenhead p {
+  color: #a8b2ce;
+}
+
+/* Баланс валют */
+#shopScreen .wallet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+#shopScreen .wallet span {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 14px;
+  color: #a8b2ce;
+  font-size: 12px;
+  background: linear-gradient(145deg, #151d33, #0e1426);
+  border: 1px solid #293554;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px #0005;
+}
+
+#shopScreen .wallet b {
+  color: #5cf5e8;
+  font-size: 15px;
+}
+
+/* Карточка сюрприз-бокса */
+#shopScreen .surprise-shop-card {
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  gap: 15px;
+  padding: 17px;
+  background:
+    radial-gradient(ellipse at 0% 0%, #5cf5e81b, transparent 65%),
+    linear-gradient(145deg, #151d33, #0e1426);
+  border: 1px solid #3a5273;
+  border-radius: 19px;
+  box-shadow:
+    0 4px 14px #0005,
+    inset 0 1px 0 #ffffff08;
+}
+
+#shopScreen .surprise-shop-icon {
+  flex: 0 0 62px;
+  height: 62px;
+  color: #5cf5e8;
+  background: linear-gradient(145deg, #1a2942, #101629);
+  border: 1px solid #476080;
+  border-radius: 16px;
+  box-shadow: 0 0 22px #5cf5e815;
+}
+
+#shopScreen .surprise-shop-label {
+  color: #5cf5e8;
+  letter-spacing: 2px;
+}
+
+#shopScreen .surprise-shop-info h3 {
+  color: #f4f5ff;
+  font-size: 18px;
+}
+
+#shopScreen .surprise-shop-info p {
+  color: #a8b2ce;
+}
+
+#shopScreen .surprise-shop-buy {
+  color: #07111e;
+  background: linear-gradient(100deg, #5cf5e8, #7c9dff);
+  border: 1px solid #7cfff4;
+  border-radius: 11px;
+  box-shadow: 0 5px 14px #5cf5e82a;
+  transition: transform .18s ease, filter .18s ease;
+}
+
+#shopScreen .surprise-shop-buy:hover {
+  filter: brightness(1.08);
+}
+
+#shopScreen .surprise-shop-buy:active {
+  transform: scale(.98);
+}
+
+/* Карточки товаров */
+#shopScreen .shopgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+}
+
+#shopScreen .shopitem {
+  min-width: 0;
+  padding: 15px 12px;
+  background:
+    radial-gradient(ellipse at 50% 0%, #9d7cff0b, transparent 70%),
+    linear-gradient(145deg, #151d33, #0e1426);
+  border: 1px solid #293554;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px #0005;
+  transition: border-color .2s ease, transform .2s ease,
+    box-shadow .2s ease;
+}
+
+#shopScreen .shopitem .emoji {
+  margin-bottom: 10px;
+  font-size: 30px;
+  filter: drop-shadow(0 0 12px #5cf5e825);
+}
+
+#shopScreen .shopitem strong {
+  color: #f4f5ff;
+  font-size: 14px;
+}
+
+#shopScreen .shopitem p {
+  color: #a8b2ce;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+#shopScreen .shopitem button {
+  width: 100%;
+  min-height: 38px;
+  padding: 9px 7px;
+  color: #07111e;
+  font-size: 10px;
+  font-weight: 900;
+  background: linear-gradient(100deg, #5cf5e8, #7c9dff);
+  border: 1px solid #7cfff4;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px #5cf5e81a;
+  cursor: pointer;
+}
+
+#shopScreen .shopitem button:active {
+  transform: scale(.98);
+}
+
+@media (hover: hover) {
+  #shopScreen .shopitem:hover {
+    transform: translateY(-2px);
+    border-color: #5cf5e866;
+    box-shadow: 0 7px 20px #0006, 0 0 18px #5cf5e80b;
+  }
+}
+
+@media (max-width: 360px) {
+  #shopScreen .shopgrid {
+    grid-template-columns: 1fr;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
