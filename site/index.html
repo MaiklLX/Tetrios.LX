@@ -3094,11 +3094,66 @@ const bbCatalog=[{id:'quick',emoji:'⚡',name:'Молниеносный стар
 function bbSave(){bbPut('coins',bbCoins);bbPut('gems',bbGems);bbPut('xp',bbXp);bbPut('heroLevel',bbHeroLevel);bbPut('inventory',bbInventory);bbPut('perks',bbPerks);bbRefresh()}
 /* BLOCK BUDDIES — выбор и сохранение персонажа */
 const bbHeroes = [
-  { id: 'plush', name: 'Капитан Плюш', emoji: '🐻', color: '#9b6845', desc: 'Храбрый лидер команды' },
-  { id: 'prism', name: 'Призма', emoji: '💎', color: '#276c9e', desc: 'Мастер точных комбинаций' },
-  { id: 'blip', name: 'Блип', emoji: '👾', color: '#6846a0', desc: 'Любитель неожиданных ходов' },
-  { id: 'pixel', name: 'Пиксель', emoji: '🤖', color: '#287858', desc: 'Спокойный и надёжный' },
-  { id: 'spark', name: 'Искра', emoji: '⚡', color: '#a87916', desc: 'Энергия каждой битвы' }
+  {
+    id: 'plush',
+    name: 'Капитан Плюш',
+    emoji: '🐻',
+    color: '#9b6845',
+    desc: 'Храбрый лидер команды',
+    role: 'Защитник',
+    hp: 5,
+    power: 3,
+    skill: 'Медвежья стойкость',
+    skillDesc: 'Один раз за забег смягчает последствия ошибки.'
+  },
+  {
+    id: 'prism',
+    name: 'Призма',
+    emoji: '💎',
+    color: '#276c9e',
+    desc: 'Мастер точных комбинаций',
+    role: 'Тактик',
+    hp: 3,
+    power: 5,
+    skill: 'Кристальный расчёт',
+    skillDesc: 'Подсвечивает возможность для выгодной комбинации.'
+  },
+  {
+    id: 'blip',
+    name: 'Блип',
+    emoji: '👾',
+    color: '#6846a0',
+    desc: 'Любитель неожиданных ходов',
+    role: 'Хаотик',
+    hp: 3,
+    power: 4,
+    skill: 'Глитч',
+    skillDesc: 'Даёт случайный небольшой бонус в начале забега.'
+  },
+  {
+    id: 'pixel',
+    name: 'Пиксель',
+    emoji: '🤖',
+    color: '#287858',
+    desc: 'Спокойный и надёжный',
+    role: 'Инженер',
+    hp: 5,
+    power: 3,
+    skill: 'Точный алгоритм',
+    skillDesc: 'Помогает быстрее подготовить следующий ход.'
+  },
+  {
+    id: 'spark',
+    name: 'Искра',
+    emoji: '⚡',
+    color: '#a87916',
+    desc: 'Энергия каждой битвы',
+    role: 'Штурмовик',
+    hp: 3,
+    power: 5,
+    skill: 'Перезарядка',
+    skillDesc: 'Получает дополнительный бонус за серии очищенных линий.'
+  }
 ];
 
 let bbSelectedHero = localStorage.getItem('bbSelectedHero') || 'plush';
