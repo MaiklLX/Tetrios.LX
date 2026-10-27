@@ -2317,6 +2317,74 @@ font-weight: 900 !important;
     linear-gradient(145deg, #1a2850 0%, #111a33 75%) !important;
 }
 
+
+/* BLOCK BUDDIES — премиальная игровая арена */
+#menu {
+  position: relative;
+  isolation: isolate;
+}
+
+#menu .hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(133, 160, 255, .22);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 100%,
+      rgba(40, 225, 220, .18), transparent 48%),
+    radial-gradient(ellipse at 15% 10%,
+      rgba(116, 83, 255, .22), transparent 55%),
+    linear-gradient(155deg, #1b2547, #10172d 65%, #0c1224);
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, .28),
+    inset 0 1px 0 rgba(255, 255, 255, .09),
+    inset 0 -18px 35px rgba(72, 92, 180, .07);
+}
+
+#menu .hero::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 12%;
+  right: 12%;
+  bottom: 13px;
+  height: 22px;
+  border-radius: 50%;
+  background: #43eee2;
+  filter: blur(27px);
+  opacity: .24;
+  pointer-events: none;
+}
+
+#menu .hero h1,
+#menu .hero p,
+#menu .hero .eyebrow,
+#menu .hero .orb {
+  position: relative;
+  z-index: 1;
+}
+
+#menu .orb {
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, .25));
+}
+
+#menu .orb::before {
+  border-color: rgba(92, 245, 232, .55);
+  box-shadow:
+    0 0 35px rgba(92, 245, 232, .17),
+    inset 0 0 28px rgba(157, 124, 255, .13);
+}
+
+#menu .orb::after {
+  border-color: rgba(157, 124, 255, .65);
+  box-shadow: 0 0 22px rgba(157, 124, 255, .12);
+}
+
+#menu .relic {
+  filter:
+    drop-shadow(0 0 10px rgba(92, 245, 232, .7))
+    drop-shadow(0 8px 12px rgba(0, 0, 0, .35));
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
