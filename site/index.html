@@ -2614,6 +2614,86 @@ font-weight: 900 !important;
 .surprise-shop-buy:active {
   transform: scale(.98);
 }
+
+/* BLOCK BUDDIES — премиальное окно награды */
+.bb-reward-modal {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 20px 20px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #d9ad4a26, transparent 65%),
+    linear-gradient(145deg, #24231f, #15161b 60%, #101117);
+  border: 1px solid #c9a34f;
+  border-radius: 22px;
+  box-shadow:
+    0 0 35px #d5a84420,
+    0 18px 45px #0009,
+    inset 0 1px 0 #fff2d522;
+}
+
+.bb-reward-modal .bigicon {
+  display: flex;
+  width: 94px;
+  height: 94px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  font-size: 55px;
+  background: linear-gradient(145deg, #49391e, #211d16);
+  border: 1px solid #d2ad55;
+  border-radius: 24px;
+  box-shadow:
+    0 0 28px #d5a84435,
+    inset 0 1px 0 #fff2d530;
+}
+
+.bb-reward-modal .eyebrow {
+  margin-bottom: 8px;
+  color: #e5c36c;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.bb-reward-modal h3 {
+  margin: 0 0 12px;
+  color: #ffe5a0;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.bb-reward-modal p {
+  margin: 0 0 22px;
+  color: #c6c0b2;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.bb-reward-modal p b {
+  display: block;
+  margin-top: 10px;
+  color: #f5d47d;
+  font-size: 20px;
+  text-shadow: 0 0 18px #d5a84435;
+}
+
+.bb-reward-modal .action {
+  width: 100%;
+  min-height: 46px;
+  color: #21190a;
+  font-weight: 950;
+  letter-spacing: 1px;
+  background: linear-gradient(100deg, #d8b45b, #f8e3a0);
+  border: 1px solid #f8dfa0;
+  border-radius: 12px;
+  box-shadow: 0 5px 18px #d5a84425;
+  cursor: pointer;
+}
+
+.bb-reward-modal .action:active {
+  transform: scale(.98);
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
