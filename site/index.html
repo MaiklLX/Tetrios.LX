@@ -3012,10 +3012,13 @@ let mult=boosts.includes('mult')?1.5:1;
 if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15;
 if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1;if(boosts.includes('score'))mult*=1+combo*.15;if(boosts.includes('glow'))mult*=1.1;if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&dailyRules[new Date().getDay()].mod==='pulse')mult*=1.5;let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mult);if(cleared===1&&boosts.includes('dust'))score+=100;if(cleared>=2&&boosts.includes('magnet'))score+=250;if(cleared>=3&&boosts.includes('burst'))score+=600;if(cleared>=2&&boosts.includes('flash'))flash();if(boosts.includes('echo')&&lines%5<cleared)levelLines++;if(boosts.includes('reactor')&&lines%10<cleared)levelLines+=needLines;if(boosts.includes('infinity')&&lines%10<cleared){relicCount++;localStorage.nrRelics=relicCount}if(mode==='daily'&&dailyRules[new Date().getDay()].mod==='sun'&&lines%4<cleared)levelLines++;if(mode==='daily'&&dailyRules[new Date().getDay()].mod==='chroma')colors.reverse();if(mode==='daily'&&dailyRules[new Date().getDay()].mod==='comet'&&Date.now()-lastClear<2000)score+=200;lastClear=Date.now();tone(400+cleared*150,.18,'triangle',.05);if(cleared>=2)chime();}else combo=0;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-4&&Math.random()<.22?1:0));toast('Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
   bbPlushSaved=true;
-  board[H-1].fill(0);
-  board[H-2].fill(0);
-  board[H-3].fill(0);
-  toast('🐻 КАПИТАН ПЛЮШ СПАСАЕТ! Очищены 3 нижних ряда!');
+  for(let y=H-1;y>=4;y--){
+    board[y]=board[y-4].slice();
+  }
+  for(let y=0;y<4;y++){
+    board[y]=Array(W).fill(0);
+  }
+  toast('🐻 КАПИТАН ПЛЮШ СПАСАЕТ! Поле сдвинуто на 4 ряда!');
 }else{
   if(bbCheckCampaignCompletion())return;
   endGame();
