@@ -1498,7 +1498,74 @@ body,
   box-shadow: 0 4px 14px #ff2d4140 !important;
   font-weight: 900 !important;
 }
+/* FIX: единая тёмная тема на компьютере и телефоне */
+html,
+body {
+background: #080b18 !important;
+color: #f4f5ff !important;
+}
 
+body,
+body .app {
+background-color: #080b18 !important;
+color: #f4f5ff !important;
+}
+
+body .app {
+background-image:
+radial-gradient(ellipse at 50% -10%, #27305b 0, transparent 48%),
+linear-gradient(160deg, #080b18, #0b1021 60%, #090b17) !important;
+}
+
+/* Тёмные панели кампании */
+#campaign,
+#campaign .screen,
+#campaign .challengebox,
+#campaign .mapgrid,
+#campaign #mapgrid,
+#campaign #mapgrid > button,
+#campaign #mapgrid > .node,
+#campaign .worldcard {
+background-color: #11172a !important;
+color: #f4f5ff !important;
+border-color: #2b3655 !important;
+}
+
+#campaign .challengebox,
+#campaign #mapgrid > button,
+#campaign #mapgrid > .node,
+#campaign .worldcard {
+background-image: linear-gradient(145deg, #17213b, #0e1426) !important;
+box-shadow: 0 4px 14px #0005 !important;
+}
+
+#campaign .screenhead h2,
+#campaign .challengehero h3,
+#campaign .challengehero p,
+#campaign .challengegoal,
+#campaign #mapgrid > button span,
+#campaign #mapgrid > button strong,
+#campaign #mapgrid > button small {
+color: #f4f5ff !important;
+}
+
+#campaign #mapgrid > button.active,
+#campaign #mapgrid > .node.active {
+background: linear-gradient(145deg, #183b52, #17213b) !important;
+border-color: #5cf5e8 !important;
+}
+
+/* Красная кнопка сброса — независимо от общих стилей кнопок */
+button#resetProgressBtn,
+button#resetProgressBtn.primary,
+button#resetProgressBtn.action {
+background: linear-gradient(135deg, #ff4d4f, #b5122b) !important;
+background-color: #b5122b !important;
+color: #ffffff !important;
+border: 1px solid #ff7779 !important;
+box-shadow: 0 4px 14px #ff2d4140 !important;
+font-weight: 900 !important;
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">✦</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧸</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes"><button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign"><div class="modeicon">⌘</div><div class="modetext"><div class="modetitle">Кампания</div><div class="modesub">Путешествие по секторам забытой галактики</div><span class="tag">КАРТА · ПРОГРЕССИЯ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue"><div class="modeicon">✧</div><div class="modetext"><div class="modetitle">Весёлый блок-ран</div><div class="modesub">Случайные усиления. Растущая сложность. Один забег.</div><span class="tag" style="color:#bba8ff;background:#9d7cff20">25+ УЛУЧШЕНИЙ</span></div><div class="modearrow">›</div></button><button class="mode" style="--glow:#ffc86b;--iconbg:#ffc86b1c" data-mode="daily"><div class="modeicon">☼</div><div class="modetext"><div class="modetitle">Ежедневный вызов</div><div class="modesub">Новое правило каждый день недели</div><span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span></div><div class="modearrow">›</div></button></div><div id="rpgPanel" class="rpgpanel"></div><div class="avatar">🐻</div><div class="rpginfo"><div class="rpgname">Капитан Плюш <span id="heroLevel">УР. 1</span></div><div class="xpbar"><i id="heroXpBar"></i></div><div class="wallet"><span>🪙 <b id="coins">0</b> монет</span><span>💎 <b id="gems">0</b> самоцветов</span></div></div></div>
 <div style="margin-top:16px">
