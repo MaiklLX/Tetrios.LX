@@ -5036,6 +5036,14 @@ function bbDailyShowChallenge(date) {
   const completed = Boolean(record) ||
     localStorage.getItem('bbDailyChallengeCompletedDate') === date;
 
+  const isToday = date === todayKey;
+  const replayPrice = bbDailyReplayPrice(date);
+  const replayedDates = JSON.parse(
+    localStorage.getItem('bbDailyReplayCompleted') || '[]'
+  );
+  const replayAlreadyCompleted = replayedDates.includes(date);
+  const canReplay = !isToday && !completed && !replayAlreadyCompleted;
+
   modal.innerHTML = `
     <div class="modalhead">
       <div class="bigicon">${challenge.symbol}</div>
@@ -5055,11 +5063,26 @@ function bbDailyShowChallenge(date) {
 
     <p style="color:${completed ? '#5cf5a5' : '#ffc86b'}">
       ${completed ? '✓ Испытание пройдено' : '× Испытание пропущено'}
-    </p>
 
-    <p style="color:#aebbd7;font-size:12px">
-      Повторное прохождение за монеты добавим следующим этапом.
-    </p>
+${canReplay
+  ? `<p style="color:#ffc86b;font-size:13px">
+       Повторное прохождение: ${replayPrice} 🪙
+     </p>
+     <p style="color:#aebbd7;font-size:12px">
+       Награда за этот день может быть получена только один раз.
+     </p>`
+  : `<p style="color:#aebbd7;font-size:12px">
+       ${isToday
+         ? 'Сегодняшний вызов запускается на главном экране режима.'
+         : replayAlreadyCompleted
+           ? 'Этот вызов уже повторно пройден.'
+           : 'Этот день уже отмечен как пройденный.'}
+     </p>`
+}
+
+<p style="color:#aebbd7;font-size:12px">
+  {canReplay ? '' : ''}
+</p>
 
     <button class="action secondary" id="bbDailyBackToCalendar">
       ← НАЗАД К КАЛЕНДАРЮ
