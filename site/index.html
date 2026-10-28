@@ -4204,28 +4204,78 @@ font-weight: 900 !important;
   overflow-wrap: anywhere;
 }
 
+
 @media (max-width: 700px) {
   #game {
-    max-width: 520px;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
   }
 
   #game .playlayout {
-    grid-template-columns: 54px minmax(0, 1fr) 66px !important;
-    gap: 5px !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 76px !important;
+    grid-template-rows: auto auto;
+    gap: 6px !important;
     padding: 4px !important;
+    align-items: start !important;
+  }
+
+  /* Поле занимает левую часть экрана */
+  #game .playlayout > div {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   #game .boardframe {
-    height: min(57dvh, 520px) !important;
+    box-sizing: border-box;
+    width: 100%;
+    height: min(70dvh, 620px) !important;
+    min-height: 0;
+    aspect-ratio: auto !important;
     padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Сохраняем правильные пропорции клеток */
+  #game .board {
+    display: block;
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1 / 2;
+    object-fit: contain;
+    flex: 0 1 auto;
+  }
+
+  /* Статистика и прогресс — под игровым полем */
+  #game .gameleftcol {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
   }
 
   #game .gameleftcol .hudbox {
-    padding: 6px 3px;
+    min-width: 0;
+    padding: 6px 4px;
+    overflow-wrap: anywhere;
   }
 
   #game .gameleftcol .hudbox span {
-    font-size: 7px;
+    font-size: 8px;
     letter-spacing: 0;
   }
 
@@ -4233,21 +4283,39 @@ font-weight: 900 !important;
     font-size: 13px;
   }
 
+  #game .gameleftcol .progresswrap {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  /* Все игровые карточки — справа от поля */
   #game .sidecol {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     gap: 6px;
   }
 
   #game .sidecard {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
     padding: 6px 3px;
+    overflow-wrap: anywhere;
   }
 
   #game .sidecard label {
-    font-size: 7px;
+    font-size: 8px;
     letter-spacing: 0;
   }
 
   #game .nextcanvas {
+    display: block;
     max-width: 100%;
+    height: auto;
   }
 }
 
