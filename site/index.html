@@ -5038,9 +5038,19 @@ function bbDailyShowChallenge(date) {
 
   const isToday = date === todayKey;
   const replayPrice = bbDailyReplayPrice(date);
-  const replayedDates = JSON.parse(
+let replayedDates = [];
+
+try {
+  replayedDates = JSON.parse(
     localStorage.getItem('bbDailyReplayCompleted') || '[]'
   );
+
+  if (!Array.isArray(replayedDates)) {
+    replayedDates = [];
+  }
+} catch (error) {
+  replayedDates = [];
+}
   const replayAlreadyCompleted = replayedDates.includes(date);
   const canReplay = !isToday && !completed && !replayAlreadyCompleted;
 
