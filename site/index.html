@@ -5112,9 +5112,9 @@ ${canReplay
         return;
       }
 
-      bbDailyReplayDate = date;
-      bbDailyReplayRule = dailyRules[selected.getDay()];
-      bbDailyReplayPaid = false;
+bbDailyReplayDate = date;
+bbDailyReplayRule = record || dailyRules[selected.getDay()];
+bbDailyReplayPaid = false;
 
       bbChooseHeroBeforeStart();
     };
