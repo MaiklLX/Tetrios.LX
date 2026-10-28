@@ -4831,6 +4831,31 @@ function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function setupDaily(){let d=new Date(),rule=dailyRules[d.getDay()];$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ'}
 
+function bbSaveDailyChallengeHistory(date, rule, status = 'completed') {
+  if (!date || !rule) return;
+
+  const key = 'bbDailyChallengeHistory';
+  let history = {};
+
+  try {
+    history = JSON.parse(localStorage.getItem(key) || '{}');
+  } catch (error) {
+    history = {};
+  }
+
+  history[date] = {
+    date,
+    title: rule.title,
+    symbol: rule.symbol,
+    desc: rule.desc,
+    goal: rule.goal,
+    rule: rule.rule,
+    mod: rule.mod,
+    status
+  };
+
+  localStorage.setItem(key, JSON.stringify(history));
+}
 function bbDailyCalendarOpen() {
   const modal = document.getElementById('modal');
   const overlay = document.getElementById('overlay');
@@ -5730,7 +5755,13 @@ function bbCheckDailyCompletion() {
 
   // Сначала фиксируем победу, чтобы награду нельзя было получить повторно.
   localStorage.setItem('bbDailyChallengeCompletedDate', today);
-
+  
+bbSaveDailyChallengeHistory(
+  today,
+  dailyRules[new Date().getDay()],
+  'completed'
+);
+  
   // Награда за ежедневный вызов.
   bbCoins += 500;
   localStorage.setItem('bbCoins', String(bbCoins));
