@@ -5160,10 +5160,13 @@ function bbCheckDailyCompletion() {
 
   toast('🏆 Ежедневный вызов пройден! +500 🪙 и 1 ✧ реликвия');
 
+
   paused = true;
   bbRewardFloat(500);
 
-  const relicReward = document.createElement('div');
+  setTimeout(() => {
+    const relicReward = document.createElement('div');
+
   relicReward.textContent = '+1 ✧ РЕЛИКВИЯ';
   relicReward.style.cssText =
     'position:fixed;left:50%;top:35%;transform:translate(-50%,0);' +
@@ -5173,12 +5176,14 @@ function bbCheckDailyCompletion() {
     'box-shadow:0 0 32px #9d7cffaa;' +
     'animation:bbRelicPop 1.8s ease-in-out both;';
 
-  document.body.appendChild(relicReward);
 
-  setTimeout(() => {
-    relicReward.remove();
-    endGame();
-  }, 1800);
+    document.body.appendChild(relicReward);
+
+    setTimeout(() => {
+      relicReward.remove();
+      endGame();
+    }, 1800);
+  }, 700);
 
   return true;
 }
