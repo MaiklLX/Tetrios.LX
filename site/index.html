@@ -5646,14 +5646,18 @@ $('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='c
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
 tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});
+
 let touch = null;
+let touchDropLocked = false;
 const cv = $('game');
 
 cv.addEventListener('touchstart', e => {
-  if (!started || paused || gameOver) return;
+  if (!started || paused || gameOver || touchDropLocked) return;
+
   if (e.target.closest('#board')) {
-  e.preventDefault();
-}
+    e.preventDefault();
+  }
+
   if (e.target.closest('button, input, select, textarea')) return;
 
   const t = e.changedTouches[0];
@@ -5671,19 +5675,17 @@ cv.addEventListener('touchstart', e => {
 }, { passive: false });
 
 cv.addEventListener('touchmove', e => {
-  if (!touch || !started || paused || gameOver) return;
+  if (!touch || touch.dropped || !started || paused || gameOver) return;
 
   const t = e.changedTouches[0];
   const dx = t.clientX - touch.lastX;
   const dy = t.clientY - touch.lastY;
 
-  // Горизонтальное перемещение — сохраняем привычное управление.
   if (Math.abs(dx) >= 24 && Math.abs(dx) > Math.abs(dy) * 1.15) {
     move(dx > 0 ? 1 : -1);
     touch.lastX = t.clientX;
   }
 
-  // Медленное движение вниз — опускаем фигуру на одну клетку.
   if (dy >= 32 && dy > Math.abs(dx) * 1.25) {
     move(0, 1);
     touch.lastY = t.clientY;
@@ -5691,40 +5693,41 @@ cv.addEventListener('touchmove', e => {
 }, { passive: true });
 
 cv.addEventListener('touchend', e => {
-  if (!touch) return;
+  if (!touch) {
+    touchDropLocked = false;
+    return;
+  }
 
   const t = e.changedTouches[0];
   const dx = t.clientX - touch.x;
   const dy = t.clientY - touch.y;
   const elapsed = Date.now() - touch.at;
 
-  // Короткое касание без движения — поворот фигуры.
   if (
     Math.abs(dx) < 18 &&
     Math.abs(dy) < 18 &&
     elapsed < 230
   ) {
     rotatePiece();
-  }
-
-  // Жёсткое падение — только при явном свайпе вниз.
-  else if (
+  } else if (
     dy > 110 &&
     dy > Math.abs(dx) * 1.8 &&
     elapsed < 800
   ) {
+    touch.dropped = true;
+    touchDropLocked = true;
     hardDrop();
   }
 
   touch = null;
+  touchDropLocked = false;
 }, { passive: true });
 
 cv.addEventListener('touchcancel', () => {
   touch = null;
+  touchDropLocked = false;
 }, { passive: true });
-cv.addEventListener('touchcancel', () => {
-  touch = null;
-}, { passive: true });
+
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
 
