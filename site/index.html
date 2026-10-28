@@ -5073,6 +5073,16 @@ document.getElementById('bbCancelStartHero').onclick = () => {
 }
 
 function startGame() {
+  if (
+    mode === 'daily' &&
+    localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
+  ) {
+    show('daily');
+    toast('🏆 Ежедневный вызов уже пройден. Новая цель появится завтра!');
+    bbRenderDailyQuests();
+    return;
+  }
+
   bbChooseHeroBeforeStart();
 }
 
@@ -5091,8 +5101,16 @@ function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&d
 function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape);if(!collides(piece,0,0,s)){piece.shape=s;chime();render()}else if(!collides(piece,-1,0,s)){piece.x--;piece.shape=s;chime();render()}else if(!collides(piece,1,0,s)){piece.x++;piece.shape=s;chime();render()}}
 function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;lockPiece()}
 
+
 function bbCheckDailyCompletion() {
   if (mode !== 'daily' || !started || paused || gameOver) {
+    return false;
+  }
+
+  const today = bbGetTodayKey();
+  const completedDate = localStorage.getItem('bbDailyChallengeCompletedDate');
+
+  if (completedDate === today) {
     return false;
   }
 
@@ -5113,10 +5131,26 @@ function bbCheckDailyCompletion() {
 
   if (!completed) return false;
 
-  toast('🏆 Ежедневный вызов выполнен!');
+  // Сначала фиксируем победу, чтобы награду нельзя было получить повторно.
+  localStorage.setItem('bbDailyChallengeCompletedDate', today);
+
+  // Награда за ежедневный вызов.
+  bbCoins += 500;
+  localStorage.setItem('bbCoins', String(bbCoins));
+  localStorage.setItem('coins', String(bbCoins));
+
+  relicCount += 1;
+  localStorage.setItem('nrRelics', String(relicCount));
+
+  updateHud();
+  updateStats();
+
+  toast('🏆 Ежедневный вызов пройден! +500 монет и 1 самоцвет');
+
   endGame();
   return true;
 }
+
 function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));let cleared=0;for(let y=H-1;y>=0;y--){if(board[y].every(v=>v)){board.splice(y,1);board.unshift(Array(W).fill(0));cleared++;y++}}
 if(cleared){bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);lines+=cleared;bbDailyAddLines(cleared);levelLines+=cleared;
 combo++;
