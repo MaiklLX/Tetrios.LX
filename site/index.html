@@ -4926,6 +4926,41 @@ let bbCampaignRun = { maxClear: 0, passed: false };function bbGetNodeGoals(node)
 let bbDailyQuests = [];
 let bbDailyQuestDate = '';
 
+let bbDailyArchive = {};
+
+function bbLoadDailyArchive() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem('bbDailyArchive') || '{}'
+    );
+
+    bbDailyArchive =
+      saved && typeof saved === 'object' && !Array.isArray(saved)
+        ? saved
+        : {};
+  } catch (e) {
+    bbDailyArchive = {};
+  }
+}
+
+function bbSaveDailyArchive() {
+  const dates = Object.keys(bbDailyArchive).sort();
+
+  // Храним историю за последние 90 дней.
+  while (dates.length > 90) {
+    const oldestDate = dates.shift();
+    delete bbDailyArchive[oldestDate];
+  }
+
+  localStorage.setItem(
+    'bbDailyArchive',
+    JSON.stringify(bbDailyArchive)
+  );
+}
+
+bbLoadDailyArchive();
+
+
 function bbGetTodayKey() {
   const d = new Date();
   return d.getFullYear() + '-' +
@@ -4940,11 +4975,13 @@ function bbLoadDailyQuests() {
   try {
     const saved = JSON.parse(localStorage.getItem('bbDailyQuests') || 'null');
 
-    if (saved && saved.date === today && Array.isArray(saved.quests)) {
-      bbDailyQuests = saved.quests;
-      bbDailyQuestDate = today;
-      return;
-    }
+
+if (saved && saved.date === today && Array.isArray(saved.quests)) {
+  bbDailyQuests = saved.quests;
+  bbDailyQuestDate = today;
+  bbSaveDailyQuests();
+  return;
+}
   } catch (e) {}
 
   bbDailyQuestDate = today;
@@ -5013,11 +5050,23 @@ function bbLoadDailyQuests() {
   bbSaveDailyQuests();
 }
 
+
 function bbSaveDailyQuests() {
+  const snapshot = bbDailyQuests.map(q => ({ ...q }));
+
   localStorage.setItem('bbDailyQuests', JSON.stringify({
     date: bbDailyQuestDate,
-    quests: bbDailyQuests
+    quests: snapshot
   }));
+
+  if (bbDailyQuestDate) {
+    bbDailyArchive[bbDailyQuestDate] = {
+      date: bbDailyQuestDate,
+      quests: snapshot
+    };
+
+    bbSaveDailyArchive();
+  }
 }
 
 function bbRenderDailyQuests() {
