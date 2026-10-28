@@ -5100,6 +5100,25 @@ ${canReplay
 
   document.getElementById('bbDailyBackToCalendar').onclick =
     bbDailyCalendarOpen;
+
+  const replayButton = document.getElementById('bbDailyReplayStart');
+
+  if (replayButton) {
+    replayButton.onclick = () => {
+      const price = bbDailyReplayPrice(date);
+
+      if (bbCoins < price) {
+        toast('Недостаточно монет для повторного прохождения.');
+        return;
+      }
+
+      bbDailyReplayDate = date;
+      bbDailyReplayRule = dailyRules[selected.getDay()];
+      bbDailyReplayPaid = false;
+
+      bbChooseHeroBeforeStart();
+    };
+  }
 }
 
 document.addEventListener('click', function(event) {
