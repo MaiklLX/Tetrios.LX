@@ -5090,9 +5090,29 @@ function startGame() {
     localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   ) {
     show('daily');
-toast('🏆 Ежедневный вызов пройден! +500 🪙 и 1 ✧ реликвия');
-    bbRenderDailyQuests();
-    return;
+
+  paused = true;
+
+  bbRewardFloat(500);
+
+  const relicReward = document.createElement('div');
+  relicReward.textContent = '+1 ✧ РЕЛИКВИЯ';
+  relicReward.style.cssText =
+    'position:fixed;left:50%;top:34%;transform:translate(-50%,0);' +
+    'z-index:99999;padding:12px 18px;border-radius:14px;' +
+    'background:#211735;color:#c8a8ff;border:1px solid #9d7cff;' +
+    'font-size:22px;font-weight:900;box-shadow:0 0 24px #9d7cff88;';
+  document.body.appendChild(relicReward);
+
+  toast('🏆 Ежедневный вызов пройден!');
+
+  setTimeout(() => {
+    relicReward.remove();
+    endGame();
+  }, 1800);
+
+  return true;
+
   }
 
   bbChooseHeroBeforeStart();
