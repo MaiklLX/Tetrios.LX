@@ -5982,15 +5982,16 @@ if (resetProgressBtn) {
         }
       }
 
-      [
-        'bbDailyQuests',
-        'bbSelectedHero',
-        'nrBest',
-        'nrRuns',
-        'nrRelics',
-        'nrNode',
-        'nrDailyDone'
-      ].forEach(key => localStorage.removeItem(key));
+[
+  'bbDailyQuests',
+  'bbSelectedHero',
+  'bbDailyChallengeCompletedDate',
+  'nrBest',
+  'nrRuns',
+  'nrRelics',
+  'nrNode',
+  'nrDailyDone'
+].forEach(key => localStorage.removeItem(key));
 
       window.location.reload();
     };
