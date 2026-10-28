@@ -5851,6 +5851,14 @@ document.getElementById('bbConfirmStartHero').onclick = () => {
   };
 
 document.getElementById('bbCancelStartHero').onclick = () => {
+  const wasDailyReplay = Boolean(bbDailyReplayDate);
+
+  if (wasDailyReplay) {
+    bbDailyReplayDate = null;
+    bbDailyReplayRule = null;
+    bbDailyReplayPaid = false;
+  }
+
   closeOverlay();
 
   if (mode === 'campaign') {
@@ -5858,6 +5866,10 @@ document.getElementById('bbCancelStartHero').onclick = () => {
     buildMap();
   } else if (mode === 'daily') {
     show('daily');
+
+    if (wasDailyReplay) {
+      toast('Повторное испытание отменено. Монеты не списаны.');
+    }
   } else {
     show('menu');
   }
