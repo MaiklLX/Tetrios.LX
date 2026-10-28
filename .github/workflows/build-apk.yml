@@ -51,7 +51,7 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/android-project"
 
           unzip -oq \
-            "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project.zip" \
+            "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip" \
             -d "$GITHUB_WORKSPACE/android-project"
 
           PROJECT_DIR="$(find "$GITHUB_WORKSPACE/android-project" \
