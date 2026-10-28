@@ -5224,6 +5224,35 @@ function bbGetTodayKey() {
     String(d.getDate()).padStart(2, '0');
 }
 
+let bbDailyReplayDate = null;
+let bbDailyReplayRule = null;
+let bbDailyReplayPaid = false;
+
+function bbDailyReplayPrice(date) {
+  const today = new Date();
+  const selected = new Date(date + 'T12:00:00');
+  const current = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  const selectedDay = new Date(
+    selected.getFullYear(),
+    selected.getMonth(),
+    selected.getDate()
+  );
+
+  const age = Math.floor(
+    (current.getTime() - selectedDay.getTime()) / 86400000
+  );
+
+  if (age <= 0) return 0;
+
+  // 10% за каждый день давности, максимум 50% от награды в 500 монет.
+  return Math.min(age * 50, 250);
+}
+
 
 function bbLoadDailyQuests() {
   const today = bbGetTodayKey();
