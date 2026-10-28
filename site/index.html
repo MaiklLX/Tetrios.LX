@@ -5974,7 +5974,8 @@ function bbCheckDailyCompletion() {
 
   // Повторное прохождение: записываем исходную дату,
   // но не выдаём повторную награду и не блокируем сегодня.
-  if (isReplay) {
+
+if (isReplay) {
     let replayedDates = [];
 
     try {
@@ -5989,19 +5990,37 @@ function bbCheckDailyCompletion() {
       replayedDates = [];
     }
 
-    if (!replayedDates.includes(targetDate)) {
-      replayedDates.push(targetDate);
-    }
+    const alreadyReplayed = replayedDates.includes(targetDate);
 
-    localStorage.setItem(
-      'bbDailyReplayCompleted',
-      JSON.stringify(replayedDates)
-    );
+    if (!alreadyReplayed) {
+      replayedDates.push(targetDate);
+
+      localStorage.setItem(
+        'bbDailyReplayCompleted',
+        JSON.stringify(replayedDates)
+      );
+
+      // Награда за успешно пройденный пропущенный вызов.
+      bbCoins += 500;
+      localStorage.setItem('bbCoins', String(bbCoins));
+      localStorage.setItem('coins', String(bbCoins));
+
+      relicCount += 1;
+      localStorage.setItem('nrRelics', String(relicCount));
+
+      updateHud();
+      updateStats();
+
+      bbRewardFloat(500);
+
+      toast('🏆 Испытание пройдено! +500 🪙 и 1 ✧ реликвия');
+    } else {
+      toast('Это испытание уже пройдено.');
+    }
 
     bbSaveDailyChallengeHistory(targetDate, rule, 'replayed');
 
     paused = true;
-    toast('🏆 Повторное испытание пройдено! Награда уже была учтена.');
 
     setTimeout(() => {
       bbDailyReplayDate = null;
