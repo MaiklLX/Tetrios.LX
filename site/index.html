@@ -5919,19 +5919,25 @@ function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.s
 function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;lockPiece()}
 
 
+
 function bbCheckDailyCompletion() {
   if (mode !== 'daily' || !started || paused || gameOver) {
     return false;
   }
 
   const today = bbGetTodayKey();
-  const completedDate = localStorage.getItem('bbDailyChallengeCompletedDate');
+  const isReplay = Boolean(bbDailyReplayDate);
+  const targetDate = isReplay ? bbDailyReplayDate : today;
+  const rule = bbGetActiveDailyRule();
 
-  if (completedDate === today) {
+  // Обычный сегодняшний вызов можно пройти только один раз.
+  if (
+    !isReplay &&
+    localStorage.getItem('bbDailyChallengeCompletedDate') === today
+  ) {
     return false;
   }
 
-  const rule = bbGetActiveDailyRule();
   if (!rule || !rule.goal) return false;
 
   const target = Number(rule.goal.match(/\d+/)?.[0]);
@@ -5948,16 +5954,52 @@ function bbCheckDailyCompletion() {
 
   if (!completed) return false;
 
-  // Сначала фиксируем победу, чтобы награду нельзя было получить повторно.
+  // Повторное прохождение: записываем исходную дату,
+  // но не выдаём повторную награду и не блокируем сегодня.
+  if (isReplay) {
+    let replayedDates = [];
+
+    try {
+      replayedDates = JSON.parse(
+        localStorage.getItem('bbDailyReplayCompleted') || '[]'
+      );
+
+      if (!Array.isArray(replayedDates)) {
+        replayedDates = [];
+      }
+    } catch (error) {
+      replayedDates = [];
+    }
+
+    if (!replayedDates.includes(targetDate)) {
+      replayedDates.push(targetDate);
+    }
+
+    localStorage.setItem(
+      'bbDailyReplayCompleted',
+      JSON.stringify(replayedDates)
+    );
+
+    bbSaveDailyChallengeHistory(targetDate, rule, 'replayed');
+
+    paused = true;
+    toast('🏆 Повторное испытание пройдено! Награда уже была учтена.');
+
+    setTimeout(() => {
+      bbDailyReplayDate = null;
+      bbDailyReplayRule = null;
+      bbDailyReplayPaid = false;
+
+      endGame();
+    }, 1200);
+
+    return true;
+  }
+
+  // Обычный ежедневный вызов.
   localStorage.setItem('bbDailyChallengeCompletedDate', today);
-  
-bbSaveDailyChallengeHistory(
-  today,
-bbGetActiveDailyRule(),
-  'completed'
-);
-  
-  // Награда за ежедневный вызов.
+  bbSaveDailyChallengeHistory(today, rule, 'completed');
+
   bbCoins += 500;
   localStorage.setItem('bbCoins', String(bbCoins));
   localStorage.setItem('coins', String(bbCoins));
@@ -5968,9 +6010,7 @@ bbGetActiveDailyRule(),
   updateHud();
   updateStats();
 
-
   toast('🏆 Ежедневный вызов пройден! +500 🪙 и 1 ✧ реликвия');
-
 
   paused = true;
   bbRewardFloat(500);
@@ -5978,15 +6018,14 @@ bbGetActiveDailyRule(),
   setTimeout(() => {
     const relicReward = document.createElement('div');
 
-  relicReward.textContent = '+1 ✧ РЕЛИКВИЯ';
-  relicReward.style.cssText =
-    'position:fixed;left:50%;top:35%;transform:translate(-50%,0);' +
-    'z-index:999999;padding:16px 22px;border-radius:16px;' +
-    'background:#211735;color:#d7baff;border:2px solid #9d7cff;' +
-    'font-size:24px;font-weight:900;text-align:center;' +
-    'box-shadow:0 0 32px #9d7cffaa;' +
-    'animation:bbRelicPop 1.8s ease-in-out both;';
-
+    relicReward.textContent = '+1 ✧ РЕЛИКВИЯ';
+    relicReward.style.cssText =
+      'position:fixed;left:50%;top:35%;transform:translate(-50%,0);' +
+      'z-index:999999;padding:16px 22px;border-radius:16px;' +
+      'background:#211735;color:#d7baff;border:2px solid #9d7cff;' +
+      'font-size:24px;font-weight:900;text-align:center;' +
+      'box-shadow:0 0 32px #9d7cffaa;' +
+      'animation:bbRelicPop 1.8s ease-in-out both;';
 
     document.body.appendChild(relicReward);
 
