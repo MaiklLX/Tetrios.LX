@@ -6230,6 +6230,7 @@ while (heroXp >= 200 + (heroLevel - 1) * 100) {
 
 let bbDailyRecordedThisGame = false;
 
+
 function bbDailyAddLines(cleared) {
   if (bbDailyQuestDate !== bbGetTodayKey()) {
     bbLoadDailyQuests();
@@ -6247,9 +6248,9 @@ function bbDailyAddLines(cleared) {
     toast('Ежедневное задание выполнено! +' + q.reward + ' 🪙');
   }
 
-bbRefresh();
-bbLoadDailyQuests();
-bbRenderDailyQuests();
+  bbSaveDailyQuests();
+  bbRefresh();
+  bbRenderDailyQuests();
 }
 
 window.addEventListener('load', () => {
