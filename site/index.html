@@ -5303,7 +5303,13 @@ function bbDailyReplayPrice(date) {
   // 10% за каждый день давности, максимум 50% от награды в 500 монет.
   return Math.min(age * 50, 250);
 }
+function bbGetActiveDailyRule() {
+  if (bbDailyReplayDate && bbDailyReplayRule) {
+    return bbDailyReplayRule;
+  }
 
+  return dailyRules[new Date().getDay()];
+}
 
 function bbLoadDailyQuests() {
   const today = bbGetTodayKey();
