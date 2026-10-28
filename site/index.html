@@ -3628,6 +3628,109 @@ font-weight: 900 !important;
     font-size: 20px;
   }
 }
+
+/* BLOCK BUDDIES 2.0 — улучшенная мобильная компоновка */
+@media (max-width: 520px) {
+  .app {
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  #game {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #game .playlayout {
+    grid-template-columns: minmax(0, 1fr) 68px;
+    gap: 7px;
+    align-items: start;
+  }
+
+  #game .boardframe {
+    width: 100%;
+    height: clamp(250px, calc(100dvh - 350px), 460px);
+    min-width: 0;
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  #game .board {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 1 / 2;
+    flex: 0 1 auto;
+  }
+
+  #game .sidecol {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  #game .sidecard {
+    min-width: 0;
+    padding: 6px 3px;
+    overflow-wrap: anywhere;
+  }
+
+  #game .nextcanvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  #game .controls {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  #game .control {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0;
+    touch-action: manipulation;
+  }
+
+  #game .control.drop {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+
+  #game .hint {
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 360px) {
+  #game .playlayout {
+    grid-template-columns: minmax(0, 1fr) 62px;
+    gap: 5px;
+  }
+
+  #game .hudbox {
+    padding: 6px 4px;
+  }
+
+  #game .hudbox span {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+
+  #game .hudbox strong {
+    font-size: 15px;
+  }
+
+  #game .control {
+    height: 42px;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
