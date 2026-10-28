@@ -4433,6 +4433,34 @@ body:has(#menu:not([hidden])) .app > .topbar {
   display: flex;
 }
 
+
+/* iOS: защита игрового поля от лупы, выделения и системных жестов */
+#game #board,
+#game .boardframe,
+#game .controls,
+#game .control,
+#game .sidecard,
+#game .smallbtn {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* На игровом поле жесты обрабатывает сама игра */
+#game #board {
+  touch-action: none;
+}
+
+/* Кнопки реагируют на касание без задержки */
+#game button {
+  touch-action: manipulation;
+}
+
+/* Не даём iOS запускать жестовое масштабирование внутри игры */
+#game {
+  -webkit-touch-callout: none;
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -5598,6 +5626,9 @@ const cv = $('game');
 
 cv.addEventListener('touchstart', e => {
   if (!started || paused || gameOver) return;
+  if (e.target.closest('#board')) {
+  e.preventDefault();
+}
   if (e.target.closest('button, input, select, textarea')) return;
 
   const t = e.changedTouches[0];
@@ -5612,7 +5643,7 @@ cv.addEventListener('touchstart', e => {
   };
 
   audioCtx();
-}, { passive: true });
+}, { passive: false });
 
 cv.addEventListener('touchmove', e => {
   if (!touch || !started || paused || gameOver) return;
