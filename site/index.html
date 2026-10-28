@@ -4933,8 +4933,9 @@ const challengeSymbol = record
   ? record.symbol
   : challenge.symbol;
 
-    cells += `
-      <div style="
+cells += `
+      <div data-daily-date="${date}" style="
+        cursor:pointer;
         min-height:58px;
         border:1px solid ${border};
         border-radius:10px;
@@ -5004,6 +5005,77 @@ const challengeSymbol = record
   document.getElementById('bbDailyCalendarClose').onclick =
     closeOverlay;
 }
+
+function bbDailyShowChallenge(date) {
+  const modal = document.getElementById('modal');
+  const today = new Date();
+  const selected = new Date(date + 'T12:00:00');
+  const todayKey = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0')
+  ].join('-');
+
+  if (date > todayKey) {
+    toast('Это испытание ещё не наступило.');
+    return;
+  }
+
+  let history = {};
+
+  try {
+    history = JSON.parse(
+      localStorage.getItem('bbDailyChallengeHistory') || '{}'
+    );
+  } catch (error) {
+    history = {};
+  }
+
+  const record = history[date];
+  const challenge = record || dailyRules[selected.getDay()];
+  const completed = Boolean(record) ||
+    localStorage.getItem('bbDailyChallengeCompletedDate') === date;
+
+  modal.innerHTML = `
+    <div class="modalhead">
+      <div class="bigicon">${challenge.symbol}</div>
+      <div class="eyebrow">ЕЖЕДНЕВНЫЙ ВЫЗОВ</div>
+      <h3>${challenge.title}</h3>
+      <p>${selected.toLocaleDateString('ru-RU', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      })}</p>
+    </div>
+
+    <p>${challenge.desc}</p>
+    <p><strong>Цель:</strong> ${challenge.goal}</p>
+    <p><strong>Правило:</strong> ${challenge.rule}</p>
+
+    <p style="color:${completed ? '#5cf5a5' : '#ffc86b'}">
+      ${completed ? '✓ Испытание пройдено' : '× Испытание пропущено'}
+    </p>
+
+    <p style="color:#aebbd7;font-size:12px">
+      Повторное прохождение за монеты добавим следующим этапом.
+    </p>
+
+    <button class="action secondary" id="bbDailyBackToCalendar">
+      ← НАЗАД К КАЛЕНДАРЮ
+    </button>
+  `;
+
+  document.getElementById('bbDailyBackToCalendar').onclick =
+    bbDailyCalendarOpen;
+}
+
+document.addEventListener('click', function(event) {
+  const cell = event.target.closest('[data-daily-date]');
+  if (cell) {
+    bbDailyShowChallenge(cell.dataset.dailyDate);
+  }
+});
 
 document.addEventListener('click', function(event) {
   if (event.target.closest('#dailyCalendarOpen')) {
