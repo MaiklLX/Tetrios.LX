@@ -42,34 +42,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y unzip
 
+
       - name: Extract Android project
-      
-      - name: Sync latest game and fix Android activity
         shell: bash
-        run: |
-          set -euo pipefail
-
-          ASSET_INDEX="$(find "$PROJECT_DIR/app/src/main" -type f -path '*/assets/*' -name index.html -print -quit)"
-
-          if [ -z "$ASSET_INDEX" ]; then
-            echo "::error::Android assets/index.html not found"
-            find "$PROJECT_DIR/app/src/main" -maxdepth 6 -type f | sort
-            exit 1
-          fi
-
-          cp "$GITHUB_WORKSPACE/site/index.html" "$ASSET_INDEX"
-          echo "Synced latest game: $ASSET_INDEX"
-
-          MAIN_ACTIVITY="$(find "$PROJECT_DIR/app/src/main/java" -type f -name MainActivity.java -print -quit)"
-
-          if [ -z "$MAIN_ACTIVITY" ]; then
-            echo "::error::MainActivity.java not found"
-            exit 1
-          fi
-
-          sed -i 's/protected void onWindowFocusChanged(boolean hasFocus)/public void onWindowFocusChanged(boolean hasFocus)/' "$MAIN_ACTIVITY"
-          grep -n 'onWindowFocusChanged' "$MAIN_ACTIVITY"
-  shell: bash
         run: |
           set -euo pipefail
 
@@ -97,6 +72,32 @@ jobs:
 
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Android project found: $PROJECT_DIR"
+
+      - name: Sync latest game and fix Android activity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ASSET_INDEX="$(find "$PROJECT_DIR/app/src/main" -type f -path '*/assets/*' -name index.html -print -quit)"
+
+          if [ -z "$ASSET_INDEX" ]; then
+            echo "::error::Android assets/index.html not found"
+            find "$PROJECT_DIR/app/src/main" -maxdepth 6 -type f | sort
+            exit 1
+          fi
+
+          cp "$GITHUB_WORKSPACE/site/index.html" "$ASSET_INDEX"
+          echo "Synced latest game: $ASSET_INDEX"
+
+          MAIN_ACTIVITY="$(find "$PROJECT_DIR/app/src/main/java" -type f -name MainActivity.java -print -quit)"
+
+          if [ -z "$MAIN_ACTIVITY" ]; then
+            echo "::error::MainActivity.java not found"
+            exit 1
+          fi
+
+          sed -i 's/protected void onWindowFocusChanged(boolean hasFocus)/public void onWindowFocusChanged(boolean hasFocus)/' "$MAIN_ACTIVITY"
+          grep -n 'onWindowFocusChanged' "$MAIN_ACTIVITY"
 
       - name: Install Android SDK components
         shell: bash
