@@ -4205,6 +4205,7 @@ font-weight: 900 !important;
 }
 
 
+
 @media (max-width: 700px) {
   #game {
     width: 100%;
@@ -4214,14 +4215,14 @@ font-weight: 900 !important;
 
   #game .playlayout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 76px !important;
+    grid-template-columns: minmax(0, 1fr) 82px !important;
     grid-template-rows: auto auto;
     gap: 6px !important;
     padding: 4px !important;
     align-items: start !important;
   }
 
-  /* Поле занимает левую часть экрана */
+  /* Игровое поле слева */
   #game .playlayout > div {
     grid-column: 1;
     grid-row: 1;
@@ -4235,7 +4236,7 @@ font-weight: 900 !important;
   #game .boardframe {
     box-sizing: border-box;
     width: 100%;
-    height: min(70dvh, 620px) !important;
+    height: min(68dvh, 600px) !important;
     min-height: 0;
     aspect-ratio: auto !important;
     padding: 3px;
@@ -4245,7 +4246,6 @@ font-weight: 900 !important;
     overflow: hidden;
   }
 
-  /* Сохраняем правильные пропорции клеток */
   #game .board {
     display: block;
     width: auto !important;
@@ -4257,67 +4257,137 @@ font-weight: 900 !important;
     flex: 0 1 auto;
   }
 
-  /* Статистика и прогресс — под игровым полем */
+  /* Нижняя панель статистики */
   #game .gameleftcol {
     grid-column: 1;
     grid-row: 2;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     width: 100%;
+    gap: 7px;
+  }
+
+  #game .gameleftcol .gamehud {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 5px;
+    width: 100%;
+    margin: 0;
   }
 
   #game .gameleftcol .hudbox {
+    box-sizing: border-box;
     min-width: 0;
-    padding: 6px 4px;
-    overflow-wrap: anywhere;
+    padding: 9px 2px;
+    border: 1px solid #30466e;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #182744, #0b1428);
+    text-align: center;
+    overflow: hidden;
   }
 
   #game .gameleftcol .hudbox span {
+    display: block;
     font-size: 8px;
+    line-height: 1.2;
     letter-spacing: 0;
+    overflow-wrap: anywhere;
   }
 
   #game .gameleftcol .hudbox strong {
-    font-size: 13px;
+    display: block;
+    margin-top: 4px;
+    font-size: clamp(12px, 3.5vw, 17px);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
   }
 
   #game .gameleftcol .progresswrap {
-    grid-column: 1 / -1;
     min-width: 0;
+    width: 100%;
+    margin: 0;
   }
 
-  /* Все игровые карточки — справа от поля */
+  /* Правая колонка интерфейса */
   #game .sidecol {
     grid-column: 2;
     grid-row: 1 / span 2;
-    min-width: 0;
-    width: 100%;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    width: 100%;
     gap: 6px;
   }
 
-  #game .sidecard {
+  #game .sidecard,
+  #game .sidecol #gameCoins {
     box-sizing: border-box;
     min-width: 0;
     width: 100%;
-    padding: 6px 3px;
+    margin: 0 !important;
+    padding: 7px 4px !important;
+    border: 1px solid #30466e;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #17243e, #0b1325);
+    text-align: center;
     overflow-wrap: anywhere;
   }
 
   #game .sidecard label {
+    display: block;
     font-size: 8px;
+    line-height: 1.25;
     letter-spacing: 0;
+    overflow-wrap: anywhere;
   }
 
+  #game .sidecol #gameCoins {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  /* Следующая фигура: не растягиваем canvas по высоте */
   #game .nextcanvas {
     display: block;
+    width: 100%;
     max-width: 100%;
-    height: auto;
+    height: auto !important;
+    aspect-ratio: auto;
+    object-fit: contain;
+    margin: 5px auto 0;
+  }
+
+  #game .boosticon {
+    margin: 5px 0 2px;
+    font-size: 20px;
+  }
+
+  #game .boostname,
+  #game .boostnum {
+    font-size: 9px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  #game .smallbtn {
+    width: 100%;
+    min-width: 0;
+    margin-top: 5px;
+    padding: 7px 2px;
+    font-size: 9px;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }
+
 
 @media (max-width: 370px) {
   #game .playlayout {
@@ -6134,9 +6204,9 @@ if (bbGame && bbPlayLayout && bbSideCol && bbBoardCol) {
   const bbCoins = document.getElementById('gameCoins');
   const bbProgress = bbGame.querySelector('.progresswrap');
 
-  if (bbHud) bbLeftCol.appendChild(bbHud);
-  if (bbCoins) bbLeftCol.appendChild(bbCoins);
-  if (bbProgress) bbLeftCol.appendChild(bbProgress);
+if (bbHud) bbLeftCol.appendChild(bbHud);
+if (bbCoins) bbSideCol.appendChild(bbCoins);
+if (bbProgress) bbLeftCol.appendChild(bbProgress);
 
   ['campaignGoals', 'rogueGoals'].forEach(id => {
     const panel = document.getElementById(id);
