@@ -4794,9 +4794,15 @@ map.onclick = () => {
   return true;
 }
 function bbRenderGoals() {
-    if (mode !== 'rogue') {
-    const rogueOld = $('rogueGoals');
-    if (rogueOld) rogueOld.remove();
+  const rogueOld = $('rogueGoals');
+  const campaignOld = $('campaignGoals');
+
+  if (mode !== 'rogue' && rogueOld) {
+    rogueOld.remove();
+  }
+
+  if (mode !== 'campaign' && campaignOld) {
+    campaignOld.remove();
   }
     if (mode === 'rogue') {
     const game = $('game');
