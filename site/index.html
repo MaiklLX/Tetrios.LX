@@ -4933,6 +4933,7 @@ function bbGetTodayKey() {
     String(d.getDate()).padStart(2, '0');
 }
 
+
 function bbLoadDailyQuests() {
   const today = bbGetTodayKey();
 
@@ -4947,10 +4948,66 @@ function bbLoadDailyQuests() {
   } catch (e) {}
 
   bbDailyQuestDate = today;
+
+  // Число меняется каждый день, поэтому набор заданий
+  // будет отличаться в разные даты.
+  const dayNumber = Math.floor(
+    new Date(today + 'T12:00:00').getTime() / 86400000
+  );
+
+  const lineTasks = [
+    { title: 'Очистить 6 линий', target: 6, reward: 20 },
+    { title: 'Очистить 10 линий', target: 10, reward: 30 },
+    { title: 'Очистить 14 линий', target: 14, reward: 40 },
+    { title: 'Очистить 18 линий', target: 18, reward: 55 },
+    { title: 'Очистить 22 линии', target: 22, reward: 70 },
+    { title: 'Очистить 8 линий', target: 8, reward: 25 }
+  ];
+
+  const scoreTasks = [
+    { title: 'Набрать 1000 очков', target: 1000, reward: 20 },
+    { title: 'Набрать 2000 очков', target: 2000, reward: 30 },
+    { title: 'Набрать 3500 очков', target: 3500, reward: 45 },
+    { title: 'Набрать 5000 очков', target: 5000, reward: 60 },
+    { title: 'Набрать 7000 очков', target: 7000, reward: 80 },
+    { title: 'Набрать 1500 очков', target: 1500, reward: 25 }
+  ];
+
+  const gameTasks = [
+    { title: 'Сыграть 1 партию', target: 1, reward: 15 },
+    { title: 'Сыграть 2 партии', target: 2, reward: 25 },
+    { title: 'Сыграть 3 партии', target: 3, reward: 40 },
+    { title: 'Сыграть 4 партии', target: 4, reward: 55 },
+    { title: 'Сыграть 5 партий', target: 5, reward: 70 },
+    { title: 'Сыграть 2 партии', target: 2, reward: 30 }
+  ];
+
+  const pick = (tasks, offset) =>
+    tasks[(dayNumber + offset) % tasks.length];
+
+  const lines = pick(lineTasks, 0);
+  const score = pick(scoreTasks, 2);
+  const games = pick(gameTasks, 4);
+
   bbDailyQuests = [
-    { id: 'lines', title: 'Очистить 10 линий', target: 10, progress: 0, reward: 25, claimed: false },
-    { id: 'score', title: 'Набрать 1500 очков', target: 1500, progress: 0, reward: 30, claimed: false },
-    { id: 'games', title: 'Сыграть 2 партии', target: 2, progress: 0, reward: 20, claimed: false }
+    {
+      id: 'lines',
+      ...lines,
+      progress: 0,
+      claimed: false
+    },
+    {
+      id: 'score',
+      ...score,
+      progress: 0,
+      claimed: false
+    },
+    {
+      id: 'games',
+      ...games,
+      progress: 0,
+      claimed: false
+    }
   ];
 
   bbSaveDailyQuests();
