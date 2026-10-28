@@ -5084,11 +5084,20 @@ document.getElementById('bbCancelStartHero').onclick = () => {
 };
 }
 
+
 function startGame() {
   if (
     mode === 'daily' &&
     localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   ) {
+    show('daily');
+    toast('✅ Ежедневный вызов уже пройден сегодня!');
+    return;
+  }
+
+  bbChooseHeroBeforeStart();
+}
+
     show('daily');
 
   paused = true;
