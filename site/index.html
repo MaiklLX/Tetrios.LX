@@ -5002,8 +5002,69 @@ cells += `
 
   overlay.classList.add('show');
 
-  document.getElementById('bbDailyCalendarClose').onclick =
-    closeOverlay;
+document.getElementById('bbDailyBackToCalendar').onclick =
+  bbDailyCalendarOpen;
+
+const replayButton = document.getElementById('bbDailyReplayStart');
+
+if (replayButton) {
+  replayButton.onclick = () => {
+    const price = bbDailyReplayPrice(date);
+
+    let replayedDates = [];
+
+    try {
+      replayedDates = JSON.parse(
+        localStorage.getItem('bbDailyReplayCompleted') || '[]'
+      );
+    } catch (error) {
+      replayedDates = [];
+    }
+
+    if (replayedDates.includes(date)) {
+      toast('Этот вызов уже повторно пройден.');
+      return;
+    }
+
+    if (date === bbGetTodayKey()) {
+      toast('Сегодняшний вызов запускается обычным способом.');
+      return;
+    }
+
+    if (price > bbCoins) {
+      toast('Недостаточно монет для повторного прохождения.');
+      return;
+    }
+
+    const selectedDate = new Date(date + 'T12:00:00');
+    const rule = history[date] || dailyRules[selectedDate.getDay()];
+
+    if (!rule) {
+      toast('Не удалось загрузить правила испытания.');
+      return;
+    }
+
+    bbDailyReplayDate = date;
+    bbDailyReplayRule = rule;
+    bbDailyReplayPaid = price > 0;
+
+    if (price > 0) {
+      bbCoins -= price;
+      localStorage.setItem('bbCoins', String(bbCoins));
+      localStorage.setItem('coins', String(bbCoins));
+    }
+
+    mode = 'daily';
+    closeOverlay();
+    bbChooseHeroBeforeStart();
+
+    toast(
+      price > 0
+        ? `Списано ${price} 🪙. Испытание готово к запуску.`
+        : 'Запускаем повторное испытание.'
+    );
+  };
+}
 }
 
 function bbDailyShowChallenge(date) {
