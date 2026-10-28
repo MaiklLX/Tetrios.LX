@@ -4868,8 +4868,18 @@ function bbDailyCalendarOpen() {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const offset = (firstDay + 6) % 7;
 
-  const completedDate =
-    localStorage.getItem('bbDailyChallengeCompletedDate') || '';
+const completedDate =
+  localStorage.getItem('bbDailyChallengeCompletedDate') || '';
+
+let history = {};
+
+try {
+  history = JSON.parse(
+    localStorage.getItem('bbDailyChallengeHistory') || '{}'
+  );
+} catch (error) {
+  history = {};
+}
 
   let cells = '';
 
@@ -4886,7 +4896,15 @@ function bbDailyCalendarOpen() {
 
     const isToday = day === today.getDate();
     const isFuture = day > today.getDate();
-    const isCompleted = date === completedDate;
+
+const record = history[date];
+const isCompleted = date === completedDate || Boolean(record);
+const isMissed = !isToday && !isFuture && !isCompleted;
+
+const challenge = dailyRules[
+  new Date(year, month, day).getDay()
+];
+
 
     const background = isCompleted
       ? '#174a38'
@@ -4902,13 +4920,18 @@ function bbDailyCalendarOpen() {
         ? '#ffc86b'
         : '#35415d';
 
-    const symbol = isCompleted
-      ? '✓'
-      : isToday
-        ? '★'
-        : isFuture
-          ? '·'
-          : '○';
+
+const symbol = isCompleted
+  ? '✓'
+  : isToday
+    ? '★'
+    : isFuture
+      ? '·'
+      : '×';
+
+const challengeSymbol = record
+  ? record.symbol
+  : challenge.symbol;
 
     cells += `
       <div style="
@@ -4921,8 +4944,8 @@ function bbDailyCalendarOpen() {
         align-items:center;
         justify-content:center;
         gap:4px">
-        <strong>${day}</strong>
-        <span>${symbol}</span>
+<strong>${day}</strong>
+<span>${challengeSymbol} ${symbol}</span>
       </div>`;
   }
 
@@ -4965,10 +4988,10 @@ function bbDailyCalendarOpen() {
       margin:16px 0;
       color:#b6c2df;
       font-size:12px">
-      <span>✓ Пройден</span>
-      <span>★ Сегодня</span>
-      <span>○ Прошлый день</span>
-      <span>· Будущий день</span>
+<span>✓ Пройден</span>
+<span>★ Сегодня</span>
+<span>× Пропущен</span>
+<span>· Будущий день</span>
     </div>
 
     <button class="action secondary" id="bbDailyCalendarClose">
