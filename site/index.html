@@ -4354,9 +4354,17 @@ document.getElementById('confirmResetProgress').onclick = function() {
 for (let i = localStorage.length - 1; i >= 0; i--) {
 const key = localStorage.key(i);
 if (key && (key.startsWith('bb_') ||
-['bbDailyQuests', 'bbSelectedHero', 'nrBest',
-'nrRuns', 'nrRelics', 'nrNode', 'nrDailyDone'].includes(key))) {
-localStorage.removeItem(key);
+
+[
+  'bbDailyQuests',
+  'bbSelectedHero',
+  'bbDailyChallengeCompletedDate',
+  'nrBest',
+  'nrRuns',
+  'nrRelics',
+  'nrNode',
+  'nrDailyDone'
+].includes(key);
 }
 }
 
