@@ -95,12 +95,25 @@ jobs:
             exit 1
           fi
 
-          curl --fail --silent --show-error \
+
+          API_URL="https://api.github.com/repos/MaiklLX/Tetrios-Signing/contents/signing/release.keystore.enc?ref=main"
+
+          HTTP_CODE=$(curl --silent --show-error \
+            -o "$RUNNER_TEMP/signing-response.json" \
+            -w "%{http_code}" \
             -H "Authorization: Bearer $SIGNING_REPO_READ_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/MaiklLX/Tetrios-Signing/contents/signing/release.keystore.enc?ref=main" \
-            -o "$RUNNER_TEMP/signing-response.json"
+            "$API_URL")
+
+          echo "GitHub API HTTP status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "GitHub API error response:"
+            jq -r '.message // "No error message returned"' \
+              "$RUNNER_TEMP/signing-response.json"
+            exit 1
+          fi
 
           jq -er '.content' "$RUNNER_TEMP/signing-response.json" \
             | tr -d '\n' \
