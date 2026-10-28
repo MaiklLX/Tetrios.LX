@@ -4932,13 +4932,16 @@ cv.addEventListener('touchstart', e => {
   if (e.target.closest('button, input, select, textarea')) return;
 
   const t = e.changedTouches[0];
+
   touch = {
     x: t.clientX,
     y: t.clientY,
     lastX: t.clientX,
     lastY: t.clientY,
-    at: Date.now()
+    at: Date.now(),
+    dropped: false
   };
+
   audioCtx();
 }, { passive: true });
 
@@ -4949,12 +4952,14 @@ cv.addEventListener('touchmove', e => {
   const dx = t.clientX - touch.lastX;
   const dy = t.clientY - touch.lastY;
 
-  if (Math.abs(dx) >= 24) {
+  // Горизонтальное перемещение — сохраняем привычное управление.
+  if (Math.abs(dx) >= 24 && Math.abs(dx) > Math.abs(dy) * 1.15) {
     move(dx > 0 ? 1 : -1);
     touch.lastX = t.clientX;
   }
 
-  if (dy >= 28) {
+  // Медленное движение вниз — опускаем фигуру на одну клетку.
+  if (dy >= 32 && dy > Math.abs(dx) * 1.25) {
     move(0, 1);
     touch.lastY = t.clientY;
   }
@@ -4968,15 +4973,30 @@ cv.addEventListener('touchend', e => {
   const dy = t.clientY - touch.y;
   const elapsed = Date.now() - touch.at;
 
-  if (Math.abs(dx) < 18 && Math.abs(dy) < 18 && elapsed < 230) {
+  // Короткое касание без движения — поворот фигуры.
+  if (
+    Math.abs(dx) < 18 &&
+    Math.abs(dy) < 18 &&
+    elapsed < 230
+  ) {
     rotatePiece();
-  } else if (dy < -45) {
+  }
+
+  // Жёсткое падение — только при явном свайпе вниз.
+  else if (
+    dy > 110 &&
+    dy > Math.abs(dx) * 1.8 &&
+    elapsed < 800
+  ) {
     hardDrop();
   }
 
   touch = null;
 }, { passive: true });
 
+cv.addEventListener('touchcancel', () => {
+  touch = null;
+}, { passive: true });
 cv.addEventListener('touchcancel', () => {
   touch = null;
 }, { passive: true });
