@@ -4831,6 +4831,138 @@ function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function setupDaily(){let d=new Date(),rule=dailyRules[d.getDay()];$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ'}
 
+function bbDailyCalendarOpen() {
+  const modal = document.getElementById('modal');
+  const overlay = document.getElementById('overlay');
+  if (!modal || !overlay) return;
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const offset = (firstDay + 6) % 7;
+
+  const completedDate =
+    localStorage.getItem('bbDailyChallengeCompletedDate') || '';
+
+  let cells = '';
+
+  for (let i = 0; i < offset; i++) {
+    cells += '<div></div>';
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = [
+      year,
+      String(month + 1).padStart(2, '0'),
+      String(day).padStart(2, '0')
+    ].join('-');
+
+    const isToday = day === today.getDate();
+    const isFuture = day > today.getDate();
+    const isCompleted = date === completedDate;
+
+    const background = isCompleted
+      ? '#174a38'
+      : isToday
+        ? '#493719'
+        : isFuture
+          ? '#151b2b'
+          : '#202940';
+
+    const border = isCompleted
+      ? '#5cf5a5'
+      : isToday
+        ? '#ffc86b'
+        : '#35415d';
+
+    const symbol = isCompleted
+      ? '✓'
+      : isToday
+        ? '★'
+        : isFuture
+          ? '·'
+          : '○';
+
+    cells += `
+      <div style="
+        min-height:58px;
+        border:1px solid ${border};
+        border-radius:10px;
+        background:${background};
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:4px">
+        <strong>${day}</strong>
+        <span>${symbol}</span>
+      </div>`;
+  }
+
+  modal.innerHTML = `
+    <div class="modalhead">
+      <div class="bigicon">📅</div>
+      <div class="eyebrow">ИСТОРИЯ ИСПЫТАНИЙ</div>
+      <h3>${today.toLocaleDateString('ru-RU', {
+        month: 'long',
+        year: 'numeric'
+      })}</h3>
+      <p>Календарь режима «Ежедневный вызов».</p>
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:6px;
+      text-align:center;
+      color:#b6c2df;
+      font-size:12px;
+      margin-bottom:8px">
+      ${['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
+        .map(d => `<div>${d}</div>`).join('')}
+    </div>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:6px;
+      text-align:center;
+      color:#fff">
+      ${cells}
+    </div>
+
+    <div style="
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin:16px 0;
+      color:#b6c2df;
+      font-size:12px">
+      <span>✓ Пройден</span>
+      <span>★ Сегодня</span>
+      <span>○ Прошлый день</span>
+      <span>· Будущий день</span>
+    </div>
+
+    <button class="action secondary" id="bbDailyCalendarClose">
+      ЗАКРЫТЬ
+    </button>
+  `;
+
+  overlay.classList.add('show');
+
+  document.getElementById('bbDailyCalendarClose').onclick =
+    closeOverlay;
+}
+
+document.addEventListener('click', function(event) {
+  if (event.target.closest('#dailyCalendarOpen')) {
+    bbDailyCalendarOpen();
+  }
+});
+
 const bbBiomes = [
   { id: 0, name: 'Зелёные равнины', icon: '🌿', start: 1, end: 30, color: '#72d6a0' },
   { id: 1, name: 'Шепчущий лес', icon: '🌲', start: 31, end: 60, color: '#53c9a2' },
