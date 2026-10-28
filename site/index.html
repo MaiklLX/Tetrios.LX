@@ -3875,6 +3875,274 @@ font-weight: 900 !important;
     font-size: 14px;
   }
 }
+
+/* TETRIOS.LX — единая игровая панель */
+#game .playlayout {
+  display: grid !important;
+  grid-template-columns: 94px minmax(0, 1fr) 112px !important;
+  gap: 9px !important;
+  align-items: stretch !important;
+  padding: 9px !important;
+  box-sizing: border-box;
+  min-width: 0;
+  border: 1px solid #294b85;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #101a35, #080f20 75%);
+  box-shadow: inset 0 1px 0 #ffffff0b, 0 10px 28px #00000022;
+}
+
+/* Левая колонка: статистика и прогресс */
+#game .gameleftcol {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+#game .gameleftcol .gamehud {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+  margin: 0;
+}
+
+#game .gameleftcol .hudbox {
+  min-width: 0;
+  padding: 7px 5px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#game .gameleftcol .hudbox span {
+  font-size: 8px;
+}
+
+#game .gameleftcol .hudbox strong {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+#game .gameleftcol #gameCoins {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 8px 5px !important;
+  font-size: 10px;
+  text-align: center;
+}
+
+#game .gameleftcol .progresswrap {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 6px;
+  border: 1px solid #2d4f91;
+  border-radius: 10px;
+  background: #101b42;
+}
+
+#game .gameleftcol .progressmeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 8px;
+  line-height: 1.3;
+}
+
+/* Центральная колонка: игровое поле */
+#game .playlayout > div:first-child {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#game .playlayout > div:first-child .progresswrap {
+  display: none;
+}
+
+#game .boardframe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: clamp(300px, calc(100dvh - 250px), 680px);
+  min-width: 0;
+  min-height: 0;
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#game .board {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1 / 2;
+  object-fit: contain;
+  flex: 0 1 auto;
+}
+
+/* Правая колонка: фигура, буст, таймер, музыка и цели */
+#game .sidecol {
+  grid-column: 3;
+  grid-row: 1;
+  position: static !important;
+  inset: auto !important;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: auto !important;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible !important;
+  pointer-events: auto !important;
+}
+
+#game .sidecol .sidecard {
+  min-width: 0;
+  padding: 7px 5px;
+  border-radius: 11px;
+  text-align: center;
+}
+
+#game .sidecol .sidecard label {
+  font-size: 8px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+#game .sidecol .nextcanvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 4px auto 0;
+}
+
+#game #campaignGoals,
+#game #rogueGoals {
+  box-sizing: border-box;
+  width: 100%;
+  margin: auto 0 0 !important;
+  padding: 7px 6px !important;
+  border-radius: 11px !important;
+  font-size: 9px !important;
+  line-height: 1.35 !important;
+  overflow-wrap: anywhere;
+}
+
+#game #campaignGoals > strong,
+#game #rogueGoals > strong {
+  font-size: 10px !important;
+}
+
+/* Планшеты и обычные телефоны */
+@media (max-width: 700px) {
+  #game .playlayout {
+    grid-template-columns: 62px minmax(0, 1fr) 70px !important;
+    gap: 5px !important;
+    padding: 5px !important;
+    border-radius: 13px;
+  }
+
+  #game .gameleftcol,
+  #game .sidecol {
+    gap: 5px;
+  }
+
+  #game .gameleftcol .hudbox {
+    padding: 5px 2px;
+  }
+
+  #game .gameleftcol .hudbox span {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+
+  #game .gameleftcol .hudbox strong {
+    font-size: 13px;
+  }
+
+  #game .gameleftcol #gameCoins {
+    padding: 6px 2px !important;
+    font-size: 9px;
+  }
+
+  #game .gameleftcol .progresswrap {
+    padding: 6px 4px;
+  }
+
+  #game .gameleftcol .progressmeta {
+    font-size: 7px;
+  }
+
+  #game .sidecol .sidecard {
+    padding: 5px 3px;
+  }
+
+  #game .sidecol .sidecard label {
+    font-size: 7px;
+  }
+
+  #game .sidecol .boostname,
+  #game .sidecol .boostnum {
+    font-size: 8px;
+    overflow-wrap: anywhere;
+  }
+
+  #game .sidecol .smallbtn {
+    padding: 6px 2px;
+    font-size: 8px;
+  }
+
+  #game #campaignGoals,
+  #game #rogueGoals {
+    padding: 5px 3px !important;
+    font-size: 8px !important;
+  }
+
+  #game #campaignGoals > strong,
+  #game #rogueGoals > strong {
+    font-size: 9px !important;
+  }
+
+  #game .boardframe {
+    height: clamp(260px, calc(100dvh - 235px), 560px);
+    min-height: 0;
+    padding: 2px;
+  }
+}
+
+/* Очень узкие телефоны */
+@media (max-width: 370px) {
+  #game .playlayout {
+    grid-template-columns: 54px minmax(0, 1fr) 62px !important;
+    gap: 4px !important;
+  }
+
+  #game .gameleftcol .hudbox strong {
+    font-size: 12px;
+  }
+
+  #game .sidecol .sidecard label {
+    font-size: 6px;
+  }
+
+  #game .boardframe {
+    height: clamp(240px, calc(100dvh - 225px), 500px);
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -5514,19 +5782,39 @@ endGame = function() {
 
 const bbOldStart=startGame;startGame=function(){bbDailyRecordedThisGame=false;bbOldStart();if(bbInventory.quick>0){bbInventory.quick--;if(!boosts.includes('mult'))boosts.push('mult');dropMs=Math.max(150,dropMs-90);restartDrop()}if(bbInventory.shield>0){bbInventory.shield--;if(!boosts.includes('shield'))boosts.push('shield')}if(bbInventory.magnet>0){bbInventory.magnet--;if(!boosts.includes('magnet'))boosts.push('magnet')}bbSave();updateHud();render()};
 
-/* Компактная боковая панель игрового поля */
+
+/* Единая игровая панель */
 const bbGame = document.getElementById('game');
 const bbPlayLayout = bbGame?.querySelector('.playlayout');
 const bbSideCol = bbPlayLayout?.querySelector('.sidecol');
-const bbGameHud = bbGame?.querySelector('.gamehud');
-const bbCoinsPanel = document.getElementById('gameCoins');
-const bbProgressPanel = bbGame?.querySelector('.progresswrap');
+const bbBoardCol = bbPlayLayout?.querySelector(':scope > div:first-child');
 
-if (bbSideCol && bbGameHud && bbCoinsPanel && bbProgressPanel) {
-  bbSideCol.prepend(bbGameHud, bbCoinsPanel, bbProgressPanel);
+if (bbGame && bbPlayLayout && bbSideCol && bbBoardCol) {
+  let bbLeftCol = bbPlayLayout.querySelector('.gameleftcol');
+
+  if (!bbLeftCol) {
+    bbLeftCol = document.createElement('aside');
+    bbLeftCol.className = 'gameleftcol';
+    bbLeftCol.setAttribute('aria-label', 'Статистика и цели уровня');
+    bbPlayLayout.insertBefore(bbLeftCol, bbBoardCol);
+  }
+
+  const bbHud = bbGame.querySelector('.gamehud');
+  const bbCoins = document.getElementById('gameCoins');
+  const bbProgress = bbGame.querySelector('.progresswrap');
+
+  if (bbHud) bbLeftCol.appendChild(bbHud);
+  if (bbCoins) bbLeftCol.appendChild(bbCoins);
+  if (bbProgress) bbLeftCol.appendChild(bbProgress);
+
+  ['campaignGoals', 'rogueGoals'].forEach(id => {
+    const panel = document.getElementById(id);
+    if (panel) bbSideCol.appendChild(panel);
+  });
 }
 
 let bbGesture = null;
+
 function bbTune() {
   if (!musicOn || !soundOn) {
     if (arcadeMusicTimer !== null) {
