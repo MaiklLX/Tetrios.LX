@@ -4678,16 +4678,22 @@ const key = localStorage.key(i);
 
 if (key && (
   key.startsWith('bb_') ||
+
   [
     'bbDailyQuests',
     'bbSelectedHero',
     'bbDailyChallengeCompletedDate',
+    'bbDailyChallengeHistory',
+    'bbDailyReplayCompleted',
+    'bbCoins',
+    'coins',
     'nrBest',
     'nrRuns',
     'nrRelics',
     'nrNode',
     'nrDailyDone'
   ].includes(key)
+
 )) {
   localStorage.removeItem(key);
 }
