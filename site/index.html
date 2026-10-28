@@ -5822,7 +5822,21 @@ function bbChooseHeroBeforeStart() {
     };
   });
 
-  document.getElementById('bbConfirmStartHero').onclick = () => {
+document.getElementById('bbConfirmStartHero').onclick = () => {
+    if (bbDailyReplayDate && !bbDailyReplayPaid) {
+      const price = bbDailyReplayPrice(bbDailyReplayDate);
+
+      if (bbCoins < price) {
+        toast('Недостаточно монет для повторного прохождения.');
+        return;
+      }
+
+      bbCoins -= price;
+      localStorage.setItem('bbCoins', String(bbCoins));
+      localStorage.setItem('coins', String(bbCoins));
+      bbDailyReplayPaid = true;
+    }
+
     bbSelectedHero = chosenHero;
     localStorage.setItem('bbSelectedHero', chosenHero);
     bbApplyHero();
