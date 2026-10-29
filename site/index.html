@@ -7042,23 +7042,31 @@ if (isReplay) {
   updateHud();
   updateStats();
 
-  // Разводим награды по времени: сначала монеты, затем отдельный экран реликвии.
+  // Показываем награды отдельными плавающими карточками в одном стиле.
   paused = true;
   bbRewardFloat(500);
 
   setTimeout(() => {
     const relicReward = document.createElement('div');
-
-    relicReward.innerHTML='<div style="font-size:44px;line-height:1.1;margin-bottom:10px;filter:drop-shadow(0 0 12px #c4a2ff)">✧</div><div style="font-size:11px;letter-spacing:.2em;color:#cbb6ff;margin-bottom:7px">РЕДКАЯ НАГРАДА</div><div style="font-size:23px;line-height:1.15">РЕЛИКВИЯ ПОЛУЧЕНА</div><div style="font-size:13px;font-weight:700;margin-top:10px;color:#f0e8ff">+1 в коллекцию</div>';
-    relicReward.style.cssText='position:fixed;left:50%;top:30%;transform:translate(-50%,0);z-index:999999;width:min(300px,calc(100vw - 32px));box-sizing:border-box;padding:26px 18px;border-radius:22px;background:radial-gradient(circle at 50% 0%,#674b96 0%,#211735 62%,#111426 100%);color:#f5edff;border:2px solid #c8b1ff;font-size:24px;font-weight:900;text-align:center;box-shadow:0 0 0 6px #9d7cff24,0 0 48px #9d7cffdd,inset 0 1px #ffffff40;animation:bbRelicPop 2.5s ease-in-out both;';
-
+    relicReward.textContent = '✧  РЕЛИКВИЯ ПОЛУЧЕНА  ·  +1';
+    relicReward.style.cssText='position:fixed;left:50%;top:42%;transform:translate(-50%,0);z-index:2147483647;box-sizing:border-box;width:max-content;max-width:calc(100vw - 28px);padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,#33204f,#211b38);color:#f3eaff;border:2px solid #c4a2ff;font-size:clamp(16px,4.8vw,22px);font-weight:900;letter-spacing:.02em;text-align:center;box-shadow:0 0 0 4px #9d7cff24,0 0 32px #9d7cffaa;opacity:0;transition:transform .35s ease,opacity .35s ease;pointer-events:none;';
     document.body.appendChild(relicReward);
+
+    requestAnimationFrame(() => {
+      relicReward.style.opacity = '1';
+      relicReward.style.transform = 'translate(-50%,-35px)';
+    });
+
+    setTimeout(() => {
+      relicReward.style.opacity = '0';
+      relicReward.style.transform = 'translate(-50%,-70px)';
+    }, 2100);
 
     setTimeout(() => {
       relicReward.remove();
       endGame();
-    }, 2500);
-  }, 1300);
+    }, 2700);
+  }, 1700);
 
   return true;
 }
