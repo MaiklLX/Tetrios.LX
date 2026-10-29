@@ -7050,14 +7050,8 @@ if (isReplay) {
   setTimeout(() => {
     const relicReward = document.createElement('div');
 
-    relicReward.textContent = '+1 ✧ РЕЛИКВИЯ';
-    relicReward.style.cssText =
-      'position:fixed;left:50%;top:35%;transform:translate(-50%,0);' +
-      'z-index:999999;padding:16px 22px;border-radius:16px;' +
-      'background:#211735;color:#d7baff;border:2px solid #9d7cff;' +
-      'font-size:24px;font-weight:900;text-align:center;' +
-      'box-shadow:0 0 32px #9d7cffaa;' +
-      'animation:bbRelicPop 1.8s ease-in-out both;';
+    relicReward.innerHTML='<div style="font-size:38px;line-height:1.1;margin-bottom:7px;filter:drop-shadow(0 0 10px #c4a2ff)">✧</div><div style="font-size:11px;letter-spacing:.2em;color:#cbb6ff;margin-bottom:5px">РЕДКАЯ НАГРАДА</div><div style="font-size:23px;line-height:1.1">РЕЛИКВИЯ ПОЛУЧЕНА</div><div style="font-size:13px;font-weight:700;margin-top:8px;color:#f0e8ff">+1 в коллекцию</div>';
+    relicReward.style.cssText='position:fixed;left:50%;top:30%;transform:translate(-50%,0);z-index:999999;width:min(290px,calc(100vw - 36px));box-sizing:border-box;padding:22px 18px;border-radius:20px;background:radial-gradient(circle at 50% 0%,#57417d 0%,#211735 58%,#111426 100%);color:#f5edff;border:2px solid #b79aff;font-size:24px;font-weight:900;text-align:center;box-shadow:0 0 0 5px #9d7cff20,0 0 42px #9d7cffbb,inset 0 1px #ffffff35;animation:bbRelicPop 1.8s ease-in-out both;';
 
     document.body.appendChild(relicReward);
 
@@ -7329,80 +7323,34 @@ const cv = $('game');
 
 cv.addEventListener('touchstart', e => {
   if (!started || paused || gameOver || touchDropLocked) return;
-
-  if (e.target.closest('#board')) {
-    e.preventDefault();
-  }
-
   if (e.target.closest('button, input, select, textarea')) return;
-
-  const t = e.changedTouches[0];
-
-  touch = {
-    x: t.clientX,
-    y: t.clientY,
-    lastX: t.clientX,
-    lastY: t.clientY,
-    at: Date.now(),
-    dropped: false
-  };
-
+  if (e.target.closest('#board')) e.preventDefault();
+  const t=e.changedTouches[0];
+  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,at:Date.now(),axis:null,dropped:false};
   audioCtx();
-}, { passive: false });
-
-cv.addEventListener('touchmove', e => {
-  if (!touch || touch.dropped || !started || paused || gameOver) return;
-
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touch.lastX;
-  const dy = t.clientY - touch.lastY;
-
-  if (Math.abs(dx) >= 24 && Math.abs(dx) > Math.abs(dy) * 1.15) {
-    move(dx > 0 ? 1 : -1);
-    touch.lastX = t.clientX;
+},{passive:false});
+cv.addEventListener('touchmove',e=>{
+  if(!touch||touch.dropped||!started||paused||gameOver)return;
+  const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
+  if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
+    touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
   }
-
-  if (dy >= 32 && dy > Math.abs(dx) * 1.25) {
-    move(0, 1);
-    touch.lastY = t.clientY;
+  if(touch.axis==='x'){
+    const dx=t.clientX-touch.lastX;
+    if(Math.abs(dx)>=26){move(dx>0?1:-1);touch.lastX=t.clientX;}
   }
-}, { passive: true });
-
-cv.addEventListener('touchend', e => {
-  if (!touch) {
-    touchDropLocked = false;
-    return;
+},{passive:true});
+cv.addEventListener('touchend',e=>{
+  if(!touch){touchDropLocked=false;return}
+  const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y,elapsed=Date.now()-touch.at;
+  if(Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230)rotatePiece();
+  else if(touch.axis==='y'&&dy>88&&dy>Math.abs(dx)*1.65&&elapsed<1100){
+    touch.dropped=true;touchDropLocked=true;hardDrop();
+    setTimeout(()=>{touchDropLocked=false},180);
   }
-
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touch.x;
-  const dy = t.clientY - touch.y;
-  const elapsed = Date.now() - touch.at;
-
-  if (
-    Math.abs(dx) < 18 &&
-    Math.abs(dy) < 18 &&
-    elapsed < 230
-  ) {
-    rotatePiece();
-  } else if (
-    dy > 110 &&
-    dy > Math.abs(dx) * 1.8 &&
-    elapsed < 800
-  ) {
-    touch.dropped = true;
-    touchDropLocked = true;
-    hardDrop();
-  }
-
-  touch = null;
-  touchDropLocked = false;
-}, { passive: true });
-
-cv.addEventListener('touchcancel', () => {
-  touch = null;
-  touchDropLocked = false;
-}, { passive: true });
+  touch=null;
+},{passive:true});
+cv.addEventListener('touchcancel',()=>{touch=null;touchDropLocked=false},{passive:true});
 
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
