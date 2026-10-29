@@ -4871,7 +4871,9 @@ function bbIsDailyMechanic(mod) {
     bbGetActiveDailyRule()?.mod === mod
   );
 }
-const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Гравитационный переворот',symbol:'⟲',desc:'Каждая очищенная линия ускоряет падение фигур. Успей адаптироваться до сброса гравитации.',goal:'12 линий',rule:'Каждая очищенная линия ускоряет падение. Каждые 30 секунд накопленное ускорение сбрасывается.',mod:'gravityFlip'},{title:'Глитч-реактор',symbol:'⌁',desc:'Поле предупреждает об аномалии, а затем на время меняет свои цвета.',goal:'12 линий',rule:'После каждых 4 очищенных линий появляется предупреждение. Через 2 секунды палитра поля меняется на 4 секунды.',mod:'glitchReactor'},{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
+const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Гравитационный переворот',symbol:'⟲',desc:'Каждая очищенная линия ускоряет падение фигур. Успей адаптироваться до сброса гравитации.',goal:'12 линий',rule:'Каждая очищенная линия ускоряет падение. Каждые 30 секунд накопленное ускорение сбрасывается.',mod:'gravityFlip'},{title:'Глитч-реактор',symbol:'⌁',desc:'Поле предупреждает об аномалии, а затем на время меняет свои цвета.',goal:'12 линий',rule:'После каждых 4 очищенных линий появляется предупреждение. Через 2 секунды палитра поля меняется на 4 секунды.',mod:'glitchReactor'}
+,{title:'Охота за артефактом',symbol:'✦',desc:'Собирай линии, чтобы пробудить древний артефакт и получить временный бонус к очкам.',goal:'12 линий',rule:'Каждые 4 очищенные линии пробуждают артефакт. Следующие 8 секунд очистка линий приносит на 50% больше очков.',mod:'artifactHunt'}
+,{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
 
 function bbDailyBuildCycle(cycle) {
   let seed = 2166136261;
@@ -6426,7 +6428,31 @@ bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);lines+=cleared;b
 combo++;
 let mult=boosts.includes('mult')?1.5:1;
 if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15;
-if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1;if(boosts.includes('score'))mult*=1+combo*.15;if(boosts.includes('glow'))mult*=1.1;if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse')mult*=1.5;let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mult);if(cleared===1&&boosts.includes('dust'))score+=100;if(cleared>=2&&boosts.includes('magnet'))score+=250;if(cleared>=3&&boosts.includes('burst'))score+=600;if(cleared>=2&&boosts.includes('flash'))flash();if(boosts.includes('echo')&&lines%5<cleared)levelLines++;if(boosts.includes('reactor')&&lines%10<cleared)levelLines+=needLines;if(boosts.includes('infinity')&&lines%10<cleared){relicCount++;localStorage.nrRelics=relicCount}if(mode==='daily'&&bbGetActiveDailyRule().mod==='sun'&&lines%4<cleared)levelLines++;if(mode==='daily'&&bbGetActiveDailyRule().mod==='chroma')colors.reverse();if(mode==='daily'&&bbGetActiveDailyRule().mod==='comet'&&Date.now()-lastClear<2000)score+=200;lastClear=Date.now();tone(400+cleared*150,.18,'triangle',.05);if(cleared>=2)chime();}else combo=0;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-4&&Math.random()<.22?1:0));toast('Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1;if(boosts.includes('score'))mult*=1+combo*.15;if(boosts.includes('glow'))mult*=1.1;if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse')mult*=1.5;
+if(
+  mode==='daily' &&
+  bbGetActiveDailyRule().mod==='artifactHunt' &&
+  runSeconds<bbDailyMechanicState.artifactBonusUntil
+){
+  mult*=1.5;
+}
+let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mult);if(cleared===1&&boosts.includes('dust'))score+=100;if(cleared>=2&&boosts.includes('magnet'))score+=250;if(cleared>=3&&boosts.includes('burst'))score+=600;if(cleared>=2&&boosts.includes('flash'))flash();if(boosts.includes('echo')&&lines%5<cleared)levelLines++;if(boosts.includes('reactor')&&lines%10<cleared)levelLines+=needLines;if(boosts.includes('infinity')&&lines%10<cleared){relicCount++;localStorage.nrRelics=relicCount}if(mode==='daily'&&bbGetActiveDailyRule().mod==='sun'&&lines%4<cleared)levelLines++;if(mode==='daily'&&bbGetActiveDailyRule().mod==='chroma')colors.reverse();if(mode==='daily'&&bbGetActiveDailyRule().mod==='comet'&&Date.now()-lastClear<2000)score+=200;lastClear=Date.now();tone(400+cleared*150,.18,'triangle',.05);if(cleared>=2)chime();}else combo=0;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-4&&Math.random()<.22?1:0));toast('Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+if(
+  mode==='daily' &&
+  bbGetActiveDailyRule().mod==='artifactHunt'
+){
+  bbDailyMechanicState.artifactProgress+=cleared;
+
+  if(
+    bbDailyMechanicState.artifactProgress>=4 &&
+    runSeconds>=bbDailyMechanicState.artifactBonusUntil
+  ){
+    bbDailyMechanicState.artifactProgress-=4;
+    bbDailyMechanicState.artifactBonusUntil=runSeconds+8;
+
+    toast('✦ АРТЕФАКТ ПРОБУЖДЁН! Бонус к очкам ×1.5 на 8 секунд');
+  }
+}
   bbPlushSaved=true;
   for(let y=H-1;y>=4;y--){
     board[y]=board[y-4].slice();
