@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,gridGroup,glowGroup,resizeObserver,enabled=false,lastSignature='',raf=0;
+  let renderer,scene,camera,boardGroup,gridGroup,resizeObserver,enabled=false,lastSignature='',raf=0;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -81,21 +81,23 @@
     }
   }
   function animate(){
-    raf=requestAnimationFrame(animate);
+    raf=0;
     if(!enabled||!renderer||document.hidden)return;
-    sync();const t=performance.now()*.00025;
-    camera.position.x=3.2+Math.sin(t)*.18;camera.lookAt(0,0,0);
-    renderer.render(scene,camera);
+    sync();
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const t=performance.now()*.00025;camera.position.x=3.2+Math.sin(t)*.18;}
+    camera.lookAt(0,0,0);renderer.render(scene,camera);
+    raf=requestAnimationFrame(animate);
   }
   toggle.addEventListener('click',()=>{
     enabled=!enabled;
     toggle.setAttribute('aria-pressed',String(enabled));
     toggle.textContent=enabled?'2D РЕЖИМ':'3D ARENA';
     frame.classList.toggle('bb-3d-arena-active',enabled);
+    if(!enabled&&raf){cancelAnimationFrame(raf);raf=0;}
     if(enabled){
       try{init();sync();if(!raf)animate()}
       catch(error){enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);setTimeout(()=>{toggle.textContent='3D ARENA'},2200)}
     }
   });
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&enabled)sync()});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();if(!raf)animate();}});
 })();
