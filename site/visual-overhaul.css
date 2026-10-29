@@ -108,6 +108,12 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 .bb-arena-toggle[aria-pressed="true"]{background:linear-gradient(110deg,#73fff0,#a98aff);color:#09111f;border-color:#fff}
 .bb-arena-canvas{position:absolute;z-index:2;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);display:none;pointer-events:none}
 .boardframe.bb-3d-arena-active .bb-arena-canvas{display:block}
+.boardframe.bb-3d-arena-active{
+  isolation:isolate;overflow:hidden;border-color:rgba(102,255,240,.48)!important;
+  background:radial-gradient(ellipse at 50% 45%,rgba(53,101,185,.2),transparent 65%),linear-gradient(145deg,#0b1227,#060a17)!important;
+  box-shadow:0 0 0 1px rgba(102,255,240,.08),0 0 36px rgba(58,225,231,.12),inset 0 0 34px rgba(75,117,255,.08)!important;
+}
 .boardframe.bb-3d-arena-active #board{opacity:0}
-.boardframe.bb-3d-arena-active:after{content:"TETRIOS.LX · HOLOGRAPHIC ARENA";position:absolute;z-index:3;left:12px;bottom:12px;font-size:8px;letter-spacing:.16em;color:rgba(193,218,255,.72);pointer-events:none}
+.boardframe.bb-3d-arena-active .bb-arena-canvas{filter:drop-shadow(0 0 14px rgba(74,244,236,.13))}
+.boardframe.bb-3d-arena-active:after{content:"TETRIOS.LX · HOLOGRAPHIC ARENA";position:absolute;z-index:3;left:12px;bottom:12px;padding:5px 7px;border:1px solid rgba(102,255,240,.18);border-radius:6px;background:rgba(5,10,24,.72);font-size:8px;letter-spacing:.16em;color:rgba(193,218,255,.82);pointer-events:none}
 @media(max-width:520px){.bb-arena-toggle{top:10px;right:10px;font-size:8px;padding:7px 9px}}
