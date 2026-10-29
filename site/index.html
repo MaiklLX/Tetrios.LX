@@ -4522,6 +4522,46 @@ body:has(#menu:not([hidden])) .app > .topbar {
     box-sizing: border-box;
   }
 }
+
+/* Панель цели ежедневного вызова */
+#dailyMissionGoal {
+  display: flex;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 6px;
+  padding: 8px 12px;
+  border: 1px solid #ffc86b66;
+  border-radius: 11px;
+  background: linear-gradient(100deg, #ffc86b20, #111a30);
+  color: #ffc86b;
+}
+
+#dailyMissionGoal[hidden] {
+  display: none !important;
+}
+
+#dailyMissionGoal .daily-mission-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+#dailyMissionGoalText {
+  font-size: 14px;
+  text-align: right;
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  #dailyMissionGoal {
+    margin-bottom: 5px;
+    padding: 7px 10px;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -4692,7 +4732,12 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
-<section id="game" class="screen" hidden><div class="screenhead"><button class="back" id="gameBack">Ⅱ</button><div style="flex:1"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn" id="pauseBtn">Ⅱ</button></div><div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div id="gameCoins" style="margin:8px 0;padding:10px 14px;border:1px solid #ffc86b66;border-radius:12px;background:linear-gradient(100deg,#ffc86b20,#111a30);color:#ffc86b;font-weight:900;display:flex;justify-content:space-between;align-items:center">
+<section id="game" class="screen" hidden><div class="screenhead"><button class="back" id="gameBack">Ⅱ</button><div style="flex:1"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn" id="pauseBtn">Ⅱ</button></div>
+<div id="dailyMissionGoal" hidden>
+  <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
+  <strong id="dailyMissionGoalText">12 линий</strong>
+</div>
+<div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div id="gameCoins" style="margin:8px 0;padding:10px 14px;border:1px solid #ffc86b66;border-radius:12px;background:linear-gradient(100deg,#ffc86b20,#111a30);color:#ffc86b;font-weight:900;display:flex;justify-content:space-between;align-items:center">
   <span>🪙 ТВОИ МОНЕТЫ</span>
   <strong id="gameCoinsValue">0</strong>
 </div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div><div class="progresswrap"><div class="progressmeta"><span id="progressLabel">ЗАРЯД УРОВНЯ</span><span id="progressText">0 / 5 линий</span></div><div class="progressbar"><div class="progressfill" id="progressFill"></div></div></div></div><aside class="sidecol"><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button><button class="control primary drop" data-act="drop">DROP ↓</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div>
@@ -5964,7 +6009,36 @@ if(bbSelectedHero==='blip'&&upgrades.length){
   if(starter)boosts.push(starter[3]);
 }
 holdUsed=0;combo=0;lastClear=0;
-board=Array.from({length:H},()=>Array(W).fill(0));nextType=randomType();piece=newPiece(randomType());if(mode==='daily'){$('gameTitle').textContent=bbGetActiveDailyRule().title;$('gameSub').textContent='Ежедневный вызов · '+bbGetActiveDailyRule().goal;}else if(mode==='campaign'){$('gameTitle').textContent='Узел '+String(campaignNode).padStart(2,'0');$('gameSub').textContent='Кампания · Сектор '+Math.ceil(campaignNode/3)}else{$('gameTitle').textContent='Весёлый блок-ран';$('gameSub').textContent='Каждый уровень приносит новые сюрпризы!'}show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}if(mode==='rogue'){bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
+board=Array.from({length:H},()=>Array(W).fill(0));nextType=randomType();piece=newPiece(randomType());
+if (mode === 'daily') {
+  const dailyRule = bbGetActiveDailyRule();
+
+  $('gameTitle').textContent = dailyRule.title;
+  $('gameSub').textContent = 'Ежедневный вызов';
+
+  const goalPanel = $('dailyMissionGoal');
+  const goalText = $('dailyMissionGoalText');
+
+  if (goalPanel && goalText) {
+    goalText.textContent = dailyRule.goal;
+    goalPanel.hidden = false;
+  }
+} else {
+  const goalPanel = $('dailyMissionGoal');
+
+  if (goalPanel) {
+    goalPanel.hidden = true;
+  }
+
+  if (mode === 'campaign') {
+    $('gameTitle').textContent = 'Узел ' + String(campaignNode).padStart(2, '0');
+    $('gameSub').textContent = 'Кампания · Сектор ' + Math.ceil(campaignNode / 3);
+  } else {
+    $('gameTitle').textContent = 'Весёлый блок-ран';
+    $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
+  }
+}
+else if(mode==='campaign'){$('gameTitle').textContent='Узел '+String(campaignNode).padStart(2,'0');$('gameSub').textContent='Кампания · Сектор '+Math.ceil(campaignNode/3)}else{$('gameTitle').textContent='Весёлый блок-ран';$('gameSub').textContent='Каждый уровень приносит новые сюрпризы!'}show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}if(mode==='rogue'){bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
 function fmt(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 
 let pieceBag = [];
