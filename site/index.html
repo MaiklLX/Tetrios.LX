@@ -6525,6 +6525,14 @@ if(
   return;
 }
 }if(levelLines>=needLines)levelUp();updateHud();
+
+if(bbIsDailyMechanic('echoCombo')&&cleared>0){
+  toast(
+    '⟡ ЭХО-КОМБО ×'+
+    bbDailyMechanicState.echoMultiplier.toFixed(2)
+  );
+}
+
 bbRenderGoals();
 render();
 
