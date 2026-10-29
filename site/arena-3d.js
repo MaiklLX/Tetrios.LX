@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -135,15 +135,22 @@
     const linesChanged=!!previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines;
     // A locked piece becomes part of the settled board. Brief cell flashes make that transition readable.
     if(boardChanged&&previousState?.piece&&!linesChanged){
-      const oldPiece=previousState.piece;
+      const oldPiece=previousState.piece,now=performance.now();
+      impactAt=now;impactStrength=.16;
       oldPiece.shape.forEach((row,dy)=>row.forEach((v,dx)=>{
         if(!v||oldPiece.y+dy<0)return;
-        const mat=new THREE.MeshBasicMaterial({color:0x8ffff7,transparent:true,opacity:.72,side:THREE.DoubleSide});
+        const mat=new THREE.MeshBasicMaterial({color:0x8ffff7,transparent:true,opacity:.82,side:THREE.DoubleSide});
         const flash=new THREE.Mesh(new THREE.PlaneGeometry(.82,.82),mat);
         flash.position.set(oldPiece.x+dx-4.5,9.5-(oldPiece.y+dy),.52);
-        flash.userData.createdAt=performance.now();
+        flash.userData.createdAt=now;flash.userData.life=360;
         effectsGroup.add(flash);
       }));
+      // Ground shockwave: a quick horizontal energy sweep under the locked piece.
+      const shockMat=new THREE.MeshBasicMaterial({color:0x75fff0,transparent:true,opacity:.9,side:THREE.DoubleSide});
+      const shock=new THREE.Mesh(new THREE.PlaneGeometry(8.8,.055),shockMat);
+      shock.position.set(0,Math.max(-9.72,Math.min(9.6,9.5-oldPiece.y)),.5);
+      shock.userData.createdAt=now;shock.userData.life=300;shock.userData.shockwave=true;
+      effectsGroup.add(shock);
     }
     if(boardChanged){
       lastBoardSignature=boardSignature;
@@ -186,6 +193,8 @@
           effect.position.x+=effect.userData.velocity.x;
           effect.position.y+=effect.userData.velocity.y;
           effect.scale.setScalar(1-progress*.7);
+        }else if(effect.userData.shockwave){
+          effect.scale.x=1+progress*.08;effect.scale.y=1+progress*3.5;
         }else{
           effect.scale.set(1+progress*.16,1+progress*.22,1);
         }
@@ -193,7 +202,10 @@
       }
     }
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      const t=now*.00025;camera.position.x=3+Math.sin(t)*.12;camera.position.y=2+Math.cos(t*.8)*.05;
+      const t=now*.00025,impactAge=now-impactAt;
+      const shake=impactAt&&impactAge<240?Math.sin(impactAge*.085)*impactStrength*(1-impactAge/240):0;
+      camera.position.x=3+Math.sin(t)*.12+shake;
+      camera.position.y=2+Math.cos(t*.8)*.05+Math.abs(shake)*.28;
       [boardGroup,activeGroup,ghostGroup].forEach(group=>group.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}}));
       if(pieceOffsetY){pieceOffsetY*=Math.exp(-Math.min(.05,1/60)*18);if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;activeGroup.position.y=pieceOffsetY;}
     }
