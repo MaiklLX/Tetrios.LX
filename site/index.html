@@ -7415,6 +7415,17 @@ if(bbIsDailyMechanic('redZone')){
 }
 for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);
 if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext()}
+window.bbGet3DBoardState=function(){
+  const settled=board.map(row=>row.slice());
+  let active=null,ghostY=null;
+  if(piece&&!gameOver){
+    active={x:piece.x,y:piece.y,t:piece.t,shape:piece.shape.map(row=>row.slice())};
+    const ghost={...piece,y:piece.y};
+    while(!collides(ghost,0,1))ghost.y++;
+    ghostY=ghost.y;
+  }
+  return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),started:!!started,paused:!!paused,gameOver:!!gameOver};
+};
 function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.4,s=cell-2.8;ctx.save();if(ghost){ctx.globalAlpha=.2;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,s-2,s-2);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.3;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(px,py,s,s,Math.max(2,cell*.12));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff75';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#ffffff45';ctx.fillRect(px+3,py+3,s-6,Math.max(1,s*.09));ctx.restore()}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
