@@ -5044,43 +5044,30 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 
 
-/* DROP controls: desktop uses the sidebar; touch portrait uses a dedicated floating target */
+/* DROP stays inside the sidebar on desktop and mobile — never overlays the HUD */
 #game .sidecol .side-drop{display:flex;align-items:center;justify-content:center;width:100%;min-height:42px;margin-top:2px}
-#game .mobile-drop{display:none}
 @media (max-width:900px) and (orientation:portrait){
   #game .controls,
   #game .hint{display:none !important}
-  #game .sidecol .side-drop{display:none !important}
-  /* Keep DROP in the page flow instead of floating over the coins/sidebar */
-  #game .mobile-drop{
+  #game .sidecol .side-drop{
     display:flex !important;
-    position:relative;
-    z-index:4;
-    align-self:stretch;
+    flex:0 0 auto;
     width:100%;
-    min-height:44px;
-    margin:7px 0 10px;
-    padding:5px 14px;
-    flex-direction:row;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
+    min-width:0;
+    height:38px;
+    min-height:38px;
+    margin:3px 0 0;
+    padding:0 2px;
     border:1px solid #79ffe3;
-    border-radius:14px;
-    background:linear-gradient(100deg,#12384a,#116b70 50%,#173e75);
+    border-radius:10px;
+    background:linear-gradient(145deg,#174c59,#087f7c);
     color:#f0fffc;
-    font-size:13px;
+    font-size:10px;
     font-weight:1000;
-    letter-spacing:.18em;
-    box-shadow:inset 0 1px 0 #ffffff35,0 3px 0 #071a29,0 0 16px #39f3cf22;
-    touch-action:manipulation;
-    -webkit-tap-highlight-color:transparent;
+    letter-spacing:.04em;
+    box-shadow:inset 0 1px 0 #ffffff35,0 2px 0 #071a29;
+    white-space:nowrap;
   }
-  #game .mobile-drop-arrow{font-size:23px;line-height:1;font-weight:900}
-  #game .mobile-drop:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #ffffff25,0 1px 0 #071c29}
-}
-@media (max-width:900px) and (orientation:landscape){
-  #game .mobile-drop{display:none !important}
 }
 /* Contrast pass for the playfield */
 #game .boardframe{
@@ -5268,7 +5255,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div id="gameCoins" style="margin:8px 0;padding:10px 14px;border:1px solid #ffc86b66;border-radius:12px;background:linear-gradient(100deg,#ffc86b20,#111a30);color:#ffc86b;font-weight:900;display:flex;justify-content:space-between;align-items:center">
   <span>🪙 ТВОИ МОНЕТЫ</span>
   <strong id="gameCoinsValue">0</strong>
-</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div><button class="mobile-drop" data-act="drop" aria-label="Быстро сбросить фигуру"><span class="mobile-drop-arrow">↓</span><span>DROP</span></button></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
+</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
 <audio id="bgmTrack" preload="none" loop src="https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3"></audio>
 <script>
 (()=>{'use strict';
