@@ -5122,7 +5122,8 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game.daily-chrono-layout .sidecol .side-drop{font-size:9px}
 }
 
-</style></head>
+</style>
+<link rel="stylesheet" href="./visual-overhaul.css"></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
   <span class="apk-download-copy"><strong>СКАЧАТЬ APK</strong><small>Установить на Android · бесплатно</small></span>
@@ -7414,6 +7415,17 @@ if(bbIsDailyMechanic('redZone')){
 }
 for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);
 if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext()}
+window.bbGet3DBoardState=function(){
+  const settled=board.map(row=>row.slice());
+  let active=null,ghostY=null;
+  if(piece&&!gameOver){
+    active={x:piece.x,y:piece.y,t:piece.t,shape:piece.shape.map(row=>row.slice())};
+    const ghost={...piece,y:piece.y};
+    while(!collides(ghost,0,1))ghost.y++;
+    ghostY=ghost.y;
+  }
+  return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),lines:Number(lines)||0,started:!!started,paused:!!paused,gameOver:!!gameOver};
+};
 function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.4,s=cell-2.8;ctx.save();if(ghost){ctx.globalAlpha=.2;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,s-2,s-2);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.3;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(px,py,s,s,Math.max(2,cell*.12));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff75';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#ffffff45';ctx.fillRect(px+3,py+3,s-6,Math.max(1,s*.09));ctx.restore()}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
@@ -7655,6 +7667,20 @@ let bbSelectedHero = localStorage.getItem('bbSelectedHero') || 'plush';
 let bbPreviewHero = bbSelectedHero;
 let bbPlushSaved = false;
 
+function bbHeroEmblem(id, size = 'roster') {
+  const w = size === 'detail' ? 82 : 58;
+  const art = {
+    plush: '<circle cx="31" cy="28" r="11" fill="#9b6845" stroke="#e8bd8d" stroke-width="3"/><circle cx="69" cy="28" r="11" fill="#9b6845" stroke="#e8bd8d" stroke-width="3"/><path d="M23 44Q24 33 50 33Q76 33 77 44L81 66Q80 78 66 78H34Q20 78 19 66Z" fill="#9b6845" stroke="#e8bd8d" stroke-width="3"/><ellipse cx="50" cy="58" rx="19" ry="15" fill="#e8c7a2"/><circle cx="40" cy="47" r="4" fill="#fff"/><circle cx="60" cy="47" r="4" fill="#fff"/><circle cx="41" cy="47" r="2" fill="#15203b"/><circle cx="61" cy="47" r="2" fill="#15203b"/><path d="M43 57Q50 63 57 57Q55 68 50 68Q45 68 43 57Z" fill="#20223a"/><path d="M28 69Q50 79 72 69L68 78H32Z" fill="#5cf5e8"/>',
+    prism: '<ellipse cx="50" cy="53" rx="36" ry="10" fill="none" stroke="#9d7cff" stroke-width="3" transform="rotate(-24 50 53)"/><path d="M50 13L72 39L63 69L50 82L34 66L27 39Z" fill="#276c9e" stroke="#83f4ff" stroke-width="3"/><path d="M50 13L51 46L27 39Z" fill="#c8fbff"/><path d="M51 46L72 39L63 69Z" fill="#42c8ff"/><path d="M51 46L34 66L27 39Z" fill="#5b83ff"/><path d="M51 46L63 69L50 82L34 66Z" fill="#9d7cff"/><path d="M39 44Q44 39 48 44M53 44Q58 39 62 44" fill="none" stroke="#10203d" stroke-width="3"/><circle cx="43" cy="45" r="2.5" fill="#fff"/><circle cx="58" cy="45" r="2.5" fill="#fff"/><path d="M42 56Q50 61 58 56" fill="none" stroke="#10203d" stroke-width="2.5"/>',
+    blip: '<path d="M31 28L20 12L39 22M68 24L80 10L78 31" fill="#6846a0" stroke="#c7a4ff" stroke-width="3"/><path d="M18 48Q14 24 39 24H62Q87 24 82 50L76 68Q69 80 50 78Q30 80 23 66Z" fill="#8c61d9" stroke="#d2b4ff" stroke-width="3"/><ellipse cx="39" cy="47" rx="9" ry="12" fill="#fff"/><ellipse cx="62" cy="47" rx="9" ry="12" fill="#fff"/><circle cx="42" cy="49" r="4" fill="#27134e"/><circle cx="59" cy="49" r="4" fill="#27134e"/><path d="M39 63Q50 72 62 61" fill="none" stroke="#2d174f" stroke-width="4"/><path d="M51 64L56 64L54 70Z" fill="#fff"/><path d="M49 24V14" stroke="#b7c8ed" stroke-width="3"/><circle cx="49" cy="10" r="5" fill="#5cf5e8" stroke="#e3ffff" stroke-width="2"/>',
+    pixel: '<path d="M45 20V11H55V20" fill="none" stroke="#b7c8ed" stroke-width="4"/><rect x="42" y="5" width="16" height="12" rx="3" fill="#ffc86b" stroke="#fff0b4" stroke-width="2"/><rect x="24" y="23" width="52" height="48" rx="8" fill="#287858" stroke="#8fffe1" stroke-width="3"/><rect x="31" y="31" width="38" height="23" rx="4" fill="#101b34" stroke="#6eeadd" stroke-width="2"/><rect x="37" y="37" width="7" height="10" rx="2" fill="#5cf5e8"/><rect x="56" y="37" width="7" height="10" rx="2" fill="#b2ff76"/><path d="M39 59H61" stroke="#ffc86b" stroke-width="3"/><circle cx="39" cy="65" r="2" fill="#fff"/><circle cx="50" cy="65" r="2" fill="#fff"/><circle cx="61" cy="65" r="2" fill="#fff"/><path d="M23 37L14 43V59L24 62M77 37L86 43V59L76 62" fill="#43506e" stroke="#b7c8ed" stroke-width="3"/>',
+    spark: '<path d="M50 9L59 27L78 20L71 40L87 49L69 58L74 77L54 69L42 84L37 65L17 68L27 50L12 38L33 34L32 15L46 27Z" fill="#ff9d24" stroke="#ffe69a" stroke-width="3"/><path d="M50 18L63 38L56 44L66 51L49 72L45 53L35 49L43 39Z" fill="#ffdf70"/><ellipse cx="40" cy="42" rx="5" ry="7" fill="#fff"/><ellipse cx="60" cy="42" rx="5" ry="7" fill="#fff"/><circle cx="41" cy="43" r="2.5" fill="#38203b"/><circle cx="59" cy="43" r="2.5" fill="#38203b"/><path d="M42 56Q50 62 58 56" fill="none" stroke="#9c4316" stroke-width="3"/>'
+  };
+  const labels = {plush:'Капитан Плюш',prism:'Призма',blip:'Блип',pixel:'Пиксель',spark:'Искра'};
+  const colors = {plush:'#9b6845',prism:'#42c8ff',blip:'#9564f5',pixel:'#42d6a0',spark:'#ffc84d'};
+  const idSafe = labels[id] ? id : 'plush';
+  return '<svg viewBox="0 0 100 90" width="'+w+'" height="'+Math.round(w*.9)+'" role="img" aria-label="'+labels[idSafe]+'" style="display:block;filter:drop-shadow(0 4px 10px '+colors[idSafe]+'88)"><circle cx="50" cy="47" r="43" fill="'+colors[idSafe]+'" opacity=".12"/><ellipse cx="50" cy="79" rx="25" ry="5" fill="#070d1b" opacity=".4"/>'+art[idSafe]+'</svg>';
+}
 function bbRenderHeroes() {
   const roster = document.getElementById('heroesRoster');
   const details = document.getElementById('heroDetails');
@@ -7670,7 +7696,7 @@ function bbRenderHeroes() {
       style="padding:14px 8px;border:2px solid ${h.id === hero.id ? h.color : 'rgba(150,170,200,.2)'};
       border-radius:16px;background:${h.id === hero.id ? h.color + '22' : 'rgba(120,140,160,.08)'};
       color:inherit;cursor:pointer;text-align:center;min-width:0;">
-      <div style="font-size:38px;margin-bottom:7px">${h.emoji}</div>
+      <div style="display:flex;justify-content:center;align-items:center;min-height:62px;margin-bottom:7px">${bbHeroEmblem(h.id)}</div>
       <strong style="display:block;font-size:13px">${h.name}</strong>
       <div style="font-size:11px;opacity:.7;margin-top:5px">${h.role}</div>
       <div style="font-size:10px;margin-top:8px;color:${h.color}">
@@ -7685,8 +7711,9 @@ function bbRenderHeroes() {
     hero.color + '22,rgba(120,140,160,.06));margin:12px 0 16px;';
 
   details.innerHTML = `
+    <div class="bb-3d-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-просмотр персонажа"></div>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="font-size:54px;background:${hero.color}30;border-radius:16px;padding:8px">${hero.emoji}</div>
+      <div style="display:grid;place-items:center;width:94px;height:94px;flex:0 0 94px;background:${hero.color}20;border:1px solid ${hero.color}66;border-radius:22px;box-shadow:inset 0 0 24px ${hero.color}18">${bbHeroEmblem(hero.id, "detail")}</div>
       <div>
         <div style="font-size:10px;letter-spacing:2px;opacity:.7">${hero.role.toUpperCase()}</div>
         <h3 style="margin:5px 0;font-size:20px">${hero.name}</h3>
@@ -8434,4 +8461,5 @@ if (resetProgressBtn) {
 }
 
 })();
-</script></body></html>
+</script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js"></script>
+</body></html>

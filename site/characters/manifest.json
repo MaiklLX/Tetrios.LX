@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "coordinateSystem": "Y-up",
+  "unit": "meters-or-normalized",
+  "targetHeight": 1.8,
+  "characters": {
+    "plush": {
+      "model": null,
+      "license": null,
+      "animations": {
+        "idle": "Idle",
+        "victory": "Victory",
+        "attack": "Attack"
+      }
+    },
+    "prism": {
+      "model": null,
+      "license": null,
+      "animations": {
+        "idle": "Idle",
+        "victory": "Victory",
+        "attack": "Attack"
+      }
+    },
+    "blip": {
+      "model": null,
+      "license": null,
+      "animations": {
+        "idle": "Idle",
+        "victory": "Victory",
+        "attack": "Attack"
+      }
+    },
+    "pixel": {
+      "model": null,
+      "license": null,
+      "animations": {
+        "idle": "Idle",
+        "victory": "Victory",
+        "attack": "Attack"
+      }
+    },
+    "spark": {
+      "model": null,
+      "license": null,
+      "animations": {
+        "idle": "Idle",
+        "victory": "Victory",
+        "attack": "Attack"
+      }
+    }
+  }
+}
