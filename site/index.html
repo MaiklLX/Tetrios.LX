@@ -7424,7 +7424,7 @@ window.bbGet3DBoardState=function(){
     while(!collides(ghost,0,1))ghost.y++;
     ghostY=ghost.y;
   }
-  return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),started:!!started,paused:!!paused,gameOver:!!gameOver};
+  return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),lines:Number(lines)||0,started:!!started,paused:!!paused,gameOver:!!gameOver};
 };
 function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.4,s=cell-2.8;ctx.save();if(ghost){ctx.globalAlpha=.2;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,s-2,s-2);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.3;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(px,py,s,s,Math.max(2,cell*.12));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff75';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#ffffff45';ctx.fillRect(px+3,py+3,s-6,Math.max(1,s*.09));ctx.restore()}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
