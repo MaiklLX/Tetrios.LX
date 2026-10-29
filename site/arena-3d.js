@@ -68,7 +68,8 @@
     const signature=JSON.stringify(state);
     if(signature===lastSignature)return;
     lastSignature=signature;
-    boardGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose();if(obj.material){const list=Array.isArray(obj.material)?obj.material:[obj.material];for(const m of list)if(!Array.from(colorCache.values()).includes(m))m.dispose()}});\n    boardGroup.clear();
+    boardGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose();if(obj.material){const list=Array.isArray(obj.material)?obj.material:[obj.material];for(const m of list)if(!Array.from(colorCache.values()).includes(m))m.dispose()}});
+    boardGroup.clear();
     const colors=state.colors||[];
     for(let y=0;y<state.height;y++)for(let x=0;x<state.width;x++){
       const v=state.board[y]?.[x];if(v)block(x,y,colors[v-1]||'#69f4ff');
