@@ -266,10 +266,35 @@
     toggle.setAttribute('aria-pressed',String(enabled));
     toggle.textContent=enabled?'2D РЕЖИМ':'3D ARENA';
     frame.classList.toggle('bb-3d-arena-active',enabled);
+    // Do not rely on stylesheet state alone: explicitly remove the WebGL canvas from
+    // layout/paint while 2D is active so a stale framebuffer can never cover the game.
+    if(renderer?.domElement){
+      renderer.domElement.style.display=enabled?'block':'none';
+      renderer.domElement.style.visibility=enabled?'visible':'hidden';
+      renderer.domElement.style.opacity=enabled?'1':'0';
+    }
     if(!enabled&&raf){cancelAnimationFrame(raf);raf=0;}
     if(enabled){
-      try{init();sync();lastSyncAt=performance.now();if(!raf){lastFrameAt=0;animate()}}
-      catch(error){enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);setTimeout(()=>{toggle.textContent='3D ARENA'},2200)}
+      try{
+        init();
+        if(renderer?.domElement){
+          renderer.domElement.style.display='block';
+          renderer.domElement.style.visibility='visible';
+          renderer.domElement.style.opacity='1';
+        }
+        sync();lastSyncAt=performance.now();
+        if(!raf){lastFrameAt=0;animate()}
+      }catch(error){
+        enabled=false;frame.classList.remove('bb-3d-arena-active');
+        toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';
+        if(renderer?.domElement){
+          renderer.domElement.style.display='none';
+          renderer.domElement.style.visibility='hidden';
+          renderer.domElement.style.opacity='0';
+        }
+        console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);
+        setTimeout(()=>{toggle.textContent='3D ARENA'},2200)
+      }
     }
   }
   toggle.addEventListener('click',()=>{
