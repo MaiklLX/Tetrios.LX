@@ -8,7 +8,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -155,3 +155,23 @@ jobs:
           path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Prepare stable APK download
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk" "$GITHUB_WORKSPACE/Block-Buddies.apk"
+          test -s "$GITHUB_WORKSPACE/Block-Buddies.apk"
+
+      - name: Publish latest APK download
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: Tetrios.LX — Android APK
+          body: |
+            Автоматически собранная Android-версия Block Buddies из актуальной версии сайта.
+            Файл Block-Buddies.apk можно установить на Android. Это debug-сборка.
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: Block-Buddies.apk
