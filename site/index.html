@@ -5084,21 +5084,42 @@ body:has(#menu:not([hidden])) .app > .topbar {
 #game .board{border:1px solid #34536f;box-shadow:inset 0 0 24px #2bc9ff0a,0 0 16px #27c9ff0c}
 
 
-/* Daily challenge: Chrono Rift gets its own compact layout so DROP cannot push coins off-screen */
+/* Unified HUD layout: same proportions and visual hierarchy in every game mode */
 @media (max-width:900px) and (orientation:portrait){
-  #game.daily-chrono-layout .playlayout{grid-template-columns:minmax(0,1fr) 60px !important;gap:5px !important}
-  #game.daily-chrono-layout .sidecol{gap:3px !important;overflow:hidden}
-  #game.daily-chrono-layout .sidecard{padding:4px 2px !important;border-radius:10px}
-  #game.daily-chrono-layout .sidecard label{font-size:7px;line-height:1.05}
-  #game.daily-chrono-layout .nextcanvas{max-height:30px !important;margin:2px auto 0}
-  #game.daily-chrono-layout .boosticon{font-size:14px;margin:2px 0}
-  #game.daily-chrono-layout .boostname,#game.daily-chrono-layout .boostnum{font-size:7px;line-height:1.1}
-  #game.daily-chrono-layout .chrono-ring{width:48px !important;margin:4px auto}
-  #game.daily-chrono-layout .chrono-ring-inner strong{font-size:17px}
-  #game.daily-chrono-layout .sidecol .side-drop{height:32px !important;min-height:32px !important;margin:1px 0 0 !important;font-size:9px !important}
-  #game.daily-chrono-layout #gameCoins{width:100%;margin:5px 0 0 !important;padding:6px 4px !important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:8px;line-height:1.1;text-align:center}
-  #game.daily-chrono-layout .gameleftcol #gameCoins{box-sizing:border-box}
-  /* Keep the normal full-height playfield; compact only the sidebar cards */
+  #game.unified-game-layout .playlayout,
+  #game.daily-chrono-layout .playlayout{grid-template-columns:minmax(0,1fr) minmax(92px,27%) !important;gap:6px !important;align-items:stretch}
+  #game.unified-game-layout .sidecol,
+  #game.daily-chrono-layout .sidecol{min-width:0;gap:5px !important;overflow:visible}
+  #game.unified-game-layout .sidecard,
+  #game.daily-chrono-layout .sidecard{min-width:0;padding:6px 4px !important;border-radius:12px;overflow:hidden}
+  #game.unified-game-layout .sidecard label,
+  #game.daily-chrono-layout .sidecard label{font-size:8px;line-height:1.15;letter-spacing:.06em}
+  #game.unified-game-layout .nextcanvas,
+  #game.daily-chrono-layout .nextcanvas{width:min(100%,86px);max-height:54px;margin:4px auto 0}
+  #game.unified-game-layout .boosticon,
+  #game.daily-chrono-layout .boosticon{font-size:18px;margin:4px 0}
+  #game.unified-game-layout .boostname,
+  #game.unified-game-layout .boostnum,
+  #game.daily-chrono-layout .boostname,
+  #game.daily-chrono-layout .boostnum{font-size:8px;line-height:1.2;overflow-wrap:anywhere}
+  #game.unified-game-layout .chrono-ring,
+  #game.daily-chrono-layout .chrono-ring{width:min(68px,100%);margin:5px auto}
+  #game.unified-game-layout .chrono-ring-inner strong,
+  #game.daily-chrono-layout .chrono-ring-inner strong{font-size:20px}
+  #game.unified-game-layout .sidecol .side-drop,
+  #game.daily-chrono-layout .sidecol .side-drop{width:100%;height:40px;min-height:40px;margin:4px 0 0;padding:0 3px;font-size:10px;letter-spacing:.05em}
+  #game.unified-game-layout #gameCoins,
+  #game.daily-chrono-layout #gameCoins{width:100%;box-sizing:border-box;margin:6px 0 0 !important;padding:8px 10px !important;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #31578e;border-radius:12px;background:linear-gradient(110deg,#0c1730,#111d3a);font-size:12px;line-height:1.2;text-align:center}
+  #game.unified-game-layout .boardframe,
+  #game.daily-chrono-layout .boardframe{height:clamp(300px,calc(100dvh - 300px),620px) !important;min-height:0}
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game.unified-game-layout .playlayout,
+  #game.daily-chrono-layout .playlayout{grid-template-columns:minmax(0,1fr) 88px !important;gap:5px !important}
+  #game.unified-game-layout .sidecard,
+  #game.daily-chrono-layout .sidecard{padding:5px 3px !important}
+  #game.unified-game-layout .sidecol .side-drop,
+  #game.daily-chrono-layout .sidecol .side-drop{font-size:9px}
 }
 
 </style></head>
@@ -7934,12 +7955,10 @@ function bbApplyDailyChronoLayout(){
   const side=layout?.querySelector('.sidecol');
   const left=layout?.querySelector('.gameleftcol');
   const coins=document.getElementById('gameCoins');
-  const compact=mode==='daily'&&bbIsDailyMechanic('chronoRift');
-  game?.classList.toggle('daily-chrono-layout',compact);
-  if(coins&&side&&left){
-    if(compact) left.appendChild(coins);
-    else side.appendChild(coins);
-  }
+  /* One shared HUD layout for every mode; only the visible mode cards change. */
+  game?.classList.add('unified-game-layout');
+  game?.classList.remove('daily-chrono-layout');
+  if(coins&&side&&left) left.appendChild(coins);
 }
 
 let bbGesture = null;
