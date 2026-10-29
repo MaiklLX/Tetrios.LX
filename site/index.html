@@ -4461,6 +4461,67 @@ body:has(#menu:not([hidden])) .app > .topbar {
 #game {
   -webkit-touch-callout: none;
 }
+
+/* TETRIOS.LX — исправление ширины игрового поля на Android */
+@media (max-width: 900px) and (orientation: portrait) {
+  #game .playlayout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 60px !important;
+    align-items: stretch;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: visible;
+  }
+
+  #game .playlayout > div:first-child {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+  }
+
+  #game .boardframe {
+    width: 100%;
+    min-width: 0;
+    height: clamp(240px, 55dvh, 480px);
+    min-height: 0;
+    padding: 3px !important;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #game .board {
+    display: block;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1 / 2;
+    flex: 0 1 auto;
+  }
+
+  #game .sidecol {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: 60px;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #game .progresswrap {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
