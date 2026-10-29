@@ -12,8 +12,8 @@
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
-  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set();
-  const geometryFor=(key,create)=>{if(!geometryCache.has(key))geometryCache.set(key,create());return geometryCache.get(key)};
+  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
+  const geometryFor=(key,create)=>{if(!geometryCache.has(key)){const geometry=create();geometryCache.set(key,geometry);sharedGeometries.add(geometry)}return geometryCache.get(key)};
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
     if(!colorCache.has(key)){const material=new THREE.MeshStandardMaterial({
@@ -113,7 +113,7 @@
   }
   function disposeGroup(group){
     group.traverse(obj=>{
-      if(obj.geometry&&!([...geometryCache.values()].includes(obj.geometry)))obj.geometry.dispose();
+      if(obj.geometry&&!sharedGeometries.has(obj.geometry))obj.geometry.dispose();
       if(obj.material){
         const list=Array.isArray(obj.material)?obj.material:[obj.material];
         for(const m of list)if(!sharedMaterials.has(m))m.dispose();
