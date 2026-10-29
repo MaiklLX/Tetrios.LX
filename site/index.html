@@ -4562,6 +4562,158 @@ body:has(#menu:not([hidden])) .app > .topbar {
     padding: 7px 10px;
   }
 }
+
+/* === BLOCK BUDDIES: neon arcade layout refresh === */
+#game{
+  width:100%;
+  max-width:1120px;
+  margin-inline:auto;
+  padding:clamp(10px,2vw,22px);
+  border:1px solid #263e70;
+  border-radius:24px;
+  background:
+    radial-gradient(ellipse at 48% 38%,#12265a35,transparent 48%),
+    linear-gradient(145deg,#080e20ed,#060a16f5);
+  box-shadow:0 22px 70px #0008,inset 0 0 40px #2769ff0b;
+}
+#game .screenhead{
+  padding:0 2px 12px;
+  border-bottom:1px solid #26365b;
+  margin-bottom:12px;
+}
+#game .screenhead h2{
+  font-size:clamp(20px,2.4vw,30px);
+  letter-spacing:.015em;
+  text-shadow:0 0 18px #4d8dff4a;
+}
+#game .screenhead p{font-size:12px;color:#9fb5e7}
+#game .gamehud{gap:10px;margin:12px 0}
+#game .hudbox{
+  padding:12px 15px;
+  border-color:#2a4b83;
+  background:linear-gradient(135deg,#101d3b,#080f21);
+  box-shadow:inset 0 0 20px #287bff0a;
+  position:relative;overflow:hidden;
+}
+#game .hudbox:after{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(#4baaff,#765bff);
+  box-shadow:0 0 12px #318aff;
+}
+#game .hudbox span{font-size:10px;letter-spacing:.16em;color:#9db4e4}
+#game .hudbox strong{font-size:clamp(20px,2.3vw,28px);color:#f2f6ff}
+#game #gameCoins{
+  margin:10px 0 14px!important;
+  padding:10px 15px!important;
+  border:1px solid #b78a4166!important;
+  border-radius:13px!important;
+  background:linear-gradient(100deg,#ffc86b18,#111a30 55%,#0b1225)!important;
+  box-shadow:inset 0 0 18px #ffc86b08;
+}
+#game .playlayout{
+  grid-template-columns:minmax(0,1fr) 190px;
+  gap:16px;
+  align-items:stretch;
+}
+#game .boardframe{
+  height:min(72vh,760px);
+  min-height:440px;
+  padding:9px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  border:1px solid #367bff;
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at 50% 30%,#123d7a36,transparent 60%),
+    linear-gradient(145deg,#0e1b39,#070d1c);
+  box-shadow:0 0 0 1px #6d52ff2b,0 0 30px #245fff22, inset 0 0 26px #167dff12;
+}
+#game .boardframe:before{
+  box-shadow:inset 0 0 30px #267aff14,0 0 22px #4a63ff12;
+}
+#game .board{
+  width:auto;
+  height:100%;
+  max-width:100%;
+  aspect-ratio:1/2;
+  object-fit:contain;
+  flex:0 1 auto;
+  border:1px solid #1c5cb7;
+  box-shadow:0 0 22px #147bff15;
+}
+#game .sidecol{gap:10px;align-content:start}
+#game .sidecard{
+  padding:12px 10px;
+  border-color:#2b4779;
+  border-radius:15px;
+  background:linear-gradient(145deg,#111d39,#080e20);
+  box-shadow:inset 0 0 18px #3678ff08;
+}
+#game .sidecard label{font-size:9px;letter-spacing:.14em;color:#9bb7e8}
+#game .nextcanvas{max-height:110px;margin:8px auto 0}
+#game .boosticon{font-size:28px;margin:10px 0 5px}
+#game .boostname{font-size:11px}
+#game .boostnum{font-size:11px}
+#game .chrono-card{
+  padding:13px 10px;
+  border-color:#348dff99;
+  background:radial-gradient(circle at 50% 35%,#163c7566,transparent 58%),linear-gradient(145deg,#101d3b,#080e20);
+}
+#game .chrono-ring{width:min(100%,150px);margin:13px auto 10px}
+#game .chrono-ring-inner strong{font-size:clamp(30px,3vw,38px)}
+#game .chrono-hourglass{font-size:22px}
+#game .chrono-caption{font-size:9px}
+#game .chrono-track{height:5px}
+#game .sidecard #timer{font-size:22px!important;font-variant-numeric:tabular-nums;color:#eaf2ff;text-shadow:0 0 12px #398bff4d}
+#game .smallbtn{font-size:10px;padding:9px 5px;border-color:#34517e;background:#111e3a}
+#game .progresswrap{margin:10px 0 4px}
+#game .progressmeta{font-size:11px;color:#a8bce4}
+#game .progressbar{height:6px;background:#182746}
+#game .controls{gap:9px;margin-top:12px}
+#game .control{height:50px;border-color:#2b4779;background:linear-gradient(145deg,#152344,#0b1224);box-shadow:0 4px 0 #050914,0 0 14px #225dff0a}
+#game .control.primary{background:linear-gradient(135deg,#5cf5e8,#70baff);box-shadow:0 4px 0 #123d58,0 0 20px #5cf5e81c}
+#game .hint{font-size:11px;color:#8199c8;margin-top:10px}
+@media(min-width:900px){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 205px;gap:18px}
+  #game .boardframe{height:min(74vh,800px)}
+}
+@media(max-width:700px){
+  #game{padding:10px;border-radius:18px}
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 104px;gap:9px}
+  #game .boardframe{height:clamp(300px,calc(100dvh - 350px),620px);min-height:0;padding:5px;border-radius:14px}
+  #game .sidecol{gap:7px}
+  #game .sidecard{padding:8px 5px;border-radius:12px}
+  #game .sidecard label{font-size:8px;letter-spacing:.08em}
+  #game .chrono-ring{width:min(100%,92px);margin:9px auto 7px}
+  #game .chrono-ring-inner strong{font-size:24px}
+  #game .chrono-hourglass{font-size:16px}
+  #game .chrono-caption{font-size:7px;letter-spacing:.04em}
+  #game .nextcanvas{max-height:70px}
+  #game .boosticon{font-size:22px;margin:6px 0 3px}
+  #game .boostname,#game .boostnum{font-size:9px}
+  #game .gamehud{gap:6px}
+  #game .hudbox{padding:8px 9px}
+  #game .hudbox span{font-size:8px}
+  #game .hudbox strong{font-size:18px}
+}
+@media(max-width:420px){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 88px;gap:6px}
+  #game .boardframe{height:clamp(260px,calc(100dvh - 360px),520px)}
+  #game .sidecard{padding:7px 4px}
+  #game .chrono-ring{width:min(100%,78px)}
+  #game .chrono-ring-inner strong{font-size:21px}
+  #game .gamehud{gap:4px}
+  #game .hudbox{padding:7px 6px}
+  #game .hudbox span{font-size:7px;letter-spacing:.08em}
+  #game .hudbox strong{font-size:16px}
+  #game .control{height:42px}
+}
+@media(max-height:760px) and (min-width:701px){
+  #game .boardframe{height:min(66vh,620px);min-height:330px}
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
