@@ -7764,7 +7764,7 @@ function bbStartMenuMusic() {
   menuMusicStep = 0;
   const notes = [261.63,329.63,392.00,493.88,392.00,329.63,293.66,349.23];
   menuMusicTimer = setInterval(() => {
-    if (!musicOn || !soundOn || document.hidden || $('game').hidden || (started && !paused && !gameOver)) return;
+    if (!musicOn || !soundOn || document.hidden || (!$('game').hidden && started && !paused && !gameOver)) return;
     const a = audioCtx();
     if (!a) return;
     const n = notes[menuMusicStep % notes.length];
@@ -7775,7 +7775,7 @@ function bbStartMenuMusic() {
 }
 function bbSyncMusic() {
   const track = $('bgmTrack');
-  const menuVisible = !$('game').hidden && !started && !gameOver;
+  const menuVisible = $('game').hidden || (!started && !paused && !gameOver);
   if (!musicOn || !soundOn || document.hidden) {
     if (track) track.pause();
     bbStopMenuMusic();
