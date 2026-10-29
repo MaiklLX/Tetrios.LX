@@ -119,9 +119,9 @@
       const resize=()=>{if(!stage.isConnected)return;const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
       const ro=new ResizeObserver(resize);ro.observe(stage);
       // Touch/mouse drag lets players inspect the mascot instead of seeing a fixed thumbnail.
-      let dragging=false,lastX=0,lastY=0,targetY=0,targetX=0;
+      let dragging=false,lastX=0,lastY=0;const controls={targetY:0,targetX:0};
       const down=e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;stage.classList.add('bb-3d-dragging');if(renderer.domElement.setPointerCapture&&e.pointerId!==undefined){try{renderer.domElement.setPointerCapture(e.pointerId)}catch(_){}}};
-      const move=e=>{if(!dragging)return;targetY+=(e.clientX-lastX)*.012;targetX=Math.max(-.28,Math.min(.28,targetX+(e.clientY-lastY)*.006));lastX=e.clientX;lastY=e.clientY};
+      const move=e=>{if(!dragging)return;controls.targetY+=(e.clientX-lastX)*.012;controls.targetX=Math.max(-.28,Math.min(.28,controls.targetX+(e.clientY-lastY)*.006));lastX=e.clientX;lastY=e.clientY};
       const up=()=>{dragging=false;stage.classList.remove('bb-3d-dragging')};
       renderer.domElement.style.touchAction='pan-y';
       renderer.domElement.addEventListener('pointerdown',down);
@@ -130,11 +130,11 @@
       renderer.domElement.addEventListener('pointercancel',up);
       renderer.domElement.addEventListener('lostpointercapture',up);
       stage.addEventListener('pointerleave',up);
-      active.set(stage,{renderer,scene,camera,char,ro,targetY,targetX,dragging:false,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}});
+      active.set(stage,{renderer,scene,camera,char,ro,controls,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}});
     }catch(err){console.warn('[Tetrios 3D] Renderer failed; keeping fallback artwork.',err);fallback.style.display='';}
   }
   function scan(){document.querySelectorAll('.bb-3d-stage').forEach(mount);for(const [stage,item] of active){if(!stage.isConnected){item.ro.disconnect();item.cleanup?.();item.renderer.dispose();active.delete(stage)}}}
   const clock=new THREE.Clock();
-  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;item.renderer.render(item.scene,item.camera)}}
+  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;item.renderer.render(item.scene,item.camera)}}
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});scan();frame();
 })();
