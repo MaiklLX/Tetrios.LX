@@ -117,7 +117,21 @@
       }
     }
     const boardSignature=JSON.stringify([state.board,state.colors]);
-    if(boardSignature!==lastBoardSignature){
+    const boardChanged=boardSignature!==lastBoardSignature;
+    const linesChanged=!!previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines;
+    // A locked piece becomes part of the settled board. Brief cell flashes make that transition readable.
+    if(boardChanged&&previousState?.piece&&!linesChanged){
+      const oldPiece=previousState.piece;
+      oldPiece.shape.forEach((row,dy)=>row.forEach((v,dx)=>{
+        if(!v||oldPiece.y+dy<0)return;
+        const mat=new THREE.MeshBasicMaterial({color:0x8ffff7,transparent:true,opacity:.72,side:THREE.DoubleSide});
+        const flash=new THREE.Mesh(new THREE.PlaneGeometry(.82,.82),mat);
+        flash.position.set(oldPiece.x+dx-4.5,9.5-(oldPiece.y+dy),.52);
+        flash.userData.createdAt=performance.now();
+        effectsGroup.add(flash);
+      }));
+    }
+    if(boardChanged){
       lastBoardSignature=boardSignature;
       disposeGroup(boardGroup);
       const colors=state.colors||[];
