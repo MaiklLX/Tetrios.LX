@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
@@ -94,6 +94,7 @@
     boardGroup=new THREE.Group();scene.add(boardGroup);
     activeGroup=new THREE.Group();scene.add(activeGroup);
     ghostGroup=new THREE.Group();scene.add(ghostGroup);
+    pulseGroups=[boardGroup,activeGroup,ghostGroup];
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
     const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
@@ -248,7 +249,13 @@
       const shake=impactAt&&impactAge<240?Math.sin(impactAge*.085)*impactStrength*(1-impactAge/240):0;
       camera.position.x=3+Math.sin(t)*.12+shake;
       camera.position.y=2+Math.cos(t*.8)*.05+Math.abs(shake)*.28;
-      [boardGroup,activeGroup,ghostGroup].forEach(group=>group.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}}));
+      for(let g=0;g<pulseGroups.length;g++){
+        const cells=pulseGroups[g].children;
+        for(let i=0;i<cells.length;i++){
+          const cell=cells[i];
+          if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}
+        }
+      }
       if(pieceOffsetY){pieceOffsetY*=Math.exp(-deltaSeconds*18);if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;activeGroup.position.y=pieceOffsetY;}
     }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
