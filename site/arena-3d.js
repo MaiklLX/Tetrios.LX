@@ -48,6 +48,16 @@
     gridGroup.add(new THREE.LineSegments(gridGeo,lineMaterial));
     const borderGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-5,-10,.04),new THREE.Vector3(5,-10,.04),new THREE.Vector3(5,10,.04),new THREE.Vector3(-5,10,.04),new THREE.Vector3(-5,-10,.04)]);
     gridGroup.add(new THREE.Line(borderGeo,new THREE.LineBasicMaterial({color:0x75fff0,transparent:true,opacity:.8})));
+    // Floating side rails and corner beacons give the board a framed arcade-arena silhouette.
+    const railMat=new THREE.MeshStandardMaterial({color:0x5df8ee,emissive:0x1a8e9c,emissiveIntensity:1.6,metalness:.65,roughness:.22});
+    const railGeo=new THREE.BoxGeometry(.075,20.6,.16);
+    [-5.34,5.34].forEach((x,i)=>{
+      const rail=new THREE.Mesh(railGeo,railMat);rail.position.set(x,0,-.04);gridGroup.add(rail);
+      const beaconGeo=new THREE.SphereGeometry(.105,12,8);
+      [-10.15,10.15].forEach(y=>{const beacon=new THREE.Mesh(beaconGeo,new THREE.MeshBasicMaterial({color:i?0xa98aff:0x75fff0}));beacon.position.set(x,y,.12);gridGroup.add(beacon)});
+    });
+    const base=new THREE.Mesh(new THREE.BoxGeometry(10.9,.16,.65),new THREE.MeshStandardMaterial({color:0x182442,metalness:.8,roughness:.28,emissive:0x101e42,emissiveIntensity:.7}));
+    base.position.set(0,-10.48,-.12);gridGroup.add(base);
     boardGroup=new THREE.Group();scene.add(boardGroup);
     const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
