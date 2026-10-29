@@ -101,3 +101,13 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #heroDetails{padding:12px!important}
 }
 @media(prefers-reduced-motion:reduce){.screen,.bb-3d-stage .bb-3d-fallback{animation:none!important}*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+/* Optional 3D gameplay arena — the original canvas remains active for game logic and input. */
+.boardframe{overflow:hidden}
+.bb-arena-toggle{position:absolute;z-index:5;top:12px;right:12px;padding:7px 10px;border:1px solid rgba(102,255,240,.52);border-radius:999px;background:rgba(7,13,29,.86);color:#9ffff4;font:800 9px/1 system-ui,sans-serif;letter-spacing:.12em;box-shadow:0 0 18px rgba(73,245,234,.12);backdrop-filter:blur(8px);cursor:pointer}
+.bb-arena-toggle[aria-pressed="true"]{background:linear-gradient(110deg,#73fff0,#a98aff);color:#09111f;border-color:#fff}
+.bb-arena-canvas{position:absolute;z-index:2;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);display:none;pointer-events:none}
+.boardframe.bb-3d-arena-active .bb-arena-canvas{display:block}
+.boardframe.bb-3d-arena-active #board{opacity:0}
+.boardframe.bb-3d-arena-active:after{content:"TETRIOS.LX · HOLOGRAPHIC ARENA";position:absolute;z-index:3;left:12px;bottom:12px;font-size:8px;letter-spacing:.16em;color:rgba(193,218,255,.72);pointer-events:none}
+@media(max-width:520px){.bb-arena-toggle{top:10px;right:10px;font-size:8px;padding:7px 9px}}
