@@ -12,25 +12,25 @@
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
-  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map();
+  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set();
   const geometryFor=(key,create)=>{if(!geometryCache.has(key))geometryCache.set(key,create());return geometryCache.get(key)};
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
-    if(!colorCache.has(key))colorCache.set(key,new THREE.MeshStandardMaterial({
+    if(!colorCache.has(key)){const material=new THREE.MeshStandardMaterial({
       color,roughness:ghost?.48:.22,metalness:ghost?.12:.72,
       emissive:color,emissiveIntensity:ghost?.1:.34,
       transparent:ghost,opacity:ghost?.18:1
-    }));
+    });colorCache.set(key,material);sharedMaterials.add(material);}
     return colorCache.get(key);
   };
   const coreMaterialFor=color=>{
     const key=String(color);
-    if(!coreCache.has(key))coreCache.set(key,new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72,depthWrite:false}));
+    if(!coreCache.has(key)){const material=new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72,depthWrite:false});coreCache.set(key,material);sharedMaterials.add(material);}
     return coreCache.get(key);
   };
   const edgeMaterialFor=color=>{
     const key=String(color);
-    if(!edgeCache.has(key))edgeCache.set(key,new THREE.MeshStandardMaterial({color,metalness:.9,roughness:.16,emissive:color,emissiveIntensity:.5}));
+    if(!edgeCache.has(key)){const material=new THREE.MeshStandardMaterial({color,metalness:.9,roughness:.16,emissive:color,emissiveIntensity:.5});edgeCache.set(key,material);sharedMaterials.add(material);}
     return edgeCache.get(key);
   };
   function init(){
@@ -116,7 +116,7 @@
       if(obj.geometry&&!([...geometryCache.values()].includes(obj.geometry)))obj.geometry.dispose();
       if(obj.material){
         const list=Array.isArray(obj.material)?obj.material:[obj.material];
-        for(const m of list)if(![...colorCache.values(),...coreCache.values(),...edgeCache.values()].includes(m))m.dispose();
+        for(const m of list)if(!sharedMaterials.has(m))m.dispose();
       }
     });
     group.clear();
