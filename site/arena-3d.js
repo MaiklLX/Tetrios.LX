@@ -66,19 +66,29 @@
     });
     const base=new THREE.Mesh(new THREE.BoxGeometry(10.9,.16,.65),new THREE.MeshStandardMaterial({color:0x182442,metalness:.8,roughness:.28,emissive:0x101e42,emissiveIntensity:.7}));
     base.position.set(0,-10.48,-.12);gridGroup.add(base);
-    boardGroup=new THREE.Group();scene.add(boardGroup);\n    effectsGroup=new THREE.Group();scene.add(effectsGroup);
+    boardGroup=new THREE.Group();scene.add(boardGroup);
+    effectsGroup=new THREE.Group();scene.add(effectsGroup);
     const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
   }
   function block(x,y,color,ghost=false){
+    const cell=new THREE.Group();
+    cell.position.set(x-4.5,9.5-y,ghost?.03:.24);
+    cell.userData.pulsePhase=(x*7+y*13)%19;
     const geo=new THREE.BoxGeometry(.88,.88,.62);
     const mesh=new THREE.Mesh(geo,materialFor(color,ghost));
-    mesh.position.set(x-4.5,9.5-y,ghost?.03:.24);
-    if(!ghost){mesh.castShadow=false;mesh.receiveShadow=false}
-    boardGroup.add(mesh);
-    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:0xe6ffff,transparent:true,opacity:ghost?.35:.62}));
-    edges.position.copy(mesh.position);boardGroup.add(edges);
-    if(!ghost){const shine=new THREE.Mesh(new THREE.BoxGeometry(.68,.055,.018),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.32}));shine.position.set(mesh.position.x,mesh.position.y+.31,mesh.position.z+.22);boardGroup.add(shine)}
+    cell.add(mesh);
+    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.3:.7}));
+    edges.position.z=.002;cell.add(edges);
+    if(!ghost){
+      const shine=new THREE.Mesh(new THREE.BoxGeometry(.66,.045,.018),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
+      shine.position.set(0,.31,.325);cell.add(shine);
+      const accent=new THREE.Mesh(new THREE.BoxGeometry(.055,.58,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.42}));
+      accent.position.set(-.32,-.08,.326);cell.add(accent);
+      const corner=new THREE.Mesh(new THREE.BoxGeometry(.16,.045,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
+      corner.position.set(.27,-.31,.326);cell.add(corner);
+    }
+    boardGroup.add(cell);
   }
   function sync(){
     if(!enabled||!window.bbGet3DBoardState)return;
