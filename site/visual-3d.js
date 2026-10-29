@@ -38,14 +38,14 @@
     if(id==='plush'){
       const torso=new THREE.Mesh(new THREE.SphereGeometry(.57,28,22),bodyMat);torso.scale.set(1,.95,.72);torso.position.y=.9;group.add(torso);
       const belly=new THREE.Mesh(new THREE.SphereGeometry(.34,24,18),mat(0xf0d5b2,.42,.02));belly.scale.set(1,.9,.28);belly.position.set(0,.79,.39);group.add(belly);
-      for(const x of [-.39,.39]){const ear=new THREE.Mesh(new THREE.SphereGeometry(.2,20,16),bodyMat);ear.position.set(x,1.39,.02);group.add(ear);const inner=new THREE.Mesh(new THREE.SphereGeometry(.105,16,12),mat(0xf3b5a4,.4,.02));inner.position.set(x,1.4,.17);group.add(inner)}
+      for(const x of [-.39,.39]){const ear=new THREE.Mesh(new THREE.SphereGeometry(.2,20,16),bodyMat);ear.position.set(x,1.39,.02);ear.userData.bbMotion={axis:'z',base:0,amplitude:.055,speed:1.8,phase:x>0?0:Math.PI};group.add(ear);const inner=new THREE.Mesh(new THREE.SphereGeometry(.105,16,12),mat(0xf3b5a4,.4,.02));inner.position.set(x,1.4,.17);group.add(inner)}
       addEyes(group,[[-.2,1.08,.48,1],[.2,1.08,.48,1]],eyeMat,darkMat);
       const nose=new THREE.Mesh(new THREE.SphereGeometry(.075,16,12),darkMat);nose.position.set(0,.91,.53);group.add(nose);
-      for(const side of [-1,1]){const arm=new THREE.Mesh(new THREE.SphereGeometry(.19,18,14),bodyMat);arm.scale.set(.78,1.45,.8);arm.position.set(side*.62,.82,0);group.add(arm);const foot=new THREE.Mesh(new THREE.SphereGeometry(.22,18,14),darkMat);foot.scale.set(1,.58,1);foot.position.set(side*.29,.28,.12);group.add(foot)}
+      for(const side of [-1,1]){const arm=new THREE.Mesh(new THREE.SphereGeometry(.19,18,14),bodyMat);arm.scale.set(.78,1.45,.8);arm.position.set(side*.62,.82,0);arm.userData.bbMotion={axis:'z',base:0,amplitude:.12,speed:1.7,phase:side>0?0:Math.PI};group.add(arm);const foot=new THREE.Mesh(new THREE.SphereGeometry(.22,18,14),darkMat);foot.scale.set(1,.58,1);foot.position.set(side*.29,.28,.12);group.add(foot)}
       const scarf=roundedBlock(.72,.12,.18,.045,mat(0x67e8d9,.28,.18));scarf.position.set(0,.54,.42);group.add(scarf);
     }else if(id==='prism'){
       const crystalMat=new THREE.MeshPhysicalMaterial({color:0x57cfff,roughness:.16,metalness:.2,transmission:.12,thickness:.7,clearcoat:1,clearcoatRoughness:.1,emissive:0x064e83,emissiveIntensity:.55,flatShading:true});
-      const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(.78,0),crystalMat);crystal.position.y=1.02;crystal.scale.set(.83,1.1,.68);crystal.rotation.y=.22;group.add(crystal);
+      const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(.78,0),crystalMat);crystal.position.y=1.02;crystal.scale.set(.83,1.1,.68);crystal.rotation.y=.22;crystal.userData.bbMotion={axis:'y',base:crystal.rotation.y,amplitude:.12,speed:.7,phase:0};group.add(crystal);
       const inner=new THREE.Mesh(new THREE.OctahedronGeometry(.43,0),mat(0xd6fbff,.16,.32,0x3a9fff));inner.position.set(0,1.03,.19);inner.scale.set(.8,1.05,.6);group.add(inner);
       const band=new THREE.Mesh(new THREE.TorusGeometry(.57,.055,10,48),goldMat);band.position.y=.95;band.rotation.x=Math.PI/2;group.add(band);
       addEyes(group,[[-.16,1.16,.47,.72],[.16,1.16,.47,.72]],eyeMat,darkMat);
@@ -55,7 +55,7 @@
       const head=new THREE.Mesh(new THREE.SphereGeometry(.64,24,20),mat(0x8c61d9,.27,.14,0x48218b));head.scale.set(1.08,.88,.8);head.position.y=1.02;group.add(head);
       const jaw=new THREE.Mesh(new THREE.SphereGeometry(.35,20,16),mat(0x5c399d,.32,.08));jaw.scale.set(1,.48,.65);jaw.position.set(0,.63,.2);group.add(jaw);
       addEyes(group,[[-.24,1.12,.48,1.25],[.24,1.12,.48,1.25]],eyeMat,mat(0x31145c,.2,.08));
-      for(const side of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.13,.42,7),mat(0xd4a9ff,.25,.12,0x6a2bb5));horn.position.set(side*.42,1.65,0);horn.rotation.z=-side*.35;group.add(horn);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.36,4,8),mat(0x6d45b2,.3,.12));arm.position.set(side*.66,.76,0);arm.rotation.z=-side*.55;group.add(arm)}
+      for(const side of [-1,1]){const horn=new THREE.Mesh(new THREE.ConeGeometry(.13,.42,7),mat(0xd4a9ff,.25,.12,0x6a2bb5));horn.position.set(side*.42,1.65,0);horn.rotation.z=-side*.35;group.add(horn);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.36,4,8),mat(0x6d45b2,.3,.12));arm.position.set(side*.66,.76,0);arm.rotation.z=-side*.55;arm.userData.bbMotion={axis:'z',base:arm.rotation.z,amplitude:.14,speed:2.4,phase:side>0?0:Math.PI};group.add(arm)}
       const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.025,.04,.28,8),metalMat);antenna.position.set(0,1.65,0);group.add(antenna);
       const orb=new THREE.Mesh(new THREE.SphereGeometry(.105,16,12),mat(0x69fff1,.15,.2,0x44fff0));orb.position.set(0,1.82,0);group.add(orb);
       const mouth=new THREE.Mesh(new THREE.TorusGeometry(.11,.025,6,20,Math.PI),darkMat);mouth.position.set(0,.78,.49);mouth.rotation.z=Math.PI;group.add(mouth);
@@ -65,7 +65,7 @@
       for(const x of [-.19,.19]){const eye=new THREE.Mesh(new THREE.BoxGeometry(.12,.15,.04),mat(x<0?0x5bfff0:0xb2ff76,.18,.2,0x41ffe0));eye.position.set(x,1.08,.415);group.add(eye)}
       const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,.28,8),metalMat);antenna.position.set(0,1.48,0);group.add(antenna);
       const antennaTip=new THREE.Mesh(new THREE.BoxGeometry(.17,.17,.17),goldMat);antennaTip.position.set(0,1.69,0);group.add(antennaTip);
-      for(const side of [-1,1]){const shoulder=roundedBlock(.28,.31,.35,.06,metalMat);shoulder.position.set(side*.62,1.08,0);group.add(shoulder);const arm=roundedBlock(.18,.46,.2,.045,mat(0x279b83,.28,.5));arm.position.set(side*.64,.73,0);group.add(arm);const leg=roundedBlock(.25,.36,.3,.05,mat(0x263c5d,.3,.4));leg.position.set(side*.25,.25,0);group.add(leg);const foot=roundedBlock(.34,.16,.4,.04,darkMat);foot.position.set(side*.25,.12,.08);group.add(foot)}
+      for(const side of [-1,1]){const shoulder=roundedBlock(.28,.31,.35,.06,metalMat);shoulder.position.set(side*.62,1.08,0);group.add(shoulder);const arm=roundedBlock(.18,.46,.2,.045,mat(0x279b83,.28,.5));arm.position.set(side*.64,.73,0);arm.userData.bbMotion={axis:'z',base:0,amplitude:.1,speed:1.9,phase:side>0?0:Math.PI};group.add(arm);const leg=roundedBlock(.25,.36,.3,.05,mat(0x263c5d,.3,.4));leg.position.set(side*.25,.25,0);group.add(leg);const foot=roundedBlock(.34,.16,.4,.04,darkMat);foot.position.set(side*.25,.12,.08);group.add(foot)}
       for(let i=0;i<3;i++){const vent=new THREE.Mesh(new THREE.BoxGeometry(.09,.045,.025),goldMat);vent.position.set(-.1+i*.1,.68,.335);group.add(vent)}
     }else if(id==='spark'){
       const coreMat=mat(0xffc247,.2,.3,0xff8a18);
@@ -74,7 +74,7 @@
       addEyes(group,[[-.17,1.12,.43,.85],[.17,1.12,.43,.85]],eyeMat,darkMat);
       const boltShape=new THREE.Shape();boltShape.moveTo(.08,.42);boltShape.lineTo(-.13,.05);boltShape.lineTo(.02,.05);boltShape.lineTo(-.09,-.35);boltShape.lineTo(.2,.08);boltShape.lineTo(.05,.08);boltShape.closePath();
       const boltGeo=new THREE.ExtrudeGeometry(boltShape,{depth:.08,bevelEnabled:true,bevelSegments:2,bevelSize:.025,bevelThickness:.025});const bolt=new THREE.Mesh(boltGeo,mat(0xfff6b0,.18,.25,0xffd34e));bolt.position.set(.43,1.18,.05);bolt.rotation.z=-.12;group.add(bolt);
-      for(const side of [-1,1]){const fin=new THREE.Mesh(new THREE.ConeGeometry(.15,.5,5),mat(0xff8a2a,.22,.2,0xff5a16));fin.position.set(side*.47,1.47,-.05);fin.rotation.z=-side*.85;group.add(fin)}
+      for(const side of [-1,1]){const fin=new THREE.Mesh(new THREE.ConeGeometry(.15,.5,5),mat(0xff8a2a,.22,.2,0xff5a16));fin.position.set(side*.47,1.47,-.05);fin.rotation.z=-side*.85;fin.userData.bbMotion={axis:'z',base:fin.rotation.z,amplitude:.1,speed:2.7,phase:side>0?0:Math.PI};group.add(fin)}
       const baseRing=new THREE.Mesh(new THREE.TorusGeometry(.53,.07,8,36),goldMat);baseRing.position.y=.35;baseRing.rotation.x=Math.PI/2;group.add(baseRing);
     }
     // Character-specific surface details to push each silhouette beyond a simple primitive.
@@ -113,7 +113,7 @@
     const ring2=new THREE.Mesh(new THREE.TorusGeometry(id==='pixel'?.88:.9,.009,6,64),new THREE.MeshBasicMaterial({color:0x9baeff,transparent:true,opacity:.42}));ring2.rotation.x=Math.PI/2;ring2.position.y=.08;group.add(ring2);
     for(let i=0;i<18;i++){const a=i*2.399,rad=.92+(i%3)*.14;const p=new THREE.Mesh(new THREE.OctahedronGeometry(i%4===0?.045:.022),glowMat);p.position.set(Math.cos(a)*rad,.35+(i%5)*.27,Math.sin(a)*rad*.55);sparkles.add(p)}
     group.add(sparkles);group.scale.setScalar(id==='blip'?.95:id==='pixel'?.92:1.02);
-    return {group,halo,ring2,sparkles};
+    return {group,halo,ring2,sparkles,motion:group.children.filter(part=>part.userData.bbMotion)};
   }
   function mount(stage){
     if(stage.dataset.bb3dReady==='1')return;
@@ -167,6 +167,6 @@
   }
   function scan(){document.querySelectorAll('.bb-3d-stage').forEach(mount);for(const [stage,item] of active){if(!stage.isConnected){item.ro.disconnect();item.cleanup?.();item.renderer.dispose();active.delete(stage)}}}
   const clock=new THREE.Clock();
-  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;for(const part of item.char.group.children){if(part.userData.bbOrbit)part.rotation.y=t*.9}item.renderer.render(item.scene,item.camera)}}
+  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;for(const part of item.char.motion){const m=part.userData.bbMotion;part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude}for(const part of item.char.group.children){if(part.userData.bbOrbit)part.rotation.y=t*.9}item.renderer.render(item.scene,item.camera)}}
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});scan();frame();
 })();
