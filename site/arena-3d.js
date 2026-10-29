@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -106,15 +106,28 @@
     if(!enabled||!window.bbGet3DBoardState)return;
     const state=window.bbGet3DBoardState();
     if(previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines){
-      const count=Math.min(4,state.lines-previousState.lines);
+      const now=performance.now(),count=Math.min(4,state.lines-previousState.lines);
+      clearStreak=now-lastClearAt<1800?Math.min(5,clearStreak+1):1;lastClearAt=now;
       for(const obj of [...effectsGroup.children]){
         effectsGroup.remove(obj);if(obj.geometry)obj.geometry.dispose();if(obj.material)obj.material.dispose();
       }
       for(let n=0;n<count;n++){
         const mat=new THREE.MeshBasicMaterial({color:n%2?0xa98aff:0x9ffff8,transparent:true,opacity:.98,side:THREE.DoubleSide});
         const flash=new THREE.Mesh(new THREE.PlaneGeometry(10,.72),mat);
-        flash.position.set(0,-9.15+n*.72,.48);flash.userData.createdAt=performance.now();flash.userData.row=state.height-1-n;
+        flash.position.set(0,-9.15+n*.72,.48);flash.userData.createdAt=now;flash.userData.life=460+clearStreak*90;flash.userData.clearFlash=true;
         effectsGroup.add(flash);
+      }
+      // A short radial burst makes consecutive clears feel stronger without changing scoring.
+      const particleCount=Math.min(36,12+count*4+clearStreak*3);
+      for(let i=0;i<particleCount;i++){
+        const angle=(Math.PI*2*i/particleCount)+(Math.random()-.5)*.12;
+        const speed=.035+Math.random()*.055;
+        const mat=new THREE.MeshBasicMaterial({color:i%3===0?0xffd47a:(i%2?0xa98aff:0x75fff0),transparent:true,opacity:.95});
+        const particle=new THREE.Mesh(new THREE.SphereGeometry(.035+Math.random()*.035,6,5),mat);
+        particle.position.set(Math.cos(angle)*2.8,(Math.random()-.5)*13,.55);
+        particle.userData.createdAt=now;particle.userData.life=520+clearStreak*110;
+        particle.userData.velocity={x:Math.cos(angle)*speed,y:Math.sin(angle)*speed};
+        effectsGroup.add(particle);
       }
     }
     const boardSignature=JSON.stringify([state.board,state.colors]);
@@ -166,10 +179,16 @@
     if(now-lastSyncAt>=40){sync();lastSyncAt=now;}
     if(effectsGroup){
       for(const effect of [...effectsGroup.children]){
-        const age=now-(effect.userData.createdAt||now);
-        const progress=Math.min(1,age/460);
+        const age=now-(effect.userData.createdAt||now),life=effect.userData.life||460;
+        const progress=Math.min(1,age/life);
         effect.material.opacity=(1-progress)*.95;
-        effect.scale.set(1+progress*.16,1+progress*.22,1);
+        if(effect.userData.velocity){
+          effect.position.x+=effect.userData.velocity.x;
+          effect.position.y+=effect.userData.velocity.y;
+          effect.scale.setScalar(1-progress*.7);
+        }else{
+          effect.scale.set(1+progress*.16,1+progress*.22,1);
+        }
         if(progress>=1){effectsGroup.remove(effect);effect.geometry.dispose();effect.material.dispose();}
       }
     }
