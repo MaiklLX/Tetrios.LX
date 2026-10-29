@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null;
+  let renderer,scene,camera,boardGroup,activeGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -155,8 +155,9 @@
   function animate(){
     raf=0;
     if(!enabled||!renderer||document.hidden)return;
-    sync();
     const now=performance.now();
+    // The board changes only on input/tick events; syncing at ~25 Hz keeps the 60 Hz render loop light.
+    if(now-lastSyncAt>=40){sync();lastSyncAt=now;}
     if(effectsGroup){
       for(const effect of [...effectsGroup.children]){
         const age=now-(effect.userData.createdAt||now);
@@ -180,7 +181,7 @@
     frame.classList.toggle('bb-3d-arena-active',enabled);
     if(!enabled&&raf){cancelAnimationFrame(raf);raf=0;}
     if(enabled){
-      try{init();sync();if(!raf)animate()}
+      try{init();sync();lastSyncAt=performance.now();if(!raf)animate()}
       catch(error){enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);setTimeout(()=>{toggle.textContent='3D ARENA'},2200)}
     }
   }
@@ -197,5 +198,5 @@
     gameObserver.observe(gameScreen,{attributes:true,attributeFilter:['hidden']});
     if(!gameScreen.hidden)setEnabled(true);
   }
-  document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();if(!raf)animate();}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();lastSyncAt=performance.now();if(!raf)animate();}});
 })();
