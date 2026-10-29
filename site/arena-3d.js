@@ -207,7 +207,8 @@
     raf=0;
     if(!enabled||!renderer||document.hidden)return;
     const now=performance.now();
-    const deltaScale=lastFrameAt?Math.min(2.5,Math.max(.25,(now-lastFrameAt)/(1000/60))):1;
+    const deltaSeconds=lastFrameAt?Math.min(.05,Math.max(.004,(now-lastFrameAt)/1000)):1/60;
+    const deltaScale=deltaSeconds/(1/60);
     lastFrameAt=now;
     // The board changes only on input/tick events; syncing at ~25 Hz keeps the 60 Hz render loop light.
     if(now-lastSyncAt>=40){sync();lastSyncAt=now;}
@@ -238,7 +239,7 @@
       camera.position.x=3+Math.sin(t)*.12+shake;
       camera.position.y=2+Math.cos(t*.8)*.05+Math.abs(shake)*.28;
       [boardGroup,activeGroup,ghostGroup].forEach(group=>group.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}}));
-      if(pieceOffsetY){pieceOffsetY*=Math.exp(-Math.min(.05,1/60)*18);if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;activeGroup.position.y=pieceOffsetY;}
+      if(pieceOffsetY){pieceOffsetY*=Math.exp(-deltaSeconds*18);if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;activeGroup.position.y=pieceOffsetY;}
     }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
