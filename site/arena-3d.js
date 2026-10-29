@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastSignature='',raf=0,previousState=null;
+  let renderer,scene,camera,boardGroup,activeGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -67,11 +67,12 @@
     const base=new THREE.Mesh(new THREE.BoxGeometry(10.9,.16,.65),new THREE.MeshStandardMaterial({color:0x182442,metalness:.8,roughness:.28,emissive:0x101e42,emissiveIntensity:.7}));
     base.position.set(0,-10.48,-.12);gridGroup.add(base);
     boardGroup=new THREE.Group();scene.add(boardGroup);
+    activeGroup=new THREE.Group();scene.add(activeGroup);
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
     const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
   }
-  function block(x,y,color,ghost=false){
+  function blockInto(target,x,y,color,ghost=false){
     const cell=new THREE.Group();
     cell.position.set(x-4.5,9.5-y,ghost?.03:.24);
     cell.userData.pulsePhase=(x*7+y*13)%19;
@@ -88,13 +89,21 @@
       const corner=new THREE.Mesh(new THREE.BoxGeometry(.16,.045,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
       corner.position.set(.27,-.31,.326);cell.add(corner);
     }
-    boardGroup.add(cell);
+    target.add(cell);
+  }
+  function disposeGroup(group){
+    group.traverse(obj=>{
+      if(obj.geometry)obj.geometry.dispose();
+      if(obj.material){
+        const list=Array.isArray(obj.material)?obj.material:[obj.material];
+        for(const m of list)if(!Array.from(colorCache.values()).includes(m))m.dispose();
+      }
+    });
+    group.clear();
   }
   function sync(){
     if(!enabled||!window.bbGet3DBoardState)return;
     const state=window.bbGet3DBoardState();
-    const signature=JSON.stringify(state);
-    if(signature===lastSignature)return;
     if(previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines){
       const count=Math.min(4,state.lines-previousState.lines);
       for(const obj of [...effectsGroup.children]){
@@ -107,19 +116,27 @@
         effectsGroup.add(flash);
       }
     }
+    const boardSignature=JSON.stringify([state.board,state.colors]);
+    if(boardSignature!==lastBoardSignature){
+      lastBoardSignature=boardSignature;
+      disposeGroup(boardGroup);
+      const colors=state.colors||[];
+      for(let y=0;y<state.height;y++)for(let x=0;x<state.width;x++){
+        const v=state.board[y]?.[x];if(v)blockInto(boardGroup,x,y,colors[v-1]||'#69f4ff');
+      }
+    }
+    const pieceSignature=JSON.stringify([state.piece,state.ghostY,state.colors]);
+    if(pieceSignature!==lastPieceSignature){
+      lastPieceSignature=pieceSignature;
+      disposeGroup(activeGroup);
+      const colors=state.colors||[];
+      if(state.piece){
+        const p=state.piece,color=colors[p.t]||'#69f4ff';
+        if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)blockInto(activeGroup,p.x+dx,state.ghostY+dy,color,true)}));
+        p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color)}));
+      }
+    }
     previousState={...state,board:state.board?.map(row=>row.slice())};
-    lastSignature=signature;
-    boardGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose();if(obj.material){const list=Array.isArray(obj.material)?obj.material:[obj.material];for(const m of list)if(!Array.from(colorCache.values()).includes(m))m.dispose()}});
-    boardGroup.clear();
-    const colors=state.colors||[];
-    for(let y=0;y<state.height;y++)for(let x=0;x<state.width;x++){
-      const v=state.board[y]?.[x];if(v)block(x,y,colors[v-1]||'#69f4ff');
-    }
-    if(state.piece){
-      const p=state.piece,color=colors[p.t]||'#69f4ff';
-      if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)block(p.x+dx,state.ghostY+dy,color,true)}));
-      p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)block(p.x+dx,p.y+dy,color)}));
-    }
   }
   function animate(){
     raf=0;
@@ -137,7 +154,7 @@
     }
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
       const t=now*.00025;camera.position.x=3+Math.sin(t)*.12;camera.position.y=2+Math.cos(t*.8)*.05;
-      boardGroup.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}});
+      [boardGroup,activeGroup].forEach(group=>group.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}}));
     }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
