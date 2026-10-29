@@ -5062,7 +5062,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div id="gameCoins" style="margin:8px 0;padding:10px 14px;border:1px solid #ffc86b66;border-radius:12px;background:linear-gradient(100deg,#ffc86b20,#111a30);color:#ffc86b;font-weight:900;display:flex;justify-content:space-between;align-items:center">
   <span>🪙 ТВОИ МОНЕТЫ</span>
   <strong id="gameCoinsValue">0</strong>
-</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">DROP ↓</button><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><audio id="bgmTrack" preload="none" loop src="https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3"></audio>
+</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">DROP ↓</button><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Original track: “Chills” by Holizna, CC0 public domain, OpenGameArt.org. -->\n<audio id="bgmTrack" preload="none" loop src="https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3"></audio>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0;
@@ -7710,22 +7710,15 @@ function bbTune() {
 }
 
 function bbSyncMusic() {
-  if (!musicOn || !soundOn || document.hidden) {
+  const track = $('bgmTrack');
+  if (!musicOn || !soundOn || document.hidden || (started && (paused || gameOver))) {
+    if (track) track.pause();
     if (arcadeMusicTimer !== null) {
       clearInterval(arcadeMusicTimer);
       arcadeMusicTimer = null;
     }
     return;
   }
-
-  if (started && (paused || gameOver)) {
-    if (arcadeMusicTimer !== null) {
-      clearInterval(arcadeMusicTimer);
-      arcadeMusicTimer = null;
-    }
-    return;
-  }
-
   music();
 }
 
