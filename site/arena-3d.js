@@ -26,9 +26,9 @@
     if(renderer)return;
     scene=new THREE.Scene();scene.background=null;
     camera=new THREE.PerspectiveCamera(37,1,.1,100);
-    camera.position.set(3.2,3.6,27);camera.lookAt(0,0,0);
+    camera.position.set(3.0,2.0,28);camera.lookAt(0,0,0);
     renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance'});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.35));
     renderer.outputColorSpace=THREE.SRGBColorSpace;
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
     renderer.domElement.className='bb-arena-canvas';renderer.domElement.setAttribute('aria-hidden','true');
@@ -37,8 +37,16 @@
     const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(-4,7,12);scene.add(key);
     const rim=new THREE.PointLight(0x45f4ff,18,28);rim.position.set(5,0,8);scene.add(rim);
     const violet=new THREE.PointLight(0x9566ff,13,24);violet.position.set(-6,2,-4);scene.add(violet);
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(9.6,19.2),new THREE.MeshStandardMaterial({color:0x0b1429,roughness:.44,metalness:.2,transparent:true,opacity:.88}));
-    plane.position.z=-.5;scene.add(plane);
+    const shell=new THREE.Mesh(new THREE.BoxGeometry(10.25,20.45,.78),new THREE.MeshStandardMaterial({color:0x101a34,roughness:.3,metalness:.82,emissive:0x111c3c,emissiveIntensity:.55}));
+    shell.position.set(0,0,-.62);scene.add(shell);
+    const plane=new THREE.Mesh(new THREE.PlaneGeometry(9.9,19.9),new THREE.MeshStandardMaterial({color:0x0b1429,roughness:.34,metalness:.28,transparent:true,opacity:.96}));
+    plane.position.z=-.18;scene.add(plane);
+    const inset=new THREE.Mesh(new THREE.PlaneGeometry(9.55,19.55),new THREE.MeshBasicMaterial({color:0x102341,transparent:true,opacity:.24}));
+    inset.position.z=-.15;scene.add(inset);
+    const sideGlowMat=new THREE.MeshBasicMaterial({color:0x54fff0,transparent:true,opacity:.32});
+    [-5.06,5.06].forEach(x=>{const glow=new THREE.Mesh(new THREE.BoxGeometry(.035,19.8,.04),sideGlowMat);glow.position.set(x,0,-.08);scene.add(glow)});
+    const topGlow=new THREE.Mesh(new THREE.BoxGeometry(10.12,.035,.04),new THREE.MeshBasicMaterial({color:0xa98aff,transparent:true,opacity:.55}));
+    topGlow.position.set(0,10.02,-.08);scene.add(topGlow);
     gridGroup=new THREE.Group();scene.add(gridGroup);
     const lineMaterial=new THREE.LineBasicMaterial({color:0x385477,transparent:true,opacity:.55});
     const positions=[];
@@ -63,9 +71,9 @@
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
   }
   function block(x,y,color,ghost=false){
-    const geo=new THREE.BoxGeometry(.88,.88,.42);
+    const geo=new THREE.BoxGeometry(.88,.88,.62);
     const mesh=new THREE.Mesh(geo,materialFor(color,ghost));
-    mesh.position.set(x-4.5,9.5-y,ghost?.02:.22);
+    mesh.position.set(x-4.5,9.5-y,ghost?.03:.24);
     if(!ghost){mesh.castShadow=false;mesh.receiveShadow=false}
     boardGroup.add(mesh);
     const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:0xe6ffff,transparent:true,opacity:ghost?.35:.62}));
@@ -94,12 +102,12 @@
     raf=0;
     if(!enabled||!renderer||document.hidden)return;
     sync();
-    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const t=performance.now()*.00025;camera.position.x=3.2+Math.sin(t)*.18;}
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const t=performance.now()*.00025;camera.position.x=3+Math.sin(t)*.12;camera.position.y=2+Math.cos(t*.8)*.05;}
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
   }
-  toggle.addEventListener('click',()=>{
-    enabled=!enabled;
+  function setEnabled(next){
+    enabled=!!next;
     toggle.setAttribute('aria-pressed',String(enabled));
     toggle.textContent=enabled?'2D РЕЖИМ':'3D ARENA';
     frame.classList.toggle('bb-3d-arena-active',enabled);
@@ -108,6 +116,19 @@
       try{init();sync();if(!raf)animate()}
       catch(error){enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);setTimeout(()=>{toggle.textContent='3D ARENA'},2200)}
     }
+  }
+  toggle.addEventListener('click',()=>{
+    setEnabled(!enabled);
   });
+  const gameScreen=document.getElementById('game');
+  if(gameScreen){
+    const gameObserver=new MutationObserver(()=>{
+      const visible=!gameScreen.hidden;
+      if(visible&&!enabled)setEnabled(true);
+      else if(!visible&&enabled)setEnabled(false);
+    });
+    gameObserver.observe(gameScreen,{attributes:true,attributeFilter:['hidden']});
+    if(!gameScreen.hidden)setEnabled(true);
+  }
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();if(!raf)animate();}});
 })();
