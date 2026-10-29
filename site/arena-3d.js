@@ -250,7 +250,7 @@
     frame.classList.toggle('bb-3d-arena-active',enabled);
     if(!enabled&&raf){cancelAnimationFrame(raf);raf=0;}
     if(enabled){
-      try{init();sync();lastSyncAt=performance.now();if(!raf)animate()}
+      try{init();sync();lastSyncAt=performance.now();if(!raf){lastFrameAt=0;animate()}}
       catch(error){enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);setTimeout(()=>{toggle.textContent='3D ARENA'},2200)}
     }
   }
