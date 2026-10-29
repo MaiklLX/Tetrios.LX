@@ -26,7 +26,7 @@
     if(renderer)return;
     scene=new THREE.Scene();scene.background=null;
     camera=new THREE.PerspectiveCamera(37,1,.1,100);
-    camera.position.set(3.0,2.0,28);camera.lookAt(0,0,0);
+    camera.position.set(3.0,2.0,34);camera.lookAt(0,0,0);
     renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance'});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.35));
     renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -95,23 +95,16 @@
     const state=window.bbGet3DBoardState();
     const signature=JSON.stringify(state);
     if(signature===lastSignature)return;
-    if(previousState?.board&&state.board){
-      const oldRows=previousState.board;
-      const cleared=[];
-      for(let y=0;y<oldRows.length;y++){
-        const row=oldRows[y]||[];
-        if(row.length&&row.every(Boolean)&&!(state.board[y]||[]).every(Boolean))cleared.push(y);
+    if(previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines){
+      const count=Math.min(4,state.lines-previousState.lines);
+      for(const obj of [...effectsGroup.children]){
+        effectsGroup.remove(obj);if(obj.geometry)obj.geometry.dispose();if(obj.material)obj.material.dispose();
       }
-      if(cleared.length){
-        for(const obj of [...effectsGroup.children]){
-          effectsGroup.remove(obj);if(obj.geometry)obj.geometry.dispose();if(obj.material)obj.material.dispose();
-        }
-        for(const y of cleared){
-          const mat=new THREE.MeshBasicMaterial({color:0x9ffff8,transparent:true,opacity:.95,side:THREE.DoubleSide});
-          const flash=new THREE.Mesh(new THREE.PlaneGeometry(10,.82),mat);
-          flash.position.set(0,9.5-y,.42);flash.userData.createdAt=performance.now();flash.userData.row=y;
-          effectsGroup.add(flash);
-        }
+      for(let n=0;n<count;n++){
+        const mat=new THREE.MeshBasicMaterial({color:n%2?0xa98aff:0x9ffff8,transparent:true,opacity:.98,side:THREE.DoubleSide});
+        const flash=new THREE.Mesh(new THREE.PlaneGeometry(10,.72),mat);
+        flash.position.set(0,-9.15+n*.72,.48);flash.userData.createdAt=performance.now();flash.userData.row=state.height-1-n;
+        effectsGroup.add(flash);
       }
     }
     previousState={...state,board:state.board?.map(row=>row.slice())};
