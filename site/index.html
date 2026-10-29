@@ -5370,6 +5370,7 @@ if (key && (
     'bbDailyChallengeCompletedDate',
     'bbDailyChallengeHistory',
     'bbDailyReplayCompleted',
+  'bbVisitStreak',
     'bbCoins',
     'coins',
     'nrBest',
@@ -7123,6 +7124,7 @@ if (isReplay) {
 
       localStorage.setItem(
         'bbDailyReplayCompleted',
+  'bbVisitStreak',
         JSON.stringify(replayedDates)
       );
 
@@ -8004,6 +8006,8 @@ function bbDailyAddLines(cleared) {
 window.addEventListener('load', () => {
   bbLoadDailyQuests();
   bbRenderDailyQuests();
+  // Обновляем серию сразу при открытии приложения, а не только в разделе вызова.
+  bbUpdateVisitStreak();
 });
 
 
@@ -8223,6 +8227,7 @@ if (resetProgressBtn) {
   'bbDailyChallengeCompletedDate',
   'bbDailyChallengeHistory',
   'bbDailyReplayCompleted',
+  'bbVisitStreak',
   'bbCoins',
   'coins',
   'nrBest',
