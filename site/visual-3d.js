@@ -89,14 +89,33 @@
     const fallback=document.createElement('div');fallback.className='bb-3d-fallback';fallback.textContent=stage.dataset.heroEmoji||'🧸';stage.appendChild(fallback);
     try{
       const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1.5,5.8);camera.lookAt(0,.9,0);
-      const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(stage.clientWidth||320,stage.clientHeight||220,false);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+      const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance',stencil:false,depth:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(stage.clientWidth||320,stage.clientHeight||260,false);
+      renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;
+      renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
       renderer.domElement.setAttribute('aria-label','Объёмная 3D-модель персонажа');renderer.domElement.setAttribute('role','img');stage.insertBefore(renderer.domElement,fallback);fallback.style.display='none';
-      scene.add(new THREE.HemisphereLight(0xc6d8ff,0x1a1c42,2.1));
-      const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(3,5,4);scene.add(key);
-      const rim=new THREE.PointLight(colorFor(stage.dataset.heroId),16,8);rim.position.set(-2,2,2);scene.add(rim);
-      const floor=new THREE.Mesh(new THREE.CircleGeometry(1.35,48),new THREE.MeshBasicMaterial({color:colorFor(stage.dataset.heroId),transparent:true,opacity:.09,side:THREE.DoubleSide}));floor.rotation.x=-Math.PI/2;floor.position.y=.02;scene.add(floor);
-      const char=makeCharacter(stage);scene.add(char.group);
-      const caption=document.createElement('div');caption.className='bb-3d-caption';caption.textContent='3D HERO PREVIEW · WEBGL';stage.appendChild(caption);
+      scene.add(new THREE.HemisphereLight(0xc6d8ff,0x1a1c42,2.0));
+      const key=new THREE.DirectionalLight(0xfff4df,4.0);key.position.set(3,5,4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
+      const fill=new THREE.DirectionalLight(0x7b8cff,2.2);fill.position.set(-4,2,-3);scene.add(fill);
+      const rim=new THREE.PointLight(colorFor(stage.dataset.heroId),24,9);rim.position.set(-2,2,2);scene.add(rim);
+      const accent=new THREE.PointLight(0x8c5bff,10,7);accent.position.set(2,.8,-2);scene.add(accent);
+      // A miniature holographic showcase stage: layered metallic plinth, emissive rings,
+      // a deep starfield and floating architectural arcs instead of a flat preview card.
+      const base=colorFor(stage.dataset.heroId),stageRig=new THREE.Group();scene.add(stageRig);
+      const plinthMat=new THREE.MeshStandardMaterial({color:0x121a35,metalness:.82,roughness:.24});
+      const plinth=new THREE.Mesh(new THREE.CylinderGeometry(.94,1.04,.12,64),plinthMat);plinth.position.y=.015;plinth.receiveShadow=true;stageRig.add(plinth);
+      const top=new THREE.Mesh(new THREE.CylinderGeometry(.88,.94,.035,64),new THREE.MeshStandardMaterial({color:0x20294b,metalness:.72,roughness:.2,emissive:base,emissiveIntensity:.08}));top.position.y=.09;stageRig.add(top);
+      const edge=new THREE.Mesh(new THREE.TorusGeometry(.94,.025,10,72),new THREE.MeshBasicMaterial({color:base}));edge.rotation.x=Math.PI/2;edge.position.y=.075;stageRig.add(edge);
+      const innerEdge=new THREE.Mesh(new THREE.TorusGeometry(.69,.009,8,72),new THREE.MeshBasicMaterial({color:0x9e8bff,transparent:true,opacity:.85}));innerEdge.rotation.x=Math.PI/2;innerEdge.position.y=.112;stageRig.add(innerEdge);
+      const floor=new THREE.Mesh(new THREE.CircleGeometry(1.5,64),new THREE.MeshBasicMaterial({color:base,transparent:true,opacity:.12,side:THREE.DoubleSide}));floor.rotation.x=-Math.PI/2;floor.position.y=.105;stageRig.add(floor);
+      const arcMat=new THREE.MeshBasicMaterial({color:base,transparent:true,opacity:.34});
+      for(let i=0;i<3;i++){const arc=new THREE.Mesh(new THREE.TorusGeometry(1.35+i*.22,.008,6,72,Math.PI*1.15),arcMat);arc.position.set(0,.82-i*.13,-.55);arc.rotation.set(.45+i*.24,.25+i*.5,.35+i*.4);stageRig.add(arc)}
+      const stars=new THREE.BufferGeometry(),starPositions=[];
+      for(let i=0;i<180;i++){starPositions.push((Math.random()-.5)*7,Math.random()*4.5-.1,-2.5-Math.random()*3)}
+      stars.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
+      const starField=new THREE.Points(stars,new THREE.PointsMaterial({color:0xc5d9ff,size:.018,transparent:true,opacity:.78,sizeAttenuation:true}));scene.add(starField);
+      const char=makeCharacter(stage);char.group.position.y=.12;scene.add(char.group);
+      const caption=document.createElement('div');caption.className='bb-3d-caption';caption.textContent='TETRIOS.LX · 3D CHARACTER SHOWCASE';stage.appendChild(caption);
       const resize=()=>{if(!stage.isConnected)return;const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
       const ro=new ResizeObserver(resize);ro.observe(stage);
       active.set(stage,{renderer,scene,camera,char,ro});
@@ -104,6 +123,6 @@
   }
   function scan(){document.querySelectorAll('.bb-3d-stage').forEach(mount);for(const [stage,item] of active){if(!stage.isConnected){item.ro.disconnect();item.renderer.dispose();active.delete(stage)}}}
   const clock=new THREE.Clock();
-  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=Math.sin(t*1.8)*.065;item.char.group.rotation.y=Math.sin(t*.55)*.2;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;item.renderer.render(item.scene,item.camera)}}
+  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y=Math.sin(t*.55)*.2;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;item.renderer.render(item.scene,item.camera)}}
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});scan();frame();
 })();
