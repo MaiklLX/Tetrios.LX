@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -68,6 +68,7 @@
     base.position.set(0,-10.48,-.12);gridGroup.add(base);
     boardGroup=new THREE.Group();scene.add(boardGroup);
     activeGroup=new THREE.Group();scene.add(activeGroup);
+    ghostGroup=new THREE.Group();scene.add(ghostGroup);
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
     const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
@@ -142,13 +143,18 @@
     const pieceSignature=JSON.stringify([state.piece,state.ghostY,state.colors]);
     if(pieceSignature!==lastPieceSignature){
       lastPieceSignature=pieceSignature;
-      disposeGroup(activeGroup);
+      const oldPiece=previousState?.piece,newPiece=state.piece;
+      pieceOffsetY=oldPiece&&newPiece&&oldPiece.t===newPiece.t&&oldPiece.x===newPiece.x&&
+        JSON.stringify(oldPiece.shape)===JSON.stringify(newPiece.shape)&&
+        newPiece.y>oldPiece.y&&newPiece.y-oldPiece.y<=2 ? newPiece.y-oldPiece.y : 0;
+      disposeGroup(activeGroup);disposeGroup(ghostGroup);
       const colors=state.colors||[];
-      if(state.piece){
-        const p=state.piece,color=colors[p.t]||'#69f4ff';
-        if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)blockInto(activeGroup,p.x+dx,state.ghostY+dy,color,true)}));
+      if(newPiece){
+        const p=newPiece,color=colors[p.t]||'#69f4ff';
+        if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)blockInto(ghostGroup,p.x+dx,state.ghostY+dy,color,true)}));
         p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color)}));
       }
+      activeGroup.position.y=pieceOffsetY;
     }
     previousState={...state,board:state.board?.map(row=>row.slice())};
   }
@@ -169,7 +175,8 @@
     }
     if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
       const t=now*.00025;camera.position.x=3+Math.sin(t)*.12;camera.position.y=2+Math.cos(t*.8)*.05;
-      [boardGroup,activeGroup].forEach(group=>group.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}}));
+      [boardGroup,activeGroup,ghostGroup].forEach(group=>group.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}}));
+      if(pieceOffsetY){pieceOffsetY*=Math.exp(-Math.min(.05,1/60)*18);if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;activeGroup.position.y=pieceOffsetY;}
     }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
