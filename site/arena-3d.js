@@ -76,8 +76,8 @@
     }
     if(state.piece){
       const p=state.piece,color=colors[p.t]||'#69f4ff';
-      p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)block(p.x+dx,p.y+dy,color)}));
       if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)block(p.x+dx,state.ghostY+dy,color,true)}));
+      p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)block(p.x+dx,p.y+dy,color)}));
     }
   }
   function animate(){
