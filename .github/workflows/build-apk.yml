@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -175,3 +177,23 @@ jobs:
           make_latest: false
           overwrite_files: true
           files: Block-Buddies.apk
+
+      - name: Stage APK for direct website download
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/site/download"
+          cp "$GITHUB_WORKSPACE/Block-Buddies.apk" "$GITHUB_WORKSPACE/site/download/Block-Buddies.apk"
+          test -s "$GITHUB_WORKSPACE/site/download/Block-Buddies.apk"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website and APK to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy website and direct APK
+        id: pages-deployment
+        uses: actions/deploy-pages@v4
