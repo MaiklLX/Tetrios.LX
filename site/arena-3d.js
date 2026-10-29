@@ -12,6 +12,8 @@
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
   const geometryFor=(key,create)=>{if(!geometryCache.has(key)){const geometry=create();geometryCache.set(key,geometry);sharedGeometries.add(geometry)}return geometryCache.get(key)};
   const materialFor=(color,ghost=false)=>{
@@ -38,8 +40,10 @@
     scene=new THREE.Scene();scene.background=null;
     camera=new THREE.PerspectiveCamera(37,1,.1,100);
     camera.position.set(3.0,2.0,34);camera.lookAt(0,0,0);
-    renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance'});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.35));
+    renderer=new THREE.WebGLRenderer({alpha:true,antialias:!lowPowerDevice,powerPreference:lowPowerDevice?'low-power':'high-performance'});
+    // Keep the arena crisp on desktop while avoiding a costly high-DPI framebuffer on phones/tablets.
+    const pixelCap=lowPowerDevice?1:1.35;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,pixelCap));
     renderer.outputColorSpace=THREE.SRGBColorSpace;
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
     renderer.domElement.className='bb-arena-canvas';renderer.domElement.setAttribute('aria-hidden','true');
@@ -127,8 +131,10 @@
     if(previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines){
       const now=performance.now(),count=Math.min(4,state.lines-previousState.lines);
       clearStreak=now-lastClearAt<1800?Math.min(5,clearStreak+1):1;lastClearAt=now;
-      for(const obj of [...effectsGroup.children]){
-        effectsGroup.remove(obj);if(obj.geometry)obj.geometry.dispose();if(obj.material)obj.material.dispose();
+      for(let i=effectsGroup.children.length-1;i>=0;i--){
+        const obj=effectsGroup.children[i];effectsGroup.remove(obj);
+        if(obj.geometry)obj.geometry.dispose();
+        if(obj.material){const list=Array.isArray(obj.material)?obj.material:[obj.material];list.forEach(material=>material.dispose());}
       }
       for(let n=0;n<count;n++){
         const mat=new THREE.MeshBasicMaterial({color:n%2?0xa98aff:0x9ffff8,transparent:true,opacity:.98,side:THREE.DoubleSide});
@@ -137,7 +143,7 @@
         effectsGroup.add(flash);
       }
       // A short radial burst makes consecutive clears feel stronger without changing scoring.
-      const particleCount=Math.min(36,12+count*4+clearStreak*3);
+      const particleCount=reducedMotion.matches?0:Math.min(lowPowerDevice?20:36,12+count*4+clearStreak*3);
       for(let i=0;i<particleCount;i++){
         const angle=(Math.PI*2*i/particleCount)+(Math.random()-.5)*.12;
         const speed=.035+Math.random()*.055;
@@ -204,23 +210,27 @@
     // The board changes only on input/tick events; syncing at ~25 Hz keeps the 60 Hz render loop light.
     if(now-lastSyncAt>=40){sync();lastSyncAt=now;}
     if(effectsGroup){
-      for(const effect of [...effectsGroup.children]){
+      for(let i=effectsGroup.children.length-1;i>=0;i--){
+        const effect=effectsGroup.children[i];
         const age=now-(effect.userData.createdAt||now),life=effect.userData.life||460;
         const progress=Math.min(1,age/life);
-        effect.material.opacity=(1-progress)*.95;
-        if(effect.userData.velocity){
-          effect.position.x+=effect.userData.velocity.x;
-          effect.position.y+=effect.userData.velocity.y;
-          effect.scale.setScalar(1-progress*.7);
-        }else if(effect.userData.shockwave){
-          effect.scale.x=1+progress*.08;effect.scale.y=1+progress*3.5;
-        }else{
-          effect.scale.set(1+progress*.16,1+progress*.22,1);
+        // Reduced-motion mode keeps the visual cue static and short-lived instead of animating it.
+        effect.material.opacity=reducedMotion.matches?.78:(1-progress)*.95;
+        if(!reducedMotion.matches){
+          if(effect.userData.velocity){
+            effect.position.x+=effect.userData.velocity.x;
+            effect.position.y+=effect.userData.velocity.y;
+            effect.scale.setScalar(1-progress*.7);
+          }else if(effect.userData.shockwave){
+            effect.scale.x=1+progress*.08;effect.scale.y=1+progress*3.5;
+          }else{
+            effect.scale.set(1+progress*.16,1+progress*.22,1);
+          }
         }
-        if(progress>=1){effectsGroup.remove(effect);effect.geometry.dispose();effect.material.dispose();}
+        if(progress>=1){effectsGroup.remove(effect);if(effect.geometry)effect.geometry.dispose();if(effect.material){const list=Array.isArray(effect.material)?effect.material:[effect.material];list.forEach(material=>material.dispose());}}
       }
     }
-    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    if(!reducedMotion.matches){
       const t=now*.00025,impactAge=now-impactAt;
       const shake=impactAt&&impactAge<240?Math.sin(impactAge*.085)*impactStrength*(1-impactAge/240):0;
       camera.position.x=3+Math.sin(t)*.12+shake;
