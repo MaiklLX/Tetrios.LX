@@ -6220,7 +6220,25 @@ if (mode === 'daily') {
     $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
   }
 }
-show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(
+show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);
+if(
+  mode==='daily' &&
+  bbIsDailyMechanic('chronoRift') &&
+  bbDailyMechanicState.chronoRemaining>0
+){
+  bbDailyMechanicState.chronoRemaining--;
+
+  if(bbDailyMechanicState.chronoRemaining===5){
+    toast('⌛ Хроноразлом: осталось 5 секунд! Очисти линию.');
+  }
+
+  if(bbDailyMechanicState.chronoRemaining<=0){
+    bbDailyMechanicState.chronoRemaining=0;
+    toast('⌛ Время хроноразлома истекло!');
+    endGame();
+    return;
+  }
+}if(
   mode==='daily' &&
   bbIsDailyMechanic('redZone') &&
   runSeconds%5===0
@@ -6445,6 +6463,10 @@ if(
 }
 
 if(cleared){
+if(bbIsDailyMechanic('chronoRift')){
+  bbDailyMechanicState.chronoRemaining=10;
+  toast('⌛ Хроноразлом: 10 секунд до следующей очистки!');
+}
 if(mode==='daily'&&bbGetActiveDailyRule().mod==='glitchReactor'){
   bbDailyMechanicState.glitchClearCount+=cleared;
   if(
