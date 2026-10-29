@@ -5069,6 +5069,12 @@ body:has(#menu:not([hidden])) .app > .topbar {
     white-space:nowrap;
   }
 }
+/* Original tiny PNG tech texture, used as a decorative frame surface */
+#game .boardframe{
+  background-image:linear-gradient(145deg,#12243be8,#091323f0 55%,#101a30e8),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADPklEQVR42u3dQU7cQBSE4bdjmwsgcYFIuUAWrBDiBnCHnIJjZoFY5w6BWVgajUiwm9e2ut+38M52tat6jMfT9RPXP5++X327+XvURv9Y/WBCbf1gQm39YEJt/WBCbf1gQm39WDuIH0/Pj1u2bBPo99GPtYPYelHZJtDvox9rBtFyMRkG0O+vHz3/JmWaQL+Pfqw9ScsgMgyg31c/tpzkCBPo99WPrQfvaQL9/vrRcuAyiLs/v38t214GtJhAv2ECfDboU+j3ry8Py5Y9CT7b/2TCuX52CFX0mybAEv7lIP43CbIN+Eh/zwBm0Y81O78He9u6tZiwZr/los9NyPoUVtL/0h3gchB73wEu9ff+BM6gP+wzwEcm0E+cAGsnwfm3gH8NIvspeOsbM/rJXwO3/oqV8RKEfh/96D2IzDdh9PP1o9dLjNZfsejvqx+9BnE6JmtlC/1++l0nQNbyJvr99GPLCVuXJGWZQD9fPzJuURZajqsfTKitH0yorR9MqK0fTKitH0yorR9MwAcQAj6AEPABhIAPIAR8ACHgA+jn4wPo5+MD6OfjA+jn4wPo5+MD6OfjA+jn4wPo50/KR2juBlbv58/CR2ieAJX7+TPxEaJ1sJX6+TPzEb50B6jaz5+JjxAZs7BiP38WPkJqPbxaP38GPgI+AD6Afj4+gH4+PoB+Pj6Afj4+gH4+PoCFlvgAQsAHEAI+gBDwAYSADyAEfAAh4AMIAR9ACPgAQsAHEAI+gBDwAfTz8QH08/EB9PPxAfTz8QH08/EB9PPxAfTz8QHq8QFm4BPgAxTnE+ADFOcT4AMU5xPgAxTnE+ADFOcT4AMU5xPgA+AD6OfjA+jn4wPo5+MD6OfjA+jn4wNYaIkPIAR8ACHgAwgBH0AI+ABCwAcQAj6AEPABhIAPIAR8ACHgAwgBH0A/Hx9APx8fQD8fH0A/Hx9APx8fQD8fH0A/Hx9gzH58dT7BsHyAo/937yx8giH5AJn9+Op8giH4AD378dX5BEPyATL78dX5BMPyAY5+BpiFTzA0HyCjH1+dT4APgA+gn48PoJ+PD6Cfjw+gn48PoJ+PD6Cfjw+gn48PoJ+PD2ChJT6AEPABhIAPIAR8ACHgAwhhbv03vLdYQt8oZoUAAAAASUVORK5CYII=");
+  background-size:auto,128px 128px;
+  background-repeat:no-repeat,repeat;
+}
 /* Contrast pass for the playfield */
 #game .boardframe{
   border-color:#3b6484;
@@ -5092,7 +5098,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game.daily-chrono-layout .sidecol .side-drop{height:32px !important;min-height:32px !important;margin:1px 0 0 !important;font-size:9px !important}
   #game.daily-chrono-layout #gameCoins{width:100%;margin:5px 0 0 !important;padding:6px 4px !important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:8px;line-height:1.1;text-align:center}
   #game.daily-chrono-layout .gameleftcol #gameCoins{box-sizing:border-box}
-  #game.daily-chrono-layout .boardframe{height:clamp(220px,52dvh,440px) !important}
+  /* Keep the normal full-height playfield; compact only the sidebar cards */
 }
 
 </style></head>
