@@ -4999,6 +4999,48 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .screenhead #pauseBtn{width:44px;height:44px;flex-basis:44px}
 }
 
+
+/* === Fast DROP control: full-width thumb target below movement controls === */
+#game .sidecol > .side-drop{display:none !important}
+#game .controls{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+#game .controls .drop-main{
+  grid-column:1 / -1;
+  width:100%;
+  min-height:54px;
+  margin-top:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:1px solid #66f3d0;
+  border-radius:16px;
+  background:linear-gradient(110deg,#123b45,#155c60 48%,#12344a);
+  color:#e3fff8;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:.16em;
+  box-shadow:inset 0 1px #ffffff35,0 4px 0 #071c29,0 0 18px #38e8c22b;
+  touch-action:manipulation;
+}
+#game .controls .drop-main .drop-icon{
+  width:28px;height:28px;border-radius:9px;
+  display:grid;place-items:center;
+  background:#5df4ce24;border:1px solid #8affdf88;
+  font-size:22px;line-height:1;
+}
+#game .controls .drop-main:active{
+  transform:translateY(3px);
+  box-shadow:inset 0 1px #ffffff20,0 1px 0 #071c29;
+}
+@media(max-width:420px){
+  #game .controls{gap:5px}
+  #game .controls .drop-main{min-height:58px;font-size:11px;letter-spacing:.12em}
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -5177,7 +5219,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div id="gameCoins" style="margin:8px 0;padding:10px 14px;border:1px solid #ffc86b66;border-radius:12px;background:linear-gradient(100deg,#ffc86b20,#111a30);color:#ffc86b;font-weight:900;display:flex;justify-content:space-between;align-items:center">
   <span>🪙 ТВОИ МОНЕТЫ</span>
   <strong id="gameCoinsValue">0</strong>
-</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">DROP ↓</button><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
+</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button><button class="drop-main" data-act="drop" aria-label="Сбросить фигуру вниз"><span class="drop-icon">↓</span><span>БЫСТРЫЙ СБРОС</span></button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
 <audio id="bgmTrack" preload="none" loop src="https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3"></audio>
 <script>
 (()=>{'use strict';
@@ -5558,6 +5600,12 @@ const arcadeHarmony = [
   null,null,349.23,null,null,null,null,null
 ];
 
+function bbResetGameplayTrack() {
+  const track = $('bgmTrack');
+  if (!track) return;
+  track.pause();
+  try { track.currentTime = 0; } catch (e) {}
+}
 function music() {
   const track = $('bgmTrack');
   if (track) {
@@ -5599,7 +5647,16 @@ function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');cle
   setTimeout(()=>el.remove(),1600);
 }
 
-function show(id){['menu','shopScreen','heroes','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);$(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();if(typeof bbSyncMusic==='function')bbSyncMusic()}
+let bbLastShownScreen = null;
+function show(id){
+  const changed = bbLastShownScreen !== id;
+  bbLastShownScreen = id;
+  if (changed && id !== 'game' && typeof bbRestartMenuMusic === 'function') bbRestartMenuMusic();
+  ['menu','shopScreen','heroes','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);
+  $(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');
+  if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
+  if(typeof bbSyncMusic==='function')bbSyncMusic()
+}
 
 function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
@@ -6662,7 +6719,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
+function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
   const starter=upgrades[Math.floor(Math.random()*upgrades.length)];
@@ -7118,7 +7175,7 @@ function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
 function restartDrop(){if(dropTimer)clearInterval(dropTimer);dropTimer=setInterval(()=>{if(started&&!paused&&!gameOver)move(0,1)},dropMs)}
-function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><h3>Пауза</h3><p>Герой отдыхает! Возвращайся, когда будешь готов.</p></div><button class="action" id="resume">ПРОДОЛЖИТЬ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else closeOverlay()}
+function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><h3>Пауза</h3><p>Герой отдыхает! Возвращайся, когда будешь готов.</p></div><button class="action" id="resume">ПРОДОЛЖИТЬ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
 /* Просмотр активных бустов с паузой */
 const boostCard = document.querySelector('#game .sidecol .sidecard:nth-child(2)');
@@ -7827,6 +7884,11 @@ function bbTune() {
 
 let menuMusicTimer = null;
 let menuMusicStep = 0;
+function bbRestartMenuMusic() {
+  bbStopMenuMusic();
+  menuMusicStep = 0;
+  if (typeof bbSyncMusic === 'function') bbSyncMusic();
+}
 function bbStopMenuMusic() {
   if (menuMusicTimer !== null) {
     clearInterval(menuMusicTimer);
