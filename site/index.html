@@ -7140,7 +7140,7 @@ let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mul
     bbDailyMechanicState.echoCombo=0;
     bbDailyMechanicState.echoMultiplier=1;
   }
-}piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-4&&Math.random()<.22?1:0));toast('Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-4&&Math.random()<.22?1:0));toast('Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
 if(
   mode==='daily' &&
   bbGetActiveDailyRule().mod==='artifactHunt'
@@ -7166,9 +7166,14 @@ if(
   }
   toast('🐻 КАПИТАН ПЛЮШ СПАСАЕТ! Поле сдвинуто на 4 ряда!');
 }else{
-  if(bbCheckCampaignCompletion())return;
-  endGame();
-  return;
+  if(mode==='daily'){
+    // Сначала проверим, не завершено ли испытание этим ходом.
+    dailySpawnCollision=true;
+  }else{
+    if(bbCheckCampaignCompletion())return;
+    endGame();
+    return;
+  }
 }
 }if(levelLines>=needLines)levelUp();updateHud();
 
@@ -7183,6 +7188,11 @@ bbRenderGoals();
 render();
 
 if (bbCheckDailyCompletion()) return;
+
+if(dailySpawnCollision){
+  endGame();
+  return;
+}
 
 bbCheckCampaignCompletion();
 }
@@ -7333,7 +7343,7 @@ cv.addEventListener('touchstart', e => {
   if (e.target.closest('button, input, select, textarea')) return;
   if (e.target.closest('#board')) e.preventDefault();
   const t=e.changedTouches[0];
-  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,at:Date.now(),axis:null,dropped:false};
+  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false};
   audioCtx();
 },{passive:false});
 cv.addEventListener('touchmove',e=>{
@@ -7345,13 +7355,22 @@ cv.addEventListener('touchmove',e=>{
   if(touch.axis==='x'){
     const dx=t.clientX-touch.lastX;
     if(Math.abs(dx)>=26){move(dx>0?1:-1);touch.lastX=t.clientX;}
+  }else if(touch.axis==='y'){
+    // Вернули мягкое ускоренное падение: движение вниз по шагам, без мгновенного DROP.
+    const dyStep=t.clientY-touch.lastY;
+    if(dyStep>=22){
+      const steps=Math.min(4,Math.floor(dyStep/22));
+      for(let i=0;i<steps;i++) move(0,1);
+      touch.lastY+=steps*22;
+    }
   }
 },{passive:true});
 cv.addEventListener('touchend',e=>{
   if(!touch){touchDropLocked=false;return}
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y,elapsed=Date.now()-touch.at;
   if(Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230)rotatePiece();
-  else if(touch.axis==='y'&&dy>88&&dy>Math.abs(dx)*1.65&&elapsed<1100){
+  else if(touch.axis==='y'&&dy>150&&dy>Math.abs(dx)*1.8&&elapsed<650){
+    // Только очень резкий длинный свайп остаётся быстрым DROP.
     touch.dropped=true;touchDropLocked=true;hardDrop();
     setTimeout(()=>{touchDropLocked=false},180);
   }
