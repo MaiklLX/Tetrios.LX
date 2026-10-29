@@ -7507,22 +7507,19 @@ cv.addEventListener('touchstart', e => {
     return;
   }
   const t=e.changedTouches[0];
-  // Расширенная «мёртвая зона» вокруг DROP: размер кнопки и расположение
-  // берутся из текущей вёрстки, поэтому защита работает на телефонах,
-  // планшетах и компьютерах с сенсорным экраном независимо от масштаба.
+  // Узкая защитная зона вокруг DROP подавляет только случайный тап
+  // (который иначе вращает фигуру), но не блокирует свайпы через эту область.
   const dropButton = document.querySelector('#game [data-act="drop"]');
+  let suppressTap = false;
   if (dropButton) {
     const r = dropButton.getBoundingClientRect();
-    const safe = 52;
-    if (t.clientX >= r.left - safe && t.clientX <= r.right + safe &&
-        t.clientY >= r.top - safe && t.clientY <= r.bottom + safe) {
-      touch = null;
-      return;
-    }
+    const safe = 18;
+    suppressTap = t.clientX >= r.left - safe && t.clientX <= r.right + safe &&
+      t.clientY >= r.top - safe && t.clientY <= r.bottom + safe;
   }
   if (!started || paused || gameOver || touchDropLocked) return;
   if (e.target.closest('#board')) e.preventDefault();
-  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false};
+  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,suppressTap};
   audioCtx();
 },{passive:false});
 
@@ -7565,7 +7562,7 @@ cv.addEventListener('touchend',e=>{
   const elapsed=Date.now()-touch.at;
   const fastDownSwipe=touch.axis==='y'&&dy>135&&dy>Math.abs(dx)*1.7&&elapsed<420;
 
-  if(!touch.dropped&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
+  if(!touch.dropped&&!touch.suppressTap&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
     rotatePiece();
   }else if(!touch.dropped&&fastDownSwipe&&started&&!paused&&!gameOver){
     // Отдельный быстрый жест — hard drop текущей фигуры.
