@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
@@ -207,6 +207,8 @@
     raf=0;
     if(!enabled||!renderer||document.hidden)return;
     const now=performance.now();
+    const deltaScale=lastFrameAt?Math.min(2.5,Math.max(.25,(now-lastFrameAt)/(1000/60))):1;
+    lastFrameAt=now;
     // The board changes only on input/tick events; syncing at ~25 Hz keeps the 60 Hz render loop light.
     if(now-lastSyncAt>=40){sync();lastSyncAt=now;}
     if(effectsGroup){
@@ -218,8 +220,8 @@
         effect.material.opacity=reducedMotion.matches?.78:(1-progress)*.95;
         if(!reducedMotion.matches){
           if(effect.userData.velocity){
-            effect.position.x+=effect.userData.velocity.x;
-            effect.position.y+=effect.userData.velocity.y;
+            effect.position.x+=effect.userData.velocity.x*deltaScale;
+            effect.position.y+=effect.userData.velocity.y*deltaScale;
             effect.scale.setScalar(1-progress*.7);
           }else if(effect.userData.shockwave){
             effect.scale.x=1+progress*.08;effect.scale.y=1+progress*3.5;
@@ -265,5 +267,5 @@
     gameObserver.observe(gameScreen,{attributes:true,attributeFilter:['hidden']});
     if(!gameScreen.hidden)setEnabled(true);
   }
-  document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();lastSyncAt=performance.now();if(!raf)animate();}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();lastSyncAt=performance.now();if(!raf){lastFrameAt=0;animate();}}});
 })();
