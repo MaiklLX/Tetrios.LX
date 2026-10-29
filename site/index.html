@@ -4871,7 +4871,7 @@ function bbIsDailyMechanic(mod) {
     bbGetActiveDailyRule()?.mod === mod
   );
 }
-const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Гравитационный переворот',symbol:'⟲',desc:'Каждая очищенная линия ускоряет падение фигур. Успей адаптироваться до сброса гравитации.',goal:'12 линий',rule:'Каждая очищенная линия ускоряет падение. Каждые 30 секунд накопленное ускорение сбрасывается.',mod:'gravityFlip'},{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
+const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Гравитационный переворот',symbol:'⟲',desc:'Каждая очищенная линия ускоряет падение фигур. Успей адаптироваться до сброса гравитации.',goal:'12 линий',rule:'Каждая очищенная линия ускоряет падение. Каждые 30 секунд накопленное ускорение сбрасывается.',mod:'gravityFlip'},{title:'Глитч-реактор',symbol:'⌁',desc:'Поле предупреждает об аномалии, а затем на время меняет свои цвета.',goal:'12 линий',rule:'После каждых 4 очищенных линий появляется предупреждение. Через 2 секунды палитра поля меняется на 4 секунды.',mod:'glitchReactor'},{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
 
 function bbDailyBuildCycle(cycle) {
   let seed = 2166136261;
@@ -6215,7 +6215,15 @@ if (mode === 'daily') {
     $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
   }
 }
-show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'&&runSeconds%30===0){
+show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}if(
+  mode==='daily' &&
+  bbGetActiveDailyRule().mod==='glitchReactor' &&
+  bbDailyMechanicState.glitchWarning &&
+  runSeconds>=bbDailyMechanicState.glitchUntil-4
+){
+  bbDailyMechanicState.glitchWarning=false;
+  render();
+}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'&&runSeconds%30===0){
   dropMs+=bbDailyMechanicState.gravityPenaltyMs;
   bbDailyMechanicState.gravityPenaltyMs=0;
   bbDailyMechanicState.gravityClears=0;
@@ -6394,6 +6402,19 @@ if (isReplay) {
 
 function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));let cleared=0;for(let y=H-1;y>=0;y--){if(board[y].every(v=>v)){board.splice(y,1);board.unshift(Array(W).fill(0));cleared++;y++}}
 if(cleared){
+if(mode==='daily'&&bbGetActiveDailyRule().mod==='glitchReactor'){
+  bbDailyMechanicState.glitchClearCount+=cleared;
+  if(
+    bbDailyMechanicState.glitchClearCount>=4 &&
+    !bbDailyMechanicState.glitchWarning &&
+    runSeconds>=bbDailyMechanicState.glitchUntil
+  ){
+    bbDailyMechanicState.glitchClearCount-=4;
+    bbDailyMechanicState.glitchWarning=true;
+    bbDailyMechanicState.glitchUntil=runSeconds+6;
+    toast('⚠️ ГЛИТЧ-РЕАКТОР: аномалия через 2 секунды!');
+  }
+}
 if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'){
   const oldDropMs=dropMs;
   dropMs=Math.max(150,dropMs-30*cleared);
@@ -6454,7 +6475,31 @@ if(mode==='campaign'){
   }
 }
 if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div><div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">ПОПРОБОВАТЬ СНОВА</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`);$('retry').onclick=()=>{closeOverlay();startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
-function render(){let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);ctx.strokeStyle='#24304b';ctx.lineWidth=.65;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,colors[(board[y][x]-1)%colors.length],cell);if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,colors[piece.t],cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,colors[piece.t],cell)}))}drawNext()}
+function bbDailyGlitchColor(index){
+  const glitchColors=[
+    '#ff3155',
+    '#25f4ee',
+    '#ffcf33',
+    '#a855f7',
+    '#ffffff',
+    '#ff7a18',
+    '#48ff65'
+  ];
+
+  const state=bbDailyMechanicState;
+
+  if(
+    !bbIsDailyMechanic('glitchReactor') ||
+    state.glitchWarning ||
+    runSeconds<state.glitchUntil-4 ||
+    runSeconds>=state.glitchUntil
+  ){
+    return colors[index%colors.length];
+  }
+
+  return glitchColors[index%glitchColors.length];
+}
+function render(){let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);ctx.strokeStyle='#24304b';ctx.lineWidth=.65;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext()}
 function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.4,s=cell-2.8;ctx.save();if(ghost){ctx.globalAlpha=.2;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,s-2,s-2);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.3;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(px,py,s,s,Math.max(2,cell*.12));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff75';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#ffffff45';ctx.fillRect(px+3,py+3,s-6,Math.max(1,s*.09));ctx.restore()}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
