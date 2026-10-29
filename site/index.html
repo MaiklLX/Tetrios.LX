@@ -4784,6 +4784,67 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .boardframe{height:min(66vh,620px);min-height:330px}
 }
 
+
+/* === Unified game-space polish: applies identically to every mode === */
+#game .playlayout{
+  grid-template-columns:minmax(0,1fr) 190px !important;
+  align-items:stretch !important;
+}
+#game .gameleftcol{min-width:0}
+#game .gameleftcol .gamehud{width:100%}
+#game .gameleftcol .progresswrap{
+  width:100%;min-width:0;padding:10px 11px 11px;
+  border:1px solid #31578e;border-radius:12px;
+  background:linear-gradient(110deg,#0c1730,#111d3a);
+  box-shadow:inset 0 0 18px #287bff12,0 0 14px #1a66ff0b;
+}
+#game .progressmeta{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:5px 10px;line-height:1.25;
+}
+#game #progressLabel{color:#b8c9f2;font-weight:800;letter-spacing:.12em}
+#game #progressText{color:#fff;font-weight:900;font-variant-numeric:tabular-nums}
+#game .progressbar{
+  position:relative;isolation:isolate;overflow:hidden;
+  height:12px;margin-top:9px;border:1px solid #46659a;
+  border-radius:999px;background:#070d1c;
+  box-shadow:inset 0 2px 5px #000b,0 0 0 1px #071021;
+}
+#game .progressfill{
+  position:relative;min-width:0;height:100%;border-radius:inherit;
+  background:linear-gradient(90deg,#36e8d1 0%,#53aaff 52%,#c3a1ff 100%);
+  box-shadow:0 0 8px #48e7e0b3,0 0 17px #538bff70;
+  transition:width .32s cubic-bezier(.2,.8,.2,1);
+}
+#game .progressfill:after{
+  content:"";position:absolute;inset:1px 2px auto;height:35%;
+  border-radius:inherit;background:linear-gradient(90deg,#ffffff80,#ffffff08);
+}
+#game .progressbar:before{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0,transparent calc(20% - 1px),#071326a8 calc(20% - 1px),#071326a8 20%);
+}
+#game .sidecol{min-width:0}
+@media(max-width:700px){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 104px !important;gap:9px !important}
+  #game .boardframe{height:clamp(230px,calc(100dvh - 430px),460px);min-height:0}
+  #game .gameleftcol .progresswrap{padding:8px 7px}
+  #game .progressmeta{gap:4px 6px}
+  #game #progressLabel{font-size:8px;letter-spacing:.06em}
+  #game #progressText{font-size:9px;white-space:nowrap}
+  #game .progressbar{height:10px;margin-top:7px}
+}
+@media(max-width:420px){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 98px !important;gap:7px !important}
+  #game .gameleftcol .progresswrap{padding:7px 6px}
+  #game #progressLabel{font-size:7px}
+  #game #progressText{font-size:8px}
+  #game .progressbar{height:9px}
+}
+@media(max-width:360px){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 90px !important;gap:6px !important}
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -5306,70 +5367,69 @@ function chime() {
   setTimeout(() => tone(987.77, 0.075, 'sine', 0.009), 65);
 }
 
-/* BLOCK BUDDIES — ORIGINAL RETRO ARCADE MUSIC */
-
+/* BLOCK BUDDIES — LONG-FORM PROCEDURAL ARCADE SCORE */
 let arcadeMusicTimer = null;
 let arcadeMusicStep = 0;
 
+/* Four evolving phrases in C major / A minor: melody, bass and light harmony. */
 const arcadeMelody = [
-  523.25, null, 659.25, 783.99,
-  null, 659.25, 523.25, 392.00,
-  440.00, null, 523.25, 659.25,
-  783.99, 659.25, 523.25, null,
-
-  523.25, 659.25, 783.99, 1046.50,
-  null, 783.99, 659.25, 523.25,
-  587.33, null, 698.46, 880.00,
-  783.99, 659.25, 523.25, null
+  523.25,null,659.25,783.99,659.25,null,587.33,523.25,
+  392.00,null,440.00,523.25,587.33,null,523.25,null,
+  659.25,null,783.99,880.00,783.99,659.25,587.33,null,
+  523.25,null,587.33,659.25,523.25,null,392.00,null,
+  440.00,null,523.25,659.25,783.99,null,659.25,523.25,
+  587.33,null,698.46,783.99,698.46,null,587.33,523.25,
+  392.00,440.00,523.25,null,659.25,null,587.33,523.25,
+  440.00,null,392.00,null,523.25,null,null,null
 ];
-
 const arcadeBass = [
-  130.81, null, null, null,
-  130.81, null, 196.00, null,
-  110.00, null, null, null,
-  110.00, null, 164.81, null,
-
-  130.81, null, 130.81, null,
-  196.00, null, 164.81, null,
-  110.00, null, 110.00, null,
-  164.81, null, 196.00, null
+  130.81,null,null,196.00,130.81,null,196.00,null,
+  110.00,null,null,164.81,110.00,null,164.81,null,
+  174.61,null,null,261.63,174.61,null,261.63,null,
+  196.00,null,null,293.66,196.00,null,146.83,null,
+  130.81,null,null,196.00,130.81,null,196.00,null,
+  146.83,null,null,220.00,146.83,null,220.00,null,
+  110.00,null,null,164.81,110.00,null,164.81,null,
+  130.81,null,196.00,null,130.81,null,null,null
+];
+const arcadeHarmony = [
+  null,null,392.00,null,null,null,440.00,null,
+  null,null,329.63,null,null,null,392.00,null,
+  null,null,523.25,null,null,null,440.00,null,
+  null,null,392.00,null,null,null,349.23,null,
+  null,null,392.00,null,null,null,523.25,null,
+  null,null,440.00,null,null,null,392.00,null,
+  null,null,329.63,null,null,null,392.00,null,
+  null,null,349.23,null,null,null,null,null
 ];
 
 function music() {
   if (arcadeMusicTimer !== null) return;
-
   arcadeMusicStep = 0;
-
   arcadeMusicTimer = setInterval(() => {
-    if (!musicOn || !soundOn || !started || paused || gameOver) {
-      return;
-    }
-
+    if (!musicOn || !soundOn || !started || paused || gameOver) return;
+    const step = arcadeMusicStep % arcadeMelody.length;
+    const phrase = Math.floor(arcadeMusicStep / arcadeMelody.length) % 4;
     const a = audioCtx();
     if (!a) return;
 
-    const step = arcadeMusicStep % arcadeMelody.length;
-    const melodyNote = arcadeMelody[step];
+    let melodyNote = arcadeMelody[step];
     const bassNote = arcadeBass[step];
+    const harmonyNote = arcadeHarmony[step];
 
-    // Основная аркадная мелодия
-    if (melodyNote !== null) {
-      const duration = step % 4 === 3 ? 0.16 : 0.105;
-      tone(melodyNote, duration, 'square', 0.018);
+    /* Every second phrase adds an octave sparkle; the third softens into a variation. */
+    if (melodyNote && phrase === 1 && step % 8 === 2) melodyNote *= 2;
+    if (melodyNote && phrase === 2 && step % 16 === 6) melodyNote *= 0.5;
+    if (melodyNote) {
+      const longNote = step % 8 === 3 || step % 8 === 7;
+      tone(melodyNote, longNote ? 0.22 : 0.14, 'triangle', 0.019);
     }
+    if (bassNote) tone(bassNote, 0.27, 'sine', 0.024);
+    if (harmonyNote && step % 2 === 0) tone(harmonyNote, 0.18, 'triangle', 0.008);
 
-    // Низкий электронный бас
-    if (bassNote !== null) {
-      tone(bassNote, 0.20, 'triangle', 0.035);
-    }
-
-    // Яркие акценты в начале музыкальной фразы
-    if (step === 0 || step === 16) {
-      tone(261.63, 0.12, 'square', 0.012);
-    }
-
+    if (step % 16 === 0) tone(261.63, 0.20, 'sine', 0.009);
     arcadeMusicStep++;
-  }, 125);
+  }, 160);
 }
 function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1900)}function bbRewardFloat(amount){
   const el=document.createElement('div');
