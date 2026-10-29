@@ -86,7 +86,10 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   border:1px solid rgba(147,165,255,.2);box-shadow:inset 0 1px rgba(255,255,255,.045),0 12px 30px rgba(0,0,0,.18);
 }
 .bb-3d-stage:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.36;background-image:linear-gradient(rgba(143,159,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(143,159,255,.09) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(transparent,#000 25%,#000 85%,transparent)}
-.bb-3d-stage canvas{display:block;width:100%;height:100%;outline:none}
+.bb-3d-stage canvas{display:block;width:100%;height:100%;outline:none;cursor:grab}
+.bb-3d-stage.bb-3d-dragging canvas{cursor:grabbing}
+.bb-3d-stage:after{content:"DRAG TO ROTATE";position:absolute;right:12px;top:10px;font-size:8px;letter-spacing:.16em;color:rgba(190,205,255,.66);pointer-events:none;opacity:.78}
+.bb-3d-stage.bb-3d-dragging:after{opacity:.25}
 .bb-3d-stage .bb-3d-fallback{font-size:76px;filter:drop-shadow(0 10px 16px rgba(0,0,0,.4));animation:bbFallbackFloat 2.8s ease-in-out infinite}
 .bb-3d-stage .bb-3d-caption{position:absolute;left:12px;bottom:10px;font-size:9px;letter-spacing:.2em;color:#aeb9e5;text-transform:uppercase;pointer-events:none}
 @keyframes bbFallbackFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
