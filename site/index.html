@@ -6155,6 +6155,7 @@ ${canReplay
 bbDailyReplayDate = date;
 bbDailyReplayRule = record || bbDailyRuleForDate(date);
 bbDailyReplayPaid = false;
+bbDailyReplayNoQuestReward = true;
 
       bbChooseHeroBeforeStart();
     };
@@ -6318,6 +6319,7 @@ function bbGetTodayKey() {
 let bbDailyReplayDate = null;
 let bbDailyReplayRule = null;
 let bbDailyReplayPaid = false;
+let bbDailyReplayNoQuestReward = false;
 
 function bbDailyReplayPrice(date) {
   // Сравниваем календарные даты через UTC, чтобы переходы летнего
@@ -6901,6 +6903,7 @@ document.getElementById('bbCancelStartHero').onclick = () => {
     bbDailyReplayDate = null;
     bbDailyReplayRule = null;
     bbDailyReplayPaid = false;
+    bbDailyReplayNoQuestReward = false;
   }
 
   closeOverlay();
@@ -8042,7 +8045,14 @@ endGame = function() {
 
   if (shouldRecord) {
     bbDailyRecordedThisGame = true;
-    bbDailyRecordGame();
+
+    // Повторное прохождение пропущенного вызова не продвигает
+    // ежедневные задания и не может косвенно приносить монеты.
+    if (!bbDailyReplayNoQuestReward) {
+      bbDailyRecordGame();
+    }
+
+    bbDailyReplayNoQuestReward = false;
   }
 
   bbDailyOldEnd();
