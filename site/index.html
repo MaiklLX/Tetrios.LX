@@ -8000,16 +8000,15 @@ function bbOpenRelicChest(tierId){
   let roll=Math.random(),reward='';
   const owned=bbGetChestCosmetics();
   if(roll<tier.cosmetic){
-    const available=bbChestCosmetics.filter(item=>!owned.includes(item.id));
-    if(available.length){
-      const item=available[Math.floor(Math.random()*available.length)];
+    const item=bbChestCosmetics[Math.floor(Math.random()*bbChestCosmetics.length)];
+    if(!owned.includes(item.id)){
       owned.push(item.id);
       bbPut('chestCosmetics',owned);
       reward=item.emoji+' '+item.name+' — новый предмет коллекции';
     }else{
       const fragments=tier.id==='mythic'?6:tier.id==='elite'?4:3;
       bbPut('collectionFragments',bbGetCollectionFragments()+fragments);
-      reward='🧩 +'+fragments+' фрагмента коллекции за дубликат';
+      reward='🧩 '+item.name+' уже есть: +'+fragments+' фрагмента коллекции';
     }
   }else if(roll<tier.cosmetic+tier.boost){
     const ids=['quick','shield','magnet'];
