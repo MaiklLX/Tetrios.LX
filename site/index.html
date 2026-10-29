@@ -7259,7 +7259,7 @@ function restartDrop(){if(dropTimer)clearInterval(dropTimer);dropTimer=setInterv
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><h3>Пауза</h3><p>Герой отдыхает! Возвращайся, когда будешь готов.</p></div><button class="action" id="resume">ПРОДОЛЖИТЬ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
 /* Просмотр активных бустов с паузой */
-const boostCard = document.querySelector('#game .sidecol .sidecard:nth-child(2)');
+const boostCard = $('boostIcon')?.closest('.sidecard');
 
 if (boostCard) {
   boostCard.setAttribute('role', 'button');
@@ -7328,8 +7328,13 @@ const cv = $('game');
 
 // Мягкий свайп ускоряет падение; быстрый длинный свайп в конце выполняет hard drop.
 cv.addEventListener('touchstart', e => {
+  // Игровые кнопки обрабатываются только своими click-обработчиками.
+  // Не оставляем жест поля активным, если палец коснулся DROP/поворота/движения.
+  if (e.target.closest('button, input, select, textarea, [data-act]')) {
+    touch = null;
+    return;
+  }
   if (!started || paused || gameOver || touchDropLocked) return;
-  if (e.target.closest('button, input, select, textarea')) return;
   if (e.target.closest('#board')) e.preventDefault();
   const t=e.changedTouches[0];
   touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false};
@@ -7364,6 +7369,11 @@ cv.addEventListener('touchmove',e=>{
 },{passive:true});
 
 cv.addEventListener('touchend',e=>{
+  // Завершение касания кнопки не должно интерпретироваться как тап по игровому полю.
+  if (e.target.closest('button, input, select, textarea, [data-act]')) {
+    touch = null;
+    return;
+  }
   if(!touch){touchDropLocked=false;return}
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
   const elapsed=Date.now()-touch.at;
