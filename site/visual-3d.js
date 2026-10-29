@@ -115,6 +115,52 @@
     group.add(sparkles);group.scale.setScalar(id==='blip'?.95:id==='pixel'?.92:1.02);
     return {group,halo,ring2,sparkles,motion:group.children.filter(part=>part.userData.bbMotion)};
   }
+  let characterManifestPromise=null;
+  function getCharacterManifest(){
+    if(!characterManifestPromise)characterManifestPromise=fetch(new URL('./characters/manifest.json',import.meta.url))
+      .then(response=>{if(!response.ok)throw new Error('Character manifest unavailable: '+response.status);return response.json()})
+      .catch(err=>{console.warn('[Tetrios 3D] Using procedural characters; manifest unavailable.',err);return null});
+    return characterManifestPromise;
+  }
+  async function tryLoadCharacterAsset(stage,char,item){
+    const manifest=await getCharacterManifest();
+    const entry=manifest?.characters?.[stage.dataset.heroId||'plush'];
+    if(!entry?.model||!stage.isConnected||active.get(stage)!==item)return;
+    try{
+      const [{GLTFLoader}]=await Promise.all([import('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js')]);
+      if(!stage.isConnected||active.get(stage)!==item)return;
+      const gltf=await new GLTFLoader().loadAsync(new URL(entry.model,import.meta.url).href);
+      if(!stage.isConnected||active.get(stage)!==item){
+        gltf.scene.traverse(node=>{if(node.geometry)node.geometry.dispose();if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(material=>material.dispose())});
+        return;
+      }
+      const model=gltf.scene;
+      model.updateMatrixWorld(true);
+      let bounds=new THREE.Box3().setFromObject(model);
+      const size=bounds.getSize(new THREE.Vector3());
+      if(!Number.isFinite(size.y)||size.y<=0)throw new Error('GLB model has invalid dimensions');
+      const targetHeight=Number(manifest.targetHeight)||1.8;
+      model.scale.multiplyScalar(targetHeight/size.y);
+      model.updateMatrixWorld(true);
+      bounds=new THREE.Box3().setFromObject(model);
+      const center=bounds.getCenter(new THREE.Vector3());
+      model.position.x-=center.x;model.position.z-=center.z;model.position.y-=bounds.min.y;
+      for(const child of [...char.group.children]){
+        if(child!==char.halo&&child!==char.ring2&&child!==char.sparkles)child.visible=false;
+      }
+      char.group.add(model);
+      if(gltf.animations?.length){
+        item.mixer=new THREE.AnimationMixer(model);
+        const names=entry.animations||{};
+        const idle=gltf.animations.find(clip=>clip.name===names.idle)||gltf.animations[0];
+        if(idle)item.mixer.clipAction(idle).reset().play();
+        item.clips=gltf.animations;
+      }
+      item.externalModel=true;
+    }catch(err){
+      console.warn('[Tetrios 3D] Could not load mascot asset; keeping procedural model.',err);
+    }
+  }
   function mount(stage){
     if(stage.dataset.bb3dReady==='1')return;
     stage.dataset.bb3dReady='1';
@@ -162,11 +208,11 @@
       renderer.domElement.addEventListener('pointercancel',up);
       renderer.domElement.addEventListener('lostpointercapture',up);
       stage.addEventListener('pointerleave',up);
-      active.set(stage,{renderer,scene,camera,char,ro,controls,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}});
+      const item={renderer,scene,camera,char,ro,controls,mixer:null,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}};active.set(stage,item);tryLoadCharacterAsset(stage,char,item);
     }catch(err){console.warn('[Tetrios 3D] Renderer failed; keeping fallback artwork.',err);fallback.style.display='';}
   }
   function scan(){document.querySelectorAll('.bb-3d-stage').forEach(mount);for(const [stage,item] of active){if(!stage.isConnected){item.ro.disconnect();item.cleanup?.();item.renderer.dispose();active.delete(stage)}}}
   const clock=new THREE.Clock();
-  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;for(const part of item.char.motion){const m=part.userData.bbMotion;part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude}for(const part of item.char.group.children){if(part.userData.bbOrbit)part.rotation.y=t*.9}item.renderer.render(item.scene,item.camera)}}
+  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;if(item.mixer)item.mixer.update(.016);for(const part of item.char.motion){const m=part.userData.bbMotion;part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude}for(const part of item.char.group.children){if(part.userData.bbOrbit)part.rotation.y=t*.9}item.renderer.render(item.scene,item.camera)}}
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});scan();frame();
 })();
