@@ -5051,32 +5051,33 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .controls,
   #game .hint{display:none !important}
   #game .sidecol .side-drop{display:none !important}
+  /* Keep DROP in the page flow instead of floating over the coins/sidebar */
   #game .mobile-drop{
     display:flex !important;
-    position:fixed;
-    z-index:50;
-    right:max(14px,env(safe-area-inset-right));
-    bottom:max(16px,env(safe-area-inset-bottom));
-    width:72px;
-    height:72px;
-    padding:0;
-    flex-direction:column;
+    position:relative;
+    z-index:4;
+    align-self:stretch;
+    width:100%;
+    min-height:44px;
+    margin:7px 0 10px;
+    padding:5px 14px;
+    flex-direction:row;
     align-items:center;
     justify-content:center;
-    gap:1px;
-    border:2px solid #79ffe3;
-    border-radius:22px;
-    background:linear-gradient(145deg,#174c59,#087f7c);
+    gap:9px;
+    border:1px solid #79ffe3;
+    border-radius:14px;
+    background:linear-gradient(100deg,#12384a,#116b70 50%,#173e75);
     color:#f0fffc;
     font-size:13px;
     font-weight:1000;
-    letter-spacing:.12em;
-    box-shadow:inset 0 1px 0 #ffffff55,0 5px 0 #071c29,0 0 24px #39f3cf42;
+    letter-spacing:.18em;
+    box-shadow:inset 0 1px 0 #ffffff35,0 3px 0 #071a29,0 0 16px #39f3cf22;
     touch-action:manipulation;
     -webkit-tap-highlight-color:transparent;
   }
-  #game .mobile-drop-arrow{font-size:30px;line-height:1;font-weight:900}
-  #game .mobile-drop:active{transform:translateY(3px);box-shadow:inset 0 1px 0 #ffffff25,0 1px 0 #071c29}
+  #game .mobile-drop-arrow{font-size:23px;line-height:1;font-weight:900}
+  #game .mobile-drop:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #ffffff25,0 1px 0 #071c29}
 }
 @media (max-width:900px) and (orientation:landscape){
   #game .mobile-drop{display:none !important}
@@ -7203,7 +7204,7 @@ function bbDailyGlitchColor(index){
 
   return glitchColors[index%glitchColors.length];
 }
-function render(){let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Neon tactical grid: visible cell boundaries plus stronger five-cell guides */ctx.strokeStyle='#263957';ctx.lineWidth=.8;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.save();ctx.strokeStyle='#4b739b';ctx.lineWidth=1.25;ctx.globalAlpha=.72;for(let x=0;x<=W;x+=5){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y+=5){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.restore();/* subtle center glow and frame edge */const glow=ctx.createRadialGradient(cw*.5,ch*.45,cell,cw*.5,ch*.45,cw*.72);glow.addColorStop(0,'#1c8bba12');glow.addColorStop(1,'#050a1600');ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
+function render(){let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Neon tactical grid: visible cell boundaries plus stronger five-cell guides */ctx.strokeStyle='#263957';ctx.lineWidth=.8;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.save();ctx.strokeStyle='#416486';ctx.lineWidth=1.15;ctx.globalAlpha=.58;for(let x=5;x<W;x+=5){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=5;y<H;y+=5){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.restore();/* Top and bottom are spawn/exit rails, not playable rows: keep them visually separate from the grid */ctx.save();ctx.fillStyle='#17243a';ctx.fillRect(0,0,cw,cell*.18);ctx.fillRect(0,ch-cell*.18,cw,cell*.18);ctx.strokeStyle='#607c9b';ctx.globalAlpha=.75;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(0,cell*.18);ctx.lineTo(cw,cell*.18);ctx.moveTo(0,ch-cell*.18);ctx.lineTo(cw,ch-cell*.18);ctx.stroke();ctx.restore();/* subtle center glow and frame edge */const glow=ctx.createRadialGradient(cw*.5,ch*.45,cell,cw*.5,ch*.45,cw*.72);glow.addColorStop(0,'#1c8bba12');glow.addColorStop(1,'#050a1600');ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
 if(bbIsDailyMechanic('redZone')){
   ctx.fillStyle='#ff304022';
   ctx.fillRect(0,0,cw,cell*3);
