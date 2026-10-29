@@ -4909,6 +4909,30 @@ function bbDailyBuildCycle(cycle) {
 function bbDailyRuleForDate(dateValue) {
   if (!dailyRules.length) return null;
 
+  // Автоматически обнаруживаем изменения каталога ежедневных испытаний.
+  // Сбрасываем только назначения: прогресс, награды и история не затрагиваются.
+  const catalogSignature = JSON.stringify(
+    dailyRules.map(({ title, symbol, desc, goal, rule, mod }) => ({
+      title, symbol, desc, goal, rule, mod
+    }))
+  );
+
+  try {
+    const savedSignature = localStorage.getItem(
+      'bbDailyChallengeCatalogSignature'
+    );
+
+    if (savedSignature !== catalogSignature) {
+      localStorage.removeItem('bbDailyChallengeAssignments');
+      localStorage.setItem(
+        'bbDailyChallengeCatalogSignature',
+        catalogSignature
+      );
+    }
+  } catch (e) {
+    // При недоступном хранилище каталог всё равно рассчитывается ниже.
+  }
+
   let history = {};
   let assignments = {};
 
@@ -4933,7 +4957,7 @@ function bbDailyRuleForDate(dateValue) {
     assignments = {};
   }
 
-  // Уже назначенное испытание не пересчитываем после обновления каталога.
+  // Назначение сохраняется, пока сам каталог испытаний не изменился.
   if (assignments[dateValue] && assignments[dateValue].mod) {
     return assignments[dateValue];
   }
