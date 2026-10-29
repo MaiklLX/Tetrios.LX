@@ -6933,6 +6933,8 @@ function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!colli
 
 
 
+let bbDailyRewardsForEnd = null;
+
 function bbCheckDailyCompletion() {
   if (mode !== 'daily' || !started || paused || gameOver) {
     return false;
@@ -7007,6 +7009,7 @@ if (isReplay) {
       updateStats();
 
       bbRewardFloat(500);
+      bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +1 ✧ реликвия';
 
       toast('🏆 Испытание пройдено! +500 🪙 и 1 ✧ реликвия');
     } else {
@@ -7042,31 +7045,11 @@ if (isReplay) {
   updateHud();
   updateStats();
 
-  // Показываем награды отдельными плавающими карточками в одном стиле.
+  // Награды показываются в итоговом окне — без плавающих баннеров и задержек.
   paused = true;
   bbRewardFloat(500);
-
-  setTimeout(() => {
-    const relicReward = document.createElement('div');
-    relicReward.textContent = '✧  РЕЛИКВИЯ ПОЛУЧЕНА  ·  +1';
-    relicReward.style.cssText='position:fixed;left:50%;top:42%;transform:translate(-50%,0);z-index:2147483647;box-sizing:border-box;width:max-content;max-width:calc(100vw - 28px);padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,#33204f,#211b38);color:#f3eaff;border:2px solid #c4a2ff;font-size:clamp(16px,4.8vw,22px);font-weight:900;letter-spacing:.02em;text-align:center;box-shadow:0 0 0 4px #9d7cff24,0 0 32px #9d7cffaa;opacity:0;transition:transform .35s ease,opacity .35s ease;pointer-events:none;';
-    document.body.appendChild(relicReward);
-
-    requestAnimationFrame(() => {
-      relicReward.style.opacity = '1';
-      relicReward.style.transform = 'translate(-50%,-35px)';
-    });
-
-    setTimeout(() => {
-      relicReward.style.opacity = '0';
-      relicReward.style.transform = 'translate(-50%,-70px)';
-    }, 2100);
-
-    setTimeout(() => {
-      relicReward.remove();
-      endGame();
-    }, 2700);
-  }, 1700);
+  bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +1 ✧ реликвия';
+  endGame();
 
   return true;
 }
@@ -7222,7 +7205,7 @@ if(mode==='campaign'){
     localStorage.nrNode=campaignNode;
   }
 }
-if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div><div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">ПОПРОБОВАТЬ СНОВА</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`);$('retry').onclick=()=>{closeOverlay();startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
+if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();const rewardSummary=mode==='daily'&&bbDailyRewardsForEnd?'<div class="reward-summary" style="margin:16px 0;padding:14px 16px;border:1px solid #bda0ff;border-radius:14px;background:linear-gradient(135deg,#302044,#201b31);color:#f1e7ff;text-align:center;font-weight:800;line-height:1.5">'+bbDailyRewardsForEnd+'</div>':'';bbDailyRewardsForEnd=null;overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div>${rewardSummary}<div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">ПОПРОБОВАТЬ СНОВА</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`);$('retry').onclick=()=>{closeOverlay();startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
 function bbDailyGlitchColor(index){
   const glitchColors=[
     '#ff3155',
@@ -7360,21 +7343,28 @@ cv.addEventListener('touchmove',e=>{
     const dyStep=t.clientY-touch.lastY;
     if(dyStep>=22){
       const steps=Math.min(4,Math.floor(dyStep/22));
-      for(let i=0;i<steps;i++) move(0,1);
-      touch.lastY+=steps*22;
+      let moved=0;
+      for(let i=0;i<steps;i++){
+        // Если шаг упёрся в дно и зафиксировал фигуру, завершаем именно этот жест.
+        if(!move(0,1)){
+          touch.dropped=true;
+          touchDropLocked=true;
+          break;
+        }
+        moved++;
+      }
+      touch.lastY+=Math.max(1,moved)*22;
     }
   }
 },{passive:true});
 cv.addEventListener('touchend',e=>{
   if(!touch){touchDropLocked=false;return}
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y,elapsed=Date.now()-touch.at;
-  if(Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230)rotatePiece();
-  else if(touch.axis==='y'&&dy>150&&dy>Math.abs(dx)*1.8&&elapsed<650){
-    // Только очень резкий длинный свайп остаётся быстрым DROP.
-    touch.dropped=true;touchDropLocked=true;hardDrop();
-    setTimeout(()=>{touchDropLocked=false},180);
-  }
+  if(!touch.dropped&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230)rotatePiece();
+  // Свайп вниз всегда управляет мягким ускорением. Hard drop — только отдельной кнопкой,
+  // поэтому окончание жеста не может случайно сбросить уже появившуюся следующую фигуру.
   touch=null;
+  if(touchDropLocked)setTimeout(()=>{touchDropLocked=false},180);
 },{passive:true});
 cv.addEventListener('touchcancel',()=>{touch=null;touchDropLocked=false},{passive:true});
 
