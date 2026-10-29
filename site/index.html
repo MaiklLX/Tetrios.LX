@@ -5041,6 +5041,63 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .controls .drop-main{min-height:58px;font-size:11px;letter-spacing:.12em}
 }
 
+
+/* FIX: mobile layouts previously hid all on-screen controls, including DROP */
+#game .controls{
+  display:grid !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:7px;
+  margin-top:8px;
+  position:relative;
+  z-index:5;
+}
+#game .controls .control{min-width:0;min-height:44px}
+#game .controls .drop-main{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  grid-column:1 / -1;
+  width:100%;
+  min-height:56px;
+  margin-top:3px;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:1px solid #73ffe0;
+  border-radius:15px;
+  background:linear-gradient(105deg,#103744,#116a70 48%,#142e51);
+  color:#effffb;
+  font-size:12px;
+  font-weight:1000;
+  letter-spacing:.14em;
+  box-shadow:inset 0 1px 0 #ffffff45,0 4px 0 #071a29,0 0 20px #39f3cf30;
+  touch-action:manipulation;
+}
+#game .controls .drop-main .drop-icon{
+  width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+  display:grid;place-items:center;
+  background:#5df4ce24;border:1px solid #8affdf99;
+  font-size:23px;line-height:1;
+}
+#game .controls .drop-main:active{transform:translateY(3px)}
+/* Premium playfield frame and more legible cell grid */
+#game .boardframe{
+  border-color:#3b6484;
+  background:linear-gradient(145deg,#12243b,#091323 55%,#101a30);
+  box-shadow:inset 0 0 0 1px #74dfff12,0 0 0 1px #07101d,0 0 24px #36c8ff18,0 14px 36px #0007;
+}
+#game .board{
+  border:1px solid #34536f;
+  box-shadow:inset 0 0 24px #2bc9ff0a,0 0 16px #27c9ff0c;
+}
+@media(max-width:420px){
+  #game .controls{gap:5px}
+  #game .controls .control{min-height:42px}
+  #game .controls .drop-main{min-height:56px;font-size:11px;letter-spacing:.1em}
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -7155,7 +7212,7 @@ function bbDailyGlitchColor(index){
 
   return glitchColors[index%glitchColors.length];
 }
-function render(){let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);ctx.strokeStyle='#24304b';ctx.lineWidth=.65;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}
+function render(){let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Neon tactical grid: visible cell boundaries plus stronger five-cell guides */ctx.strokeStyle='#263957';ctx.lineWidth=.8;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.save();ctx.strokeStyle='#4b739b';ctx.lineWidth=1.25;ctx.globalAlpha=.72;for(let x=0;x<=W;x+=5){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y+=5){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.restore();/* subtle center glow and frame edge */const glow=ctx.createRadialGradient(cw*.5,ch*.45,cell,cw*.5,ch*.45,cw*.72);glow.addColorStop(0,'#1c8bba12');glow.addColorStop(1,'#050a1600');ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
 if(bbIsDailyMechanic('redZone')){
   ctx.fillStyle='#ff304022';
   ctx.fillRect(0,0,cw,cell*3);
