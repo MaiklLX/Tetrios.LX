@@ -2,7 +2,14 @@
 (async function(){
   const THREE_URL='https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
   let THREE;
-  try{THREE=await import(THREE_URL)}catch(err){console.warn('[Tetrios 3D] Three.js unavailable; keeping fallback artwork.',err);return}
+  try{THREE=await import(THREE_URL)}catch(err){
+    console.warn('[Tetrios 3D] Three.js unavailable; keeping fallback artwork.',err);
+    const fallbackScan=()=>document.querySelectorAll('.bb-3d-stage').forEach(stage=>{
+      if(stage.querySelector('.bb-3d-fallback'))return;
+      const fallback=document.createElement('div');fallback.className='bb-3d-fallback';fallback.textContent=stage.dataset.heroEmoji||'🧸';stage.appendChild(fallback);
+    });
+    fallbackScan();new MutationObserver(fallbackScan).observe(document.body,{childList:true,subtree:true});return;
+  }
   const active=new Map();
   const colorFor=id=>({plush:0x8e9bff,ember:0xff855b,spark:0xffca56,slime:0x67f3c5,void:0xa18aff}[id]||0x8e9bff);
   const mat=(color,roughness=.32,metalness=.12,emissive=0x000000)=>new THREE.MeshStandardMaterial({color,roughness,metalness,emissive,emissiveIntensity:.38});
