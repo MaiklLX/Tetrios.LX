@@ -5077,6 +5077,24 @@ body:has(#menu:not([hidden])) .app > .topbar {
 }
 #game .board{border:1px solid #34536f;box-shadow:inset 0 0 24px #2bc9ff0a,0 0 16px #27c9ff0c}
 
+
+/* Daily challenge: Chrono Rift gets its own compact layout so DROP cannot push coins off-screen */
+@media (max-width:900px) and (orientation:portrait){
+  #game.daily-chrono-layout .playlayout{grid-template-columns:minmax(0,1fr) 60px !important;gap:5px !important}
+  #game.daily-chrono-layout .sidecol{gap:3px !important;overflow:hidden}
+  #game.daily-chrono-layout .sidecard{padding:4px 2px !important;border-radius:10px}
+  #game.daily-chrono-layout .sidecard label{font-size:7px;line-height:1.05}
+  #game.daily-chrono-layout .nextcanvas{max-height:30px !important;margin:2px auto 0}
+  #game.daily-chrono-layout .boosticon{font-size:14px;margin:2px 0}
+  #game.daily-chrono-layout .boostname,#game.daily-chrono-layout .boostnum{font-size:7px;line-height:1.1}
+  #game.daily-chrono-layout .chrono-ring{width:48px !important;margin:4px auto}
+  #game.daily-chrono-layout .chrono-ring-inner strong{font-size:17px}
+  #game.daily-chrono-layout .sidecol .side-drop{height:32px !important;min-height:32px !important;margin:1px 0 0 !important;font-size:9px !important}
+  #game.daily-chrono-layout #gameCoins{width:100%;margin:5px 0 0 !important;padding:6px 4px !important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:8px;line-height:1.1;text-align:center}
+  #game.daily-chrono-layout .gameleftcol #gameCoins{box-sizing:border-box}
+  #game.daily-chrono-layout .boardframe{height:clamp(220px,52dvh,440px) !important}
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -6755,7 +6773,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
+function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
   const starter=upgrades[Math.floor(Math.random()*upgrades.length)];
@@ -7902,6 +7920,20 @@ if (bbProgress) bbLeftCol.appendChild(bbProgress);
     const panel = document.getElementById(id);
     if (panel) bbSideCol.appendChild(panel);
   });
+}
+
+function bbApplyDailyChronoLayout(){
+  const game=document.getElementById('game');
+  const layout=game?.querySelector('.playlayout');
+  const side=layout?.querySelector('.sidecol');
+  const left=layout?.querySelector('.gameleftcol');
+  const coins=document.getElementById('gameCoins');
+  const compact=mode==='daily'&&bbIsDailyMechanic('chronoRift');
+  game?.classList.toggle('daily-chrono-layout',compact);
+  if(coins&&side&&left){
+    if(compact) left.appendChild(coins);
+    else side.appendChild(coins);
+  }
 }
 
 let bbGesture = null;
