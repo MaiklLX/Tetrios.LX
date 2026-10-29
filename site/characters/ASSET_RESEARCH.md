@@ -17,6 +17,12 @@ Status: research shortlist only. No third-party models have been copied into the
    - Third-party catalogue reports six rigged, animated characters and CC0; verify the pack's current official license and exact included formats before shipping.
    - Humanoid fantasy characters are not a direct match for the five mascots.
 
+
+4. **Gobkit free GLB library** — https://gobkit.com/freebies and https://gobkit.com/api/free
+   - Public catalogue reports CC0 1.0 models, including rigged/animated creatures and small GLB files; inspect the specific model record and the shipped file before using it.
+   - Best current candidate source for testing a creature/robot-like asset rather than a generic human.
+   - The library's existence does not prove that a perfect bear, crystal mage, horned alien, robot, or energy-being match is available. Do not configure a mascot until its exact model, animation layout, and license are reviewed.
+
 ## Decisions
 
 - Do not assign generic humanoids as final mascots merely to make the manifest non-empty.
