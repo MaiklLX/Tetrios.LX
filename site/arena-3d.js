@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,gridGroup,resizeObserver,enabled=false,lastSignature='',raf=0;
+  let renderer,scene,camera,boardGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastSignature='',raf=0,previousState=null;
   const colorCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
@@ -66,7 +66,7 @@
     });
     const base=new THREE.Mesh(new THREE.BoxGeometry(10.9,.16,.65),new THREE.MeshStandardMaterial({color:0x182442,metalness:.8,roughness:.28,emissive:0x101e42,emissiveIntensity:.7}));
     base.position.set(0,-10.48,-.12);gridGroup.add(base);
-    boardGroup=new THREE.Group();scene.add(boardGroup);
+    boardGroup=new THREE.Group();scene.add(boardGroup);\n    effectsGroup=new THREE.Group();scene.add(effectsGroup);
     const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
   }
@@ -85,6 +85,26 @@
     const state=window.bbGet3DBoardState();
     const signature=JSON.stringify(state);
     if(signature===lastSignature)return;
+    if(previousState?.board&&state.board){
+      const oldRows=previousState.board;
+      const cleared=[];
+      for(let y=0;y<oldRows.length;y++){
+        const row=oldRows[y]||[];
+        if(row.length&&row.every(Boolean)&&!(state.board[y]||[]).every(Boolean))cleared.push(y);
+      }
+      if(cleared.length){
+        for(const obj of [...effectsGroup.children]){
+          effectsGroup.remove(obj);if(obj.geometry)obj.geometry.dispose();if(obj.material)obj.material.dispose();
+        }
+        for(const y of cleared){
+          const mat=new THREE.MeshBasicMaterial({color:0x9ffff8,transparent:true,opacity:.95,side:THREE.DoubleSide});
+          const flash=new THREE.Mesh(new THREE.PlaneGeometry(10,.82),mat);
+          flash.position.set(0,9.5-y,.42);flash.userData.createdAt=performance.now();flash.userData.row=y;
+          effectsGroup.add(flash);
+        }
+      }
+    }
+    previousState={...state,board:state.board?.map(row=>row.slice())};
     lastSignature=signature;
     boardGroup.traverse(obj=>{if(obj.geometry)obj.geometry.dispose();if(obj.material){const list=Array.isArray(obj.material)?obj.material:[obj.material];for(const m of list)if(!Array.from(colorCache.values()).includes(m))m.dispose()}});
     boardGroup.clear();
@@ -102,7 +122,20 @@
     raf=0;
     if(!enabled||!renderer||document.hidden)return;
     sync();
-    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){const t=performance.now()*.00025;camera.position.x=3+Math.sin(t)*.12;camera.position.y=2+Math.cos(t*.8)*.05;}
+    const now=performance.now();
+    if(effectsGroup){
+      for(const effect of [...effectsGroup.children]){
+        const age=now-(effect.userData.createdAt||now);
+        const progress=Math.min(1,age/460);
+        effect.material.opacity=(1-progress)*.95;
+        effect.scale.set(1+progress*.16,1+progress*.22,1);
+        if(progress>=1){effectsGroup.remove(effect);effect.geometry.dispose();effect.material.dispose();}
+      }
+    }
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      const t=now*.00025;camera.position.x=3+Math.sin(t)*.12;camera.position.y=2+Math.cos(t*.8)*.05;
+      boardGroup.children.forEach(cell=>{if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}});
+    }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
   }
