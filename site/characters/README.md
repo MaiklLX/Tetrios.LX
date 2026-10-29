@@ -16,6 +16,16 @@ This folder is the home for licensed character models. The game continues to use
 
 No production GLB assets have been added yet. All five manifest entries intentionally have `model: null`; the current procedural models remain the fallback and are still used by the game.
 
+## Validation gate
+
+Before committing a new GLB, run this from the repository root with Node.js 18 or newer:
+
+```sh
+node site/characters/validate-manifest.mjs
+```
+
+The validator checks the five mascot entries, safe local paths, explicit license/source metadata, file existence, and the GLB v2 header. It deliberately accepts `model: null` while the procedural fallback is in use. It does not replace visual inspection or a browser/device test.
+
 ## Safe integration checklist
 
 1. Confirm the asset can be redistributed and modified under its license.
