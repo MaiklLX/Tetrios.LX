@@ -5287,6 +5287,17 @@ body:has(#menu:not([hidden])) .app > .topbar {
   </div>
 </div>
 
+<div class="surprise-shop-card" style="margin-top:14px;border-color:#a78bfa66">
+  <div class="surprise-shop-icon">🗝️</div>
+  <div class="surprise-shop-info">
+    <div class="surprise-shop-label">РЕЛИКТОВЫЕ НАГРАДЫ</div>
+    <h3>Сундуки древних</h3>
+    <p>Косметические находки, расходуемые бусты и редкие самоцветы. Дубликаты превращаются во фрагменты коллекции.</p>
+    <div id="bbRelicChestOptions" style="display:grid;gap:8px;margin-top:12px"></div>
+    <div id="bbCollectionStatus" style="font-size:12px;color:#b6c2df;margin-top:10px"></div>
+    <button class="surprise-shop-buy" id="bbExchangeFragments" style="margin-top:8px">ОБМЕНЯТЬ 10 ФРАГМЕНТОВ</button>
+  </div>
+</div>
 <div id="shopContent"></div>
 </section>
 <section id="heroes" class="screen" hidden>
@@ -5508,6 +5519,17 @@ function bbDailyBuildCycle(cycle) {
   return rules;
 }
 
+
+function bbDailyRelicReward(rule) {
+  if (!rule) return 1;
+  const goal = String(rule.goal || '').toLowerCase();
+  if (/15\s*линий/.test(goal)) return 4;
+  if (/12\s*линий/.test(goal)) return 3;
+  if (/10\s*линий|2000\s*очков|выживи 60 секунд/.test(goal)) return 2;
+  if (/8\s*линий|1000\s*очков/.test(goal)) return 1;
+  if (/1500\s*очков/.test(goal)) return 2;
+  return 1;
+}
 
 function bbDailyRuleForDate(dateValue) {
   if (!dailyRules.length) return null;
@@ -7171,7 +7193,8 @@ if (isReplay) {
   localStorage.setItem('bbCoins', String(bbCoins));
   localStorage.setItem('coins', String(bbCoins));
 
-  relicCount += 1;
+  const dailyRelicReward = bbDailyRelicReward(rule);
+  relicCount += dailyRelicReward;
   localStorage.setItem('nrRelics', String(relicCount));
 
   updateHud();
@@ -7180,7 +7203,7 @@ if (isReplay) {
   // Награды показываются в итоговом окне — без плавающих баннеров и задержек.
   paused = true;
   bbRewardFloat(500);
-  bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +1 ✧ реликвия';
+  bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +' + dailyRelicReward + ' ✧ реликвий';
   endGame();
 
   return true;
@@ -7761,6 +7784,7 @@ function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('sho
 function bbShop(){
   $('shopCoins').textContent = bbCoins;
   $('shopGems').textContent = bbGems;
+  bbRenderRelicChests();
 
   $('shopContent').innerHTML = `
     <div class="shopgrid">
@@ -7938,6 +7962,97 @@ function bbHero(){
   $('bbHeroClose').onclick = closeOverlay;
 }
 function bbBox(){if(bbCoins<60){toast('Сюрприз-бокс стоит 60 монет');return}bbCoins-=60;let r=Math.random(),reward;if(r<.58){let n=35+Math.floor(Math.random()*60);bbCoins+=n;reward=`🪙 +${n} монет`}else if(r<.82){let n=1+Math.floor(Math.random()*2);bbGems+=n;reward=`💎 +${n} самоцвета`}else if(r<.95){let id=['quick','shield','magnet'][Math.floor(Math.random()*3)];bbInventory[id]=(bbInventory[id]||0)+1;reward=`${bbCatalog.find(x=>x.id===id).emoji} ${bbCatalog.find(x=>x.id===id).name}`}else{let n=100+Math.floor(Math.random()*100);bbXp+=n;reward=`⭐ +${n} опыта`}bbSave();chime();bbModal(`<div class="modalhead bb-reward-modal"><div class="bigicon" style="animation:float 1s infinite">🎁</div><div class="eyebrow">ТА-ДААА!</div><h3>Сюрприз-бокс открыт!</h3><p>Внутри оказалось: <b>${reward}</b></p></div><button class="action" id="bbBoxOk">КЛАСС!</button>`);$('bbBoxOk').onclick=closeOverlay}
+const bbRelicChestTiers = [
+  {id:'super',name:'Суперсундук',cost:5,emoji:'🟦',cosmetic:0.68,boost:0.22,gems:0.09},
+  {id:'elite',name:'Элитный сундук',cost:15,emoji:'🟪',cosmetic:0.55,boost:0.25,gems:0.17},
+  {id:'mythic',name:'Мифический сундук',cost:30,emoji:'🟨',cosmetic:0.45,boost:0.30,gems:0.20}
+];
+const bbChestCosmetics = [
+  {id:'comet-trail',name:'Кометный след',emoji:'☄️'},
+  {id:'void-crown',name:'Корона пустоты',emoji:'👑'},
+  {id:'prism-shard',name:'Призматический осколок',emoji:'🔮'},
+  {id:'star-sigil',name:'Звёздная печать',emoji:'🌟'},
+  {id:'pixel-ghost',name:'Пиксельный призрак',emoji:'👻'},
+  {id:'neon-wings',name:'Неоновые крылья',emoji:'🪽'}
+];
+let bbChestBusy = false;
+function bbGetChestCosmetics(){const value=bbGet('chestCosmetics',[]);return Array.isArray(value)?value:[]}
+function bbGetCollectionFragments(){return Math.max(0,Number(bbGet('collectionFragments',0))||0)}
+function bbRenderRelicChests(){
+  const options=$('bbRelicChestOptions');
+  const status=$('bbCollectionStatus');
+  const exchange=$('bbExchangeFragments');
+  if(options) options.innerHTML=bbRelicChestTiers.map(t=>`<button type="button" data-bb-chest="${t.id}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;padding:11px 12px;border-radius:12px;border:1px solid #a78bfa66;background:#111a30;color:#f3f4ff;font-weight:800"><span>${t.emoji} ${t.name}</span><span style="white-space:nowrap">${t.cost} ✧</span></button>`).join('');
+  if(options) options.querySelectorAll('[data-bb-chest]').forEach(button=>button.onclick=()=>bbOpenRelicChest(button.dataset.bbChest));
+  const owned=bbGetChestCosmetics();
+  if(status) status.textContent='Коллекция: '+owned.length+'/'+bbChestCosmetics.length+' · Фрагменты: '+bbGetCollectionFragments();
+  if(exchange) exchange.disabled=bbGetCollectionFragments()<10||owned.length>=bbChestCosmetics.length;
+  if(exchange) exchange.textContent=owned.length>=bbChestCosmetics.length?'КОЛЛЕКЦИЯ СОБРАНА':'ОБМЕНЯТЬ 10 ФРАГМЕНТОВ';
+}
+function bbOpenRelicChest(tierId){
+  if(bbChestBusy)return;
+  const tier=bbRelicChestTiers.find(t=>t.id===tierId);
+  if(!tier)return;
+  if(relicCount<tier.cost){toast('Не хватает реликвий для этого сундука.');return}
+  bbChestBusy=true;
+  relicCount-=tier.cost;
+  localStorage.setItem('nrRelics',String(relicCount));
+  let roll=Math.random(),reward='';
+  const owned=bbGetChestCosmetics();
+  if(roll<tier.cosmetic){
+    const available=bbChestCosmetics.filter(item=>!owned.includes(item.id));
+    if(available.length){
+      const item=available[Math.floor(Math.random()*available.length)];
+      owned.push(item.id);
+      bbPut('chestCosmetics',owned);
+      reward=item.emoji+' '+item.name+' — новый предмет коллекции';
+    }else{
+      const fragments=tier.id==='mythic'?6:tier.id==='elite'?4:3;
+      bbPut('collectionFragments',bbGetCollectionFragments()+fragments);
+      reward='🧩 +'+fragments+' фрагмента коллекции за дубликат';
+    }
+  }else if(roll<tier.cosmetic+tier.boost){
+    const ids=['quick','shield','magnet'];
+    const count=tier.id==='mythic'?2:1;
+    const found=[];
+    for(let i=0;i<count;i++){
+      const id=ids[Math.floor(Math.random()*ids.length)];
+      bbInventory[id]=(bbInventory[id]||0)+1;
+      const item=bbCatalog.find(x=>x.id===id);
+      if(item)found.push(item.emoji+' '+item.name);
+    }
+    reward=found.join('<br>')+' — буст'+(count>1?'ы':'')+' на будущий забег';
+  }else if(roll<tier.cosmetic+tier.boost+tier.gems){
+    const amount=tier.id==='mythic'?2+Math.floor(Math.random()*2):tier.id==='elite'?1+Math.floor(Math.random()*2):1;
+    bbGems+=amount;
+    reward='💎 +'+amount+' самоцвет'+(amount===1?'':amount<5?'а':'ов');
+  }else{
+    const amount=tier.id==='mythic'?4:2;
+    bbGems+=amount;
+    reward='💎 '+amount+' самоцвета — редкая находка!';
+  }
+  bbSave();
+  updateStats();
+  bbRenderRelicChests();
+  chime();
+  bbModal('<div class="modalhead bb-reward-modal"><div class="bigicon" style="animation:float 1s infinite">'+tier.emoji+'</div><div class="eyebrow">'+tier.name.toUpperCase()+'</div><h3>Сундук открыт!</h3><p>Внутри оказалось:<br><b>'+reward+'</b></p></div><button class="action" id="bbChestOk">ЗАБРАТЬ НАГРАДУ</button>');
+  $('bbChestOk').onclick=()=>{bbChestBusy=false;closeOverlay();bbShop()};
+}
+function bbExchangeCollectionFragments(){
+  const owned=bbGetChestCosmetics();
+  const available=bbChestCosmetics.filter(item=>!owned.includes(item.id));
+  if(bbGetCollectionFragments()<10){toast('Нужно 10 фрагментов коллекции.');return}
+  if(!available.length){toast('Коллекция уже собрана!');return}
+  bbPut('collectionFragments',bbGetCollectionFragments()-10);
+  const item=available[Math.floor(Math.random()*available.length)];
+  owned.push(item.id);
+  bbPut('chestCosmetics',owned);
+  bbSave();
+  bbRenderRelicChests();
+  toast(item.emoji+' Получено: '+item.name);
+}
+$('bbExchangeFragments')?.addEventListener('click',bbExchangeCollectionFragments);
+
 $('openShop').onclick = bbShop;
 
 const bbOldEnd = endGame;
