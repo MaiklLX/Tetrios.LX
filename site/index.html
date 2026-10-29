@@ -4842,11 +4842,45 @@ function bbDailyBuildCycle(cycle) {
   return rules;
 }
 
+
 function bbDailyRuleForDate(dateValue) {
   if (!dailyRules.length) return null;
 
+  let history = {};
+  let assignments = {};
+
+  try {
+    history = JSON.parse(
+      localStorage.getItem('bbDailyChallengeHistory') || '{}'
+    );
+  } catch (e) {
+    history = {};
+  }
+
+  // Завершённая дата всегда сохраняет исходное испытание.
+  if (history[dateValue] && history[dateValue].mod) {
+    return history[dateValue];
+  }
+
+  try {
+    assignments = JSON.parse(
+      localStorage.getItem('bbDailyChallengeAssignments') || '{}'
+    );
+  } catch (e) {
+    assignments = {};
+  }
+
+  // Уже назначенное испытание не пересчитываем после обновления каталога.
+  if (assignments[dateValue] && assignments[dateValue].mod) {
+    return assignments[dateValue];
+  }
+
   const parts = String(dateValue).split('-').map(Number);
-  if (parts.length !== 3 || parts.some(n => !Number.isFinite(n))) {
+
+  if (
+    parts.length !== 3 ||
+    parts.some(n => !Number.isFinite(n))
+  ) {
     return dailyRules[0];
   }
 
@@ -4858,23 +4892,46 @@ function bbDailyRuleForDate(dateValue) {
   const position = dayNumber - cycle * dailyRules.length;
   const rules = bbDailyBuildCycle(cycle);
 
-  // Не допускаем одинаковое испытание на границе двух циклов.
+  // Не допускаем повтора на границе двух циклов.
   if (cycle > 0 && rules.length > 1) {
     const previousRules = bbDailyBuildCycle(cycle - 1);
     const previousLast = previousRules[previousRules.length - 1];
 
     if (rules[0].title === previousLast.title) {
       const swapIndex = rules.findIndex(
-        (rule, index) => index > 0 && rule.title !== previousLast.title
+        (rule, index) =>
+          index > 0 && rule.title !== previousLast.title
       );
 
       if (swapIndex > 0) {
-        [rules[0], rules[swapIndex]] = [rules[swapIndex], rules[0]];
+        [rules[0], rules[swapIndex]] =
+          [rules[swapIndex], rules[0]];
       }
     }
   }
 
-  return rules[position];
+  const rule = rules[position];
+
+  assignments[dateValue] = {
+    date: dateValue,
+    title: rule.title,
+    symbol: rule.symbol,
+    desc: rule.desc,
+    goal: rule.goal,
+    rule: rule.rule,
+    mod: rule.mod
+  };
+
+  try {
+    localStorage.setItem(
+      'bbDailyChallengeAssignments',
+      JSON.stringify(assignments)
+    );
+  } catch (e) {
+    // Если хранилище недоступно, используем рассчитанное испытание.
+  }
+
+  return rule;
 }
 function audioCtx() {
   if (!audio) {
