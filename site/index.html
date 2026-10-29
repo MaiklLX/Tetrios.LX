@@ -6320,27 +6320,31 @@ let bbDailyReplayRule = null;
 let bbDailyReplayPaid = false;
 
 function bbDailyReplayPrice(date) {
-  const today = new Date();
-  const selected = new Date(date + 'T12:00:00');
-  const current = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
+  // Сравниваем календарные даты через UTC, чтобы переходы летнего
+  // и зимнего времени не меняли цену повторного прохождения.
+  const todayParts = bbGetTodayKey().split('-').map(Number);
+  const selectedParts = String(date || '').split('-').map(Number);
 
-  const selectedDay = new Date(
-    selected.getFullYear(),
-    selected.getMonth(),
-    selected.getDate()
-  );
+  if (
+    todayParts.length !== 3 ||
+    selectedParts.length !== 3 ||
+    todayParts.some(n => !Number.isInteger(n)) ||
+    selectedParts.some(n => !Number.isInteger(n))
+  ) {
+    return 0;
+  }
 
-  const age = Math.floor(
-    (current.getTime() - selectedDay.getTime()) / 86400000
+  const todayNumber = Math.floor(
+    Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2]) / 86400000
   );
+  const selectedNumber = Math.floor(
+    Date.UTC(selectedParts[0], selectedParts[1] - 1, selectedParts[2]) / 86400000
+  );
+  const age = todayNumber - selectedNumber;
 
   if (age <= 0) return 0;
 
-  // 10% за каждый день давности, максимум 50% от награды в 500 монет.
+  // 50 монет за каждый день давности, максимум 250 монет.
   return Math.min(age * 50, 250);
 }
 function bbGetActiveDailyRule() {
@@ -7127,21 +7131,16 @@ if (isReplay) {
         JSON.stringify(replayedDates)
       );
 
-      // Награда за успешно пройденный пропущенный вызов.
-      bbCoins += 500;
-      localStorage.setItem('bbCoins', String(bbCoins));
-      localStorage.setItem('coins', String(bbCoins));
-
+      // За повторное прохождение выдаём реликвию, но не монеты.
+      // Повтор остаётся платным, чтобы не создавать чистую прибыль.
       relicCount += 1;
       localStorage.setItem('nrRelics', String(relicCount));
 
       updateHud();
       updateStats();
 
-      bbRewardFloat(500);
-      bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +1 ✧ реликвия';
-
-      toast('🏆 Испытание пройдено! +500 🪙 и 1 ✧ реликвия');
+      bbDailyRewardsForEnd = '🏆 Награда за повторное испытание: +1 ✧ реликвия';
+      toast('🏆 Испытание пройдено! +1 ✧ реликвия');
     } else {
       toast('Это испытание уже пройдено.');
     }
