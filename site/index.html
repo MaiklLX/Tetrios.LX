@@ -7334,9 +7334,22 @@ cv.addEventListener('touchstart', e => {
     touch = null;
     return;
   }
+  const t=e.changedTouches[0];
+  // Расширенная «мёртвая зона» вокруг DROP: размер кнопки и расположение
+  // берутся из текущей вёрстки, поэтому защита работает на телефонах,
+  // планшетах и компьютерах с сенсорным экраном независимо от масштаба.
+  const dropButton = document.querySelector('#game [data-act="drop"]');
+  if (dropButton) {
+    const r = dropButton.getBoundingClientRect();
+    const safe = 52;
+    if (t.clientX >= r.left - safe && t.clientX <= r.right + safe &&
+        t.clientY >= r.top - safe && t.clientY <= r.bottom + safe) {
+      touch = null;
+      return;
+    }
+  }
   if (!started || paused || gameOver || touchDropLocked) return;
   if (e.target.closest('#board')) e.preventDefault();
-  const t=e.changedTouches[0];
   touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false};
   audioCtx();
 },{passive:false});
