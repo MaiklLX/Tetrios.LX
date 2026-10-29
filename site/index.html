@@ -4821,9 +4821,10 @@ function bbResetDailyMechanicState(rule = null) {
   bbDailyMechanicState = {
     mod: rule?.mod || null,
 
-    // Гравитационный переворот
-    gravityClears: 0,
-    gravityResetAt: 0,
+// Гравитационный переворот
+gravityClears: 0,
+gravityResetAt: 0,
+gravityPenaltyMs: 0,
 
     // Глитч-реактор
     glitchClearCount: 0,
@@ -4870,7 +4871,7 @@ function bbIsDailyMechanic(mod) {
     bbGetActiveDailyRule()?.mod === mod
   );
 }
-const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
+const dailyRules=[{title:'Солнечный резонанс',symbol:'☼',desc:'Собирай чистые линии под пульсацией звезды.',goal:'12 линий',rule:'Каждая четвёртая линия даёт дополнительный заряд уровня.',mod:'sun'},{title:'Тихая гравитация',symbol:'◉',desc:'Падение начинается медленно, но ускоряется чаще.',goal:'1500 очков',rule:'Скорость увеличивается каждые 25 секунд. Не теряй ритм.',mod:'gravity'},{title:'Гравитационный переворот',symbol:'⟲',desc:'Каждая очищенная линия ускоряет падение фигур. Успей адаптироваться до сброса гравитации.',goal:'12 линий',rule:'Каждая очищенная линия ускоряет падение. Каждые 30 секунд накопленное ускорение сбрасывается.',mod:'gravityFlip'},{title:'Хроматический шторм',symbol:'✧',desc:'Цвета меняются, но форма остаётся знакомой.',goal:'10 линий',rule:'После очистки линии цветовая палитра поля меняется.',mod:'chroma'},{title:'Охота за кометой',symbol:'☄',desc:'Собирай линии быстро — время работает против тебя.',goal:'2000 очков',rule:'За очистку в течение 2 секунд после падения — бонус очков.',mod:'comet'},{title:'Зеркальный сектор',symbol:'◇',desc:'Проверь интуицию в отражённой пустоте.',goal:'8 линий',rule:'Движение влево и вправо зеркально перевёрнуто.',mod:'mirror'},{title:'Пульс ядра',symbol:'⚡',desc:'Короткие всплески скорости и щедрые награды.',goal:'15 линий',rule:'Каждая 5-я деталь падает быстрее. Очистка даёт ×1.5 очков.',mod:'pulse'},{title:'Реликтовая тишина',symbol:'⬡',desc:'Без подсказок. Только ты и поле.',goal:'1000 очков',rule:'Следующая деталь скрыта до момента появления.',mod:'silent'}];
 
 function bbDailyBuildCycle(cycle) {
   let seed = 2166136261;
@@ -6214,7 +6215,12 @@ if (mode === 'daily') {
     $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
   }
 }
-show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}if(mode==='rogue'){bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
+show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);if(boosts.includes('tide')&&runSeconds%45===0){levelLines++;updateProgress()}if(boosts.includes('unstable')&&runSeconds%90===0){score+=500;updateHud()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravity'&&runSeconds%25===0){dropMs=Math.max(150,dropMs-55);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse'&&runSeconds%5===0){dropMs=Math.max(180,dropMs-25);restartDrop()}if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'&&runSeconds%30===0){
+  dropMs+=bbDailyMechanicState.gravityPenaltyMs;
+  bbDailyMechanicState.gravityPenaltyMs=0;
+  bbDailyMechanicState.gravityClears=0;
+  restartDrop();
+}if(mode==='rogue'){bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
 function fmt(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 
 let pieceBag = [];
@@ -6387,7 +6393,15 @@ if (isReplay) {
 }
 
 function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));let cleared=0;for(let y=H-1;y>=0;y--){if(board[y].every(v=>v)){board.splice(y,1);board.unshift(Array(W).fill(0));cleared++;y++}}
-if(cleared){bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);lines+=cleared;bbDailyAddLines(cleared);levelLines+=cleared;
+if(cleared){
+if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'){
+  const oldDropMs=dropMs;
+  dropMs=Math.max(150,dropMs-30*cleared);
+  bbDailyMechanicState.gravityPenaltyMs+=oldDropMs-dropMs;
+  bbDailyMechanicState.gravityClears+=cleared;
+  restartDrop();
+}
+bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);lines+=cleared;bbDailyAddLines(cleared);levelLines+=cleared;
 combo++;
 let mult=boosts.includes('mult')?1.5:1;
 if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15;
