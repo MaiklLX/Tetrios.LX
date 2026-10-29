@@ -5522,13 +5522,26 @@ function bbDailyBuildCycle(cycle) {
 
 function bbDailyRelicReward(rule) {
   if (!rule) return 1;
-  const goal = String(rule.goal || '').toLowerCase();
-  if (/15\s*линий/.test(goal)) return 4;
-  if (/12\s*линий/.test(goal)) return 3;
-  if (/10\s*линий|2000\s*очков|выживи 60 секунд/.test(goal)) return 2;
-  if (/8\s*линий|1000\s*очков/.test(goal)) return 1;
-  if (/1500\s*очков/.test(goal)) return 2;
-  return 1;
+  const difficultyByMod = {
+    sun: 1,
+    silent: 1,
+    echoCombo: 2,
+    gravity: 2,
+    chroma: 2,
+    comet: 2,
+    artifactHunt: 2,
+    lastShield: 2,
+    gravityFlip: 3,
+    glitchReactor: 3,
+    redZone: 3,
+    chronoRift: 3,
+    mirror: 3,
+    blindAssembly: 3,
+    prismaticChaos: 3,
+    singularity: 3,
+    pulse: 4
+  };
+  return difficultyByMod[rule.mod] || 1;
 }
 
 function bbDailyRuleForDate(dateValue) {
@@ -5783,7 +5796,7 @@ function show(id){
 function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ';bbUpdateVisitStreak()}
+function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.';$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ';bbUpdateVisitStreak()}
 
 // BLOCK BUDDIES — серия ежедневных посещений и редкий предмет восстановления.
 function bbStreakRead() {
