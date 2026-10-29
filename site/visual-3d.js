@@ -77,6 +77,38 @@
       for(const side of [-1,1]){const fin=new THREE.Mesh(new THREE.ConeGeometry(.15,.5,5),mat(0xff8a2a,.22,.2,0xff5a16));fin.position.set(side*.47,1.47,-.05);fin.rotation.z=-side*.85;group.add(fin)}
       const baseRing=new THREE.Mesh(new THREE.TorusGeometry(.53,.07,8,36),goldMat);baseRing.position.y=.35;baseRing.rotation.x=Math.PI/2;group.add(baseRing);
     }
+    // Character-specific surface details to push each silhouette beyond a simple primitive.
+    if(id==='plush'){
+      // Guardian shoulder plates and small rivets frame the worn-fabric body.
+      for(const side of [-1,1]){
+        const plate=new THREE.Mesh(new THREE.SphereGeometry(.22,16,12),mat(0x43506e,.3,.68,0x15264b));
+        plate.scale.set(1.12,.62,.48);plate.position.set(side*.53,1.12,.13);plate.rotation.z=-side*.32;group.add(plate);
+        for(let i=0;i<3;i++){const stitch=new THREE.Mesh(new THREE.SphereGeometry(.018,8,6),goldMat);stitch.position.set(side*.53+side*(i-1)*.07,1.13,.245);group.add(stitch)}
+      }
+      const chestBadge=new THREE.Mesh(new THREE.OctahedronGeometry(.12,0),goldMat);chestBadge.position.set(0,.93,.55);chestBadge.rotation.z=Math.PI/4;group.add(chestBadge);
+    }else if(id==='prism'){
+      // Three orbiting crystal fragments form a magical, layered silhouette.
+      const orbit=new THREE.Group();orbit.position.set(0,1.02,0);group.add(orbit);
+      for(let i=0;i<3;i++){const shard=new THREE.Mesh(new THREE.OctahedronGeometry(.105+i*.025,0),mat([0x7af4ff,0xb7a5ff,0xffffff][i],.14,.25,0x2d78ff));const a=i*Math.PI*2/3;shard.position.set(Math.cos(a)*.92,Math.sin(a)*.34,Math.sin(a)*.42);shard.rotation.set(a*.4,a,a*.7);orbit.add(shard)}
+      orbit.userData.bbOrbit=true;
+    }else if(id==='blip'){
+      const cheekMat=mat(0xc7a4ff,.34,.04,0x30105b);
+      for(const side of [-1,1]){const cheek=new THREE.Mesh(new THREE.SphereGeometry(.095,12,8),cheekMat);cheek.scale.set(1,.55,.28);cheek.position.set(side*.39,.91,.44);group.add(cheek)}
+      const tooth=new THREE.Mesh(new THREE.BoxGeometry(.12,.055,.035),mat(0xffffff,.2,.02));tooth.position.set(.04,.78,.51);group.add(tooth);
+    }else if(id==='pixel'){
+      const panel=roundedBlock(.42,.14,.035,.025,mat(0x1c2d4b,.24,.52));panel.position.set(0,.48,.34);group.add(panel);
+      for(let i=0;i<4;i++){const diode=new THREE.Mesh(new THREE.SphereGeometry(.025,8,6),new THREE.MeshBasicMaterial({color:[0x65fff0,0xffd36e,0xa98aff,0x7dff9b][i]}));diode.position.set(-.12+i*.08,.48,.37);group.add(diode)}
+      const shoulderMark=new THREE.Mesh(new THREE.BoxGeometry(.16,.07,.035),goldMat);shoulderMark.position.set(.45,1.19,.19);shoulderMark.rotation.z=-.35;group.add(shoulderMark);
+    }else if(id==='spark'){
+      // Fine lightning filaments sit just outside the core as a readable energy motif.
+      for(let i=0;i<4;i++){
+        const points=[];const a=i*Math.PI/2+.2;
+        points.push(new THREE.Vector3(Math.cos(a)*.42,.78,Math.sin(a)*.3));
+        points.push(new THREE.Vector3(Math.cos(a+.12)*.68,1.02,Math.sin(a+.12)*.45));
+        points.push(new THREE.Vector3(Math.cos(a-.08)*.54,1.28,Math.sin(a-.08)*.38));
+        const filament=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:0xfff0a2,transparent:true,opacity:.9}));group.add(filament);
+      }
+    }
     const halo=new THREE.Mesh(new THREE.TorusGeometry(id==='prism'?.78:.72,.025,8,64),new THREE.MeshBasicMaterial({color:base,transparent:true,opacity:.72}));halo.rotation.x=Math.PI/2;halo.position.y=.12;group.add(halo);
     const ring2=new THREE.Mesh(new THREE.TorusGeometry(id==='pixel'?.88:.9,.009,6,64),new THREE.MeshBasicMaterial({color:0x9baeff,transparent:true,opacity:.42}));ring2.rotation.x=Math.PI/2;ring2.position.y=.08;group.add(ring2);
     for(let i=0;i<18;i++){const a=i*2.399,rad=.92+(i%3)*.14;const p=new THREE.Mesh(new THREE.OctahedronGeometry(i%4===0?.045:.022),glowMat);p.position.set(Math.cos(a)*rad,.35+(i%5)*.27,Math.sin(a)*rad*.55);sparkles.add(p)}
@@ -135,6 +167,6 @@
   }
   function scan(){document.querySelectorAll('.bb-3d-stage').forEach(mount);for(const [stage,item] of active){if(!stage.isConnected){item.ro.disconnect();item.cleanup?.();item.renderer.dispose();active.delete(stage)}}}
   const clock=new THREE.Clock();
-  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;item.renderer.render(item.scene,item.camera)}}
+  function frame(){requestAnimationFrame(frame);const t=clock.getElapsedTime();scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;for(const part of item.char.group.children){if(part.userData.bbOrbit)part.rotation.y=t*.9}item.renderer.render(item.scene,item.camera)}}
   new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});scan();frame();
 })();
