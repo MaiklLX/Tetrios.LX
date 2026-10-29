@@ -7321,6 +7321,7 @@ let touch = null;
 let touchDropLocked = false;
 const cv = $('game');
 
+// Мягкий свайп ускоряет падение; быстрый длинный свайп в конце выполняет hard drop.
 cv.addEventListener('touchstart', e => {
   if (!started || paused || gameOver || touchDropLocked) return;
   if (e.target.closest('button, input, select, textarea')) return;
@@ -7329,6 +7330,7 @@ cv.addEventListener('touchstart', e => {
   touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false};
   audioCtx();
 },{passive:false});
+
 cv.addEventListener('touchmove',e=>{
   if(!touch||touch.dropped||!started||paused||gameOver)return;
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
@@ -7338,35 +7340,46 @@ cv.addEventListener('touchmove',e=>{
   if(touch.axis==='x'){
     const dx=t.clientX-touch.lastX;
     if(Math.abs(dx)>=26){move(dx>0?1:-1);touch.lastX=t.clientX;}
-  }else if(touch.axis==='y'){
-    // Вернули мягкое ускоренное падение: движение вниз по шагам, без мгновенного DROP.
+  }else if(touch.axis==='y'&&ty>0){
+    // Пошаговое ускорение без резкого сброса при обычном свайпе.
     const dyStep=t.clientY-touch.lastY;
     if(dyStep>=22){
-      const steps=Math.min(4,Math.floor(dyStep/22));
-      let moved=0;
+      const steps=Math.min(3,Math.floor(dyStep/22));
       for(let i=0;i<steps;i++){
-        // Если шаг упёрся в дно и зафиксировал фигуру, завершаем именно этот жест.
         if(!move(0,1)){
+          // Фигура уже зафиксировалась у дна: не обрабатываем остаток жеста.
           touch.dropped=true;
           touchDropLocked=true;
           break;
         }
-        moved++;
       }
-      touch.lastY+=Math.max(1,moved)*22;
+      touch.lastY+=steps*22;
     }
   }
 },{passive:true});
+
 cv.addEventListener('touchend',e=>{
   if(!touch){touchDropLocked=false;return}
-  const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y,elapsed=Date.now()-touch.at;
-  if(!touch.dropped&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230)rotatePiece();
-  // Свайп вниз всегда управляет мягким ускорением. Hard drop — только отдельной кнопкой,
-  // поэтому окончание жеста не может случайно сбросить уже появившуюся следующую фигуру.
+  const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
+  const elapsed=Date.now()-touch.at;
+  const fastDownSwipe=touch.axis==='y'&&dy>135&&dy>Math.abs(dx)*1.7&&elapsed<420;
+
+  if(!touch.dropped&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
+    rotatePiece();
+  }else if(!touch.dropped&&fastDownSwipe&&started&&!paused&&!gameOver){
+    // Отдельный быстрый жест — hard drop текущей фигуры.
+    touch.dropped=true;
+    touchDropLocked=true;
+    hardDrop();
+    setTimeout(()=>{touchDropLocked=false},220);
+  }
   touch=null;
-  if(touchDropLocked)setTimeout(()=>{touchDropLocked=false},180);
 },{passive:true});
-cv.addEventListener('touchcancel',()=>{touch=null;touchDropLocked=false},{passive:true});
+
+cv.addEventListener('touchcancel',()=>{
+  touch=null;
+  touchDropLocked=false;
+},{passive:true});
 
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
