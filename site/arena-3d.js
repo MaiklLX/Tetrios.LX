@@ -47,6 +47,16 @@
     renderer.outputColorSpace=THREE.SRGBColorSpace;
     renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
     renderer.domElement.className='bb-arena-canvas';renderer.domElement.setAttribute('aria-hidden','true');
+    renderer.domElement.addEventListener('webglcontextlost',event=>{
+      event.preventDefault();
+      if(raf){cancelAnimationFrame(raf);raf=0;}
+      enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');
+      toggle.textContent='3D ВОССТАНАВЛИВАЕТСЯ';toggle.title='3D-графика временно недоступна; игра продолжает работать в 2D';
+      console.warn('[Tetrios 3D arena] WebGL context lost; continuing in 2D.');
+    });
+    renderer.domElement.addEventListener('webglcontextrestored',()=>{
+      toggle.textContent='3D ARENA';toggle.title='Переключить объёмное игровое поле';
+    });
     frame.insertBefore(renderer.domElement,boardCanvas.nextSibling);
     scene.add(new THREE.HemisphereLight(0xb9d7ff,0x11182e,2.3));
     const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(-4,7,12);scene.add(key);
