@@ -5153,12 +5153,25 @@ body:has(#menu:not([hidden])) .app > .topbar {
     <div class="modeicon">☼</div>
     <div class="modetext">
       <div class="modetitle">Ежедневный вызов</div>
-      <div class="modesub">Новое правило каждый день недели</div>
+      <div class="modesub">Одно общее испытание для всех игроков сегодня</div>
       <span class="tag" style="color:var(--gold);background:#ffc86b1a">СЕГОДНЯ · УНИКАЛЬНО</span>
     </div>
     <div class="modearrow">›</div>
   </button>
 </div>
+
+<section id="bbVisitStreak" aria-label="Серия ежедневных посещений" style="margin-top:14px;padding:16px;border:1px solid #ffc86b55;border-radius:18px;background:linear-gradient(135deg,#29213aee,#141b30f5);box-shadow:inset 0 1px #ffffff0b">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;border-radius:15px;background:#ffc86b1c;font-size:27px">🔥</div>
+    <div style="min-width:0;flex:1">
+      <div style="font-size:10px;font-weight:900;letter-spacing:.13em;color:#ffc86b">СЕРИЯ ПОСЕЩЕНИЙ</div>
+      <div id="bbStreakCount" style="font-size:22px;font-weight:950;margin-top:3px">0 дней подряд</div>
+      <div id="bbStreakBest" style="font-size:11px;color:#aebbd7;margin-top:3px">Рекорд: 0 дней</div>
+    </div>
+  </div>
+  <div id="bbStreakMessage" style="font-size:12px;color:#d7def2;line-height:1.45;margin-top:12px">Заходи каждый день, чтобы поддерживать серию.</div>
+  <div id="bbStreakRepairArea" style="margin-top:10px"></div>
+</section>
 
 <button class="mode" id="openHeroes" style="--glow:#ffb86b;--iconbg:#ffb86b20;width:100%;margin-top:14px;box-sizing:border-box">
   <div class="modeicon">🦸</div>
@@ -5747,7 +5760,117 @@ function show(id){
 function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ'}
+function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ';bbUpdateVisitStreak()}
+
+// BLOCK BUDDIES — серия ежедневных посещений и редкий предмет восстановления.
+function bbStreakRead() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('bbVisitStreak') || 'null');
+    if (saved && typeof saved === 'object') return saved;
+  } catch (e) {}
+  return {
+    lastDate: '',
+    current: 0,
+    best: 0,
+    repairItems: 0,
+    brokenStreak: 0,
+    brokenOn: '',
+    lastRewardMilestone: 0
+  };
+}
+
+function bbStreakWrite(state) {
+  try { localStorage.setItem('bbVisitStreak', JSON.stringify(state)); } catch (e) {}
+}
+
+function bbStreakDayNumber(dateKeyValue) {
+  const parts = String(dateKeyValue || '').split('-').map(Number);
+  if (parts.length !== 3 || parts.some(n => !Number.isFinite(n))) return NaN;
+  return Math.floor(Date.UTC(parts[0], parts[1] - 1, parts[2]) / 86400000);
+}
+
+function bbUpdateVisitStreak() {
+  const today = bbGetTodayKey();
+  const state = bbStreakRead();
+  const todayNumber = bbStreakDayNumber(today);
+  const lastNumber = bbStreakDayNumber(state.lastDate);
+  let message = 'Заходи каждый день, чтобы поддерживать серию.';
+
+  if (!state.lastDate || !Number.isFinite(lastNumber)) {
+    state.current = 1;
+    state.best = Math.max(1, Number(state.best) || 0);
+    state.lastDate = today;
+    message = 'Серия началась! Возвращайся завтра, чтобы продолжить.';
+  } else if (todayNumber > lastNumber) {
+    const gap = todayNumber - lastNumber;
+    if (gap === 1) {
+      state.current = Math.max(0, Number(state.current) || 0) + 1;
+      message = 'Отлично! Ещё один день подряд — серия продолжается.';
+    } else if (gap === 2 && (Number(state.repairItems) || 0) > 0) {
+      state.brokenStreak = Math.max(0, Number(state.current) || 0);
+      state.brokenOn = today;
+      state.current = 0;
+      message = 'Пропущен один день. Можно восстановить серию редким предметом.';
+    } else {
+      state.brokenStreak = 0;
+      state.brokenOn = '';
+      state.current = 1;
+      message = 'Серия началась заново. Продолжай заходить каждый день!';
+    }
+    state.lastDate = today;
+  } else if (todayNumber === lastNumber) {
+    message = state.current > 0
+      ? 'Сегодня засчитано. Возвращайся завтра, чтобы увеличить серию.'
+      : 'Сегодняшнее посещение засчитано.';
+  } else {
+    message = 'Дата устройства изменилась назад. Серия не начисляется повторно.';
+  }
+
+  state.best = Math.max(Number(state.best) || 0, Number(state.current) || 0);
+  const milestone = Math.floor((Number(state.current) || 0) / 7);
+  if (milestone > (Number(state.lastRewardMilestone) || 0)) {
+    state.repairItems = (Number(state.repairItems) || 0) + milestone - (Number(state.lastRewardMilestone) || 0);
+    state.lastRewardMilestone = milestone;
+    message = 'Награда за серию: получен редкий предмет восстановления!';
+  }
+
+  bbStreakWrite(state);
+  bbRenderVisitStreak(state, message);
+}
+
+function bbRenderVisitStreak(state = bbStreakRead(), message = '') {
+  const count = document.getElementById('bbStreakCount');
+  const best = document.getElementById('bbStreakBest');
+  const msg = document.getElementById('bbStreakMessage');
+  const area = document.getElementById('bbStreakRepairArea');
+  if (!count || !best || !msg || !area) return;
+
+  count.textContent = (Number(state.current) || 0) + ' ' +
+    ((Number(state.current) || 0) === 1 ? 'день подряд' : 'дней подряд');
+  best.textContent = 'Рекорд: ' + (Number(state.best) || 0) + ' · Предметы восстановления: ' + (Number(state.repairItems) || 0);
+  msg.textContent = message || 'Заходи каждый день, чтобы поддерживать серию.';
+  area.innerHTML = '';
+
+  if (state.brokenOn === bbGetTodayKey() && (Number(state.brokenStreak) || 0) > 0 && (Number(state.repairItems) || 0) > 0) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = '✦ ВОССТАНОВИТЬ СЕРИЮ · 1 ПРЕДМЕТ';
+    button.style.cssText = 'width:100%;padding:12px;border:1px solid #ffc86b80;border-radius:12px;background:#ffc86b18;color:#ffe0a0;font-weight:900;font-size:11px;cursor:pointer';
+    button.addEventListener('click', () => {
+      const fresh = bbStreakRead();
+      if (fresh.brokenOn !== bbGetTodayKey() || fresh.repairItems < 1 || fresh.brokenStreak < 1) return;
+      fresh.repairItems -= 1;
+      fresh.current = fresh.brokenStreak + 1;
+      fresh.best = Math.max(fresh.best || 0, fresh.current);
+      fresh.brokenStreak = 0;
+      fresh.brokenOn = '';
+      fresh.lastDate = bbGetTodayKey();
+      bbStreakWrite(fresh);
+      bbRenderVisitStreak(fresh, 'Серия восстановлена! Сегодняшний день засчитан.');
+    });
+    area.appendChild(button);
+  }
+}
 
 function bbSaveDailyChallengeHistory(date, rule, status = 'completed') {
   if (!date || !rule) return;
