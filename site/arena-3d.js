@@ -12,7 +12,8 @@
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
-  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map();
+  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map();
+  const geometryFor=(key,create)=>{if(!geometryCache.has(key))geometryCache.set(key,create());return geometryCache.get(key)};
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
     if(!colorCache.has(key))colorCache.set(key,new THREE.MeshStandardMaterial({
@@ -87,32 +88,32 @@
     const cell=new THREE.Group();
     cell.position.set(x-4.5,9.5-y,ghost?.03:.24);
     cell.userData.pulsePhase=(x*7+y*13)%19;
-    const geo=new THREE.BoxGeometry(.88,.88,.62);
+    const geo=geometryFor('block',()=>new THREE.BoxGeometry(.88,.88,.62));
     const mesh=new THREE.Mesh(geo,materialFor(color,ghost));
     cell.add(mesh);
-    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.28:.78}));
+    const edges=new THREE.LineSegments(geometryFor('block-edges',()=>new THREE.EdgesGeometry(geo)),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.28:.78}));
     edges.position.z=.002;cell.add(edges);
     if(!ghost){
       // A recessed-looking luminous core and machined metal rails give each block its own material identity.
-      const core=new THREE.Mesh(new THREE.BoxGeometry(.43,.43,.025),coreMaterialFor(color));
+      const core=new THREE.Mesh(geometryFor('block-core',()=>new THREE.BoxGeometry(.43,.43,.025)),coreMaterialFor(color));
       core.position.set(.035,-.015,.323);cell.add(core);
       const frameMat=edgeMaterialFor(color);
-      const topRail=new THREE.Mesh(new THREE.BoxGeometry(.62,.035,.035),frameMat);
+      const topRail=new THREE.Mesh(geometryFor('block-top-rail',()=>new THREE.BoxGeometry(.62,.035,.035)),frameMat);
       topRail.position.set(0,.365,.29);cell.add(topRail);
-      const sideRail=new THREE.Mesh(new THREE.BoxGeometry(.035,.56,.035),frameMat);
+      const sideRail=new THREE.Mesh(geometryFor('block-side-rail',()=>new THREE.BoxGeometry(.035,.56,.035)),frameMat);
       sideRail.position.set(.365,-.015,.29);cell.add(sideRail);
-      const shine=new THREE.Mesh(new THREE.BoxGeometry(.52,.025,.018),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72}));
+      const shine=new THREE.Mesh(geometryFor('block-shine',()=>new THREE.BoxGeometry(.52,.025,.018)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72}));
       shine.position.set(-.025,.285,.338);cell.add(shine);
-      const accent=new THREE.Mesh(new THREE.BoxGeometry(.035,.42,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.35}));
+      const accent=new THREE.Mesh(geometryFor('block-accent',()=>new THREE.BoxGeometry(.035,.42,.025)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.35}));
       accent.position.set(-.345,-.045,.326);cell.add(accent);
-      const corner=new THREE.Mesh(new THREE.BoxGeometry(.12,.035,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.62}));
+      const corner=new THREE.Mesh(geometryFor('block-corner',()=>new THREE.BoxGeometry(.12,.035,.025)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.62}));
       corner.position.set(.275,-.345,.326);cell.add(corner);
     }
     target.add(cell);
   }
   function disposeGroup(group){
     group.traverse(obj=>{
-      if(obj.geometry)obj.geometry.dispose();
+      if(obj.geometry&&!([...geometryCache.values()].includes(obj.geometry)))obj.geometry.dispose();
       if(obj.material){
         const list=Array.isArray(obj.material)?obj.material:[obj.material];
         for(const m of list)if(![...colorCache.values(),...coreCache.values(),...edgeCache.values()].includes(m))m.dispose();
