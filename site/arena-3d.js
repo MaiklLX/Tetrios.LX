@@ -12,15 +12,25 @@
   try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
-  const colorCache=new Map();
+  const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map();
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
     if(!colorCache.has(key))colorCache.set(key,new THREE.MeshStandardMaterial({
-      color,roughness:ghost?.4:.26,metalness:ghost?.18:.35,
-      emissive:color,emissiveIntensity:ghost?.12:.22,
-      transparent:ghost,opacity:ghost?.2:1
+      color,roughness:ghost?.48:.22,metalness:ghost?.12:.72,
+      emissive:color,emissiveIntensity:ghost?.1:.34,
+      transparent:ghost,opacity:ghost?.18:1
     }));
     return colorCache.get(key);
+  };
+  const coreMaterialFor=color=>{
+    const key=String(color);
+    if(!coreCache.has(key))coreCache.set(key,new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72,depthWrite:false}));
+    return coreCache.get(key);
+  };
+  const edgeMaterialFor=color=>{
+    const key=String(color);
+    if(!edgeCache.has(key))edgeCache.set(key,new THREE.MeshStandardMaterial({color,metalness:.9,roughness:.16,emissive:color,emissiveIntensity:.5}));
+    return edgeCache.get(key);
   };
   function init(){
     if(renderer)return;
@@ -80,15 +90,23 @@
     const geo=new THREE.BoxGeometry(.88,.88,.62);
     const mesh=new THREE.Mesh(geo,materialFor(color,ghost));
     cell.add(mesh);
-    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.3:.7}));
+    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.28:.78}));
     edges.position.z=.002;cell.add(edges);
     if(!ghost){
-      const shine=new THREE.Mesh(new THREE.BoxGeometry(.66,.045,.018),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
-      shine.position.set(0,.31,.325);cell.add(shine);
-      const accent=new THREE.Mesh(new THREE.BoxGeometry(.055,.58,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.42}));
-      accent.position.set(-.32,-.08,.326);cell.add(accent);
-      const corner=new THREE.Mesh(new THREE.BoxGeometry(.16,.045,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
-      corner.position.set(.27,-.31,.326);cell.add(corner);
+      // A recessed-looking luminous core and machined metal rails give each block its own material identity.
+      const core=new THREE.Mesh(new THREE.BoxGeometry(.43,.43,.025),coreMaterialFor(color));
+      core.position.set(.035,-.015,.323);cell.add(core);
+      const frameMat=edgeMaterialFor(color);
+      const topRail=new THREE.Mesh(new THREE.BoxGeometry(.62,.035,.035),frameMat);
+      topRail.position.set(0,.365,.29);cell.add(topRail);
+      const sideRail=new THREE.Mesh(new THREE.BoxGeometry(.035,.56,.035),frameMat);
+      sideRail.position.set(.365,-.015,.29);cell.add(sideRail);
+      const shine=new THREE.Mesh(new THREE.BoxGeometry(.52,.025,.018),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72}));
+      shine.position.set(-.025,.285,.338);cell.add(shine);
+      const accent=new THREE.Mesh(new THREE.BoxGeometry(.035,.42,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.35}));
+      accent.position.set(-.345,-.045,.326);cell.add(accent);
+      const corner=new THREE.Mesh(new THREE.BoxGeometry(.12,.035,.025),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.62}));
+      corner.position.set(.275,-.345,.326);cell.add(corner);
     }
     target.add(cell);
   }
@@ -97,7 +115,7 @@
       if(obj.geometry)obj.geometry.dispose();
       if(obj.material){
         const list=Array.isArray(obj.material)?obj.material:[obj.material];
-        for(const m of list)if(!Array.from(colorCache.values()).includes(m))m.dispose();
+        for(const m of list)if(![...colorCache.values(),...coreCache.values(),...edgeCache.values()].includes(m))m.dispose();
       }
     });
     group.clear();
