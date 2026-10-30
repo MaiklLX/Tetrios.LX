@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('./vendor/three/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
@@ -200,9 +200,14 @@
     if(pieceSignature!==lastPieceSignature){
       lastPieceSignature=pieceSignature;
       const oldPiece=previousState?.piece,newPiece=state.piece;
-      pieceOffsetY=oldPiece&&newPiece&&oldPiece.t===newPiece.t&&oldPiece.x===newPiece.x&&
-        JSON.stringify(oldPiece.shape)===JSON.stringify(newPiece.shape)&&
-        newPiece.y>oldPiece.y&&newPiece.y-oldPiece.y<=2 ? newPiece.y-oldPiece.y : 0;
+      const sameFallingPiece=oldPiece&&newPiece&&oldPiece.t===newPiece.t&&
+        JSON.stringify(oldPiece.shape)===JSON.stringify(newPiece.shape);
+      // Rebuild the active cells at their new logical coordinates, then offset the group
+      // back to the previous position and ease it into place on the render loop.
+      // This keeps horizontal taps, soft drops and hard drops visually continuous.
+      pieceOffsetX=sameFallingPiece?oldPiece.x-newPiece.x:0;
+      const fallDistance=sameFallingPiece?newPiece.y-oldPiece.y:0;
+      pieceOffsetY=fallDistance>0?Math.min(fallDistance,2.5):0;
       disposeGroup(activeGroup);disposeGroup(ghostGroup);
       const colors=state.colors||[];
       if(newPiece){
@@ -210,7 +215,7 @@
         if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)blockInto(ghostGroup,p.x+dx,state.ghostY+dy,color,true)}));
         p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color)}));
       }
-      activeGroup.position.y=pieceOffsetY;
+      activeGroup.position.set(pieceOffsetX,pieceOffsetY,0);
     }
     previousState={...state,board:state.board?.map(row=>row.slice())};
   }
@@ -256,7 +261,13 @@
           if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}
         }
       }
-      if(pieceOffsetY){pieceOffsetY*=Math.exp(-deltaSeconds*18);if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;activeGroup.position.y=pieceOffsetY;}
+      if(pieceOffsetX||pieceOffsetY){
+        const ease=Math.exp(-deltaSeconds*24);
+        pieceOffsetX*=ease;pieceOffsetY*=ease;
+        if(Math.abs(pieceOffsetX)<.015)pieceOffsetX=0;
+        if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;
+        activeGroup.position.set(pieceOffsetX,pieceOffsetY,0);
+      }
     }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
