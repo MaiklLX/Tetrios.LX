@@ -9,7 +9,8 @@ This file tracks candidate sources and the checks required before an asset is sh
 - Candidate use: buttons, panels, sliders, menu/UI sprites.
 - License reported by source: Creative Commons CC0.
 - Attribution: not required according to Kenney; optional credit is appreciated.
-- Status: candidate reviewed; individual files not yet imported.
+- Status: official Kenney page checked on 2026-10-30; it lists 430 assets and CC0. Individual files are not yet imported, so no Kenney artwork is currently represented as bundled in the app.
+- Reference: the official support page also confirms Kenney asset packs are CC0 and attribution is optional.
 - Before shipping: keep the pack's license/readme with the downloaded source and record the exact local filenames used.
 
 ### Kenney — asset library
@@ -34,3 +35,12 @@ For each imported asset:
 4. Optimize dimensions and file size for mobile screens.
 5. Confirm the asset is loaded locally and does not require a third-party host at runtime.
 6. Test at narrow phone widths, tablet widths, and with reduced motion enabled.
+
+## Current project-authored assets
+
+The following SVGs were created specifically for Tetrios.LX and are not copied from a third-party pack:
+- `site/assets/backgrounds/nebula-space.svg` — background artwork.
+- `site/assets/blocks/neon-block.svg` — block surface texture.
+- `site/assets/ui/neon-button-frame.svg` — decorative frame for prominent controls.
+
+These files are locally bundled; they do not introduce runtime requests to an external asset host.
