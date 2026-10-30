@@ -14,12 +14,13 @@ const exists = async path => {
 };
 const fail = message => { console.error(`FAIL: ${message}`); process.exitCode = 1; };
 
-const [index, arena, visual, packageJson, manifestText] = await Promise.all([
+const [index, arena, visual, packageJson, manifestText, audioCredits] = await Promise.all([
   read('site/index.html'),
   read('site/arena-3d.js'),
   read('site/visual-3d.js'),
   read('site/vendor/three/package.json'),
-  read('site/characters/manifest.json')
+  read('site/characters/manifest.json'),
+  read('site/audio/README.txt')
 ]);
 
 const imports = index.match(/<script type="importmap">\s*([\s\S]*?)\s*<\/script>/)?.[1];
@@ -48,6 +49,9 @@ if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js
 if (!visual.includes('three/addons/loaders/GLTFLoader.js')) fail('visual-3d.js does not load the local GLTFLoader');
 if (/https?:\/\//i.test(arena + visual)) fail('a remote HTTP(S) dependency remains in a 3D runtime module');
 if (/cdn\.jsdelivr\.net\/npm\/three@/i.test(index)) fail('index.html contains a Three.js CDN reference');
+if (!index.includes('src="./audio/chills.mp3"')) fail('index.html must use the bundled local soundtrack');
+if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('soundtrack attribution must document the author and CC0 license');
+if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
 
 const importMapPosition = index.indexOf('<script type="importmap">');
 for (const modulePath of ['./visual-3d.js', './arena-3d.js']) {
