@@ -11,6 +11,8 @@ on:
       - "scripts/fetch-3d-characters.sh"
       - "scripts/validate-glb-characters.py"
       - "site/visual-3d.js"
+      - "site/characters/README.md"
+      - "site/characters/validate-manifest.mjs"
 
 permissions:
   contents: write
@@ -84,6 +86,7 @@ jobs:
         run: |
           set -euo pipefail
           bash "$GITHUB_WORKSPACE/scripts/fetch-3d-characters.sh"
+          node "$GITHUB_WORKSPACE/site/characters/validate-manifest.mjs"
 
       - name: Prepare complete offline game assets
         shell: bash
