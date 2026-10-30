@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8 5h3v14H8zM15 5h3v14h-3z" fill="currentColor"/></symbol>
+  <symbol id="icon-play" viewBox="0 0 24 24"><path d="M7 4.8a1 1 0 0 1 1.5-.86l11 7.2a1 1 0 0 1 0 1.72l-11 7.2A1 1 0 0 1 7 19.2z" fill="currentColor"/></symbol>
+  <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M7 3h10v3h4v3a5 5 0 0 1-5 5h-.4A5 5 0 0 1 13 16.8V19h4v2H7v-2h4v-2.2A5 5 0 0 1 8.4 14H8a5 5 0 0 1-5-5V6h4zm10 5v3.8A3 3 0 0 0 19 9V8zM7 8H5v1a3 3 0 0 0 2 2.8z" fill="currentColor"/></symbol>
+  <symbol id="icon-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M14.8 8.5c-.6-.7-1.5-1-2.7-1-1.5 0-2.5.7-2.5 1.8 0 2.8 5.3 1.2 5.3 4.5 0 1.4-1.2 2.4-3 2.4-1.2 0-2.3-.4-3.1-1.3M12 5.8v12.4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6"/></symbol>
+  <symbol id="icon-settings" viewBox="0 0 24 24"><path d="m19.4 13.5 1.2.9-1.8 3.1-1.4-.6a7.8 7.8 0 0 1-1.7 1l-.2 1.5h-3.6l-.2-1.5a7.8 7.8 0 0 1-1.7-1l-1.4.6-1.8-3.1 1.2-.9a7.2 7.2 0 0 1 0-2l-1.2-.9 1.8-3.1 1.4.6a7.8 7.8 0 0 1 1.7-1l.2-1.5h3.6l.2 1.5a7.8 7.8 0 0 1 1.7 1l1.4-.6 1.8 3.1-1.2.9a7.2 7.2 0 0 1 0 2ZM13.7 12.5a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/></symbol>
+  <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 11 9-7 9 7v9h-6v-6H9v6H3z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.8"/></symbol>
+  <symbol id="icon-sound" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/></symbol>
+  <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M5.5 9A7 7 0 0 1 18 6l2 1M4 17l2 1a7 7 0 0 0 12.5-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"/></symbol>
+</svg>
