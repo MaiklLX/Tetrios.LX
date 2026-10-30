@@ -5224,7 +5224,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 /* Mobile immersive play mode: the board owns the available screen space. */
 @media(max-width:700px){
-  html:has(body.bb-mobile-game-active),body.bb-mobile-game-active{height:100%;overflow:hidden;overscroll-behavior:none}
+  html,body{height:100%}body.bb-mobile-game-active{overflow:hidden;overscroll-behavior:none}
   body.bb-mobile-game-active .app{padding:0;min-height:100dvh;overflow:hidden}
   #game:not([hidden]){
     position:fixed;inset:0;z-index:40;width:100vw;height:100dvh;max-width:none;margin:0;
@@ -7851,7 +7851,7 @@ function bbHeroEmblem(id, size = 'roster') {
     spark: '<path d="M50 9L59 27L78 20L71 40L87 49L69 58L74 77L54 69L42 84L37 65L17 68L27 50L12 38L33 34L32 15L46 27Z" fill="#ff9d24" stroke="#ffe69a" stroke-width="3"/><path d="M50 18L63 38L56 44L66 51L49 72L45 53L35 49L43 39Z" fill="#ffdf70"/><ellipse cx="40" cy="42" rx="5" ry="7" fill="#fff"/><ellipse cx="60" cy="42" rx="5" ry="7" fill="#fff"/><circle cx="41" cy="43" r="2.5" fill="#38203b"/><circle cx="59" cy="43" r="2.5" fill="#38203b"/><path d="M42 56Q50 62 58 56" fill="none" stroke="#9c4316" stroke-width="3"/>'
   };
   const labels = {plush:'Капитан Плюш',prism:'Призма',blip:'Блип',pixel:'Пиксель',spark:'Искра'};
-  const colors = {plush:'#9b6845',prism:'#42c8ff',blip:'#9564f5',pixel:'#2878c7',spark:'#ffc84d'};
+  const colors = {plush:'#9b6845',prism:'#276c9e',blip:'#6846a0',pixel:'#2878c7',spark:'#ffc84d'};
   const idSafe = labels[id] ? id : 'plush';
   return '<svg viewBox="0 0 100 90" width="'+w+'" height="'+Math.round(w*.9)+'" role="img" aria-label="'+labels[idSafe]+'" style="display:block;filter:drop-shadow(0 4px 10px '+colors[idSafe]+'88)"><circle cx="50" cy="47" r="43" fill="'+colors[idSafe]+'" opacity=".12"/><ellipse cx="50" cy="79" rx="25" ry="5" fill="#070d1b" opacity=".4"/>'+art[idSafe]+'</svg>';
 }
