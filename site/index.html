@@ -5282,9 +5282,9 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .charge-ring-inner strong{font-size:12px}
   #game .charge-caption{font-size:6px}
   #game .nextcanvas{display:block;width:100%;height:auto;max-height:78px;margin:5px auto 0}
-  #game .controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0;padding:0}
+  #game .controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0;padding:0}
   #game .controls .control{height:42px;min-width:0;padding:0 3px;border-radius:10px;font-size:19px}
-  #game .controls .mobile-drop-proxy{position:relative!important;inset:auto!important;display:grid;width:auto;min-width:0;height:42px;min-height:0;padding:0 3px;border-radius:10px;font-size:10px}
+  #game .controls .mobile-drop-proxy,#game .controls .mobile-hold-proxy{position:relative!important;inset:auto!important;display:grid;width:auto;min-width:0;height:42px;min-height:0;padding:0 3px;border-radius:10px;font-size:10px}
   #game .hint{display:none!important}
   #game .bb-arena-toggle{top:8px;right:8px;padding:5px 7px;font-size:7px}
 }
@@ -5294,7 +5294,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .sidecol .sidecard{padding:6px 3px}
   #game .controls{gap:4px}
   #game .controls .control{height:40px}
-  #game .controls .mobile-drop-proxy{height:40px}
+  #game .controls .mobile-drop-proxy,#game .controls .mobile-hold-proxy{height:40px}
 }
 </style>
 <link rel="stylesheet" href="./visual-overhaul.css"><script type="importmap">
@@ -8511,9 +8511,11 @@ function bbSetupMobileGameHud(){
   const musicProxy=proxy(document.getElementById('musicBtn'),'mobileMusicBtn','Переключить музыку');
   const soundProxy=proxy(document.getElementById('soundBtn'),'mobileSoundBtn','Переключить звук');
   const dropProxy=proxy(game.querySelector('.side-drop'),'mobileDropBtn','Сбросить фигуру','mobile-drop-proxy');
+  const holdProxy=proxy(document.getElementById('holdBtn'),'mobileHoldBtn','Удержать фигуру','mobile-hold-proxy');
   if(musicProxy)tools.appendChild(musicProxy);
   if(soundProxy)tools.appendChild(soundProxy);
   header.appendChild(tools);
+  if(holdProxy)controls.appendChild(holdProxy);
   if(dropProxy)controls.appendChild(dropProxy);
   game.appendChild(trigger);
   let hideTimer=0;
