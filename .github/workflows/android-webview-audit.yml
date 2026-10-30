@@ -9,6 +9,8 @@ on:
       - "scripts/patch-android-webview.py"
       - "site/validate-3d-runtime.mjs"
       - "scripts/fetch-3d-characters.sh"
+      - "scripts/validate-glb-characters.py"
+      - "site/visual-3d.js"
 
 permissions:
   contents: write
