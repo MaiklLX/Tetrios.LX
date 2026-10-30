@@ -11,6 +11,7 @@ on:
       - "scripts/fetch-3d-characters.sh"
       - "scripts/validate-glb-characters.py"
       - "site/visual-3d.js"
+      - "site/arena-3d.js"
       - "site/characters/README.md"
       - "site/characters/validate-manifest.mjs"
       - "site/characters/manifest.json"
