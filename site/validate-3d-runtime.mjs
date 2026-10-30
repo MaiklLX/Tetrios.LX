@@ -57,6 +57,9 @@ if (!compactArena.includes('rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D a
 if (!compactArena.includes('pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena must apply interpolated piece offsets to the active group');
 if (!arena.includes('impactStrength=Math.min(.32,.08+dropDistance*.025)')) fail('landing camera feedback must scale with drop distance');
 if (!arena.includes("renderer.domElement.style.display='none'")) fail('WebGL context loss must hide the canvas so the 2D board remains visible');
+if (!arena.includes('resumeAfterContextRestore=enabled') || !arena.includes("if(resumeAfterContextRestore)") || !arena.includes("lastBoardSignature='';lastPieceSignature='';previousState=null;")) fail('3D arena must resume and rebuild its scene after WebGL context restoration');
+if (!arena.includes('const MAX_ARENA_EFFECTS=96') || !arena.includes('while(effectsGroup.children.length>MAX_ARENA_EFFECTS)')) fail('3D arena transient effects must have a hard memory-safe cap');
+if (!arena.includes('function disposeEffect(effect)') || !arena.includes('disposeEffect(oldest)')) fail('3D arena must dispose geometry and materials when transient effects are removed');
 if (!arena.includes('cell.scale.set(1,.78,1)') || !arena.includes('cell.userData.landAt')) fail('locked 3D blocks must use a brief landing compression');
 if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
