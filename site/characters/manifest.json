@@ -5,49 +5,79 @@
   "targetHeight": 1.8,
   "characters": {
     "plush": {
-      "model": null,
-      "license": null,
+      "model": "./characters/models/minion-a01.glb",
+      "license": {
+        "name": "CC0 1.0",
+        "source": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "notes": "CC0 1.0 — Gobkit Minion Pack; public domain, commercial and personal use permitted, attribution not required."
+      },
       "animations": {
-        "idle": "Idle",
-        "victory": "Victory",
-        "attack": "Attack"
-      }
+        "idle": "idle",
+        "attack": "attack",
+        "victory": "attack",
+        "death": "dead"
+      },
+      "source": "https://gobkit.com/freebies/minion/minion-a01.glb"
     },
     "prism": {
-      "model": null,
-      "license": null,
+      "model": "./characters/models/minion-b01.glb",
+      "license": {
+        "name": "CC0 1.0",
+        "source": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "notes": "CC0 1.0 — Gobkit Minion Pack; public domain, commercial and personal use permitted, attribution not required."
+      },
       "animations": {
-        "idle": "Idle",
-        "victory": "Victory",
-        "attack": "Attack"
-      }
+        "idle": "idle",
+        "attack": "attack",
+        "victory": "attack",
+        "death": "dead"
+      },
+      "source": "https://gobkit.com/freebies/minion/minion-b01.glb"
     },
     "blip": {
-      "model": null,
-      "license": null,
+      "model": "./characters/models/minion-c01.glb",
+      "license": {
+        "name": "CC0 1.0",
+        "source": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "notes": "CC0 1.0 — Gobkit Minion Pack; public domain, commercial and personal use permitted, attribution not required."
+      },
       "animations": {
-        "idle": "Idle",
-        "victory": "Victory",
-        "attack": "Attack"
-      }
+        "idle": "idle",
+        "attack": "attack",
+        "victory": "attack",
+        "death": "dead"
+      },
+      "source": "https://gobkit.com/freebies/minion/minion-c01.glb"
     },
     "pixel": {
-      "model": null,
-      "license": null,
+      "model": "./characters/models/minion-d01.glb",
+      "license": {
+        "name": "CC0 1.0",
+        "source": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "notes": "CC0 1.0 — Gobkit Minion Pack; public domain, commercial and personal use permitted, attribution not required."
+      },
       "animations": {
-        "idle": "Idle",
-        "victory": "Victory",
-        "attack": "Attack"
-      }
+        "idle": "idle",
+        "attack": "attack",
+        "victory": "attack",
+        "death": "dead"
+      },
+      "source": "https://gobkit.com/freebies/minion/minion-d01.glb"
     },
     "spark": {
-      "model": null,
-      "license": null,
+      "model": "./characters/models/minion-a02.glb",
+      "license": {
+        "name": "CC0 1.0",
+        "source": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "notes": "CC0 1.0 — Gobkit Minion Pack; public domain, commercial and personal use permitted, attribution not required."
+      },
       "animations": {
-        "idle": "Idle",
-        "victory": "Victory",
-        "attack": "Attack"
-      }
+        "idle": "idle",
+        "attack": "attack",
+        "victory": "attack",
+        "death": "dead"
+      },
+      "source": "https://gobkit.com/freebies/minion/minion-a02.glb"
     }
   }
 }
