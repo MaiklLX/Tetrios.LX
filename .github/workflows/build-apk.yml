@@ -176,8 +176,10 @@ jobs:
             exit 1
           fi
 
-          sed -i 's/protected void onWindowFocusChanged(boolean hasFocus)/public void onWindowFocusChanged(boolean hasFocus)/' "$MAIN_ACTIVITY"
-          grep -n 'onWindowFocusChanged' "$MAIN_ACTIVITY"
+          python3 "$GITHUB_WORKSPACE/scripts/patch-android-webview.py" "$PROJECT_DIR"
+          grep -q 'WebViewAssetLoader' "$MAIN_ACTIVITY"
+          grep -q 'appassets.androidplatform.net/assets/index.html' "$MAIN_ACTIVITY"
+          echo "Hardened Android WebView with local HTTPS asset origin"
 
       - name: Install Android SDK components
         shell: bash
