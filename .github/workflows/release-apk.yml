@@ -16,6 +16,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Bundle CC0 soundtrack for offline play
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/site/audio"
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "$GITHUB_WORKSPACE/site/audio/chills.mp3"
+          test -s "$GITHUB_WORKSPACE/site/audio/chills.mp3"
+          AUDIO_SIZE="$(stat -c%s "$GITHUB_WORKSPACE/site/audio/chills.mp3")"
+          if [ "$AUDIO_SIZE" -lt 1000000 ]; then
+            echo "::error::CC0 soundtrack download is unexpectedly small"
+            exit 1
+          fi
+          echo "Prepared bundled CC0 soundtrack ($AUDIO_SIZE bytes)"
+
       - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
@@ -54,6 +70,20 @@ jobs:
 
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
+      - name: Prepare local Three.js runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package" "$GITHUB_WORKSPACE/site/vendor"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$GITHUB_WORKSPACE/site/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$GITHUB_WORKSPACE/site/vendor/three"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/build/three.module.js"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          echo "Prepared pinned local Three.js 0.180.0 runtime"
+          node "$GITHUB_WORKSPACE/site/validate-3d-runtime.mjs"
+
       - name: Sync latest game and fix Android activity
         shell: bash
         run: |
@@ -68,6 +98,54 @@ jobs:
           fi
 
           cp "$GITHUB_WORKSPACE/site/index.html" "$ASSET_INDEX"
+          ASSET_DIR="$(dirname "$ASSET_INDEX")"
+
+          # Keep every local dependency referenced by index.html beside it in
+          # Android assets. Copying index.html alone silently disables the 3D
+          # modules and the visual theme inside the WebView APK.
+          for asset in favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+            SOURCE="$GITHUB_WORKSPACE/site/$asset"
+            if [ ! -s "$SOURCE" ]; then
+              echo "::error::Required web asset is missing: $SOURCE"
+              exit 1
+            fi
+            cp "$SOURCE" "$ASSET_DIR/$asset"
+          done
+
+          if [ ! -d "$GITHUB_WORKSPACE/site/characters" ]; then
+            echo "::error::Character asset directory is missing"
+            exit 1
+          fi
+          mkdir -p "$ASSET_DIR/characters"
+          cp -a "$GITHUB_WORKSPACE/site/characters/." "$ASSET_DIR/characters/"
+
+          if [ ! -s "$GITHUB_WORKSPACE/site/audio/chills.mp3" ]; then
+            echo "::error::Bundled soundtrack is missing"
+            exit 1
+          fi
+          mkdir -p "$ASSET_DIR/audio"
+          cp "$GITHUB_WORKSPACE/site/audio/chills.mp3" "$ASSET_DIR/audio/chills.mp3"
+          test -s "$ASSET_DIR/audio/chills.mp3"
+          echo "Synced offline soundtrack into Android assets: $ASSET_DIR/audio/chills.mp3"
+
+          for asset in index.html favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+            if [ ! -s "$ASSET_DIR/$asset" ]; then
+              echo "::error::Android WebView asset was not synced: $asset"
+              exit 1
+            fi
+          done
+          if [ ! -d "$GITHUB_WORKSPACE/site/vendor/three" ]; then
+            echo "::error::Local Three.js runtime was not prepared"
+            exit 1
+          fi
+          mkdir -p "$ASSET_DIR/vendor"
+          rm -rf "$ASSET_DIR/vendor/three"
+          cp -a "$GITHUB_WORKSPACE/site/vendor/three" "$ASSET_DIR/vendor/three"
+          test -s "$ASSET_DIR/vendor/three/build/three.module.js"
+          test -s "$ASSET_DIR/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          echo "Synced local Three.js runtime into Android assets: $ASSET_DIR/vendor/three"
+
+          echo "Synced game and 3D dependencies into Android assets: $ASSET_DIR"
 
           MAIN_ACTIVITY="$(find "$PROJECT_DIR/app/src/main/java" \
             -type f -name MainActivity.java -print -quit)"
@@ -77,9 +155,10 @@ jobs:
             exit 1
           fi
 
-          sed -i \
-            's/protected void onWindowFocusChanged(boolean hasFocus)/public void onWindowFocusChanged(boolean hasFocus)/' \
-            "$MAIN_ACTIVITY"
+          python3 "$GITHUB_WORKSPACE/scripts/patch-android-webview.py" "$PROJECT_DIR"
+          grep -q 'WebViewAssetLoader' "$MAIN_ACTIVITY"
+          grep -q 'appassets.androidplatform.net/assets/index.html' "$MAIN_ACTIVITY"
+          echo "Hardened Android WebView with local HTTPS asset origin"
 
       - name: Download and decrypt signing key
         shell: bash

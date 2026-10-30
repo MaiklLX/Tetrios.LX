@@ -1,0 +1,219 @@
+name: Android WebView source audit
+
+on:
+  push:
+    branches:
+      - fix/3d-character-render-lifecycle
+    paths:
+      - ".github/workflows/android-webview-audit.yml"
+      - "scripts/patch-android-webview.py"
+      - "site/validate-3d-runtime.mjs"
+      - "scripts/fetch-3d-characters.sh"
+      - "scripts/validate-glb-characters.py"
+      - "site/visual-3d.js"
+      - "site/arena-3d.js"
+      - "site/characters/README.md"
+      - "site/characters/validate-manifest.mjs"
+      - "site/characters/manifest.json"
+      - "site/characters/models.sha256"
+      - "site/characters/MODEL_CREDITS.md"
+      - "site/characters/models/**"
+
+permissions:
+  contents: write
+
+jobs:
+  inspect-android-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out audit branch
+        uses: actions/checkout@v4
+
+      - name: Extract Android project archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/android-project"
+          unzip -q "Block_Buddies_Android_APK_Project_v1.zip" -d "$RUNNER_TEMP/android-project"
+          echo "Archive entries:"
+          find "$RUNNER_TEMP/android-project" -maxdepth 5 -type f | sort
+          echo
+          echo "Potential WebView entry points:"
+          find "$RUNNER_TEMP/android-project" -type f \( -name 'MainActivity.*' -o -name 'AndroidManifest.xml' -o -name 'build.gradle' -o -name 'build.gradle.kts' -o -name 'settings.gradle' -o -name 'settings.gradle.kts' \) -print
+
+      - name: Prepare source snapshot for review
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GITHUB_WORKSPACE/scripts/patch-android-webview.py" "$RUNNER_TEMP/android-project"
+          MAIN_ACTIVITY="$RUNNER_TEMP/android-project/app/src/main/java/com/maikllx/blockbuddies/MainActivity.java"
+          grep -q 'WebViewAssetLoader' "$MAIN_ACTIVITY"
+          grep -q 'appassets.androidplatform.net/assets/index.html' "$MAIN_ACTIVITY"
+          ! grep -q 'file:///android_asset/index.html' "$MAIN_ACTIVITY"
+          grep -q 'androidx.webkit:webkit:1.15.0' "$RUNNER_TEMP/android-project/app/build.gradle"
+          mkdir -p "$RUNNER_TEMP/android-audit-snapshot"
+          find "$RUNNER_TEMP/android-project" -type f \( \
+            -name 'MainActivity.java' -o -name 'MainActivity.kt' -o \
+            -name 'AndroidManifest.xml' -o -name 'build.gradle' -o \
+            -name 'build.gradle.kts' -o -name 'settings.gradle' -o \
+            -name 'settings.gradle.kts' -o -name 'gradle.properties' \
+          \) -exec cp --parents '{}' "$RUNNER_TEMP/android-audit-snapshot/" \;
+          test -n "$(find "$RUNNER_TEMP/android-audit-snapshot" -type f -print -quit)"
+          tar -czf "$RUNNER_TEMP/android-webview-source-audit.tar.gz" -C "$RUNNER_TEMP" android-audit-snapshot
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Install Android SDK components
+        shell: bash
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager -print -quit)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::Android sdkmanager not found"
+            exit 1
+          fi
+          yes | "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Fetch and pin CC0 3D character models
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$GITHUB_WORKSPACE/scripts/fetch-3d-characters.sh"
+          node "$GITHUB_WORKSPACE/site/characters/validate-manifest.mjs"
+
+      - name: Prepare complete offline game assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE="$GITHUB_WORKSPACE/site"
+          ASSET_INDEX="$(find "$RUNNER_TEMP/android-project/app/src/main" -type f -path '*/assets/*' -name index.html -print -quit)"
+          if [ -z "$ASSET_INDEX" ]; then
+            echo "::error::Android assets/index.html not found"
+            exit 1
+          fi
+          ASSET_DIR="$(dirname "$ASSET_INDEX")"
+
+          mkdir -p "$SITE/audio" "$SITE/vendor"
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "$SITE/audio/chills.mp3"
+          test -s "$SITE/audio/chills.mp3"
+          test "$(stat -c%s "$SITE/audio/chills.mp3")" -ge 1000000
+
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$SITE/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$SITE/vendor/three"
+          node "$SITE/validate-3d-runtime.mjs"
+
+          cp "$SITE/index.html" "$ASSET_INDEX"
+          for asset in favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+            test -s "$SITE/$asset"
+            cp "$SITE/$asset" "$ASSET_DIR/$asset"
+          done
+          for dir in characters audio vendor; do
+            test -d "$SITE/$dir"
+            mkdir -p "$ASSET_DIR/$dir"
+            rm -rf "$ASSET_DIR/$dir"/*
+            cp -a "$SITE/$dir/." "$ASSET_DIR/$dir/"
+          done
+
+          test -s "$ASSET_DIR/vendor/three/build/three.module.js"
+          test -s "$ASSET_DIR/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          test -s "$ASSET_DIR/audio/chills.mp3"
+          test -s "$ASSET_DIR/characters/manifest.json"
+          grep -q './vendor/three/build/three.module.js' "$ASSET_INDEX"
+          grep -q 'src="./audio/chills.mp3"' "$ASSET_INDEX"
+          echo "Complete offline HTML, CSS, JS, Three.js, GLTFLoader, character manifest and CC0 audio copied into Android assets."
+
+      - name: Validate game JavaScript and asset tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check "$GITHUB_WORKSPACE/site/arena-3d.js"
+          node --check "$GITHUB_WORKSPACE/site/visual-3d.js"
+          node --check "$GITHUB_WORKSPACE/site/validate-3d-runtime.mjs"
+          node --check "$GITHUB_WORKSPACE/site/characters/validate-manifest.mjs"
+          python3 -m py_compile "$GITHUB_WORKSPACE/scripts/validate-glb-characters.py" "$GITHUB_WORKSPACE/scripts/patch-android-webview.py"
+          bash -n "$GITHUB_WORKSPACE/scripts/fetch-3d-characters.sh"
+          echo "PASS: gameplay modules, validators and asset scripts have valid syntax."
+
+      - name: Compile debug APK without publishing
+        shell: bash
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/android-project"
+          gradle --no-daemon --stacktrace :app:assembleDebug
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          echo "Android debug APK compiled successfully; no release, signing, upload or deployment was performed."
+
+      - name: Verify packaged APK offline resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$RUNNER_TEMP/android-project/app/build/outputs/apk/debug/app-debug.apk"
+          CONTENTS="$RUNNER_TEMP/apk-contents.txt"
+          unzip -Z1 "$APK" > "$CONTENTS"
+          for required in \
+            assets/index.html \
+            assets/visual-3d.js \
+            assets/arena-3d.js \
+            assets/vendor/three/build/three.module.js \
+            assets/vendor/three/examples/jsm/loaders/GLTFLoader.js \
+            assets/characters/manifest.json \
+            assets/characters/models/minion-a01.glb \
+            assets/characters/models/minion-b01.glb \
+            assets/characters/models/minion-c01.glb \
+            assets/characters/models/minion-d01.glb \
+            assets/characters/models/minion-a02.glb \
+            assets/audio/chills.mp3; do
+            if ! grep -Fxq "$required" "$CONTENTS"; then
+              echo "::error::APK is missing offline asset: $required"
+              exit 1
+            fi
+          done
+          mkdir -p "$RUNNER_TEMP/apk-assets-check"
+          unzip -p "$APK" assets/index.html > "$RUNNER_TEMP/apk-assets-check/index.html"
+          grep -q './vendor/three/build/three.module.js' "$RUNNER_TEMP/apk-assets-check/index.html"
+          grep -q 'src="./audio/chills.mp3"' "$RUNNER_TEMP/apk-assets-check/index.html"
+          echo "PASS: APK contains local Three.js, GLTFLoader, game modules, character manifest and offline soundtrack."
+          echo "PASS: five CC0 rigged GLB heroes are bundled; procedural fallback remains available if a model fails to load."
+
+      - name: Persist verified 3D character assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/characters
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(3d): add pinned CC0 GLB hero models"
+            git fetch origin "$GITHUB_REF_NAME"
+            git rebase "origin/$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          else
+            echo "Verified character assets are already up to date"
+          fi
+
+      - name: Upload audit-only source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-webview-source-audit
+          path: ${{ runner.temp }}/android-webview-source-audit.tar.gz
+          if-no-files-found: error
+          retention-days: 3

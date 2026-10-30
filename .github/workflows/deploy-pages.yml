@@ -28,8 +28,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Bundle CC0 soundtrack for offline play
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/site/audio"
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "$GITHUB_WORKSPACE/site/audio/chills.mp3"
+          test -s "$GITHUB_WORKSPACE/site/audio/chills.mp3"
+          AUDIO_SIZE="$(stat -c%s "$GITHUB_WORKSPACE/site/audio/chills.mp3")"
+          if [ "$AUDIO_SIZE" -lt 1000000 ]; then
+            echo "::error::CC0 soundtrack download is unexpectedly small"
+            exit 1
+          fi
+          echo "Prepared bundled CC0 soundtrack ($AUDIO_SIZE bytes)"
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+
+      - name: Prepare local Three.js runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package" "$GITHUB_WORKSPACE/site/vendor"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$GITHUB_WORKSPACE/site/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$GITHUB_WORKSPACE/site/vendor/three"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/build/three.module.js"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          echo "Prepared pinned local Three.js 0.180.0 runtime"
+          node "$GITHUB_WORKSPACE/site/validate-3d-runtime.mjs"
 
       - name: Upload web game
         uses: actions/upload-pages-artifact@v3
