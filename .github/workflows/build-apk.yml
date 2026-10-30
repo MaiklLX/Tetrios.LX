@@ -75,6 +75,19 @@ jobs:
           echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
           echo "Android project found: $PROJECT_DIR"
 
+      - name: Prepare local Three.js runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package" "$GITHUB_WORKSPACE/site/vendor"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$GITHUB_WORKSPACE/site/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$GITHUB_WORKSPACE/site/vendor/three"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/build/three.module.js"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          echo "Prepared pinned local Three.js 0.180.0 runtime"
+
       - name: Sync latest game and fix Android activity
         shell: bash
         run: |
@@ -117,6 +130,17 @@ jobs:
             fi
           done
           echo "Synced game and 3D dependencies into Android assets: $ASSET_DIR"
+          if [ ! -d "$GITHUB_WORKSPACE/site/vendor/three" ]; then
+            echo "::error::Local Three.js runtime was not prepared"
+            exit 1
+          fi
+          mkdir -p "$ASSET_DIR/vendor"
+          rm -rf "$ASSET_DIR/vendor/three"
+          cp -a "$GITHUB_WORKSPACE/site/vendor/three" "$ASSET_DIR/vendor/three"
+          test -s "$ASSET_DIR/vendor/three/build/three.module.js"
+          test -s "$ASSET_DIR/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          echo "Synced local Three.js runtime into Android assets: $ASSET_DIR/vendor/three"
+
           echo "Synced latest game: $ASSET_INDEX"
 
           MAIN_ACTIVITY="$(find "$PROJECT_DIR/app/src/main/java" -type f -name MainActivity.java -print -quit)"
