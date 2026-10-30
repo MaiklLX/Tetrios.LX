@@ -79,6 +79,8 @@ for hero, model in mapping.items():
 path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
 PY
 
+python3 "$ROOT/scripts/validate-glb-characters.py" "$MODEL_DIR"
+
 cat > "$SITE/characters/MODEL_CREDITS.md" <<'EOF'
 # 3D character model credits
 
