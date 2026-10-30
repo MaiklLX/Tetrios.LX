@@ -177,23 +177,20 @@ jobs:
           echo "PASS: APK contains local Three.js, GLTFLoader, game modules, character manifest and offline soundtrack."
           echo "Note: no licensed GLB character models are currently assigned in the manifest; procedural character fallback remains active."
 
-      - name: Persist the hardened Android starter project
+      - name: Persist verified 3D character assets
         shell: bash
         run: |
           set -euo pipefail
-          rm -f "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip"
-          (cd "$RUNNER_TEMP/android-project" && find . -type f -print0 | sort -z | xargs -0 zip -X -q "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip")
-          test -s "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Block_Buddies_Android_APK_Project_v1.zip site/characters
+          git add site/characters
           if ! git diff --cached --quiet; then
-            git commit -m "build(android): persist secure offline WebView starter project"
+            git commit -m "assets(3d): add pinned CC0 GLB hero models"
             git fetch origin "$GITHUB_REF_NAME"
             git rebase "origin/$GITHUB_REF_NAME"
             git push origin "HEAD:$GITHUB_REF_NAME"
           else
-            echo "Android starter archive is already up to date"
+            echo "Verified character assets are already up to date"
           fi
 
       - name: Upload audit-only source snapshot
