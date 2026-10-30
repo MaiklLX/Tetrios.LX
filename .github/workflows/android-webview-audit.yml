@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/android-webview-audit.yml"
       - "Block_Buddies_Android_APK_Project_v1.zip"
+      - "scripts/patch-android-webview.py"
 
 permissions:
   contents: read
