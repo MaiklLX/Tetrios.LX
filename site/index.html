@@ -8514,18 +8514,40 @@ function bbSetupMobileGameHud(){
   const holdProxy=proxy(document.getElementById('holdBtn'),'mobileHoldBtn','Удержать фигуру','mobile-hold-proxy');
   if(musicProxy)tools.appendChild(musicProxy);
   if(soundProxy)tools.appendChild(soundProxy);
+  if(holdProxy)tools.appendChild(holdProxy);
+  if(dropProxy)tools.appendChild(dropProxy);
   header.appendChild(tools);
-  if(holdProxy)controls.appendChild(holdProxy);
-  if(dropProxy)controls.appendChild(dropProxy);
   game.appendChild(trigger);
-  let hideTimer=0;
+  let hideTimer=0,edgeGesture=null,suppressTriggerClick=false;
   function setOpen(open){
     game.classList.toggle('mobile-hud-open',!!open);
     trigger.setAttribute('aria-expanded',String(!!open));
     if(hideTimer)clearTimeout(hideTimer);
-    hideTimer=open?setTimeout(()=>setOpen(false),4200):0;
+    hideTimer=open?setTimeout(()=>setOpen(false),5200):0;
   }
-  trigger.addEventListener('click',()=>setOpen(!game.classList.contains('mobile-hud-open')));
+  trigger.addEventListener('click',()=>{
+    if(suppressTriggerClick){suppressTriggerClick=false;return;}
+    setOpen(!game.classList.contains('mobile-hud-open'));
+  });
+  trigger.addEventListener('pointerdown',event=>{
+    edgeGesture={id:event.pointerId,x:event.clientX,y:event.clientY};
+    try{trigger.setPointerCapture(event.pointerId)}catch(_){}
+  });
+  trigger.addEventListener('pointerup',event=>{
+    if(!edgeGesture||edgeGesture.id!==event.pointerId)return;
+    const dy=event.clientY-edgeGesture.y,dx=event.clientX-edgeGesture.x;
+    edgeGesture=null;
+    if(dy>22&&Math.abs(dx)<100){
+      suppressTriggerClick=true;
+      setOpen(true);
+      setTimeout(()=>{suppressTriggerClick=false},0);
+    }else if(dy< -22&&game.classList.contains('mobile-hud-open')){
+      suppressTriggerClick=true;
+      setOpen(false);
+      setTimeout(()=>{suppressTriggerClick=false},0);
+    }
+  });
+  trigger.addEventListener('pointercancel',()=>{edgeGesture=null});
   game.addEventListener('pointerdown',event=>{
     if(game.classList.contains('mobile-hud-open')&&!event.target.closest('.screenhead,.mobile-game-hud-trigger'))setOpen(false);
   },{passive:true});
