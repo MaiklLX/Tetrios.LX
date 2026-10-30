@@ -1,6 +1,6 @@
 # Tetrios.LX character assets
 
-The five Tetrios.LX hero slots now load real, rigged GLB characters from the Gobkit Minion Pack. The procedural Three.js mascots remain available as a safe fallback if a model fails to load.
+Five rigged GLB files from the Gobkit Minion Pack are bundled for future use, but they are currently **not used to replace the five authored Tetrios.LX heroes**. The pack models do not yet match the game's character identities and visual palette closely enough. The distinct procedural Three.js mascots remain active in the character showcase until correctly matched/licensed hero assets are approved.
 
 ## Bundled characters
 
@@ -12,7 +12,7 @@ The five Tetrios.LX hero slots now load real, rigged GLB characters from the Gob
 | Pixel | `models/minion-d01.glb` |
 | Spark | `models/minion-a02.glb` |
 
-Each model is a self-contained GLB 2.0 file with a skinned rig and named `idle`, `attack`, and `dead` animation clips. The runtime normalizes the character height and starts the idle animation. The stage can request another clip with:
+Each model is a self-contained GLB 2.0 file with a skinned rig and named `idle`, `attack`, and `dead` animation clips. When enabled in a future update, the runtime normalizes character height and starts the idle animation. The stage can request another clip with:
 
 ```js
 stage.dispatchEvent(new CustomEvent('bb3d:animation', {
