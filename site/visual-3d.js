@@ -296,8 +296,7 @@
       if(!stage.isConnected){disposeItem(item);active.delete(stage);}
     }
   }
-  const clock=new THREE.Clock();
-  let raf=0,lastFrameTime=0;
+  let raf=0,lastFrameTime=0,animationTime=0;
   function hasVisibleStage(){
     for(const [stage,item] of active){
       if(stage.isConnected&&stage.offsetParent!==null&&stage.getClientRects().length&&item.isVisible!==false)return true;
@@ -314,8 +313,8 @@
     if(!hasVisibleStage())return;
     if(lastFrameTime&&now-lastFrameTime<frameInterval){raf=requestAnimationFrame(frame);return;}
     const delta=Math.min(lastFrameTime?((now-lastFrameTime)/1000):frameInterval/1000,.05);
-    lastFrameTime=now;
-    const t=clock.elapsedTime+delta;
+    lastFrameTime=now;animationTime+=delta;
+    const t=animationTime;
     for(const [stage,item] of active){
       if(stage.offsetParent===null||item.isVisible===false)continue;
       if(!reducedMotion.matches)item.char.group.position.y=.12+Math.sin(t*1.8)*.065;
