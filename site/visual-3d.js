@@ -16,6 +16,7 @@
   const maxPixelRatio=lowPowerDevice?1:1.5;
   const frameInterval=lowPowerDevice?1000/30:1000/60;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const HERO_IDS=['plush','prism','blip','pixel','spark'];
   const colorFor=id=>({plush:0x9b6845,prism:0x276c9e,blip:0x6846a0,pixel:0x2878c7,spark:0xffc84d}[id]||0x8e9bff);
   // The bundled Gobkit minions are retained for later review, but they do not match
   // Tetrios.LX's five distinct hero identities. Keep the authored silhouettes active.
@@ -37,7 +38,11 @@
     });
   }
   function makeCharacter(stage){
-    const id=stage.dataset.heroId||'plush',base=colorFor(id),group=new THREE.Group();
+    const requestedId=stage.dataset.heroId||'plush';
+    const id=HERO_IDS.includes(requestedId)?requestedId:'plush';
+    const declaredColor=stage.dataset.heroColor||'';
+    const base=/^#[0-9a-f]{6}$/i.test(declaredColor)?parseInt(declaredColor.slice(1),16):colorFor(id);
+    const group=new THREE.Group();
     const darkMat=mat(0x151c3b,.24,.2),eyeMat=mat(0xf4ffff,.18,.05,0x6bfdf4),metalMat=mat(0xb7c8ed,.22,.72),goldMat=mat(0xffd56f,.24,.48,0x5a3308);
     const bodyMat=mat(base,.28,.16,base),glowMat=new THREE.MeshBasicMaterial({color:base});
     const sparkles=new THREE.Group();
@@ -189,8 +194,16 @@
     }
   }
   function mount(stage){
-    if(stage.dataset.bb3dReady==='1')return;
+    if(stage.dataset.bb3dReady==='1'&&stage.dataset.bb3dHeroId===(stage.dataset.heroId||'plush'))return;
+    if(stage.dataset.bb3dReady==='1'){
+      const previous=active.get(stage);
+      if(previous)disposeItem(previous);
+      active.delete(stage);
+      stage.querySelectorAll('.bb-3d-fallback,.bb-3d-caption').forEach(node=>node.remove());
+      stage.dataset.bb3dReady='';
+    }
     stage.dataset.bb3dReady='1';
+    stage.dataset.bb3dHeroId=stage.dataset.heroId||'plush';
     const fallback=document.createElement('div');fallback.className='bb-3d-fallback';fallback.textContent=stage.dataset.heroEmoji||'🧸';stage.appendChild(fallback);
     try{
       const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1.5,5.8);camera.lookAt(0,.9,0);
@@ -221,6 +234,8 @@
       stars.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
       const starField=new THREE.Points(stars,new THREE.PointsMaterial({color:0xc5d9ff,size:.018,transparent:true,opacity:.78,sizeAttenuation:true}));scene.add(starField);
       const char=makeCharacter(stage);char.group.position.y=.12;scene.add(char.group);
+      stage.dataset.bb3dRenderedHero=char.id;
+      renderer.domElement.dataset.heroId=char.id;
       const caption=document.createElement('div');caption.className='bb-3d-caption';caption.textContent='TETRIOS.LX · 3D CHARACTER SHOWCASE';stage.appendChild(caption);
       const resize=()=>{if(!stage.isConnected)return;const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
       const ro=new ResizeObserver(resize);ro.observe(stage);
