@@ -34,6 +34,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 "$GITHUB_WORKSPACE/scripts/patch-android-webview.py" "$RUNNER_TEMP/android-project"
+          MAIN_ACTIVITY="$RUNNER_TEMP/android-project/app/src/main/java/com/maikllx/blockbuddies/MainActivity.java"
+          grep -q 'WebViewAssetLoader' "$MAIN_ACTIVITY"
+          grep -q 'appassets.androidplatform.net/assets/index.html' "$MAIN_ACTIVITY"
+          ! grep -q 'file:///android_asset/index.html' "$MAIN_ACTIVITY"
+          grep -q 'androidx.webkit:webkit:1.15.0' "$RUNNER_TEMP/android-project/app/build.gradle"
           mkdir -p "$RUNNER_TEMP/android-audit-snapshot"
           find "$RUNNER_TEMP/android-project" -type f \( \
             -name 'MainActivity.java' -o -name 'MainActivity.kt' -o \
