@@ -12,6 +12,7 @@ on:
       - "scripts/fetch-3d-characters.sh"
       - "scripts/validate-glb-characters.py"
       - "site/visual-3d.js"
+      - "site/visual-overhaul.css"
       - "site/arena-3d.js"
       - "site/characters/README.md"
       - "site/characters/validate-manifest.mjs"
@@ -97,7 +98,7 @@ jobs:
       - name: Prepare complete offline game assets
         shell: bash
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           SITE="$GITHUB_WORKSPACE/site"
           ASSET_INDEX="$(find "$RUNNER_TEMP/android-project/app/src/main" -type f -path '*/assets/*' -name index.html -print -quit)"
           if [ -z "$ASSET_INDEX" ]; then
