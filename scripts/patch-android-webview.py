@@ -3,6 +3,7 @@
 # Exercised by the isolated Android WebView source-audit workflow.
 # The audit also persists the patched starter archive on this feature branch.
 # Keep the archive update rebased to avoid racing with concurrent feature commits.
+# Compile-only validation is isolated from release and deployment workflows.
 
 from pathlib import Path
 import sys
