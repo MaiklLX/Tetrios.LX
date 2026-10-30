@@ -72,7 +72,7 @@ if (!visual.includes('item.renderer.domElement.remove()')) fail('disposed charac
 if (!visual.includes('const lowPowerDevice=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4')) fail('3D showcase must detect lower-memory and lower-core devices');
 if (!visual.includes('antialias:!lowPowerDevice') || !visual.includes("powerPreference:lowPowerDevice?'low-power':'high-performance'")) fail('3D renderer must select an appropriate GPU profile for device capability');
 if (!visual.includes('lowPowerDevice?1.25:1.6')) fail('3D renderer pixel ratio must be capped for mobile GPU efficiency');
-if (!visual.includes('renderer.shadowMap.enabled=false') || !visual.includes('key.castShadow=true')) fail('3D showcase must avoid allocating unused real-time shadow maps');
+if (!visual.includes('renderer.shadowMap.enabled=false') || visual.includes('key.castShadow=true')) fail('3D showcase must avoid allocating unused real-time shadow maps');
 if (!visual.includes('const stageDetail=lowPowerDevice?32:48') || !visual.includes('const starCount=lowPowerDevice?72:120')) fail('3D showcase geometry and background particles must scale with device capability');
 if (visual.includes('new THREE.PointLight(')) fail('3D showcase should avoid expensive per-pixel point lights');
 
