@@ -14,13 +14,14 @@ const exists = async path => {
 };
 const fail = message => { console.error(`FAIL: ${message}`); process.exitCode = 1; };
 
-const [index, arena, visual, packageJsonText, manifestText, audioCredits] = await Promise.all([
+const [index, arena, visual, packageJsonText, manifestText, audioCredits, mobileCss] = await Promise.all([
   read('site/index.html'),
   read('site/arena-3d.js'),
   read('site/visual-3d.js'),
   read('site/vendor/three/package.json'),
   read('site/characters/manifest.json'),
-  read('site/audio/README.txt')
+  read('site/audio/README.txt'),
+  read('site/visual-overhaul.css')
 ]);
 
 let packageJson;
@@ -60,7 +61,8 @@ for (const path of [
 }
 
 if (!arena.includes('new THREE.OrthographicCamera(') || !arena.includes('camera.position.set(0,0,34)')) fail('3D arena camera must face the board head-on without a horizontal/vertical offset');
-if (!arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.055') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full board and rails to the live viewport aspect ratio');
+if (!arena.includes('boardCanvas.getBoundingClientRect()') || !arena.includes('boardRect.left-frameRect.left-frame.clientLeft') || !arena.includes('boardRect.top-frameRect.top-frame.clientTop')) fail('3D arena canvas must align to the exact visible 2D board bounds');
+if (!arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.025') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full board and rails to the exact board aspect ratio');
 if (arena.includes('camera.position.x=3+') || arena.includes('camera.position.y=2+')) fail('3D arena must not reintroduce the off-centre camera drift that crops the board');
 if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js does not load local Three.js');
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
@@ -77,6 +79,9 @@ if (!arena.includes('function disposeEffect(effect)') || !arena.includes('dispos
 if (!arena.includes('cell.scale.set(1,.78,1)') || !arena.includes('cell.userData.landAt')) fail('locked 3D blocks must use a brief landing compression');
 if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
 if (!visual.includes('const USE_CURATED_GLB_HEROES=false') || !visual.includes('if(USE_CURATED_GLB_HEROES)tryLoadCharacterAsset(stage,char,item)')) fail('unmatched generic GLB models must not replace the five authored Tetrios hero identities');
+if (!visual.includes("const HERO_IDS=['plush','prism','blip','pixel','spark']") || !visual.includes("HERO_IDS.includes(requestedId)?requestedId:'plush'")) fail('3D character previews must resolve to one of the five canonical hero identities');
+if (!visual.includes('stage.dataset.bb3dHeroId') || !visual.includes('stage.dataset.bb3dRenderedHero=char.id') || !visual.includes('renderer.domElement.dataset.heroId=char.id')) fail('3D character previews must track the identity they actually rendered and rebuild on identity changes');
+if (!visual.includes("stage.dataset.heroColor||''") || !visual.includes('parseInt(declaredColor.slice(1),16)')) fail('3D character preview must honor the selected roster color instead of stale model colors');
 if (!visual.includes('plush:0x9b6845,prism:0x276c9e,blip:0x6846a0,pixel:0x2878c7,spark:0xffc84d')) fail('3D hero colors must follow the canonical roster palette');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
 if (!visual.includes('three/addons/loaders/GLTFLoader.js')) fail('visual-3d.js does not load the local GLTFLoader');
@@ -105,7 +110,12 @@ if (!index.includes('@media(max-width:900px) and (pointer:coarse)')) fail('immer
 if (!index.includes('margin:0!important;padding:0 3px')) fail('mobile hold/drop buttons must fit the compact control row without inherited sidebar spacing');
 if (!index.includes("'mobileHoldBtn'") || !index.includes("'mobileDropBtn'") || !index.includes('repeat(5,minmax(0,1fr))')) fail('mobile controls must preserve left, rotate, right, hold and hard-drop actions');
 if (!index.includes('function bbSetupMobileGameHud()') || !index.includes('mobile-game-hud-trigger') || !index.includes('mobile-game-tools')) fail('mobile gameplay must expose the top-edge HUD reveal control and compact tools');
+if (!index.includes("trigger.addEventListener('pointerdown'") || !index.includes("trigger.addEventListener('pointerup'") || !index.includes('if(dy>22&&Math.abs(dx)<100)')) fail('mobile HUD must open from a downward swipe starting at the top screen edge');
+if (!index.includes('if(holdProxy)tools.appendChild(holdProxy)') || !index.includes('if(dropProxy)tools.appendChild(dropProxy)')) fail('hold and hard-drop actions must remain available in the revealed mobile tools panel');
 if (!index.includes('#game:not([hidden])') || !index.includes('grid-template-rows:auto minmax(0,1fr)') || !index.includes('#game .sidecol > :nth-child(n+3)')) fail('mobile gameplay must use the full-screen board-first layout and retain only next-piece/level HUD cards');
+if (!mobileCss.includes('#game .controls,') || !mobileCss.includes('#game .hint{display:none!important}')) fail('mobile gameplay must hide the lower control row and hint to maximize the playfield');
+if (!mobileCss.includes('#game .boardframe{') || !mobileCss.includes('padding:3px!important')) fail('mobile 3D board must not reserve a false sidebar gutter inside the playfield');
+if (!mobileCss.includes('@media(max-width:900px) and (pointer:coarse)')) fail('mobile layout refinements must remain limited to touch devices and must not alter desktop browsers');
 if (!index.includes('src="./audio/chills.mp3"')) fail('index.html must use the bundled local soundtrack');
 if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('soundtrack attribution must document the author and CC0 license');
 if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
