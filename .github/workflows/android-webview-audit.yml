@@ -7,7 +7,6 @@ on:
     paths:
       - ".github/workflows/android-webview-audit.yml"
       - "scripts/patch-android-webview.py"
-      - "scripts/patch-android-webview.py"
 
 permissions:
   contents: write
@@ -50,6 +49,42 @@ jobs:
           \) -exec cp --parents '{}' "$RUNNER_TEMP/android-audit-snapshot/" \;
           test -n "$(find "$RUNNER_TEMP/android-audit-snapshot" -type f -print -quit)"
           tar -czf "$RUNNER_TEMP/android-webview-source-audit.tar.gz" -C "$RUNNER_TEMP" android-audit-snapshot
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Install Android SDK components
+        shell: bash
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager -print -quit)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::Android sdkmanager not found"
+            exit 1
+          fi
+          yes | "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Compile debug APK without publishing
+        shell: bash
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/android-project"
+          gradle --no-daemon --stacktrace :app:assembleDebug
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          echo "Android debug APK compiled successfully; no release, signing, upload or deployment was performed."
 
       - name: Persist the hardened Android starter project
         shell: bash
