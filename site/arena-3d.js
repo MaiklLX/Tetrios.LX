@@ -51,6 +51,10 @@
       event.preventDefault();
       if(raf){cancelAnimationFrame(raf);raf=0;}
       enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');
+      // A lost WebGL canvas must never remain above the working 2D board.
+      renderer.domElement.style.display='none';
+      renderer.domElement.style.visibility='hidden';
+      renderer.domElement.style.opacity='0';
       toggle.textContent='3D ВОССТАНАВЛИВАЕТСЯ';toggle.title='3D-графика временно недоступна; игра продолжает работать в 2D';
       console.warn('[Tetrios 3D arena] WebGL context lost; continuing in 2D.');
     });
