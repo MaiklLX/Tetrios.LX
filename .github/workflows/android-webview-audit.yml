@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/3d-character-render-lifecycle
+      - integration/full-project-test
     paths:
       - ".github/workflows/android-webview-audit.yml"
       - "scripts/patch-android-webview.py"
