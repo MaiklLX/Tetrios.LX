@@ -68,7 +68,11 @@ license_text = "CC0 1.0 — Gobkit Minion Pack; public domain, commercial and pe
 for hero, model in mapping.items():
     entry = data["characters"][hero]
     entry["model"] = f"./characters/models/{model}.glb"
-    entry["license"] = license_text
+    entry["license"] = {
+        "name": "CC0 1.0",
+        "source": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "notes": license_text,
+    }
     entry["source"] = f"https://gobkit.com/freebies/minion/{model}.glb"
     entry["animations"] = {
         "idle": "idle",
