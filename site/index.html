@@ -5328,6 +5328,92 @@ body .action.primary { background-color:rgba(15,23,45,.18); }
   #heroes .hero-roster-card, #shopScreen .shopitem { transition: none; }
 }
 
+
+/* BLOCK BUDDIES — reward reveal and progression feedback */
+.bb-box-reveal {
+  --reward-accent: #aab7d2;
+  position: relative;
+  padding: 18px 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--reward-accent) 58%, #293554);
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 50% 12%, color-mix(in srgb, var(--reward-accent) 18%, transparent), transparent 62%), linear-gradient(145deg, #1b2540, #101629);
+  text-align: center;
+  overflow: hidden;
+  box-shadow: inset 0 1px #ffffff12, 0 12px 34px #0006;
+  animation: bbRewardReveal .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.bb-box-reveal:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, #ffffff0c 48%, transparent 72%);
+  transform: translateX(-120%);
+  animation: bbRewardShine 1.1s .2s ease-out both;
+  pointer-events: none;
+}
+.bb-box-reveal.rarity-common { --reward-accent: #aab7d2; }
+.bb-box-reveal.rarity-rare { --reward-accent: #65c9ff; }
+.bb-box-reveal.rarity-epic { --reward-accent: #bd8aff; }
+.bb-box-reveal.rarity-special { --reward-accent: #ffd477; }
+.bb-reward-rarity {
+  display: inline-flex;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--reward-accent) 45%, transparent);
+  border-radius: 99px;
+  color: var(--reward-accent);
+  background: color-mix(in srgb, var(--reward-accent) 10%, transparent);
+  font-size: 9px;
+  font-weight: 950;
+  letter-spacing: .13em;
+}
+.bb-reward-art {
+  display: grid;
+  place-items: center;
+  width: 94px;
+  height: 94px;
+  margin: 16px auto 13px;
+  border: 1px solid color-mix(in srgb, var(--reward-accent) 60%, transparent);
+  border-radius: 26px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--reward-accent) 22%, transparent), #111827 72%);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--reward-accent) 25%, transparent), inset 0 0 20px #ffffff08;
+  font-size: 52px;
+}
+.bb-box-reveal .eyebrow { color: #a8b2ce; font-size: 9px; font-weight: 900; letter-spacing: .2em; }
+.bb-box-reveal h3 { margin: 7px 0 10px; color: #f4f5ff; font-size: 21px; }
+.bb-reward-item { color: var(--reward-accent); font-size: 22px; font-weight: 950; text-shadow: 0 0 18px color-mix(in srgb, var(--reward-accent) 25%, transparent); }
+.bb-box-reveal p { margin: 10px 0 0; color: #a8b2ce; font-size: 11px; }
+.bb-reward-confirm { margin-top: 12px; }
+.bb-run-reward {
+  margin-top: 13px;
+  padding: 13px;
+  border: 1px solid #c49b4b66;
+  border-radius: 15px;
+  background: radial-gradient(ellipse at 0 0, #ffc86b18, transparent 70%), linear-gradient(145deg, #24231f, #151a28);
+  color: #f4f5ff;
+  text-align: left;
+  box-shadow: inset 0 1px #ffffff0b;
+}
+.bb-run-reward-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: #e7c875; font-size: 10px; font-weight: 950; letter-spacing: .08em; }
+.bb-run-reward-head span:last-child { color: #ffe0a0; font-size: 14px; letter-spacing: 0; }
+.bb-run-reward-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px; border: 1px solid #52617c66; border-radius: 11px; background: #0d1528a8; }
+.bb-run-reward-icon { display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 10px; background: #ffc86b18; font-size: 20px; }
+.bb-run-reward-row strong, .bb-run-reward-row small { display: block; }
+.bb-run-reward-row strong { font-size: 12px; }
+.bb-run-reward-row small { margin-top: 3px; color: #a8b2ce; font-size: 10px; }
+.bb-levelup-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 7px; margin-top: 10px; padding: 10px; border: 1px solid #ffd47777; border-radius: 11px; background: #ffd47716; color: #ffe09a; font-size: 10px; }
+.bb-levelup-banner b { font-size: 12px; }
+.bb-run-reward-note { margin-top: 9px; color: #9eabc8; font-size: 10px; text-align: center; }
+@keyframes bbRewardReveal { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes bbRewardShine { to { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) {
+  .bb-box-reveal, .bb-box-reveal:after { animation: none !important; }
+}
+@media (max-width: 360px) {
+  .bb-box-reveal { padding: 15px 12px; }
+  .bb-reward-art { width: 78px; height: 78px; font-size: 43px; }
+  .bb-run-reward { padding: 10px; }
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
@@ -8138,7 +8224,66 @@ function bbHero(){
 
   $('bbHeroClose').onclick = closeOverlay;
 }
-function bbBox(){if(bbCoins<60){toast('Сюрприз-бокс стоит 60 монет');return}bbCoins-=60;let r=Math.random(),reward;if(r<.58){let n=35+Math.floor(Math.random()*60);bbCoins+=n;reward=`🪙 +${n} монет`}else if(r<.82){let n=1+Math.floor(Math.random()*2);bbGems+=n;reward=`💎 +${n} самоцвета`}else if(r<.95){let id=['quick','shield','magnet'][Math.floor(Math.random()*3)];bbInventory[id]=(bbInventory[id]||0)+1;reward=`${bbCatalog.find(x=>x.id===id).emoji} ${bbCatalog.find(x=>x.id===id).name}`}else{let n=100+Math.floor(Math.random()*100);bbXp+=n;reward=`⭐ +${n} опыта`}bbSave();chime();bbModal(`<div class="modalhead bb-reward-modal"><div class="bigicon" style="animation:float 1s infinite">🎁</div><div class="eyebrow">ТА-ДААА!</div><h3>Сюрприз-бокс открыт!</h3><p>Внутри оказалось: <b>${reward}</b></p></div><button class="action" id="bbBoxOk">КЛАСС!</button>`);$('bbBoxOk').onclick=closeOverlay}
+function bbBox() {
+  if (bbCoins < 60) {
+    toast('Сюрприз-бокс стоит 60 монет');
+    return;
+  }
+
+  bbCoins -= 60;
+  const roll = Math.random();
+  let reward;
+  let rarity;
+  let rarityLabel;
+  let rewardIcon;
+
+  if (roll < .58) {
+    const amount = 35 + Math.floor(Math.random() * 60);
+    bbCoins += amount;
+    reward = '+' + amount + ' монет';
+    rarity = 'common';
+    rarityLabel = 'ОБЫЧНАЯ НАГРАДА';
+    rewardIcon = '🪙';
+  } else if (roll < .82) {
+    const amount = 1 + Math.floor(Math.random() * 2);
+    bbGems += amount;
+    reward = '+' + amount + ' самоцвета';
+    rarity = 'rare';
+    rarityLabel = 'РЕДКАЯ НАГРАДА';
+    rewardIcon = '💎';
+  } else if (roll < .95) {
+    const id = ['quick', 'shield', 'magnet'][Math.floor(Math.random() * 3)];
+    bbInventory[id] = (bbInventory[id] || 0) + 1;
+    const item = bbCatalog.find(x => x.id === id);
+    reward = item.name;
+    rarity = 'epic';
+    rarityLabel = 'ЭПИЧЕСКАЯ НАГРАДА';
+    rewardIcon = item.emoji;
+  } else {
+    const amount = 100 + Math.floor(Math.random() * 100);
+    bbXp += amount;
+    reward = '+' + amount + ' опыта';
+    rarity = 'special';
+    rarityLabel = 'ОСОБАЯ НАГРАДА';
+    rewardIcon = '⭐';
+  }
+
+  bbSave();
+  bbRefresh();
+  chime();
+  bbModal(`
+    <div class="bb-reward-modal bb-box-reveal rarity-${rarity}">
+      <div class="bb-reward-rarity">${rarityLabel}</div>
+      <div class="bb-reward-art" aria-hidden="true">${rewardIcon}</div>
+      <div class="eyebrow">СЮРПРИЗ-БОКС</div>
+      <h3>Награда найдена!</h3>
+      <div class="bb-reward-item">${reward}</div>
+      <p>Награда добавлена в твой инвентарь.</p>
+    </div>
+    <button class="action bb-reward-confirm" id="bbBoxOk">ЗАМЕЧАТЕЛЬНО!</button>
+  `);
+  $('bbBoxOk').onclick = closeOverlay;
+}
 $('openShop').onclick = bbShop;
 
 const bbOldEnd = endGame;
@@ -8154,12 +8299,16 @@ endGame = function() {
   let heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
   let heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
 
-  heroXp += Math.max(10, lines * 5 + level * 8);
+  const xpBefore = heroXp;
+  const levelBefore = heroLevel;
+  const xpEarned = Math.max(10, lines * 5 + level * 8);
+  heroXp += xpEarned;
 
-while (heroXp >= 200 + (heroLevel - 1) * 100) {
-  heroXp -= 200 + (heroLevel - 1) * 100;
-  heroLevel++;
-}
+  while (heroXp >= 200 + (heroLevel - 1) * 100) {
+    heroXp -= 200 + (heroLevel - 1) * 100;
+    heroLevel++;
+  }
+  const levelsGained = heroLevel - levelBefore;
 
   bbPut('xp_' + hero.id, heroXp);
   bbPut('heroLevel_' + hero.id, heroLevel);
@@ -8175,7 +8324,7 @@ while (heroXp >= 200 + (heroLevel - 1) * 100) {
   if (m && !m.querySelector('.rewardline')) {
     m.insertAdjacentHTML(
       'beforeend',
-      `<div class="rewardline" style="text-align:center;margin-top:12px;padding:10px;background:#e1f8ed;border-radius:12px;color:#4c796c;font-weight:900;font-size:12px">Награда: +${earned} 🪙 · ${hero.name} получил опыт ⭐</div>`
+      `<div class="rewardline bb-run-reward"><div class="bb-run-reward-head"><span>🏆 НАГРАДЫ ЗА ЗАБЕГ</span><span>+${earned} 🪙</span></div><div class="bb-run-reward-row"><span class="bb-run-reward-icon">⭐</span><span><strong>${hero.name}</strong><small>+${xpEarned} опыта · ${xpBefore} → ${heroXp} XP</small></span></div>${levelsGained > 0 ? `<div class="bb-levelup-banner"><span>✨</span><strong>НОВЫЙ УРОВЕНЬ!</strong><b>УР. ${levelBefore} → ${heroLevel}</b></div>` : `<div class="bb-run-reward-note">Ещё немного опыта — и следующий уровень!</div>`}</div>`
     );
   }
 };
