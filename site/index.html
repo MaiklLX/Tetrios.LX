@@ -5122,6 +5122,104 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game.daily-chrono-layout .sidecol .side-drop{font-size:9px}
 }
 
+
+
+/* === Desktop game layout recovery: keep HUD narrow and give the board the center stage === */
+@media (min-width: 901px) {
+  #game .playlayout {
+    display: grid !important;
+    grid-template-columns: minmax(104px, 124px) minmax(0, 1fr) minmax(176px, 204px) !important;
+    gap: clamp(10px, 1.1vw, 16px) !important;
+    align-items: stretch !important;
+  }
+
+  #game .gameleftcol {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    min-width: 0;
+  }
+
+  #game .playlayout > div:first-child {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    min-width: 0;
+  }
+
+  #game .sidecol {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    min-width: 0;
+  }
+
+  #game .boardframe {
+    height: min(58dvh, 620px) !important;
+    min-height: 0 !important;
+  }
+
+  #game .controls {
+    margin-top: 8px;
+    gap: 8px;
+  }
+
+  #game .control {
+    height: 46px;
+  }
+
+  #game .hint {
+    margin-top: 6px;
+  }
+}
+
+/* Short desktop windows: reserve enough room for the lower controls. */
+@media (min-width: 901px) and (max-height: 820px) {
+  #game .boardframe {
+    height: min(52dvh, 480px) !important;
+  }
+
+  #game .screenhead {
+    margin-bottom: 7px;
+    padding-bottom: 7px;
+  }
+
+  #game .controls {
+    margin-top: 6px;
+  }
+
+  #game .control {
+    height: 42px;
+  }
+}
+
+/* Desktop: keyboard-first gameplay, no on-screen movement/drop controls. */
+@media (min-width: 901px) {
+  #game .controls,
+  #game .sidecol .side-drop {
+    display: none !important;
+  }
+
+  #game .boardframe {
+    height: min(70dvh, 760px) !important;
+  }
+
+  #game .hint {
+    margin-top: 8px;
+    font-size: 0;
+    line-height: 1.4;
+  }
+
+  #game .hint::after {
+    content: "← → ДВИЖЕНИЕ   ·   ↑ ПОВОРОТ   ·   ↓ УСКОРИТЬ   ·   ПРОБЕЛ — ДРОП";
+    display: block;
+    font-size: 10px;
+    letter-spacing: .04em;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 820px) {
+  #game .boardframe {
+    height: min(62dvh, 590px) !important;
+  }
+}
 </style>
 <link rel="stylesheet" href="./visual-overhaul.css"><script type="importmap">
 {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
