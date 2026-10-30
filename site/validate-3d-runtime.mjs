@@ -73,6 +73,9 @@ if (!visual.includes('const lowPowerDevice=(navigator.hardwareConcurrency||8)<=4
 if (!visual.includes('antialias:!lowPowerDevice') || !visual.includes("powerPreference:lowPowerDevice?'low-power':'high-performance'")) fail('3D renderer must select an appropriate GPU profile for device capability');
 if (!visual.includes('lowPowerDevice?1.25:1.6')) fail('3D renderer pixel ratio must be capped for mobile GPU efficiency');
 if (!visual.includes('renderer.shadowMap.enabled=false') || visual.includes('key.castShadow=true')) fail('3D showcase must avoid allocating unused real-time shadow maps');
+if (!visual.includes('velocityY:0,velocityX:0') || !visual.includes('controls.dragging=true')) fail('character drag controls must track pointer velocity and active dragging');
+if (!visual.includes('const rotationEase=1-Math.exp(-10*delta)') || !visual.includes('const inertia=Math.exp(-6*delta)')) fail('character rotation must use frame-rate-independent easing and damped release inertia');
+if (!visual.includes('controls.velocityY*=inertia') || !visual.includes('controls.velocityX*=inertia')) fail('character drag inertia must decay safely after release');
 if (!visual.includes('const stageDetail=lowPowerDevice?32:48') || !visual.includes('const starCount=lowPowerDevice?72:120')) fail('3D showcase geometry and background particles must scale with device capability');
 if (visual.includes('new THREE.PointLight(')) fail('3D showcase should avoid expensive per-pixel point lights');
 
