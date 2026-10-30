@@ -140,6 +140,15 @@ jobs:
           mkdir -p "$ASSET_DIR/characters"
           cp -a "$GITHUB_WORKSPACE/site/characters/." "$ASSET_DIR/characters/"
 
+          if [ ! -s "$GITHUB_WORKSPACE/site/audio/chills.mp3" ]; then
+            echo "::error::Bundled soundtrack is missing"
+            exit 1
+          fi
+          mkdir -p "$ASSET_DIR/audio"
+          cp "$GITHUB_WORKSPACE/site/audio/chills.mp3" "$ASSET_DIR/audio/chills.mp3"
+          test -s "$ASSET_DIR/audio/chills.mp3"
+          echo "Synced offline soundtrack into Android assets: $ASSET_DIR/audio/chills.mp3"
+
           for asset in index.html favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
             if [ ! -s "$ASSET_DIR/$asset" ]; then
               echo "::error::Android WebView asset was not synced: $asset"
