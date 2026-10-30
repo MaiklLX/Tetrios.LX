@@ -240,7 +240,7 @@
         p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color)}));
       }
       activeGroup.rotation.z=rotationAngle;
-      activeGroup.position.set(pieceOffsetX+rotationPivotX*(1-Math.cos(rotationAngle))-rotationPivotY*Math.sin(rotationAngle),pieceOffsetY+rotationPivotY*(1-Math.cos(rotationAngle))+rotationPivotX*Math.sin(rotationAngle),0);
+      activeGroup.position.set(pieceOffsetX+rotationPivotX*(1-Math.cos(rotationAngle))+rotationPivotY*Math.sin(rotationAngle),pieceOffsetY+rotationPivotY*(1-Math.cos(rotationAngle))-rotationPivotX*Math.sin(rotationAngle),0);
     }
     previousState={...state,board:state.board?.map(row=>row.slice())};
   }
@@ -295,8 +295,8 @@
         activeGroup.rotation.z=rotationAngle;
         const c=Math.cos(rotationAngle),sn=Math.sin(rotationAngle);
         activeGroup.position.set(
-          pieceOffsetX+rotationPivotX*(1-c)-rotationPivotY*sn,
-          pieceOffsetY+rotationPivotY*(1-c)+rotationPivotX*sn,0
+          pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn,
+          pieceOffsetY+rotationPivotY*(1-c)-rotationPivotX*sn,0
         );
       }
     }
