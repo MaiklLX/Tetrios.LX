@@ -5188,6 +5188,37 @@ body:has(#menu:not([hidden])) .app > .topbar {
     height: 42px;
   }
 }
+
+/* Desktop: keyboard-first gameplay, no on-screen movement/drop controls. */
+@media (min-width: 901px) {
+  #game .controls,
+  #game .sidecol .side-drop {
+    display: none !important;
+  }
+
+  #game .boardframe {
+    height: min(70dvh, 760px) !important;
+  }
+
+  #game .hint {
+    margin-top: 8px;
+    font-size: 0;
+    line-height: 1.4;
+  }
+
+  #game .hint::after {
+    content: "← → ДВИЖЕНИЕ   ·   ↑ ПОВОРОТ   ·   ↓ УСКОРИТЬ   ·   ПРОБЕЛ — ДРОП";
+    display: block;
+    font-size: 10px;
+    letter-spacing: .04em;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 820px) {
+  #game .boardframe {
+    height: min(62dvh, 590px) !important;
+  }
+}
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
