@@ -8,6 +8,7 @@ on:
       - ".github/workflows/android-webview-audit.yml"
       - "scripts/patch-android-webview.py"
       - "site/validate-3d-runtime.mjs"
+      - "scripts/fetch-3d-characters.sh"
 
 permissions:
   contents: write
@@ -75,6 +76,12 @@ jobs:
           fi
           yes | "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --licenses >/dev/null || true
           "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Fetch and pin CC0 3D character models
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash "$GITHUB_WORKSPACE/scripts/fetch-3d-characters.sh"
 
       - name: Prepare complete offline game assets
         shell: bash
@@ -147,6 +154,11 @@ jobs:
             assets/vendor/three/build/three.module.js \
             assets/vendor/three/examples/jsm/loaders/GLTFLoader.js \
             assets/characters/manifest.json \
+            assets/characters/models/minion-a01.glb \
+            assets/characters/models/minion-b01.glb \
+            assets/characters/models/minion-c01.glb \
+            assets/characters/models/minion-d01.glb \
+            assets/characters/models/minion-a02.glb \
             assets/audio/chills.mp3; do
             if ! grep -Fxq "$required" "$CONTENTS"; then
               echo "::error::APK is missing offline asset: $required"
@@ -169,7 +181,7 @@ jobs:
           test -s "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Block_Buddies_Android_APK_Project_v1.zip
+          git add Block_Buddies_Android_APK_Project_v1.zip site/characters
           if ! git diff --cached --quiet; then
             git commit -m "build(android): persist secure offline WebView starter project"
             git fetch origin "$GITHUB_REF_NAME"
