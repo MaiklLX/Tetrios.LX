@@ -31,6 +31,19 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare local Three.js runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package" "$GITHUB_WORKSPACE/site/vendor"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$GITHUB_WORKSPACE/site/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$GITHUB_WORKSPACE/site/vendor/three"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/build/three.module.js"
+          test -s "$GITHUB_WORKSPACE/site/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          echo "Prepared pinned local Three.js 0.180.0 runtime"
+
       - name: Upload web game
         uses: actions/upload-pages-artifact@v3
         with:
