@@ -185,7 +185,8 @@
     // A locked piece becomes part of the settled board. Brief cell flashes make that transition readable.
     if(boardChanged&&previousState?.piece&&!linesChanged){
       const oldPiece=previousState.piece,now=performance.now();
-      impactAt=now;impactStrength=.16;
+      const dropDistance=Math.max(0,(Number.isFinite(previousState.ghostY)?previousState.ghostY:oldPiece.y)-oldPiece.y);
+      impactAt=now;impactStrength=Math.min(.32,.08+dropDistance*.025);
       oldPiece.shape.forEach((row,dy)=>row.forEach((v,dx)=>{
         if(!v||oldPiece.y+dy<0)return;
         const mat=new THREE.MeshBasicMaterial({color:0x8ffff7,transparent:true,opacity:.82,side:THREE.DoubleSide});
