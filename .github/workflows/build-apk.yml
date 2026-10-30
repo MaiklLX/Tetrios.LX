@@ -261,6 +261,7 @@ jobs:
           files: Block-Buddies.apk
 
       - name: Stage APK for direct website download
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
@@ -269,13 +270,16 @@ jobs:
           test -s "$GITHUB_WORKSPACE/site/download/Block-Buddies.apk"
 
       - name: Configure GitHub Pages
+        if: github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5
 
       - name: Upload website and APK to Pages
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
       - name: Deploy website and direct APK
+        if: github.ref == 'refs/heads/main'
         id: pages-deployment
         uses: actions/deploy-pages@v4
