@@ -9,7 +9,7 @@
   toggle.title='Переключить объёмное игровое поле';
   frame.appendChild(toggle);
   let THREE;
-  try{THREE=await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')}
+  try{THREE=await import('./vendor/three/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
