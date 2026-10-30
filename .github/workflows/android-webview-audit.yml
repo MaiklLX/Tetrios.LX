@@ -97,7 +97,7 @@ jobs:
       - name: Prepare complete offline game assets
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           SITE="$GITHUB_WORKSPACE/site"
           ASSET_INDEX="$(find "$RUNNER_TEMP/android-project/app/src/main" -type f -path '*/assets/*' -name index.html -print -quit)"
           if [ -z "$ASSET_INDEX" ]; then
