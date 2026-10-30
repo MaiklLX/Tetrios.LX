@@ -28,3 +28,7 @@ Tetrios.LX should use a cohesive premium sci-fi / neon arcade style: deep-space 
 | `models/` | Optional 3D hero/arena models and textures | GLB, KTX2, WebP |
 
 Do not add empty placeholder images or remote image URLs as if they were production assets. Add assets with their source/license record and wire them into the UI in a separate, reviewable change.
+
+## Local icon sprite
+
+`icons/tetrios-ui-icons.svg` is a project-authored SVG symbol set. It currently contains pause, play, trophy, coin, settings, home, sound, and refresh glyphs. Symbols inherit `currentColor` so the same artwork can adapt to the existing neon theme and accessible contrast states. The sprite is kept local; when wiring symbols into HTML, use `<svg><use href="./assets/icons/tetrios-ui-icons.svg#icon-pause"></use></svg>` and provide an accessible label on the containing control. Keep touch target sizing on the button itself, not on the glyph.
