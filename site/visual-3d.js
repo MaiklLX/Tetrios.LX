@@ -16,7 +16,10 @@
   const maxPixelRatio=lowPowerDevice?1:1.5;
   const frameInterval=lowPowerDevice?1000/30:1000/60;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const colorFor=id=>({plush:0x9b6845,prism:0x42c8ff,blip:0x9564f5,pixel:0x42d6a0,spark:0xffc84d}[id]||0x8e9bff);
+  const colorFor=id=>({plush:0x9b6845,prism:0x276c9e,blip:0x6846a0,pixel:0x2878c7,spark:0xffc84d}[id]||0x8e9bff);
+  // The bundled Gobkit minions are retained for later review, but they do not match
+  // Tetrios.LX's five distinct hero identities. Keep the authored silhouettes active.
+  const USE_CURATED_GLB_HEROES=false;
   const mat=(color,roughness=.32,metalness=.12,emissive=0x000000)=>new THREE.MeshStandardMaterial({color,roughness,metalness,emissive,emissiveIntensity:.38});
   function roundedBlock(w,h,d,r,material){
     const shape=new THREE.Shape();const x=-w/2,y=-h/2;
@@ -65,12 +68,12 @@
       const orb=new THREE.Mesh(new THREE.SphereGeometry(.105,16,12),mat(0x69fff1,.15,.2,0x44fff0));orb.position.set(0,1.82,0);group.add(orb);
       const mouth=new THREE.Mesh(new THREE.TorusGeometry(.11,.025,6,20,Math.PI),darkMat);mouth.position.set(0,.78,.49);mouth.rotation.z=Math.PI;group.add(mouth);
     }else if(id==='pixel'){
-      const torso=roundedBlock(.95,.88,.64,.13,mat(0x4bdaa7,.25,.46,0x087d60));torso.position.y=.87;group.add(torso);
+      const torso=roundedBlock(.95,.88,.64,.13,mat(0x2878c7,.25,.46,0x123f83));torso.position.y=.87;group.add(torso);
       const face=roundedBlock(.68,.42,.075,.07,mat(0x172b42,.18,.25));face.position.set(0,1.05,.36);group.add(face);
       for(const x of [-.19,.19]){const eye=new THREE.Mesh(new THREE.BoxGeometry(.12,.15,.04),mat(x<0?0x5bfff0:0xb2ff76,.18,.2,0x41ffe0));eye.position.set(x,1.08,.415);group.add(eye)}
       const antenna=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,.28,8),metalMat);antenna.position.set(0,1.48,0);group.add(antenna);
       const antennaTip=new THREE.Mesh(new THREE.BoxGeometry(.17,.17,.17),goldMat);antennaTip.position.set(0,1.69,0);group.add(antennaTip);
-      for(const side of [-1,1]){const shoulder=roundedBlock(.28,.31,.35,.06,metalMat);shoulder.position.set(side*.62,1.08,0);group.add(shoulder);const arm=roundedBlock(.18,.46,.2,.045,mat(0x279b83,.28,.5));arm.position.set(side*.64,.73,0);arm.userData.bbMotion={axis:'z',base:0,amplitude:.1,speed:1.9,phase:side>0?0:Math.PI};group.add(arm);const leg=roundedBlock(.25,.36,.3,.05,mat(0x263c5d,.3,.4));leg.position.set(side*.25,.25,0);group.add(leg);const foot=roundedBlock(.34,.16,.4,.04,darkMat);foot.position.set(side*.25,.12,.08);group.add(foot)}
+      for(const side of [-1,1]){const shoulder=roundedBlock(.28,.31,.35,.06,metalMat);shoulder.position.set(side*.62,1.08,0);group.add(shoulder);const arm=roundedBlock(.18,.46,.2,.045,mat(0x1d5f9f,.28,.5));arm.position.set(side*.64,.73,0);arm.userData.bbMotion={axis:'z',base:0,amplitude:.1,speed:1.9,phase:side>0?0:Math.PI};group.add(arm);const leg=roundedBlock(.25,.36,.3,.05,mat(0x263c5d,.3,.4));leg.position.set(side*.25,.25,0);group.add(leg);const foot=roundedBlock(.34,.16,.4,.04,darkMat);foot.position.set(side*.25,.12,.08);group.add(foot)}
       for(let i=0;i<3;i++){const vent=new THREE.Mesh(new THREE.BoxGeometry(.09,.045,.025),goldMat);vent.position.set(-.1+i*.1,.68,.335);group.add(vent)}
     }else if(id==='spark'){
       const coreMat=mat(0xffc247,.2,.3,0xff8a18);
@@ -258,7 +261,7 @@
         },{rootMargin:'120px 0px',threshold:0});
         item.visibilityObserver.observe(stage);
       }
-      tryLoadCharacterAsset(stage,char,item);
+      if(USE_CURATED_GLB_HEROES)tryLoadCharacterAsset(stage,char,item);
     }catch(err){console.warn('[Tetrios 3D] Renderer failed; keeping fallback artwork.',err);fallback.style.display='';}
   }
   // Dispose scene-owned GPU resources when a mascot card leaves the DOM.
