@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -f "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip"
-          (cd "$RUNNER_TEMP/android-project" && zip -qr "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip" .)
+          (cd "$RUNNER_TEMP/android-project" && find . -type f -print0 | sort -z | xargs -0 zip -X -q "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip")
           test -s "$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
