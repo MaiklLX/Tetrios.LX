@@ -38,8 +38,8 @@
   function init(){
     if(renderer)return;
     scene=new THREE.Scene();scene.background=null;
-    camera=new THREE.PerspectiveCamera(37,1,.1,100);
-    camera.position.set(3.0,2.0,34);camera.lookAt(0,0,0);
+    camera=new THREE.OrthographicCamera(-5.5,5.5,11,-11,.1,100);
+    camera.position.set(0,0,34);camera.lookAt(0,0,0);
     renderer=new THREE.WebGLRenderer({alpha:true,antialias:!lowPowerDevice,powerPreference:lowPowerDevice?'low-power':'high-performance'});
     // Keep the arena crisp on desktop while avoiding a costly high-DPI framebuffer on phones/tablets.
     const pixelCap=lowPowerDevice?1:1.35;
@@ -107,7 +107,7 @@
     ghostGroup=new THREE.Group();scene.add(ghostGroup);
     pulseGroups=[boardGroup,activeGroup,ghostGroup];
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
-    const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
+    const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14),aspect=w/h;const arenaWidth=10.9,arenaHeight=21.2,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.055,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
   }
   function blockInto(target,x,y,color,ghost=false){
@@ -317,8 +317,8 @@
     if(!reducedMotion.matches){
       const t=now*.00025,impactAge=now-impactAt;
       const shake=impactAt&&impactAge<240?Math.sin(impactAge*.085)*impactStrength*(1-impactAge/240):0;
-      camera.position.x=3+Math.sin(t)*.12+shake;
-      camera.position.y=2+Math.cos(t*.8)*.05+Math.abs(shake)*.28;
+      camera.position.x=shake;
+      camera.position.y=0;
       for(let g=0;g<pulseGroups.length;g++){
         const cells=pulseGroups[g].children;
         for(let i=0;i<cells.length;i++){
