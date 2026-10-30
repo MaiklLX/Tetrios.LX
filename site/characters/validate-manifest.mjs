@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const manifestPath = resolve(here, 'manifest.json');
-const root = resolve(here, '..', '..');
+const root = resolve(here, '..');
 const errors = [];
 const warnings = [];
 const requiredCharacters = ['plush', 'prism', 'blip', 'pixel', 'spark'];
