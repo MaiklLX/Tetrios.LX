@@ -149,6 +149,7 @@
         if(child!==char.halo&&child!==char.ring2&&child!==char.sparkles)child.visible=false;
       }
       char.group.add(model);
+      item.modelRoot=model;
       if(gltf.animations?.length){
         item.mixer=new THREE.AnimationMixer(model);
         const names=entry.animations||{};
@@ -226,7 +227,23 @@
       renderer.domElement.addEventListener('pointercancel',up);
       renderer.domElement.addEventListener('lostpointercapture',up);
       stage.addEventListener('pointerleave',up);
-      const item={renderer,scene,camera,char,ro,controls,mixer:null,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}};const animationEvent=event=>item.playAnimation?.(event.detail?.name);stage.addEventListener('bb3d:animation',animationEvent);const baseCleanup=item.cleanup;item.cleanup=()=>{baseCleanup();stage.removeEventListener('bb3d:animation',animationEvent)};active.set(stage,item);tryLoadCharacterAsset(stage,char,item);
+      const item={renderer,scene,camera,char,ro,controls,mixer:null,modelRoot:null,visibilityObserver:null,isVisible:true,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}};
+      const animationEvent=event=>item.playAnimation?.(event.detail?.name);
+      stage.addEventListener('bb3d:animation',animationEvent);
+      const baseCleanup=item.cleanup;
+      item.cleanup=()=>{baseCleanup();stage.removeEventListener('bb3d:animation',animationEvent)};
+      active.set(stage,item);
+      if(typeof IntersectionObserver==='function'){
+        item.visibilityObserver=new IntersectionObserver(entries=>{
+          for(const entry of entries){
+            if(entry.target!==stage)continue;
+            item.isVisible=entry.isIntersecting;
+            if(item.isVisible)ensureFrame();
+          }
+        },{rootMargin:'120px 0px',threshold:0});
+        item.visibilityObserver.observe(stage);
+      }
+      tryLoadCharacterAsset(stage,char,item);
     }catch(err){console.warn('[Tetrios 3D] Renderer failed; keeping fallback artwork.',err);fallback.style.display='';}
   }
   // Dispose scene-owned GPU resources when a mascot card leaves the DOM.
@@ -249,10 +266,14 @@
   }
   function disposeItem(item){
     item.ro.disconnect();
+    item.visibilityObserver?.disconnect();
+    item.mixer?.stopAllAction();
+    if(item.mixer&&item.modelRoot)item.mixer.uncacheRoot(item.modelRoot);
     item.cleanup?.();
     disposeObjectTree(item.scene);
     item.renderer.renderLists?.dispose();
     item.renderer.dispose();
+    item.renderer.domElement.remove();
   }
   function scan(){
     document.querySelectorAll('.bb-3d-stage').forEach(mount);
@@ -263,8 +284,8 @@
   const clock=new THREE.Clock();
   let raf=0;
   function hasVisibleStage(){
-    for(const [stage] of active){
-      if(stage.isConnected&&stage.offsetParent!==null&&stage.getClientRects().length)return true;
+    for(const [stage,item] of active){
+      if(stage.isConnected&&stage.offsetParent!==null&&stage.getClientRects().length&&item.isVisible!==false)return true;
     }
     return false;
   }
@@ -278,7 +299,7 @@
     if(!hasVisibleStage())return;
     const delta=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
     for(const [stage,item] of active){
-      if(stage.offsetParent===null)continue;
+      if(stage.offsetParent===null||item.isVisible===false)continue;
       item.char.group.position.y=.12+Math.sin(t*1.8)*.065;
       item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;
       item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;
