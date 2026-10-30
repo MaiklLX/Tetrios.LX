@@ -66,6 +66,7 @@ jobs:
           test -s "$GITHUB_WORKSPACE/site/vendor/three/build/three.module.js"
           test -s "$GITHUB_WORKSPACE/site/vendor/three/examples/jsm/loaders/GLTFLoader.js"
           echo "Prepared pinned local Three.js 0.180.0 runtime"
+          node "$GITHUB_WORKSPACE/site/validate-3d-runtime.mjs"
 
       - name: Sync latest game and fix Android activity
         shell: bash
