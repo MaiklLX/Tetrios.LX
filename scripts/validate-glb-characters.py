@@ -35,6 +35,12 @@ for path in files:
         raise SystemExit(f"{path.name}: no mesh geometry found")
     if any("uri" in buffer for buffer in document.get("buffers", [])):
         raise SystemExit(f"{path.name}: external buffer dependency is not allowed")
+    external_images = [
+        image["uri"] for image in document.get("images", [])
+        if "uri" in image and not image["uri"].startswith("data:")
+    ]
+    if external_images:
+        raise SystemExit(f"{path.name}: external image dependency is not allowed: {external_images}")
     print(f"PASS {path.name}: {len(document.get('meshes', []))} meshes, {len(animations)} clips, rigged, self-contained")
 
 print("PASS: all five GLB character models are valid, self-contained and animated.")
