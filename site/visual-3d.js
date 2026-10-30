@@ -1,6 +1,6 @@
 /* Tetrios.LX — lightweight real-time 3D hero viewer. Three.js / WebGL, with graceful emoji fallback. */
 (async function(){
-  const THREE_URL='https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+  const THREE_URL='./vendor/three/build/three.module.js';
   let THREE;
   try{THREE=await import(THREE_URL)}catch(err){
     console.warn('[Tetrios 3D] Three.js unavailable; keeping fallback artwork.',err);
@@ -127,7 +127,7 @@
     const entry=manifest?.characters?.[stage.dataset.heroId||'plush'];
     if(!entry?.model||!stage.isConnected||active.get(stage)!==item)return;
     try{
-      const [{GLTFLoader}]=await Promise.all([import('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js')]);
+      const [{GLTFLoader}]=await Promise.all([import('three/addons/loaders/GLTFLoader.js')]);
       if(!stage.isConnected||active.get(stage)!==item)return;
       const gltf=await new GLTFLoader().loadAsync(new URL(entry.model,import.meta.url).href);
       if(!stage.isConnected||active.get(stage)!==item){
