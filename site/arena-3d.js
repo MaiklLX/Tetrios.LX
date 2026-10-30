@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('./vendor/three/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,rotationAngle=0,rotationPivotX=0,rotationPivotY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
@@ -136,6 +136,19 @@
     });
     group.clear();
   }
+  function rotateMatrix(matrix,direction){
+    const height=matrix.length,width=matrix[0]?.length||0;
+    if(!height||!width)return [];
+    const rotated=Array.from({length:width},()=>Array(height).fill(0));
+    for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+      if(direction>0)rotated[x][height-1-y]=matrix[y][x];
+      else rotated[width-1-x][y]=matrix[y][x];
+    }
+    return rotated;
+  }
+  function sameMatrix(a,b){
+    return a.length===b.length&&a.every((row,y)=>row.length===b[y]?.length&&row.every((value,x)=>value===b[y][x]));
+  }
   function sync(){
     if(!enabled||!window.bbGet3DBoardState)return;
     const state=window.bbGet3DBoardState();
@@ -200,14 +213,25 @@
     if(pieceSignature!==lastPieceSignature){
       lastPieceSignature=pieceSignature;
       const oldPiece=previousState?.piece,newPiece=state.piece;
-      const sameFallingPiece=oldPiece&&newPiece&&oldPiece.t===newPiece.t&&
-        JSON.stringify(oldPiece.shape)===JSON.stringify(newPiece.shape);
-      // Rebuild the active cells at their new logical coordinates, then offset the group
-      // back to the previous position and ease it into place on the render loop.
-      // This keeps horizontal taps, soft drops and hard drops visually continuous.
+      const samePieceType=!!(oldPiece&&newPiece&&oldPiece.t===newPiece.t);
+      const sameFallingPiece=samePieceType&&sameMatrix(oldPiece.shape,newPiece.shape);
+      // Rebuild at the authoritative logical state. If the matrix rotated, begin at the
+      // inverse visual angle and ease to the new orientation around the piece centre.
       pieceOffsetX=!reducedMotion.matches&&sameFallingPiece?oldPiece.x-newPiece.x:0;
       const fallDistance=sameFallingPiece?newPiece.y-oldPiece.y:0;
       pieceOffsetY=!reducedMotion.matches&&fallDistance>0?Math.min(fallDistance,2.5):0;
+      rotationAngle=0;rotationPivotX=0;rotationPivotY=0;
+      if(!reducedMotion.matches&&samePieceType&&!sameFallingPiece){
+        const oldShape=oldPiece.shape,newShape=newPiece.shape;
+        const direction=sameMatrix(rotateMatrix(oldShape,1),newShape)?1:
+          (sameMatrix(rotateMatrix(oldShape,-1),newShape)?-1:0);
+        if(direction){
+          rotationAngle=-direction*Math.PI/2;
+          const height=newShape.length,width=newShape[0]?.length||0;
+          rotationPivotX=newPiece.x+width/2-4.5;
+          rotationPivotY=9.5-(newPiece.y+height/2);
+        }
+      }
       disposeGroup(activeGroup);disposeGroup(ghostGroup);
       const colors=state.colors||[];
       if(newPiece){
@@ -215,7 +239,8 @@
         if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)blockInto(ghostGroup,p.x+dx,state.ghostY+dy,color,true)}));
         p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color)}));
       }
-      activeGroup.position.set(pieceOffsetX,pieceOffsetY,0);
+      activeGroup.rotation.z=rotationAngle;
+      activeGroup.position.set(pieceOffsetX+rotationPivotX*(1-Math.cos(rotationAngle))-rotationPivotY*Math.sin(rotationAngle),pieceOffsetY+rotationPivotY*(1-Math.cos(rotationAngle))+rotationPivotX*Math.sin(rotationAngle),0);
     }
     previousState={...state,board:state.board?.map(row=>row.slice())};
   }
@@ -261,12 +286,18 @@
           if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}
         }
       }
-      if(pieceOffsetX||pieceOffsetY){
+      if(pieceOffsetX||pieceOffsetY||Math.abs(rotationAngle)>.002){
         const ease=Math.exp(-deltaSeconds*24);
-        pieceOffsetX*=ease;pieceOffsetY*=ease;
+        pieceOffsetX*=ease;pieceOffsetY*=ease;rotationAngle*=ease;
         if(Math.abs(pieceOffsetX)<.015)pieceOffsetX=0;
         if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;
-        activeGroup.position.set(pieceOffsetX,pieceOffsetY,0);
+        if(Math.abs(rotationAngle)<.002)rotationAngle=0;
+        activeGroup.rotation.z=rotationAngle;
+        const c=Math.cos(rotationAngle),sn=Math.sin(rotationAngle);
+        activeGroup.position.set(
+          pieceOffsetX+rotationPivotX*(1-c)-rotationPivotY*sn,
+          pieceOffsetY+rotationPivotY*(1-c)+rotationPivotX*sn,0
+        );
       }
     }
     camera.lookAt(0,0,0);renderer.render(scene,camera);
