@@ -89,6 +89,34 @@ jobs:
           fi
 
           cp "$GITHUB_WORKSPACE/site/index.html" "$ASSET_INDEX"
+          ASSET_DIR="$(dirname "$ASSET_INDEX")"
+
+          # Keep every local dependency referenced by index.html beside it in
+          # Android assets. Copying index.html alone silently disables the 3D
+          # modules and the visual theme inside the WebView APK.
+          for asset in favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+            SOURCE="$GITHUB_WORKSPACE/site/$asset"
+            if [ ! -s "$SOURCE" ]; then
+              echo "::error::Required web asset is missing: $SOURCE"
+              exit 1
+            fi
+            cp "$SOURCE" "$ASSET_DIR/$asset"
+          done
+
+          if [ ! -d "$GITHUB_WORKSPACE/site/characters" ]; then
+            echo "::error::Character asset directory is missing"
+            exit 1
+          fi
+          mkdir -p "$ASSET_DIR/characters"
+          cp -a "$GITHUB_WORKSPACE/site/characters/." "$ASSET_DIR/characters/"
+
+          for asset in index.html favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+            if [ ! -s "$ASSET_DIR/$asset" ]; then
+              echo "::error::Android WebView asset was not synced: $asset"
+              exit 1
+            fi
+          done
+          echo "Synced game and 3D dependencies into Android assets: $ASSET_DIR"
           echo "Synced latest game: $ASSET_INDEX"
 
           MAIN_ACTIVITY="$(find "$PROJECT_DIR/app/src/main/java" -type f -name MainActivity.java -print -quit)"
