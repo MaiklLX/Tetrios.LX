@@ -13,6 +13,9 @@
   const active=new Map();
   const lowPowerDevice=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
   const stageDetail=lowPowerDevice?32:48;
+  const maxPixelRatio=lowPowerDevice?1:1.5;
+  const frameInterval=lowPowerDevice?1000/30:1000/60;
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const colorFor=id=>({plush:0x9b6845,prism:0x42c8ff,blip:0x9564f5,pixel:0x42d6a0,spark:0xffc84d}[id]||0x8e9bff);
   const mat=(color,roughness=.32,metalness=.12,emissive=0x000000)=>new THREE.MeshStandardMaterial({color,roughness,metalness,emissive,emissiveIntensity:.38});
   function roundedBlock(w,h,d,r,material){
@@ -189,7 +192,7 @@
     try{
       const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1.5,5.8);camera.lookAt(0,.9,0);
       const renderer=new THREE.WebGLRenderer({alpha:true,antialias:!lowPowerDevice,powerPreference:lowPowerDevice?'low-power':'high-performance',stencil:false,depth:true});
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,lowPowerDevice?1.25:1.6));renderer.setSize(stage.clientWidth||320,stage.clientHeight||260,false);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,maxPixelRatio));renderer.setSize(stage.clientWidth||320,stage.clientHeight||260,false);
       renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;
       // The showcase has no real-time shadow requirement; avoid allocating a shadow map per card.
       renderer.shadowMap.enabled=false;
@@ -294,7 +297,7 @@
     }
   }
   const clock=new THREE.Clock();
-  let raf=0;
+  let raf=0,lastFrameTime=0;
   function hasVisibleStage(){
     for(const [stage,item] of active){
       if(stage.isConnected&&stage.offsetParent!==null&&stage.getClientRects().length&&item.isVisible!==false)return true;
@@ -304,36 +307,47 @@
   function ensureFrame(){
     if(!document.hidden&&!raf&&hasVisibleStage())raf=requestAnimationFrame(frame);
   }
-  function frame(){
+  function frame(now=performance.now()){
     raf=0;
     if(document.hidden)return;
     scan();
     if(!hasVisibleStage())return;
-    const delta=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+    if(lastFrameTime&&now-lastFrameTime<frameInterval){raf=requestAnimationFrame(frame);return;}
+    const delta=Math.min(lastFrameTime?((now-lastFrameTime)/1000):frameInterval/1000,.05);
+    lastFrameTime=now;
+    const t=clock.elapsedTime+delta;
     for(const [stage,item] of active){
       if(stage.offsetParent===null||item.isVisible===false)continue;
-      item.char.group.position.y=.12+Math.sin(t*1.8)*.065;
+      if(!reducedMotion.matches)item.char.group.position.y=.12+Math.sin(t*1.8)*.065;
+      else item.char.group.position.y=.12;
       const rotationEase=1-Math.exp(-10*delta);
       if(!item.controls.dragging){
-        item.controls.targetY+=item.controls.velocityY*delta;
-        item.controls.targetX=Math.max(-.28,Math.min(.28,item.controls.targetX+item.controls.velocityX*delta));
+        if(!reducedMotion.matches){
+          item.controls.targetY+=item.controls.velocityY*delta;
+          item.controls.targetX=Math.max(-.28,Math.min(.28,item.controls.targetX+item.controls.velocityX*delta));
+        }else{
+          item.controls.velocityY=0;item.controls.velocityX=0;
+        }
         const inertia=Math.exp(-6*delta);
         item.controls.velocityY*=inertia;
         item.controls.velocityX*=inertia;
         if(Math.abs(item.controls.velocityY)<.015)item.controls.velocityY=0;
         if(Math.abs(item.controls.velocityX)<.015)item.controls.velocityX=0;
       }
-      item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*rotationEase;
+      const ambientRotation=reducedMotion.matches?0:Math.sin(t*.55)*.2;
+      item.char.group.rotation.y+=(item.controls.targetY+ambientRotation-item.char.group.rotation.y)*rotationEase;
       item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*rotationEase;
-      item.char.halo.rotation.z=t*.38;
-      item.char.ring2.rotation.z=-t*.22;
-      item.char.sparkles.rotation.y=t*.28;
-      if(item.mixer)item.mixer.update(delta);
-      for(const part of item.char.motion){
-        const m=part.userData.bbMotion;
-        part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude;
+      if(!reducedMotion.matches){
+        item.char.halo.rotation.z=t*.38;
+        item.char.ring2.rotation.z=-t*.22;
+        item.char.sparkles.rotation.y=t*.28;
+        if(item.mixer)item.mixer.update(delta);
+        for(const part of item.char.motion){
+          const m=part.userData.bbMotion;
+          part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude;
+        }
+        for(const part of item.char.group.children)if(part.userData.bbOrbit)part.rotation.y=t*.9;
       }
-      for(const part of item.char.group.children)if(part.userData.bbOrbit)part.rotation.y=t*.9;
       item.renderer.render(item.scene,item.camera);
     }
     ensureFrame();
