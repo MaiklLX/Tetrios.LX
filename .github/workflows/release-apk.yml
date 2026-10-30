@@ -16,6 +16,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Bundle CC0 soundtrack for offline play
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/site/audio"
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "$GITHUB_WORKSPACE/site/audio/chills.mp3"
+          test -s "$GITHUB_WORKSPACE/site/audio/chills.mp3"
+          AUDIO_SIZE="$(stat -c%s "$GITHUB_WORKSPACE/site/audio/chills.mp3")"
+          if [ "$AUDIO_SIZE" -lt 1000000 ]; then
+            echo "::error::CC0 soundtrack download is unexpectedly small"
+            exit 1
+          fi
+          echo "Prepared bundled CC0 soundtrack ($AUDIO_SIZE bytes)"
+
       - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
