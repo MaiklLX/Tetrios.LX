@@ -81,8 +81,11 @@ for (const id of requiredCharacters) {
     fail(`character "${id}" must use a safe, relative, in-app model path`);
     continue;
   }
-  if (typeof entry.license !== 'string' || !entry.license.trim()) {
-    fail(`character "${id}" has a model but no recorded license`);
+  const licenseName = typeof entry.license === 'string' ? entry.license : entry.license?.name;
+  const licenseSource = typeof entry.license === 'object' ? entry.license?.source : null;
+  if (typeof licenseName !== 'string' || !licenseName.trim() ||
+      (licenseSource != null && !/^https:\/\//.test(licenseSource))) {
+    fail(`character "${id}" has a model but no valid recorded license`);
   }
   const modelPath = `site/${entry.model.replace(/^\.\//, '')}`;
   if (!await exists(modelPath)) fail(`character "${id}" model file is missing: ${modelPath}`);
