@@ -5161,6 +5161,173 @@ body .action.primary { background-color:rgba(15,23,45,.18); }
 @media (prefers-reduced-motion: reduce) {
   .stars,.stars:before,.stars:after { animation:none !important; }
 }
+
+/* Native asset visual system — shop, heroes and rewards */
+#shopScreen .wallet {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+#shopScreen .wallet > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 11px;
+  border: 1px solid #34415f;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #17223a, #10182b);
+  color: #c4cde5;
+  font-size: 11px;
+}
+#shopScreen .wallet b { color: #ffe0a0; font-variant-numeric: tabular-nums; }
+#shopScreen .surprise-shop-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid #a47b43;
+  border-radius: 19px;
+  background: radial-gradient(ellipse at 0 0, #ffc86b20, transparent 68%), linear-gradient(145deg, #30271f, #171b2d 72%);
+  box-shadow: inset 0 1px #ffffff12, 0 8px 22px #0004;
+}
+#shopScreen .surprise-shop-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  border: 1px solid #ffc86b55;
+  border-radius: 16px;
+  background: #ffc86b18;
+  font-size: 31px;
+  filter: drop-shadow(0 0 12px #ffc86b35);
+}
+#shopScreen .surprise-shop-info { min-width: 0; flex: 1; }
+#shopScreen .surprise-shop-label { color: #ffc86b; font-size: 9px; font-weight: 900; letter-spacing: .15em; }
+#shopScreen .surprise-shop-info h3 { margin: 5px 0; font-size: 17px; }
+#shopScreen .surprise-shop-info p { margin: 0 0 11px; color: #b5bfd8; font-size: 11px; line-height: 1.45; }
+#shopScreen .surprise-shop-buy {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid #ffdb91;
+  border-radius: 11px;
+  background: linear-gradient(100deg, #ffc86b, #ffdf9b);
+  color: #21180b;
+  font-size: 10px;
+  font-weight: 950;
+  box-shadow: 0 4px 13px #ffc86b22;
+}
+#shopScreen .shopitem { position: relative; overflow: hidden; }
+#shopScreen .shopitem:before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #9d7cff88, #5cf5e888, transparent);
+  opacity: .65;
+  pointer-events: none;
+}
+#shopScreen .shopitem .emoji {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid #9d7cff30;
+  border-radius: 15px;
+  background: radial-gradient(circle, #9d7cff20, #9d7cff08);
+}
+#shopScreen .shopitem-coming:before { opacity: .2; }
+#heroes .heroes-roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+#heroes .hero-roster-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  min-height: 150px;
+  padding: 13px 8px 11px;
+  overflow: hidden;
+  border: 1px solid #34415f;
+  border-radius: 17px;
+  background: linear-gradient(145deg, #18233b, #101629);
+  color: #f4f5ff;
+  text-align: center;
+  transition: border-color .18s, transform .18s, box-shadow .18s, background .18s;
+}
+#heroes .hero-roster-card.is-previewed {
+  border: 2px solid var(--hero-accent);
+  padding: 12px 7px 10px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--hero-accent) 17%, #18233b), #101629 80%);
+  box-shadow: inset 0 0 24px color-mix(in srgb, var(--hero-accent) 12%, transparent), 0 0 16px color-mix(in srgb, var(--hero-accent) 14%, transparent);
+}
+#heroes .hero-roster-art {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 8px;
+  border: 1px solid color-mix(in srgb, var(--hero-accent) 40%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--hero-accent) 16%, #11172a);
+  font-size: 35px;
+  filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--hero-accent) 22%, transparent));
+}
+#heroes .hero-roster-card strong { max-width: 100%; font-size: 13px; overflow-wrap: anywhere; }
+#heroes .hero-roster-role { margin-top: 4px; color: #9eabc8; font-size: 10px; }
+#heroes .hero-roster-state { margin-top: auto; padding-top: 9px; color: var(--hero-accent); font-size: 9px; font-weight: 950; letter-spacing: .08em; }
+#heroes .hero-detail {
+  --hero-accent: #5cf5e8;
+}
+#heroes .hero-details {
+  padding: 17px;
+  border: 1px solid color-mix(in srgb, var(--hero-accent) 45%, #293554);
+  border-radius: 19px;
+  background: radial-gradient(ellipse at 0 0, color-mix(in srgb, var(--hero-accent) 16%, transparent), transparent 68%), linear-gradient(145deg, #17213b, #101629);
+  box-shadow: inset 0 1px #ffffff0b, 0 7px 20px #0004;
+}
+#heroes .hero-detail-heading { display: flex; align-items: center; gap: 13px; margin-bottom: 15px; }
+#heroes .hero-detail-art {
+  display: grid;
+  place-items: center;
+  flex: 0 0 70px;
+  width: 70px;
+  height: 70px;
+  border: 1px solid color-mix(in srgb, var(--hero-accent) 45%, transparent);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--hero-accent) 19%, #11172a);
+  font-size: 43px;
+}
+#heroes .hero-detail-copy { min-width: 0; }
+#heroes .hero-detail-role, #heroes .hero-skill-label { color: #9eabc8; font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+#heroes .hero-detail-copy h3 { margin: 4px 0; font-size: 20px; }
+#heroes .hero-detail-copy p { margin: 0; color: #a8b2ce; font-size: 11px; line-height: 1.45; }
+#heroes .hero-detail-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-bottom: 15px; }
+#heroes .hero-stat { min-width: 0; padding: 11px; border: 1px solid #34415f; border-radius: 12px; background: #0d1528a8; }
+#heroes .hero-stat span { display: block; color: #9eabc8; font-size: 9px; letter-spacing: .08em; }
+#heroes .hero-stat strong { display: block; margin-top: 5px; color: var(--hero-accent); font-size: 18px; letter-spacing: .04em; white-space: nowrap; }
+#heroes .hero-skill-name { margin: 6px 0; color: var(--hero-accent); font-size: 16px; }
+#heroes .hero-skill-description { margin: 0; color: #c0c9df; font-size: 12px; line-height: 1.55; }
+#heroes .hero-roster-card:focus-visible, #shopScreen button:focus-visible { outline: 2px solid #5cf5e8; outline-offset: 3px; }
+@media (max-width: 360px) {
+  #shopScreen .surprise-shop-card { align-items: flex-start; gap: 10px; padding: 12px; }
+  #shopScreen .surprise-shop-icon { flex-basis: 44px; width: 44px; height: 44px; font-size: 25px; }
+  #heroes .hero-roster-card { min-height: 140px; padding-inline: 6px; }
+  #heroes .hero-detail-art { flex-basis: 58px; width: 58px; height: 58px; font-size: 35px; }
+  #heroes .hero-detail-copy h3 { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #heroes .hero-roster-card, #shopScreen .shopitem { transition: none; }
+}
+
 </style></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
@@ -7661,50 +7828,43 @@ function bbRenderHeroes() {
 
   const hero = bbHeroes.find(h => h.id === bbPreviewHero) || bbHeroes[0];
 
-  roster.style.cssText =
-    'display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;';
+  roster.innerHTML = bbHeroes.map(h => {
+    const selected = h.id === bbSelectedHero;
+    const previewed = h.id === hero.id;
+    return `
+      <button type="button" class="hero-roster-card${previewed ? ' is-previewed' : ''}${selected ? ' is-selected' : ''}"
+        data-hero-card="${h.id}" style="--hero-accent:${h.color}">
+        <span class="hero-roster-art">${h.emoji}</span>
+        <strong>${h.name}</strong>
+        <span class="hero-roster-role">${h.role}</span>
+        <span class="hero-roster-state">${selected ? '✓ ВЫБРАН' : previewed ? '● ПРОСМОТР' : 'ОСМОТРЕТЬ'}</span>
+      </button>
+    `;
+  }).join('');
 
-  roster.innerHTML = bbHeroes.map(h => `
-    <button type="button" data-hero-card="${h.id}"
-      style="padding:14px 8px;border:2px solid ${h.id === hero.id ? h.color : 'rgba(150,170,200,.2)'};
-      border-radius:16px;background:${h.id === hero.id ? h.color + '22' : 'rgba(120,140,160,.08)'};
-      color:inherit;cursor:pointer;text-align:center;min-width:0;">
-      <div style="font-size:38px;margin-bottom:7px">${h.emoji}</div>
-      <strong style="display:block;font-size:13px">${h.name}</strong>
-      <div style="font-size:11px;opacity:.7;margin-top:5px">${h.role}</div>
-      <div style="font-size:10px;margin-top:8px;color:${h.color}">
-        ${h.id === bbSelectedHero ? '✓ ВЫБРАН' : h.id === hero.id ? '● ПРОСМОТР' : 'ОСМОТРЕТЬ'}
-      </div>
-    </button>
-  `).join('');
-
-  details.style.cssText =
-    'padding:18px;border:1px solid ' + hero.color +
-    '66;border-radius:18px;background:linear-gradient(145deg,' +
-    hero.color + '22,rgba(120,140,160,.06));margin:12px 0 16px;';
-
+  details.style.setProperty('--hero-accent', hero.color);
   details.innerHTML = `
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="font-size:54px;background:${hero.color}30;border-radius:16px;padding:8px">${hero.emoji}</div>
-      <div>
-        <div style="font-size:10px;letter-spacing:2px;opacity:.7">${hero.role.toUpperCase()}</div>
-        <h3 style="margin:5px 0;font-size:20px">${hero.name}</h3>
-        <div style="font-size:12px;opacity:.8">${hero.desc}</div>
+    <div class="hero-detail-heading">
+      <div class="hero-detail-art">${hero.emoji}</div>
+      <div class="hero-detail-copy">
+        <div class="hero-detail-role">${hero.role.toUpperCase()}</div>
+        <h3>${hero.name}</h3>
+        <p>${hero.desc}</p>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div style="padding:12px;border-radius:12px;background:rgba(120,140,160,.12)">
-        <div style="font-size:11px;opacity:.7">СТОЙКОСТЬ</div>
-        <div style="font-size:20px;margin-top:5px">${'★'.repeat(hero.hp)}${'☆'.repeat(5-hero.hp)}</div>
+    <div class="hero-detail-stats">
+      <div class="hero-stat">
+        <span>СТОЙКОСТЬ</span>
+        <strong>${'★'.repeat(hero.hp)}${'☆'.repeat(5-hero.hp)}</strong>
       </div>
-      <div style="padding:12px;border-radius:12px;background:rgba(120,140,160,.12)">
-        <div style="font-size:11px;opacity:.7">МАСТЕРСТВО</div>
-        <div style="font-size:20px;margin-top:5px">${'★'.repeat(hero.power)}${'☆'.repeat(5-hero.power)}</div>
+      <div class="hero-stat">
+        <span>МАСТЕРСТВО</span>
+        <strong>${'★'.repeat(hero.power)}${'☆'.repeat(5-hero.power)}</strong>
       </div>
     </div>
-    <div style="font-size:10px;letter-spacing:1.5px;opacity:.7">УНИКАЛЬНАЯ СПОСОБНОСТЬ</div>
-    <h3 style="margin:7px 0;color:${hero.color}">${hero.skill}</h3>
-    <p style="font-size:13px;line-height:1.5;margin:0">${hero.skillDesc}</p>
+    <div class="hero-skill-label">УНИКАЛЬНАЯ СПОСОБНОСТЬ</div>
+    <h3 class="hero-skill-name">${hero.skill}</h3>
+    <p class="hero-skill-description">${hero.skillDesc}</p>
   `;
 
   roster.querySelectorAll('[data-hero-card]').forEach(btn => {
