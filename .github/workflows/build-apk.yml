@@ -239,6 +239,7 @@ jobs:
           retention-days: 14
 
       - name: Prepare stable APK download
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
@@ -246,6 +247,7 @@ jobs:
           test -s "$GITHUB_WORKSPACE/Block-Buddies.apk"
 
       - name: Publish latest APK download
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: android-latest
