@@ -49,6 +49,9 @@ for (const path of [
 }
 
 if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js does not load local Three.js');
+if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
+if (!arena.includes('activeGroup.position.set(pieceOffsetX,pieceOffsetY,0)')) fail('3D arena must apply interpolated piece offsets to the active group');
+if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
 if (!visual.includes('three/addons/loaders/GLTFLoader.js')) fail('visual-3d.js does not load the local GLTFLoader');
 if (/https?:\/\//i.test(arena + visual)) fail('a remote HTTP(S) dependency remains in a 3D runtime module');
