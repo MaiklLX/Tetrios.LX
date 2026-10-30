@@ -63,9 +63,9 @@ if (!manifest.characters || typeof manifest.characters !== 'object') {
         typeof entry.license.source !== 'string' || !/^https:\/\//.test(entry.license.source)) {
       fail(`${id}: model requires license.name and an HTTPS license.source URL`);
     }
-    const modelPath = resolve(here, entry.model);
-    if (!modelPath.startsWith(here + sep)) {
-      fail(`${id}: resolved model path escapes the characters directory`);
+    const modelPath = resolve(root, entry.model.replace(/^\.\//, ''));
+    if (!modelPath.startsWith(root + sep)) {
+      fail(`${id}: resolved model path escapes the site directory`);
       continue;
     }
     try {
