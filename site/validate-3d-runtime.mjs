@@ -64,6 +64,12 @@ if (!arena.includes('cell.scale.set(1,.78,1)') || !arena.includes('cell.userData
 if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
 if (!visual.includes('three/addons/loaders/GLTFLoader.js')) fail('visual-3d.js does not load the local GLTFLoader');
+if (!visual.includes("new IntersectionObserver(entries=>") || !visual.includes("rootMargin:'120px 0px'")) fail('character stages must observe viewport visibility with a small prefetch margin');
+if (!visual.includes('item.isVisible===false') || !visual.includes('item.isVisible!==false')) fail('offscreen character stages must pause animation and rendering');
+if (!visual.includes('item.visibilityObserver?.disconnect()')) fail('character visibility observers must disconnect when cards are disposed');
+if (!visual.includes('item.mixer?.stopAllAction()') || !visual.includes('item.mixer.uncacheRoot(item.modelRoot)')) fail('character animation mixers must release actions and cached roots on disposal');
+if (!visual.includes('item.renderer.domElement.remove()')) fail('disposed character stages must remove their WebGL canvas');
+
 if (/https?:\/\//i.test(arena + visual)) fail('a remote HTTP(S) dependency remains in a 3D runtime module');
 if (/cdn\.jsdelivr\.net\/npm\/three@/i.test(index)) fail('index.html contains a Three.js CDN reference');
 if (!index.includes('src="./audio/chills.mp3"')) fail('index.html must use the bundled local soundtrack');
