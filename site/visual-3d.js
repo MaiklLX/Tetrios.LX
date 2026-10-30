@@ -131,7 +131,7 @@
       if(!stage.isConnected||active.get(stage)!==item)return;
       const gltf=await new GLTFLoader().loadAsync(new URL(entry.model,import.meta.url).href);
       if(!stage.isConnected||active.get(stage)!==item){
-        gltf.scene.traverse(node=>{if(node.geometry)node.geometry.dispose();if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(material=>material.dispose())});
+        disposeObjectTree(gltf.scene);
         return;
       }
       const model=gltf.scene;
@@ -211,8 +211,78 @@
       const item={renderer,scene,camera,char,ro,controls,mixer:null,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}};active.set(stage,item);tryLoadCharacterAsset(stage,char,item);
     }catch(err){console.warn('[Tetrios 3D] Renderer failed; keeping fallback artwork.',err);fallback.style.display='';}
   }
-  function scan(){document.querySelectorAll('.bb-3d-stage').forEach(mount);for(const [stage,item] of active){if(!stage.isConnected){item.ro.disconnect();item.cleanup?.();item.renderer.dispose();active.delete(stage)}}}
+  // Dispose scene-owned GPU resources when a mascot card leaves the DOM.
+  // WebGLRenderer.dispose() alone does not release geometries, materials or textures.
+  function disposeObjectTree(root){
+    const geometries=new Set(),materials=new Set(),textures=new Set();
+    root.traverse(node=>{
+      if(node.geometry)geometries.add(node.geometry);
+      if(node.material){
+        const list=Array.isArray(node.material)?node.material:[node.material];
+        for(const material of list){
+          materials.add(material);
+          for(const value of Object.values(material))if(value?.isTexture)textures.add(value);
+        }
+      }
+    });
+    textures.forEach(texture=>texture.dispose());
+    geometries.forEach(geometry=>geometry.dispose());
+    materials.forEach(material=>material.dispose());
+  }
+  function disposeItem(item){
+    item.ro.disconnect();
+    item.cleanup?.();
+    disposeObjectTree(item.scene);
+    item.renderer.renderLists?.dispose();
+    item.renderer.dispose();
+  }
+  function scan(){
+    document.querySelectorAll('.bb-3d-stage').forEach(mount);
+    for(const [stage,item] of active){
+      if(!stage.isConnected){disposeItem(item);active.delete(stage);}
+    }
+  }
   const clock=new THREE.Clock();
-  function frame(){requestAnimationFrame(frame);const delta=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;scan();for(const [stage,item] of active){if(stage.offsetParent===null)continue;item.char.group.position.y=.12+Math.sin(t*1.8)*.065;item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;item.char.halo.rotation.z=t*.38;item.char.ring2.rotation.z=-t*.22;item.char.sparkles.rotation.y=t*.28;if(item.mixer)item.mixer.update(delta);for(const part of item.char.motion){const m=part.userData.bbMotion;part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude}for(const part of item.char.group.children){if(part.userData.bbOrbit)part.rotation.y=t*.9}item.renderer.render(item.scene,item.camera)}}
-  new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});scan();frame();
+  let raf=0;
+  function hasVisibleStage(){
+    for(const [stage] of active){
+      if(stage.isConnected&&stage.offsetParent!==null&&stage.getClientRects().length)return true;
+    }
+    return false;
+  }
+  function ensureFrame(){
+    if(!document.hidden&&!raf&&hasVisibleStage())raf=requestAnimationFrame(frame);
+  }
+  function frame(){
+    raf=0;
+    if(document.hidden)return;
+    scan();
+    if(!hasVisibleStage())return;
+    const delta=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+    for(const [stage,item] of active){
+      if(stage.offsetParent===null)continue;
+      item.char.group.position.y=.12+Math.sin(t*1.8)*.065;
+      item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;
+      item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;
+      item.char.halo.rotation.z=t*.38;
+      item.char.ring2.rotation.z=-t*.22;
+      item.char.sparkles.rotation.y=t*.28;
+      if(item.mixer)item.mixer.update(delta);
+      for(const part of item.char.motion){
+        const m=part.userData.bbMotion;
+        part.rotation[m.axis]=m.base+Math.sin(t*m.speed+m.phase)*m.amplitude;
+      }
+      for(const part of item.char.group.children)if(part.userData.bbOrbit)part.rotation.y=t*.9;
+      item.renderer.render(item.scene,item.camera);
+    }
+    ensureFrame();
+  }
+  const observer=new MutationObserver(()=>{scan();ensureFrame()});
+  observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden']});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}
+    else{scan();ensureFrame();}
+  });
+  scan();
+  ensureFrame();
 })();
