@@ -14,7 +14,7 @@ const exists = async path => {
 };
 const fail = message => { console.error(`FAIL: ${message}`); process.exitCode = 1; };
 
-const [index, arena, visual, packageJson, manifestText, audioCredits] = await Promise.all([
+const [index, arena, visual, packageJsonText, manifestText, audioCredits] = await Promise.all([
   read('site/index.html'),
   read('site/arena-3d.js'),
   read('site/visual-3d.js'),
@@ -22,6 +22,10 @@ const [index, arena, visual, packageJson, manifestText, audioCredits] = await Pr
   read('site/characters/manifest.json'),
   read('site/audio/README.txt')
 ]);
+
+let packageJson;
+try { packageJson = JSON.parse(packageJsonText); }
+catch { fail('Three.js package.json must be valid JSON'); }
 
 const imports = index.match(/<script type="importmap">\s*([\s\S]*?)\s*<\/script>/)?.[1];
 let map;
