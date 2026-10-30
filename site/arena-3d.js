@@ -107,8 +107,8 @@
     ghostGroup=new THREE.Group();scene.add(ghostGroup);
     pulseGroups=[boardGroup,activeGroup,ghostGroup];
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
-    const resize=()=>{if(!renderer)return;const w=Math.max(1,frame.clientWidth-14),h=Math.max(1,frame.clientHeight-14),aspect=w/h;const arenaWidth=10.9,arenaHeight=21.2,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.055,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
-    resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resize();
+    const resize=()=>{if(!renderer)return;const frameRect=frame.getBoundingClientRect(),boardRect=boardCanvas.getBoundingClientRect();const w=Math.max(1,boardRect.width),h=Math.max(1,boardRect.height),aspect=w/h;renderer.domElement.style.left=(boardRect.left-frameRect.left-frame.clientLeft)+'px';renderer.domElement.style.top=(boardRect.top-frameRect.top-frame.clientTop)+'px';renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';const arenaWidth=10.9,arenaHeight=21.2,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.025,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
+    resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resizeObserver.observe(boardCanvas);window.addEventListener('resize',resize,{passive:true});resize();
   }
   function blockInto(target,x,y,color,ghost=false){
     const cell=new THREE.Group();
