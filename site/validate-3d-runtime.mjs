@@ -48,6 +48,9 @@ for (const path of [
   if (!await exists(path)) fail(`missing bundled runtime file: ${path}`);
 }
 
+if (!arena.includes('new THREE.OrthographicCamera(') || !arena.includes('camera.position.set(0,0,34)')) fail('3D arena camera must face the board head-on without a horizontal/vertical offset');
+if (!arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.055') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full board and rails to the live viewport aspect ratio');
+if (arena.includes('camera.position.x=3+') || arena.includes('camera.position.y=2+')) fail('3D arena must not reintroduce the off-centre camera drift that crops the board');
 if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js does not load local Three.js');
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
 if (!arena.includes('function rotateMatrix(matrix,direction)') || !arena.includes('rotationAngle=-direction*Math.PI/2')) fail('3D arena must animate quarter-turn piece rotations');
@@ -62,6 +65,8 @@ if (!arena.includes('const MAX_ARENA_EFFECTS=96') || !arena.includes('while(effe
 if (!arena.includes('function disposeEffect(effect)') || !arena.includes('disposeEffect(oldest)')) fail('3D arena must dispose geometry and materials when transient effects are removed');
 if (!arena.includes('cell.scale.set(1,.78,1)') || !arena.includes('cell.userData.landAt')) fail('locked 3D blocks must use a brief landing compression');
 if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
+if (!visual.includes('const USE_CURATED_GLB_HEROES=false') || !visual.includes('if(USE_CURATED_GLB_HEROES)tryLoadCharacterAsset(stage,char,item)')) fail('unmatched generic GLB models must not replace the five authored Tetrios hero identities');
+if (!visual.includes('plush:0x9b6845,prism:0x276c9e,blip:0x6846a0,pixel:0x2878c7,spark:0xffc84d')) fail('3D hero colors must follow the canonical roster palette');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
 if (!visual.includes('three/addons/loaders/GLTFLoader.js')) fail('visual-3d.js does not load the local GLTFLoader');
 if (!visual.includes("new IntersectionObserver(entries=>") || !visual.includes("rootMargin:'120px 0px'")) fail('character stages must observe viewport visibility with a small prefetch margin');
@@ -84,6 +89,9 @@ if (visual.includes('new THREE.PointLight(')) fail('3D showcase should avoid exp
 
 if (/https?:\/\//i.test(arena + visual)) fail('a remote HTTP(S) dependency remains in a 3D runtime module');
 if (/cdn\.jsdelivr\.net\/npm\/three@/i.test(index)) fail('index.html contains a Three.js CDN reference');
+if (!index.includes("color: '#2878c7'") || !index.includes("color: '#ffc84d'")) fail('Pixel must remain blue and Spark must remain yellow in the hero roster');
+if (!index.includes('function bbSetupMobileGameHud()') || !index.includes('mobile-game-hud-trigger') || !index.includes('mobile-game-tools')) fail('mobile gameplay must expose the top-edge HUD reveal control and compact tools');
+if (!index.includes('#game:not([hidden])') || !index.includes('grid-template-rows:auto minmax(0,1fr)') || !index.includes('#game .sidecol > :nth-child(n+3)')) fail('mobile gameplay must use the full-screen board-first layout and retain only next-piece/level HUD cards');
 if (!index.includes('src="./audio/chills.mp3"')) fail('index.html must use the bundled local soundtrack');
 if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('soundtrack attribution must document the author and CC0 license');
 if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
