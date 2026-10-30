@@ -307,3 +307,18 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #game .controls{left:auto!important;right:12px!important;bottom:50%!important;transform:translateY(50%)!important;grid-template-columns:1fr!important;gap:5px!important}
   #game .controls .control{height:36px!important}
 }
+
+/* Keep the board's intrinsic 1:2 proportions while sizing from viewport height. */
+@media (max-width:900px) and (pointer:coarse) and (orientation:portrait){
+  #game .playlayout > div:nth-child(2){
+    width:min(39dvh,calc(100vw - 18px))!important;
+    height:auto!important;
+    aspect-ratio:1/2!important;
+  }
+}
+@media (orientation:landscape) and (max-height:520px) and (pointer:coarse){
+  #game .playlayout > div:nth-child(2){
+    width:auto!important;height:calc(100dvh - 28px)!important;
+    aspect-ratio:1/2!important;
+  }
+}
