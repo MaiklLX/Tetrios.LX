@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('./vendor/three/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,rotationAngle=0,rotationPivotX=0,rotationPivotY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,resumeAfterContextRestore=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,rotationAngle=0,rotationPivotX=0,rotationPivotY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
@@ -50,6 +50,7 @@
     renderer.domElement.addEventListener('webglcontextlost',event=>{
       event.preventDefault();
       if(raf){cancelAnimationFrame(raf);raf=0;}
+      resumeAfterContextRestore=enabled;
       enabled=false;frame.classList.remove('bb-3d-arena-active');toggle.setAttribute('aria-pressed','false');
       // A lost WebGL canvas must never remain above the working 2D board.
       renderer.domElement.style.display='none';
@@ -60,6 +61,12 @@
     });
     renderer.domElement.addEventListener('webglcontextrestored',()=>{
       toggle.textContent='3D ARENA';toggle.title='Переключить объёмное игровое поле';
+      if(resumeAfterContextRestore){
+        // Three.js restores its WebGL state; rebuild dynamic groups from the authoritative game state.
+        resumeAfterContextRestore=false;
+        lastBoardSignature='';lastPieceSignature='';previousState=null;
+        setEnabled(true);
+      }
     });
     frame.insertBefore(renderer.domElement,boardCanvas.nextSibling);
     scene.add(new THREE.HemisphereLight(0xb9d7ff,0x11182e,2.3));
@@ -130,6 +137,22 @@
     }
     target.add(cell);
   }
+  const MAX_ARENA_EFFECTS=96;
+  function disposeEffect(effect){
+    if(effect.geometry)effect.geometry.dispose();
+    if(effect.material){
+      const list=Array.isArray(effect.material)?effect.material:[effect.material];
+      list.forEach(material=>material.dispose());
+    }
+  }
+  function addEffect(effect){
+    effectsGroup.add(effect);
+    while(effectsGroup.children.length>MAX_ARENA_EFFECTS){
+      const oldest=effectsGroup.children[0];
+      effectsGroup.remove(oldest);
+      disposeEffect(oldest);
+    }
+  }
   function disposeGroup(group){
     group.traverse(obj=>{
       if(obj.geometry&&!sharedGeometries.has(obj.geometry))obj.geometry.dispose();
@@ -161,14 +184,13 @@
       clearStreak=now-lastClearAt<1800?Math.min(5,clearStreak+1):1;lastClearAt=now;
       for(let i=effectsGroup.children.length-1;i>=0;i--){
         const obj=effectsGroup.children[i];effectsGroup.remove(obj);
-        if(obj.geometry)obj.geometry.dispose();
-        if(obj.material){const list=Array.isArray(obj.material)?obj.material:[obj.material];list.forEach(material=>material.dispose());}
+        disposeEffect(obj);
       }
       for(let n=0;n<count;n++){
         const mat=new THREE.MeshBasicMaterial({color:n%2?0xa98aff:0x9ffff8,transparent:true,opacity:.98,side:THREE.DoubleSide});
         const flash=new THREE.Mesh(new THREE.PlaneGeometry(10,.72),mat);
         flash.position.set(0,-9.15+n*.72,.48);flash.userData.createdAt=now;flash.userData.life=460+clearStreak*90;flash.userData.clearFlash=true;
-        effectsGroup.add(flash);
+        addEffect(flash);
       }
       // A short radial burst makes consecutive clears feel stronger without changing scoring.
       const particleCount=reducedMotion.matches?0:Math.min(lowPowerDevice?20:36,12+count*4+clearStreak*3);
@@ -180,7 +202,7 @@
         particle.position.set(Math.cos(angle)*2.8,(Math.random()-.5)*13,.55);
         particle.userData.createdAt=now;particle.userData.life=520+clearStreak*110;
         particle.userData.velocity={x:Math.cos(angle)*speed,y:Math.sin(angle)*speed};
-        effectsGroup.add(particle);
+        addEffect(particle);
       }
     }
     const boardSignature=JSON.stringify([state.board,state.colors]);
@@ -204,7 +226,7 @@
       const shock=new THREE.Mesh(new THREE.PlaneGeometry(8.8,.055),shockMat);
       shock.position.set(0,Math.max(-9.72,Math.min(9.6,9.5-oldPiece.y)),.5);
       shock.userData.createdAt=now;shock.userData.life=300;shock.userData.shockwave=true;
-      effectsGroup.add(shock);
+      addEffect(shock);
     }
     const landingKeys=new Set();
     const landedPiece=boardChanged&&previousState?.piece&&!linesChanged?previousState.piece:null;
@@ -289,7 +311,7 @@
             effect.scale.set(1+progress*.16,1+progress*.22,1);
           }
         }
-        if(progress>=1){effectsGroup.remove(effect);if(effect.geometry)effect.geometry.dispose();if(effect.material){const list=Array.isArray(effect.material)?effect.material:[effect.material];list.forEach(material=>material.dispose());}}
+        if(progress>=1){effectsGroup.remove(effect);disposeEffect(effect);}
       }
     }
     if(!reducedMotion.matches){
