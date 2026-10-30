@@ -44,3 +44,10 @@ The following SVGs were created specifically for Tetrios.LX and are not copied f
 - `site/assets/ui/neon-button-frame.svg` — decorative frame for prominent controls.
 
 These files are locally bundled; they do not introduce runtime requests to an external asset host.
+
+### Project-authored UI icon sprite
+- Local file: `site/assets/icons/tetrios-ui-icons.svg`
+- Creator: Tetrios.LX project (original vector artwork).
+- License: project-authored; no third-party artwork copied.
+- Contents: pause, play, trophy, coin, settings, home, sound, refresh.
+- Status: added to the asset branch; not yet wired into gameplay controls.
