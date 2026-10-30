@@ -91,6 +91,7 @@ if (/https?:\/\//i.test(arena + visual)) fail('a remote HTTP(S) dependency remai
 if (/cdn\.jsdelivr\.net\/npm\/three@/i.test(index)) fail('index.html contains a Three.js CDN reference');
 if (!index.includes("color: '#2878c7'") || !index.includes("color: '#ffc84d'")) fail('Pixel must remain blue and Spark must remain yellow in the hero roster');
 if (!index.includes('@media(max-width:900px) and (pointer:coarse)')) fail('immersive game layout must target touch devices/tablets without changing desktop browser layout');
+if (!index.includes('margin:0!important;padding:0 3px')) fail('mobile hold/drop buttons must fit the compact control row without inherited sidebar spacing');
 if (!index.includes("'mobileHoldBtn'") || !index.includes("'mobileDropBtn'") || !index.includes('repeat(5,minmax(0,1fr))')) fail('mobile controls must preserve left, rotate, right, hold and hard-drop actions');
 if (!index.includes('function bbSetupMobileGameHud()') || !index.includes('mobile-game-hud-trigger') || !index.includes('mobile-game-tools')) fail('mobile gameplay must expose the top-edge HUD reveal control and compact tools');
 if (!index.includes('#game:not([hidden])') || !index.includes('grid-template-rows:auto minmax(0,1fr)') || !index.includes('#game .sidecol > :nth-child(n+3)')) fail('mobile gameplay must use the full-screen board-first layout and retain only next-piece/level HUD cards');
