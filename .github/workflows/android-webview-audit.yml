@@ -196,6 +196,14 @@ jobs:
           echo "PASS: APK contains local Three.js, GLTFLoader, game modules, character manifest and offline soundtrack."
           echo "PASS: five CC0 rigged GLB heroes are bundled; procedural fallback remains available if a model fails to load."
 
+      - name: Upload debug APK for manual testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tetrios-LX-test-apk
+          path: ${{ runner.temp }}/android-project/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Persist verified 3D character assets
         shell: bash
         run: |
