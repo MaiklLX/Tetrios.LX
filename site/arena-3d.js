@@ -205,9 +205,9 @@
       // Rebuild the active cells at their new logical coordinates, then offset the group
       // back to the previous position and ease it into place on the render loop.
       // This keeps horizontal taps, soft drops and hard drops visually continuous.
-      pieceOffsetX=sameFallingPiece?oldPiece.x-newPiece.x:0;
+      pieceOffsetX=!reducedMotion.matches&&sameFallingPiece?oldPiece.x-newPiece.x:0;
       const fallDistance=sameFallingPiece?newPiece.y-oldPiece.y:0;
-      pieceOffsetY=fallDistance>0?Math.min(fallDistance,2.5):0;
+      pieceOffsetY=!reducedMotion.matches&&fallDistance>0?Math.min(fallDistance,2.5):0;
       disposeGroup(activeGroup);disposeGroup(ghostGroup);
       const colors=state.colors||[];
       if(newPiece){
