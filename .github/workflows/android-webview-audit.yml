@@ -139,6 +139,18 @@ jobs:
           grep -q 'src="./audio/chills.mp3"' "$ASSET_INDEX"
           echo "Complete offline HTML, CSS, JS, Three.js, GLTFLoader, character manifest and CC0 audio copied into Android assets."
 
+      - name: Validate game JavaScript and asset tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check "$GITHUB_WORKSPACE/site/arena-3d.js"
+          node --check "$GITHUB_WORKSPACE/site/visual-3d.js"
+          node --check "$GITHUB_WORKSPACE/site/validate-3d-runtime.mjs"
+          node --check "$GITHUB_WORKSPACE/site/characters/validate-manifest.mjs"
+          python3 -m py_compile "$GITHUB_WORKSPACE/scripts/validate-glb-characters.py" "$GITHUB_WORKSPACE/scripts/patch-android-webview.py"
+          bash -n "$GITHUB_WORKSPACE/scripts/fetch-3d-characters.sh"
+          echo "PASS: gameplay modules, validators and asset scripts have valid syntax."
+
       - name: Compile debug APK without publishing
         shell: bash
         env:
