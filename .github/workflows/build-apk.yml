@@ -31,7 +31,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ZIP_FILE="$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project.zip"
+          ZIP_FILE="$GITHUB_WORKSPACE/Block_Buddies_Android_APK_Project_v1.zip"
 
           if [ ! -f "$ZIP_FILE" ]; then
             echo "::error::ZIP archive not found"
