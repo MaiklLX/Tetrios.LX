@@ -52,8 +52,9 @@ if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js d
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
 if (!arena.includes('function rotateMatrix(matrix,direction)') || !arena.includes('rotationAngle=-direction*Math.PI/2')) fail('3D arena must animate quarter-turn piece rotations');
 if (!arena.includes('activeGroup.rotation.z=rotationAngle')) fail('3D arena must apply the eased rotation to the active piece');
-if (!arena.includes('rotationPivotX*(1-c)-rotationPivotY*sn')) fail('3D arena rotation must compensate around the piece centre');
-if (!arena.includes('activeGroup.position.set(pieceOffsetX,pieceOffsetY,0)')) fail('3D arena must apply interpolated piece offsets to the active group');
+if (!arena.includes('rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena rotation must compensate around the piece centre');
+if (!arena.includes('pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena must apply interpolated piece offsets to the active group');
+if (!arena.includes('cell.scale.set(1,.78,1)') || !arena.includes('cell.userData.landAt')) fail('locked 3D blocks must use a brief landing compression');
 if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
 if (!visual.includes('three/addons/loaders/GLTFLoader.js')) fail('visual-3d.js does not load the local GLTFLoader');
