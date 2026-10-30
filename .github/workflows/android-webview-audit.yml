@@ -1,0 +1,53 @@
+name: Android WebView source audit
+
+on:
+  push:
+    branches:
+      - fix/3d-character-render-lifecycle
+    paths:
+      - ".github/workflows/android-webview-audit.yml"
+      - "Block_Buddies_Android_APK_Project_v1.zip"
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-android-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out audit branch
+        uses: actions/checkout@v4
+
+      - name: Extract Android project archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/android-project"
+          unzip -q "Block_Buddies_Android_APK_Project_v1.zip" -d "$RUNNER_TEMP/android-project"
+          echo "Archive entries:"
+          find "$RUNNER_TEMP/android-project" -maxdepth 5 -type f | sort
+          echo
+          echo "Potential WebView entry points:"
+          find "$RUNNER_TEMP/android-project" -type f \\( -name 'MainActivity.*' -o -name 'AndroidManifest.xml' -o -name 'build.gradle' -o -name 'build.gradle.kts' -o -name 'settings.gradle' -o -name 'settings.gradle.kts' \\) -print
+
+      - name: Prepare source snapshot for review
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/android-audit-snapshot"
+          find "$RUNNER_TEMP/android-project" -type f \\( \
+            -name 'MainActivity.java' -o -name 'MainActivity.kt' -o \
+            -name 'AndroidManifest.xml' -o -name 'build.gradle' -o \
+            -name 'build.gradle.kts' -o -name 'settings.gradle' -o \
+            -name 'settings.gradle.kts' -o -name 'gradle.properties' \
+          \\) -exec cp --parents '{}' "$RUNNER_TEMP/android-audit-snapshot/" \\;
+          test -n "$(find "$RUNNER_TEMP/android-audit-snapshot" -type f -print -quit)"
+          tar -czf "$RUNNER_TEMP/android-webview-source-audit.tar.gz" -C "$RUNNER_TEMP" android-audit-snapshot
+
+      - name: Upload audit-only source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-webview-source-audit
+          path: ${{ runner.temp }}/android-webview-source-audit.tar.gz
+          if-no-files-found: error
+          retention-days: 3
