@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Apply the hardened offline WebView configuration to the extracted APK project."""
+# Exercised by the isolated Android WebView source-audit workflow.
 
 from pathlib import Path
 import sys
