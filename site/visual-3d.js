@@ -11,6 +11,8 @@
     fallbackScan();new MutationObserver(fallbackScan).observe(document.body,{childList:true,subtree:true});return;
   }
   const active=new Map();
+  const lowPowerDevice=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
+  const stageDetail=lowPowerDevice?32:48;
   const colorFor=id=>({plush:0x9b6845,prism:0x42c8ff,blip:0x9564f5,pixel:0x42d6a0,spark:0xffc84d}[id]||0x8e9bff);
   const mat=(color,roughness=.32,metalness=.12,emissive=0x000000)=>new THREE.MeshStandardMaterial({color,roughness,metalness,emissive,emissiveIntensity:.38});
   function roundedBlock(w,h,d,r,material){
@@ -186,29 +188,30 @@
     const fallback=document.createElement('div');fallback.className='bb-3d-fallback';fallback.textContent=stage.dataset.heroEmoji||'🧸';stage.appendChild(fallback);
     try{
       const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1.5,5.8);camera.lookAt(0,.9,0);
-      const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance',stencil:false,depth:true});
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.setSize(stage.clientWidth||320,stage.clientHeight||260,false);
+      const renderer=new THREE.WebGLRenderer({alpha:true,antialias:!lowPowerDevice,powerPreference:lowPowerDevice?'low-power':'high-performance',stencil:false,depth:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,lowPowerDevice?1.25:1.6));renderer.setSize(stage.clientWidth||320,stage.clientHeight||260,false);
       renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;
-      renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+      // The showcase has no real-time shadow requirement; avoid allocating a shadow map per card.
+      renderer.shadowMap.enabled=false;
       renderer.domElement.setAttribute('aria-label','Объёмная 3D-модель персонажа');renderer.domElement.setAttribute('role','img');stage.insertBefore(renderer.domElement,fallback);fallback.style.display='none';
       scene.add(new THREE.HemisphereLight(0xc6d8ff,0x1a1c42,2.0));
-      const key=new THREE.DirectionalLight(0xfff4df,4.0);key.position.set(3,5,4);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
+      const key=new THREE.DirectionalLight(0xfff4df,3.6);key.position.set(3,5,4);scene.add(key);
       const fill=new THREE.DirectionalLight(0x7b8cff,2.2);fill.position.set(-4,2,-3);scene.add(fill);
-      const rim=new THREE.PointLight(colorFor(stage.dataset.heroId),24,9);rim.position.set(-2,2,2);scene.add(rim);
-      const accent=new THREE.PointLight(0x8c5bff,10,7);accent.position.set(2,.8,-2);scene.add(accent);
+
       // A miniature holographic showcase stage: layered metallic plinth, emissive rings,
       // a deep starfield and floating architectural arcs instead of a flat preview card.
       const base=colorFor(stage.dataset.heroId),stageRig=new THREE.Group();scene.add(stageRig);
       const plinthMat=new THREE.MeshStandardMaterial({color:0x121a35,metalness:.82,roughness:.24});
-      const plinth=new THREE.Mesh(new THREE.CylinderGeometry(.94,1.04,.12,64),plinthMat);plinth.position.y=.015;plinth.receiveShadow=true;stageRig.add(plinth);
-      const top=new THREE.Mesh(new THREE.CylinderGeometry(.88,.94,.035,64),new THREE.MeshStandardMaterial({color:0x20294b,metalness:.72,roughness:.2,emissive:base,emissiveIntensity:.08}));top.position.y=.09;stageRig.add(top);
-      const edge=new THREE.Mesh(new THREE.TorusGeometry(.94,.025,10,72),new THREE.MeshBasicMaterial({color:base}));edge.rotation.x=Math.PI/2;edge.position.y=.075;stageRig.add(edge);
-      const innerEdge=new THREE.Mesh(new THREE.TorusGeometry(.69,.009,8,72),new THREE.MeshBasicMaterial({color:0x9e8bff,transparent:true,opacity:.85}));innerEdge.rotation.x=Math.PI/2;innerEdge.position.y=.112;stageRig.add(innerEdge);
-      const floor=new THREE.Mesh(new THREE.CircleGeometry(1.5,64),new THREE.MeshBasicMaterial({color:base,transparent:true,opacity:.12,side:THREE.DoubleSide}));floor.rotation.x=-Math.PI/2;floor.position.y=.105;stageRig.add(floor);
+      const plinth=new THREE.Mesh(new THREE.CylinderGeometry(.94,1.04,.12,stageDetail),plinthMat);plinth.position.y=.015;stageRig.add(plinth);
+      const top=new THREE.Mesh(new THREE.CylinderGeometry(.88,.94,.035,stageDetail),new THREE.MeshStandardMaterial({color:0x20294b,metalness:.72,roughness:.2,emissive:base,emissiveIntensity:.08}));top.position.y=.09;stageRig.add(top);
+      const edge=new THREE.Mesh(new THREE.TorusGeometry(.94,.025,8,stageDetail),new THREE.MeshBasicMaterial({color:base}));edge.rotation.x=Math.PI/2;edge.position.y=.075;stageRig.add(edge);
+      const innerEdge=new THREE.Mesh(new THREE.TorusGeometry(.69,.009,6,stageDetail),new THREE.MeshBasicMaterial({color:0x9e8bff,transparent:true,opacity:.85}));innerEdge.rotation.x=Math.PI/2;innerEdge.position.y=.112;stageRig.add(innerEdge);
+      const floor=new THREE.Mesh(new THREE.CircleGeometry(1.5,stageDetail),new THREE.MeshBasicMaterial({color:base,transparent:true,opacity:.12,side:THREE.DoubleSide}));floor.rotation.x=-Math.PI/2;floor.position.y=.105;stageRig.add(floor);
       const arcMat=new THREE.MeshBasicMaterial({color:base,transparent:true,opacity:.34});
-      for(let i=0;i<3;i++){const arc=new THREE.Mesh(new THREE.TorusGeometry(1.35+i*.22,.008,6,72,Math.PI*1.15),arcMat);arc.position.set(0,.82-i*.13,-.55);arc.rotation.set(.45+i*.24,.25+i*.5,.35+i*.4);stageRig.add(arc)}
+      for(let i=0;i<3;i++){const arc=new THREE.Mesh(new THREE.TorusGeometry(1.35+i*.22,.008,4,stageDetail,Math.PI*1.15),arcMat);arc.position.set(0,.82-i*.13,-.55);arc.rotation.set(.45+i*.24,.25+i*.5,.35+i*.4);stageRig.add(arc)}
       const stars=new THREE.BufferGeometry(),starPositions=[];
-      for(let i=0;i<180;i++){starPositions.push((Math.random()-.5)*7,Math.random()*4.5-.1,-2.5-Math.random()*3)}
+      const starCount=lowPowerDevice?72:120;
+      for(let i=0;i<starCount;i++){starPositions.push((Math.random()-.5)*7,Math.random()*4.5-.1,-2.5-Math.random()*3)}
       stars.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
       const starField=new THREE.Points(stars,new THREE.PointsMaterial({color:0xc5d9ff,size:.018,transparent:true,opacity:.78,sizeAttenuation:true}));scene.add(starField);
       const char=makeCharacter(stage);char.group.position.y=.12;scene.add(char.group);
