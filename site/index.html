@@ -5367,6 +5367,8 @@ body .action.primary { background-color:rgba(15,23,45,.18); }
   letter-spacing: .13em;
 }
 .bb-reward-art {
+  position: relative;
+  isolation: isolate;
   display: grid;
   place-items: center;
   width: 94px;
@@ -5377,6 +5379,25 @@ body .action.primary { background-color:rgba(15,23,45,.18); }
   background: radial-gradient(circle, color-mix(in srgb, var(--reward-accent) 22%, transparent), #111827 72%);
   box-shadow: 0 0 30px color-mix(in srgb, var(--reward-accent) 25%, transparent), inset 0 0 20px #ffffff08;
   font-size: 52px;
+  animation: bbRewardArtifact .7s .12s cubic-bezier(.16,1,.3,1) both, bbRewardFloat 3s 1s ease-in-out infinite;
+}
+.bb-reward-art:before,
+.bb-reward-art:after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -9px;
+  border: 1px solid color-mix(in srgb, var(--reward-accent) 48%, transparent);
+  border-radius: 31px;
+  opacity: 0;
+  animation: bbRewardRing .8s .18s ease-out both;
+  pointer-events: none;
+}
+.bb-reward-art:after {
+  inset: -16px;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--reward-accent) 28%, transparent);
+  animation-delay: .32s;
 }
 .bb-box-reveal .eyebrow { color: #a8b2ce; font-size: 9px; font-weight: 900; letter-spacing: .2em; }
 .bb-box-reveal h3 { margin: 7px 0 10px; color: #f4f5ff; font-size: 21px; }
@@ -5400,13 +5421,52 @@ body .action.primary { background-color:rgba(15,23,45,.18); }
 .bb-run-reward-row strong, .bb-run-reward-row small { display: block; }
 .bb-run-reward-row strong { font-size: 12px; }
 .bb-run-reward-row small { margin-top: 3px; color: #a8b2ce; font-size: 10px; }
-.bb-levelup-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 7px; margin-top: 10px; padding: 10px; border: 1px solid #ffd47777; border-radius: 11px; background: #ffd47716; color: #ffe09a; font-size: 10px; }
+.bb-levelup-banner {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 11px 10px;
+  overflow: hidden;
+  border: 1px solid #ffd47799;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at 50% 0, #ffd4772b, transparent 75%), #ffd47716;
+  color: #ffe09a;
+  font-size: 10px;
+  box-shadow: 0 0 0 1px #ffd47712, 0 0 22px #ffc86b18, inset 0 1px #ffffff12;
+  animation: bbLevelUpEnter .65s .12s cubic-bezier(.16,1,.3,1) both, bbLevelUpGlow 2.4s .8s ease-in-out infinite;
+}
+.bb-levelup-banner:before {
+  content: "✦     ·       ✧       ·     ✦";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #ffe7a8;
+  font-size: 17px;
+  letter-spacing: .48em;
+  opacity: 0;
+  animation: bbLevelUpSparkle 1.1s .35s ease-out both;
+  pointer-events: none;
+}
+.bb-levelup-banner > * { position: relative; }
 .bb-levelup-banner b { font-size: 12px; }
 .bb-run-reward-note { margin-top: 9px; color: #9eabc8; font-size: 10px; text-align: center; }
 @keyframes bbRewardReveal { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes bbRewardShine { to { transform: translateX(120%); } }
+@keyframes bbRewardArtifact { 0% { opacity: 0; transform: scale(.45) rotate(-12deg); filter: brightness(1.8); } 72% { opacity: 1; transform: scale(1.09) rotate(3deg); } 100% { transform: scale(1) rotate(0); filter: brightness(1); } }
+@keyframes bbRewardFloat { 50% { transform: translateY(-4px); } }
+@keyframes bbRewardRing { 0% { opacity: .8; transform: scale(.72); } 100% { opacity: 0; transform: scale(1.22); } }
+@keyframes bbLevelUpEnter { 0% { opacity: 0; transform: translateY(8px) scale(.94); } 65% { opacity: 1; transform: translateY(-2px) scale(1.025); } 100% { transform: translateY(0) scale(1); } }
+@keyframes bbLevelUpGlow { 0%, 100% { box-shadow: 0 0 0 1px #ffd47712, 0 0 18px #ffc86b14, inset 0 1px #ffffff12; } 50% { box-shadow: 0 0 0 1px #ffd47735, 0 0 27px #ffc86b38, inset 0 1px #ffffff20; } }
+@keyframes bbLevelUpSparkle { 0% { opacity: 0; transform: scale(.75); } 30% { opacity: .8; } 100% { opacity: 0; transform: scale(1.18); } }
 @media (prefers-reduced-motion: reduce) {
-  .bb-box-reveal, .bb-box-reveal:after { animation: none !important; }
+  .bb-box-reveal, .bb-box-reveal:after, .bb-reward-art, .bb-reward-art:before, .bb-reward-art:after, .bb-levelup-banner, .bb-levelup-banner:before { animation: none !important; }
 }
 @media (max-width: 360px) {
   .bb-box-reveal { padding: 15px 12px; }
