@@ -75,6 +75,52 @@ jobs:
           yes | "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --licenses >/dev/null || true
           "$SDKMANAGER" --sdk_root="$ANDROID_HOME" --install "platforms;android-35" "build-tools;35.0.0"
 
+      - name: Prepare complete offline game assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE="$GITHUB_WORKSPACE/site"
+          ASSET_INDEX="$(find "$RUNNER_TEMP/android-project/app/src/main" -type f -path '*/assets/*' -name index.html -print -quit)"
+          if [ -z "$ASSET_INDEX" ]; then
+            echo "::error::Android assets/index.html not found"
+            exit 1
+          fi
+          ASSET_DIR="$(dirname "$ASSET_INDEX")"
+
+          mkdir -p "$SITE/audio" "$SITE/vendor"
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "$SITE/audio/chills.mp3"
+          test -s "$SITE/audio/chills.mp3"
+          test "$(stat -c%s "$SITE/audio/chills.mp3")" -ge 1000000
+
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$SITE/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$SITE/vendor/three"
+          node "$SITE/validate-3d-runtime.mjs"
+
+          cp "$SITE/index.html" "$ASSET_INDEX"
+          for asset in favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+            test -s "$SITE/$asset"
+            cp "$SITE/$asset" "$ASSET_DIR/$asset"
+          done
+          for dir in characters audio vendor; do
+            test -d "$SITE/$dir"
+            mkdir -p "$ASSET_DIR/$dir"
+            rm -rf "$ASSET_DIR/$dir"/*
+            cp -a "$SITE/$dir/." "$ASSET_DIR/$dir/"
+          done
+
+          test -s "$ASSET_DIR/vendor/three/build/three.module.js"
+          test -s "$ASSET_DIR/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          test -s "$ASSET_DIR/audio/chills.mp3"
+          test -s "$ASSET_DIR/characters/manifest.json"
+          grep -q './vendor/three/build/three.module.js' "$ASSET_INDEX"
+          grep -q 'src="./audio/chills.mp3"' "$ASSET_INDEX"
+          echo "Complete offline HTML, CSS, JS, Three.js, GLTFLoader, character manifest and CC0 audio copied into Android assets."
+
       - name: Compile debug APK without publishing
         shell: bash
         env:
@@ -85,6 +131,33 @@ jobs:
           gradle --no-daemon --stacktrace :app:assembleDebug
           test -s app/build/outputs/apk/debug/app-debug.apk
           echo "Android debug APK compiled successfully; no release, signing, upload or deployment was performed."
+
+      - name: Verify packaged APK offline resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$RUNNER_TEMP/android-project/app/build/outputs/apk/debug/app-debug.apk"
+          CONTENTS="$RUNNER_TEMP/apk-contents.txt"
+          unzip -Z1 "$APK" > "$CONTENTS"
+          for required in \
+            assets/index.html \
+            assets/visual-3d.js \
+            assets/arena-3d.js \
+            assets/vendor/three/build/three.module.js \
+            assets/vendor/three/examples/jsm/loaders/GLTFLoader.js \
+            assets/characters/manifest.json \
+            assets/audio/chills.mp3; do
+            if ! grep -Fxq "$required" "$CONTENTS"; then
+              echo "::error::APK is missing offline asset: $required"
+              exit 1
+            fi
+          done
+          mkdir -p "$RUNNER_TEMP/apk-assets-check"
+          unzip -p "$APK" assets/index.html > "$RUNNER_TEMP/apk-assets-check/index.html"
+          grep -q './vendor/three/build/three.module.js' "$RUNNER_TEMP/apk-assets-check/index.html"
+          grep -q 'src="./audio/chills.mp3"' "$RUNNER_TEMP/apk-assets-check/index.html"
+          echo "PASS: APK contains local Three.js, GLTFLoader, game modules, character manifest and offline soundtrack."
+          echo "Note: no licensed GLB character models are currently assigned in the manifest; procedural character fallback remains active."
 
       - name: Persist the hardened Android starter project
         shell: bash
