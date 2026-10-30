@@ -152,8 +152,26 @@
       if(gltf.animations?.length){
         item.mixer=new THREE.AnimationMixer(model);
         const names=entry.animations||{};
-        const idle=gltf.animations.find(clip=>clip.name===names.idle)||gltf.animations[0];
-        if(idle)item.mixer.clipAction(idle).reset().play();
+        const actions=new Map(gltf.animations.map(clip=>[clip.name,item.mixer.clipAction(clip)]));
+        const idleName=names.idle||'idle';
+        const idle=actions.get(idleName)||item.mixer.clipAction(gltf.animations[0]);
+        idle.setLoop(THREE.LoopRepeat,Infinity);
+        idle.reset().play();
+        item.currentAction=idle;
+        item.animationActions=actions;
+        item.playAnimation=name=>{
+          const clipName=names[name]||name;
+          const action=actions.get(clipName);
+          if(!action)return false;
+          if(action===item.currentAction)return true;
+          action.reset();
+          action.setLoop(name==='death'?THREE.LoopOnce:THREE.LoopRepeat,name==='death'?1:Infinity);
+          action.clampWhenFinished=name==='death';
+          item.currentAction?.fadeOut(.16);
+          action.fadeIn(.16).play();
+          item.currentAction=action;
+          return true;
+        };
         item.clips=gltf.animations;
       }
       item.externalModel=true;
@@ -208,7 +226,7 @@
       renderer.domElement.addEventListener('pointercancel',up);
       renderer.domElement.addEventListener('lostpointercapture',up);
       stage.addEventListener('pointerleave',up);
-      const item={renderer,scene,camera,char,ro,controls,mixer:null,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}};active.set(stage,item);tryLoadCharacterAsset(stage,char,item);
+      const item={renderer,scene,camera,char,ro,controls,mixer:null,cleanup:()=>{renderer.domElement.removeEventListener('pointerdown',down);renderer.domElement.removeEventListener('pointermove',move);renderer.domElement.removeEventListener('pointerup',up);renderer.domElement.removeEventListener('pointercancel',up);renderer.domElement.removeEventListener('lostpointercapture',up);stage.removeEventListener('pointerleave',up)}};const animationEvent=event=>item.playAnimation?.(event.detail?.name);stage.addEventListener('bb3d:animation',animationEvent);const baseCleanup=item.cleanup;item.cleanup=()=>{baseCleanup();stage.removeEventListener('bb3d:animation',animationEvent)};active.set(stage,item);tryLoadCharacterAsset(stage,char,item);
     }catch(err){console.warn('[Tetrios 3D] Renderer failed; keeping fallback artwork.',err);fallback.style.display='';}
   }
   // Dispose scene-owned GPU resources when a mascot card leaves the DOM.
