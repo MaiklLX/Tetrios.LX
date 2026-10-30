@@ -55,6 +55,7 @@ if (!arena.includes('activeGroup.rotation.z=rotationAngle')) fail('3D arena must
 const compactArena = arena.replace(/\\s+/g, '');
 if (!compactArena.includes('rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena rotation must compensate around the piece centre');
 if (!compactArena.includes('pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena must apply interpolated piece offsets to the active group');
+if (!arena.includes('impactStrength=Math.min(.32,.08+dropDistance*.025)')) fail('landing camera feedback must scale with drop distance');
 if (!arena.includes('cell.scale.set(1,.78,1)') || !arena.includes('cell.userData.landAt')) fail('locked 3D blocks must use a brief landing compression');
 if (!arena.includes('!reducedMotion.matches&&sameFallingPiece')) fail('piece movement interpolation must respect reduced-motion preferences');
 if (!visual.includes('./vendor/three/build/three.module.js')) fail('visual-3d.js does not load local Three.js');
