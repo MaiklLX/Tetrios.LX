@@ -32,7 +32,7 @@ let map;
 try { map = JSON.parse(imports); }
 catch { fail('index.html must contain a valid JSON import map before module scripts'); }
 
-const inlineGameScript = [...index.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)]
+const inlineGameScript = [...index.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
   .map(match => match[1])
   .find(script => script.includes('function startGame') && script.includes('function render()'));
 if (!inlineGameScript) fail('index.html must contain the main inline gameplay script');
