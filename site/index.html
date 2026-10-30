@@ -5134,8 +5134,10 @@ body .app {
   background-size:cover,cover,cover,cover;
   background-attachment:scroll,scroll,scroll,scroll;
 }
+/* Decorative frames are reserved for prominent controls; compact in-game
+   buttons keep their original high-contrast hit areas on narrow screens. */
 body .iconbtn,
-body .smallbtn {
+body .action.primary {
   background-image:url("./assets/ui/neon-button-frame.svg");
   background-size:100% 100%;
   background-position:center;
@@ -5143,7 +5145,7 @@ body .smallbtn {
   border-color:transparent;
 }
 body .iconbtn { background-color:rgba(15,23,45,.42); }
-body .smallbtn { background-color:rgba(15,23,45,.45); }
+body .action.primary { background-color:rgba(15,23,45,.18); }
 .boardframe {
   background-image:
     linear-gradient(145deg,rgba(23,33,59,.94),rgba(13,20,39,.94)),
