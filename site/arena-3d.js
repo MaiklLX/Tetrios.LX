@@ -201,12 +201,25 @@
       shock.userData.createdAt=now;shock.userData.life=300;shock.userData.shockwave=true;
       effectsGroup.add(shock);
     }
+    const landingKeys=new Set();
+    const landedPiece=boardChanged&&previousState?.piece&&!linesChanged?previousState.piece:null;
+    if(landedPiece)landedPiece.shape.forEach((row,dy)=>row.forEach((v,dx)=>{
+      if(v&&landedPiece.y+dy>=0)landingKeys.add((landedPiece.x+dx)+','+(landedPiece.y+dy));
+    }));
     if(boardChanged){
       lastBoardSignature=boardSignature;
       disposeGroup(boardGroup);
       const colors=state.colors||[];
       for(let y=0;y<state.height;y++)for(let x=0;x<state.width;x++){
-        const v=state.board[y]?.[x];if(v)blockInto(boardGroup,x,y,colors[v-1]||'#69f4ff');
+        const v=state.board[y]?.[x];
+        if(v){
+          blockInto(boardGroup,x,y,colors[v-1]||'#69f4ff');
+          const cell=boardGroup.children[boardGroup.children.length-1];
+          if(!reducedMotion.matches&&landingKeys.has(x+','+y)){
+            cell.userData.landAt=performance.now();
+            cell.scale.set(1,.78,1);
+          }
+        }
       }
     }
     const pieceSignature=JSON.stringify([state.piece,state.ghostY,state.colors]);
@@ -283,7 +296,15 @@
         const cells=pulseGroups[g].children;
         for(let i=0;i<cells.length;i++){
           const cell=cells[i];
-          if(cell.isGroup){const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;cell.scale.set(pulse,pulse,1);}
+          if(cell.isGroup){
+            const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;
+            if(cell.userData.landAt){
+              const progress=Math.min(1,(now-cell.userData.landAt)/260);
+              const rebound=1-.22*Math.exp(-progress*7)*Math.cos(progress*12);
+              cell.scale.set(pulse,pulse*rebound,1);
+              if(progress>=1)delete cell.userData.landAt;
+            }else cell.scale.set(pulse,pulse,1);
+          }
         }
       }
       if(pieceOffsetX||pieceOffsetY||Math.abs(rotationAngle)>.002){
