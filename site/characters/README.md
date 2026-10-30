@@ -1,35 +1,41 @@
-# Tetrios.LX character asset pipeline
+# Tetrios.LX character assets
 
-This folder is the home for licensed character models. The game continues to use its procedural Three.js mascots until a real model is added and verified; an absent or broken asset must never break the game.
+The five Tetrios.LX hero slots now load real, rigged GLB characters from the Gobkit Minion Pack. The procedural Three.js mascots remain available as a safe fallback if a model fails to load.
 
-## Required asset format
+## Bundled characters
 
-- One `.glb` file per mascot, with embedded textures where practical.
-- Y-up orientation; character faces toward positive Z.
-- Centered around X/Z origin, feet near Y=0.
-- Target visible height around 1.8 units (the loader normalizes scale).
-- Prefer a single skinned mesh or a small number of meshes, PBR materials, sensible polygon count, and no external texture paths.
-- Optional animation clips named `Idle`, `Victory`, and `Attack`. Missing clips are allowed.
-- Include a license file or source URL and explicit license in `manifest.json` before shipping an asset.
+| Tetrios.LX hero | GLB model |
+|---|---|
+| Plush | `models/minion-a01.glb` |
+| Prism | `models/minion-b01.glb` |
+| Blip | `models/minion-c01.glb` |
+| Pixel | `models/minion-d01.glb` |
+| Spark | `models/minion-a02.glb` |
 
-## Current status
+Each model is a self-contained GLB 2.0 file with a skinned rig and named `idle`, `attack`, and `dead` animation clips. The runtime normalizes the character height and starts the idle animation. The stage can request another clip with:
 
-No production GLB assets have been added yet. All five manifest entries intentionally have `model: null`; the current procedural models remain the fallback and are still used by the game.
-
-## Validation gate
-
-Before committing a new GLB, run this from the repository root with Node.js 18 or newer:
-
-```sh
-node site/characters/validate-manifest.mjs
+```js
+stage.dispatchEvent(new CustomEvent('bb3d:animation', {
+  detail: { name: 'attack' } // idle | attack | victory | death
+}));
 ```
 
-The validator checks the five mascot entries, safe local paths, explicit license/source metadata, file existence, and the GLB v2 header. It deliberately accepts `model: null` while the procedural fallback is in use. It does not replace visual inspection or a browser/device test.
+## License and source
 
-## Safe integration checklist
+- Pack: Gobkit Minion Pack
+- Source manifest: https://gobkit.com/api/free
+- Individual GLB URLs are recorded in `manifest.json`.
+- License: CC0 1.0 (public domain), commercial and personal use permitted, no attribution required.
+- The SHA-256 hashes are pinned in `models.sha256`.
 
-1. Confirm the asset can be redistributed and modified under its license.
-2. Add the GLB and update only that mascot's `model` field with a relative path such as `./characters/plush.glb`.
-3. Add the license/source information.
-4. Test load failure, mobile viewport, orientation, scale, and animation clips before replacing the fallback.
-5. Keep the procedural mascot available as a runtime fallback.
+## Validation
+
+Run:
+
+```sh
+python3 scripts/validate-glb-characters.py site/characters/models
+node site/characters/validate-manifest.mjs
+node site/validate-3d-runtime.mjs
+```
+
+The pipeline checks GLB v2 headers, embedded resources, rigging, required animation names, manifest paths, license metadata, the pinned Three.js runtime, and local audio. Visual review and testing on real Android/iOS devices are still required before release.
