@@ -219,10 +219,19 @@
       const resize=()=>{if(!stage.isConnected)return;const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
       const ro=new ResizeObserver(resize);ro.observe(stage);
       // Touch/mouse drag lets players inspect the mascot instead of seeing a fixed thumbnail.
-      let dragging=false,lastX=0,lastY=0;const controls={targetY:0,targetX:0};
-      const down=e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;stage.classList.add('bb-3d-dragging');if(renderer.domElement.setPointerCapture&&e.pointerId!==undefined){try{renderer.domElement.setPointerCapture(e.pointerId)}catch(_){}}};
-      const move=e=>{if(!dragging)return;controls.targetY+=(e.clientX-lastX)*.012;controls.targetX=Math.max(-.28,Math.min(.28,controls.targetX+(e.clientY-lastY)*.006));lastX=e.clientX;lastY=e.clientY};
-      const up=()=>{dragging=false;stage.classList.remove('bb-3d-dragging')};
+      let dragging=false,lastX=0,lastY=0;const controls={targetY:0,targetX:0,velocityY:0,velocityX:0,lastMoveAt:0,dragging:false};
+      const down=e=>{dragging=true;controls.dragging=true;controls.velocityY=0;controls.velocityX=0;controls.lastMoveAt=e.timeStamp||performance.now();lastX=e.clientX;lastY=e.clientY;stage.classList.add('bb-3d-dragging');if(renderer.domElement.setPointerCapture&&e.pointerId!==undefined){try{renderer.domElement.setPointerCapture(e.pointerId)}catch(_){}}};
+      const move=e=>{
+        if(!dragging)return;
+        const dx=e.clientX-lastX,dy=e.clientY-lastY,now=e.timeStamp||performance.now();
+        const moveDelta=Math.max(8,Math.min(80,now-controls.lastMoveAt||16));
+        controls.targetY+=dx*.012;
+        controls.targetX=Math.max(-.28,Math.min(.28,controls.targetX+dy*.006));
+        controls.velocityY=Math.max(-3.5,Math.min(3.5,dx*.012/(moveDelta/1000)));
+        controls.velocityX=Math.max(-1.4,Math.min(1.4,dy*.006/(moveDelta/1000)));
+        controls.lastMoveAt=now;lastX=e.clientX;lastY=e.clientY;
+      };
+      const up=()=>{dragging=false;controls.dragging=false;stage.classList.remove('bb-3d-dragging')};
       renderer.domElement.style.touchAction='pan-y';
       renderer.domElement.addEventListener('pointerdown',down);
       renderer.domElement.addEventListener('pointermove',move);
@@ -304,8 +313,18 @@
     for(const [stage,item] of active){
       if(stage.offsetParent===null||item.isVisible===false)continue;
       item.char.group.position.y=.12+Math.sin(t*1.8)*.065;
-      item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*.08;
-      item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*.08;
+      const rotationEase=1-Math.exp(-10*delta);
+      if(!item.controls.dragging){
+        item.controls.targetY+=item.controls.velocityY*delta;
+        item.controls.targetX=Math.max(-.28,Math.min(.28,item.controls.targetX+item.controls.velocityX*delta));
+        const inertia=Math.exp(-6*delta);
+        item.controls.velocityY*=inertia;
+        item.controls.velocityX*=inertia;
+        if(Math.abs(item.controls.velocityY)<.015)item.controls.velocityY=0;
+        if(Math.abs(item.controls.velocityX)<.015)item.controls.velocityX=0;
+      }
+      item.char.group.rotation.y+=(item.controls.targetY+Math.sin(t*.55)*.2-item.char.group.rotation.y)*rotationEase;
+      item.char.group.rotation.x+=(item.controls.targetX-item.char.group.rotation.x)*rotationEase;
       item.char.halo.rotation.z=t*.38;
       item.char.ring2.rotation.z=-t*.22;
       item.char.sparkles.rotation.y=t*.28;
