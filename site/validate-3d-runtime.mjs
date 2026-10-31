@@ -117,6 +117,9 @@ if (!index.includes("color: '#2878c7'") || !index.includes("color: '#ffc84d'")) 
 
 
 if (!index.includes('@media (max-width: 520px)') || !index.includes('#game .playlayout')) fail('classic responsive gameplay layout must remain available on phones');
+if (!index.includes('id="hapticBtn"') || !index.includes('function bbHaptic(pattern)') || !index.includes("typeof navigator.vibrate !== 'function'")) fail('mobile haptic feedback must be optional and guarded for unsupported browsers');
+if (!index.includes('bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16)') || !index.includes('score+=dist*2;bbHaptic(16);lockPiece()')) fail('haptic feedback must respond to line clears and hard drops');
+if (!index.includes("localStorage.bb_haptics=hapticsOn?'1':'0'")) fail('haptic preference must persist between sessions');
 if (index.includes('bbSetupMobileGameHud') || index.includes('mobile-game-hud-trigger') || index.includes('bb-mobile-game-active')) fail('experimental immersive mobile HUD must remain removed');
 if (mobileCss.includes('#game .sidecol{display:none!important}') || mobileCss.includes('position:fixed!important;inset:0!important')) fail('visual stylesheet must not force a fullscreen mobile board');
 if (!arena.includes('new THREE.ExtrudeGeometry(shape,') || !arena.includes('bevelEnabled:true') || !arena.includes('clearcoat:ghost?0:.9')) fail('3D blocks must use beveled, premium physical surfaces');
