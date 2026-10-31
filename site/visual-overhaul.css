@@ -798,3 +798,95 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
     display:block!important;visibility:visible!important;
   }
 }
+
+
+/* TETRIOS.LX — neon arcade home-screen art direction, first implementation pass. */
+:root{--bg:#030817;--panel:#07142a;--panel2:#0c1d39;--cyan:#42eaff;--violet:#9c54ff;--gold:#ffbd39;--ink:#f4f8ff;--muted:#a5b6d8;--line:#1e4b78}
+.app{max-width:none;width:100%;min-height:100dvh;padding:clamp(10px,1.5vw,22px) clamp(12px,2.2vw,34px) 30px;background:radial-gradient(ellipse at 50% 45%,#102d59 0,transparent 36%),radial-gradient(ellipse at 50% 100%,#071e42 0,transparent 55%),linear-gradient(180deg,#020613 0%,#07132b 58%,#020713 100%)}
+.app:before{content:"";position:fixed;inset:35% -15% -20%;z-index:-1;pointer-events:none;opacity:.32;background:linear-gradient(#1a9bff22 1px,transparent 1px),linear-gradient(90deg,#1a9bff22 1px,transparent 1px);background-size:54px 54px;transform:perspective(420px) rotateX(62deg);transform-origin:50% 100%;mask-image:linear-gradient(transparent,#000 30%,#000)}
+.topbar{max-width:1500px;margin:0 auto 12px;padding:7px 12px;border:1px solid #2c70a777;border-radius:18px;background:linear-gradient(100deg,#07152de8,#101d3ce8 55%,#06152de8);box-shadow:0 0 30px #008dff18,inset 0 1px #ffffff18}
+.brand{gap:12px}.brandmark{width:42px;height:42px;border:1px solid #54eaff;border-radius:13px;background:linear-gradient(145deg,#0c3c71,#101a3b);box-shadow:0 0 18px #22caff55;color:#fff}.brandname{font-size:clamp(15px,1.6vw,22px);letter-spacing:.16em;font-weight:1000;text-shadow:0 0 18px #42eaff88}.edition{color:#65eaff;font-size:8px;letter-spacing:.19em}.menu-trigger{border-radius:50%;border:1px solid #62eaff;background:radial-gradient(circle at 35% 25%,#265d88,#09172d 70%);box-shadow:0 0 18px #23caff55;font-size:21px;width:46px;height:46px}
+#menu.home-dashboard{max-width:1500px;width:100%;margin:0 auto;display:grid!important;grid-template-columns:minmax(220px,1fr) minmax(340px,1.28fr) minmax(220px,1fr);grid-template-areas:"label label apk" "campaign hero heroes" "daily play shop" "streak stats currency" "quests quests quests" "reset reset reset";grid-template-rows:auto minmax(170px,auto) auto auto auto auto;gap:clamp(9px,1.15vw,17px);align-items:stretch;padding:4px 0 20px;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+#menu.home-dashboard>.hero{grid-area:hero;min-width:0;min-height:0!important;padding:10px 12px 2px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 65%,#0875bf2b,transparent 60%);border:0!important;box-shadow:none!important}
+#menu.home-dashboard>.hero:before{content:"";position:absolute;z-index:-1;inset:8% 4% 0;border:1px solid #2bbdff3b;border-radius:48% 48% 20px 20px;box-shadow:inset 0 0 55px #008cff18,0 0 45px #007dff15;clip-path:polygon(12% 0,88% 0,100% 100%,0 100%)}
+#menu.home-dashboard>.hero .eyebrow{font-size:clamp(8px,.8vw,11px);letter-spacing:.2em;color:#76eaff}
+#menu.home-dashboard>.hero h1{font-size:clamp(34px,5.3vw,68px)!important;line-height:.98!important;letter-spacing:-.055em!important;margin:8px 0 7px!important;background:linear-gradient(110deg,#fff 8%,#9eeaff 48%,#a98aff 78%,#fff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 28px #38cfff55;white-space:nowrap}
+#menu.home-dashboard>.hero p{font-size:clamp(10px,.9vw,13px)!important;max-width:34ch!important;color:#b8d4f6!important;line-height:1.45!important}
+#menu.home-dashboard>.hero .orb{height:clamp(90px,12vw,160px)!important;width:clamp(140px,19vw,230px)!important;margin:4px auto 0!important;overflow:visible}
+#menu.home-dashboard>.hero .orb:before{width:clamp(80px,9vw,130px);height:clamp(80px,9vw,130px);border:1px solid #42eaff88;box-shadow:0 0 50px #10aaff55,inset 0 0 36px #39dfff33}
+#menu.home-dashboard>.hero .orb:after{width:clamp(118px,15vw,200px);height:clamp(44px,5vw,66px);border-color:#a15cff99}
+#menu.home-dashboard>.hero .relic{font-size:clamp(38px,5vw,66px);filter:drop-shadow(0 0 24px #36dfff);}
+#menu.home-dashboard>.apk-download{grid-area:apk;align-self:center;max-width:none;width:100%;margin:0;border-color:#4c9eff99;background:linear-gradient(110deg,#102c54,#07172d);box-shadow:0 0 22px #148cff22}
+#menu.home-dashboard>.sectionlabel{grid-area:label;margin:0 0 0 4px;color:#83dfff;align-self:end}
+#menu.home-dashboard>.modes{display:contents}
+#menu.home-dashboard>.modes>.mode{min-width:0;min-height:106px!important;padding:clamp(10px,1.2vw,17px)!important;border-radius:19px!important;border:1px solid color-mix(in srgb,var(--glow) 68%,#315078)!important;background:linear-gradient(120deg,color-mix(in srgb,var(--glow) 18%,#08152d),#07142a 72%)!important;box-shadow:inset 0 1px #ffffff19,0 8px 24px #0005,0 0 20px color-mix(in srgb,var(--glow) 12%,transparent);}
+#menu.home-dashboard>.modes>.mode:before{opacity:.35;background:linear-gradient(110deg,var(--glow),transparent 72%)}
+#menu.home-dashboard>.modes>.mode[data-mode="campaign"]{grid-area:campaign}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"]{grid-area:play;min-height:76px!important;align-self:center;justify-content:center;text-align:center;border:2px solid #43dcff!important;background:linear-gradient(115deg,#07558c,#102e75 55%,#391d79)!important;box-shadow:inset 0 1px #ffffff55,0 0 0 4px #2cbcff20,0 0 34px #18aaff55,0 6px 0 #04142b;font-size:1.08em}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modeicon{width:48px;height:48px;background:#54eaff24;font-size:27px}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modetitle{font-size:clamp(16px,1.7vw,23px);color:#fff;text-transform:uppercase;letter-spacing:.09em}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modesub{font-size:10px;color:#c4eaff}
+#menu.home-dashboard>.modes>.mode[data-mode="daily"]{grid-area:daily}
+#menu.home-dashboard>#openHeroes{grid-area:heroes;margin:0!important;min-height:106px!important;border-color:#ffb947!important;background:linear-gradient(115deg,#4b2b0d,#1d1a26 70%)!important;box-shadow:inset 0 1px #fff2,0 8px 24px #0005,0 0 22px #ff9e2422}
+#menu.home-dashboard>#rpgPanel{grid-area:shop;min-width:0;min-height:90px}
+#menu.home-dashboard>#rpgPanel .shop-main-button{min-height:106px;border:1px solid #36caff99;background:linear-gradient(115deg,#092c56,#08152b);box-shadow:inset 0 1px #ffffff22,0 8px 24px #0005,0 0 24px #19bfff25}
+#menu.home-dashboard>#bbVisitStreak{grid-area:streak;margin:0!important;min-width:0;border-color:#a45aff99!important;background:linear-gradient(125deg,#30125a,#10172f 72%)!important;box-shadow:inset 0 1px #fff2,0 0 22px #963cff20!important}
+#menu.home-dashboard>.bottomstats{grid-area:stats;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;align-self:stretch}
+#menu.home-dashboard>.bottomstats .stat{border-color:#426fc2;background:linear-gradient(145deg,#111f43,#09152b);box-shadow:inset 0 1px #ffffff17,0 0 18px #2d75ff1b}
+#menu.home-dashboard>.currency-panel{grid-area:currency;margin:0;min-width:0;border-color:#4b8eff99;background:linear-gradient(125deg,#10254a,#0a152b);}
+#menu.home-dashboard>#dailyQuestsPanel{grid-area:quests;margin:0!important}
+#menu.home-dashboard>.home-reset{grid-area:reset;margin:0!important}
+#menu.home-dashboard>.shopbuttons{display:none!important}
+#menu.home-dashboard>.modes>.mode .modeicon{border:1px solid color-mix(in srgb,var(--glow) 55%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--glow) 24%,transparent);}
+#menu.home-dashboard .modetitle{text-transform:uppercase;letter-spacing:.055em}
+#menu.home-dashboard .modearrow{color:#e5faff;font-size:28px;text-shadow:0 0 12px #48dfff}
+#menu.home-dashboard .stat strong{color:#fff;text-shadow:0 0 12px #55caff55}
+#menu.home-dashboard>#dailyQuestsPanel{border-color:#35dfff88!important;background:linear-gradient(120deg,#081b36,#0b1a31)!important;box-shadow:0 0 24px #00aaff14}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{background:linear-gradient(120deg,#102342,#0b172d)!important;border-color:#31517c!important}
+#menu.home-dashboard>.currency-panel .currency-card{background:linear-gradient(125deg,#13284a,#09162d);border-color:#356da5}
+#menu.home-dashboard .home-reset{opacity:.82}
+#game .screenhead #pauseBtn{font-size:0!important;width:46px!important;height:46px!important;border-radius:50%!important;border:1px solid #62eaff!important;background:radial-gradient(circle at 35% 25%,#286c9d,#101a35 72%)!important;box-shadow:0 0 18px #20caff33,inset 0 1px #ffffff33!important;position:relative}
+#game .screenhead #pauseBtn:before{content:"Ⅱ";font-size:20px;font-weight:1000}
+#game .sidecard:has(#musicBtn){display:none!important}
+.settings-list{display:grid;gap:8px;margin:14px 0}
+.settings-row{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border:1px solid #31517b;border-radius:14px;background:linear-gradient(110deg,#10294a,#0a172d);}
+.settings-symbol{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#37cfff20;color:#69eaff;font-size:21px;flex:0 0 38px}
+.settings-row>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}.settings-row strong{font-size:12px}.settings-row small{font-size:10px;color:#9eb4d5}.settings-state{font-size:9px;letter-spacing:.12em;color:#58eaff;border:1px solid #3edaff66;border-radius:20px;padding:5px 8px}
+@media(max-width:900px){
+ #menu.home-dashboard{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"hero hero" "label apk" "campaign play" "daily heroes" "shop shop" "streak currency" "stats stats" "quests quests" "reset reset";gap:9px}
+ #menu.home-dashboard>.hero{padding:8px 8px 0!important}
+ #menu.home-dashboard>.hero .orb{height:88px!important}
+ #menu.home-dashboard>.modes>.mode{min-height:96px!important}
+ #menu.home-dashboard>.modes>.mode[data-mode="rogue"]{min-height:88px!important}
+ #menu.home-dashboard>#rpgPanel{min-height:0}
+ #menu.home-dashboard>#rpgPanel .shop-main-button{min-height:86px}
+ #menu.home-dashboard>.bottomstats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:520px){
+ .app{padding:8px 9px 22px}
+ .topbar{margin-bottom:8px;padding:6px 9px;border-radius:14px}
+ .brandmark{width:36px;height:36px}.brandname{font-size:14px}.edition{font-size:7px}
+ .menu-trigger{width:40px;height:40px}
+ #menu.home-dashboard{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"hero hero" "play play" "campaign daily" "heroes shop" "apk apk" "streak streak" "currency currency" "stats stats" "quests quests" "reset reset";gap:8px}
+ #menu.home-dashboard>.sectionlabel{display:none!important}
+ #menu.home-dashboard>.hero{padding:4px 4px 0!important}
+ #menu.home-dashboard>.hero h1{font-size:clamp(30px,9vw,44px)!important}
+ #menu.home-dashboard>.hero p{font-size:10px!important}
+ #menu.home-dashboard>.hero .orb{height:68px!important;width:145px!important;margin-top:0!important}
+ #menu.home-dashboard>.hero .orb:before{width:58px;height:58px}
+ #menu.home-dashboard>.hero .orb:after{width:92px;height:30px}
+ #menu.home-dashboard>.hero .relic{font-size:29px}
+ #menu.home-dashboard>.modes>.mode{min-height:88px!important;padding:9px!important;gap:7px!important}
+ #menu.home-dashboard>.modes>.mode .modeicon{width:34px;height:34px;flex-basis:34px;font-size:19px}
+ #menu.home-dashboard>.modes>.mode .modetitle{font-size:10px!important}
+ #menu.home-dashboard>.modes>.mode .modesub{font-size:8px!important}
+ #menu.home-dashboard>.modes>.mode .tag{font-size:6px!important;letter-spacing:.05em}
+ #menu.home-dashboard>.modes>.mode[data-mode="rogue"]{min-height:62px!important;justify-content:center}
+ #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modeicon{width:34px;height:34px;font-size:20px}
+ #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modetitle{font-size:15px!important}
+ #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modesub,#menu.home-dashboard>.modes>.mode[data-mode="rogue"] .tag{display:none!important}
+ #menu.home-dashboard>#openHeroes{min-height:88px!important;padding:9px!important}
+ #menu.home-dashboard>#bbVisitStreak{padding:12px!important}
+ #menu.home-dashboard>.currency-panel{padding:10px!important}
+ #menu.home-dashboard>.bottomstats .stat{padding:10px 5px!important}
+}
