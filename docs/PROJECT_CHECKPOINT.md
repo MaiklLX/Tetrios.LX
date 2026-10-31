@@ -144,3 +144,13 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Next: verify the latest web deploy and Android debug APK; inspect CI logs for any runtime/markup validation failure; then refine actual page geometry against the reference without touching the gameplay arena. User should verify on a physical Android device; no physical-device test has been claimed.
 - Research notes: classic puzzle-game menus benefit from a strong central focal point and clear mode destinations (Tetris Effect's mode-selection presentation and Puyo Puyo Tetris 2's separated Adventure/Solo/Online/Options destinations were useful references). Sources: https://media.gdcvault.com/gdc2019/presentations/Mizuguchi_Tetsuya_MakingTetrisEffect-ive.pdf and https://cdn.steamstatic.com/steam/apps/1259790/manuals/tenpex_WM_210216_Steam_en.pdf.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Follow-up: central neon block arena built from interface elements — 2026-11-01
+- Added a real CSS/HTML block-stack centerpiece inside the home hero. It is composed of individual colored, glowing block elements with a perspective frame and animated light response; it is not a background screenshot or a generated image.
+- New source commits: hero centerpiece markup `2ff1003f6aef32f403f1640df2cea18e223316ca`; centerpiece styling `580dc6e84059f0e2f7951892c9b3392357519d86`.
+- Latest main SHA at checkpoint: `580dc6e84059f0e2f7951892c9b3392357519d86`.
+- Current CI for this SHA: web deployment run `41244190929` (pending), debug APK run `41244190902` (queued), signed release run `41244191005` (queued). Earlier signed build attempt `41244112545` failed at signing-key retrieval; this is the known external signing-repository access issue. Do not offer an APK or claim the latest revision is live until the corresponding latest artifact/deployment is confirmed.
+- Preserve backup branch `backup/main-before-aaa-release-2026-10-31` at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: verify deployment and APK workflow results; inspect the rendered page on phone/tablet/desktop and adjust proportions, especially the center scene and side cards. Keep gameplay arena/game rules unchanged. Ask user for physical-device feedback after a current APK is available.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
