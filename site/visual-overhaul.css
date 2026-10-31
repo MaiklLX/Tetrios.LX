@@ -364,3 +364,148 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @media(max-height:620px){
   #menu.home-dashboard{height:auto;min-height:calc(100svh - 82px);overflow:visible;grid-template-rows:auto}
 }
+
+/* TETRIOS.LX — dashboard geometry & control consistency pass.
+   Normalize icon boxes, touch targets and text flow without changing game screens. */
+#menu.home-dashboard,
+#menu.home-dashboard *{box-sizing:border-box}
+#menu.home-dashboard>*{min-width:0;max-width:100%}
+#menu.home-dashboard :is(button,a){-webkit-tap-highlight-color:transparent;min-width:0}
+#menu.home-dashboard :is(.mode,.shopbutton,.apk-download,#openHeroes,#resetProgressBtn){
+  min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;
+}
+#menu.home-dashboard>.modes{align-items:stretch}
+#menu.home-dashboard>.modes>.mode{
+  min-width:0;min-height:54px;display:flex;flex-flow:row nowrap;
+  align-items:center;justify-content:flex-start;gap:clamp(7px,1vw,12px);
+  padding:clamp(8px,1vw,13px)!important;text-align:left;
+}
+#menu.home-dashboard>.modes>.mode .modeicon{
+  flex:0 0 clamp(34px,3.4vw,44px);width:clamp(34px,3.4vw,44px);
+  height:clamp(34px,3.4vw,44px);aspect-ratio:1;display:grid;place-items:center;
+  border-radius:12px;font-size:clamp(18px,2vw,25px);line-height:1;
+}
+#menu.home-dashboard>.modes>.mode .modetext,
+#menu.home-dashboard>#openHeroes .modetext{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+#menu.home-dashboard>.modes>.mode .modetitle,
+#menu.home-dashboard>#openHeroes .modetitle{display:block;min-width:0;line-height:1.2;overflow-wrap:anywhere}
+#menu.home-dashboard>.modes>.mode .modesub{
+  max-width:100%;overflow-wrap:anywhere;line-height:1.25;
+}
+#menu.home-dashboard>.modes>.mode .tag{
+  max-width:100%;white-space:normal;overflow-wrap:anywhere;
+  border-radius:6px;letter-spacing:.06em;
+}
+#menu.home-dashboard>.modes>.mode .modearrow{
+  flex:0 0 18px;width:18px;text-align:center;line-height:1;
+}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"]{min-height:64px}
+#menu.home-dashboard>#openHeroes{
+  display:flex;align-items:center;gap:9px;text-align:left;
+}
+#menu.home-dashboard>#openHeroes .modeicon{
+  flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;
+  border-radius:10px;line-height:1;
+}
+#menu.home-dashboard>#openHeroes .modearrow{flex:0 0 16px}
+#menu.home-dashboard>#rpgPanel .shopbutton{
+  min-width:0;display:flex;align-items:center;gap:9px;text-align:left;
+}
+#menu.home-dashboard>#rpgPanel .shop-main-icon{
+  flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;
+  border-radius:10px;line-height:1;
+}
+#menu.home-dashboard>#rpgPanel .shop-main-text{flex:1 1 auto;min-width:0}
+#menu.home-dashboard>#rpgPanel .shop-main-text strong,
+#menu.home-dashboard>#rpgPanel .shop-main-text small{
+  display:block;max-width:100%;overflow-wrap:anywhere;line-height:1.2;
+}
+#menu.home-dashboard>.apk-download{
+  min-height:46px;display:flex;align-items:center;gap:10px;
+}
+#menu.home-dashboard>.apk-download .apk-download-icon,
+#menu.home-dashboard>.apk-download .apk-download-arrow{
+  flex:0 0 28px;width:28px;height:28px;display:grid;place-items:center;
+  border-radius:9px;line-height:1;
+}
+#menu.home-dashboard>.apk-download .apk-download-copy{flex:1 1 auto;min-width:0}
+#menu.home-dashboard>.apk-download .apk-download-copy strong,
+#menu.home-dashboard>.apk-download .apk-download-copy small{
+  display:block;overflow-wrap:anywhere;line-height:1.2;
+}
+#menu.home-dashboard>#bbVisitStreak{min-width:0}
+#menu.home-dashboard>#bbVisitStreak>div:first-child{min-width:0}
+#menu.home-dashboard>#bbVisitStreak #bbStreakCount{line-height:1.1;overflow-wrap:anywhere}
+#menu.home-dashboard>#bbVisitStreak #bbStreakRepairArea>*{max-width:100%;min-width:0}
+#menu.home-dashboard>.currency-panel .currency-grid{min-width:0}
+#menu.home-dashboard>.currency-panel .currency-card{min-width:0;overflow:hidden}
+#menu.home-dashboard>.currency-panel .currency-icon{
+  flex:0 0 24px;width:24px;height:24px;display:grid;place-items:center;line-height:1;
+}
+#menu.home-dashboard>.currency-panel .currency-info{flex:1 1 auto;min-width:0}
+#menu.home-dashboard>.currency-panel .currency-info strong{
+  display:block;max-width:100%;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}
+#menu.home-dashboard>#dailyQuestsPanel{min-width:0}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{min-width:0;align-items:stretch}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{
+  min-width:0;display:flex;flex-direction:column;justify-content:space-between;
+}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>*{
+  max-width:100%;min-width:0;overflow-wrap:anywhere;
+}
+#menu.home-dashboard>.bottomstats .stat{min-width:0;overflow:hidden}
+#menu.home-dashboard>.bottomstats .stat strong,
+#menu.home-dashboard>.bottomstats .stat span{max-width:100%;overflow-wrap:anywhere;text-align:center}
+#menu.home-dashboard>.home-reset #resetProgressBtn{
+  min-height:30px;max-width:100%;white-space:normal;line-height:1.15;
+}
+.topbar{min-width:0;display:flex;align-items:center;gap:8px}
+.topbar .brand{flex:1 1 auto;min-width:0}
+.topbar .brand>div:last-child{min-width:0}
+.topbar .brandname,.topbar .edition{max-width:100%;overflow-wrap:anywhere}
+.topbar .iconbtn{
+  flex:0 0 clamp(36px,3.2vw,42px);width:clamp(36px,3.2vw,42px);
+  height:clamp(36px,3.2vw,42px);min-width:0;min-height:0;
+  display:grid;place-items:center;padding:0!important;line-height:1;
+}
+@media(max-width:760px){
+  #menu.home-dashboard>.modes>.mode{min-height:0;gap:7px;padding:7px 9px!important}
+  #menu.home-dashboard>.modes>.mode .modeicon{
+    flex-basis:32px;width:32px;height:32px;border-radius:10px;font-size:18px;
+  }
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"]{min-height:48px}
+  #menu.home-dashboard>.modes>.mode .modearrow{flex-basis:14px;width:14px;font-size:16px}
+  #menu.home-dashboard>#openHeroes,#menu.home-dashboard>#rpgPanel .shopbutton{gap:6px}
+  #menu.home-dashboard>#openHeroes .modeicon,
+  #menu.home-dashboard>#rpgPanel .shop-main-icon{
+    flex-basis:28px;width:28px;height:28px;border-radius:8px;
+  }
+  #menu.home-dashboard>.apk-download{min-height:38px;gap:7px}
+  #menu.home-dashboard>.apk-download .apk-download-icon,
+  #menu.home-dashboard>.apk-download .apk-download-arrow{
+    flex-basis:23px;width:23px;height:23px;
+  }
+  #menu.home-dashboard>.currency-panel .currency-card{gap:4px}
+  #menu.home-dashboard>.currency-panel .currency-icon{
+    flex-basis:19px;width:19px;height:19px;font-size:13px;
+  }
+  .topbar{gap:6px}
+  .topbar .iconbtn{flex-basis:36px;width:36px;height:36px}
+  .topbar .brandmark{flex:0 0 34px;width:34px;height:34px}
+  .topbar .brandname{font-size:clamp(10px,3vw,13px)}
+  .topbar .edition{font-size:6px;letter-spacing:.06em;padding:3px 5px}
+}
+@media(max-width:380px){
+  #menu.home-dashboard>.modes>.mode{gap:5px;padding:6px!important}
+  #menu.home-dashboard>.modes>.mode .modeicon{flex-basis:28px;width:28px;height:28px;font-size:16px}
+  #menu.home-dashboard>.modes>.mode .modetitle{font-size:9px!important}
+  #menu.home-dashboard>#openHeroes .modetitle,
+  #menu.home-dashboard>#rpgPanel .shop-main-text strong{font-size:8px!important}
+  #menu.home-dashboard>.currency-panel .currency-info strong{font-size:11px!important}
+  #menu.home-dashboard>.bottomstats .stat span{letter-spacing:.04em}
+}
+@media(max-height:620px){
+  #menu.home-dashboard>.modes>.mode{min-height:58px}
+}
+
