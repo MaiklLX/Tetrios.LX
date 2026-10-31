@@ -43,7 +43,10 @@ When the user sends this phrase in a new chat:
 - Preserved existing feature hooks and data IDs: game modes, Android APK download, daily visit streak/repair, hero selection, shop, currencies, daily quests, record/run/relic stats, and full progress reset.
 - Desktop uses a wide dashboard grid; narrow screens use a compact two-column composition with a featured primary run mode.
 - Short-height devices below 620px retain natural vertical overflow instead of clipping content or making controls inaccessible.
-- Latest homepage source commit and CI are recorded below after the first implementation pass.
+- Responsive dashboard commits: markup `0b48a9c9e52d50a6b79094f768cf24e538f7e85e`; initial dashboard CSS `e30ed69c701a5d7f3261f0f905fe5eda9a3a8326`; mobile grid/screen-switch safety `1a2f077db2ee96e12d20233c3bcca684d20028f4`; featured primary mode `2a1d4b49b131751d63d390eb89b847b633f5bbc2`; short-viewport CSS safety `8124f9fd2343bd301273f0be4446db36192ad9f4`.
+- Runtime validator addition: `83b8d20200b8c7e2c56019e7cd873654a0f09125`.
+- Run `41238153870` completed successfully for the responsive dashboard source before the final featured-mode and short-viewport CSS refinements. Latest full audit `41238292740` is running for source commit `8124f9fd2343bd301273f0be4446db36192ad9f4`; verify its conclusion and artifact before sharing a new APK.
+- The dashboard keeps the existing app identity and all existing click/data hooks; no gameplay screen or arena files were changed in this homepage pass.
 
 ## Current CI
 - Android WebView audit PR run: `41217105665`
@@ -59,7 +62,7 @@ When the user sends this phrase in a new chat:
 - Latest 3D effect lifecycle source commit: `b25da61f091bfa253ba60b164948cf33a098c1cb`.
 - Latest 3D effect validator commit: `f680721d28faf3c17a4c2b5645cf0f99d3ff06b3`.
 - Latest runtime validator commit: `81a06b69e7e88017aa8e51b076313888c7ad7c4a`.
-- Latest verified audit run `41219218006` completed successfully for checkpoint commit `04e6a0a5b215dcbc7db77b4935f602b6c55de8ba`; APK artifact `13049137553` (`Tetrios-LX-test-apk`, 18,904,937 bytes), expires `2026-11-14T16:21:56Z`. The next arena streak-response changes trigger a new audit; verify its result and artifact before sharing as the latest APK.
+- Latest verified pre-homepage audit run `41237316474` completed successfully for arena streak-response checkpoint commit `c8def368eec5d0dfbd9adc1484d206c5670f0c19`. The responsive homepage pass has a successful intermediate audit `41238153870`; the final CSS refinements are being checked by run `41238292740`. Verify its result and APK artifact before sharing a new build.
 
 ## Testing notes for user
 Ask the user to test:
