@@ -33,7 +33,10 @@ When the user sends this phrase in a new chat:
 ## Current CI
 - Android WebView audit PR run: `41217105665`
 - Run URL: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41217105665
-- At checkpoint creation: build was in progress; verify final conclusion and artifacts before sharing APK.
+- Run `41217105665` completed successfully for source commit `4b082c39510305f68ceeeeeeffd061342844af12`.
+- Test APK artifact: `13048019167` (`Tetrios-LX-test-apk`, 18,904,326 bytes), expires `2026-11-14T15:56:05Z`.
+- Artifact URL: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41217105665/artifacts/13048019167
+- A follow-up audit for the docs-only checkpoint commit `d034f9685fdc8cd104699946521c1409ce5b5816` was queued as run `41217232515`; check its final result when resuming.
 
 ## Testing notes for user
 Ask the user to test:
