@@ -106,16 +106,20 @@ if (visual.includes('new THREE.PointLight(')) fail('3D showcase should avoid exp
 if (/https?:\/\//i.test(arena + visual)) fail('a remote HTTP(S) dependency remains in a 3D runtime module');
 if (/cdn\.jsdelivr\.net\/npm\/three@/i.test(index)) fail('index.html contains a Three.js CDN reference');
 if (!index.includes("color: '#2878c7'") || !index.includes("color: '#ffc84d'")) fail('Pixel must remain blue and Spark must remain yellow in the hero roster');
-if (!index.includes('@media(max-width:900px) and (pointer:coarse)')) fail('immersive game layout must target touch devices/tablets without changing desktop browser layout');
+
 if (!index.includes('margin:0!important;padding:0 3px')) fail('mobile hold/drop buttons must fit the compact control row without inherited sidebar spacing');
-if (!index.includes("'mobileHoldBtn'") || !index.includes("'mobileDropBtn'") || !index.includes('repeat(5,minmax(0,1fr))')) fail('mobile controls must preserve left, rotate, right, hold and hard-drop actions');
-if (!index.includes('function bbSetupMobileGameHud()') || !index.includes('mobile-game-hud-trigger') || !index.includes('mobile-game-tools')) fail('mobile gameplay must expose the top-edge HUD reveal control and compact tools');
+
+
 if (!index.includes("trigger.addEventListener('pointerdown'") || !index.includes("trigger.addEventListener('pointerup'") || !index.includes('if(dy>22&&Math.abs(dx)<100)')) fail('mobile HUD must open from a downward swipe starting at the top screen edge');
 if (!index.includes('if(holdProxy)tools.appendChild(holdProxy)') || !index.includes('if(dropProxy)tools.appendChild(dropProxy)')) fail('hold and hard-drop actions must remain available in the revealed mobile tools panel');
-if (!index.includes('#game:not([hidden])') || !index.includes('grid-template-rows:auto minmax(0,1fr)') || !index.includes('#game .sidecol > :nth-child(n+3)')) fail('mobile gameplay must use the full-screen board-first layout and retain only next-piece/level HUD cards');
-if (!mobileCss.includes('#game .controls,') || !mobileCss.includes('#game .hint{display:none!important}')) fail('mobile gameplay must hide the lower control row and hint to maximize the playfield');
-if (!mobileCss.includes('#game .boardframe{') || !mobileCss.includes('padding:3px!important')) fail('mobile 3D board must not reserve a false sidebar gutter inside the playfield');
-if (!mobileCss.includes('@media(max-width:900px) and (pointer:coarse)')) fail('mobile layout refinements must remain limited to touch devices and must not alter desktop browsers');
+
+
+
+
+if (!index.includes('@media (max-width: 520px)') || !index.includes('#game .playlayout')) fail('classic responsive gameplay layout must remain available on phones');
+if (index.includes('bbSetupMobileGameHud') || index.includes('mobile-game-hud-trigger') || index.includes('bb-mobile-game-active')) fail('experimental immersive mobile HUD must remain removed');
+if (mobileCss.includes('#game .sidecol{display:none!important}') || mobileCss.includes('position:fixed!important;inset:0!important')) fail('visual stylesheet must not force a fullscreen mobile board');
+if (!arena.includes('new THREE.ExtrudeGeometry(shape,') || !arena.includes('bevelEnabled:true') || !arena.includes('clearcoat:ghost?0:.9')) fail('3D blocks must use beveled, premium physical surfaces');
 if (!index.includes('src="./audio/chills.mp3"')) fail('index.html must use the bundled local soundtrack');
 if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('soundtrack attribution must document the author and CC0 license');
 if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
