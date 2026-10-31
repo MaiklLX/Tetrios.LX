@@ -11,7 +11,7 @@
   let THREE;
   try{THREE=await import('./vendor/three/build/three.module.js')}
   catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
-  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,resumeAfterContextRestore=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,rotationAngle=0,rotationPivotX=0,rotationPivotY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0;
+  let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,resumeAfterContextRestore=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,rotationAngle=0,rotationPivotX=0,rotationPivotY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0,arenaPulseMaterial=null,arenaPulseAt=0,arenaPulseStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
   const colorCache=new Map(),coreCache=new Map(),edgeCache=new Map(),geometryCache=new Map(),sharedMaterials=new Set(),sharedGeometries=new Set();
@@ -100,6 +100,7 @@
     gridGroup.add(new THREE.Line(borderGeo,new THREE.LineBasicMaterial({color:0x75fff0,transparent:true,opacity:.8})));
     // Floating side rails and corner beacons give the board a framed arcade-arena silhouette.
     const railMat=new THREE.MeshStandardMaterial({color:0x5df8ee,emissive:0x1a8e9c,emissiveIntensity:1.6,metalness:.65,roughness:.22});
+    arenaPulseMaterial=railMat;
     const railGeo=new THREE.BoxGeometry(.075,20.6,.16);
     [-5.34,5.34].forEach((x,i)=>{
       const rail=new THREE.Mesh(railGeo,railMat);rail.position.set(x,0,-.04);gridGroup.add(rail);
@@ -201,6 +202,10 @@
     if(previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines){
       const now=performance.now(),count=Math.min(4,state.lines-previousState.lines);
       clearStreak=now-lastClearAt<1800?Math.min(5,clearStreak+1):1;lastClearAt=now;
+      // A compact camera impulse makes a line clear register without shaking the UI.
+      impactAt=now;impactStrength=Math.min(.24,.09+count*.035);
+      // The arena rails briefly answer a clear streak; no new meshes or render loop are created.
+      arenaPulseAt=now;arenaPulseStrength=Math.min(.9,.28+count*.12+Math.max(0,clearStreak-1)*.08);
       for(let i=effectsGroup.children.length-1;i>=0;i--){
         const obj=effectsGroup.children[i];effectsGroup.remove(obj);
         disposeEffect(obj);
@@ -238,7 +243,7 @@
         const flash=new THREE.Mesh(new THREE.PlaneGeometry(.82,.82),mat);
         flash.position.set(oldPiece.x+dx-4.5,9.5-(oldPiece.y+dy),.52);
         flash.userData.createdAt=now;flash.userData.life=360;
-        effectsGroup.add(flash);
+        addEffect(flash);
       }));
       // Ground shockwave: a quick horizontal energy sweep under the locked piece.
       const shockMat=new THREE.MeshBasicMaterial({color:0x75fff0,transparent:true,opacity:.9,side:THREE.DoubleSide});
@@ -289,6 +294,16 @@
           const height=newShape.length,width=newShape[0]?.length||0;
           rotationPivotX=newPiece.x+width/2-4.5;
           rotationPivotY=9.5-(newPiece.y+height/2);
+          // A compact rotating arc marks the input response without obscuring the tetromino.
+          const rotationAt=performance.now();
+          const arcMaterial=new THREE.MeshBasicMaterial({color:0x9ffff8,transparent:true,opacity:.92,depthWrite:false,side:THREE.DoubleSide});
+          const rotationArc=new THREE.Mesh(new THREE.TorusGeometry(.78,.035,5,18,Math.PI*1.55),arcMaterial);
+          rotationArc.position.set(rotationPivotX,rotationPivotY,.58);
+          rotationArc.rotation.z=direction>0?-.35:Math.PI-.35;
+          rotationArc.userData.createdAt=rotationAt;
+          rotationArc.userData.life=310;
+          rotationArc.userData.rotationArc=true;
+          addEffect(rotationArc);
         }
       }
       disposeGroup(activeGroup);disposeGroup(ghostGroup);
@@ -324,6 +339,9 @@
             effect.position.x+=effect.userData.velocity.x*deltaScale;
             effect.position.y+=effect.userData.velocity.y*deltaScale;
             effect.scale.setScalar(1-progress*.7);
+          }else if(effect.userData.rotationArc){
+            effect.rotation.z+=.045*deltaScale;
+            effect.scale.setScalar(1+progress*.38);
           }else if(effect.userData.shockwave){
             effect.scale.x=1+progress*.08;effect.scale.y=1+progress*3.5;
           }else{
@@ -336,6 +354,9 @@
     if(!reducedMotion.matches){
       const t=now*.00025,impactAge=now-impactAt;
       const shake=impactAt&&impactAge<240?Math.sin(impactAge*.085)*impactStrength*(1-impactAge/240):0;
+      const arenaPulseAge=now-arenaPulseAt,arenaPulseProgress=Math.min(1,arenaPulseAge/720);
+      const arenaPulse=arenaPulseAt&&arenaPulseAge<720?Math.sin(arenaPulseProgress*Math.PI)*(1-arenaPulseProgress)*arenaPulseStrength:0;
+      if(arenaPulseMaterial)arenaPulseMaterial.emissiveIntensity=1.6+arenaPulse;
       camera.position.x=shake;
       camera.position.y=0;
       for(let g=0;g<pulseGroups.length;g++){

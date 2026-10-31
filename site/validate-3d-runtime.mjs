@@ -68,6 +68,11 @@ if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js d
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
 if (!arena.includes('function rotateMatrix(matrix,direction)') || !arena.includes('rotationAngle=-direction*Math.PI/2')) fail('3D arena must animate quarter-turn piece rotations');
 if (!arena.includes('activeGroup.rotation.z=rotationAngle')) fail('3D arena must apply the eased rotation to the active piece');
+if (!arena.includes('new THREE.TorusGeometry(.78,.035,5,18,Math.PI*1.55)') || !arena.includes('rotationArc.userData.rotationArc=true') || !arena.includes('effect.userData.rotationArc')) fail('3D piece rotations must emit a short-lived, animated arc cue');
+if (!arena.includes('rotationArc.userData.life=310') || !arena.includes('addEffect(rotationArc)')) fail('rotation feedback must use the capped and disposable transient-effects lifecycle');
+if (arena.includes('effectsGroup.add(flash)')) fail('landing flashes must use the capped transient-effects manager');
+if (!arena.includes('impactAt=now;impactStrength=Math.min(.24,.09+count*.035)')) fail('line clears must trigger a short gameplay-only camera impact');
+if (!arena.includes('arenaPulseMaterial=railMat') || !arena.includes('arenaPulseStrength=Math.min(.9,.28+count*.12+Math.max(0,clearStreak-1)*.08)') || !arena.includes('arenaPulseMaterial.emissiveIntensity=1.6+arenaPulse')) fail('line-clear streaks must gently pulse the existing arena rails without allocating new scene objects');
 const compactArena = arena.replace(/\\s+/g, '');
 if (!compactArena.includes('rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena rotation must compensate around the piece centre');
 if (!compactArena.includes('pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena must apply interpolated piece offsets to the active group');
@@ -117,6 +122,12 @@ if (!index.includes("color: '#2878c7'") || !index.includes("color: '#ffc84d'")) 
 
 
 if (!index.includes('@media (max-width: 520px)') || !index.includes('#game .playlayout')) fail('classic responsive gameplay layout must remain available on phones');
+if (!index.includes('class="screen home-dashboard"') || !mobileCss.includes('#menu.home-dashboard') || !mobileCss.includes('grid-template-areas:') || !mobileCss.includes('@media(max-width:760px)') || !mobileCss.includes('@media(max-height:620px)')) fail('home dashboard must use responsive single-viewport layouts with a safe short-screen overflow fallback');
+if (!index.includes('id="hapticBtn"') || !index.includes('function bbHaptic(pattern)') || !index.includes("typeof navigator.vibrate!=='function'")) fail('mobile haptic feedback must be optional and guarded for unsupported browsers');
+if (!index.includes('bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16)') || !index.includes('score+=dist*2;bbHaptic(16);lockPiece()')) fail('haptic feedback must respond to line clears and hard drops');
+if (!index.includes('if(rotated){bbHaptic(9);chime();render()}')) fail('successful piece rotations must trigger a light haptic pulse without vibrating on blocked rotations');
+if (!index.includes("localStorage.bb_haptics=hapticsOn?'1':'0'")) fail('haptic preference must persist between sessions');
+if (!index.includes('function bbHandleVisibilityChange()') || !index.includes('if (document.hidden && started && !paused && !gameOver)') || !index.includes("document.addEventListener('visibilitychange', bbHandleVisibilityChange)")) fail('an active game must auto-pause when the app is backgrounded and require manual resume');
 if (index.includes('bbSetupMobileGameHud') || index.includes('mobile-game-hud-trigger') || index.includes('bb-mobile-game-active')) fail('experimental immersive mobile HUD must remain removed');
 if (mobileCss.includes('#game .sidecol{display:none!important}') || mobileCss.includes('position:fixed!important;inset:0!important')) fail('visual stylesheet must not force a fullscreen mobile board');
 if (!arena.includes('new THREE.ExtrudeGeometry(shape,') || !arena.includes('bevelEnabled:true') || !arena.includes('clearcoat:ghost?0:.9')) fail('3D blocks must use beveled, premium physical surfaces');
