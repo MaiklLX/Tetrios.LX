@@ -1,6 +1,6 @@
 # Tetrios.LX — project checkpoint
 
-Last updated: 2026-11-01 (arena streak-response pass)
+Last updated: 2026-11-01 (home dashboard geometry and control consistency pass)
 
 ## Resume phrase
 **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
@@ -83,3 +83,17 @@ Do not claim device testing has happened; the user performs real-device testing.
 4. Test background auto-pause by starting a round, switching to another Android app, then returning; confirm the pause overlay remains until RESUME is tapped.
 5. Keep Android offline asset validation and APK build checks in CI.
 6. Keep a fresh checkpoint after meaningful milestones and update this file with the latest verified branch, PR, commit SHA, audit run and artifact.
+
+
+## Latest main checkpoint — 2026-11-01
+- Current branch of record: `main`
+- Current source commit: `00d0aace786c8b8c2cf0992d1422cedfc876673c`
+- PR #12 was merged successfully at `c51d094e870f9ef55d735b6c40e9bf1faefa629c`; subsequent dashboard refinements are being committed directly to `main` per user approval.
+- Current iteration changes only `site/visual-overhaul.css`; gameplay arena, game rules, input handling and existing feature hooks were not modified.
+- Added a dedicated dashboard geometry pass: normalized icon containers and button proportions, consistent alignment, resilient text wrapping, min-width safeguards, currency/quest card overflow protection, and compact topbar controls at narrow widths.
+- CSS commit: `00d0aace786c8b8c2cf0992d1422cedfc876673c`.
+- Website deployment run `41239739655`: waiting at checkpoint creation; verify completion before claiming the latest CSS is live.
+- Android release workflow run `41239739630`: queued at checkpoint creation. The previous signed release attempt `41238880159` failed because GitHub returned HTTP 404 for `MaiklLX/Tetrios-Signing` during keystore retrieval; this is a signing-repository access/configuration issue, not a game-source compile failure.
+- Do not offer an APK from an older run as if it includes this latest CSS commit. Verify the run/artifact for the current main SHA first.
+- Next: continue responsive QA of the home dashboard across compact phone, tall phone, tablet and desktop widths; focus on clipping/overlap and touch-target comfort. Keep visual effects/art direction on hold until the user approves moving to that phase. Do not alter the gameplay arena.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged.
