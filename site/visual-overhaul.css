@@ -1401,3 +1401,129 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard .tetromino{animation:none!important;opacity:0!important;transform:translate(-50%,-50%)!important}
   #menu.home-dashboard .tetromino-i{opacity:1!important}
 }
+
+
+/* TETRIOS.LX — centered rotating emblem + expanded home controls (2026-11-01). */
+#menu.home-dashboard{
+  height:auto!important;min-height:calc(100svh - 112px)!important;max-height:none!important;
+  overflow:visible!important;align-content:stretch!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  grid-template-rows:minmax(170px,1.15fr) minmax(86px,.62fr) minmax(120px,.82fr) minmax(84px,.56fr)!important;
+  grid-template-areas:
+    "modes modes modes modes logo logo logo logo heroes heroes heroes heroes"
+    "modes modes modes modes logo logo logo logo apk apk apk apk"
+    "quests quests quests quests quests quests currency currency stats stats stats stats"
+    "streak streak streak streak streak streak shop shop shop shop reset reset"!important;
+  gap:10px!important;
+}
+#menu.home-dashboard>.hero{
+  grid-area:logo!important;min-width:0!important;min-height:0!important;height:100%!important;
+  display:grid!important;place-items:center!important;padding:0!important;margin:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;overflow:visible!important;text-align:center!important;
+}
+#menu.home-dashboard>.hero:after{display:none!important}
+#menu.home-dashboard>.hero>.eyebrow,
+#menu.home-dashboard>.hero>h1,
+#menu.home-dashboard>.hero>p{display:none!important}
+#menu.home-dashboard>.hero .orb{
+  position:relative!important;isolation:isolate!important;
+  width:min(100%,clamp(150px,22vw,250px))!important;
+  aspect-ratio:1!important;height:auto!important;min-height:0!important;
+  margin:0!important;display:grid!important;place-items:center!important;
+  filter:drop-shadow(0 0 28px rgba(66,218,255,.2))!important;
+}
+#menu.home-dashboard>.hero .orb:before{
+  content:""!important;position:absolute!important;inset:8%!important;
+  width:auto!important;height:auto!important;border-radius:25%!important;
+  border:2px solid rgba(89,238,255,.9)!important;
+  background:linear-gradient(145deg,rgba(74,230,255,.12),rgba(116,95,255,.04) 55%,rgba(10,16,39,.24))!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 24px rgba(37,213,255,.32),inset 0 0 28px rgba(68,190,255,.12)!important;
+  transform:rotate(45deg)!important;animation:bb-logo-frame-spin 24s linear infinite!important;
+}
+#menu.home-dashboard>.hero .orb:after{
+  content:""!important;position:absolute!important;inset:1%!important;
+  width:auto!important;height:auto!important;border:1px solid rgba(161,124,255,.42)!important;
+  border-radius:50%!important;background:transparent!important;
+  box-shadow:0 0 22px rgba(145,110,255,.14)!important;
+  transform:none!important;animation:bb-logo-orbit 30s linear infinite!important;
+}
+#menu.home-dashboard>.hero .relic.tetromino-showcase{
+  z-index:1!important;width:100%!important;height:100%!important;
+  display:grid!important;place-items:center!important;perspective:700px!important;
+}
+#menu.home-dashboard .tetromino{
+  width:clamp(76px,10vw,112px)!important;height:clamp(76px,10vw,112px)!important;
+  grid-template-columns:repeat(4,clamp(16px,2vw,23px))!important;
+  grid-template-rows:repeat(4,clamp(16px,2vw,23px))!important;
+  gap:2px!important;
+}
+#menu.home-dashboard .tetromino i{
+  width:clamp(16px,2vw,23px)!important;height:clamp(16px,2vw,23px)!important;
+  min-width:0!important;min-height:0!important;border-radius:5px!important;
+}
+@keyframes bb-logo-frame-spin{to{transform:rotate(405deg)}}
+@keyframes bb-logo-orbit{to{transform:rotate(360deg)}}
+#menu.home-dashboard>.sectionlabel{display:none!important}
+#menu.home-dashboard>.modes{grid-area:modes!important;grid-template-columns:1fr!important;grid-template-rows:repeat(3,minmax(0,1fr))!important;gap:9px!important}
+#menu.home-dashboard>.modes>.mode{min-height:0!important;height:100%!important}
+#menu.home-dashboard>#openHeroes{grid-area:heroes!important;align-self:stretch!important;height:100%!important;margin:0!important}
+#menu.home-dashboard>.apk-download{grid-area:apk!important;align-self:stretch!important;height:100%!important}
+#menu.home-dashboard>#bbVisitStreak{grid-area:streak!important;height:100%!important;margin:0!important}
+#menu.home-dashboard>#rpgPanel{grid-area:shop!important;min-width:0!important;min-height:0!important;height:100%!important;margin:0!important}
+#menu.home-dashboard>.currency-panel{grid-area:currency!important;min-width:0!important;height:100%!important;margin:0!important}
+#menu.home-dashboard>.bottomstats{grid-area:stats!important;min-width:0!important;height:100%!important;margin:0!important}
+#menu.home-dashboard>#dailyQuestsPanel{grid-area:quests!important;min-width:0!important;height:100%!important;margin:0!important;overflow:auto!important}
+#menu.home-dashboard>.home-reset{grid-area:reset!important;align-self:stretch!important;margin:0!important}
+#menu.home-dashboard>.home-reset #resetProgressBtn{min-height:38px!important}
+@media(max-width:760px) and (orientation:portrait){
+  #menu.home-dashboard{
+    min-height:0!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-rows:clamp(126px,19svh,166px) auto auto auto auto auto auto auto!important;
+    grid-template-areas:
+      "logo logo"
+      "modes modes"
+      "apk apk"
+      "streak heroes"
+      "shop shop"
+      "quests quests"
+      "currency stats"
+      "reset reset"!important;
+    gap:8px!important;
+  }
+  #menu.home-dashboard>.hero .orb{width:min(100%,clamp(126px,36vw,164px))!important}
+  #menu.home-dashboard .tetromino{
+    width:76px!important;height:76px!important;
+    grid-template-columns:repeat(4,16px)!important;grid-template-rows:repeat(4,16px)!important;
+  }
+  #menu.home-dashboard .tetromino i{width:16px!important;height:16px!important}
+  #menu.home-dashboard>.modes{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-rows:repeat(2,minmax(68px,auto))!important;
+  }
+  #menu.home-dashboard>.modes>.mode:last-child{grid-column:1/-1}
+  #menu.home-dashboard>.modes>.mode{padding:9px!important;gap:7px!important}
+  #menu.home-dashboard>.modes>.mode .modesub{display:none!important}
+  #menu.home-dashboard>#bbVisitStreak,
+  #menu.home-dashboard>#openHeroes{min-height:76px!important;padding:9px!important}
+  #menu.home-dashboard>#bbVisitStreak>div:first-child>div:first-child{width:30px!important;height:30px!important;font-size:17px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakMessage{display:none!important}
+  #menu.home-dashboard>#dailyQuestsPanel{padding:10px!important}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #menu.home-dashboard>.currency-panel{padding:9px!important}
+  #menu.home-dashboard>.currency-panel .currency-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important}
+  #menu.home-dashboard>.currency-panel .currency-card{padding:7px!important}
+  #menu.home-dashboard>.bottomstats{gap:5px!important}
+  #menu.home-dashboard>.bottomstats .stat{padding:8px 4px!important}
+  #menu.home-dashboard>.home-reset #resetProgressBtn{min-height:34px!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #menu.home-dashboard{gap:7px!important}
+  #menu.home-dashboard>.modes>.mode .modetitle{font-size:10px!important}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard>.hero .orb:before,
+  #menu.home-dashboard>.hero .orb:after{animation:none!important}
+}
