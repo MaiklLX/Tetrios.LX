@@ -201,3 +201,17 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Only `site/visual-overhaul.css` changed. HTML, game logic, navigation, data, buttons and gameplay arena were not modified. Backup branch remains untouched.
 - Verify web deploy and Android debug APK workflows for this source commit before claiming it is live or sharing a build. Physical-device review is still required for the perceived centering and animation smoothness.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Latest main checkpoint — 2026-11-01 (centered rotating emblem + home-menu expansion)
+- Current main source commit: `93628e54798610399192651fd221281b2eade2d2`.
+- Changed only `site/visual-overhaul.css`; existing menu HTML, IDs, handlers, gameplay logic, data, and gameplay arena are untouched.
+- Removed the duplicate product name/tagline from the central hero area; the TETRIOS.LX name remains in the top header.
+- Reframed the centerpiece as a single square neon emblem: a rotating square frame and subtle orbital ring surround the tetromino showcase. Tetrominoes retain the centered shared geometry, slow rotation, and soft cross-fades.
+- Reallocated the dashboard around the emblem: mode choices on the left/upper area, hero selection and APK download alongside it, and quests, streak, shop, currencies, statistics and reset action in supporting grid areas.
+- Added a dedicated narrow portrait layout with a centered emblem, two-column mode cards and compact supporting sections. Reduced-motion preferences disable the new frame/orbit motion.
+- Website deployment workflow run: `41248794952` for this exact SHA; queued when checkpoint was written. Verify the run and deployment status before saying the new version is live.
+- Visual layout is source-implemented but not yet verified on a physical Android device. The user should review the emblem centering, balance of menu controls, and whether the first screen avoids scrolling on their phone. Do not claim device testing.
+- Preserved backup branch `backup/main-before-aaa-release-2026-10-31` remains at `1a6548446c938d77d737accb202ee368a116943c`; do not modify it.
+- Next: inspect deployment run `41248794952`, then review the live result and tune any actual clipping/overlap based on the user's device feedback. Do not change the gameplay arena.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
