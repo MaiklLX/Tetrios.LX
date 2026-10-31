@@ -72,6 +72,7 @@ if (!arena.includes('new THREE.TorusGeometry(.78,.035,5,18,Math.PI*1.55)') || !a
 if (!arena.includes('rotationArc.userData.life=310') || !arena.includes('addEffect(rotationArc)')) fail('rotation feedback must use the capped and disposable transient-effects lifecycle');
 if (arena.includes('effectsGroup.add(flash)')) fail('landing flashes must use the capped transient-effects manager');
 if (!arena.includes('impactAt=now;impactStrength=Math.min(.24,.09+count*.035)')) fail('line clears must trigger a short gameplay-only camera impact');
+if (!arena.includes('arenaPulseMaterial=railMat') || !arena.includes('arenaPulseStrength=Math.min(.9,.28+count*.12+Math.max(0,clearStreak-1)*.08)') || !arena.includes('arenaPulseMaterial.emissiveIntensity=1.6+arenaPulse')) fail('line-clear streaks must gently pulse the existing arena rails without allocating new scene objects');
 const compactArena = arena.replace(/\\s+/g, '');
 if (!compactArena.includes('rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena rotation must compensate around the piece centre');
 if (!compactArena.includes('pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena must apply interpolated piece offsets to the active group');
