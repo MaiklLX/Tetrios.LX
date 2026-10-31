@@ -1350,3 +1350,54 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard .tetromino{animation:none!important;opacity:0!important}
   #menu.home-dashboard .tetromino-i{opacity:1!important;transform:none!important}
 }
+
+
+/* Home logo centerpiece refinement: fixed shared geometry, calm spin and soft cross-fades. */
+#menu.home-dashboard>.hero .orb{
+  width:150px!important;height:92px!important;min-height:92px!important;
+  margin:0 auto!important;display:grid!important;place-items:center!important;
+}
+#menu.home-dashboard>.hero .relic.tetromino-showcase{
+  width:88px!important;height:88px!important;position:relative!important;
+  display:grid!important;place-items:center!important;perspective:520px;
+}
+#menu.home-dashboard .tetromino{
+  position:absolute;left:50%;top:50%;
+  width:76px;height:76px;inset:auto;
+  display:grid;grid-template-columns:repeat(4,16px);grid-template-rows:repeat(4,16px);
+  gap:2px;place-content:center;place-items:center;
+  opacity:0;transform:translate(-50%,-50%);
+  transform-origin:50% 50%;transform-style:preserve-3d;backface-visibility:hidden;
+  animation:tetromino-cycle 21s ease-in-out infinite,tetromino-spin 18s linear infinite;
+  will-change:opacity,transform;
+}
+#menu.home-dashboard .tetromino i{
+  width:16px;height:16px;min-width:16px;min-height:16px;
+  display:block;box-sizing:border-box;border-radius:4px;
+}
+#menu.home-dashboard .tetromino-i{animation-delay:0s,0s}
+#menu.home-dashboard .tetromino-o{animation-delay:-18s,-2.57s}
+#menu.home-dashboard .tetromino-t{animation-delay:-15s,-5.14s}
+#menu.home-dashboard .tetromino-l{animation-delay:-12s,-7.71s}
+#menu.home-dashboard .tetromino-j{animation-delay:-9s,-10.28s}
+#menu.home-dashboard .tetromino-s{animation-delay:-6s,-12.85s}
+#menu.home-dashboard .tetromino-z{animation-delay:-3s,-15.42s}
+@keyframes tetromino-cycle{
+  0%,100%{opacity:0}
+  2.5%{opacity:0}
+  5.5%{opacity:1}
+  10.5%{opacity:1}
+  14.285%{opacity:0}
+}
+@keyframes tetromino-spin{
+  from{transform:translate(-50%,-50%) rotateZ(-8deg) rotateY(-8deg)}
+  to{transform:translate(-50%,-50%) rotateZ(352deg) rotateY(8deg)}
+}
+@media(max-width:600px) and (orientation:portrait){
+  #menu.home-dashboard>.hero .orb{height:82px!important;min-height:82px!important;width:150px!important}
+  #menu.home-dashboard>.hero .relic.tetromino-showcase{width:84px!important;height:84px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard .tetromino{animation:none!important;opacity:0!important;transform:translate(-50%,-50%)!important}
+  #menu.home-dashboard .tetromino-i{opacity:1!important}
+}
