@@ -1026,3 +1026,231 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard>#openHeroes{min-height:76px!important;grid-template-columns:30px minmax(0,1fr) 9px}
   #menu.home-dashboard>#rpgPanel,#menu.home-dashboard>#rpgPanel .shop-main-button{min-height:76px!important}
 }
+
+
+/* TETRIOS.LX — clean portrait layout override.
+   Replaces conflicting accumulated dashboard sizing rules with one predictable,
+   content-sized two-column phone grid. No game logic or gameplay screen changes. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .app { padding: 8px 12px 24px !important; }
+  .topbar { width: 100%; max-width: 520px; margin: 0 auto 12px !important; padding: 7px 10px !important; }
+  #menu.home-dashboard {
+    display: grid !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 0 auto !important;
+    padding: 0 0 20px !important;
+    box-sizing: border-box !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-areas:
+      "hero hero"
+      "play play"
+      "campaign daily"
+      "heroes shop"
+      "streak streak"
+      "currency currency"
+      "stats stats"
+      "apk apk"
+      "quests quests"
+      "reset reset" !important;
+    grid-template-rows: none !important;
+    grid-auto-rows: auto !important;
+    align-content: start !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #menu.home-dashboard > .hero {
+    grid-area: hero !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 15px 12px 10px !important;
+    text-align: center !important;
+    border-radius: 20px !important;
+  }
+  #menu.home-dashboard > .hero h1 {
+    font-size: clamp(29px, 8vw, 40px) !important;
+    line-height: 1 !important;
+    margin: 2px 0 !important;
+    white-space: normal !important;
+  }
+  #menu.home-dashboard > .hero p {
+    display: block !important;
+    max-width: 34ch !important;
+    margin: 0 auto !important;
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+  }
+  #menu.home-dashboard > .hero .orb { display: none !important; }
+  #menu.home-dashboard > .hero .home-board-scene,
+  #menu.home-dashboard > .hero .home-board-scene {
+    width: min(78%, 250px) !important;
+    height: 82px !important;
+    margin: 5px auto 0 !important;
+  }
+  #menu.home-dashboard > .sectionlabel { display: none !important; }
+  #menu.home-dashboard > .modes { display: contents !important; }
+  #menu.home-dashboard > .modes > .mode {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 82px !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 11px 10px !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    text-align: left !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="rogue"] {
+    grid-area: play !important;
+    min-height: 68px !important;
+    padding: 10px 16px !important;
+    justify-content: center !important;
+    gap: 12px !important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="campaign"] { grid-area: campaign !important; }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] { grid-area: daily !important; }
+  #menu.home-dashboard > .modes > .mode .modeicon {
+    box-sizing: border-box !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 19px !important;
+    line-height: 1 !important;
+  }
+  #menu.home-dashboard > .modes > .mode .modetext {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+  #menu.home-dashboard > .modes > .mode .modetitle {
+    display: block !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere !important;
+  }
+  #menu.home-dashboard > .modes > .mode .modesub {
+    display: block !important;
+    margin-top: 4px !important;
+    font-size: 8px !important;
+    line-height: 1.3 !important;
+    overflow-wrap: anywhere !important;
+  }
+  #menu.home-dashboard > .modes > .mode .tag { display: none !important; }
+  #menu.home-dashboard > .modes > .mode .modearrow {
+    flex: 0 0 14px !important;
+    width: 14px !important;
+    font-size: 19px !important;
+    text-align: center !important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="rogue"] .modeicon {
+    flex-basis: 40px !important; width: 40px !important; height: 40px !important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="rogue"] .modetitle {
+    font-size: 16px !important; letter-spacing: .07em !important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="rogue"] .modesub { font-size: 9px !important; }
+  #menu.home-dashboard > #openHeroes {
+    grid-area: heroes !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 82px !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 11px 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    text-align: left !important;
+  }
+  #menu.home-dashboard > #openHeroes .modeicon {
+    flex: 0 0 36px !important; width: 36px !important; height: 36px !important;
+    display: grid !important; place-items: center !important; font-size: 19px !important;
+  }
+  #menu.home-dashboard > #openHeroes .modetext { flex: 1 1 auto !important; min-width: 0 !important; }
+  #menu.home-dashboard > #openHeroes .modetitle { font-size: 10px !important; line-height: 1.25 !important; }
+  #menu.home-dashboard > #openHeroes .modesub { display: block !important; font-size: 8px !important; line-height: 1.3 !important; }
+  #menu.home-dashboard > #openHeroes .tag { display: none !important; }
+  #menu.home-dashboard > #rpgPanel {
+    grid-area: shop !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 82px !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: stretch !important;
+    overflow: visible !important;
+  }
+  #menu.home-dashboard > #rpgPanel .shop-main-button,
+  #menu.home-dashboard > #rpgPanel .shopbutton {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 82px !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 9px !important;
+    text-align: left !important;
+  }
+  #menu.home-dashboard > #rpgPanel .shop-main-icon {
+    flex: 0 0 34px !important; width: 34px !important; height: 34px !important;
+    display: grid !important; place-items: center !important;
+  }
+  #menu.home-dashboard > #rpgPanel .shop-main-text { flex: 1 1 auto !important; min-width: 0 !important; }
+  #menu.home-dashboard > #rpgPanel .shop-main-text strong { display: block !important; font-size: 10px !important; }
+  #menu.home-dashboard > #rpgPanel .shop-main-text small { display: block !important; font-size: 8px !important; line-height: 1.3 !important; }
+  #menu.home-dashboard > #bbVisitStreak { grid-area: streak !important; width: 100% !important; min-width: 0 !important; height: auto !important; margin: 0 !important; padding: 12px !important; }
+  #menu.home-dashboard > .currency-panel { grid-area: currency !important; width: 100% !important; min-width: 0 !important; height: auto !important; margin: 0 !important; padding: 12px !important; }
+  #menu.home-dashboard > .currency-panel .currency-grid { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 8px !important; }
+  #menu.home-dashboard > .currency-panel .currency-card { min-width: 0 !important; padding: 8px !important; }
+  #menu.home-dashboard > .bottomstats { grid-area: stats !important; width: 100% !important; min-width: 0 !important; height: auto !important; margin: 0 !important; gap: 7px !important; }
+  #menu.home-dashboard > .bottomstats .stat { min-width: 0 !important; padding: 10px 5px !important; }
+  #menu.home-dashboard > .bottomstats .stat strong { font-size: 17px !important; }
+  #menu.home-dashboard > .bottomstats .stat span { font-size: 7px !important; }
+  #menu.home-dashboard > .apk-download { grid-area: apk !important; box-sizing: border-box !important; width: 100% !important; max-width: none !important; min-height: 48px !important; height: auto !important; margin: 0 !important; padding: 9px 12px !important; }
+  #menu.home-dashboard > #dailyQuestsPanel { grid-area: quests !important; width: 100% !important; min-width: 0 !important; height: auto !important; margin: 0 !important; padding: 12px !important; }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList { display: grid !important; grid-template-columns: 1fr !important; gap: 7px !important; }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div { min-height: 0 !important; height: auto !important; padding: 10px !important; }
+  #menu.home-dashboard > .home-reset { grid-area: reset !important; width: 100% !important; margin: 0 !important; }
+  #menu.home-dashboard > .home-reset #resetProgressBtn { width: 100% !important; min-height: 40px !important; font-size: 9px !important; }
+}
+@media (max-width: 380px) and (orientation: portrait) {
+  .app { padding-left: 10px !important; padding-right: 10px !important; }
+  #menu.home-dashboard { gap: 8px !important; }
+  #menu.home-dashboard > .modes > .mode,
+  #menu.home-dashboard > #openHeroes,
+  #menu.home-dashboard > #rpgPanel .shop-main-button,
+  #menu.home-dashboard > #rpgPanel .shopbutton { padding-left: 8px !important; padding-right: 8px !important; }
+  #menu.home-dashboard > .modes > .mode .modeicon,
+  #menu.home-dashboard > #openHeroes .modeicon { flex-basis: 32px !important; width: 32px !important; height: 32px !important; }
+  #menu.home-dashboard > .modes > .mode .modetitle,
+  #menu.home-dashboard > #openHeroes .modetitle { font-size: 10px !important; }
+}
