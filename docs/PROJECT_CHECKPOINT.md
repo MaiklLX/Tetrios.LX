@@ -125,3 +125,22 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Signed release run: `41242331168` (queued at checkpoint time); prior signed runs fail retrieving key from `MaiklLX/Tetrios-Signing` with HTTP 404.
 - Preserve backup branch `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: confirm deployment and debug APK artifact; then review user's device feedback. Do not begin home-screen effects or change gameplay arena until the geometry has been verified.
+
+
+## Main-screen art direction implementation — 2026-11-01
+- User supplied the generated neon arcade menu as the explicit visual prototype and asked for a real site implementation, not another image. The implementation uses real HTML/CSS controls and preserves the existing game logic and navigation hooks.
+- Main branch source commits:
+  - HTML/menu structure and settings entry: `eb6000dcf232f892b64ca6a57726d54312cc991c`
+  - Neon arcade dashboard layout and visual system: `5498dab88c86478d1a8cc28db740db20693fe6c2`
+  - Browser title aligned to product identity: `53625162d8be966afa61354e4b3b850b7a0af839`
+- The home screen now has a wider arcade composition with a smaller TETRIOS.LX wordmark, luminous central hero/orb, left-side mode actions, right-side hero/shop/download destinations, and a lower band for streak, currencies, records and daily quests. Layout collapses to a two-column/tablet and compact mobile composition rather than shrinking the whole page.
+- Replaced the visible home/game sound controls with one intuitive hamburger settings button. Sound, music and haptic controls remain connected to the existing handlers and are available inside the settings overlay. The old sound/music buttons are hidden rather than deleted, preserving the existing audio synchronization hooks.
+- Gameplay music control is removed from the playfield sidebar; the existing music toggle remains available in settings. Pause remains a dedicated icon-only control in the game header; gameplay logic and pause overlay are unchanged.
+- Rebranded the page header and document title to TETRIOS.LX. Existing mode IDs, hero/shop/currency/quest/streak/stat IDs, gameplay logic, canvas and game navigation handlers are retained.
+- No generated artwork is used as the page itself. The visual treatment is built from CSS gradients, layered borders, neon glow and a perspective grid.
+- Current main SHA at checkpoint: `53625162d8be966afa61354e4b3b850b7a0af839`.
+- Preserved backup branch remains `backup/main-before-aaa-release-2026-10-31` at `1a6548446c938d77d737accb202ee368a116943c`; do not modify it.
+- CI for the new layout source commit `5498dab88c86478d1a8cc28db740db20693fe6c2`: deployment run `41244084591`, debug APK run `41244084487`, signed release run `41244084540` (all still running when checked). A preceding deployment run was cancelled after a newer commit superseded it; the signed build for the preceding commit failed. Latest title commit workflows: deploy `41244112831`, debug APK `41244112733`, signed release `41244112545` (pending/queued when checked). Verify latest run/artifacts before sharing a live URL or APK as the new revision.
+- Next: verify the latest web deploy and Android debug APK; inspect CI logs for any runtime/markup validation failure; then refine actual page geometry against the reference without touching the gameplay arena. User should verify on a physical Android device; no physical-device test has been claimed.
+- Research notes: classic puzzle-game menus benefit from a strong central focal point and clear mode destinations (Tetris Effect's mode-selection presentation and Puyo Puyo Tetris 2's separated Adventure/Solo/Online/Options destinations were useful references). Sources: https://media.gdcvault.com/gdc2019/presentations/Mizuguchi_Tetsuya_MakingTetrisEffect-ive.pdf and https://cdn.steamstatic.com/steam/apps/1259790/manuals/tenpex_WM_210216_Steam_en.pdf.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
