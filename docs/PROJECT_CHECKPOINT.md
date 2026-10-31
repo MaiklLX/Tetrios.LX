@@ -1,6 +1,6 @@
 # Tetrios.LX — project checkpoint
 
-Last updated: 2026-11-01 (content-first dashboard reflow)
+Last updated: 2026-11-01 (short-screen clipping audit)
 
 ## Resume phrase
 **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
@@ -112,3 +112,16 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Signed release workflow run `41240286047` failed again; verify logs if investigating. Previous runs show the signing repository lookup for `MaiklLX/Tetrios-Signing` returning HTTP 404. This is separate from the debug APK build.
 - Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: inspect latest deployed page and test dashboard composition at narrow phone widths (including 360px), tablet and desktop; fix any real collisions without hiding content. Ask the user to verify on the physical Android device; do not claim device testing.
+
+
+## Latest main checkpoint — 2026-11-01 (short-screen clipping audit)
+- Current CSS source commit: `52b0671a5448545ee00ec618265cc9a3b86ede71`.
+- Confirmed concrete source of hidden content: legacy `@media(max-height:700px)` rules were still hiding the hero description, mode tags and daily-quest reward labels. The previous content-first correction only restored these in a narrower <=620px height range, leaving a 621–700px band where content remained hidden.
+- New override explicitly cancels the short-height hiding rules and removes fixed dashboard height/track constraints at every supported width.
+- Daily quest cards now size to content; at <=420px they use a compact two-column inner layout with title and progress/reward retained, rather than forcing narrow three-column cards.
+- Main dashboard cards and dynamic shop panel are permitted to grow; overflow is visible and page scrolling is allowed where required. Existing IDs, handlers and game logic remain unchanged.
+- Website deployment run: `41242331153` (waiting at checkpoint time).
+- Android debug APK run: `41242331169` (queued at checkpoint time). Do not share an APK for this revision until artifact is verified.
+- Signed release run: `41242331168` (queued at checkpoint time); prior signed runs fail retrieving key from `MaiklLX/Tetrios-Signing` with HTTP 404.
+- Preserve backup branch `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: confirm deployment and debug APK artifact; then review user's device feedback. Do not begin home-screen effects or change gameplay arena until the geometry has been verified.
