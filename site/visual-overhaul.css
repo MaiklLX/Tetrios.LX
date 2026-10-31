@@ -905,3 +905,124 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @keyframes blockGlow{from{filter:brightness(.92)}to{filter:brightness(1.18)}}
 @media(max-width:900px){.home-board-scene{width:min(100%,245px);height:104px}}
 @media(max-width:520px){#menu.home-dashboard>.hero .orb{height:34px!important;margin:0 auto -2px!important}.home-board-scene{width:min(100%,210px);height:78px;padding:6px 10px 9px;gap:2px}.home-board-scene i{border-radius:3px}}
+
+
+/* PORTRAIT-FIRST HOME: phone layout is the primary composition, not a shrunken desktop grid. */
+@media (max-width:600px) and (orientation:portrait){
+  .app{padding:7px 10px 22px}
+  .topbar{max-width:none;margin:0 0 9px;padding:6px 9px;border-radius:14px}
+  .brand{gap:9px}.brandmark{width:34px;height:34px;border-radius:10px}
+  .brandname{font-size:13px;letter-spacing:.13em}.edition{font-size:6px;letter-spacing:.15em}
+  .menu-trigger{width:38px;height:38px;font-size:19px}
+  #menu.home-dashboard{
+    width:100%;max-width:520px;margin:0 auto;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-areas:
+      "hero hero"
+      "play play"
+      "campaign daily"
+      "heroes shop"
+      "streak streak"
+      "currency currency"
+      "stats stats"
+      "apk apk"
+      "quests quests"
+      "reset reset";
+    grid-template-rows:auto;
+    gap:8px;padding:0 0 18px;
+  }
+  #menu.home-dashboard>.hero{
+    grid-area:hero;min-height:0!important;padding:4px 4px 0!important;
+    display:flex!important;justify-content:center;gap:3px;
+    background:radial-gradient(ellipse at 50% 75%,#0875bf25,transparent 67%);
+  }
+  #menu.home-dashboard>.hero:before{inset:8% 10% 0;border-radius:24px 24px 14px 14px;clip-path:none}
+  #menu.home-dashboard>.hero .eyebrow{font-size:7px;letter-spacing:.14em}
+  #menu.home-dashboard>.hero h1{font-size:clamp(27px,8vw,39px)!important;margin:2px 0!important;letter-spacing:.015em!important}
+  #menu.home-dashboard>.hero p{font-size:9px!important;line-height:1.35!important;max-width:34ch!important;margin:0 auto!important}
+  #menu.home-dashboard>.hero .orb{display:none!important}
+  .home-board-scene{width:min(76%,250px);height:76px;margin:3px auto 5px;padding:5px 10px 8px;gap:2px;border-radius:9px 9px 15px 15px}
+  .home-board-scene i{border-radius:3px}
+  #menu.home-dashboard>.sectionlabel{display:none!important}
+  #menu.home-dashboard>.modes{display:contents!important}
+  #menu.home-dashboard>.modes>.mode{
+    min-width:0;min-height:92px!important;padding:10px 9px!important;
+    display:grid!important;grid-template-columns:35px minmax(0,1fr) 12px;
+    align-items:center;gap:7px!important;border-radius:15px!important;
+  }
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"]{
+    grid-area:play;min-height:64px!important;padding:8px 15px!important;
+    display:flex!important;justify-content:center;gap:12px!important;
+    border-radius:17px!important;text-align:left;
+  }
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modeicon{width:38px;height:38px;font-size:21px}
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modetext{flex:0 1 auto}
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modetitle{font-size:16px!important;letter-spacing:.1em}
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modesub{display:block!important;font-size:8px!important}
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"] .tag{display:none!important}
+  #menu.home-dashboard>.modes>.mode[data-mode="campaign"]{grid-area:campaign}
+  #menu.home-dashboard>.modes>.mode[data-mode="daily"]{grid-area:daily}
+  #menu.home-dashboard>.modes>.mode .modeicon{width:34px;height:34px;flex-basis:34px;font-size:18px}
+  #menu.home-dashboard>.modes>.mode .modetext{min-width:0}
+  #menu.home-dashboard>.modes>.mode .modetitle{font-size:10px!important;line-height:1.2}
+  #menu.home-dashboard>.modes>.mode .modesub{font-size:8px!important;line-height:1.25;margin-top:3px}
+  #menu.home-dashboard>.modes>.mode .tag{display:none!important}
+  #menu.home-dashboard>.modes>.mode .modearrow{font-size:22px}
+  #menu.home-dashboard>#openHeroes{
+    grid-area:heroes;min-height:82px!important;margin:0!important;
+    padding:9px!important;display:grid!important;
+    grid-template-columns:35px minmax(0,1fr) 12px;gap:7px!important;border-radius:15px!important
+  }
+  #menu.home-dashboard>#openHeroes .modeicon{width:34px;height:34px;font-size:18px}
+  #menu.home-dashboard>#openHeroes .modetext{min-width:0}
+  #menu.home-dashboard>#openHeroes .modetitle{font-size:10px!important}
+  #menu.home-dashboard>#openHeroes .modesub{font-size:8px!important;line-height:1.25}
+  #menu.home-dashboard>#openHeroes .tag{display:none}
+  #menu.home-dashboard>#rpgPanel{grid-area:shop;min-width:0;min-height:82px}
+  #menu.home-dashboard>#rpgPanel .shop-main-button{height:100%;min-height:82px!important;padding:9px!important;border-radius:15px!important}
+  #menu.home-dashboard>#rpgPanel .shop-main-icon{font-size:22px}
+  #menu.home-dashboard>#rpgPanel .shop-main-text strong{font-size:11px}
+  #menu.home-dashboard>#rpgPanel .shop-main-text small{font-size:8px;line-height:1.2}
+  #menu.home-dashboard>#bbVisitStreak{
+    grid-area:streak;margin:0!important;padding:10px 12px!important;border-radius:15px!important;
+  }
+  #menu.home-dashboard>#bbVisitStreak>div:first-child{gap:9px!important}
+  #menu.home-dashboard>#bbVisitStreak>div:first-child>div:first-child{width:36px!important;height:36px!important;font-size:20px!important;border-radius:11px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakCount{font-size:17px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakBest{font-size:9px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakMessage{font-size:10px!important;margin-top:7px!important}
+  #menu.home-dashboard>.currency-panel{grid-area:currency;margin:0!important;padding:10px!important;border-radius:15px!important}
+  #menu.home-dashboard>.currency-panel .currency-heading{font-size:9px!important;margin-bottom:7px}
+  #menu.home-dashboard>.currency-panel .currency-grid{gap:7px!important}
+  #menu.home-dashboard>.currency-panel .currency-card{min-width:0;padding:8px!important;border-radius:12px!important}
+  #menu.home-dashboard>.currency-panel .currency-icon{font-size:20px!important}
+  #menu.home-dashboard>.currency-panel .currency-label{font-size:8px!important}
+  #menu.home-dashboard>.currency-panel .currency-info strong{font-size:17px!important}
+  #menu.home-dashboard>.currency-panel .currency-caption{font-size:8px!important}
+  #menu.home-dashboard>.bottomstats{grid-area:stats;margin:0!important;gap:7px!important}
+  #menu.home-dashboard>.bottomstats .stat{min-width:0;padding:9px 4px!important;border-radius:12px!important}
+  #menu.home-dashboard>.bottomstats .stat strong{font-size:17px!important}
+  #menu.home-dashboard>.bottomstats .stat span{font-size:7px!important;letter-spacing:.08em}
+  #menu.home-dashboard>.apk-download{
+    grid-area:apk;min-height:42px;padding:8px 11px!important;border-radius:12px!important;
+    display:flex;align-items:center;justify-content:center;gap:9px
+  }
+  #menu.home-dashboard>.apk-download .apk-download-icon{font-size:16px}
+  #menu.home-dashboard>.apk-download .apk-download-copy strong{font-size:9px}
+  #menu.home-dashboard>.apk-download .apk-download-copy small{font-size:7px}
+  #menu.home-dashboard>#dailyQuestsPanel{grid-area:quests;margin:0!important;padding:11px!important;border-radius:15px!important}
+  #menu.home-dashboard>#dailyQuestsPanel>div:first-child strong{font-size:11px!important}
+  #menu.home-dashboard>#dailyQuestsPanel>div:first-child span{font-size:7px!important}
+  #menu.home-dashboard>#dailyQuestsPanel>div:nth-child(2){font-size:9px!important}
+  #menu.home-dashboard>.home-reset{grid-area:reset;margin:0!important}
+  #menu.home-dashboard>.home-reset button{padding:9px!important;font-size:9px!important}
+}
+@media(max-width:390px) and (orientation:portrait){
+  #menu.home-dashboard{gap:7px}
+  #menu.home-dashboard>.modes>.mode{min-height:84px!important;padding:8px!important;grid-template-columns:30px minmax(0,1fr) 9px}
+  #menu.home-dashboard>.modes>.mode .modeicon,#menu.home-dashboard>#openHeroes .modeicon{width:29px;height:29px;font-size:16px}
+  #menu.home-dashboard>.modes>.mode .modetitle,#menu.home-dashboard>#openHeroes .modetitle{font-size:9px!important}
+  #menu.home-dashboard>.modes>.mode .modesub,#menu.home-dashboard>#openHeroes .modesub{font-size:7px!important}
+  #menu.home-dashboard>#openHeroes{min-height:76px!important;grid-template-columns:30px minmax(0,1fr) 9px}
+  #menu.home-dashboard>#rpgPanel,#menu.home-dashboard>#rpgPanel .shop-main-button{min-height:76px!important}
+}
