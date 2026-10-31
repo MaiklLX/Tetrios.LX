@@ -121,7 +121,7 @@
     cell.position.set(x-4.5,9.5-y,ghost?.03:.24);
     cell.userData.pulsePhase=(x*7+y*13)%19;
     const geo=geometryFor('block',()=>{
-      const shape=new THREE.Shape(),size=.88,r=.105,x=-size/2,y=-size/2;
+      const shape=new THREE.Shape(),size=.78,r=.095,x=-size/2,y=-size/2;
       shape.moveTo(x+r,y);shape.lineTo(x+size-r,y);shape.quadraticCurveTo(x+size,y,x+size,y+r);
       shape.lineTo(x+size,y+size-r);shape.quadraticCurveTo(x+size,y+size,x+size-r,y+size);
       shape.lineTo(x+r,y+size);shape.quadraticCurveTo(x,y+size,x,y+size-r);
