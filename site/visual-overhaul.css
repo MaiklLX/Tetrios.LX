@@ -678,3 +678,123 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard>.modes>.mode .modesub,
   #menu.home-dashboard>.modes>.mode .tag{display:block!important}
 }
+
+
+/* TETRIOS.LX — final dashboard overflow audit.
+   Explicitly cancel legacy short-screen rules that hid supporting copy or quest rewards. */
+#menu.home-dashboard{
+  height:auto!important;max-height:none!important;min-height:0!important;
+  overflow:visible!important;grid-auto-flow:row!important;
+  grid-template-rows:repeat(8,auto)!important;
+  align-content:start!important;
+}
+#menu.home-dashboard>.hero,
+#menu.home-dashboard>.apk-download,
+#menu.home-dashboard>.sectionlabel,
+#menu.home-dashboard>.modes,
+#menu.home-dashboard>#bbVisitStreak,
+#menu.home-dashboard>#openHeroes,
+#menu.home-dashboard>#rpgPanel,
+#menu.home-dashboard>.currency-panel,
+#menu.home-dashboard>.home-reset,
+#menu.home-dashboard>#dailyQuestsPanel,
+#menu.home-dashboard>.bottomstats{
+  min-height:min-content!important;height:auto!important;max-height:none!important;
+  overflow:visible!important;
+}
+#menu.home-dashboard>.hero p,
+#menu.home-dashboard>.modes>.mode .modesub,
+#menu.home-dashboard>.modes>.mode .tag,
+#menu.home-dashboard>#openHeroes .modesub,
+#menu.home-dashboard>#openHeroes .tag,
+#menu.home-dashboard>#rpgPanel .shop-main-text small,
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{
+  display:block!important;visibility:visible!important;
+}
+#menu.home-dashboard>.modes>.mode .tag,
+#menu.home-dashboard>#openHeroes .tag{width:max-content;max-width:100%}
+#menu.home-dashboard>#dailyQuestsPanel{
+  display:flex!important;flex-direction:column!important;justify-content:flex-start!important;
+  padding:clamp(10px,1.5vw,16px)!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child{
+  flex-wrap:wrap!important;align-items:flex-start!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child strong{
+  min-width:0;overflow-wrap:anywhere;
+}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child span{
+  white-space:normal!important;text-align:left;
+}
+#menu.home-dashboard>#dailyQuestsPanel>div:nth-child(2){
+  display:block!important;line-height:1.4!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-auto-rows:minmax(min-content,auto)!important;align-items:stretch!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{
+  height:auto!important;max-height:none!important;min-height:0!important;
+  overflow:visible!important;justify-content:flex-start!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(3){
+  flex:0 0 6px;
+}
+#menu.home-dashboard>.currency-panel{
+  min-width:0!important;overflow:visible!important;
+}
+#menu.home-dashboard>#rpgPanel{
+  min-width:0!important;overflow:visible!important;
+}
+#menu.home-dashboard>.home-reset #resetProgressBtn{
+  white-space:normal!important;overflow-wrap:anywhere;line-height:1.25!important;
+}
+@media(max-width:760px){
+  #menu.home-dashboard{
+    height:auto!important;max-height:none!important;min-height:0!important;
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    grid-template-rows:repeat(8,auto)!important;
+    grid-auto-rows:minmax(min-content,auto)!important;
+    gap:8px!important;padding-bottom:16px!important;
+  }
+  #menu.home-dashboard>.hero{min-height:0!important}
+  #menu.home-dashboard>.hero p{max-width:34ch!important}
+  #menu.home-dashboard>.modes>.mode{min-height:76px!important}
+  #menu.home-dashboard>#bbVisitStreak{align-self:stretch}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  #menu.home-dashboard>#openHeroes,
+  #menu.home-dashboard>#rpgPanel,
+  #menu.home-dashboard>.currency-panel{
+    min-height:68px!important;height:auto!important;
+  }
+}
+@media(max-width:420px){
+  #menu.home-dashboard>.hero{grid-template-columns:minmax(0,1fr) 54px!important}
+  #menu.home-dashboard>.modes>.mode{min-height:84px!important;align-items:flex-start!important}
+  #menu.home-dashboard>.modes>.mode .modetext{padding-top:2px}
+  #menu.home-dashboard>.modes>.mode .modesub{font-size:8px!important;line-height:1.3!important}
+  #menu.home-dashboard>.modes>.mode .tag{font-size:6.5px!important;line-height:1.25!important}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{
+    display:grid!important;grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;gap:4px 10px;padding:10px!important;
+  }
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:first-child{grid-column:1/-1}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(2){grid-column:1}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(3){grid-column:1/-1;width:100%}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{grid-column:2;grid-row:2;text-align:right}
+  #menu.home-dashboard>.currency-panel .currency-label,
+  #menu.home-dashboard>.currency-panel .currency-caption{display:block!important}
+}
+@media(max-height:700px){
+  #menu.home-dashboard{height:auto!important;max-height:none!important;overflow:visible!important}
+  #menu.home-dashboard>.hero p,
+  #menu.home-dashboard>.modes>.mode .tag,
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{
+    display:block!important;visibility:visible!important;
+  }
+}
