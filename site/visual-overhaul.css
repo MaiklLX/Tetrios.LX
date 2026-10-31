@@ -198,3 +198,146 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #game .boardframe.bb-3d-arena-active{border-radius:15px!important}
   #game .bb-arena-toggle{padding:6px 9px!important;font-size:8px!important}
 }
+
+
+/* TETRIOS.LX — responsive one-screen home dashboard (2026-11-01).
+   Keep every existing home feature and its original JS hooks; only rearrange presentation. */
+#menu.home-dashboard{
+  box-sizing:border-box;width:100%;height:calc(100svh - 104px);min-height:0;overflow:hidden;
+  display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-template-rows:minmax(112px,1.2fr) minmax(34px,.36fr) minmax(18px,.2fr) minmax(76px,.92fr) minmax(54px,.62fr) minmax(100px,1.05fr) minmax(48px,.5fr) minmax(22px,.2fr);
+  grid-template-areas:
+    "hero hero hero hero hero hero hero download download download download download"
+    "hero hero hero hero hero hero hero streak streak streak streak streak"
+    "label label label label label label label streak streak streak streak streak"
+    "modes modes modes modes modes modes modes heroes heroes heroes heroes heroes"
+    "modes modes modes modes modes modes modes shop shop shop shop shop"
+    "quests quests quests quests quests quests quests resources resources resources resources resources"
+    "quests quests quests quests quests quests quests stats stats stats stats stats"
+    "reset reset reset reset reset reset reset reset reset reset reset reset";
+  gap:8px;align-content:stretch;
+}
+#menu.home-dashboard>.hero{grid-area:hero;min-width:0;min-height:0;height:100%;display:grid;grid-template-columns:minmax(0,1fr) clamp(76px,12vw,150px);grid-template-rows:auto auto 1fr;align-items:center;gap:3px 8px;padding:clamp(10px,1.3vw,20px)!important;text-align:left!important}
+#menu.home-dashboard>.hero .eyebrow{grid-column:1;grid-row:1;font-size:clamp(8px,.75vw,10px)!important;line-height:1.2}
+#menu.home-dashboard>.hero h1{grid-column:1;grid-row:2;font-size:clamp(30px,4.2vw,58px)!important;line-height:.88!important;margin:3px 0!important}
+#menu.home-dashboard>.hero p{grid-column:1;grid-row:3;align-self:start;max-width:34ch!important;margin:0!important;font-size:clamp(10px,.9vw,13px)!important;line-height:1.35!important}
+#menu.home-dashboard>.hero .orb{grid-column:2;grid-row:1/4;width:100%!important;height:100%!important;min-height:66px;margin:0!important;display:grid;place-items:center}
+#menu.home-dashboard>.hero .orb:before{width:clamp(52px,7.5vw,104px)!important;height:clamp(52px,7.5vw,104px)!important;border-radius:28px!important}
+#menu.home-dashboard>.hero .orb:after{width:clamp(66px,9vw,124px)!important;height:clamp(26px,3vw,42px)!important}
+#menu.home-dashboard>.hero .relic{font-size:clamp(28px,4vw,48px)!important}
+#menu.home-dashboard>.apk-download{grid-area:download;align-self:stretch;min-width:0;margin:0!important;padding:8px 12px!important;display:flex;align-items:center;gap:10px;border-radius:15px}
+#menu.home-dashboard>.apk-download .apk-download-icon{font-size:19px}
+#menu.home-dashboard>.apk-download .apk-download-copy strong{font-size:11px}
+#menu.home-dashboard>.apk-download .apk-download-copy small{font-size:9px}
+#menu.home-dashboard>.sectionlabel{grid-area:label;align-self:end;margin:0!important;padding:0 2px!important;font-size:9px!important;line-height:1.2}
+#menu.home-dashboard>.modes{grid-area:modes;min-width:0;min-height:0;height:100%;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:1fr;gap:8px;align-content:stretch}
+#menu.home-dashboard>.modes>.mode{min-width:0;min-height:0;height:100%;margin:0!important;padding:clamp(8px,1vw,14px)!important;display:flex;align-items:center;gap:8px;border-radius:16px!important}
+#menu.home-dashboard>.modes>.mode .modeicon{width:clamp(30px,3.5vw,46px);height:clamp(30px,3.5vw,46px);flex:0 0 auto;display:grid;place-items:center;font-size:clamp(18px,2.1vw,27px)}
+#menu.home-dashboard>.modes>.mode .modetext{min-width:0}
+#menu.home-dashboard>.modes>.mode .modetitle{font-size:clamp(10px,1vw,14px)!important;line-height:1.15}
+#menu.home-dashboard>.modes>.mode .modesub{display:none}
+#menu.home-dashboard>.modes>.mode .tag{display:inline-block;margin-top:5px;font-size:7px!important;line-height:1.2;padding:3px 5px}
+#menu.home-dashboard>.modes>.mode .modearrow{margin-left:auto;font-size:19px}
+#menu.home-dashboard>#bbVisitStreak{grid-area:streak;min-width:0;min-height:0;height:100%;box-sizing:border-box;margin:0!important;padding:clamp(8px,1vw,14px)!important;border-radius:16px!important;display:flex;flex-direction:column;justify-content:center;gap:4px}
+#menu.home-dashboard>#bbVisitStreak>div:first-child{gap:9px!important}
+#menu.home-dashboard>#bbVisitStreak>div:first-child>div:first-child{width:36px!important;height:36px!important;border-radius:11px!important;font-size:20px!important}
+#menu.home-dashboard>#bbVisitStreak #bbStreakCount{font-size:clamp(14px,1.5vw,20px)!important;margin:0!important}
+#menu.home-dashboard>#bbVisitStreak #bbStreakBest{font-size:9px!important}
+#menu.home-dashboard>#bbVisitStreak #bbStreakMessage{font-size:9px!important;line-height:1.25!important;margin:2px 0 0!important}
+#menu.home-dashboard>#bbVisitStreak #bbStreakRepairArea{margin:0!important;font-size:9px}
+#menu.home-dashboard>#openHeroes{grid-area:heroes;min-width:0;min-height:0;height:100%;margin:0!important;padding:8px 10px!important;border-radius:15px!important}
+#menu.home-dashboard>#openHeroes .modeicon{font-size:22px}
+#menu.home-dashboard>#openHeroes .modetitle{font-size:12px!important}
+#menu.home-dashboard>#openHeroes .modesub{display:none}
+#menu.home-dashboard>#openHeroes .tag{font-size:7px!important;margin-top:3px}
+#menu.home-dashboard>#rpgPanel{grid-area:shop;min-width:0;min-height:0;height:100%;box-sizing:border-box;display:flex;align-items:stretch;margin:0!important;padding:0!important;border-radius:15px!important;overflow:hidden}
+#menu.home-dashboard>#rpgPanel .shopbutton{min-width:0;min-height:0;width:100%;height:100%;margin:0!important;padding:7px 10px!important;display:flex;align-items:center;gap:8px;border-radius:14px!important}
+#menu.home-dashboard>#rpgPanel .shop-main-icon{font-size:22px}
+#menu.home-dashboard>#rpgPanel .shop-main-text strong{font-size:11px}
+#menu.home-dashboard>#rpgPanel .shop-main-text small{font-size:8px}
+#menu.home-dashboard>.currency-panel{grid-area:resources;min-width:0;min-height:0;height:100%;box-sizing:border-box;margin:0!important;padding:7px 9px!important;border-radius:15px!important;display:flex;flex-direction:column;justify-content:center;gap:5px}
+#menu.home-dashboard>.currency-panel .currency-heading{font-size:8px!important;margin:0!important}
+#menu.home-dashboard>.currency-panel .currency-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+#menu.home-dashboard>.currency-panel .currency-card{min-width:0;padding:5px 8px!important;display:flex;align-items:center;gap:7px;border-radius:10px!important}
+#menu.home-dashboard>.currency-panel .currency-icon{font-size:17px}
+#menu.home-dashboard>.currency-panel .currency-label,#menu.home-dashboard>.currency-panel .currency-caption{display:none}
+#menu.home-dashboard>.currency-panel .currency-info strong{font-size:15px!important}
+#menu.home-dashboard>#dailyQuestsPanel{grid-area:quests;min-width:0;min-height:0;height:100%;box-sizing:border-box;margin:0!important;padding:8px 10px!important;border-radius:15px!important;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child{margin:0 0 3px!important}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child strong{font-size:10px!important}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child span{font-size:8px!important}
+#menu.home-dashboard>#dailyQuestsPanel>div:nth-child(2){font-size:9px!important;line-height:1.2}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:6px!important;min-height:0}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{min-width:0;margin:0!important;padding:6px!important;border-radius:9px!important;overflow:hidden}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:first-child{font-size:9px!important;line-height:1.15}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(2){font-size:8px!important;margin-top:3px!important}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(3){height:4px!important;margin-top:4px!important}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{font-size:8px!important;margin-top:3px!important}
+#menu.home-dashboard>.bottomstats{grid-area:stats;min-width:0;min-height:0;height:100%;margin:0!important;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#menu.home-dashboard>.bottomstats .stat{min-width:0;padding:5px 4px!important;border-radius:11px!important;display:flex;flex-direction:column;justify-content:center;align-items:center}
+#menu.home-dashboard>.bottomstats .stat strong{font-size:clamp(14px,1.5vw,20px)!important;line-height:1.05}
+#menu.home-dashboard>.bottomstats .stat span{font-size:7px!important;letter-spacing:.1em}
+#menu.home-dashboard>.home-reset{grid-area:reset;min-width:0;margin:0!important;display:flex;justify-content:flex-end;align-items:center}
+#menu.home-dashboard>.home-reset #resetProgressBtn{width:auto!important;min-height:0;padding:4px 9px!important;margin:0!important;font-size:8px!important;letter-spacing:.06em;border-radius:9px!important;box-shadow:none!important}
+#menu.home-dashboard>.shopbuttons{display:none!important}
+#menu.home-dashboard>*{min-width:0}
+@media(max-width:760px){
+  #menu.home-dashboard{height:calc(100svh - 92px);grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:minmax(78px,1.05fr) minmax(34px,.42fr) minmax(15px,.2fr) minmax(88px,1.18fr) minmax(58px,.66fr) minmax(88px,1.12fr) minmax(44px,.52fr) minmax(18px,.2fr);grid-template-areas:"hero hero hero hero hero hero" "download download download download download download" "label label label label label label" "modes modes modes modes modes modes" "streak streak streak streak streak streak" "quests quests quests quests quests quests" "heroes heroes shop shop resources resources" "stats stats stats stats reset reset";gap:6px}
+  #menu.home-dashboard>.hero{grid-template-columns:minmax(0,1fr) 74px;padding:8px 11px!important;border-radius:16px!important}
+  #menu.home-dashboard>.hero h1{font-size:clamp(27px,7vw,39px)!important;margin:2px 0!important}
+  #menu.home-dashboard>.hero .eyebrow{font-size:7px!important;letter-spacing:.08em!important}
+  #menu.home-dashboard>.hero p{font-size:9px!important;line-height:1.2!important}
+  #menu.home-dashboard>.hero .orb:before{width:48px!important;height:48px!important;border-radius:15px!important}
+  #menu.home-dashboard>.hero .orb:after{width:62px!important;height:24px!important}
+  #menu.home-dashboard>.hero .relic{font-size:28px!important}
+  #menu.home-dashboard>.modes{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:6px}
+  #menu.home-dashboard>.modes>.mode{padding:6px 8px!important;border-radius:12px!important}
+  #menu.home-dashboard>.modes>.mode[data-mode="rogue"]{grid-column:span 2}
+  #menu.home-dashboard>.modes>.mode .modeicon{width:30px;height:30px;font-size:18px}
+  #menu.home-dashboard>.modes>.mode .modetitle{font-size:10px!important}
+  #menu.home-dashboard>.modes>.mode .tag{font-size:6px!important;margin-top:2px;padding:2px 4px}
+  #menu.home-dashboard>#bbVisitStreak{padding:6px 9px!important;flex-direction:row;align-items:center;gap:8px}
+  #menu.home-dashboard>#bbVisitStreak>div:first-child>div:first-child{width:30px!important;height:30px!important;font-size:17px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakCount{font-size:13px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakBest{font-size:8px!important}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakMessage{display:none}
+  #menu.home-dashboard>#bbVisitStreak #bbStreakRepairArea{display:none}
+  #menu.home-dashboard>#dailyQuestsPanel{padding:6px 8px!important}
+  #menu.home-dashboard>#dailyQuestsPanel>div:nth-child(2){display:none}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{gap:4px;margin-top:4px!important}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{padding:5px!important}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:first-child{font-size:8px!important}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{font-size:7px!important}
+  #menu.home-dashboard>.currency-panel{padding:4px 5px!important}
+  #menu.home-dashboard>.currency-panel .currency-heading{display:none}
+  #menu.home-dashboard>.currency-panel .currency-card{padding:4px!important;gap:4px}
+  #menu.home-dashboard>.currency-panel .currency-icon{font-size:14px}
+  #menu.home-dashboard>.currency-panel .currency-info strong{font-size:12px!important}
+  #menu.home-dashboard>#openHeroes{padding:5px!important}
+  #menu.home-dashboard>#openHeroes .modeicon{font-size:17px}
+  #menu.home-dashboard>#openHeroes .modetitle{font-size:9px!important}
+  #menu.home-dashboard>#openHeroes .tag{display:none}
+  #menu.home-dashboard>#rpgPanel .shop-main-icon{font-size:17px}
+  #menu.home-dashboard>#rpgPanel .shop-main-text strong{font-size:9px}
+  #menu.home-dashboard>#rpgPanel .shop-main-text small{display:none}
+  #menu.home-dashboard>.bottomstats{gap:4px}
+  #menu.home-dashboard>.bottomstats .stat{padding:3px!important}
+  #menu.home-dashboard>.bottomstats .stat strong{font-size:12px!important}
+  #menu.home-dashboard>.bottomstats .stat span{font-size:6px!important}
+  #menu.home-dashboard>.home-reset #resetProgressBtn{font-size:6px!important;padding:3px 5px!important}
+}
+@media(max-width:380px){
+  #menu.home-dashboard{grid-template-rows:minmax(72px,1fr) 30px 14px minmax(82px,1.12fr) minmax(52px,.62fr) minmax(82px,1.1fr) minmax(40px,.48fr) 16px;gap:5px}
+  #menu.home-dashboard>.apk-download{padding:5px 8px!important}
+  #menu.home-dashboard>.apk-download .apk-download-copy strong{font-size:9px}
+  #menu.home-dashboard>.apk-download .apk-download-copy small{font-size:7px}
+}
+@media(max-height:700px) and (max-width:760px){
+  #menu.home-dashboard{height:calc(100svh - 82px);grid-template-rows:minmax(66px,.92fr) 28px 13px minmax(74px,1fr) minmax(48px,.55fr) minmax(74px,1fr) minmax(36px,.42fr) 14px;gap:4px}
+  #menu.home-dashboard>.hero p{display:none}
+  #menu.home-dashboard>.modes>.mode .tag{display:none}
+  #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{display:none}
+}
+@media(max-height:620px){
+  #menu.home-dashboard{height:auto;min-height:calc(100svh - 82px);overflow:visible;grid-template-rows:auto;grid-template-areas:"hero hero hero hero hero hero" "download download download download download download" "label label label label label label" "modes modes modes modes modes modes" "streak streak streak streak streak streak" "quests quests quests quests quests quests" "heroes heroes shop shop resources resources" "stats stats stats stats reset reset"}
+}
