@@ -166,3 +166,16 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve backup branch `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: verify the latest deploy/APK artifacts, then ask user to check portrait phone layout and refine based on actual device proportions. No physical-device test has been claimed.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Portrait menu geometry repair — 2026-11-01
+- User reported the portrait home screen had visibly narrowed/distorted buttons and poor alignment; the previous layout was not acceptable.
+- Root cause found in `site/visual-overhaul.css`: several historical dashboard overrides were stacked with conflicting grid templates, min-heights, display modes and short-screen rules. The final portrait block did not consistently neutralize all earlier geometry.
+- Added a final, explicit portrait-only layout override in source commit `e5b9a48a5b7f87d3545cdc21a3ae3cb3178fbfd9`.
+- New portrait structure uses a predictable two-column content-sized grid: full-width hero and primary run button; equal Campaign/Daily cards; equal Heroes/Shop cards; then full-width streak, currency, stats, APK, quests and reset. Buttons are explicitly full-width within their grid cells, with fixed icon boxes and flexible text columns; no fixed viewport height or clipped dashboard content.
+- Changes are limited to `site/visual-overhaul.css`; no HTML, game logic, data, handlers, gameplay controls or arena changes.
+- Current main SHA: `e5b9a48a5b7f87d3545cdc21a3ae3cb3178fbfd9`.
+- CI for this commit: debug APK run `41246102332` and signed release run `41246102321`; both were in progress when recorded. Check latest run state and artifacts before sharing a build. Prior portrait APK run `41244821819` succeeded but predates this repair and should not be presented as the repaired version.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: verify CI, then user should inspect the new portrait layout on their Android device. If it is still not right, revert the portrait-specific menu work rather than stacking more conflicting CSS. Do not start visual FX or change the gameplay arena until the user approves the geometry.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
