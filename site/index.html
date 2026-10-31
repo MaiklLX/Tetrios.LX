@@ -5123,6 +5123,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 }
 
 
+
 /* === Desktop game layout recovery: keep HUD narrow and give the board the center stage === */
 @media (min-width: 901px) {
   #game .playlayout {
@@ -5219,7 +5220,12 @@ body:has(#menu:not([hidden])) .app > .topbar {
     height: min(62dvh, 590px) !important;
   }
 }
-</style></head>
+
+
+</style>
+<link rel="stylesheet" href="./visual-overhaul.css"><script type="importmap">
+{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
+</script></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
   <span class="apk-download-copy"><strong>СКАЧАТЬ APK</strong><small>Установить на Android · бесплатно</small></span>
@@ -5384,6 +5390,17 @@ body:has(#menu:not([hidden])) .app > .topbar {
   </div>
 </div>
 
+<div class="surprise-shop-card" style="margin-top:14px;border-color:#a78bfa66">
+  <div class="surprise-shop-icon">🗝️</div>
+  <div class="surprise-shop-info">
+    <div class="surprise-shop-label">РЕЛИКТОВЫЕ НАГРАДЫ</div>
+    <h3>Сундуки древних</h3>
+    <p>Косметические находки, расходуемые бусты и редкие самоцветы. Дубликаты превращаются во фрагменты коллекции.</p>
+    <div id="bbRelicChestOptions" style="display:grid;gap:8px;margin-top:12px"></div>
+    <div id="bbCollectionStatus" style="font-size:12px;color:#b6c2df;margin-top:10px"></div>
+    <button class="surprise-shop-buy" id="bbExchangeFragments" style="margin-top:8px">ОБМЕНЯТЬ 10 ФРАГМЕНТОВ</button>
+  </div>
+</div>
 <div id="shopContent"></div>
 </section>
 <section id="heroes" class="screen" hidden>
@@ -5416,7 +5433,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
   <span>🪙 ТВОИ МОНЕТЫ</span>
   <strong id="gameCoinsValue">0</strong>
 </div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
-<audio id="bgmTrack" preload="none" loop src="https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3"></audio>
+<audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0;
@@ -5605,6 +5622,30 @@ function bbDailyBuildCycle(cycle) {
   return rules;
 }
 
+
+function bbDailyRelicReward(rule) {
+  if (!rule) return 1;
+  const difficultyByMod = {
+    sun: 1,
+    silent: 1,
+    echoCombo: 2,
+    gravity: 2,
+    chroma: 2,
+    comet: 2,
+    artifactHunt: 2,
+    lastShield: 2,
+    gravityFlip: 3,
+    glitchReactor: 3,
+    redZone: 3,
+    chronoRift: 3,
+    mirror: 3,
+    blindAssembly: 3,
+    prismaticChaos: 3,
+    singularity: 3,
+    pulse: 4
+  };
+  return difficultyByMod[rule.mod] || 1;
+}
 
 function bbDailyRuleForDate(dateValue) {
   if (!dailyRules.length) return null;
@@ -5855,10 +5896,10 @@ function show(id){
   if(typeof bbSyncMusic==='function')bbSyncMusic()
 }
 
-function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show')}
+function overlay(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule;$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ';bbUpdateVisitStreak()}
+function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.';$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ';bbUpdateVisitStreak()}
 
 // BLOCK BUDDIES — серия ежедневных посещений и редкий предмет восстановления.
 function bbStreakRead() {
@@ -6252,6 +6293,7 @@ ${canReplay
 bbDailyReplayDate = date;
 bbDailyReplayRule = record || bbDailyRuleForDate(date);
 bbDailyReplayPaid = false;
+bbDailyReplayNoQuestReward = true;
 
       bbChooseHeroBeforeStart();
     };
@@ -6415,29 +6457,34 @@ function bbGetTodayKey() {
 let bbDailyReplayDate = null;
 let bbDailyReplayRule = null;
 let bbDailyReplayPaid = false;
+let bbDailyReplayNoQuestReward = false;
 
 function bbDailyReplayPrice(date) {
-  const today = new Date();
-  const selected = new Date(date + 'T12:00:00');
-  const current = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  );
+  // Сравниваем календарные даты через UTC, чтобы переходы летнего
+  // и зимнего времени не меняли цену повторного прохождения.
+  const todayParts = bbGetTodayKey().split('-').map(Number);
+  const selectedParts = String(date || '').split('-').map(Number);
 
-  const selectedDay = new Date(
-    selected.getFullYear(),
-    selected.getMonth(),
-    selected.getDate()
-  );
+  if (
+    todayParts.length !== 3 ||
+    selectedParts.length !== 3 ||
+    todayParts.some(n => !Number.isInteger(n)) ||
+    selectedParts.some(n => !Number.isInteger(n))
+  ) {
+    return 0;
+  }
 
-  const age = Math.floor(
-    (current.getTime() - selectedDay.getTime()) / 86400000
+  const todayNumber = Math.floor(
+    Date.UTC(todayParts[0], todayParts[1] - 1, todayParts[2]) / 86400000
   );
+  const selectedNumber = Math.floor(
+    Date.UTC(selectedParts[0], selectedParts[1] - 1, selectedParts[2]) / 86400000
+  );
+  const age = todayNumber - selectedNumber;
 
   if (age <= 0) return 0;
 
-  // 10% за каждый день давности, максимум 50% от награды в 500 монет.
+  // 50 монет за каждый день давности, максимум 250 монет.
   return Math.min(age * 50, 250);
 }
 function bbGetActiveDailyRule() {
@@ -6994,6 +7041,7 @@ document.getElementById('bbCancelStartHero').onclick = () => {
     bbDailyReplayDate = null;
     bbDailyReplayRule = null;
     bbDailyReplayPaid = false;
+    bbDailyReplayNoQuestReward = false;
   }
 
   closeOverlay();
@@ -7224,21 +7272,16 @@ if (isReplay) {
         JSON.stringify(replayedDates)
       );
 
-      // Награда за успешно пройденный пропущенный вызов.
-      bbCoins += 500;
-      localStorage.setItem('bbCoins', String(bbCoins));
-      localStorage.setItem('coins', String(bbCoins));
-
+      // За повторное прохождение выдаём реликвию, но не монеты.
+      // Повтор остаётся платным, чтобы не создавать чистую прибыль.
       relicCount += 1;
       localStorage.setItem('nrRelics', String(relicCount));
 
       updateHud();
       updateStats();
 
-      bbRewardFloat(500);
-      bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +1 ✧ реликвия';
-
-      toast('🏆 Испытание пройдено! +500 🪙 и 1 ✧ реликвия');
+      bbDailyRewardsForEnd = '🏆 Награда за повторное испытание: +1 ✧ реликвия';
+      toast('🏆 Испытание пройдено! +1 ✧ реликвия');
     } else {
       toast('Это испытание уже пройдено.');
     }
@@ -7266,7 +7309,8 @@ if (isReplay) {
   localStorage.setItem('bbCoins', String(bbCoins));
   localStorage.setItem('coins', String(bbCoins));
 
-  relicCount += 1;
+  const dailyRelicReward = bbDailyRelicReward(rule);
+  relicCount += dailyRelicReward;
   localStorage.setItem('nrRelics', String(relicCount));
 
   updateHud();
@@ -7275,7 +7319,7 @@ if (isReplay) {
   // Награды показываются в итоговом окне — без плавающих баннеров и задержек.
   paused = true;
   bbRewardFloat(500);
-  bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +1 ✧ реликвия';
+  bbDailyRewardsForEnd = '🏆 Награды за испытание: +500 🪙 монет и +' + dailyRelicReward + ' ✧ реликвий';
   endGame();
 
   return true;
@@ -7473,6 +7517,17 @@ if(bbIsDailyMechanic('redZone')){
 }
 for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);
 if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext()}
+window.bbGet3DBoardState=function(){
+  const settled=board.map(row=>row.slice());
+  let active=null,ghostY=null;
+  if(piece&&!gameOver){
+    active={x:piece.x,y:piece.y,t:piece.t,shape:piece.shape.map(row=>row.slice())};
+    const ghost={...piece,y:piece.y};
+    while(!collides(ghost,0,1))ghost.y++;
+    ghostY=ghost.y;
+  }
+  return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),lines:Number(lines)||0,started:!!started,paused:!!paused,gameOver:!!gameOver};
+};
 function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.4,s=cell-2.8;ctx.save();if(ghost){ctx.globalAlpha=.2;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,s-2,s-2);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.3;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(px,py,s,s,Math.max(2,cell*.12));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff75';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#ffffff45';ctx.fillRect(px+3,py+3,s-6,Math.max(1,s*.09));ctx.restore()}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
@@ -7546,6 +7601,15 @@ tone(330,.09,'triangle')}else toast('Удержание уже использо�
 
 let touch = null;
 let touchDropLocked = false;
+let touchDropUnlockTimer = null;
+function lockTouchDrop() {
+  touchDropLocked = true;
+  if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
+  touchDropUnlockTimer = setTimeout(() => {
+    touchDropLocked = false;
+    touchDropUnlockTimer = null;
+  }, 220);
+}
 const cv = $('game');
 
 // Мягкий свайп ускоряет падение; быстрый длинный свайп в конце выполняет hard drop.
@@ -7557,22 +7621,19 @@ cv.addEventListener('touchstart', e => {
     return;
   }
   const t=e.changedTouches[0];
-  // Расширенная «мёртвая зона» вокруг DROP: размер кнопки и расположение
-  // берутся из текущей вёрстки, поэтому защита работает на телефонах,
-  // планшетах и компьютерах с сенсорным экраном независимо от масштаба.
+  // Узкая защитная зона вокруг DROP подавляет только случайный тап
+  // (который иначе вращает фигуру), но не блокирует свайпы через эту область.
   const dropButton = document.querySelector('#game [data-act="drop"]');
+  let suppressTap = false;
   if (dropButton) {
     const r = dropButton.getBoundingClientRect();
-    const safe = 52;
-    if (t.clientX >= r.left - safe && t.clientX <= r.right + safe &&
-        t.clientY >= r.top - safe && t.clientY <= r.bottom + safe) {
-      touch = null;
-      return;
-    }
+    const safe = 18;
+    suppressTap = t.clientX >= r.left - safe && t.clientX <= r.right + safe &&
+      t.clientY >= r.top - safe && t.clientY <= r.bottom + safe;
   }
   if (!started || paused || gameOver || touchDropLocked) return;
   if (e.target.closest('#board')) e.preventDefault();
-  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false};
+  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,suppressTap};
   audioCtx();
 },{passive:false});
 
@@ -7594,7 +7655,8 @@ cv.addEventListener('touchmove',e=>{
         if(!move(0,1)){
           // Фигура уже зафиксировалась у дна: не обрабатываем остаток жеста.
           touch.dropped=true;
-          touchDropLocked=true;
+          // Не блокируем следующие жесты навсегда, если фигура уже упёрлась в дно.
+          lockTouchDrop();
           break;
         }
       }
@@ -7609,19 +7671,18 @@ cv.addEventListener('touchend',e=>{
     touch = null;
     return;
   }
-  if(!touch){touchDropLocked=false;return}
+  if(!touch)return
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
   const elapsed=Date.now()-touch.at;
   const fastDownSwipe=touch.axis==='y'&&dy>135&&dy>Math.abs(dx)*1.7&&elapsed<420;
 
-  if(!touch.dropped&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
+  if(!touch.dropped&&!touch.suppressTap&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
     rotatePiece();
   }else if(!touch.dropped&&fastDownSwipe&&started&&!paused&&!gameOver){
     // Отдельный быстрый жест — hard drop текущей фигуры.
     touch.dropped=true;
-    touchDropLocked=true;
+    lockTouchDrop();
     hardDrop();
-    setTimeout(()=>{touchDropLocked=false},220);
   }
   touch=null;
 },{passive:true});
@@ -7682,7 +7743,7 @@ const bbHeroes = [
     id: 'pixel',
     name: 'Пиксель',
     emoji: '🤖',
-    color: '#287858',
+    color: '#2878c7',
     desc: 'Спокойный и надёжный',
     role: 'Инженер',
     hp: 5,
@@ -7694,7 +7755,7 @@ const bbHeroes = [
     id: 'spark',
     name: 'Искра',
     emoji: '⚡',
-    color: '#a87916',
+    color: '#ffc84d',
     desc: 'Энергия каждой битвы',
     role: 'Штурмовик',
     hp: 3,
@@ -7708,6 +7769,20 @@ let bbSelectedHero = localStorage.getItem('bbSelectedHero') || 'plush';
 let bbPreviewHero = bbSelectedHero;
 let bbPlushSaved = false;
 
+function bbHeroEmblem(id, size = 'roster') {
+  const w = size === 'detail' ? 82 : 58;
+  const art = {
+    plush: '<circle cx="31" cy="28" r="11" fill="#9b6845" stroke="#e8bd8d" stroke-width="3"/><circle cx="69" cy="28" r="11" fill="#9b6845" stroke="#e8bd8d" stroke-width="3"/><path d="M23 44Q24 33 50 33Q76 33 77 44L81 66Q80 78 66 78H34Q20 78 19 66Z" fill="#9b6845" stroke="#e8bd8d" stroke-width="3"/><ellipse cx="50" cy="58" rx="19" ry="15" fill="#e8c7a2"/><circle cx="40" cy="47" r="4" fill="#fff"/><circle cx="60" cy="47" r="4" fill="#fff"/><circle cx="41" cy="47" r="2" fill="#15203b"/><circle cx="61" cy="47" r="2" fill="#15203b"/><path d="M43 57Q50 63 57 57Q55 68 50 68Q45 68 43 57Z" fill="#20223a"/><path d="M28 69Q50 79 72 69L68 78H32Z" fill="#5cf5e8"/>',
+    prism: '<ellipse cx="50" cy="53" rx="36" ry="10" fill="none" stroke="#9d7cff" stroke-width="3" transform="rotate(-24 50 53)"/><path d="M50 13L72 39L63 69L50 82L34 66L27 39Z" fill="#276c9e" stroke="#83f4ff" stroke-width="3"/><path d="M50 13L51 46L27 39Z" fill="#c8fbff"/><path d="M51 46L72 39L63 69Z" fill="#42c8ff"/><path d="M51 46L34 66L27 39Z" fill="#5b83ff"/><path d="M51 46L63 69L50 82L34 66Z" fill="#9d7cff"/><path d="M39 44Q44 39 48 44M53 44Q58 39 62 44" fill="none" stroke="#10203d" stroke-width="3"/><circle cx="43" cy="45" r="2.5" fill="#fff"/><circle cx="58" cy="45" r="2.5" fill="#fff"/><path d="M42 56Q50 61 58 56" fill="none" stroke="#10203d" stroke-width="2.5"/>',
+    blip: '<path d="M31 28L20 12L39 22M68 24L80 10L78 31" fill="#6846a0" stroke="#c7a4ff" stroke-width="3"/><path d="M18 48Q14 24 39 24H62Q87 24 82 50L76 68Q69 80 50 78Q30 80 23 66Z" fill="#8c61d9" stroke="#d2b4ff" stroke-width="3"/><ellipse cx="39" cy="47" rx="9" ry="12" fill="#fff"/><ellipse cx="62" cy="47" rx="9" ry="12" fill="#fff"/><circle cx="42" cy="49" r="4" fill="#27134e"/><circle cx="59" cy="49" r="4" fill="#27134e"/><path d="M39 63Q50 72 62 61" fill="none" stroke="#2d174f" stroke-width="4"/><path d="M51 64L56 64L54 70Z" fill="#fff"/><path d="M49 24V14" stroke="#b7c8ed" stroke-width="3"/><circle cx="49" cy="10" r="5" fill="#5cf5e8" stroke="#e3ffff" stroke-width="2"/>',
+    pixel: '<path d="M45 20V11H55V20" fill="none" stroke="#b7c8ed" stroke-width="4"/><rect x="42" y="5" width="16" height="12" rx="3" fill="#ffc86b" stroke="#fff0b4" stroke-width="2"/><rect x="24" y="23" width="52" height="48" rx="8" fill="#2878c7" stroke="#9ed5ff" stroke-width="3"/><rect x="31" y="31" width="38" height="23" rx="4" fill="#101b34" stroke="#72c8ff" stroke-width="2"/><rect x="37" y="37" width="7" height="10" rx="2" fill="#5cf5e8"/><rect x="56" y="37" width="7" height="10" rx="2" fill="#b2ff76"/><path d="M39 59H61" stroke="#ffc86b" stroke-width="3"/><circle cx="39" cy="65" r="2" fill="#fff"/><circle cx="50" cy="65" r="2" fill="#fff"/><circle cx="61" cy="65" r="2" fill="#fff"/><path d="M23 37L14 43V59L24 62M77 37L86 43V59L76 62" fill="#43506e" stroke="#b7c8ed" stroke-width="3"/>',
+    spark: '<path d="M50 9L59 27L78 20L71 40L87 49L69 58L74 77L54 69L42 84L37 65L17 68L27 50L12 38L33 34L32 15L46 27Z" fill="#ff9d24" stroke="#ffe69a" stroke-width="3"/><path d="M50 18L63 38L56 44L66 51L49 72L45 53L35 49L43 39Z" fill="#ffdf70"/><ellipse cx="40" cy="42" rx="5" ry="7" fill="#fff"/><ellipse cx="60" cy="42" rx="5" ry="7" fill="#fff"/><circle cx="41" cy="43" r="2.5" fill="#38203b"/><circle cx="59" cy="43" r="2.5" fill="#38203b"/><path d="M42 56Q50 62 58 56" fill="none" stroke="#9c4316" stroke-width="3"/>'
+  };
+  const labels = {plush:'Капитан Плюш',prism:'Призма',blip:'Блип',pixel:'Пиксель',spark:'Искра'};
+  const colors = {plush:'#9b6845',prism:'#276c9e',blip:'#6846a0',pixel:'#2878c7',spark:'#ffc84d'};
+  const idSafe = labels[id] ? id : 'plush';
+  return '<svg viewBox="0 0 100 90" width="'+w+'" height="'+Math.round(w*.9)+'" role="img" aria-label="'+labels[idSafe]+'" style="display:block;filter:drop-shadow(0 4px 10px '+colors[idSafe]+'88)"><circle cx="50" cy="47" r="43" fill="'+colors[idSafe]+'" opacity=".12"/><ellipse cx="50" cy="79" rx="25" ry="5" fill="#070d1b" opacity=".4"/>'+art[idSafe]+'</svg>';
+}
 function bbRenderHeroes() {
   const roster = document.getElementById('heroesRoster');
   const details = document.getElementById('heroDetails');
@@ -7723,7 +7798,7 @@ function bbRenderHeroes() {
       style="padding:14px 8px;border:2px solid ${h.id === hero.id ? h.color : 'rgba(150,170,200,.2)'};
       border-radius:16px;background:${h.id === hero.id ? h.color + '22' : 'rgba(120,140,160,.08)'};
       color:inherit;cursor:pointer;text-align:center;min-width:0;">
-      <div style="font-size:38px;margin-bottom:7px">${h.emoji}</div>
+      <div style="display:flex;justify-content:center;align-items:center;min-height:62px;margin-bottom:7px">${bbHeroEmblem(h.id)}</div>
       <strong style="display:block;font-size:13px">${h.name}</strong>
       <div style="font-size:11px;opacity:.7;margin-top:5px">${h.role}</div>
       <div style="font-size:10px;margin-top:8px;color:${h.color}">
@@ -7738,8 +7813,9 @@ function bbRenderHeroes() {
     hero.color + '22,rgba(120,140,160,.06));margin:12px 0 16px;';
 
   details.innerHTML = `
+    <div class="bb-3d-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-просмотр персонажа"></div>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="font-size:54px;background:${hero.color}30;border-radius:16px;padding:8px">${hero.emoji}</div>
+      <div style="display:grid;place-items:center;width:94px;height:94px;flex:0 0 94px;background:${hero.color}20;border:1px solid ${hero.color}66;border-radius:22px;box-shadow:inset 0 0 24px ${hero.color}18">${bbHeroEmblem(hero.id, "detail")}</div>
       <div>
         <div style="font-size:10px;letter-spacing:2px;opacity:.7">${hero.role.toUpperCase()}</div>
         <h3 style="margin:5px 0;font-size:20px">${hero.name}</h3>
@@ -7760,6 +7836,47 @@ function bbRenderHeroes() {
     <h3 style="margin:7px 0;color:${hero.color}">${hero.skill}</h3>
     <p style="font-size:13px;line-height:1.5;margin:0">${hero.skillDesc}</p>
   `;
+
+  // Коллекционные косметические предметы можно надевать на выбранного героя.
+  const ownedCosmetics = typeof bbGetChestCosmetics === 'function' ? bbGetChestCosmetics() : [];
+  const equippedCosmetic = bbGet('equippedChestCosmetic', '');
+  const cosmeticById = {
+    'comet-trail': {name:'Кометный след',emoji:'☄️'},
+    'void-crown': {name:'Корона пустоты',emoji:'👑'},
+    'prism-shard': {name:'Призматический осколок',emoji:'🔮'},
+    'star-sigil': {name:'Звёздная печать',emoji:'🌟'},
+    'pixel-ghost': {name:'Пиксельный призрак',emoji:'👻'},
+    'neon-wings': {name:'Неоновые крылья',emoji:'🪽'}
+  };
+  const equipped = cosmeticById[equippedCosmetic];
+  const cosmeticPanel = document.createElement('section');
+  cosmeticPanel.style.cssText = 'margin-top:14px;padding:14px;border:1px solid rgba(167,139,250,.35);border-radius:16px;background:rgba(100,80,160,.08)';
+  cosmeticPanel.innerHTML = `
+    <div style="font-size:10px;letter-spacing:1.5px;opacity:.75;margin-bottom:6px">КОСМЕТИКА ГЕРОЯ</div>
+    <div style="font-size:13px;margin-bottom:10px">${equipped ? 'Надето: '+equipped.emoji+' '+equipped.name : 'Украшение не выбрано'}</div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+      ${ownedCosmetics.length ? ownedCosmetics.map(id => {
+        const item = cosmeticById[id];
+        if (!item) return '';
+        const active = id === equippedCosmetic;
+        return `<button type="button" data-equip-cosmetic="${id}" style="padding:10px 6px;border-radius:12px;border:1px solid ${active ? '#a78bfa' : 'rgba(150,170,200,.2)'};background:${active ? 'rgba(167,139,250,.2)' : 'rgba(120,140,160,.08)'};color:inherit;text-align:center;font-size:12px"><span style="font-size:22px;display:block;margin-bottom:5px">${item.emoji}</span>${item.name}${active ? '<br>✓ НАДЕТО' : ''}</button>`;
+      }).join('') : '<div style="grid-column:1/-1;font-size:12px;opacity:.7">Пока нет предметов. Открывай реликтовые сундуки в магазине.</div>'}
+    </div>
+    ${equippedCosmetic ? '<button type="button" data-unequip-cosmetic style="margin-top:9px;width:100%;padding:9px;border-radius:10px;border:1px solid rgba(150,170,200,.2);background:transparent;color:inherit">СНЯТЬ УКРАШЕНИЕ</button>' : ''}
+  `;
+  details.appendChild(cosmeticPanel);
+  cosmeticPanel.querySelectorAll('[data-equip-cosmetic]').forEach(btn => {
+    btn.onclick = () => {
+      bbPut('equippedChestCosmetic', btn.dataset.equipCosmetic);
+      bbApplyHero();
+      bbRenderHeroes();
+    };
+  });
+  cosmeticPanel.querySelector('[data-unequip-cosmetic]')?.addEventListener('click', () => {
+    bbPut('equippedChestCosmetic', '');
+    bbApplyHero();
+    bbRenderHeroes();
+  });
 
   roster.querySelectorAll('[data-hero-card]').forEach(btn => {
     btn.onclick = () => {
@@ -7791,9 +7908,18 @@ function bbApplyHero() {
   const name = document.querySelector('#menu .rpgname');
 
   if (avatar) {
-    avatar.textContent = hero.emoji;
+    const cosmeticEmojiById = {
+      'comet-trail':'☄️','void-crown':'👑','prism-shard':'🔮',
+      'star-sigil':'🌟','pixel-ghost':'👻','neon-wings':'🪽'
+    };
+    const equippedId = bbGet('equippedChestCosmetic', '');
+    const accessory = cosmeticEmojiById[equippedId];
+    avatar.innerHTML = accessory
+      ? '<span style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:100%;height:100%"><span>'+hero.emoji+'</span><span aria-label="Надетая косметика" title="Надетая косметика" style="position:absolute;right:-7px;top:-9px;min-width:23px;height:23px;padding:2px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#201a3b;border:1px solid #a78bfa;font-size:15px;box-shadow:0 2px 8px #0006">'+accessory+'</span></span>'
+      : hero.emoji;
     avatar.style.background = hero.color;
     avatar.style.borderRadius = '14px';
+    avatar.style.overflow = 'visible';
   }
 
   if (name) {
@@ -7856,6 +7982,7 @@ function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('sho
 function bbShop(){
   $('shopCoins').textContent = bbCoins;
   $('shopGems').textContent = bbGems;
+  bbRenderRelicChests();
 
   $('shopContent').innerHTML = `
     <div class="shopgrid">
@@ -8033,6 +8160,96 @@ function bbHero(){
   $('bbHeroClose').onclick = closeOverlay;
 }
 function bbBox(){if(bbCoins<60){toast('Сюрприз-бокс стоит 60 монет');return}bbCoins-=60;let r=Math.random(),reward;if(r<.58){let n=35+Math.floor(Math.random()*60);bbCoins+=n;reward=`🪙 +${n} монет`}else if(r<.82){let n=1+Math.floor(Math.random()*2);bbGems+=n;reward=`💎 +${n} самоцвета`}else if(r<.95){let id=['quick','shield','magnet'][Math.floor(Math.random()*3)];bbInventory[id]=(bbInventory[id]||0)+1;reward=`${bbCatalog.find(x=>x.id===id).emoji} ${bbCatalog.find(x=>x.id===id).name}`}else{let n=100+Math.floor(Math.random()*100);bbXp+=n;reward=`⭐ +${n} опыта`}bbSave();chime();bbModal(`<div class="modalhead bb-reward-modal"><div class="bigicon" style="animation:float 1s infinite">🎁</div><div class="eyebrow">ТА-ДААА!</div><h3>Сюрприз-бокс открыт!</h3><p>Внутри оказалось: <b>${reward}</b></p></div><button class="action" id="bbBoxOk">КЛАСС!</button>`);$('bbBoxOk').onclick=closeOverlay}
+const bbRelicChestTiers = [
+  {id:'super',name:'Суперсундук',cost:5,emoji:'🟦',cosmetic:0.68,boost:0.22,gems:0.09},
+  {id:'elite',name:'Элитный сундук',cost:15,emoji:'🟪',cosmetic:0.55,boost:0.25,gems:0.17},
+  {id:'mythic',name:'Мифический сундук',cost:30,emoji:'🟨',cosmetic:0.45,boost:0.30,gems:0.20}
+];
+const bbChestCosmetics = [
+  {id:'comet-trail',name:'Кометный след',emoji:'☄️'},
+  {id:'void-crown',name:'Корона пустоты',emoji:'👑'},
+  {id:'prism-shard',name:'Призматический осколок',emoji:'🔮'},
+  {id:'star-sigil',name:'Звёздная печать',emoji:'🌟'},
+  {id:'pixel-ghost',name:'Пиксельный призрак',emoji:'👻'},
+  {id:'neon-wings',name:'Неоновые крылья',emoji:'🪽'}
+];
+let bbChestBusy = false;
+function bbGetChestCosmetics(){const value=bbGet('chestCosmetics',[]);return Array.isArray(value)?value:[]}
+function bbGetCollectionFragments(){return Math.max(0,Number(bbGet('collectionFragments',0))||0)}
+function bbRenderRelicChests(){
+  const options=$('bbRelicChestOptions');
+  const status=$('bbCollectionStatus');
+  const exchange=$('bbExchangeFragments');
+  if(options) options.innerHTML=bbRelicChestTiers.map(t=>`<button type="button" data-bb-chest="${t.id}" style="display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;padding:11px 12px;border-radius:12px;border:1px solid #a78bfa66;background:#111a30;color:#f3f4ff;font-weight:800"><span>${t.emoji} ${t.name}</span><span style="white-space:nowrap">${t.cost} ✧</span></button>`).join('');
+  if(options) options.querySelectorAll('[data-bb-chest]').forEach(button=>button.onclick=()=>bbOpenRelicChest(button.dataset.bbChest));
+  const owned=bbGetChestCosmetics();
+  if(status) status.textContent='Коллекция: '+owned.length+'/'+bbChestCosmetics.length+' · Фрагменты: '+bbGetCollectionFragments();
+  if(exchange) exchange.disabled=bbGetCollectionFragments()<10||owned.length>=bbChestCosmetics.length;
+  if(exchange) exchange.textContent=owned.length>=bbChestCosmetics.length?'КОЛЛЕКЦИЯ СОБРАНА':'ОБМЕНЯТЬ 10 ФРАГМЕНТОВ';
+}
+function bbOpenRelicChest(tierId){
+  if(bbChestBusy)return;
+  const tier=bbRelicChestTiers.find(t=>t.id===tierId);
+  if(!tier)return;
+  if(relicCount<tier.cost){toast('Не хватает реликвий для этого сундука.');return}
+  bbChestBusy=true;
+  relicCount-=tier.cost;
+  localStorage.setItem('nrRelics',String(relicCount));
+  let roll=Math.random(),reward='';
+  const owned=bbGetChestCosmetics();
+  if(roll<tier.cosmetic){
+    const item=bbChestCosmetics[Math.floor(Math.random()*bbChestCosmetics.length)];
+    if(!owned.includes(item.id)){
+      owned.push(item.id);
+      bbPut('chestCosmetics',owned);
+      reward=item.emoji+' '+item.name+' — новый предмет коллекции';
+    }else{
+      const fragments=tier.id==='mythic'?6:tier.id==='elite'?4:3;
+      bbPut('collectionFragments',bbGetCollectionFragments()+fragments);
+      reward='🧩 '+item.name+' уже есть: +'+fragments+' фрагмента коллекции';
+    }
+  }else if(roll<tier.cosmetic+tier.boost){
+    const ids=['quick','shield','magnet'];
+    const count=tier.id==='mythic'?2:1;
+    const found=[];
+    for(let i=0;i<count;i++){
+      const id=ids[Math.floor(Math.random()*ids.length)];
+      bbInventory[id]=(bbInventory[id]||0)+1;
+      const item=bbCatalog.find(x=>x.id===id);
+      if(item)found.push(item.emoji+' '+item.name);
+    }
+    reward=found.join('<br>')+' — буст'+(count>1?'ы':'')+' на будущий забег';
+  }else if(roll<tier.cosmetic+tier.boost+tier.gems){
+    const amount=tier.id==='mythic'?2+Math.floor(Math.random()*2):tier.id==='elite'?1+Math.floor(Math.random()*2):1;
+    bbGems+=amount;
+    reward='💎 +'+amount+' самоцвет'+(amount===1?'':amount<5?'а':'ов');
+  }else{
+    const amount=tier.id==='mythic'?4:2;
+    bbGems+=amount;
+    reward='💎 '+amount+' самоцвета — редкая находка!';
+  }
+  bbSave();
+  updateStats();
+  bbRenderRelicChests();
+  chime();
+  bbModal('<div class="modalhead bb-reward-modal"><div class="bigicon" style="animation:float 1s infinite">'+tier.emoji+'</div><div class="eyebrow">'+tier.name.toUpperCase()+'</div><h3>Сундук открыт!</h3><p>Внутри оказалось:<br><b>'+reward+'</b></p></div><button class="action" id="bbChestOk">ЗАБРАТЬ НАГРАДУ</button>');
+  $('bbChestOk').onclick=()=>{bbChestBusy=false;closeOverlay();bbShop()};
+}
+function bbExchangeCollectionFragments(){
+  const owned=bbGetChestCosmetics();
+  const available=bbChestCosmetics.filter(item=>!owned.includes(item.id));
+  if(bbGetCollectionFragments()<10){toast('Нужно 10 фрагментов коллекции.');return}
+  if(!available.length){toast('Коллекция уже собрана!');return}
+  bbPut('collectionFragments',bbGetCollectionFragments()-10);
+  const item=available[Math.floor(Math.random()*available.length)];
+  owned.push(item.id);
+  bbPut('chestCosmetics',owned);
+  bbSave();
+  bbRenderRelicChests();
+  toast(item.emoji+' Получено: '+item.name);
+}
+$('bbExchangeFragments')?.addEventListener('click',bbExchangeCollectionFragments);
+
 $('openShop').onclick = bbShop;
 
 const bbOldEnd = endGame;
@@ -8140,7 +8357,14 @@ endGame = function() {
 
   if (shouldRecord) {
     bbDailyRecordedThisGame = true;
-    bbDailyRecordGame();
+
+    // Повторное прохождение пропущенного вызова не продвигает
+    // ежедневные задания и не может косвенно приносить монеты.
+    if (!bbDailyReplayNoQuestReward) {
+      bbDailyRecordGame();
+    }
+
+    bbDailyReplayNoQuestReward = false;
   }
 
   bbDailyOldEnd();
@@ -8190,6 +8414,8 @@ function bbApplyDailyChronoLayout(){
   game?.classList.remove('daily-chrono-layout');
   if(coins&&side&&left) left.appendChild(coins);
 }
+
+
 
 let bbGesture = null;
 
@@ -8339,4 +8565,5 @@ if (resetProgressBtn) {
 }
 
 })();
-</script></body></html>
+</script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js"></script>
+</body></html>
