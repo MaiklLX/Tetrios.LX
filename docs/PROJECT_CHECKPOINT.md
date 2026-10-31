@@ -215,3 +215,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserved backup branch `backup/main-before-aaa-release-2026-10-31` remains at `1a6548446c938d77d737accb202ee368a116943c`; do not modify it.
 - Next: inspect deployment run `41248794952`, then review the live result and tune any actual clipping/overlap based on the user's device feedback. Do not change the gameplay arena.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Recovery checkpoint — 2026-11-01 (restore stable home layout)
+- The expanded dashboard grid introduced in commit `93628e54798610399192651fd221281b2eade2d2` was visually broken on the user's device. Do not reapply that grid or its CSS block.
+- Recovery commit: `6c6a2fe08fb3ed0c4595a30d923b802c247d8b77`. It removes only the appended block beginning `TETRIOS.LX — centered rotating emblem + expanded home controls` from `site/visual-overhaul.css`.
+- This restores the prior home layout and preserves the earlier working tetromino showcase: common centered shape geometry, slow rotation and soft cross-fades from `d430331ae8009c6bc44e18d994547f4161e72fb7`.
+- No HTML, game logic, navigation, data, gameplay arena or backup branch was changed.
+- A new GitHub Pages deployment should be triggered by the recovery commit; verify its completion before telling the user the site is restored live.
+- Next design pass: do not rearrange the dashboard grid. First adjust only the central hero/emblem within its existing layout bounds; preserve all menu dimensions and positions. Make one small change at a time and wait for user device confirmation before expanding scope.
+- Backup branch `backup/main-before-aaa-release-2026-10-31` remains unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
