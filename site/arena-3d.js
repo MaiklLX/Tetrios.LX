@@ -201,6 +201,8 @@
     if(previousState&&Number.isFinite(state.lines)&&Number.isFinite(previousState.lines)&&state.lines>previousState.lines){
       const now=performance.now(),count=Math.min(4,state.lines-previousState.lines);
       clearStreak=now-lastClearAt<1800?Math.min(5,clearStreak+1):1;lastClearAt=now;
+      // A compact camera impulse makes a line clear register without shaking the UI.
+      impactAt=now;impactStrength=Math.min(.24,.09+count*.035);
       for(let i=effectsGroup.children.length-1;i>=0;i--){
         const obj=effectsGroup.children[i];effectsGroup.remove(obj);
         disposeEffect(obj);
@@ -238,7 +240,7 @@
         const flash=new THREE.Mesh(new THREE.PlaneGeometry(.82,.82),mat);
         flash.position.set(oldPiece.x+dx-4.5,9.5-(oldPiece.y+dy),.52);
         flash.userData.createdAt=now;flash.userData.life=360;
-        effectsGroup.add(flash);
+        addEffect(flash);
       }));
       // Ground shockwave: a quick horizontal energy sweep under the locked piece.
       const shockMat=new THREE.MeshBasicMaterial({color:0x75fff0,transparent:true,opacity:.9,side:THREE.DoubleSide});
