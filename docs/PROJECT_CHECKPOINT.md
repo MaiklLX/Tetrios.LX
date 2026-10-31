@@ -1,6 +1,6 @@
 # Tetrios.LX — project checkpoint
 
-Last updated: 2026-10-31 (3D rotation feedback pass)
+Last updated: 2026-10-31 (3D rotation + rotation haptics pass)
 
 ## Resume phrase
 **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
@@ -25,12 +25,13 @@ When the user sends this phrase in a new chat:
 - PR: #12 — https://github.com/MaiklLX/Tetrios.LX/pull/12
 - PR purpose: optional mobile haptic feedback, safe background auto-pause, and responsive 3D rotation feedback.
 - Added a haptic toggle beside the sound control in the header. It is hidden where `navigator.vibrate` is unsupported.
-- Haptics are user-toggleable, persisted in `localStorage.bb_haptics`, and used for hard drops and line clears. The 4-line clear gets a stronger pattern.
+- Haptics are user-toggleable, persisted in `localStorage.bb_haptics`, and used for successful rotations, hard drops and line clears. The 4-line clear gets a stronger pattern; blocked rotations do not vibrate.
 - Main 2D game logic, classic mobile layout, and 3D arena remain unchanged.
 - Updated `site/validate-3d-runtime.mjs` to assert haptic capability guarding, persisted preference, and event feedback.
 - Inline gameplay script syntax was checked successfully with `new Function` after the background-pause change.
 - Added `bbHandleVisibilityChange()`: if Android backgrounds the WebView during an active round, the game opens its existing pause overlay and remains paused until the player explicitly taps RESUME. No automatic resume on return; no changes to menu flow or an already-paused round.
 - Runtime validator now asserts the visibility handler and active-round guard.
+- Successful piece rotations now trigger a light 9 ms haptic pulse. The rotate function only emits feedback when a rotation or wall-kick succeeds; failed rotations remain silent.
 - 3D rotation feedback: when a tetromino rotates, a short mint-colored arc appears around its pivot, gently expands and rotates, then disposes itself. It uses the existing capped transient-effects manager, respects reduced-motion by not animating, and does not change game rules or inputs.
 
 ## Current CI
@@ -42,6 +43,8 @@ When the user sends this phrase in a new chat:
 - Follow-up audit `41217232515` for checkpoint commit `d034f9685fdc8cd104699946521c1409ce5b5816` completed successfully and produced APK artifact `13048177545`.
 - Latest source changes: auto-pause commit `32c533aba3e040e99ed3f5d29b789d264241d33a`, validator commit `27570ed6808cf8219a9e49e4cf3b8d44d53668e3`.
 - Latest 3D feedback source commit: `78c289531469489c6b4c072c19832ab8e5b254b3`.
+- Latest rotation haptics source commit: `0e0bb2b62c8a9e23aaf06c0f10f8cc39b41b58bd`.
+- Latest haptics validator commit: `2cfca88be0277e22262bde7b080bc28b41d9885d`.
 - Latest runtime validator commit: `81a06b69e7e88017aa8e51b076313888c7ad7c4a`.
 - A fresh audit is triggered for these latest changes; verify its final result and APK artifact before sharing.
 
