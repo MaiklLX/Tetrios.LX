@@ -37,6 +37,14 @@ When the user sends this phrase in a new chat:
 - Line clears now add a brief camera-only impact pulse, scaled by the number of cleared lines; the 2D UI and game logic are untouched.
 - Arena streak response: the existing metallic side-rail material receives a subtle, short emissive pulse after line clears. The pulse scales gently with line count and consecutive clears, fades within 720 ms, and reuses the existing material (no new meshes, particles, timers, or render loops). It runs inside the existing animation frame and respects reduced-motion mode.
 
+## Main screen redesign — 2026-11-01
+- Gameplay-space redesign is paused by user request; current 2D/3D arena and gameplay presentation remain unchanged.
+- Main menu is being reorganized as a responsive one-viewport dashboard across desktop, tablet and mobile.
+- Preserved existing feature hooks and data IDs: game modes, Android APK download, daily visit streak/repair, hero selection, shop, currencies, daily quests, record/run/relic stats, and full progress reset.
+- Desktop uses a wide dashboard grid; narrow screens use a compact two-column composition with a featured primary run mode.
+- Short-height devices below 620px retain natural vertical overflow instead of clipping content or making controls inaccessible.
+- Latest homepage source commit and CI are recorded below after the first implementation pass.
+
 ## Current CI
 - Android WebView audit PR run: `41217105665`
 - Run URL: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41217105665
