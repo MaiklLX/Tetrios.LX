@@ -890,3 +890,18 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
  #menu.home-dashboard>.currency-panel{padding:10px!important}
  #menu.home-dashboard>.bottomstats .stat{padding:10px 5px!important}
 }
+
+
+/* CSS-built centerpiece: actual interface geometry, not a flattened screenshot. */
+#menu.home-dashboard>.hero .orb{height:clamp(46px,5vw,64px)!important;margin:2px auto -5px!important;width:150px!important}
+#menu.home-dashboard>.hero .orb:before{width:42px;height:42px;border-color:#7b7cff99;box-shadow:0 0 28px #885cff66}
+#menu.home-dashboard>.hero .orb:after{width:74px;height:24px;border-color:#43eaff88}
+#menu.home-dashboard>.hero .relic{font-size:24px;animation:float 3.5s ease-in-out infinite}
+.home-board-scene{position:relative;isolation:isolate;width:min(100%,290px);height:clamp(92px,10vw,142px);margin:0 auto 4px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr));gap:3px;padding:8px 12px 12px;transform:perspective(520px) rotateX(7deg);border:1px solid #37cfff88;border-radius:13px 13px 22px 22px;background:linear-gradient(180deg,#071d3eaa,#08132cdd);box-shadow:0 0 0 3px #238fff1c,0 0 34px #079eff38,inset 0 0 30px #1c8bff24;clip-path:polygon(8% 0,92% 0,100% 100%,0 100%)}
+.home-board-scene:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(#4bbdff1b 1px,transparent 1px),linear-gradient(90deg,#4bbdff1b 1px,transparent 1px);background-size:calc(100% / 7) 20%;pointer-events:none}
+.home-board-scene i{grid-column:var(--col);grid-row:var(--row);display:block;min-width:0;min-height:0;border-radius:4px;border:1px solid color-mix(in srgb,var(--tile) 85%,white);background:linear-gradient(145deg,color-mix(in srgb,var(--tile) 72%,white),var(--tile) 58%,color-mix(in srgb,var(--tile) 55%,#07152c));box-shadow:inset 0 2px #ffffff88,inset 0 -3px #0005,0 0 11px color-mix(in srgb,var(--tile) 60%,transparent);animation:blockGlow 4s ease-in-out infinite alternate}
+.home-board-scene i:nth-child(3n){animation-delay:-1.2s}
+.home-board-scene i:nth-child(4n){animation-delay:-2.1s}
+@keyframes blockGlow{from{filter:brightness(.92)}to{filter:brightness(1.18)}}
+@media(max-width:900px){.home-board-scene{width:min(100%,245px);height:104px}}
+@media(max-width:520px){#menu.home-dashboard>.hero .orb{height:34px!important;margin:0 auto -2px!important}.home-board-scene{width:min(100%,210px);height:78px;padding:6px 10px 9px;gap:2px}.home-board-scene i{border-radius:3px}}
