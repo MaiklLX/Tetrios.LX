@@ -1,6 +1,6 @@
 # Tetrios.LX — project checkpoint
 
-Last updated: 2026-10-31 (3D rotation + rotation haptics pass)
+Last updated: 2026-10-31 (3D impact and effect lifecycle pass)
 
 ## Resume phrase
 **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
@@ -33,6 +33,8 @@ When the user sends this phrase in a new chat:
 - Runtime validator now asserts the visibility handler and active-round guard.
 - Successful piece rotations now trigger a light 9 ms haptic pulse. The rotate function only emits feedback when a rotation or wall-kick succeeds; failed rotations remain silent.
 - 3D rotation feedback: when a tetromino rotates, a short mint-colored arc appears around its pivot, gently expands and rotates, then disposes itself. It uses the existing capped transient-effects manager, respects reduced-motion by not animating, and does not change game rules or inputs.
+- Landing flashes now also pass through `addEffect()` instead of bypassing the 96-effect cap. This closes a small resource-management gap during rapid locking.
+- Line clears now add a brief camera-only impact pulse, scaled by the number of cleared lines; the 2D UI and game logic are untouched.
 
 ## Current CI
 - Android WebView audit PR run: `41217105665`
@@ -45,6 +47,8 @@ When the user sends this phrase in a new chat:
 - Latest 3D feedback source commit: `78c289531469489c6b4c072c19832ab8e5b254b3`.
 - Latest rotation haptics source commit: `0e0bb2b62c8a9e23aaf06c0f10f8cc39b41b58bd`.
 - Latest haptics validator commit: `2cfca88be0277e22262bde7b080bc28b41d9885d`.
+- Latest 3D effect lifecycle source commit: `b25da61f091bfa253ba60b164948cf33a098c1cb`.
+- Latest 3D effect validator commit: `f680721d28faf3c17a4c2b5645cf0f99d3ff06b3`.
 - Latest runtime validator commit: `81a06b69e7e88017aa8e51b076313888c7ad7c4a`.
 - A fresh audit is triggered for these latest changes; verify its final result and APK artifact before sharing.
 
