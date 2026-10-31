@@ -1,6 +1,6 @@
 # Tetrios.LX — project checkpoint
 
-Last updated: 2026-10-31
+Last updated: 2026-10-31 (background auto-pause pass)
 
 ## Resume phrase
 **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
@@ -23,12 +23,14 @@ When the user sends this phrase in a new chat:
 ## Current work
 - Working branch: `feature/gameplay-polish-next-2026-10-31`
 - PR: #12 — https://github.com/MaiklLX/Tetrios.LX/pull/12
-- PR purpose: optional mobile haptic feedback.
+- PR purpose: optional mobile haptic feedback plus safe background auto-pause.
 - Added a haptic toggle beside the sound control in the header. It is hidden where `navigator.vibrate` is unsupported.
 - Haptics are user-toggleable, persisted in `localStorage.bb_haptics`, and used for hard drops and line clears. The 4-line clear gets a stronger pattern.
 - Main 2D game logic, classic mobile layout, and 3D arena remain unchanged.
 - Updated `site/validate-3d-runtime.mjs` to assert haptic capability guarding, persisted preference, and event feedback.
-- Inline gameplay script syntax was checked successfully with `new Function`.
+- Inline gameplay script syntax was checked successfully with `new Function` after the background-pause change.
+- Added `bbHandleVisibilityChange()`: if Android backgrounds the WebView during an active round, the game opens its existing pause overlay and remains paused until the player explicitly taps RESUME. No automatic resume on return; no changes to menu flow or an already-paused round.
+- Runtime validator now asserts the visibility handler and active-round guard.
 
 ## Current CI
 - Android WebView audit PR run: `41217105665`
@@ -36,7 +38,9 @@ When the user sends this phrase in a new chat:
 - Run `41217105665` completed successfully for source commit `4b082c39510305f68ceeeeeeffd061342844af12`.
 - Test APK artifact: `13048019167` (`Tetrios-LX-test-apk`, 18,904,326 bytes), expires `2026-11-14T15:56:05Z`.
 - Artifact URL: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41217105665/artifacts/13048019167
-- A follow-up audit for the docs-only checkpoint commit `d034f9685fdc8cd104699946521c1409ce5b5816` was queued as run `41217232515`; check its final result when resuming.
+- Follow-up audit `41217232515` for checkpoint commit `d034f9685fdc8cd104699946521c1409ce5b5816` completed successfully and produced APK artifact `13048177545`.
+- Latest source changes: auto-pause commit `32c533aba3e040e99ed3f5d29b789d264241d33a`, validator commit `27570ed6808cf8219a9e49e4cf3b8d44d53668e3`.
+- A fresh audit was triggered for these latest changes; verify its final result and APK artifact before sharing.
 
 ## Testing notes for user
 Ask the user to test:
@@ -52,5 +56,6 @@ Do not claim device testing has happened; the user performs real-device testing.
 1. Use the user's real-device feedback to tune or disable haptic patterns.
 2. Continue improving gameplay completeness and tactile feedback without disturbing the classic mobile layout.
 3. Improve 3D/gameplay integration incrementally, retaining 2D as the reliable fallback.
+4. Test background auto-pause by starting a round, switching to another Android app, then returning; confirm the pause overlay remains until RESUME is tapped.
 4. Keep Android offline asset validation and APK build checks in CI.
 5. Keep a fresh checkpoint after meaningful milestones and update this file with the latest verified branch, PR, commit SHA, audit run and artifact.
