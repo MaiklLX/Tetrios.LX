@@ -5226,7 +5226,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <link rel="stylesheet" href="./visual-overhaul.css"><script type="importmap">
 {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
 </script></head>
-<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true">〰</button></header><section id="menu" class="screen home-dashboard"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
+<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>TETRIOS.LX</h1><p>Собирай комбинации. Открывай новые миры. Создай свою легенду.</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
   <span class="apk-download-copy"><strong>СКАЧАТЬ APK</strong><small>Установить на Android · бесплатно</small></span>
   <span class="apk-download-arrow">↗</span>
@@ -5424,7 +5424,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
-<section id="game" class="screen" hidden><div class="screenhead"><button class="back" id="gameBack" aria-label="Назад к режимам">‹</button><div style="flex:1"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn" id="pauseBtn">Ⅱ</button></div>
+<section id="game" class="screen" hidden><div class="screenhead"><button class="back" id="gameBack" aria-label="Назад к режимам">‹</button><div style="flex:1"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" aria-label="Пауза" title="Пауза">Ⅱ</button></div>
 <div id="dailyMissionGoal" hidden>
   <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
   <strong id="dailyMissionGoalText">12 линий</strong>
@@ -5432,7 +5432,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div id="gameCoins" style="margin:8px 0;padding:10px 14px;border:1px solid #ffc86b66;border-radius:12px;background:linear-gradient(100deg,#ffc86b20,#111a30);color:#ffc86b;font-weight:900;display:flex;justify-content:space-between;align-items:center">
   <span>🪙 ТВОИ МОНЕТЫ</span>
   <strong id="gameCoinsValue">0</strong>
-</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn">♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
+</div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn" hidden>♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
 <audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
@@ -7612,6 +7612,30 @@ if(hapticButton){
     const syncHapticButton=()=>{hapticButton.textContent=hapticsOn?'〰':'⌁̸';hapticButton.setAttribute('aria-pressed',String(hapticsOn));hapticButton.title=hapticsOn?'Тактильная отдача включена':'Тактильная отдача выключена';hapticButton.setAttribute('aria-label',hapticButton.title)};
     syncHapticButton();
     hapticButton.onclick=()=>{hapticsOn=!hapticsOn;localStorage.bb_haptics=hapticsOn?'1':'0';syncHapticButton();if(hapticsOn)bbHaptic(18);toast(hapticsOn?'Вибрация включена':'Вибрация выключена')};
+  }
+}
+const menuButton=$('menuBtn');
+if(menuButton){
+  const settingsMarkup=()=>`
+    <div class="modalhead"><div class="bigicon">⚙</div><div class="eyebrow">TETRIOS.LX</div><h3>Настройки игры</h3><p>Управляй звуком, музыкой и тактильной отдачей.</p></div>
+    <div class="settings-list">
+      <button class="settings-row" id="settingsSound"><span class="settings-symbol">♫</span><span><strong>Звуковые эффекты</strong><small>Сигналы и игровые события</small></span><b class="settings-state">${soundOn?'ВКЛ':'ВЫКЛ'}</b></button>
+      <button class="settings-row" id="settingsMusic"><span class="settings-symbol">♪</span><span><strong>Музыка</strong><small>Фоновая музыка меню и игры</small></span><b class="settings-state">${musicOn?'ВКЛ':'ВЫКЛ'}</b></button>
+      <button class="settings-row" id="settingsHaptics"><span class="settings-symbol">〰</span><span><strong>Вибрация</strong><small>Тактильный отклик на действия</small></span><b class="settings-state">${hapticsOn?'ВКЛ':'ВЫКЛ'}</b></button>
+    </div>
+    <button class="action secondary" id="settingsClose">ЗАКРЫТЬ</button>`;
+  menuButton.onclick=()=>{
+    overlay(settingsMarkup());
+    $('settingsSound').onclick=()=>{$('soundBtn').click();overlay(settingsMarkup());bindSettings()};
+    $('settingsMusic').onclick=()=>{$('musicBtn').click();overlay(settingsMarkup());bindSettings()};
+    $('settingsHaptics').onclick=()=>{if(typeof navigator.vibrate==='function')$('hapticBtn').click();else toast('Вибрация недоступна на этом устройстве');overlay(settingsMarkup());bindSettings()};
+    $('settingsClose').onclick=closeOverlay;
+  };
+  function bindSettings(){
+    $('settingsSound').onclick=()=>{$('soundBtn').click();overlay(settingsMarkup());bindSettings()};
+    $('settingsMusic').onclick=()=>{$('musicBtn').click();overlay(settingsMarkup());bindSettings()};
+    $('settingsHaptics').onclick=()=>{if(typeof navigator.vibrate==='function')$('hapticBtn').click();else toast('Вибрация недоступна на этом устройстве');overlay(settingsMarkup());bindSettings()};
+    $('settingsClose').onclick=closeOverlay;
   }
 }
 document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});
