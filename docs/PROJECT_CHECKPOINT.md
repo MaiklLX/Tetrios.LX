@@ -154,3 +154,15 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve backup branch `backup/main-before-aaa-release-2026-10-31` at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: verify deployment and APK workflow results; inspect the rendered page on phone/tablet/desktop and adjust proportions, especially the center scene and side cards. Keep gameplay arena/game rules unchanged. Ask user for physical-device feedback after a current APK is available.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Portrait-first mobile menu correction — 2026-11-01
+- User clarified that the primary target is portrait mobile, not landscape/desktop. The previous wide-screen composition is now overridden on phones in portrait orientation with a dedicated stacked arcade layout.
+- CSS commit: `7d40d14e811dc969474cc1c158fecf7571740352` (`feat(ui): make portrait mobile the primary home menu layout`).
+- Portrait order: compact TETRIOS.LX header and hero/board scene; full-width primary Block Run action; two-column Campaign/Daily Challenge; two-column Heroes/Shop; then visit streak, currencies, stats, APK download, daily quests and reset. Controls and content remain present, with normal vertical scrolling instead of clipping.
+- Portrait breakpoint <=600px with a narrower <=390px refinement. Tablet and desktop compositions remain separate; landscape gameplay arena is not modified.
+- Latest main SHA: `7d40d14e811dc969474cc1c158fecf7571740352`.
+- Current web deploy run `41244821791`, debug APK run `41244821819`, signed release run `41244821682` are all in progress at checkpoint time. An earlier debug APK build for pre-portrait SHA `5c074c3bcd3b5ceb1b60bafefc83b262d5a1b8b5` succeeded, but it does not contain this portrait correction and must not be shared as current.
+- Preserve backup branch `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: verify the latest deploy/APK artifacts, then ask user to check portrait phone layout and refine based on actual device proportions. No physical-device test has been claimed.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
