@@ -5226,7 +5226,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <link rel="stylesheet" href="./visual-overhaul.css"><script type="importmap">
 {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
 </script></head>
-<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
+<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">PUZZLE RPG · HAPPY ARCADE</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук">♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true">〰</button></header><section id="menu" class="screen"><div class="hero"><div class="eyebrow">★ ТВОЁ МАЛЕНЬКОЕ БОЛЬШОЕ ПРИКЛЮЧЕНИЕ ★</div><h1>BLOCK<br>BUDDIES!</h1><p>Собирай блоки, дружи с забавными героями и открывай новые способности!</p><div class="orb"><div class="relic">🧊</div></div></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
   <span class="apk-download-copy"><strong>СКАЧАТЬ APK</strong><small>Установить на Android · бесплатно</small></span>
   <span class="apk-download-arrow">↗</span>
@@ -5436,7 +5436,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
-const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0;
+const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0,hapticsOn=localStorage.bb_haptics!=='0';
 // Раннее подключение кнопки сброса прогресса
 document.addEventListener('click', function(event) {
 const button = event.target.closest('#resetProgressBtn');
@@ -5800,6 +5800,12 @@ function tone(freq = 440, dur = 0.08, type = 'sine', vol = 0.035) {
 function chime() {
   tone(659.25, 0.055, 'triangle', 0.012);
   setTimeout(() => tone(987.77, 0.075, 'sine', 0.009), 65);
+}
+
+// Optional Android tactile feedback. Unsupported browsers and disabled settings stay silent.
+function bbHaptic(pattern) {
+  if (!hapticsOn || typeof navigator.vibrate !== 'function') return;
+  try { navigator.vibrate(pattern); } catch (_) {}
 }
 
 /* BLOCK BUDDIES — LONG-FORM PROCEDURAL ARCADE SCORE */
@@ -7204,7 +7210,7 @@ function rotate(m){return m[0].map((_,i)=>m.map(r=>r[i]).reverse())}function new
 function collides(p,dx=0,dy=0,shape=p.shape){for(let y=0;y<shape.length;y++)for(let x=0;x<shape[y].length;x++)if(shape[y][x]){let nx=p.x+x+dx,ny=p.y+y+dy;if(nx<0||nx>=W||ny>=H)return true;if(ny>=0&&board[ny][nx])return true}return false}
 function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&bbGetActiveDailyRule().mod==='mirror')dx=-dx;if(!collides(piece,dx,dy)){piece.x+=dx;piece.y+=dy;render();if(dy)tone(170,.025,'sine',.009);return true}if(dy>0)lockPiece();return false}
 function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape);if(!collides(piece,0,0,s)){piece.shape=s;chime();render()}else if(!collides(piece,-1,0,s)){piece.x--;piece.shape=s;chime();render()}else if(!collides(piece,1,0,s)){piece.x++;piece.shape=s;chime();render()}}
-function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;lockPiece()}
+function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;bbHaptic(16);lockPiece()}
 
 
 
@@ -7339,6 +7345,7 @@ if(
 }
 
 if(cleared){
+bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16);
 if(bbIsDailyMechanic('chronoRift')){
   bbDailyMechanicState.chronoRemaining=20;
   bbRenderChronoTimer();
@@ -7597,7 +7604,17 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.datase
 $('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?2:(boosts.includes('hold')?2:1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
-tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});
+tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};
+const hapticButton=$('hapticBtn');
+if(hapticButton){
+  if(typeof navigator.vibrate!=='function')hapticButton.hidden=true;
+  else{
+    const syncHapticButton=()=>{hapticButton.textContent=hapticsOn?'〰':'⌁̸';hapticButton.setAttribute('aria-pressed',String(hapticsOn));hapticButton.title=hapticsOn?'Тактильная отдача включена':'Тактильная отдача выключена';hapticButton.setAttribute('aria-label',hapticButton.title)};
+    syncHapticButton();
+    hapticButton.onclick=()=>{hapticsOn=!hapticsOn;localStorage.bb_haptics=hapticsOn?'1':'0';syncHapticButton();if(hapticsOn)bbHaptic(18);toast(hapticsOn?'Вибрация включена':'Вибрация выключена')};
+  }
+}
+document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});
 
 let touch = null;
 let touchDropLocked = false;
