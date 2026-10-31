@@ -18,11 +18,17 @@
   const geometryFor=(key,create)=>{if(!geometryCache.has(key)){const geometry=create();geometryCache.set(key,geometry);sharedGeometries.add(geometry)}return geometryCache.get(key)};
   const materialFor=(color,ghost=false)=>{
     const key=String(color)+':'+ghost;
-    if(!colorCache.has(key)){const material=new THREE.MeshStandardMaterial({
-      color,roughness:ghost?.48:.22,metalness:ghost?.12:.72,
-      emissive:color,emissiveIntensity:ghost?.1:.34,
-      transparent:ghost,opacity:ghost?.18:1
-    });colorCache.set(key,material);sharedMaterials.add(material);}
+    if(!colorCache.has(key)){
+      const options={
+        color,roughness:ghost?.52:.2,metalness:ghost?.08:.62,
+        emissive:color,emissiveIntensity:ghost?.08:.28,
+        transparent:ghost,opacity:ghost?.18:1
+      };
+      const material=lowPowerDevice
+        ?new THREE.MeshStandardMaterial(options)
+        :new THREE.MeshPhysicalMaterial({...options,clearcoat:ghost?0:.9,clearcoatRoughness:.12});
+      colorCache.set(key,material);sharedMaterials.add(material);
+    }
     return colorCache.get(key);
   };
   const coreMaterialFor=color=>{
@@ -114,7 +120,20 @@
     const cell=new THREE.Group();
     cell.position.set(x-4.5,9.5-y,ghost?.03:.24);
     cell.userData.pulsePhase=(x*7+y*13)%19;
-    const geo=geometryFor('block',()=>new THREE.BoxGeometry(.88,.88,.62));
+    const geo=geometryFor('block',()=>{
+      const shape=new THREE.Shape(),size=.88,r=.105,x=-size/2,y=-size/2;
+      shape.moveTo(x+r,y);shape.lineTo(x+size-r,y);shape.quadraticCurveTo(x+size,y,x+size,y+r);
+      shape.lineTo(x+size,y+size-r);shape.quadraticCurveTo(x+size,y+size,x+size-r,y+size);
+      shape.lineTo(x+r,y+size);shape.quadraticCurveTo(x,y+size,x,y+size-r);
+      shape.lineTo(x,y+r);shape.quadraticCurveTo(x,y,x+r,y);
+      const bevel=lowPowerDevice?2:4;
+      const geometry=new THREE.ExtrudeGeometry(shape,{
+        depth:.51,bevelEnabled:true,bevelSegments:bevel,steps:1,
+        bevelSize:.055,bevelThickness:.055,curveSegments:lowPowerDevice?3:6
+      });
+      geometry.translate(0,0,-.255);
+      return geometry;
+    });
     const mesh=new THREE.Mesh(geo,materialFor(color,ghost));
     cell.add(mesh);
     const edges=new THREE.LineSegments(geometryFor('block-edges',()=>new THREE.EdgesGeometry(geo)),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.28:.78}));
