@@ -7209,7 +7209,7 @@ function randomType() {
 function rotate(m){return m[0].map((_,i)=>m.map(r=>r[i]).reverse())}function newPiece(t){let s=shapes[t].map(r=>r.slice());if(boosts.includes('mirror')&&lines>0&&lines%7===0)s=s.map(r=>r.slice().reverse());return {t,shape:s,x:Math.floor((W-s[0].length)/2),y:0}}
 function collides(p,dx=0,dy=0,shape=p.shape){for(let y=0;y<shape.length;y++)for(let x=0;x<shape[y].length;x++)if(shape[y][x]){let nx=p.x+x+dx,ny=p.y+y+dy;if(nx<0||nx>=W||ny>=H)return true;if(ny>=0&&board[ny][nx])return true}return false}
 function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&bbGetActiveDailyRule().mod==='mirror')dx=-dx;if(!collides(piece,dx,dy)){piece.x+=dx;piece.y+=dy;render();if(dy)tone(170,.025,'sine',.009);return true}if(dy>0)lockPiece();return false}
-function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape);if(!collides(piece,0,0,s)){piece.shape=s;chime();render()}else if(!collides(piece,-1,0,s)){piece.x--;piece.shape=s;chime();render()}else if(!collides(piece,1,0,s)){piece.x++;piece.shape=s;chime();render()}}
+function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;if(!collides(piece,0,0,s)){piece.shape=s;rotated=true}else if(!collides(piece,-1,0,s)){piece.x--;piece.shape=s;rotated=true}else if(!collides(piece,1,0,s)){piece.x++;piece.shape=s;rotated=true}if(rotated){bbHaptic(9);chime();render()}}
 function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;bbHaptic(16);lockPiece()}
 
 
