@@ -68,6 +68,8 @@ if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js d
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
 if (!arena.includes('function rotateMatrix(matrix,direction)') || !arena.includes('rotationAngle=-direction*Math.PI/2')) fail('3D arena must animate quarter-turn piece rotations');
 if (!arena.includes('activeGroup.rotation.z=rotationAngle')) fail('3D arena must apply the eased rotation to the active piece');
+if (!arena.includes('new THREE.TorusGeometry(.78,.035,5,18,Math.PI*1.55)') || !arena.includes('rotationArc.userData.rotationArc=true') || !arena.includes('effect.userData.rotationArc')) fail('3D piece rotations must emit a short-lived, animated arc cue');
+if (!arena.includes('rotationArc.userData.life=310') || !arena.includes('addEffect(rotationArc)')) fail('rotation feedback must use the capped and disposable transient-effects lifecycle');
 const compactArena = arena.replace(/\\s+/g, '');
 if (!compactArena.includes('rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena rotation must compensate around the piece centre');
 if (!compactArena.includes('pieceOffsetX+rotationPivotX*(1-c)+rotationPivotY*sn')) fail('3D arena must apply interpolated piece offsets to the active group');
