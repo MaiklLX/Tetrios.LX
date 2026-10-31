@@ -179,3 +179,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: verify CI, then user should inspect the new portrait layout on their Android device. If it is still not right, revert the portrait-specific menu work rather than stacking more conflicting CSS. Do not start visual FX or change the gameplay arena until the user approves the geometry.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Home hero tetromino showcase — 2026-11-01
+- User approved the repaired portrait menu and requested a shorter logo/hero block, removal of the static Tetris board illustration, and restoration of the former rotating centerpiece with Tetris pieces cycling one after another instead of a cube.
+- Updated `site/index.html`: shortened eyebrow to “ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ”, shortened tagline to “Собирай фигуры. Побеждай.”, replaced the static board scene with seven semantic CSS-rendered tetrominoes (I, O, T, L, J, S, Z) inside the existing orb/relic area.
+- Updated `site/visual-overhaul.css`: compact hero typography and spacing; removed the board illustration from layout; created glossy 3D-like rotating/fading sequence for seven pieces with staggered timing, retaining the previous orb/ring framing. Reduced-motion preference displays a static I piece. No JS, game logic, game data, navigation, gameplay arena or button geometry changed.
+- Source commits: HTML `938ddbbca112c5df0f8af51c214b64e12b9e444b`; CSS `5ea3d1f114908936fa4c7a1293ed29e1530f9569`; animation timing refinement `297fd34d49b77e310f0c3592a8fb09e60440207f`.
+- Current main SHA at source checkpoint: `297fd34d49b77e310f0c3592a8fb09e60440207f`.
+- Preserve backup `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: verify web deploy and debug APK workflows for this SHA. User should review the hero/logo animation on an Android device before any further visual effects or gameplay changes.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
