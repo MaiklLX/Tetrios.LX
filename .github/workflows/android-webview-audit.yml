@@ -5,6 +5,7 @@ on:
     branches:
       - fix/3d-character-render-lifecycle
       - integration/full-project-test
+      - release/aaa-visual-overhaul-2026
     paths:
       - ".github/workflows/android-webview-audit.yml"
       - "scripts/patch-android-webview.py"
