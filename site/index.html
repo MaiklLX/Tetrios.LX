@@ -8506,7 +8506,16 @@ $('musicBtn').addEventListener('click', () => {
   setTimeout(bbSyncMusic, 100);
 });
 
-document.addEventListener('visibilitychange', bbSyncMusic);
+function bbHandleVisibilityChange() {
+  // Never let a running round continue unseen when Android backgrounds the WebView.
+  // Keep the player paused on return; require an explicit tap on RESUME.
+  if (document.hidden && started && !paused && !gameOver) {
+    pauseGame();
+    toast('Партия приостановлена — нажми «Продолжить», когда вернёшься');
+  }
+  bbSyncMusic();
+}
+document.addEventListener('visibilitychange', bbHandleVisibilityChange);
 
 document.addEventListener('pointerdown', () => {
   bbSyncMusic();
