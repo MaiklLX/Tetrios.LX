@@ -1254,3 +1254,100 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard > .modes > .mode .modetitle,
   #menu.home-dashboard > #openHeroes .modetitle { font-size: 10px !important; }
 }
+
+
+/* Home hero refinement: compact copy + rotating Tetris piece showcase. */
+#menu.home-dashboard>.hero .eyebrow{
+  font-size:8px!important;letter-spacing:.12em!important;line-height:1.2!important;
+}
+#menu.home-dashboard>.hero h1{
+  font-size:clamp(29px,7.5vw,42px)!important;
+  margin:3px 0 2px!important;letter-spacing:-.045em!important;
+}
+#menu.home-dashboard>.hero p{
+  max-width:none!important;margin:0!important;
+  font-size:10px!important;line-height:1.25!important;
+}
+#menu.home-dashboard>.hero .home-board-scene{display:none!important}
+#menu.home-dashboard>.hero .orb{
+  width:150px!important;height:82px!important;min-height:82px!important;
+  margin:1px auto 0!important;display:grid!important;place-items:center!important;
+}
+#menu.home-dashboard>.hero .orb:before{
+  width:62px!important;height:62px!important;border-radius:20px!important;
+  transform:rotate(45deg);border-color:#46dfff99!important;
+  box-shadow:0 0 32px #10aaff55,inset 0 0 22px #39dfff33!important;
+}
+#menu.home-dashboard>.hero .orb:after{
+  width:112px!important;height:34px!important;border-color:#a15cff99!important;
+}
+#menu.home-dashboard>.hero .relic.tetromino-showcase{
+  position:relative!important;width:88px!important;height:82px!important;
+  display:block!important;font-size:initial!important;filter:none!important;
+  animation:none!important;perspective:420px;
+}
+#menu.home-dashboard .tetromino{
+  position:absolute;inset:0;display:grid;
+  grid-template-columns:repeat(4,17px);grid-template-rows:repeat(4,17px);
+  gap:2px;place-content:center;opacity:0;
+  transform-style:preserve-3d;backface-visibility:hidden;
+  animation:tetromino-cycle 14s cubic-bezier(.22,.7,.25,1) infinite;
+}
+#menu.home-dashboard .tetromino i{
+  display:block;width:17px;height:17px;border-radius:4px;
+  border:1px solid color-mix(in srgb,var(--piece) 72%,white);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--piece) 70%,white),var(--piece) 58%,color-mix(in srgb,var(--piece) 58%,#07152c));
+  box-shadow:inset 0 2px #ffffff99,inset 0 -3px #0005,0 0 12px color-mix(in srgb,var(--piece) 68%,transparent);
+}
+#menu.home-dashboard .tetromino-i{--piece:#19c9ff;animation-delay:0s}
+#menu.home-dashboard .tetromino-o{--piece:#ffc23d;animation-delay:-12s}
+#menu.home-dashboard .tetromino-t{--piece:#ad70ff;animation-delay:-10s}
+#menu.home-dashboard .tetromino-l{--piece:#ff9b42;animation-delay:-8s}
+#menu.home-dashboard .tetromino-j{--piece:#557cff;animation-delay:-6s}
+#menu.home-dashboard .tetromino-s{--piece:#38e58b;animation-delay:-4s}
+#menu.home-dashboard .tetromino-z{--piece:#ff557d;animation-delay:-2s}
+#menu.home-dashboard .tetromino-i i:nth-child(1){grid-area:2/1}
+#menu.home-dashboard .tetromino-i i:nth-child(2){grid-area:2/2}
+#menu.home-dashboard .tetromino-i i:nth-child(3){grid-area:2/3}
+#menu.home-dashboard .tetromino-i i:nth-child(4){grid-area:2/4}
+#menu.home-dashboard .tetromino-o i:nth-child(1){grid-area:2/2}
+#menu.home-dashboard .tetromino-o i:nth-child(2){grid-area:2/3}
+#menu.home-dashboard .tetromino-o i:nth-child(3){grid-area:3/2}
+#menu.home-dashboard .tetromino-o i:nth-child(4){grid-area:3/3}
+#menu.home-dashboard .tetromino-t i:nth-child(1){grid-area:2/2}
+#menu.home-dashboard .tetromino-t i:nth-child(2){grid-area:2/3}
+#menu.home-dashboard .tetromino-t i:nth-child(3){grid-area:2/4}
+#menu.home-dashboard .tetromino-t i:nth-child(4){grid-area:3/3}
+#menu.home-dashboard .tetromino-l i:nth-child(1){grid-area:1/2}
+#menu.home-dashboard .tetromino-l i:nth-child(2){grid-area:2/2}
+#menu.home-dashboard .tetromino-l i:nth-child(3){grid-area:3/2}
+#menu.home-dashboard .tetromino-l i:nth-child(4){grid-area:3/3}
+#menu.home-dashboard .tetromino-j i:nth-child(1){grid-area:1/3}
+#menu.home-dashboard .tetromino-j i:nth-child(2){grid-area:2/3}
+#menu.home-dashboard .tetromino-j i:nth-child(3){grid-area:3/2}
+#menu.home-dashboard .tetromino-j i:nth-child(4){grid-area:3/3}
+#menu.home-dashboard .tetromino-s i:nth-child(1){grid-area:2/2}
+#menu.home-dashboard .tetromino-s i:nth-child(2){grid-area:2/3}
+#menu.home-dashboard .tetromino-s i:nth-child(3){grid-area:1/3}
+#menu.home-dashboard .tetromino-s i:nth-child(4){grid-area:1/4}
+#menu.home-dashboard .tetromino-z i:nth-child(1){grid-area:1/2}
+#menu.home-dashboard .tetromino-z i:nth-child(2){grid-area:1/3}
+#menu.home-dashboard .tetromino-z i:nth-child(3){grid-area:2/3}
+#menu.home-dashboard .tetromino-z i:nth-child(4){grid-area:2/4}
+@keyframes tetromino-cycle{
+  0%,2%{opacity:0;transform:rotateY(-90deg) rotateX(-18deg) scale(.72)}
+  5%,11%{opacity:1;transform:rotateY(0deg) rotateX(-12deg) scale(1)}
+  14%,16%{opacity:0;transform:rotateY(90deg) rotateX(18deg) scale(.72)}
+  100%{opacity:0;transform:rotateY(90deg) rotateX(18deg) scale(.72)}
+}
+@media(max-width:600px) and (orientation:portrait){
+  #menu.home-dashboard>.hero{padding:8px 10px 2px!important;gap:2px!important}
+  #menu.home-dashboard>.hero .eyebrow{font-size:7px!important;letter-spacing:.1em!important}
+  #menu.home-dashboard>.hero h1{font-size:clamp(28px,8vw,38px)!important;margin:2px 0!important}
+  #menu.home-dashboard>.hero p{font-size:9px!important}
+  #menu.home-dashboard>.hero .orb{height:76px!important;min-height:76px!important;margin:0 auto!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard .tetromino{animation:none!important;opacity:0!important}
+  #menu.home-dashboard .tetromino-i{opacity:1!important;transform:none!important}
+}
