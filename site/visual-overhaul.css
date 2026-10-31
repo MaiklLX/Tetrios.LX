@@ -349,3 +349,14 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard>.modes>.mode[data-mode="campaign"]{grid-column:1;grid-row:2}
   #menu.home-dashboard>.modes>.mode[data-mode="daily"]{grid-column:2;grid-row:2}
 }
+
+/* The quick-run entry is the primary action; supporting modes stay equally easy to reach. */
+#menu.home-dashboard>.modes{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1.15fr) minmax(0,.85fr)}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"]{grid-column:1/-1;grid-row:1;border-color:rgba(169,138,255,.48)!important;background:linear-gradient(115deg,rgba(64,48,111,.96),rgba(19,27,53,.98))!important;box-shadow:0 8px 22px rgba(0,0,0,.2),0 0 24px rgba(169,138,255,.12)}
+#menu.home-dashboard>.modes>.mode[data-mode="campaign"]{grid-column:1;grid-row:2}
+#menu.home-dashboard>.modes>.mode[data-mode="daily"]{grid-column:2;grid-row:2}
+#menu.home-dashboard>.modes>.mode .modesub{display:block;font-size:8px;line-height:1.2;margin-top:3px}
+@media(max-width:760px){
+  #menu.home-dashboard>.modes{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:minmax(0,1.15fr) minmax(0,.85fr)}
+  #menu.home-dashboard>.modes>.mode .modesub{display:none}
+}
