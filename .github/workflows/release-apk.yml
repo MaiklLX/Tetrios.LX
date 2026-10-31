@@ -337,7 +337,7 @@ jobs:
           body: |
             Подписанная Android-сборка Tetrios.LX.
             APK собран из проверенного состояния main и предназначен для установки на Android.
-          prerelease: true
-          make_latest: false
+          prerelease: false
+          make_latest: true
           overwrite_files: true
           files: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/release/app-release.apk
