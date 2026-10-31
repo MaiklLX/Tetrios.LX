@@ -190,3 +190,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve backup `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: verify web deploy and debug APK workflows for this SHA. User should review the hero/logo animation on an Android device before any further visual effects or gameplay changes.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Home logo tetromino alignment and motion refinement — 2026-11-01
+- User reported that the seven tetrominoes appeared inconsistently positioned and visually overlapped the logo. The cause was inconsistent shape footprints within a shared but insufficiently constrained grid.
+- CSS commit: `d430331ae8009c6bc44e18d994547f4161e72fb7` (`fix(ui): align and smooth home tetromino showcase`).
+- All seven shapes now use the same fixed 76×76px grid, identical 16px cells, explicit centering and a common transform origin. The showcase itself has a fixed centered stage so the shape does not jump between positions.
+- Added slow continuous rotation (18s per revolution) independently of the visibility cycle. The seven-shape sequence now uses a 21s cycle with gentle ease-in/out opacity transitions and a brief hold, rather than abrupt 2s flips.
+- Reduced-motion preference remains respected and displays one static centered I piece.
+- Only `site/visual-overhaul.css` changed. HTML, game logic, navigation, data, buttons and gameplay arena were not modified. Backup branch remains untouched.
+- Verify web deploy and Android debug APK workflows for this source commit before claiming it is live or sharing a build. Physical-device review is still required for the perceived centering and animation smoothness.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
