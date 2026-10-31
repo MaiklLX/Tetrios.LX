@@ -122,6 +122,7 @@ if (!index.includes("color: '#2878c7'") || !index.includes("color: '#ffc84d'")) 
 
 
 if (!index.includes('@media (max-width: 520px)') || !index.includes('#game .playlayout')) fail('classic responsive gameplay layout must remain available on phones');
+if (!index.includes('class="screen home-dashboard"') || !mobileCss.includes('#menu.home-dashboard') || !mobileCss.includes('grid-template-areas:') || !mobileCss.includes('@media(max-width:760px)') || !mobileCss.includes('@media(max-height:620px)')) fail('home dashboard must use responsive single-viewport layouts with a safe short-screen overflow fallback');
 if (!index.includes('id="hapticBtn"') || !index.includes('function bbHaptic(pattern)') || !index.includes("typeof navigator.vibrate!=='function'")) fail('mobile haptic feedback must be optional and guarded for unsupported browsers');
 if (!index.includes('bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16)') || !index.includes('score+=dist*2;bbHaptic(16);lockPiece()')) fail('haptic feedback must respond to line clears and hard drops');
 if (!index.includes('if(rotated){bbHaptic(9);chime();render()}')) fail('successful piece rotations must trigger a light haptic pulse without vibrating on blocked rotations');
