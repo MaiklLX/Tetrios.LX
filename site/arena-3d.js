@@ -289,6 +289,16 @@
           const height=newShape.length,width=newShape[0]?.length||0;
           rotationPivotX=newPiece.x+width/2-4.5;
           rotationPivotY=9.5-(newPiece.y+height/2);
+          // A compact rotating arc marks the input response without obscuring the tetromino.
+          const rotationAt=performance.now();
+          const arcMaterial=new THREE.MeshBasicMaterial({color:0x9ffff8,transparent:true,opacity:.92,depthWrite:false,side:THREE.DoubleSide});
+          const rotationArc=new THREE.Mesh(new THREE.TorusGeometry(.78,.035,5,18,Math.PI*1.55),arcMaterial);
+          rotationArc.position.set(rotationPivotX,rotationPivotY,.58);
+          rotationArc.rotation.z=direction>0?-.35:Math.PI-.35;
+          rotationArc.userData.createdAt=rotationAt;
+          rotationArc.userData.life=310;
+          rotationArc.userData.rotationArc=true;
+          addEffect(rotationArc);
         }
       }
       disposeGroup(activeGroup);disposeGroup(ghostGroup);
@@ -324,6 +334,9 @@
             effect.position.x+=effect.userData.velocity.x*deltaScale;
             effect.position.y+=effect.userData.velocity.y*deltaScale;
             effect.scale.setScalar(1-progress*.7);
+          }else if(effect.userData.rotationArc){
+            effect.rotation.z+=.045*deltaScale;
+            effect.scale.setScalar(1+progress*.38);
           }else if(effect.userData.shockwave){
             effect.scale.x=1+progress*.08;effect.scale.y=1+progress*3.5;
           }else{
