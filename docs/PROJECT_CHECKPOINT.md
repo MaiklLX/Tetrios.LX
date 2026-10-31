@@ -1,6 +1,6 @@
 # Tetrios.LX — project checkpoint
 
-Last updated: 2026-11-01 (home dashboard geometry and control consistency pass)
+Last updated: 2026-11-01 (content-first dashboard reflow)
 
 ## Resume phrase
 **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
@@ -97,3 +97,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Do not offer an APK from an older run as if it includes this latest CSS commit. Verify the run/artifact for the current main SHA first.
 - Next: continue responsive QA of the home dashboard across compact phone, tall phone, tablet and desktop widths; focus on clipping/overlap and touch-target comfort. Keep visual effects/art direction on hold until the user approves moving to that phase. Do not alter the gameplay arena.
 - Preserve `backup/main-before-aaa-release-2026-10-31` unchanged.
+
+
+## Latest main checkpoint — 2026-11-01 (content-first layout correction)
+- Current branch: `main`
+- Latest source commit: `14b5850a5c16dcaf101dd49a3756b16d782c251f`
+- Dashboard CSS commits in this pass: `e451148cb1b4b002fb967e6bd98f097927a86694` and `14b5850a5c16dcaf101dd49a3756b16d782c251f`.
+- Root cause addressed: the earlier dashboard used fixed viewport-height grid tracks and `overflow:hidden`, which could crop text, streak repair controls and quest details. The new content-first override removes the fixed height/max-height constraint, allows the dashboard and cards to grow, restores supporting copy and details, and allows natural page scrolling when the viewport is short.
+- Responsive reflow: mobile mode cards retain full descriptions/tags with readable two-row arrangement; daily quests switch to a single-column list on very narrow screens; hero copy, streak details, resource labels and reset action are no longer hidden solely to force a one-screen fit.
+- Existing IDs, handlers and game logic are untouched. The static shop-button placeholder remains hidden because the existing JS relocates the single live shop button into `#rpgPanel`; this avoids a duplicate control.
+- Gameplay arena and gameplay screens remain untouched. Visual-effects phase remains on hold until the user approves.
+- Android debug workflow for latest commit: run `41240346307` (queued at checkpoint time); verify completion and artifact before sharing an APK.
+- Previous source commit `e451148cb1b4b002fb967e6bd98f097927a86694` web deployment run `41240286036` succeeded, but it predates the small follow-up CSS correction. Verify the deployment triggered by `14b5850a5c16dcaf101dd49a3756b16d782c251f` before claiming that exact revision is live.
+- Signed release workflow run `41240286047` failed again; verify logs if investigating. Previous runs show the signing repository lookup for `MaiklLX/Tetrios-Signing` returning HTTP 404. This is separate from the debug APK build.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: inspect latest deployed page and test dashboard composition at narrow phone widths (including 360px), tablet and desktop; fix any real collisions without hiding content. Ask the user to verify on the physical Android device; do not claim device testing.
