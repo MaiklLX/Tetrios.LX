@@ -8898,7 +8898,8 @@ if (resetProgressBtn) {
  transition:transform .25s,border-color .25s,filter .25s!important;
 }
 #campaign .bb-galaxy-card::after{content:"";position:absolute;inset:auto -20% -35% -20%;height:55%;background:radial-gradient(ellipse,var(--biome-color),transparent 68%);opacity:.13;pointer-events:none}
-#campaign .bb-galaxy-card.is-current{border-color:var(--biome-color)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--biome-color) 45%,transparent),0 18px 42px #0008,0 0 30px color-mix(in srgb,var(--biome-color) 22%,transparent)!important}
+#campaign .bb-galaxy-card.is-current{transform:translateY(-3px);border-color:var(--biome-color)!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--biome-color) 45%,transparent),0 18px 42px #0008,0 0 30px color-mix(in srgb,var(--biome-color) 22%,transparent)!important}
+#campaign .bb-galaxy-card:focus-visible{outline:2px solid var(--biome-color);outline-offset:3px}
 #campaign .bb-galaxy-card.is-locked{filter:saturate(.45);opacity:.68}
 #campaign .bb-galaxy-art{width:210px;height:190px;position:relative;display:grid;place-items:center;isolation:isolate}
 #campaign .bb-galaxy-core{
