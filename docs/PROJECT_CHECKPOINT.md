@@ -629,3 +629,15 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Source commit: `e05d59747a8a28c62bc1c2d63ca57449ae00936a` (`Polish atlas scrolling and remove legacy galaxy decorations`).
 - Validation boundary: CSS/source update committed to `main`; actual touch feel, model alignment during fast/slow swipes, and final appearance still require checking on the published site/device. Do not claim device-side verification until the user confirms.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 279. ПРОВЕРИТЬ ПЛАВНОСТЬ ГОРИЗОНТАЛЬНОЙ ПРОКРУТКИ КАРТЫ ВСЕЛЕННЫХ И ПЛАНЕТ ПОСЛЕ ПЕРЕХОДА НА МЯГКУЮ SNAP-ПРОКРУТКУ. УБЕДИТЬСЯ, ЧТО 3D-МОДЕЛИ ОСТАЮТСЯ СТРОГО В СВОИХ СЛОТАХ, А СТАРЫЕ 2D-ОРБИТЫ, МЕРЦАНИЕ И РАМКИ НЕ ВОЗВРАЩАЮТСЯ. СОХРАНИТЬ МАРШРУТ И СОХРАНЕНИЯ. 🤘😎**
+
+
+## Checkpoint 279 — clear universe and planet progression states — 2026-11-01
+- User requested an at-a-glance visual distinction between available, locked, and completed universes/planets.
+- Added a compact status legend to both the universe atlas introduction and each planet-system heading.
+- Universe cards now show a small status chip: turquoise "ДОСТУПНО" for the current accessible universe, warm gold "ПРОЙДЕНО" for completed universes, and muted slate "ЗАКРЫТО" for future universes.
+- Planet nodes now show a small corner marker: turquoise chevron for the currently available planet, gold check for completed planets, and a muted lock marker for unavailable planets. Their existing textual labels are retained and recolored to match the same status language.
+- Statuses are derived only from existing progression classes and variables (`is-current`, `is-cleared`, `is-locked`, `current`, and existing biome ranges). No new progression state or storage keys were introduced.
+- 3D models remain visible and unobstructed; markers are compact and placed at the edge of the visual object. No changes to model loading, model positions, route geometry, gameplay, rewards, progression logic, purchases, inventory, equipment, or save data.
+- Source commits: `7913a821fdd307d5643ef04053bdb1e677fc3eea` (universe status chips and shared visual language), `9a17b43d2fa53c5cdeb3986c321c9e6b7448f8aa` (planet legend and lock marker).
+- Validation boundary: source changes are committed to `main`; actual mobile layout/readability and published-site appearance still require device-side confirmation.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 280. ПРОВЕРИТЬ ОБОЗНАЧЕНИЯ СТАТУСОВ НА КАРТЕ ВСЕЛЕННЫХ И КАРТЕ ПЛАНЕТ: БИРЮЗОВЫЙ — ДОСТУПНО, ЗОЛОТОЙ — ПРОЙДЕНО, СЕРЫЙ ЗАМОК — ЗАКРЫТО. УБЕДИТЬСЯ, ЧТО МЕТКИ НЕ ПЕРЕКРЫВАЮТ 3D-МОДЕЛИ И ХОРОШО ЧИТАЮТСЯ НА ТЕЛЕФОНЕ. СОХРАНИТЬ ПРОГРЕСС И МАРШРУТ. 🤘😎**
