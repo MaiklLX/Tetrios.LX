@@ -5469,7 +5469,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
     Выбрать этого героя
   </button>
 </section>
-<section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" id="campaignBack" aria-label="Назад">‹</button><div><h2>Атлас вселенных</h2><p>Спираль миров · исследуй галактики и планеты</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждый очищенный узел открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ УЗЛЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div>
+<section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" id="campaignBack" aria-label="Назад">‹</button><div><h2>Атлас вселенных</h2><p>Спираль миров · исследуй галактики и планеты</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждая покорённая планета открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ ПЛАНЕТЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div>
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
@@ -6695,73 +6695,59 @@ function bbCreateRogueGoal() {
 
 let bbNodeCompleted = false;
 
+let bbCampaignArrivalTimer=null;
 function bbCheckCampaignCompletion() {
-  if (mode !== 'campaign' || !started || gameOver || bbNodeCompleted) {
-    return false;
-  }
+  if (mode !== 'campaign' || !started || gameOver || bbNodeCompleted) return false;
+  const goals=bbGetNodeGoals(campaignNode);
+  if(!goals.every(g=>g.value()>=g.target))return false;
 
-  const goals = bbGetNodeGoals(campaignNode);
-  if (!goals.every(g => g.value() >= g.target)) {
-    return false;
-  }
+  bbNodeCompleted=true;
+  gameOver=true;paused=true;started=false;
+  clearInterval(dropTimer);clearInterval(tickTimer);
 
-  bbNodeCompleted = true;
-
-  gameOver = true;
-  paused = true;
-  started = false;
-
-  clearInterval(dropTimer);
-  clearInterval(tickTimer);
-
-  const completedNode = campaignNode;
-  const campaignRewardMarks=1+Math.floor((completedNode-1)/30);bbCampaignMarks+=campaignRewardMarks;localStorage.setItem('bbCampaignMarks',String(bbCampaignMarks));
-  const campaignXp=80+Math.floor(completedNode*2);bbAwardHeroXp(bbSelectedHero,campaignXp);
-  const nextNode = Math.min(
-    bbTotalNodes,
-    Math.max(bbGetUnlockedNode(), completedNode + 1)
-  );
-
-  localStorage.nrNode = nextNode;
-  campaignNode = nextNode;
+  const completedPlanet=campaignNode;
+  const campaignRewardMarks=1+Math.floor((completedPlanet-1)/30);
+  bbCampaignMarks+=campaignRewardMarks;
+  localStorage.setItem('bbCampaignMarks',String(bbCampaignMarks));
+  const campaignXp=80+Math.floor(completedPlanet*2);
+  bbAwardHeroXp(bbSelectedHero,campaignXp);
+  const nextPlanet=Math.min(bbTotalNodes,Math.max(bbGetUnlockedNode(),completedPlanet+1));
+  localStorage.nrNode=nextPlanet;
+  campaignNode=nextPlanet;
+  bbCampaignArrivalNode=nextPlanet;
+  const nextBiome=bbGetBiome(nextPlanet);
+  if(nextBiome)bbCampaignViewedBiomeId=nextBiome.id;
   updateStats();
 
+  const overlayEl=$('overlay');
+  overlayEl.classList.add('bb-campaign-arrival-overlay');
   overlay(
-    '<div class="modalhead">' +
-    '<div class="bigicon">🏆</div>' +
-    '<div class="eyebrow">УЗЕЛ ПРОЙДЕН</div>' +
-    '<h3>Узел ' + String(completedNode).padStart(3, '0') + '</h3>' +
-    '<p>Все цели выполнены! Следующий узел открыт.</p>' +
-    '<div class="reward-summary" style="margin:12px 0;padding:13px;border:1px solid #e8c36b88;border-radius:13px;background:linear-gradient(135deg,#332b19,#1d2438);color:#ffe4a0;text-align:center;font-weight:900">🏅 +'+campaignRewardMarks+' ЗВЁЗДНЫХ ЗНАКА · ⭐ +'+campaignXp+' ОПЫТА ГЕРОЮ</div>' +
-    '</div>' +
-    '<button class="action" id="nextNode">СЛЕДУЮЩИЙ УЗЕЛ</button>' +
-    '<button class="action secondary" id="mapAfterWin">К КАРТЕ</button>'
+    '<div class="bb-campaign-arrival-banner" role="status" aria-live="polite">' +
+      '<div class="bb-campaign-arrival-icon">✦</div>' +
+      '<div class="eyebrow">ЭКСПЕДИЦИЯ ЗАВЕРШЕНА</div>' +
+      '<h3>ПЛАНЕТА '+String(completedPlanet).padStart(3,'0')+' ПОКОРЕНА</h3>' +
+      '<p>Новая планета обнаружена. Готовимся к высадке!</p>' +
+      '<div class="bb-campaign-arrival-reward">🏅 +'+campaignRewardMarks+' ЗВЁЗДНЫХ ЗНАКА <span>·</span> ⭐ +'+campaignXp+' ОПЫТА ГЕРОЮ</div>' +
+      '<div class="bb-campaign-arrival-countdown">ПЕРЕХОД НА КАРТУ ПЛАНЕТ…</div>' +
+    '</div>'
   );
+  overlayEl.classList.add('bb-campaign-arrival-overlay');
 
-  const next = $('nextNode');
-  if (next) {
-    next.onclick = () => {
-      closeOverlay();
-      mode = 'campaign';
-      startGame();
-    };
-  }
-
-  const map = $('mapAfterWin');
-  if (map) {
-map.onclick = () => {
-  closeOverlay();
-  const campaignButton = document.querySelector('[data-mode="campaign"]');
-  if (campaignButton) {
-    campaignButton.click();
-  } else {
+  let finished=false;
+  const finish=()=>{
+    if(finished)return;
+    finished=true;
+    if(bbCampaignArrivalTimer){clearTimeout(bbCampaignArrivalTimer);bbCampaignArrivalTimer=null;}
+    overlayEl.removeEventListener('click',finish);
+    overlayEl.classList.remove('bb-campaign-arrival-overlay');
+    closeOverlay();
+    mode='campaign';
     show('campaign');
     buildMap();
-  }
-};
-  }
-
-  tone(620, 0.28, 'triangle', 0.05);
+  };
+  overlayEl.addEventListener('click',finish);
+  bbCampaignArrivalTimer=setTimeout(finish,4200);
+  tone(620,0.28,'triangle',0.05);
   return true;
 }
 function bbRenderGoals() {
@@ -6854,7 +6840,7 @@ toast('Цель выполнена! +' + g.reward + ' монет');
 
   bbCheckCampaignCompletion();
 }
-let bbCampaignViewedBiomeId = null;
+let bbCampaignViewedBiomeId = null;\nlet bbCampaignArrivalNode = 0;
 
 function buildMap() {
   const g = $('mapgrid');
@@ -7014,7 +7000,7 @@ function buildMap() {
       const local = n - b.start;
       const planet = document.createElement('button');
       planet.type = 'button';
-      planet.className = 'bb-planet-node' + (n === current ? ' is-current' : '') + (done ? ' is-cleared' : '') + (!open ? ' is-locked' : '');
+      planet.className = 'bb-planet-node' + (n === current ? ' is-current' : '') + (n === bbCampaignArrivalNode ? ' is-arrival' : '') + (done ? ' is-cleared' : '') + (!open ? ' is-locked' : '');
       planet.style.left = positions[local].x - 58 + 'px';
       planet.style.top = positions[local].y - 66 + 'px';
       planet.style.setProperty('--planet-size', [104,126,90,114,136,98,118][local % 7] + 'px');
@@ -7050,7 +7036,7 @@ function buildMap() {
     g.appendChild(hint);
     requestAnimationFrame(() => {
       const active = track.querySelector('.is-current');
-      if (active) viewport.scrollTo({left:Math.max(0,active.offsetLeft - viewport.clientWidth * .38),behavior:'smooth'});
+      if (active) viewport.scrollTo({left:Math.max(0,active.offsetLeft - viewport.clientWidth * .38),behavior:'smooth'});\n      if(bbCampaignArrivalNode===current){const arrived=track.querySelector('.is-arrival');if(arrived){arrived.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});}bbCampaignArrivalNode=0;}
     });
   };
 
@@ -9196,4 +9182,4 @@ if (resetProgressBtn) {
 </style>
 <script type="module" src="./universes-3d.js?v=20261101-universe-models-3"></script>
 
-</body></html>
+\n<style id="bb-campaign-planet-arrival">\n#overlay.bb-campaign-arrival-overlay{padding:18px!important;cursor:pointer;touch-action:manipulation}\n#overlay.bb-campaign-arrival-overlay .modal{width:min(100%,390px)!important;padding:0!important;overflow:hidden!important;border:1px solid #f3d17b99!important;border-radius:22px!important;background:radial-gradient(ellipse at 50% 0%,#554327 0%,#1b2742 52%,#0a1224 100%)!important;box-shadow:0 0 0 1px #ffe6a533,0 0 48px #ffd36b33,0 24px 70px #000b!important}\n.bb-campaign-arrival-banner{position:relative;padding:27px 20px 22px;text-align:center;overflow:hidden}\n.bb-campaign-arrival-banner:before{content:"";position:absolute;inset:-55% 15% auto;height:180px;background:radial-gradient(ellipse,#ffe8a788,transparent 68%);pointer-events:none;animation:bbArrivalGlow 2.1s ease-in-out infinite}\n.bb-campaign-arrival-icon{position:relative;margin:0 auto 10px;width:52px;height:52px;display:grid;place-items:center;border:1px solid #ffe6a988;border-radius:50%;color:#fff0b8;font-size:27px;background:radial-gradient(circle,#fff1be44,#f2bd4d0a);box-shadow:0 0 28px #ffd36b55;animation:bbArrivalStar 1.6s ease-in-out infinite}\n.bb-campaign-arrival-banner .eyebrow{position:relative;color:#f3d38b;font-size:9px;font-weight:900;letter-spacing:.2em}\n.bb-campaign-arrival-banner h3{position:relative;margin:8px 0;color:#fff4d6;font-size:20px;letter-spacing:.035em}\n.bb-campaign-arrival-banner p{position:relative;margin:0 auto 15px;max-width:280px;color:#c5d0e6;font-size:12px;line-height:1.5}\n.bb-campaign-arrival-reward{position:relative;padding:11px 8px;border:1px solid #e8c36b55;border-radius:12px;background:#211f2d99;color:#ffe4a0;font-size:10px;font-weight:900;line-height:1.6}\n.bb-campaign-arrival-reward span{color:#9eaccb;padding:0 4px}\n.bb-campaign-arrival-countdown{position:relative;margin-top:14px;color:#9fb2d5;font-size:8px;letter-spacing:.16em;font-weight:900}\n#campaign .bb-planet-node.is-arrival .bb-planet-sphere{animation:bbPlanetArrival 1.05s ease-in-out 3;box-shadow:0 0 0 5px #fff4b855,0 0 28px #ffe58b,0 0 68px #8cecff!important}\n#campaign .bb-planet-node.is-arrival .bb-planet-orbit{border-color:#fff0b9;box-shadow:0 0 22px #ffe58b;animation:bbArrivalOrbit 1.8s linear infinite}\n@keyframes bbArrivalGlow{50%{opacity:.42;transform:scale(1.2)}}\n@keyframes bbArrivalStar{50%{transform:scale(1.12) rotate(12deg);box-shadow:0 0 42px #ffd36b99}}\n@keyframes bbPlanetArrival{0%,100%{transform:scale(1.08);filter:brightness(1)}50%{transform:scale(1.28);filter:brightness(1.8)}}\n@keyframes bbArrivalOrbit{to{transform:rotate(385deg)}}\n@media(prefers-reduced-motion:reduce){.bb-campaign-arrival-icon:before,.bb-campaign-arrival-banner:before,#campaign .bb-planet-node.is-arrival .bb-planet-sphere{animation:none!important}}\n</style>\n</body></html>
