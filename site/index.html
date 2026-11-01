@@ -9537,7 +9537,11 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 #campaign .bb-galaxy-viewport:after,#campaign .bb-planet-viewport:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;}
 #campaign .bb-galaxy-viewport:after{opacity:.72;background:radial-gradient(ellipse at 50% 52%,transparent 24%,#02061120 64%,#02061180 100%),linear-gradient(118deg,transparent 0 28%,#b49aff18 43%,transparent 58%),radial-gradient(ellipse at 50% 100%,#527dcb30 0%,transparent 60%);}
 #campaign .bb-planet-viewport:after{opacity:.68;background:radial-gradient(ellipse at 50% 50%,transparent 20%,#03081218 66%,#03081288 100%),radial-gradient(ellipse at 50% 100%,#59d6d044 0%,transparent 58%),linear-gradient(145deg,transparent 0 35%,#a2cfff12 52%,transparent 68%);}
-#campaign .bb-galaxy-track,#campaign .bb-planet-track{position:relative!important;z-index:1!important;}
+#campaign .bb-galaxy-track,#campaign .bb-planet-track{position:relative!important;z-index:2!important;}
+#campaign .bb-galaxy-viewport>canvas.bb-galaxy-model-canvas,
+#campaign .bb-planet-viewport>canvas.bb-galaxy-model-canvas{position:absolute!important;z-index:1!important;pointer-events:none!important;background:transparent!important;}
+#campaign .bb-galaxy-viewport:before,#campaign .bb-planet-viewport:before,
+#campaign .bb-galaxy-viewport:after,#campaign .bb-planet-viewport:after{z-index:0!important;}
 #campaign .bb-galaxy-track:before{opacity:.9!important;filter:drop-shadow(0 0 10px #7fb7e888)!important;}
 #campaign .bb-treasure-trail{z-index:0!important;}#campaign .bb-planet-node{z-index:2!important;}
 @media(prefers-reduced-motion:no-preference){#campaign .bb-galaxy-viewport:after{animation:bbGalaxyHaze 42s ease-in-out infinite alternate;}#campaign .bb-planet-viewport:after{animation:bbPlanetHaze 36s ease-in-out infinite alternate;}}
