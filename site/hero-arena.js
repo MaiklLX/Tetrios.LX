@@ -61,7 +61,8 @@
   const shortlist=candidates.slice(0,Math.min(6,candidates.length));
   let best=null,bestScore=Infinity;
   for(const candidate of shortlist){
-   const future=nextType==null?candidate.immediate:bestFutureScore(candidate.board,nextType);
+   const projected=nextType==null?candidate.immediate:bestFutureScore(candidate.board,nextType);
+   const future=Number.isFinite(projected)?projected:candidate.immediate+30;
    const combined=candidate.immediate*.58+future*.42+(Math.random()*.035);
    if(combined<bestScore){bestScore=combined;best={x:candidate.x,shape:candidate.shape,type,cleared:candidate.cleared}}
   }
