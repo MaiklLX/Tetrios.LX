@@ -263,3 +263,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Verified prior emblem CSS deployment and debug APK succeeded for `8a875c49add561a055180b70016f1fbefab662a6`; the new brand mark commit requires its own workflow verification before calling it deployed or offering its APK.
 - Physical Android visual review is still pending.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Latest verified checkpoint — 2026-11-01 (brand emblem deployed)
+- Current branch: `main`; current source commit: `ec018399442a9b48b4a644390cb43cadce6efb87` (`fix(web): bust cached home emblem stylesheet`).
+- Latest visual identity pass is the CSS-only T tetromino signature from `4af089883ab63ee9b2729a7f7cc47ce2027cb5b7`; the latest commit adds a cache-busting query to the stylesheet link in `site/index.html` so browsers/WebView clients fetch the current CSS.
+- Matching GitHub Actions for `ec018399442a9b48b4a644390cb43cadce6efb87`:
+  - Website deployment run `41270579978`: completed successfully.
+  - Android debug APK run `41270580028`: completed successfully.
+  - Debug APK artifact `Block-Buddies-debug-apk`, artifact ID `13069046640`, 18,924,590 bytes, expires `2026-11-15T03:49:36Z`.
+  - GitHub Pages artifact ID `13069306012` is also attached to the successful APK workflow run.
+  - Signed release APK run `41270580017`: failed in job `Build signed Android APK`, step `Download and decrypt signing key`; GitHub API returned HTTP 404 for `MaiklLX/Tetrios-Signing`. This is a signing repository access/configuration failure, not a failure of the debug APK or website deployment.
+- Website and debug APK are verified for this exact source SHA. Physical Android visual verification remains pending; do not claim device testing.
+- Preserve backup branch `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: invite the user to inspect the updated emblem and menu on their Android device using the current debug APK or deployed site. Only make further visual changes from concrete device feedback. If addressing signed release, separately repair access to `MaiklLX/Tetrios-Signing` and verify repository/file permissions; do not change app source to mask this external signing issue.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
