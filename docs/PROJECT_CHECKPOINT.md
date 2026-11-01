@@ -453,3 +453,12 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Pages deployment for this source SHA has not yet been confirmed. Do not claim the new card interaction is live until the matching Pages workflow completes successfully. Physical Android review remains pending.
 - Next: verify the Pages deployment for this SHA; then inspect hero card flipping and all six cosmetic previews on Android. If the 3D stage badge is obscured by the model, refine its placement without changing the 3D viewer or saved state.
 - Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ 243d6f5. ПРОТЕСТИРОВАТЬ ПЕРЕВОРОТ КАРТОЧЕК ГЕРОЕВ И ВИДИМОСТЬ ЭКИПИРОВАННЫХ УКРАШЕНИЙ. МЕХАНИКУ, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+### Deployment verification update — hero flip/cosmetics pass
+- Pages workflow run `41302022757` for source SHA `243d6f5ddbc59b099bdf6303b5a334155fbe94d3` completed with conclusion `success`.
+- The `Deploy to GitHub Pages` step is confirmed successful. Live site: `https://maikllx.github.io/Tetrios.LX/`.
+- Workflow: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41302022757
+- Debug APK workflow `41302022761` for the same site source SHA was still running at the time of this update; do not offer an APK until its artifact is confirmed.
+- Signed release APK workflow `41302022729` failed separately. This does not affect the successful website deployment; do not alter signing credentials as part of this UI task.
+- The follow-up documentation commit is not a site-source change; the deployed website content matches the verified source SHA above.
