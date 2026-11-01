@@ -723,3 +723,12 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Kept decorative pseudo-elements behind map content with `pointer-events:none`; 3D canvas/rendering, models, navigation, scrolling, game progress, saves, purchases and inventory logic unchanged.
 - Static source verification only. Wait for the web deployment to succeed and user to verify on the published site/mobile device.
 - Source commit: `91d45ed7ded5b478e04d7da027a3a2087fe6bf8e`.
+## Checkpoint 289 — correct 3D canvas layer within campaign map
+- User reported that the newly published atmospheres were visible but still appeared partially covered by another layer.
+- Inspected `site/universes-3d.js`: the transparent WebGL canvas was appended to `document.body` as a fixed full-viewport overlay with `z-index:9999`, above the campaign map and its DOM layers.
+- Moved the WebGL canvas into the active map viewport as an absolutely positioned transparent layer. Its offset now tracks the viewport's horizontal/vertical scroll position, keeping the canvas pinned to the visible scrollport while the map content moves.
+- Established explicit layer order: atmospheric pseudo-elements at z-index 0, WebGL canvas at z-index 1, map tracks and labels at z-index 2. Canvas remains pointer-events:none.
+- Universe/planet model generation and navigation unchanged; no progress, saves, purchases or inventory touched.
+- Static source edits completed; must wait for web deployment and verify both maps on a real phone. Do not claim visual confirmation before user testing.
+- `site/universes-3d.js` source commit: `fe44a2e2ce4ee1af83f0637d901b9cca54e4dc83`.
+- `site/index.html` source commit: `0dcb29a4bb2c4073b52a630216b934799bb409b4`.
