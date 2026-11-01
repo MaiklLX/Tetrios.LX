@@ -17,7 +17,8 @@
   for(let x=0;x<cols-1;x++)bump+=Math.abs(heights[x]-heights[x+1]);
   for(let x=0;x<cols;x++){const left=x===0?rows:heights[x-1],right=x===cols-1?rows:heights[x+1],depth=Math.max(0,Math.min(left,right)-heights[x]);wells+=depth*(depth+1)/2}
   const top= Math.max(...heights);
-  return aggregate*.48+holes*8.5+bump*.52+wells*1.35+top*.8-cleared*7.8;
+  const clearBonus=[0,15,38,72,118][Math.min(4,cleared)]||0;
+  return aggregate*.43+holes*10.5+bump*.48+wells*.22+top*.92-clearBonus;
  };
  const findMove=type=>{
   let best=null,bestScore=Infinity;
@@ -48,7 +49,7 @@
   const type=drawType();
   const move=findMove(type);
   if(!move){reset();return}
-  const p={type,shape:normalize(clone(shapes[type])),x:Math.max(0,Math.floor(cols/2)-2),y:-3,color:colors[type],targetX:move.x,targetShape:move.shape,planned:false};
+  const p={type,shape:normalize(clone(shapes[type])),x:Math.max(0,Math.floor(cols/2)-2),y:-3,color:colors[type],targetX:move.x,targetShape:move.shape,planned:false,hesitation:0,mistake:Math.random()<.16?1:0};
   piece=p;
  };
  const reset=()=>{grid=Array.from({length:rows},()=>Array(cols).fill(null));piece=null;makePiece()};
@@ -93,7 +94,17 @@
   if(!piece)return;
   // The little AI steers toward its best landing, turning and shifting while descending.
   if(!piece.planned){piece.shape=clone(piece.targetShape);piece.planned=true}
-  if(piece.x!==piece.targetX){const dir=Math.sign(piece.targetX-piece.x);if(fits(grid,piece,dir,0))piece.x+=dir}
+  if(piece.x!==piece.targetX){
+   const dir=Math.sign(piece.targetX-piece.x);
+   // A human-like controller occasionally hesitates or makes a small correction.
+   if(piece.hesitation>0)piece.hesitation--;
+   else if(Math.random()>(piece.mistake?.12:.035)){
+    const nudge=piece.mistake&&Math.random()<.12?-dir:dir;
+    if(fits(grid,piece,nudge,0))piece.x+=nudge;
+    else if(fits(grid,piece,dir,0))piece.x+=dir;
+    piece.hesitation=piece.mistake&&Math.random()<.18?1:0;
+   }
+  }
   if(fits(grid,piece,0,1))piece.y++;else lock();
  };
  const frame=now=>{raf=0;if(paused||reduce.matches)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
