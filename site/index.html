@@ -5513,10 +5513,46 @@ function bbGetUpgradeRank(id){return mode==='rogue'?Math.max(1,bbGetRogueCardRan
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
-    {ids:['score','mult'],name:'КОМБО-РЕАКТОР',desc:'+12% к очкам'},
-    {ids:['shield','armor'],name:'ЖЕЛЕЗНАЯ КРЕПОСТЬ',desc:'щит очищает больше рядов при спасении'},
-    {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'дополнительно замедляет рост сложности'}
+    {ids:['score','mult'],name:'КОМБО-РЕАКТОР',desc:'+12% к очкам за очистку'},
+    {ids:['shield','armor'],name:'ЖЕЛЕЗНАЯ КРЕПОСТЬ',desc:'щит выдерживает дополнительные атаки'},
+    {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'атаки монстров приходят реже'}
   ].filter(combo=>combo.ids.every(id=>(Number(r[id])||0)>0));
+}
+let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};
+function bbRogueStartRoom(){
+  const e=bbRogueEncounter,floor=Math.floor((e.room-1)/5)+1,boss=e.room%5===0;
+  const hp=boss?18+floor*7+e.room*2:5+floor*2+Math.floor(e.room/2);
+  e.floor=floor;e.boss=boss;e.hp=hp;e.maxHp=hp;e.nextAttack=boss?20:Math.max(23,34-floor*2);
+  bbRogueRenderEncounter();
+}
+function bbRogueRenderEncounter(){
+  if(mode!=='rogue')return '';
+  const e=bbRogueEncounter,pct=Math.max(0,Math.min(100,e.hp/Math.max(1,e.maxHp)*100));
+  return '<div style="margin:10px 0;padding:12px;border:1px solid '+(e.boss?'#ff6b75':'#9d7cff')+'88;border-radius:14px;background:linear-gradient(120deg,#17172d,#111a30);color:#f5f2ff">'+
+    '<div style="display:flex;justify-content:space-between;gap:8px;font-weight:900"><span>'+(e.boss?'👹 БОСС ЭТАЖА':'👾 МОНСТР КОМНАТЫ')+'</span><span>ЭТАЖ '+e.floor+' · КОМНАТА '+e.room+'</span></div>'+
+    '<div style="height:9px;margin:9px 0 5px;background:#ffffff18;border-radius:9px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'linear-gradient(90deg,#ff596b,#ffb45e)':'linear-gradient(90deg,#9d7cff,#5cf5e8)')+'"></i></div>'+
+    '<div style="display:flex;justify-content:space-between;font-size:11px;color:#c7c4df"><b>HP '+e.hp+'/'+e.maxHp+'</b><span>АТАКА ЧЕРЕЗ '+e.nextAttack+'с</span></div></div>';
+}
+function bbRogueDamageEnemy(amount){
+  if(mode!=='rogue'||bbRogueEncounter.hp<=0)return;
+  const e=bbRogueEncounter;e.hp=Math.max(0,e.hp-Math.max(0,amount));
+  if(e.hp===0){
+    e.defeated++;e.room++;
+    if(e.room%5===1&&e.room>1)toast('🏰 ЭТАЖ '+Math.floor((e.room-1)/5+1)+'! Враги стали сильнее.');
+    else toast(e.boss?'👑 БОСС ПОВЕРЖЕН! Следующая комната открыта.':'⚔️ Монстр повержен! Следующая комната открыта.');
+    dropMs=Math.max(170,dropMs-(e.boss?24:8));restartDrop();bbRogueStartRoom();
+  }else bbRogueRenderEncounter();
+}
+function bbRogueEnemyAttack(){
+  if(mode!=='rogue'||!started||paused||gameOver)return;
+  const e=bbRogueEncounter,chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
+  for(let n=0;n<(e.boss?2:1);n++){
+    if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
+    board.shift();const hole=Math.floor(Math.random()*W),garbage=Array(W).fill(8);garbage[hole]=0;board.push(garbage);
+  }
+  e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2)-(chrono?8:0);
+  toast(e.boss?'💥 БОСС ОБРУШИЛ ДВА РЯДА!':'👾 АТАКА МОНСТРА! На поле добавлен мусорный ряд.');
+  render();bbRogueRenderEncounter();
 }
 
 
@@ -6797,7 +6833,7 @@ function bbRenderGoals() {
       if (layout) game.insertBefore(panel, layout);
     }
 
-    panel.innerHTML = '<strong style="font-size:14px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
+    panel.innerHTML = bbRogueRenderEncounter() + '<strong style="font-size:14px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
       bbRogueGoals.map(g => {
         const value = g.value();
                 if (!g.claimed && value >= g.target) {
@@ -7093,7 +7129,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueCardRanks={};bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
+function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
@@ -7195,7 +7231,7 @@ if(mode==='daily'&&bbIsDailyMechanic('singularity')&&runSeconds>0&&runSeconds%20
   bbDailyMechanicState.gravityPenaltyMs=0;
   bbDailyMechanicState.gravityClears=0;
   restartDrop();
-}if(mode==='rogue'){bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
+}if(mode==='rogue'){if(bbRogueEncounter.hp>0){bbRogueEncounter.nextAttack--;if(bbRogueEncounter.nextAttack<=0)bbRogueEnemyAttack()}bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
 function fmt(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 
 let pieceBag = [];
@@ -7387,7 +7423,7 @@ if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'){
   bbDailyMechanicState.gravityClears+=cleared;
   restartDrop();
 }
-bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);lines+=cleared;bbDailyAddLines(cleared);levelLines+=cleared;
+bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);if(mode==='rogue')bbRogueDamageEnemy(cleared*(1+Math.floor(bbGetRogueCardRank('score')/3)));lines+=cleared;bbDailyAddLines(cleared);levelLines+=cleared;
 combo++;
 
 if(bbIsDailyMechanic('echoCombo')){
@@ -7594,17 +7630,21 @@ if (boostCard) {
 
     paused = true;
 
-    const activeBoosts = boosts.map((id) => {
-      const item = upgrades.find((u) => u[3] === id);
-      return item
-        ? `<div class="choice">
-             <div class="choiceicon">${item[0]}</div>
-             <div class="choicetext">
-               <strong>${item[1]}</strong>
-               <span>${item[2]}</span>
-             </div>
-           </div>`
-        : '';
+    const activeBoosts = boosts.map(id=>{
+      const item=upgrades.find(u=>u[3]===id);if(!item)return '';
+      const rank=mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):1;
+      const stars=mode==='rogue'?'★'.repeat(rank)+'☆'.repeat(5-rank):'АКТИВНО';
+      const effects={
+        shield:'Запас спасений: '+(rank+(bbGetRogueCardRank('armor')||0))+' атаки',
+        slow:'Падение медленнее на '+(20+rank*5)+'%',
+        mult:'Множитель очков ×'+(1+rank*.5).toFixed(2),
+        score:'Комбо усиливает очки на '+(15*rank)+'% за шаг',
+        hold:'Удержание доступно '+(1+rank)+' раза',
+        memory:'Порог уровня снижен на '+rank+' линию(и)',
+        fortress:'Скорость роста угрозы снижена на '+(rank*8)+'%',
+        nova:'Аварийное спасение: очищает '+rank+' нижн. линию(и)'
+      };
+      return `<div class="choice"><div class="choiceicon">${item[0]}</div><div class="choicetext"><strong>${item[1]}</strong><span>${stars}</span><span>${effects[id]||item[2]+' · сила карты: '+rank+'★'}</span></div></div>`;
     }).filter(Boolean);
 
     overlay(`
