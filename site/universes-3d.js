@@ -151,7 +151,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const canvas=document.createElement('canvas');
     canvas.className='bb-galaxy-model-canvas';
     canvas.setAttribute('aria-hidden','true');
-    grid.appendChild(canvas);
+    viewport.appendChild(canvas);
     let renderer;
     try{
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:'low-power'});
@@ -174,28 +174,34 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const activate=slot=>{
       if(entries.has(slot))return;
       const id=slot.dataset.universeModel;
-      const index=manifest.universeOrder.indexOf(id);
+      const index=Math.max(0,manifest.universeOrder.indexOf(id));
       visibleSlots.add(slot);
+
+      // Draw a local 3D model immediately; never leave the animated 2D icon underneath it.
+      try{
+        const immediate=buildScene(createProceduralModel(id,index),index);
+        entries.set(slot,immediate);
+        slot.classList.add('is-loaded','is-model-fallback');
+        slot.closest('.bb-planet-node')?.classList.add('is-3d');
+        requestRender();
+      }catch(error){
+        console.warn(log,'immediate procedural model failed for '+id+'.',error);
+      }
+
+      // Upgrade the visible local model to the detailed GLB when the remote asset arrives.
       loadModel(id).then(source=>{
-        if(active!==state||!slot.isConnected)return;
-        if(!visibleSlots.has(slot)){modelCache.delete(id);return;}
-        const clone=source.clone(true);
-        const entry=buildScene(clone,Math.max(0,index));
-        entries.set(slot,entry);
+        if(active!==state||!slot.isConnected||!visibleSlots.has(slot))return;
+        const previous=entries.get(slot);
+        if(previous)disposeScene(previous.scene);
+        const upgraded=buildScene(source.clone(true),index);
+        entries.set(slot,upgraded);
         slot.classList.add('is-loaded');
+        slot.closest('.bb-planet-node')?.classList.add('is-3d');
         requestRender();
       }).catch(error=>{
         if(active!==state||!slot.isConnected||!visibleSlots.has(slot))return;
-        console.warn(log,'could not load '+id+' from Grab3D; drawing local 3D fallback.',error);
-        try{
-          const entry=buildScene(createProceduralModel(id,Math.max(0,index)),Math.max(0,index));
-          entries.set(slot,entry);
-          slot.classList.add('is-loaded','is-model-fallback');
-          requestRender();
-        }catch(fallbackError){
-          slot.classList.add('is-model-fallback');
-          console.warn(log,'procedural fallback failed for '+id+'.',fallbackError);
-        }
+        // Keep the already visible procedural 3D model; remote GLB failure is non-fatal.
+        console.warn(log,'GLB unavailable for '+id+'; keeping immediate local 3D model.',error);
       });
     };
 
@@ -217,9 +223,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       if(active!==state)return;
       const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);
       renderer.setSize(w,h,false);
-      const gr=grid.getBoundingClientRect(),vr=viewport.getBoundingClientRect();
-      canvas.style.left=(vr.left-gr.left)+'px';
-      canvas.style.top=(vr.top-gr.top)+'px';
+      // Canvas is a child of the viewport, so its origin is stable while the page scrolls.
+      canvas.style.left='0px';
+      canvas.style.top='0px';
       canvas.style.width=w+'px';
       canvas.style.height=h+'px';
       requestRender();
