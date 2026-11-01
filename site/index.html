@@ -6883,7 +6883,10 @@ function buildMap() {
     intro.innerHTML =
       '<span>КАРТА ИЗВЕСТНОЙ ВСЕЛЕННОЙ</span>' +
       '<strong>Спираль миров</strong>' +
-      '<small>Листай галактики по горизонтали и выбирай открытый биом</small>';
+      '<small>Листай галактики по горизонтали и выбирай открытый биом</small>' +
+      '<div class="bb-atlas-status-legend" aria-label="Обозначения статусов">' +
+        '<span class="available">● ДОСТУПНО</span><span class="cleared">✓ ПРОЙДЕНО</span><span class="locked">▣ ЗАКРЫТО</span>' +
+      '</div>';
     g.appendChild(intro);
 
     const viewport = document.createElement('div');
@@ -9260,6 +9263,65 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
   #campaign .bb-galaxy-viewport,
   #campaign .bb-planet-viewport{scroll-behavior:auto!important}
   #campaign .bb-galaxy-card{transition:none!important}
+}
+</style>
+
+
+<style id="bb-atlas-status-clarity">
+/* A compact visual language shared by universe and planet maps. */
+#campaign .bb-atlas-status-legend{
+ display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+ gap:8px 14px;margin-top:7px;font-size:8px;font-weight:900;letter-spacing:.12em;
+}
+#campaign .bb-atlas-status-legend span{white-space:nowrap}
+#campaign .bb-atlas-status-legend .available{color:#62e8ce;text-shadow:0 0 10px #42dfbd55}
+#campaign .bb-atlas-status-legend .cleared{color:#f4ca72;text-shadow:0 0 10px #f4ca7255}
+#campaign .bb-atlas-status-legend .locked{color:#8794ad}
+#campaign .bb-galaxy-card{padding-top:24px!important}
+#campaign .bb-galaxy-card::before{
+ position:absolute;top:12px;right:13px;z-index:5;
+ padding:5px 8px;border-radius:20px;font-size:8px;font-weight:950;
+ letter-spacing:.1em;line-height:1;background:#07101dcc;
+ border:1px solid #ffffff18;backdrop-filter:blur(8px);
+}
+#campaign .bb-galaxy-card.is-current::before{
+ content:"● ДОСТУПНО";color:#65f0d4;border-color:#65f0d455;
+ box-shadow:0 0 14px #52e9c522;
+}
+#campaign .bb-galaxy-card.is-cleared::before{
+ content:"✓ ПРОЙДЕНО";color:#f4ca72;border-color:#f4ca7255;
+ box-shadow:0 0 14px #f4ca7222;
+}
+#campaign .bb-galaxy-card.is-locked::before{
+ content:"▣ ЗАКРЫТО";color:#9aa7bf;border-color:#9aa7bf33;
+}
+#campaign .bb-galaxy-card.is-current .bb-galaxy-status{color:#65f0d4!important}
+#campaign .bb-galaxy-card.is-cleared .bb-galaxy-status{color:#f4ca72!important}
+#campaign .bb-galaxy-card.is-locked .bb-galaxy-status{color:#9aa7bf!important}
+#campaign .bb-planet-node::before{
+ position:absolute;top:15px;right:13px;z-index:4;
+ width:20px;height:20px;display:grid;place-items:center;
+ border-radius:50%;font-size:11px;font-weight:950;line-height:1;
+ background:#07101ddd;border:1px solid #ffffff20;
+ box-shadow:0 3px 12px #0008;backdrop-filter:blur(6px);
+}
+#campaign .bb-planet-node.is-current::before{
+ content:"›";color:#65f0d4;border-color:#65f0d488;
+ box-shadow:0 0 13px #52e9c544;
+}
+#campaign .bb-planet-node.is-cleared::before{
+ content:"✓";color:#f4ca72;border-color:#f4ca7288;
+ box-shadow:0 0 12px #f4ca7244;
+}
+#campaign .bb-planet-node.is-locked::before{
+ content:"•";color:#9aa7bf;border-color:#9aa7bf66;
+}
+#campaign .bb-planet-node.is-current small{color:#65f0d4!important;font-weight:950}
+#campaign .bb-planet-node.is-cleared small{color:#f4ca72!important;font-weight:900}
+#campaign .bb-planet-node.is-locked strong,
+#campaign .bb-planet-node.is-locked small{color:#8491a9!important}
+@media(prefers-reduced-motion:reduce){
+ #campaign .bb-galaxy-card::before,#campaign .bb-planet-node::before{backdrop-filter:none}
 }
 </style>
 
