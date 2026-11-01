@@ -2565,3 +2565,170 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){
   #shopScreen .shopitem{transition:none!important}
 }
+
+
+/* TETRIOS.LX — submenu identity pass 3: map / shop / roster */
+#campaign #mapgrid{
+  gap:10px!important;
+}
+#campaign #mapgrid>.worldcard{
+  isolation:isolate;
+  overflow:hidden;
+  min-height:132px!important;
+  border-width:1px!important;
+  box-shadow:0 9px 22px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.1)!important;
+}
+#campaign #mapgrid>.worldcard:after{
+  content:"";
+  position:absolute;
+  left:12%;right:12%;bottom:9px;height:2px;
+  border-radius:99px;
+  background:linear-gradient(90deg,transparent,currentColor,transparent);
+  opacity:.42;
+  pointer-events:none;
+}
+#campaign #mapgrid>.worldcard:nth-child(2){
+  color:#75f1e6!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(49,222,205,.2),transparent 68%),linear-gradient(155deg,#16414b,#101b35)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(3){
+  color:#8bc8ff!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(77,157,255,.22),transparent 68%),linear-gradient(155deg,#18365c,#101a35)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(4){
+  color:#d6a8ff!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(174,105,255,.22),transparent 68%),linear-gradient(155deg,#35234f,#17172f)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(5){
+  color:#ffce83!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,177,87,.2),transparent 68%),linear-gradient(155deg,#493323,#1d1a2e)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(6){
+  color:#ff9eaa!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,105,139,.2),transparent 68%),linear-gradient(155deg,#4a263e,#1c1934)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(7){
+  color:#a9e5c2!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(94,207,151,.19),transparent 68%),linear-gradient(155deg,#1c443f,#111d32)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(8){
+  color:#c1a7ff!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(147,111,255,.22),transparent 68%),linear-gradient(155deg,#30294f,#17182f)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(9){
+  color:#a6f1f4!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(91,223,231,.2),transparent 68%),linear-gradient(155deg,#19444e,#111c34)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(10){
+  color:#f3d09b!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(220,172,111,.2),transparent 68%),linear-gradient(155deg,#44382e,#1a1c31)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(11){
+  color:#b7a7ff!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(132,109,255,.23),transparent 68%),linear-gradient(155deg,#292a58,#15192f)!important;
+}
+#campaign #mapgrid>.worldcard:nth-child(12){
+  color:#ff9bd5!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,105,194,.22),transparent 68%),linear-gradient(155deg,#4a2448,#1c1834)!important;
+}
+#campaign #mapgrid>.worldcard.locked{
+  filter:saturate(.38) brightness(.76)!important;
+}
+#campaign #mapgrid>.worldcard.active{
+  border-color:currentColor!important;
+  box-shadow:0 0 0 1px color-mix(in srgb,currentColor 32%,transparent),0 0 24px color-mix(in srgb,currentColor 24%,transparent),inset 0 1px rgba(255,255,255,.16)!important;
+  transform:translateY(-2px);
+}
+#campaign #mapgrid>.worldcard>span:first-child{
+  width:54px;height:54px;display:grid;place-items:center;
+  border:1px solid currentColor;border-radius:17px;
+  background:rgba(4,10,24,.28);
+  box-shadow:inset 0 1px rgba(255,255,255,.16),0 7px 16px rgba(0,0,0,.18);
+}
+#campaign #mapgrid>.worldcard strong{color:#f5f7ff!important}
+#campaign #mapgrid>.worldcard small{color:rgba(230,239,255,.72)!important}
+#campaign #mapgrid>.worldcard.active small:last-child{color:currentColor!important}
+#campaign #mapgrid>.node:not(.active):not(.locked){
+  border-color:rgba(92,245,232,.28)!important;
+  background:linear-gradient(150deg,rgba(25,55,67,.94),rgba(12,22,39,.98))!important;
+}
+#campaign #mapgrid>.node:not(.active):not(.locked) span{color:#7cebdc!important}
+#campaign #mapgrid>.node.locked{filter:grayscale(.55);opacity:.38!important}
+#campaign #mapgrid>.node.active{
+  transform:translateY(-2px);
+  box-shadow:0 0 0 1px rgba(92,245,232,.2),0 0 26px rgba(92,245,232,.2),inset 0 1px rgba(255,255,255,.12)!important;
+}
+#shopScreen .shopitem:has([data-bb-buy="quick"]){--item-accent:#ffd16f}
+#shopScreen .shopitem:has([data-bb-buy="shield"]){--item-accent:#72cfff}
+#shopScreen .shopitem:has([data-bb-buy="magnet"]){--item-accent:#f29bff}
+#shopScreen .shopitem:has([data-bb-buy="lucky"]){--item-accent:#9de6a7}
+#shopScreen .shopitem:has([data-bb-buy="heart"]){--item-accent:#ff91b9}
+#shopScreen .shopitem:has([data-bb-buy="rainbow"]){--item-accent:#a9a4ff}
+#shopScreen .shopitem:has([data-bb-buy]){
+  border-color:color-mix(in srgb,var(--item-accent) 36%,rgba(129,158,220,.22))!important;
+  background:radial-gradient(ellipse at 18% 0%,color-mix(in srgb,var(--item-accent) 17%,transparent),transparent 65%),linear-gradient(150deg,rgba(28,39,70,.97),rgba(13,20,40,.99))!important;
+}
+#shopScreen .shopitem:has([data-bb-buy]) .emoji{
+  color:var(--item-accent);
+  border:1px solid color-mix(in srgb,var(--item-accent) 42%,transparent);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--item-accent) 23%,transparent),rgba(13,20,40,.5))!important;
+  box-shadow:0 7px 17px color-mix(in srgb,var(--item-accent) 12%,transparent);
+}
+#shopScreen .shopitem:has([data-bb-buy]) button{
+  border-color:color-mix(in srgb,var(--item-accent) 52%,transparent)!important;
+  background:linear-gradient(100deg,color-mix(in srgb,var(--item-accent) 24%,#17213a),rgba(38,53,83,.92))!important;
+  color:#f3f6ff!important;
+}
+#shopScreen .shopitem:has([data-bb-buy]):after{
+  content:"";
+  position:absolute;top:0;left:14px;right:14px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--item-accent),transparent);
+  opacity:.8;pointer-events:none;
+}
+#shopScreen .shopitem-coming{
+  border-color:rgba(145,157,190,.22)!important;
+}
+#heroes #heroesRoster [data-hero-card="plush"]{--hero-accent:#d4a078}
+#heroes #heroesRoster [data-hero-card="prism"]{--hero-accent:#67c9ed}
+#heroes #heroesRoster [data-hero-card="blip"]{--hero-accent:#bd91ff}
+#heroes #heroesRoster [data-hero-card="pixel"]{--hero-accent:#73aaff}
+#heroes #heroesRoster [data-hero-card="spark"]{--hero-accent:#ffd36b}
+#heroes #heroesRoster [data-hero-card]{
+  border-color:color-mix(in srgb,var(--hero-accent) 42%,rgba(143,165,221,.25))!important;
+  background:radial-gradient(ellipse at 50% 0%,color-mix(in srgb,var(--hero-accent) 17%,transparent),transparent 65%),linear-gradient(150deg,rgba(27,39,70,.97),rgba(12,20,40,.99))!important;
+}
+#heroes #heroesRoster [data-hero-card]>div:first-child{
+  min-height:76px!important;
+  margin:-2px 0 8px!important;
+  border-radius:14px;
+  background:radial-gradient(ellipse at 50% 75%,color-mix(in srgb,var(--hero-accent) 18%,transparent),transparent 70%);
+}
+#heroes #heroesRoster [data-hero-card]>div:first-child svg{
+  filter:drop-shadow(0 8px 13px color-mix(in srgb,var(--hero-accent) 36%,transparent))!important;
+  transition:transform .22s ease,filter .22s ease;
+}
+#heroes #heroesRoster [data-hero-card]:active>div:first-child svg,
+#heroes #heroesRoster [data-hero-card]:hover>div:first-child svg{
+  transform:translateY(-3px) scale(1.06);
+}
+#heroes #heroesRoster [data-hero-card]>strong{
+  display:block;padding-top:8px;border-top:1px solid color-mix(in srgb,var(--hero-accent) 30%,transparent);
+  color:#f6f7ff;
+}
+#heroes #heroesRoster [data-hero-card]>div:last-child{
+  display:inline-block;padding:5px 8px;border-radius:99px;
+  background:color-mix(in srgb,var(--hero-accent) 14%,transparent);
+  font-weight:900;letter-spacing:.06em;
+}
+#heroes #heroDetails{
+  border-color:color-mix(in srgb,var(--hero-accent, #8b9ac0) 28%,rgba(137,164,231,.22));
+}
+@media(max-width:520px){
+  #campaign #mapgrid>.worldcard{min-height:122px!important;padding:9px 4px!important}
+  #campaign #mapgrid>.worldcard>span:first-child{width:46px;height:46px;border-radius:14px}
+  #shopScreen .shopitem{min-height:160px}
+  #heroes #heroesRoster [data-hero-card]>div:first-child{min-height:68px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #heroes #heroesRoster [data-hero-card]>div:first-child svg{transition:none!important}
+}
