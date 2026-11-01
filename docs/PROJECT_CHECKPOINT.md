@@ -226,3 +226,15 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Next design pass: do not rearrange the dashboard grid. First adjust only the central hero/emblem within its existing layout bounds; preserve all menu dimensions and positions. Make one small change at a time and wait for user device confirmation before expanding scope.
 - Backup branch `backup/main-before-aaa-release-2026-10-31` remains unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Focused home emblem refinement — 2026-11-01
+- CSS commit: `77277975a812631b15593677ad75881e25c1b489`.
+- This is a narrowly scoped hero-only pass in `site/visual-overhaul.css`; it does not alter dashboard grid, menu card positions, dimensions, IDs, handlers, game logic, data or gameplay arena.
+- Hid the duplicate TETRIOS.LX hero heading; the product name remains in the top site header. Kept the short supporting tagline.
+- Changed the orb's inner frame to a 76×76px rounded square with slow rotation and retained a softer orbital ring.
+- Corrected the horizontal/vertical offsets of the T, S and Z showcase shapes within the shared 4×4 stage so their visual centers align with the emblem.
+- This is source-only verification so far. Wait for the matching deployment and debug APK workflows; physical Android review is still required. If the frame or piece alignment is not right on-device, revert this isolated block rather than changing dashboard geometry.
+- The recovery baseline remains in commit `6c6a2fe08fb3ed0c4595a30d923b802c247d8b77`; do not reapply the failed expanded grid from `93628e5`.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
