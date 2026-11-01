@@ -641,3 +641,13 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Source commits: `7913a821fdd307d5643ef04053bdb1e677fc3eea` (universe status chips and shared visual language), `9a17b43d2fa53c5cdeb3986c321c9e6b7448f8aa` (planet legend and lock marker).
 - Validation boundary: source changes are committed to `main`; actual mobile layout/readability and published-site appearance still require device-side confirmation.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 280. ПРОВЕРИТЬ ОБОЗНАЧЕНИЯ СТАТУСОВ НА КАРТЕ ВСЕЛЕННЫХ И КАРТЕ ПЛАНЕТ: БИРЮЗОВЫЙ — ДОСТУПНО, ЗОЛОТОЙ — ПРОЙДЕНО, СЕРЫЙ ЗАМОК — ЗАКРЫТО. УБЕДИТЬСЯ, ЧТО МЕТКИ НЕ ПЕРЕКРЫВАЮТ 3D-МОДЕЛИ И ХОРОШО ЧИТАЮТСЯ НА ТЕЛЕФОНЕ. СОХРАНИТЬ ПРОГРЕСС И МАРШРУТ. 🤘😎**
+
+
+## Checkpoint 280 — larger foreground completion marks on planet map — 2026-11-01
+- User asked to make the gold completed-planet checkmark larger and visibly in front of the 3D planet object.
+- Updated only the planet-map presentation layer in `site/index.html`: completed nodes now show a 36px gold check badge with a brighter rim, glow, and dark translucent backing, positioned over the lower-right edge of the planet so it reads as a foreground completion marker.
+- Adjusted the 3D canvas stacking and planet viewport/node stacking so the completion badge renders above the 3D model rather than being obscured by it. Universe-map presentation is not changed by the new viewport stacking rule.
+- Existing `is-cleared` status class remains the sole trigger. No progression rules, map positions, model selection/loading, route geometry, rewards, purchases, inventory, equipment, save keys or stored data were changed.
+- Source commit: `6d8b1cb903dca9dc34bc4a1409296e85152ce32a` (`Make completed planet checkmarks larger and foregrounded`).
+- Validation boundary: source update committed to `main`; confirm the visual layering and badge placement on the published site, especially on a narrow phone screen. No device-side verification is claimed.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 281. ПРОВЕРИТЬ НА КАРТЕ ПЛАНЕТ УВЕЛИЧЕННУЮ ЗОЛОТУЮ ГАЛОЧКУ ПРОЙДЕННОЙ ПЛАНЕТЫ: ОНА ДОЛЖНА БЫТЬ НА ПЕРЕДНЕМ ПЛАНЕ У ПРАВОГО НИЖНЕГО КРАЯ 3D-МОДЕЛИ, ХОРОШО ЧИТАТЬСЯ И НЕ МЕШАТЬ НАЗВАНИЮ И СОСЕДНИМ ПЛАНЕТАМ. ПРОВЕРИТЬ, ЧТО 3D-МОДЕЛИ ОСТАЛИСЬ ВИДИМЫМИ, А МАРШРУТ И СОХРАНЕНИЯ НЕ ИЗМЕНИЛИСЬ. 🤘😎**
