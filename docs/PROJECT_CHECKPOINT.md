@@ -651,3 +651,12 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Source commit: `6d8b1cb903dca9dc34bc4a1409296e85152ce32a` (`Make completed planet checkmarks larger and foregrounded`).
 - Validation boundary: source update committed to `main`; confirm the visual layering and badge placement on the published site, especially on a narrow phone screen. No device-side verification is claimed.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 281. ПРОВЕРИТЬ НА КАРТЕ ПЛАНЕТ УВЕЛИЧЕННУЮ ЗОЛОТУЮ ГАЛОЧКУ ПРОЙДЕННОЙ ПЛАНЕТЫ: ОНА ДОЛЖНА БЫТЬ НА ПЕРЕДНЕМ ПЛАНЕ У ПРАВОГО НИЖНЕГО КРАЯ 3D-МОДЕЛИ, ХОРОШО ЧИТАТЬСЯ И НЕ МЕШАТЬ НАЗВАНИЮ И СОСЕДНИМ ПЛАНЕТАМ. ПРОВЕРИТЬ, ЧТО 3D-МОДЕЛИ ОСТАЛИСЬ ВИДИМЫМИ, А МАРШРУТ И СОХРАНЕНИЯ НЕ ИЗМЕНИЛИСЬ. 🤘😎**
+
+
+## Checkpoint 281 — completion checkmark in front of 3D planet — 2026-11-01
+- Clarified placement after user feedback: the completed-planet checkmark must read as a foreground element in front of the 3D model, not sit low/behind the sphere.
+- Adjusted the existing badge to a 38px gold marker at the upper-right/front edge of the planet, with a higher stacking level and glow. The badge remains a DOM element; the 3D model remains visible behind it.
+- Only the planet completion badge styling changed. No route/progression logic, model data, saves, rewards, purchases, inventory, equipment or storage keys changed.
+- Source commit: `33acede3e867881e8348ecffc872ebb02e13236d` (`Bring completed planet checkmark into foreground of 3D model`).
+- Validate on the published phone view that the checkmark is visibly in front of the 3D planet and does not hide its recognizable shape.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 282. ПРОВЕРИТЬ, ЧТО ЗОЛОТАЯ ГАЛОЧКА ПРОЙДЕННОЙ ПЛАНЕТЫ ОТОБРАЖАЕТСЯ ПОВЕРХ 3D-МОДЕЛИ, НА ПЕРЕДНЕМ ПЛАНЕ, А НЕ ЗА НЕЙ; ОНА КРУПНАЯ, ЧИТАЕМАЯ И НЕ ЗАКРЫВАЕТ СУЩЕСТВЕННУЮ ЧАСТЬ ПЛАНЕТЫ. ПРОВЕРИТЬ НА ТЕЛЕФОНЕ. МАРШРУТ И СОХРАНЕНИЯ НЕ ТРОГАТЬ. 🤘😎**
