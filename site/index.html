@@ -7752,12 +7752,20 @@ function bbGetHeroEquippedCosmetic(heroId){
   }
   return equippedByHero[heroId]||'';
 }
+function bbFindCosmeticOwner(cosmeticId,exceptHeroId=''){
+  const equippedByHero=bbGet('equippedChestCosmetics',{});
+  return bbHeroes.find(hero=>hero.id!==exceptHeroId&&equippedByHero[hero.id]===cosmeticId)||null;
+}
 function bbSetHeroEquippedCosmetic(heroId,cosmeticId){
   bbGetHeroEquippedCosmetic(heroId);
   const equippedByHero=bbGet('equippedChestCosmetics',{});
-  if(cosmeticId)equippedByHero[heroId]=cosmeticId;
-  else delete equippedByHero[heroId];
+  if(cosmeticId){
+    const owner=bbFindCosmeticOwner(cosmeticId,heroId);
+    if(owner)return false;
+    equippedByHero[heroId]=cosmeticId;
+  }else delete equippedByHero[heroId];
   bbPut('equippedChestCosmetics',equippedByHero);
+  return true;
 }
 let bbCoins=bbGet('coins',80),bbGems=bbGet('gems',3),bbXp=bbGet('xp',0),bbHeroLevel=bbGet('heroLevel',1),bbInventory=bbGet('inventory',{quick:1,shield:0,magnet:0}),bbPerks=bbGet('perks',[]),bbMusicLoop=null,bbMusicStep=0;
 const bbCatalog=[{id:'quick',emoji:'⚡',name:'Молниеносный старт',desc:'Бонус скорости и очков на один забег.',cost:35,currency:'coins'},{id:'shield',emoji:'🛡️',name:'Плюшевый щит',desc:'Спасает от одного проигрыша.',cost:55,currency:'coins'},{id:'magnet',emoji:'🧲',name:'Магнит монет',desc:'Больше монет за очищенные линии.',cost:75,currency:'coins'},{id:'lucky',emoji:'🍀',name:'Удача новичка',desc:'Постоянное улучшение удачи.',cost:2,currency:'gems'},{id:'heart',emoji:'💖',name:'Сердечко героя',desc:'Постоянно даёт +5% к наградам.',cost:3,currency:'gems'},{id:'rainbow',emoji:'🌈',name:'Радужный стиль',desc:'Косметическое улучшение героя.',cost:4,currency:'gems'}];
@@ -7858,13 +7866,13 @@ function bbOpenHeroShowcase(id){
  <div class="bb-hero-showcase-stats"><div><span>СТОЙКОСТЬ</span><strong>${'★'.repeat(hero.hp)}${'☆'.repeat(5-hero.hp)}</strong></div><div><span>МАСТЕРСТВО</span><strong>${'★'.repeat(hero.power)}${'☆'.repeat(5-hero.power)}</strong></div></div>
  <div class="bb-hero-showcase-skill"><span>УНИКАЛЬНАЯ СПОСОБНОСТЬ</span><strong>${hero.skill}</strong><p>${hero.skillDesc}</p></div>
  <div class="bb-hero-cosmetic-panel"><div class="bb-hero-cosmetic-heading">КОСМЕТИКА ГЕРОЯ</div><div class="bb-hero-cosmetic-status">${equipped?'Надето: '+equipped.emoji+' '+equipped.name:'Украшение не выбрано'}</div>
- <div class="bb-hero-cosmetic-grid">${owned.length?owned.map(itemId=>{const item=cosmetics[itemId];if(!item)return '';const active=itemId===equippedId;return '<button type="button" data-equip-cosmetic="'+itemId+'" class="'+(active?'is-equipped':'')+'"><span>'+item.emoji+'</span>'+item.name+(active?'<small>✓ НАДЕТО</small>':'')+'</button>'}).join(''):'<div class="bb-hero-cosmetic-empty">Пока нет украшений. Открывай реликтовые сундуки в магазине.</div>'}</div>
+ <div class="bb-hero-cosmetic-grid">${owned.length?owned.map(itemId=>{const item=cosmetics[itemId];if(!item)return '';const active=itemId===equippedId;const owner=active?null:bbFindCosmeticOwner(itemId,hero.id);return '<button type="button" data-equip-cosmetic="'+itemId+'" class="'+(active?'is-equipped':owner?'is-unavailable':'')+'" '+(owner?'disabled aria-disabled="true"':'')+'><span>'+item.emoji+'</span>'+item.name+(active?'<small>✓ НАДЕТО</small>':owner?'<small>НАДЕТО: '+owner.name+'</small>':'')+'</button>'}).join(''):'<div class="bb-hero-cosmetic-empty">Пока нет украшений. Открывай реликтовые сундуки в магазине.</div>'}</div>
  ${equippedId?'<button type="button" data-unequip-cosmetic class="bb-hero-unequip">СНЯТЬ УКРАШЕНИЕ</button>':''}</div>
  <div class="bb-hero-showcase-progress">ОПЫТ: ${xp} / ${200+(level-1)*100}</div><button type="button" class="action bb-hero-showcase-select" id="bbShowcaseSelect">${hero.id===bbSelectedHero?'✓ ГЕРОЙ ВЫБРАН':'ВЫБРАТЬ ЭТОГО ГЕРОЯ'}</button></div>`);
  const modal=document.getElementById('modal');modal.classList.add('bb-hero-showcase-modal');
  modal.querySelector('.bb-hero-showcase-close')?.addEventListener('click',closeOverlay);
  modal.querySelector('#bbShowcaseSelect')?.addEventListener('click',()=>{bbSelectedHero=hero.id;bbPreviewHero=hero.id;localStorage.setItem('bbSelectedHero',hero.id);bbApplyHero();closeOverlay();bbRenderHeroes()});
- modal.querySelectorAll('[data-equip-cosmetic]').forEach(btn=>btn.addEventListener('click',()=>{bbSetHeroEquippedCosmetic(hero.id,btn.dataset.equipCosmetic);bbApplyHero();bbOpenHeroShowcase(hero.id)}));
+ modal.querySelectorAll('[data-equip-cosmetic]').forEach(btn=>btn.addEventListener('click',()=>{if(!bbSetHeroEquippedCosmetic(hero.id,btn.dataset.equipCosmetic))return;bbApplyHero();bbOpenHeroShowcase(hero.id)}));
  modal.querySelector('[data-unequip-cosmetic]')?.addEventListener('click',()=>{bbSetHeroEquippedCosmetic(hero.id,'');bbApplyHero();bbOpenHeroShowcase(hero.id)});
 }
 function bbRenderHeroes(){
