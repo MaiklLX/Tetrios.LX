@@ -574,3 +574,15 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Syntax checks passed for the main inline script, `arena-3d.js`, `universes-3d.js`, and the validator module.
 - GitHub Pages deployment for `4b369ed` completed successfully: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41324231776.
 - Actual device-side iOS rendering remains to be tested; deployment success does not by itself prove that remote GLBs or the procedural 3D fallback render correctly on every device.
+
+
+## Checkpoint 276 — Immediate 3D planet rendering, stable canvas anchoring and page-top refresh — 2026-11-01
+- User reported that 3D planet/universe models appeared late over the old animated 2D icons, shifted slightly while scrolling, and that a page refresh should always start at the top.
+- Updated `site/universes-3d.js` so each visible slot receives a local procedural 3D model immediately when activated. The remote Grab3D GLB is now an asynchronous visual upgrade; if it fails, the already-visible procedural 3D model remains. This removes the wait-for-network gap and avoids showing the 2D icon beneath the 3D model.
+- Moved the shared WebGL canvas from the outer map grid into the active map viewport itself. The canvas is now positioned at the viewport's own top-left origin, and renderer sizing no longer derives offsets from two independently scrolling DOM rectangles. This is intended to keep 3D models anchored to their corresponding planet/universe slots during page and map scrolling.
+- Added loaded-state styling in `site/index.html` to hide the old fallback glyph and remove the 2D sphere background, ring and float animation once a 3D model is present.
+- Added manual browser scroll restoration and top-of-page resets on `pageshow` and `load`, including a post-frame reset for mobile browser restoration timing.
+- Updated the universe module cache token to `20261101-instant-stable-3d-3`.
+- Preservation: no campaign route coordinates, planet ordering, galaxy order, gameplay logic, progression, purchases, inventory, equipment, save keys or stored data were changed.
+- Verification required before claiming completion: syntax-check both edited files, inspect the exact diff, run the repository's 3D runtime validator, and verify the GitHub Pages deployment. Then test on iOS/Android that 3D appears immediately, the 2D glyph is gone, models remain fixed while scrolling horizontally/vertically, and refresh starts at the top.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 276. ПРОВЕРИТЬ МГНОВЕННУЮ ПРОЦЕДУРНУЮ 3D-ЗАГРУЗКУ С ПОСЛЕДУЮЩИМ GLB-UPGRADE, ОТСУТСТВИЕ СТАРЫХ 2D-ИКОНOК, ФИКСАЦИЮ МОДЕЛЕЙ ПРИ ПРОКРУТКЕ И СТАРТ СВЕРХУ ПОСЛЕ ОБНОВЛЕНИЯ. МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
