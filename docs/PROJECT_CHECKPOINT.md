@@ -539,3 +539,30 @@ Do not claim device testing has happened; the user performs real-device testing.
 - iOS visual interaction and GitHub Pages deployment are not yet confirmed. Test in the published site on iPhone: open pre-level selection in campaign, daily and Block Run; open each hero dossier; return to roster; choose a different hero; verify the selected badge and final in-game hero; cancel and verify the correct previous screen is restored.
 - Next: confirm Pages deployment and test the complete roster → dossier → back → confirm flow on iOS, including long dossier scrolling and the 3D stage.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 274. ПРОВЕРИТЬ DEPLOY И ПРОТЕСТИРОВАТЬ НОВЫЙ ДВУХШАГОВЫЙ ВЫБОР ГЕРОЯ НА iOS: СПИСОК → ПОЛНОЕ ДОСЬЕ → НАЗАД К СПИСКУ → ПОДТВЕРЖДЕНИЕ. ПРОВЕРИТЬ CAMPAIGN, DAILY И BLOCK RUN. ПРОГРЕСС, ХАРАКТЕРИСТИКИ, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+## Checkpoint 275 — Planet completion flow, 2D-first board and planet 3D models — 2026-11-01
+- User requested a campaign completion presentation as a short informational banner, automatic return to the planet map after 3–5 seconds or immediate dismissal by tapping anywhere, a flash/pulse on the newly unlocked planet, consistent "planet" terminology, 2D as the default game board with optional 3D, and visible 3D planet/universe models.
+- Campaign completion in `site/index.html` now:
+  - preserves the existing campaign reward calculations, star-mark awards, hero XP awards, unlocked-planet calculation and `nrNode` progression;
+  - replaces the old completion dialog and its two navigation buttons with a compact completion banner showing the completed planet and earned rewards;
+  - returns to the campaign planet map after 4.2 seconds, or immediately on a tap/click anywhere on the overlay;
+  - selects the biome containing the newly unlocked planet and marks that planet for a one-time arrival highlight.
+- The newly unlocked planet receives an arrival animation: bright pulse, glow and orbit highlight, with the map scrolling to center it. The animation respects reduced-motion preferences.
+- Campaign-facing UI wording was changed from "node" to "planet", including completion banner and campaign upgrade descriptions. No route IDs, route order, biome boundaries or saved progression keys were changed.
+- `site/arena-3d.js` now defaults to 2D. The 3D renderer and Three.js module are loaded only after the player presses the 3D toggle; switching away from the game screen returns to 2D and stops the 3D render loop. This removes the previous automatic 3D activation whenever the game screen became visible.
+- The universe renderer now targets both the galaxy atlas and the planet-route viewport. Planet spheres receive distinct model IDs from the existing 12-model manifest. The WebGL canvas remains a separate overlay and is positioned over the active map viewport.
+- Added a procedural 3D fallback for each universe model if its remote Grab3D GLB request fails, so a failed external asset request should no longer leave only a flat emoji. The original remote GLB remains the preferred model source.
+- Cache-busting updated for `arena-3d.js?v=20261101-opt-in-2d` and `universes-3d.js?v=20261101-planet-models-2`.
+- Source commits:
+  - campaign arrival banner and 2D-first arena: `a84de7b5d939c62fe5b82fff058328e341402db9`
+  - optional/lazy 3D arena: `eec607086c8b0098302c99e3cdcf9bd9a52391e9`
+  - universe viewport anchoring: `a4f1ebc8c2fe6d63f3993c64a1c14f279adc5d43`
+  - 3D planet nodes: `10d3433cb4ad7280512c226f11d34fce3d9db389`
+  - local procedural 3D fallback: `93f3dfbede303a44163c9bb8330bbbcc80c945a1`
+  - campaign terminology/cache-bust: `0304af3c257a57fcf40c5beacf198ca086dfe92c`
+- Verification against committed source: completion banner has no navigation buttons; timer is 4.2 seconds; overlay click listener skips the wait; reward/progression writes remain; planet arrival class is applied; no remaining campaign "узел" wording; 3D arena no longer auto-enables and uses lazy import; planet map includes model slots; universe loader scans both atlas and planet map; procedural fallback is present.
+- GitHub Actions for the latest commit `0304af3` were still running/pending at checkpoint time; published Pages rendering and actual iOS/WebGL visual appearance are not yet confirmed. The Grab3D GLB endpoints remain remote; if a GLB fails, the new local procedural 3D representation should be used instead.
+- No campaign route geometry, biome/planet numbering, progress records, purchases, coins, inventory, equipped items, hero statistics, game rules or save keys were intentionally changed.
+- Next: verify the latest Pages deployment, then test on iOS: finish a campaign planet, let the banner auto-dismiss and separately tap to dismiss it; confirm the next planet is centered and flashes; confirm board opens in 2D and the 3D toggle loads only when requested; inspect both galaxy atlas and planet route for 3D models.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 275. ПРОВЕРИТЬ DEPLOY И НА iOS: БАННЕР ЗАВЕРШЕНИЯ ПЛАНЕТЫ (4,2 СЕКУНДЫ / TAP ANYWHERE), ПЕРЕХОД И ВСПЫШКУ НОВОЙ ПЛАНЕТЫ, 2D ПО УМОЛЧАНИЮ И РУЧНОЙ 3D, МОДЕЛИ НА КАРТЕ ГАЛАКТИК И ПЛАНЕТ. МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
