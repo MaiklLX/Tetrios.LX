@@ -1,0 +1,186 @@
+/* Tetrios.LX — lazy-loaded 3D universe models for the campaign galaxy atlas.
+   One shared WebGL renderer draws only the visible GLB models, keeping mobile GPU use low. */
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+(async function(){
+  const log='[Tetrios 3D Universes]';
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let manifest;
+  try{
+    const response=await fetch('./universes/manifest.json',{cache:'force-cache'});
+    if(!response.ok)throw new Error('manifest HTTP '+response.status);
+    manifest=await response.json();
+  }catch(error){console.warn(log,'manifest unavailable; emoji fallback stays active.',error);return;}
+
+  const loader=new GLTFLoader();
+  let active=null,raf=0,last=0;
+  const modelCache=new Map();
+  const lowPower=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
+
+  function loadModel(id){
+    if(modelCache.has(id))return modelCache.get(id);
+    const entry=manifest.models[id];
+    if(!entry)return Promise.reject(new Error('Unknown model '+id));
+    const promise=loader.loadAsync(entry.url).then(gltf=>gltf.scene).catch(error=>{
+      modelCache.delete(id);
+      throw error;
+    });
+    modelCache.set(id,promise);
+    return promise;
+  }
+
+  function buildScene(model,index){
+    const scene=new THREE.Scene();
+    scene.add(new THREE.HemisphereLight(0xdceaff,0x18213a,2.0));
+    const key=new THREE.DirectionalLight(0xffffff,2.4);key.position.set(-3,5,6);scene.add(key);
+    const fill=new THREE.DirectionalLight(0x83cfff,1.2);fill.position.set(4,1,-4);scene.add(fill);
+    const rim=new THREE.PointLight(0x8c78ff,1.1,8);rim.position.set(0,1.5,-2);scene.add(rim);
+
+    const pivot=new THREE.Group();
+    const root=model;
+    root.updateMatrixWorld(true);
+    const bounds=new THREE.Box3().setFromObject(root);
+    const size=bounds.getSize(new THREE.Vector3());
+    const center=bounds.getCenter(new THREE.Vector3());
+    const maxDim=Math.max(size.x,size.y,size.z)||1;
+    const scale=1.72/maxDim;
+    root.scale.setScalar(scale);
+    root.position.sub(center.multiplyScalar(scale));
+    pivot.add(root);
+    pivot.rotation.y=(index%4)*.35;
+    scene.add(pivot);
+
+    const camera=new THREE.PerspectiveCamera(34,1,.1,40);
+    camera.position.set(0,.08,3.35);
+    camera.lookAt(0,0,0);
+    return {scene,camera,pivot,index};
+  }
+
+  function stopCurrent(){
+    if(!active)return;
+    cancelAnimationFrame(raf);raf=0;
+    active.observer?.disconnect();
+    active.resizeObserver?.disconnect();
+    active.renderer?.dispose();
+    active.canvas?.remove();
+    active=null;
+  }
+
+  function startAtlas(viewport){
+    if(active?.viewport===viewport)return;
+    stopCurrent();
+    const grid=viewport.closest('#mapgrid');
+    if(!grid)return;
+    const canvas=document.createElement('canvas');
+    canvas.className='bb-galaxy-model-canvas';
+    canvas.setAttribute('aria-hidden','true');
+    grid.appendChild(canvas);
+    let renderer;
+    try{
+      renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:'low-power'});
+    }catch(error){
+      canvas.remove();console.warn(log,'WebGL unavailable; using galaxy artwork fallback.',error);return;
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,lowPower?1:1.25));
+    renderer.setClearColor(0x000000,0);
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.toneMapping=THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=1.12;
+    renderer.setScissorTest(true);
+
+    const slots=[...viewport.querySelectorAll('[data-universe-model]')];
+    const entries=new Map();
+    const state={viewport,grid,canvas,renderer,observer:null,resizeObserver:null,entries,slots};
+    active=state;
+
+    const activate=slot=>{
+      if(entries.has(slot))return;
+      const id=slot.dataset.universeModel;
+      const index=manifest.universeOrder.indexOf(id);
+      loadModel(id).then(source=>{
+        if(active!==state||!slot.isConnected)return;
+        const clone=source.clone(true);
+        const entry=buildScene(clone,Math.max(0,index));
+        entries.set(slot,entry);
+        slot.classList.add('is-loaded');
+        requestRender();
+      }).catch(error=>{
+        slot.classList.add('is-model-fallback');
+        console.warn(log,'could not load '+id+'; keeping fallback icon.',error);
+      });
+    };
+
+    if('IntersectionObserver' in window){
+      state.observer=new IntersectionObserver(items=>{
+        items.forEach(item=>{if(item.isIntersecting)activate(item.target)});
+      },{root:viewport,rootMargin:'0px 280px 0px 280px',threshold:0});
+      slots.forEach(slot=>state.observer.observe(slot));
+    }else slots.slice(0,3).forEach(activate);
+
+    const resize=()=>{
+      if(active!==state)return;
+      const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);
+      renderer.setSize(w,h,false);
+      const gr=grid.getBoundingClientRect(),vr=viewport.getBoundingClientRect();
+      canvas.style.left=(vr.left-gr.left)+'px';
+      canvas.style.top=(vr.top-gr.top)+'px';
+      canvas.style.width=w+'px';
+      canvas.style.height=h+'px';
+      requestRender();
+    };
+    state.resizeObserver=new ResizeObserver(resize);
+    state.resizeObserver.observe(viewport);
+    window.addEventListener('resize',resize,{passive:true});
+    viewport.addEventListener('scroll',requestRender,{passive:true});
+    resize();
+
+    function draw(now){
+      if(active!==state)return;
+      const campaign=document.getElementById('campaign');
+      if(document.hidden||campaign?.hidden){
+        raf=requestAnimationFrame(draw);return;
+      }
+      const dt=Math.min(.05,(now-last)/1000||0);last=now;
+      const vr=viewport.getBoundingClientRect();
+      const cw=viewport.clientWidth,ch=viewport.clientHeight;
+      renderer.setScissorTest(false);renderer.clear(true,true,true);renderer.setScissorTest(true);
+      entries.forEach((entry,slot)=>{
+        const rect=slot.getBoundingClientRect();
+        if(rect.right<vr.left||rect.left>vr.right||rect.bottom<vr.top||rect.top>vr.bottom)return;
+        const x=Math.max(0,rect.left-vr.left);
+        const y=Math.max(0,rect.top-vr.top);
+        const w=Math.min(cw-x,rect.width),h=Math.min(ch-y,rect.height);
+        if(w<2||h<2)return;
+        entry.camera.aspect=w/h;entry.camera.updateProjectionMatrix();
+        if(!reduceMotion.matches){
+          entry.pivot.rotation.y+=dt*.18;
+          entry.pivot.rotation.x=Math.sin(now*.00035+entry.index)*.035;
+          entry.pivot.position.y=Math.sin(now*.0008+entry.index)*.025;
+        }
+        renderer.setViewport(x,ch-y-h,w,h);
+        renderer.setScissor(x,ch-y-h,w,h);
+        renderer.render(entry.scene,entry.camera);
+      });
+      raf=requestAnimationFrame(draw);
+    }
+    function requestRender(){if(active===state&&!raf){last=performance.now();raf=requestAnimationFrame(draw)}}
+    requestRender();
+  }
+
+  function scan(){
+    const viewport=document.querySelector('#campaign .bb-galaxy-viewport');
+    if(!viewport){if(active)stopCurrent();return}
+    if(active?.viewport!==viewport){
+      requestAnimationFrame(()=>{
+        if(!viewport.isConnected)return;
+        if(viewport.getBoundingClientRect().width>0)startAtlas(viewport);
+      });
+    }
+  }
+  const observer=new MutationObserver(scan);
+  observer.observe(document.body,{childList:true,subtree:true});
+  window.addEventListener('pageshow',scan);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&active)requestRender()});
+  scan();
+})();
