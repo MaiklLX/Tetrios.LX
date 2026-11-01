@@ -6967,7 +6967,10 @@ function buildMap() {
       '<span class="bb-planet-kicker">СИСТЕМА · ' + String(b.id + 1).padStart(2,'0') + '</span>' +
       '<strong>' + b.icon + ' ' + b.name + '</strong>' +
       '<small>' + (biomeAtmospheres[b.id] || 'Неизведанный мир') + '</small>' +
-      '<span>Открыто до планеты ' + current + ' из ' + b.end + '</span>';
+      '<span>Открыто до планеты ' + current + ' из ' + b.end + '</span>' +
+      '<div class="bb-atlas-status-legend" aria-label="Обозначения статусов">' +
+        '<span class="available">› ДОСТУПНА</span><span class="cleared">✓ ПРОЙДЕНА</span><span class="locked">▣ ЗАКРЫТА</span>' +
+      '</div>';
     g.appendChild(hero);
 
     const viewport = document.createElement('div');
@@ -9314,7 +9317,7 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
  box-shadow:0 0 12px #f4ca7244;
 }
 #campaign .bb-planet-node.is-locked::before{
- content:"•";color:#9aa7bf;border-color:#9aa7bf66;
+ content:"▣";color:#9aa7bf;border-color:#9aa7bf66;
 }
 #campaign .bb-planet-node.is-current small{color:#65f0d4!important;font-weight:950}
 #campaign .bb-planet-node.is-cleared small{color:#f4ca72!important;font-weight:900}
