@@ -9386,18 +9386,10 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 #campaign .bb-atlas-intro strong{font-size:21px!important;letter-spacing:-.045em!important}
 #campaign .bb-atlas-intro small{max-width:290px!important;line-height:1.45!important}
 #campaign .bb-galaxy-viewport{
- position:relative!important;
- padding:12px 18px 20px!important;
+ position:relative!important;padding:12px 18px 20px!important;
  overflow-x:auto!important;overflow-y:hidden!important;
- background:
-  radial-gradient(ellipse at 50% 48%,#1a315044 0,transparent 58%),
-  radial-gradient(1px 1px at 12% 18%,#d9edff88 0 1px,transparent 1.8px),
-  radial-gradient(1px 1px at 39% 72%,#d9edff66 0 1px,transparent 1.8px),
-  radial-gradient(1px 1px at 67% 24%,#d9edff77 0 1px,transparent 1.8px),
-  radial-gradient(1px 1px at 88% 66%,#d9edff66 0 1px,transparent 1.8px),
-  linear-gradient(180deg,#080e1b22,#0b142833)!important;
- border-top:1px solid #9bb8e012!important;
- border-bottom:1px solid #9bb8e012!important;
+ background:transparent!important;
+ border-top:1px solid #9bb8e012!important;border-bottom:1px solid #9bb8e012!important;
 }
 #campaign .bb-galaxy-track{
  position:relative!important;isolation:isolate!important;
@@ -9535,92 +9527,23 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 
 
 <style id="bb-campaign-map-atmospheres">
-/* Distinct, restrained environments for the two campaign maps.
-   Decorative layers stay behind the DOM map and never intercept touch input. */
-#campaign .bb-galaxy-viewport,
-#campaign .bb-planet-viewport{
-  position:relative!important;
-  isolation:isolate!important;
-  background-color:#070b16!important;
-  background-repeat:no-repeat!important;
-}
-#campaign .bb-galaxy-viewport{
-  background-image:
-    radial-gradient(ellipse at 50% 42%,#182b49a8 0,transparent 48%),
-    radial-gradient(ellipse at 18% 78%,#38245a55 0,transparent 43%),
-    radial-gradient(ellipse at 82% 18%,#164b5a42 0,transparent 40%),
-    linear-gradient(180deg,#080d1b 0%,#090f1e 52%,#070b16 100%)!important;
-}
-#campaign .bb-galaxy-viewport::before,
-#campaign .bb-planet-viewport::before{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-repeat:repeat;
-}
-#campaign .bb-galaxy-viewport::before{
-  opacity:.58;
-  background-image:
-    radial-gradient(1px 1px at 7% 19%,#e9f4ff 0 1px,transparent 1.7px),
-    radial-gradient(1px 1px at 23% 72%,#9bdcff 0 1px,transparent 1.8px),
-    radial-gradient(1.4px 1.4px at 44% 31%,#ffffff 0 1px,transparent 2px),
-    radial-gradient(1px 1px at 61% 83%,#c6b5ff 0 1px,transparent 1.8px),
-    radial-gradient(1px 1px at 79% 48%,#d9edff 0 1px,transparent 1.8px),
-    radial-gradient(1px 1px at 94% 14%,#ffffff 0 1px,transparent 1.8px);
-  background-size:310px 230px,370px 280px,420px 300px,340px 260px,390px 290px,460px 320px;
-}
-#campaign .bb-galaxy-viewport::after{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  opacity:.42;
-  background:
-    radial-gradient(ellipse at 50% 54%,transparent 34%,#02061155 100%),
-    linear-gradient(115deg,transparent 0 38%,#9e8aff0b 49%,transparent 62%);
-}
-#campaign .bb-galaxy-track{position:relative!important;z-index:1!important}
-#campaign .bb-galaxy-track::before{
-  opacity:.72!important;
-  filter:drop-shadow(0 0 8px #7fb7e855)!important;
-}
-#campaign .bb-planet-viewport{
-  background-image:
-    radial-gradient(ellipse at 50% 52%,#173b4b88 0,transparent 48%),
-    radial-gradient(ellipse at 14% 16%,#243b6855 0,transparent 42%),
-    radial-gradient(ellipse at 88% 88%,#4a315044 0,transparent 44%),
-    linear-gradient(180deg,#080f1b 0%,#0b1724 48%,#080d19 100%)!important;
-}
-#campaign .bb-planet-viewport::before{
-  opacity:.48;
-  background-image:
-    radial-gradient(1px 1px at 10% 24%,#d9f5ff 0 1px,transparent 1.8px),
-    radial-gradient(1px 1px at 31% 78%,#a8e7f4 0 1px,transparent 1.8px),
-    radial-gradient(1.3px 1.3px at 54% 16%,#ffffff 0 1px,transparent 2px),
-    radial-gradient(1px 1px at 73% 61%,#b9c9ff 0 1px,transparent 1.8px),
-    radial-gradient(1px 1px at 91% 34%,#e8f5ff 0 1px,transparent 1.8px);
-  background-size:350px 270px,410px 310px,380px 290px,440px 330px,390px 300px;
-}
-#campaign .bb-planet-viewport::after{
-  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  opacity:.52;
-  background:
-    radial-gradient(ellipse at 50% 50%,transparent 28%,#03081266 100%),
-    radial-gradient(ellipse at 50% 100%,#4c9ca51a 0,transparent 55%);
-}
-#campaign .bb-planet-track{position:relative!important;z-index:1!important}
-#campaign .bb-treasure-trail{z-index:0!important}
-#campaign .bb-planet-node{z-index:2!important}
-@media(prefers-reduced-motion:no-preference){
-  #campaign .bb-galaxy-viewport::after{animation:bbGalaxyHaze 46s ease-in-out infinite alternate}
-  #campaign .bb-planet-viewport::after{animation:bbPlanetHaze 38s ease-in-out infinite alternate}
-}
-@keyframes bbGalaxyHaze{
-  from{opacity:.30;transform:translate3d(-.5%,0,0)}
-  to{opacity:.48;transform:translate3d(.5%,0,0)}
-}
-@keyframes bbPlanetHaze{
-  from{opacity:.40;transform:translate3d(.35%,0,0)}
-  to{opacity:.58;transform:translate3d(-.35%,0,0)}
-}
-@media(prefers-reduced-motion:reduce){
-  #campaign .bb-galaxy-viewport::after,#campaign .bb-planet-viewport::after{animation:none!important}
-}
+/* Definitive map backgrounds: replace legacy viewport fills, then paint atmosphere behind map content. */
+#campaign .bb-galaxy-viewport,#campaign .bb-planet-viewport{position:relative!important;isolation:isolate!important;background-repeat:no-repeat!important;background-clip:padding-box!important;}
+#campaign .bb-galaxy-viewport{background:radial-gradient(ellipse 72% 92% at 50% 48%,#315a91b8 0%,#1a315c82 34%,transparent 72%),radial-gradient(ellipse 48% 75% at 14% 82%,#7043a66e 0%,transparent 72%),radial-gradient(ellipse 46% 70% at 88% 18%,#167e9270 0%,transparent 70%),radial-gradient(ellipse 35% 48% at 52% 8%,#5364ad52 0%,transparent 75%),linear-gradient(180deg,#080d1c 0%,#101b35 48%,#080d1a 100%)!important;}
+#campaign .bb-planet-viewport{background:radial-gradient(ellipse 66% 90% at 52% 48%,#176d7b9c 0%,#16465b78 38%,transparent 74%),radial-gradient(ellipse 45% 70% at 12% 12%,#315fa36e 0%,transparent 72%),radial-gradient(ellipse 42% 65% at 90% 88%,#79509a62 0%,transparent 72%),radial-gradient(ellipse 30% 42% at 72% 20%,#2d9a9c42 0%,transparent 75%),linear-gradient(180deg,#08111f 0%,#0d2634 50%,#080e1a 100%)!important;}
+#campaign .bb-galaxy-viewport:before,#campaign .bb-planet-viewport:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background-repeat:repeat;}
+#campaign .bb-galaxy-viewport:before{opacity:.82;background-image:radial-gradient(1px 1px at 7% 19%,#f4f8ff 0 1px,transparent 1.8px),radial-gradient(1.4px 1.4px at 23% 72%,#a9dcff 0 1px,transparent 2px),radial-gradient(1.5px 1.5px at 44% 31%,#fff 0 1px,transparent 2px),radial-gradient(1px 1px at 61% 83%,#d5c6ff 0 1px,transparent 1.8px),radial-gradient(1.4px 1.4px at 79% 48%,#b8edff 0 1px,transparent 2px),radial-gradient(1px 1px at 94% 14%,#fff 0 1px,transparent 1.8px);background-size:270px 210px,330px 250px,390px 280px,310px 240px,360px 270px,420px 300px;}
+#campaign .bb-planet-viewport:before{opacity:.7;background-image:radial-gradient(1px 1px at 10% 24%,#e8fbff 0 1px,transparent 1.8px),radial-gradient(1.4px 1.4px at 31% 78%,#a8f0f4 0 1px,transparent 2px),radial-gradient(1.3px 1.3px at 54% 16%,#fff 0 1px,transparent 2px),radial-gradient(1px 1px at 73% 61%,#c8d9ff 0 1px,transparent 1.8px),radial-gradient(1.4px 1.4px at 91% 34%,#e8f5ff 0 1px,transparent 2px);background-size:320px 250px,380px 290px,350px 270px,410px 310px,370px 280px;}
+#campaign .bb-galaxy-viewport:after,#campaign .bb-planet-viewport:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;}
+#campaign .bb-galaxy-viewport:after{opacity:.72;background:radial-gradient(ellipse at 50% 52%,transparent 24%,#02061120 64%,#02061180 100%),linear-gradient(118deg,transparent 0 28%,#b49aff18 43%,transparent 58%),radial-gradient(ellipse at 50% 100%,#527dcb30 0%,transparent 60%);}
+#campaign .bb-planet-viewport:after{opacity:.68;background:radial-gradient(ellipse at 50% 50%,transparent 20%,#03081218 66%,#03081288 100%),radial-gradient(ellipse at 50% 100%,#59d6d044 0%,transparent 58%),linear-gradient(145deg,transparent 0 35%,#a2cfff12 52%,transparent 68%);}
+#campaign .bb-galaxy-track,#campaign .bb-planet-track{position:relative!important;z-index:1!important;}
+#campaign .bb-galaxy-track:before{opacity:.9!important;filter:drop-shadow(0 0 10px #7fb7e888)!important;}
+#campaign .bb-treasure-trail{z-index:0!important;}#campaign .bb-planet-node{z-index:2!important;}
+@media(prefers-reduced-motion:no-preference){#campaign .bb-galaxy-viewport:after{animation:bbGalaxyHaze 42s ease-in-out infinite alternate;}#campaign .bb-planet-viewport:after{animation:bbPlanetHaze 36s ease-in-out infinite alternate;}}
+@keyframes bbGalaxyHaze{from{opacity:.54;transform:translate3d(-.7%,0,0);}to{opacity:.78;transform:translate3d(.7%,0,0);}}
+@keyframes bbPlanetHaze{from{opacity:.5;transform:translate3d(.45%,0,0);}to{opacity:.74;transform:translate3d(-.45%,0,0);}}
+@media(prefers-reduced-motion:reduce){#campaign .bb-galaxy-viewport:after,#campaign .bb-planet-viewport:after{animation:none!important;}}
 </style>
 
 </body></html>
