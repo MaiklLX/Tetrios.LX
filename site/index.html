@@ -5476,7 +5476,7 @@ for (let i = localStorage.length - 1; i >= 0; i--) {
 const key = localStorage.key(i);
 
 if (key && (
-  key.startsWith('bb_') ||
+  key.startsWith('bb_') || key.startsWith('bbCampaignPerks_') ||
 
   [
     'bbDailyQuests',
@@ -5486,6 +5486,7 @@ if (key && (
     'bbDailyReplayCompleted',
   'bbVisitStreak',
     'bbCoins',
+    'bbCampaignMarks',
     'coins',
     'nrBest',
     'nrRuns',
@@ -6132,9 +6133,9 @@ function bbDailyCalendarOpen(){
   let history={};try{history=JSON.parse(localStorage.getItem('bbDailyChallengeHistory')||'{}')}catch(e){history={}}
   let cells='';for(let i=0;i<offset;i++)cells+='<div></div>';
   for(let day=1;day<=daysInMonth;day++){
-    const date=[year,String(month+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-'),record=history[date],isToday=date===todayKey,isFuture=date>todayKey,isCompleted=Boolean(record)||localStorage.getItem('bbDailyChallengeCompletedDate')===date,isMissed=!isToday&&!isFuture&&!isCompleted;
+    const date=[year,String(month+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-'),record=history[date],isBeforeStart=date<'2026-10-24',isToday=date===todayKey,isFuture=date>todayKey,isCompleted=!isBeforeStart&&(Boolean(record)||localStorage.getItem('bbDailyChallengeCompletedDate')===date),isMissed=!isBeforeStart&&!isToday&&!isFuture&&!isCompleted;
     const background=isCompleted?'#174a38':isToday?'#493719':isFuture?'#151b2b':'#202940',color=isCompleted?'#8dffca':isToday?'#ffe08a':isFuture?'#71809e':isMissed?'#ff9b9b':'#fff';
-    cells+='<button type="button" data-daily-date="'+date+'" style="min-height:38px;border:1px solid '+(isToday?'#ffd36a':'#ffffff16')+';border-radius:9px;background:'+background+';color:'+color+';font-weight:900">'+day+(isCompleted?' ✓':isMissed?' ×':isToday?' ★':'')+'</button>';
+    cells+='<button type="button" '+(isBeforeStart?'disabled':'data-daily-date="'+date+'"')+' style="min-height:38px;border:1px solid '+(isToday?'#ffd36a':'#ffffff16')+';border-radius:9px;background:'+(isBeforeStart?'#111827':background)+';color:'+(isBeforeStart?'#4a5671':color)+';font-weight:900">'+day+(isBeforeStart?'':isCompleted?' ✓':isMissed?' ×':isToday?' ★':'')+'</button>';
   }
   const title=bbDailyCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}),prev=new Date(year,month-1,1)>=minMonth,next=new Date(year,month+1,1)<=maxMonth;
   modal.innerHTML='<div class="modalhead"><div class="bigicon">📅</div><div class="eyebrow">АРХИВ ИСПЫТАНИЙ</div><h3>Календарь вызовов</h3><p>История доступна с месяца запуска проекта — октября 2026 года.</p></div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 14px"><button type="button" id="bbCalendarPrev" class="action secondary" style="width:auto;padding:9px 14px" '+(prev?'':'disabled')+'>‹</button><strong style="text-transform:capitalize;color:#f3d28a">'+title+'</strong><button type="button" id="bbCalendarNext" class="action secondary" style="width:auto;padding:9px 14px" '+(next?'':'disabled')+'>›</button></div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;color:#9daaca;font-size:11px;margin-bottom:8px">'+['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=>'<b>'+d+'</b>').join('')+'</div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center">'+cells+'</div><div style="display:flex;flex-wrap:wrap;gap:12px;margin:16px 0;color:#b6c2df;font-size:12px"><span>✓ Пройден</span><span>★ Сегодня</span><span>× Пропущен</span><span>· Будущий день</span></div><button class="action secondary" id="bbDailyCalendarClose">ЗАКРЫТЬ</button>'
@@ -7866,7 +7867,7 @@ function bbOpenHeroShowcase(id){
  <div class="bb-3d-stage bb-hero-showcase-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-модель героя ${hero.name}">${equipped?'<span class="bb-hero-equipped-badge"><span>✦</span>'+equipped.emoji+'</span>':''}</div></div>
  <div class="bb-hero-showcase-heading"><div class="bb-hero-showcase-emblem">${bbHeroEmblem(hero.id,'detail')}${equipped?'<span>'+equipped.emoji+'</span>':''}</div><div><div class="bb-hero-showcase-kicker">ПЕРСОНАЖ · УРОВЕНЬ ${level}</div><h2>${hero.name}</h2><p>${hero.desc}</p></div></div>
  <div class="bb-hero-showcase-stats"><div><span>СТОЙКОСТЬ</span><strong>${'★'.repeat(hero.hp)}${'☆'.repeat(5-hero.hp)}</strong></div><div><span>МАСТЕРСТВО</span><strong>${'★'.repeat(hero.power)}${'☆'.repeat(5-hero.power)}</strong></div></div>
- <div class="bb-hero-showcase-skill"><span>УНИКАЛЬНАЯ СПОСОБНОСТЬ</span><strong>${hero.skill}</strong><p>${hero.skillDesc}</p></div>
+ <div class="bb-hero-showcase-skill"><span>УНИКАЛЬНАЯ СПОСОБНОСТЬ</span><strong>${hero.skill}</strong><p>${hero.skillDesc}</p></div><button type="button" class="action secondary" id="bbShowcaseTraining">🏅 ТРЕНИРОВКА ПЕРКОВ КАМПАНИИ</button>
  <div class="bb-hero-cosmetic-panel"><div class="bb-hero-cosmetic-heading">КОСМЕТИКА ГЕРОЯ</div><div class="bb-hero-cosmetic-status">${equipped?'Надето: '+equipped.emoji+' '+equipped.name:'Украшение не выбрано'}</div>
  <div class="bb-hero-cosmetic-grid">${owned.length?owned.map(itemId=>{const item=cosmetics[itemId];if(!item)return '';const active=itemId===equippedId;const owner=active?null:bbFindCosmeticOwner(itemId,hero.id);return '<button type="button" data-equip-cosmetic="'+itemId+'" class="'+(active?'is-equipped':owner?'is-unavailable':'')+'" '+(owner?'disabled aria-disabled="true"':'')+'><span>'+item.emoji+'</span>'+item.name+(active?'<small>✓ НАДЕТО</small>':owner?'<small>НАДЕТО: '+owner.name+'</small>':'')+'</button>'}).join(''):'<div class="bb-hero-cosmetic-empty">Пока нет украшений. Открывай реликтовые сундуки в магазине.</div>'}</div>
  ${equippedId?'<button type="button" data-unequip-cosmetic class="bb-hero-unequip">СНЯТЬ УКРАШЕНИЕ</button>':''}</div>
@@ -7874,6 +7875,7 @@ function bbOpenHeroShowcase(id){
  const modal=document.getElementById('modal');modal.classList.add('bb-hero-showcase-modal');
  modal.querySelector('.bb-hero-showcase-close')?.addEventListener('click',closeOverlay);
  modal.querySelector('#bbShowcaseSelect')?.addEventListener('click',()=>{bbSelectedHero=hero.id;bbPreviewHero=hero.id;localStorage.setItem('bbSelectedHero',hero.id);bbApplyHero();closeOverlay();bbRenderHeroes()});
+  modal.querySelector('#bbShowcaseTraining')?.addEventListener('click',()=>bbOpenCampaignTraining(hero.id));
  modal.querySelectorAll('[data-equip-cosmetic]').forEach(btn=>btn.addEventListener('click',()=>{if(!bbSetHeroEquippedCosmetic(hero.id,btn.dataset.equipCosmetic))return;bbApplyHero();bbOpenHeroShowcase(hero.id)}));
  modal.querySelector('[data-unequip-cosmetic]')?.addEventListener('click',()=>{bbSetHeroEquippedCosmetic(hero.id,'');bbApplyHero();bbOpenHeroShowcase(hero.id)});
 }
