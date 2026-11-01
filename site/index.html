@@ -9611,4 +9611,82 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 }
 </style>
 
+
+
+<style id="bb-fullscreen-cosmic-atlas">
+/* Full-bleed cosmic world: atmosphere belongs to the whole page, not a framed card. */
+html:has(#campaign:not([hidden])){
+  background:#030716!important;
+}
+body:has(#campaign:not([hidden])){
+  background:#030716!important;
+  isolation:isolate;
+}
+body:has(#campaign:not([hidden])):before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 62% 34% at 8% 24%,rgba(143,48,221,.48) 0%,rgba(100,39,173,.2) 42%,transparent 76%),
+    radial-gradient(ellipse 58% 38% at 96% 43%,rgba(0,190,218,.42) 0%,rgba(15,91,166,.18) 46%,transparent 78%),
+    radial-gradient(ellipse 66% 36% at 18% 82%,rgba(116,53,213,.4) 0%,transparent 75%),
+    radial-gradient(ellipse 52% 34% at 88% 92%,rgba(0,163,203,.32) 0%,transparent 78%),
+    radial-gradient(ellipse 72% 60% at 50% 48%,rgba(26,57,132,.36) 0%,transparent 78%),
+    radial-gradient(1px 1px at 8% 12%,#fff 0 1px,transparent 1.8px),
+    radial-gradient(1px 1px at 21% 38%,#d9eaff 0 1px,transparent 1.8px),
+    radial-gradient(1.4px 1.4px at 39% 17%,#fff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 57% 64%,#c9dfff 0 1px,transparent 1.8px),
+    radial-gradient(1.3px 1.3px at 76% 28%,#fff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 91% 77%,#e7d7ff 0 1px,transparent 1.8px),
+    radial-gradient(1px 1px at 14% 91%,#fff 0 1px,transparent 1.8px),
+    linear-gradient(180deg,#030716 0%,#07122c 48%,#030716 100%);
+  background-size:100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,190px 230px,270px 310px,330px 290px,290px 350px,370px 330px,310px 270px,410px 390px,100% 100%;
+  background-repeat:no-repeat, no-repeat, no-repeat, no-repeat, no-repeat,repeat,repeat,repeat,repeat,repeat,repeat,repeat,no-repeat;
+}
+#campaign.screen{
+  position:relative!important;
+  isolation:isolate!important;
+  width:100%!important;
+  max-width:none!important;
+  min-height:100dvh!important;
+  margin:0!important;
+  padding:14px 12px 28px!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  overflow:visible!important;
+}
+#campaign .screenhead{
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+#campaign .challengebox,
+#campaign .bb-atlas-intro,
+#campaign .bb-atlas-controls{
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+#campaign .bb-galaxy-viewport{
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-color:transparent!important;
+}
+#campaign .bb-galaxy-viewport:before{opacity:1!important}
+#campaign .bb-galaxy-viewport:after{opacity:.9!important}
+@media(max-width:700px){
+  #campaign.screen{padding:12px 10px 24px!important}
+}
+</style>
+
 </body></html>
