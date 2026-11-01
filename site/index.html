@@ -7882,9 +7882,7 @@ function bbApplyHero() {
     };
     const equippedId = bbGet('equippedChestCosmetic', '');
     const accessory = cosmeticEmojiById[equippedId];
-    avatar.innerHTML = accessory
-      ? '<span style="position:relative;display:inline-flex;align-items:center;justify-content:center;width:100%;height:100%"><span>'+hero.emoji+'</span><span aria-label="Надетая косметика" title="Надетая косметика" style="position:absolute;right:-7px;top:-9px;min-width:23px;height:23px;padding:2px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#201a3b;border:1px solid #a78bfa;font-size:15px;box-shadow:0 2px 8px #0006">'+accessory+'</span></span>'
-      : hero.emoji;
+    avatar.innerHTML = '<span class="bb-unified-hero-avatar">'+bbHeroEmblem(hero.id,'detail')+(accessory?'<span>'+accessory+'</span>':'')+'</span>';
     avatar.style.background = hero.color;
     avatar.style.borderRadius = '14px';
     avatar.style.overflow = 'visible';
