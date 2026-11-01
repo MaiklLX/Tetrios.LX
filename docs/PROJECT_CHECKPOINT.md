@@ -325,3 +325,21 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Verify the website deployment and Android WebView/debug APK workflows for this exact SHA before claiming it is live or sharing an APK. Physical Android review is still pending; do not claim device testing.
 - Next: inspect the refreshed menu on the user's phone and tune only concrete secondary-panel readability/spacing feedback. Keep the emblem and dashboard geometry locked unless the user explicitly requests a change.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
+
+
+## Main menu icon-first button pass — 2026-11-01
+- User requested larger buttons, less text, and clearer associative icons so each menu action is recognizable at a glance.
+- Implemented in `site/visual-overhaul.css`, commit `770688358ec8743987f78a1aef52de3c5b4db221`:
+  - Main mode cards now have larger touch areas, larger icon tiles, clearer titles and stronger arrow affordances.
+  - Removed the secondary explanatory copy and category tags from the three primary mode cards to reduce text density; titles remain visible.
+  - Heroes and Shop actions also receive larger icon-led hit areas; secondary subtitles are hidden on those entry buttons.
+  - Added compact mobile-specific sizing so the buttons remain comfortable without overwhelming the screen.
+- Updated primary mode icon associations and shortened the rogue mode title in `site/index.html`, commit `36143c6e447f8ca4b9a8ee8b28d0dd855140da7a`:
+  - Campaign: 🗺️
+  - Block-run: 🧱 (title shortened from “Весёлый блок-ран” to “Блок-ран”)
+  - Daily challenge: 🏆
+- Cache-bust token updated to `20261101-icon-first-menu-1`, commit `dce617afa8e263bb966be2307bfbfacae7633b93`.
+- No event IDs, data-mode values, click handlers, navigation, gameplay, save data, or menu ordering changed. The emblem and supporting panels remain untouched.
+- User has not yet visually reviewed this pass on their phone. Confirm deployment and Android display before claiming it is live or device-tested.
+- Next: ask for the user's visual impression; tune icon choice/size or button height only from concrete feedback.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
