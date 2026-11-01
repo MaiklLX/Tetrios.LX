@@ -5469,7 +5469,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
     Выбрать этого героя
   </button>
 </section>
-<section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Атлас вселенных</h2><p>Спираль миров · исследуй галактики и планеты</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждый очищенный узел открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ УЗЛЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div>
+<section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" id="campaignBack" aria-label="Назад">‹</button><div><h2>Атлас вселенных</h2><p>Спираль миров · исследуй галактики и планеты</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждый очищенный узел открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ УЗЛЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div>
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
@@ -6854,13 +6854,16 @@ toast('Цель выполнена! +' + g.reward + ' монет');
 
   bbCheckCampaignCompletion();
 }
+let bbCampaignViewedBiomeId = null;
+
 function buildMap() {
   const g = $('mapgrid');
   if (!g) return;
 
   const current = bbGetUnlockedNode();
   const activeBiome = bbGetBiome(current);
-  let viewedBiomeId = activeBiome.id;
+  let viewedBiomeId = bbCampaignViewedBiomeId ?? activeBiome.id;
+  const campaignBack = $('campaignBack');
   const planetEmojis = ['🪐','🌕','🌑','🌍','🌋','🧊','🔮','☄️','🌟','🌊'];
   const biomeAtmospheres = [
     'Живые континенты и сияющие долины',
@@ -6878,6 +6881,7 @@ function buildMap() {
   ];
 
   const renderGalaxyAtlas = () => {
+    if (campaignBack) campaignBack.onclick = () => show('menu');
     g.innerHTML = '';
     g.className = 'mapgrid bb-galaxy-atlas';
     const intro = document.createElement('div');
@@ -6920,6 +6924,7 @@ function buildMap() {
           return;
         }
         viewedBiomeId = b.id;
+        bbCampaignViewedBiomeId = b.id;
         renderPlanetSystem(b);
       });
       track.appendChild(card);
@@ -6953,17 +6958,9 @@ function buildMap() {
   };
 
   const renderPlanetSystem = (b) => {
+    if (campaignBack) campaignBack.onclick = () => renderGalaxyAtlas();
     g.innerHTML = '';
     g.className = 'mapgrid bb-planet-map';
-
-    const back = document.createElement('button');
-    back.type = 'button';
-    back.className = 'bb-cosmos-back';
-    back.setAttribute('aria-label','Вернуться к спирали вселенных');
-    back.title = 'К спирали вселенных';
-    back.innerHTML = '<span aria-hidden="true">←</span>';
-    back.onclick = () => renderGalaxyAtlas();
-    g.appendChild(back);
 
     const hero = document.createElement('div');
     hero.className = 'bb-planet-heading';
@@ -6980,31 +6977,33 @@ function buildMap() {
     const track = document.createElement('div');
     track.className = 'bb-planet-track';
     const positions = [];
-    const trackWidth = (b.end - b.start + 1) * 148 + 100;
-    for (let i = 0; i < b.end - b.start + 1; i++) {
-      const x = 58 + i * 148;
-      const wave = Math.sin(i * 1.17 + b.id * .73);
-      const alternate = [0, 34, -24, 52, -42, 18][i % 6];
-      const y = Math.max(82, Math.min(258, 166 + wave * 48 + alternate));
-      positions.push({x:x+48,y:y+48});
+    const planetCount = b.end - b.start + 1;
+    const trackWidth = 70 + (planetCount - 1) * 174 + 170;
+    const trackHeight = 450;
+    for (let i = 0; i < planetCount; i++) {
+      const x = 70 + i * 174;
+      const wave = Math.sin(i * 1.04 + b.id * .73);
+      const alternate = [-26, 38, -52, 54, -12, 68, -42, 20][i % 8];
+      const y = Math.max(104, Math.min(344, 218 + wave * 70 + alternate));
+      positions.push({x:x+58,y});
     }
     const path = document.createElementNS('http://www.w3.org/2000/svg','svg');
     path.setAttribute('class','bb-treasure-trail');
-    path.setAttribute('viewBox','0 0 '+trackWidth+' 360');
+    path.setAttribute('viewBox','0 0 '+trackWidth+' '+trackHeight);
     path.setAttribute('width',trackWidth);
-    path.setAttribute('height','360');
+    path.setAttribute('height',String(trackHeight));
     path.setAttribute('aria-hidden','true');
     let d = '';
     positions.forEach((p,i) => {
       if (!i) d = 'M '+p.x+' '+p.y;
       else {
         const prev = positions[i-1];
-        const midX = (prev.x+p.x)/2;
-        const bend = (p.y-prev.y)*.18;
-        d += ' C '+(midX-24)+' '+(prev.y+bend)+' '+(midX+24)+' '+(p.y-bend)+' '+p.x+' '+p.y;
+        const dx = p.x - prev.x;
+        const dy = p.y - prev.y;
+        d += ' C '+(prev.x+dx*.38)+' '+(prev.y+dy*.04)+' '+(prev.x+dx*.72)+' '+(p.y-dy*.04)+' '+p.x+' '+p.y;
       }
     });
-    path.innerHTML = '<path class="bb-trail-shadow" d="'+d+'"/><path class="bb-trail-dashes" d="'+d+'"/>';
+    path.innerHTML = '<path class="bb-trail-glow" d="'+d+'"/><path class="bb-trail-shadow" d="'+d+'"/><path class="bb-trail-dashes" d="'+d+'"/>';
     track.appendChild(path);
 
     for (let n = b.start; n <= b.end; n++) {
@@ -7014,8 +7013,10 @@ function buildMap() {
       const planet = document.createElement('button');
       planet.type = 'button';
       planet.className = 'bb-planet-node' + (n === current ? ' is-current' : '') + (done ? ' is-cleared' : '') + (!open ? ' is-locked' : '');
-      planet.style.left = positions[local].x - 48 + 'px';
-      planet.style.top = positions[local].y - 48 + 'px';
+      planet.style.left = positions[local].x - 58 + 'px';
+      planet.style.top = positions[local].y - 66 + 'px';
+      planet.style.setProperty('--planet-size', [104,126,90,114,136,98,118][local % 7] + 'px');
+      planet.classList.add('bb-planet-shape-' + (local % 6));
       planet.style.setProperty('--planet-hue', String((b.id * 31 + local * 13) % 360));
       planet.style.setProperty('--planet-delay', (local % 9) * -0.23 + 's');
       planet.innerHTML =
@@ -7037,7 +7038,7 @@ function buildMap() {
       track.appendChild(planet);
     }
     track.style.width = trackWidth + 'px';
-    track.style.height = '360px';
+    track.style.height = trackHeight + 'px';
     viewport.appendChild(track);
     g.appendChild(viewport);
 
@@ -7062,7 +7063,9 @@ function buildMap() {
       startGame();
     };
   }
-  renderGalaxyAtlas();
+  const rememberedBiome = bbBiomes.find(b => b.id === viewedBiomeId);
+  if (rememberedBiome && bbCampaignViewedBiomeId !== null) renderPlanetSystem(rememberedBiome);
+  else renderGalaxyAtlas();
 }
 
 function bbChooseHeroBeforeStart() {
