@@ -588,3 +588,5 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 276. ПРОВЕРИТЬ МГНОВЕННУЮ ПРОЦЕДУРНУЮ 3D-ЗАГРУЗКУ С ПОСЛЕДУЮЩИМ GLB-UPGRADE, ОТСУТСТВИЕ СТАРЫХ 2D-ИКОНOК, ФИКСАЦИЮ МОДЕЛЕЙ ПРИ ПРОКРУТКЕ И СТАРТ СВЕРХУ ПОСЛЕ ОБНОВЛЕНИЯ. МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
 
 - Implementation refinement after source review: the WebGL canvas is a fixed overlay attached to `document.body`, and its screen position is refreshed from the active viewport's live bounding rectangle on every render frame. Currently visible slots are activated synchronously before the first IntersectionObserver callback. This avoids making the overlay a child of the horizontally scrolling viewport and reduces first-visible-frame delay.
+
+- Canvas CSS was made global (not campaign-descendant-scoped) because the fixed WebGL canvas is deliberately attached to `document.body`; this ensures the fixed positioning, stacking order and pointer-event behavior apply to the actual canvas element.
