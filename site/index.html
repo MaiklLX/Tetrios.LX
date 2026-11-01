@@ -5223,7 +5223,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 
 </style>
-<link rel="stylesheet" href="./visual-overhaul.css?v=20261101-submenus-clarity-4"><script type="importmap">
+<link rel="stylesheet" href="./visual-overhaul.css?v=20261101-hero-flip-cosmetics-1"><script type="importmap">
 {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
 </script></head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
@@ -7830,33 +7830,52 @@ function bbRenderHeroes() {
   if (!roster || !details) return;
 
   const hero = bbHeroes.find(h => h.id === bbPreviewHero) || bbHeroes[0];
+  const ownedCosmetics = typeof bbGetChestCosmetics === 'function' ? bbGetChestCosmetics() : [];
+  const equippedCosmetic = bbGet('equippedChestCosmetic', '');
+  const cosmeticById = {
+    'comet-trail': {name:'Кометный след',emoji:'☄️'},
+    'void-crown': {name:'Корона пустоты',emoji:'👑'},
+    'prism-shard': {name:'Призматический осколок',emoji:'🔮'},
+    'star-sigil': {name:'Звёздная печать',emoji:'🌟'},
+    'pixel-ghost': {name:'Пиксельный призрак',emoji:'👻'},
+    'neon-wings': {name:'Неоновые крылья',emoji:'🪽'}
+  };
+  const equipped = cosmeticById[equippedCosmetic];
 
-  roster.style.cssText =
-    'display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;';
+  roster.classList.add('bb-hero-flip-roster');
+  roster.innerHTML = bbHeroes.map(h => {
+    const active = h.id === hero.id;
+    return `
+      <button type="button" class="bb-hero-flip-card ${active ? 'is-open' : ''}" data-hero-card="${h.id}" aria-expanded="${active}">
+        <span class="bb-hero-flip-inner">
+          <span class="bb-hero-card-face bb-hero-card-front">
+            <span class="bb-hero-card-art" style="--hero-accent:${h.color}">${bbHeroEmblem(h.id)}</span>
+            <strong>${h.name}</strong>
+            <span class="bb-hero-card-role">${h.role}</span>
+            <span class="bb-hero-card-state" style="color:${h.color}">
+              ${h.id === bbSelectedHero ? '✓ ВЫБРАН' : active ? '↻ ХАРАКТЕРИСТИКИ' : 'ОСМОТРЕТЬ'}
+            </span>
+            ${active ? '<span class="bb-hero-card-hint">НАЖМИ, ЧТОБЫ ЗАКРЫТЬ</span>' : ''}
+          </span>
+          <span class="bb-hero-card-face bb-hero-card-back">
+            <span class="bb-hero-card-back-inner"></span>
+          </span>
+        </span>
+      </button>`;
+  }).join('');
 
-  roster.innerHTML = bbHeroes.map(h => `
-    <button type="button" data-hero-card="${h.id}"
-      style="padding:14px 8px;border:2px solid ${h.id === hero.id ? h.color : 'rgba(150,170,200,.2)'};
-      border-radius:16px;background:${h.id === hero.id ? h.color + '22' : 'rgba(120,140,160,.08)'};
-      color:inherit;cursor:pointer;text-align:center;min-width:0;">
-      <div style="display:flex;justify-content:center;align-items:center;min-height:62px;margin-bottom:7px">${bbHeroEmblem(h.id)}</div>
-      <strong style="display:block;font-size:13px">${h.name}</strong>
-      <div style="font-size:11px;opacity:.7;margin-top:5px">${h.role}</div>
-      <div style="font-size:10px;margin-top:8px;color:${h.color}">
-        ${h.id === bbSelectedHero ? '✓ ВЫБРАН' : h.id === hero.id ? '● ПРОСМОТР' : 'ОСМОТРЕТЬ'}
-      </div>
-    </button>
-  `).join('');
-
+  // Build the existing detail panel, then move it into the selected card's reverse face.
+  details.hidden = false;
   details.style.cssText =
     'padding:18px;border:1px solid ' + hero.color +
     '66;border-radius:18px;background:linear-gradient(145deg,' +
-    hero.color + '22,rgba(120,140,160,.06));margin:12px 0 16px;';
-
+    hero.color + '22,rgba(120,140,160,.06));margin:0;';
   details.innerHTML = `
-    <div class="bb-3d-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-просмотр персонажа"></div>
+    <div class="bb-3d-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-просмотр персонажа">
+      ${equipped ? '<span class="bb-hero-equipped-badge" title="Надетое украшение"><span>✦</span>'+equipped.emoji+'</span>' : ''}
+    </div>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="display:grid;place-items:center;width:94px;height:94px;flex:0 0 94px;background:${hero.color}20;border:1px solid ${hero.color}66;border-radius:22px;box-shadow:inset 0 0 24px ${hero.color}18">${bbHeroEmblem(hero.id, "detail")}</div>
+      <div style="display:grid;place-items:center;width:94px;height:94px;flex:0 0 94px;background:${hero.color}20;border:1px solid ${hero.color}66;border-radius:22px;box-shadow:inset 0 0 24px ${hero.color}18">${bbHeroEmblem(hero.id, "detail")}${equipped ? '<span class="bb-hero-portrait-accessory">'+equipped.emoji+'</span>' : ''}</div>
       <div>
         <div style="font-size:10px;letter-spacing:2px;opacity:.7">${hero.role.toUpperCase()}</div>
         <h3 style="margin:5px 0;font-size:20px">${hero.name}</h3>
@@ -7878,42 +7897,37 @@ function bbRenderHeroes() {
     <p style="font-size:13px;line-height:1.5;margin:0">${hero.skillDesc}</p>
   `;
 
-  // Коллекционные косметические предметы можно надевать на выбранного героя.
-  const ownedCosmetics = typeof bbGetChestCosmetics === 'function' ? bbGetChestCosmetics() : [];
-  const equippedCosmetic = bbGet('equippedChestCosmetic', '');
-  const cosmeticById = {
-    'comet-trail': {name:'Кометный след',emoji:'☄️'},
-    'void-crown': {name:'Корона пустоты',emoji:'👑'},
-    'prism-shard': {name:'Призматический осколок',emoji:'🔮'},
-    'star-sigil': {name:'Звёздная печать',emoji:'🌟'},
-    'pixel-ghost': {name:'Пиксельный призрак',emoji:'👻'},
-    'neon-wings': {name:'Неоновые крылья',emoji:'🪽'}
-  };
-  const equipped = cosmeticById[equippedCosmetic];
   const cosmeticPanel = document.createElement('section');
-  cosmeticPanel.style.cssText = 'margin-top:14px;padding:14px;border:1px solid rgba(167,139,250,.35);border-radius:16px;background:rgba(100,80,160,.08)';
+  cosmeticPanel.className = 'bb-hero-cosmetic-panel';
   cosmeticPanel.innerHTML = `
-    <div style="font-size:10px;letter-spacing:1.5px;opacity:.75;margin-bottom:6px">КОСМЕТИКА ГЕРОЯ</div>
-    <div style="font-size:13px;margin-bottom:10px">${equipped ? 'Надето: '+equipped.emoji+' '+equipped.name : 'Украшение не выбрано'}</div>
-    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+    <div class="bb-hero-cosmetic-heading">КОСМЕТИКА ГЕРОЯ</div>
+    <div class="bb-hero-cosmetic-status">${equipped ? 'Надето: '+equipped.emoji+' '+equipped.name : 'Украшение не выбрано'}</div>
+    <div class="bb-hero-cosmetic-grid">
       ${ownedCosmetics.length ? ownedCosmetics.map(id => {
         const item = cosmeticById[id];
         if (!item) return '';
         const active = id === equippedCosmetic;
-        return `<button type="button" data-equip-cosmetic="${id}" style="padding:10px 6px;border-radius:12px;border:1px solid ${active ? '#a78bfa' : 'rgba(150,170,200,.2)'};background:${active ? 'rgba(167,139,250,.2)' : 'rgba(120,140,160,.08)'};color:inherit;text-align:center;font-size:12px"><span style="font-size:22px;display:block;margin-bottom:5px">${item.emoji}</span>${item.name}${active ? '<br>✓ НАДЕТО' : ''}</button>`;
-      }).join('') : '<div style="grid-column:1/-1;font-size:12px;opacity:.7">Пока нет предметов. Открывай реликтовые сундуки в магазине.</div>'}
+        return `<button type="button" data-equip-cosmetic="${id}" class="${active ? 'is-equipped' : ''}"><span>${item.emoji}</span>${item.name}${active ? '<small>✓ НАДЕТО</small>' : ''}</button>`;
+      }).join('') : '<div class="bb-hero-cosmetic-empty">Пока нет предметов. Открывай реликтовые сундуки в магазине.</div>'}
     </div>
-    ${equippedCosmetic ? '<button type="button" data-unequip-cosmetic style="margin-top:9px;width:100%;padding:9px;border-radius:10px;border:1px solid rgba(150,170,200,.2);background:transparent;color:inherit">СНЯТЬ УКРАШЕНИЕ</button>' : ''}
+    ${equippedCosmetic ? '<button type="button" data-unequip-cosmetic class="bb-hero-unequip">СНЯТЬ УКРАШЕНИЕ</button>' : ''}
   `;
   details.appendChild(cosmeticPanel);
+
+  const selectedCard = roster.querySelector('[data-hero-card="'+hero.id+'"]');
+  const back = selectedCard?.querySelector('.bb-hero-card-back-inner');
+  if (back) back.appendChild(details);
+
   cosmeticPanel.querySelectorAll('[data-equip-cosmetic]').forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = event => {
+      event.stopPropagation();
       bbPut('equippedChestCosmetic', btn.dataset.equipCosmetic);
       bbApplyHero();
       bbRenderHeroes();
     };
   });
-  cosmeticPanel.querySelector('[data-unequip-cosmetic]')?.addEventListener('click', () => {
+  cosmeticPanel.querySelector('[data-unequip-cosmetic]')?.addEventListener('click', event => {
+    event.stopPropagation();
     bbPut('equippedChestCosmetic', '');
     bbApplyHero();
     bbRenderHeroes();
@@ -7921,7 +7935,8 @@ function bbRenderHeroes() {
 
   roster.querySelectorAll('[data-hero-card]').forEach(btn => {
     btn.onclick = () => {
-      bbPreviewHero = btn.dataset.heroCard;
+      const id = btn.dataset.heroCard;
+      bbPreviewHero = id === bbPreviewHero ? bbSelectedHero : id;
       bbRenderHeroes();
     };
   });
