@@ -32,6 +32,62 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     return promise;
   }
 
+  function createProceduralModel(id,index){
+    const group=new THREE.Group();
+    const palettes={
+      planet:0x3c9cbd,'earth-moon':0x3f9db9,'lava-world':0xd85b24,neptune:0x3159c8,
+      mars:0xb85d3d,uranus:0x71c9c9,saturn:0xd7b36d,'black-hole':0x28203f,
+      mercury:0x9a8b82,'solar-system':0xf4b94e,'spiral-galaxy':0x9874dc,sun:0xffb83e
+    };
+    const color=palettes[id]||0x6d8fd8;
+    const segments=lowPower?20:32;
+    const bodyMaterial=new THREE.MeshStandardMaterial({color,roughness:id==='sun'||id==='black-hole'?.38:.72,metalness:.12,emissive:id==='sun'||id==='lava-world'?color:0x000000,emissiveIntensity:id==='sun'?.42:id==='lava-world'?.18:0});
+    const sphere=(radius,mat,x=0,y=0,z=0)=>{
+      const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,segments,Math.max(12,Math.floor(segments*.7))),mat);
+      mesh.position.set(x,y,z);group.add(mesh);return mesh;
+    };
+    const ring=(radius,tube,mat,rotation=0)=>{
+      const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,8,lowPower?36:64),mat);
+      mesh.rotation.x=Math.PI/2+rotation;group.add(mesh);return mesh;
+    };
+    if(id==='black-hole'){
+      sphere(.62,new THREE.MeshBasicMaterial({color:0x03030b}));
+      ring(.83,.12,new THREE.MeshStandardMaterial({color:0x9b5cff,emissive:0x713bff,emissiveIntensity:2,metalness:.35,roughness:.24}),.22);
+      ring(1.02,.035,new THREE.MeshBasicMaterial({color:0xffbd72}),-.12);
+    }else if(id==='spiral-galaxy'){
+      sphere(.18,new THREE.MeshBasicMaterial({color:0xffe2a0}));
+      for(let arm=0;arm<3;arm++){
+        const points=[];
+        for(let i=0;i<48;i++){const t=i/47*Math.PI*2.2+arm*Math.PI*2/3,r=.12+i/47*.92;points.push(new THREE.Vector3(Math.cos(t)*r,Math.sin(t)*r*.32,Math.sin(t)*r*.18));}
+        const curve=new THREE.CatmullRomCurve3(points);
+        const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,64,.035,5,false),new THREE.MeshBasicMaterial({color:[0x9c7cff,0x65dfff,0xffcf82][arm]}));group.add(mesh);
+      }
+    }else if(id==='solar-system'){
+      sphere(.28,new THREE.MeshBasicMaterial({color:0xffc45f}));
+      [0.48,.72,.98,1.22].forEach((r,i)=>{
+        ring(r,.009,new THREE.MeshBasicMaterial({color:0x8db9ff,transparent:true,opacity:.4}),.02*i);
+        sphere(.065+i*.012,new THREE.MeshStandardMaterial({color:[0x62c9ee,0xd8a26c,0x6d87d9,0x75cba8][i]}),Math.cos(i*1.5)*r,Math.sin(i*1.5)*r*.22,Math.sin(i*1.5)*r);
+      });
+    }else{
+      sphere(.78,bodyMaterial);
+      if(id==='earth-moon'){
+        sphere(.18,new THREE.MeshStandardMaterial({color:0xb8b9c2,roughness:.9}),1.02,.45,0);
+        ring(1.02,.009,new THREE.MeshBasicMaterial({color:0xb8d8ff,transparent:true,opacity:.45}),.18);
+      }
+      if(id==='saturn'||id==='uranus'){
+        ring(1.02,.12,new THREE.MeshStandardMaterial({color:id==='saturn'?0xd8bd85:0x9be2e2,metalness:.35,roughness:.55,side:THREE.DoubleSide}),id==='uranus'?.72:.12);
+        ring(1.17,.025,new THREE.MeshBasicMaterial({color:id==='saturn'?0xf4dfb0:0x74d2e0,transparent:true,opacity:.72}),id==='uranus'?.72:.12);
+      }
+      if(id==='sun'){
+        ring(.96,.018,new THREE.MeshBasicMaterial({color:0xffd77a,transparent:true,opacity:.75}),.4);
+      }
+      if(id==='lava-world'){
+        ring(.91,.035,new THREE.MeshBasicMaterial({color:0xff6a26,emissive:0xff3b12}),.2);
+      }
+    }
+    return group;
+  }
+
   function buildScene(model,index){
     const scene=new THREE.Scene();
     scene.add(new THREE.HemisphereLight(0xdceaff,0x18213a,2.0));
@@ -129,8 +185,17 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         slot.classList.add('is-loaded');
         requestRender();
       }).catch(error=>{
-        slot.classList.add('is-model-fallback');
-        console.warn(log,'could not load '+id+'; keeping fallback icon.',error);
+        if(active!==state||!slot.isConnected||!visibleSlots.has(slot))return;
+        console.warn(log,'could not load '+id+' from Grab3D; drawing local 3D fallback.',error);
+        try{
+          const entry=buildScene(createProceduralModel(id,Math.max(0,index)),Math.max(0,index));
+          entries.set(slot,entry);
+          slot.classList.add('is-loaded','is-model-fallback');
+          requestRender();
+        }catch(fallbackError){
+          slot.classList.add('is-model-fallback');
+          console.warn(log,'procedural fallback failed for '+id+'.',fallbackError);
+        }
       });
     };
 
