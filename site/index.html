@@ -9378,4 +9378,106 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 }
 </style>
 
+
+<style id="bb-universe-shared-cosmos">
+/* One continuous star atlas: floating universe models connected in a single navigable space. */
+#campaign .bb-galaxy-atlas{gap:8px!important}
+#campaign .bb-atlas-intro{padding:2px 14px 4px!important;align-items:center!important;text-align:center!important}
+#campaign .bb-atlas-intro strong{font-size:21px!important;letter-spacing:-.045em!important}
+#campaign .bb-atlas-intro small{max-width:290px!important;line-height:1.45!important}
+#campaign .bb-galaxy-viewport{
+ position:relative!important;
+ padding:12px 18px 20px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ background:
+  radial-gradient(ellipse at 50% 48%,#1a315044 0,transparent 58%),
+  radial-gradient(1px 1px at 12% 18%,#d9edff88 0 1px,transparent 1.8px),
+  radial-gradient(1px 1px at 39% 72%,#d9edff66 0 1px,transparent 1.8px),
+  radial-gradient(1px 1px at 67% 24%,#d9edff77 0 1px,transparent 1.8px),
+  radial-gradient(1px 1px at 88% 66%,#d9edff66 0 1px,transparent 1.8px),
+  linear-gradient(180deg,#080e1b22,#0b142833)!important;
+ border-top:1px solid #9bb8e012!important;
+ border-bottom:1px solid #9bb8e012!important;
+}
+#campaign .bb-galaxy-track{
+ position:relative!important;isolation:isolate!important;
+ align-items:stretch!important;gap:0!important;
+ padding:8px 22px 12px!important;
+}
+#campaign .bb-galaxy-track::before{
+ content:"";position:absolute;z-index:-1;left:95px;right:95px;top:105px;height:1px;
+ background:linear-gradient(90deg,transparent,#7b9ec533 8%,#8ab8db66 50%,#7b9ec533 92%,transparent);
+ box-shadow:0 0 13px #72a9d733;pointer-events:none;
+}
+#campaign .bb-galaxy-card{
+ width:218px!important;min-height:315px!important;flex:0 0 218px!important;
+ gap:6px!important;padding:0 12px 12px!important;
+ display:flex!important;align-items:center!important;text-align:center!important;
+ border:0!important;border-radius:0!important;overflow:visible!important;
+ background:transparent!important;box-shadow:none!important;
+ scroll-snap-align:center!important;
+}
+#campaign .bb-galaxy-card::after{display:none!important}
+#campaign .bb-galaxy-card.is-current{
+ transform:none!important;border:0!important;box-shadow:none!important;
+ background:radial-gradient(ellipse at 50% 31%,color-mix(in srgb,var(--biome-color) 13%,transparent),transparent 64%)!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-art{
+ position:relative!important;width:184px!important;height:184px!important;flex:0 0 184px!important;
+ margin:0 auto 2px!important;overflow:visible!important;
+ filter:drop-shadow(0 12px 20px #0008);
+}
+#campaign .bb-galaxy-card .bb-galaxy-model-slot{inset:0!important}
+#campaign .bb-galaxy-card .bb-galaxy-model-fallback{
+ width:112px!important;height:112px!important;font-size:48px!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-index{
+ margin-top:0!important;font-size:8px!important;letter-spacing:.2em!important;
+ color:#8fa4c7!important;font-weight:900!important;
+}
+#campaign .bb-galaxy-card strong{
+ font-size:16px!important;line-height:1.2!important;letter-spacing:-.025em!important;
+ text-shadow:0 2px 12px #000!important;
+}
+#campaign .bb-galaxy-card small{
+ max-width:185px!important;min-height:28px!important;
+ font-size:10px!important;line-height:1.35!important;color:#9eacc4!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-range{
+ font-size:8px!important;letter-spacing:.12em!important;color:#8194b4!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-progress{
+ width:72%!important;height:3px!important;margin:3px auto 0!important;
+ background:#ffffff18!important;border-radius:8px!important;overflow:hidden!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-progress i{
+ display:block!important;height:100%!important;border-radius:8px!important;
+ background:var(--biome-color)!important;box-shadow:0 0 8px var(--biome-color)!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-status{
+ margin-top:3px!important;font-size:8px!important;letter-spacing:.09em!important;
+}
+#campaign .bb-galaxy-card::before{
+ top:7px!important;right:17px!important;padding:4px 7px!important;
+ font-size:7px!important;backdrop-filter:blur(10px)!important;
+}
+#campaign .bb-black-hole-frontier{
+ align-self:center!important;min-height:190px!important;width:170px!important;
+ margin:0 12px!important;padding:18px 10px!important;
+ border:1px dashed #7185a833!important;border-radius:18px!important;
+ background:radial-gradient(ellipse,#26334a44,transparent 72%)!important;
+}
+#campaign .bb-atlas-controls{margin-top:0!important}
+@media(max-width:520px){
+ #campaign .bb-galaxy-viewport{padding-left:calc(50vw - 109px)!important;padding-right:calc(50vw - 109px)!important}
+ #campaign .bb-galaxy-track{padding-left:0!important;padding-right:0!important}
+ #campaign .bb-galaxy-card{width:218px!important;flex-basis:218px!important}
+ #campaign .bb-galaxy-card .bb-galaxy-art{width:170px!important;height:170px!important;flex-basis:170px!important}
+ #campaign .bb-galaxy-track::before{top:100px}
+}
+@media(prefers-reduced-motion:reduce){
+ #campaign .bb-galaxy-card{transition:none!important}
+}
+</style>
+
 </body></html>
