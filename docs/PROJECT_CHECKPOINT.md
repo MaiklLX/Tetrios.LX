@@ -293,3 +293,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: verify exact-main deployment and APK workflows, then ask the user to inspect the dimensional emblem on the public site. If the effect feels too busy or too subtle on device, tune only the isolated hero emblem block.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Main menu visual polish — 2026-11-01
+- User confirmed the logo work is finished and asked to continue improving the main menu page.
+- Implemented a CSS-only visual hierarchy pass in `site/visual-overhaul.css`, commit `dad2b884e2eb134f63faa505b8f3c72ce0f764c7`.
+- Refined the top bar contrast/brand typography/settings button; mode cards now have clearer category-specific lighting, stronger tactile depth and improved icon tiles; emphasized the primary run card; polished Heroes, Shop, visit streak, resources, stats, daily quests and APK download panels for a more coherent premium arcade UI.
+- Deliberately did NOT change the Tetrios emblem/hero orb, menu geometry, ordering, HTML structure, JS hooks, navigation, gameplay, saves, data or mechanics. No full-screen board or one-screen cropping experiment.
+- Kept hover motion subtle and disabled transitions under reduced-motion preference. Existing mobile breakpoints/layout remain authoritative.
+- Cache-bust update in `site/index.html`: `0e8d67043c0c530cf09e2db5c07c7189f990231b`; stylesheet query now `20261101-main-menu-polish-1`.
+- Current main at checkpoint: `0e8d67043c0c530cf09e2db5c07c7189f990231b`.
+- Verify matching web deploy and debug APK workflows for this exact SHA before claiming the polish is live or offering a current APK. Signed release pipeline may still be blocked by the separate signing repository access issue.
+- Physical Android visual review is still pending; do not claim device testing.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next menu passes should be incremental: assess the user-facing mobile hierarchy and readability, then improve secondary-panel details without changing the established layout or emblem.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
