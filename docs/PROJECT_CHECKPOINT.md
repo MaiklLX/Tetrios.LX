@@ -278,3 +278,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve backup branch `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next: invite the user to inspect the updated emblem and menu on their Android device using the current debug APK or deployed site. Only make further visual changes from concrete device feedback. If addressing signed release, separately repair access to `MaiklLX/Tetrios-Signing` and verify repository/file permissions; do not change app source to mask this external signing issue.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Dimensional brand emblem — 2026-11-01
+- User approved the direction “Объёмный фирменный знак” and delegated the creative effect level: “Удиви меня”.
+- Implemented a hero-only CSS pass in `site/visual-overhaul.css`: deeper machined frame, layered cyan/violet orbital energy, volumetric tetromino blocks with beveled highlights, visible extrusion/shadow faces and a restrained light sweep. The existing seven-piece cycle and permanent T signature remain.
+- Kept the logo inside the existing hero footprint. No dashboard geometry, menu controls, gameplay, game rules, JavaScript, data or navigation were changed.
+- Added compact portrait-specific sizing and retained `prefers-reduced-motion` behavior.
+- CSS commit: `e9a3f814b89b0f98b380ab7a860a41867cae9e4c`.
+- Cache-bust commit in `site/index.html`: `5fe136650c7c479b8616c89e16e71293701aa8fc`; stylesheet query is now `20261101-tetrios-3d-emblem-1`.
+- Current main at checkpoint: `5fe136650c7c479b8616c89e16e71293701aa8fc`.
+- Matching web deployment run `41278749090`, debug APK run `41278749050`, and signed release run `41278749054` were triggered for this exact main SHA and were still running/pending when checkpoint was written. Earlier source-only runs `41278732691`, `41278732673`, `41278732689` were also still running. Verify the exact-main runs before claiming deployment or offering an APK.
+- Physical Android visual review is still pending; do not claim device testing.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Next: verify exact-main deployment and APK workflows, then ask the user to inspect the dimensional emblem on the public site. If the effect feels too busy or too subtle on device, tune only the isolated hero emblem block.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
