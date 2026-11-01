@@ -151,13 +151,13 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const canvas=document.createElement('canvas');
     canvas.className='bb-galaxy-model-canvas';
     canvas.setAttribute('aria-hidden','true');
-    // Inline fixed positioning prevents later campaign styles from demoting the WebGL layer.
+    // Keep WebGL inside the active map viewport, between its atmosphere and DOM labels.
     Object.assign(canvas.style,{
-      position:'fixed',left:'0px',top:'0px',width:'1px',height:'1px',
-      zIndex:'9999',display:'block',pointerEvents:'none',
+      position:'absolute',left:'0px',top:'0px',width:'1px',height:'1px',
+      zIndex:'1',display:'block',pointerEvents:'none',
       background:'transparent',maxWidth:'none',maxHeight:'none'
     });
-    document.body.appendChild(canvas);
+    viewport.appendChild(canvas);
     let renderer;
     try{
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:'low-power'});
@@ -236,10 +236,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       if(active!==state)return;
       const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);
       renderer.setSize(w,h,false);
-      // Keep the body-level fixed canvas aligned to the active viewport.
-      const vr=viewport.getBoundingClientRect();
-      canvas.style.left=vr.left+'px';
-      canvas.style.top=vr.top+'px';
+      // The absolute canvas stays visually pinned to the viewport while its content scrolls.
+      canvas.style.left=viewport.scrollLeft+'px';
+      canvas.style.top=viewport.scrollTop+'px';
       canvas.style.width=w+'px';
       canvas.style.height=h+'px';
       requestRender();
@@ -260,9 +259,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       }
       const dt=Math.min(.05,(now-last)/1000||0);last=now;
       const vr=viewport.getBoundingClientRect();
-      // Reposition the fixed overlay to the active viewport's live screen coordinates.
-      canvas.style.left=vr.left+'px';
-      canvas.style.top=vr.top+'px';
+      // Keep the in-viewport canvas aligned with the visible scrollport, not above the whole page.
+      canvas.style.left=viewport.scrollLeft+'px';
+      canvas.style.top=viewport.scrollTop+'px';
       const cw=viewport.clientWidth,ch=viewport.clientHeight;
       renderer.setScissorTest(false);renderer.clear(true,true,true);renderer.setScissorTest(true);
       entries.forEach((entry,slot)=>{
