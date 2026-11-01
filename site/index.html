@@ -7009,7 +7009,7 @@ function buildMap() {
       planet.style.setProperty('--planet-delay', (local % 9) * -0.23 + 's');
       planet.innerHTML =
         '<span class="bb-planet-orbit"></span>' +
-        '<span class="bb-planet-sphere">' + (open ? (done ? '✓' : (local % 10 === 9 ? '✹' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span>' +
+        '<span class="bb-planet-sphere" data-universe-model="' + universeModelIds[(b.id + local) % universeModelIds.length] + '"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '✹' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
         '<strong>' + String(n).padStart(3,'0') + '</strong>' +
         '<small>' + (done ? 'ПРОЙДЕНА' : n === current ? 'ДОСТУПНА' : 'ЗАКРЫТА') + '</small>';
       planet.onclick = () => {
@@ -8785,7 +8785,7 @@ if (resetProgressBtn) {
 }
 
 })();
-</script><script type="module" src="./hero-arena.js"></script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js"></script>
+</script><script type="module" src="./hero-arena.js"></script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js?v=20261101-opt-in-2d"></script>
 
 
 <style id="bb-unified-hud-fit">
@@ -8958,6 +8958,11 @@ if (resetProgressBtn) {
 #campaign .bb-planet-orbit{position:absolute;top:22px;width:100px;height:100px;border:1px dashed hsl(var(--planet-hue) 80% 75% / .3);border-radius:50%;transform:rotate(25deg)}
 #campaign .bb-planet-node strong{font-size:12px;letter-spacing:.12em;color:#f5f7ff}
 #campaign .bb-planet-node small{font-size:8px;letter-spacing:.1em;color:#9eaccb}
+#campaign .bb-planet-sphere[data-universe-model]{position:relative;isolation:isolate;overflow:visible}
+#campaign .bb-planet-fallback{position:relative;z-index:1;display:grid;place-items:center;transition:opacity .25s ease}
+#campaign .bb-planet-sphere.is-loaded .bb-planet-fallback{opacity:0}
+#campaign .bb-galaxy-viewport,#campaign .bb-planet-viewport{position:relative!important;z-index:1!important;isolation:isolate!important}
+#campaign .bb-galaxy-model-canvas{z-index:8!important}
 #campaign .bb-planet-node.is-current .bb-planet-sphere{box-shadow:inset -13px -12px 18px #030817aa,0 0 0 4px #5cf5e833,0 0 32px hsl(var(--planet-hue) 90% 60% / .7);transform:scale(1.08)}
 #campaign .bb-planet-node.is-cleared .bb-planet-sphere{filter:saturate(.7) brightness(.9)}
 #campaign .bb-planet-node.is-locked{opacity:.42;filter:grayscale(.45)}
@@ -9180,6 +9185,6 @@ if (resetProgressBtn) {
  #campaign .bb-galaxy-model-fallback{animation:none!important}
 }
 </style>
-<script type="module" src="./universes-3d.js?v=20261101-universe-models-3"></script>
+<script type="module" src="./universes-3d.js?v=20261101-planet-models-1"></script>
 
 \n<style id="bb-campaign-planet-arrival">\n#overlay.bb-campaign-arrival-overlay{padding:18px!important;cursor:pointer;touch-action:manipulation}\n#overlay.bb-campaign-arrival-overlay .modal{width:min(100%,390px)!important;padding:0!important;overflow:hidden!important;border:1px solid #f3d17b99!important;border-radius:22px!important;background:radial-gradient(ellipse at 50% 0%,#554327 0%,#1b2742 52%,#0a1224 100%)!important;box-shadow:0 0 0 1px #ffe6a533,0 0 48px #ffd36b33,0 24px 70px #000b!important}\n.bb-campaign-arrival-banner{position:relative;padding:27px 20px 22px;text-align:center;overflow:hidden}\n.bb-campaign-arrival-banner:before{content:"";position:absolute;inset:-55% 15% auto;height:180px;background:radial-gradient(ellipse,#ffe8a788,transparent 68%);pointer-events:none;animation:bbArrivalGlow 2.1s ease-in-out infinite}\n.bb-campaign-arrival-icon{position:relative;margin:0 auto 10px;width:52px;height:52px;display:grid;place-items:center;border:1px solid #ffe6a988;border-radius:50%;color:#fff0b8;font-size:27px;background:radial-gradient(circle,#fff1be44,#f2bd4d0a);box-shadow:0 0 28px #ffd36b55;animation:bbArrivalStar 1.6s ease-in-out infinite}\n.bb-campaign-arrival-banner .eyebrow{position:relative;color:#f3d38b;font-size:9px;font-weight:900;letter-spacing:.2em}\n.bb-campaign-arrival-banner h3{position:relative;margin:8px 0;color:#fff4d6;font-size:20px;letter-spacing:.035em}\n.bb-campaign-arrival-banner p{position:relative;margin:0 auto 15px;max-width:280px;color:#c5d0e6;font-size:12px;line-height:1.5}\n.bb-campaign-arrival-reward{position:relative;padding:11px 8px;border:1px solid #e8c36b55;border-radius:12px;background:#211f2d99;color:#ffe4a0;font-size:10px;font-weight:900;line-height:1.6}\n.bb-campaign-arrival-reward span{color:#9eaccb;padding:0 4px}\n.bb-campaign-arrival-countdown{position:relative;margin-top:14px;color:#9fb2d5;font-size:8px;letter-spacing:.16em;font-weight:900}\n#campaign .bb-planet-node.is-arrival .bb-planet-sphere{animation:bbPlanetArrival 1.05s ease-in-out 3;box-shadow:0 0 0 5px #fff4b855,0 0 28px #ffe58b,0 0 68px #8cecff!important}\n#campaign .bb-planet-node.is-arrival .bb-planet-orbit{border-color:#fff0b9;box-shadow:0 0 22px #ffe58b;animation:bbArrivalOrbit 1.8s linear infinite}\n@keyframes bbArrivalGlow{50%{opacity:.42;transform:scale(1.2)}}\n@keyframes bbArrivalStar{50%{transform:scale(1.12) rotate(12deg);box-shadow:0 0 42px #ffd36b99}}\n@keyframes bbPlanetArrival{0%,100%{transform:scale(1.08);filter:brightness(1)}50%{transform:scale(1.28);filter:brightness(1.8)}}\n@keyframes bbArrivalOrbit{to{transform:rotate(385deg)}}\n@media(prefers-reduced-motion:reduce){.bb-campaign-arrival-icon:before,.bb-campaign-arrival-banner:before,#campaign .bb-planet-node.is-arrival .bb-planet-sphere{animation:none!important}}\n</style>\n</body></html>
