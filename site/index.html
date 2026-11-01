@@ -9090,5 +9090,43 @@ if (resetProgressBtn) {
 @media(min-width:521px){
  #game .boardframe{height:min(68dvh,680px)!important;width:min(100%,340px,calc(min(68dvh,680px)/2))!important}
 }
+
+/* Organic, larger planet trail — supersedes the first atlas pass. */
+#campaign .bb-planet-track::before{display:none!important}
+#campaign .bb-planet-track{min-height:450px!important}
+#campaign .bb-treasure-trail{height:450px!important;overflow:visible!important}
+#campaign .bb-trail-glow{fill:none;stroke:var(--biome-color,#8e9cff);stroke-width:15;stroke-linecap:round;opacity:.13;filter:blur(5px)}
+#campaign .bb-trail-shadow{stroke:#030713;stroke-width:11;stroke-linecap:round;opacity:.88}
+#campaign .bb-trail-dashes{stroke:#f0d69a;stroke-width:4;stroke-linecap:round;stroke-dasharray:2 17;filter:drop-shadow(0 0 5px #f4d68b);opacity:1}
+#campaign .bb-planet-node{width:116px!important;height:148px!important;min-width:116px!important;gap:7px!important}
+#campaign .bb-planet-sphere{
+ width:var(--planet-size,108px)!important;height:var(--planet-size,108px)!important;
+ flex:0 0 var(--planet-size,108px)!important;font-size:clamp(32px,4vw,43px)!important;
+ transition:transform .35s ease,filter .35s ease,box-shadow .35s ease!important;
+}
+#campaign .bb-planet-node:hover .bb-planet-sphere{transform:translateY(-5px) scale(1.07)!important;filter:brightness(1.12)}
+#campaign .bb-planet-shape-1 .bb-planet-sphere{border-radius:43% 57% 48% 52%!important}
+#campaign .bb-planet-shape-2 .bb-planet-sphere{border-radius:57% 43% 56% 44%!important}
+#campaign .bb-planet-shape-3 .bb-planet-sphere{border-radius:48% 52% 39% 61%!important}
+#campaign .bb-planet-shape-4 .bb-planet-sphere{border-radius:50%!important}
+#campaign .bb-planet-shape-5 .bb-planet-sphere{border-radius:39% 61% 47% 53%!important}
+#campaign .bb-planet-shape-4 .bb-planet-sphere:after{
+ content:"";position:absolute;width:calc(var(--planet-size,108px) * 1.42);height:calc(var(--planet-size,108px) * .28);
+ border:4px solid hsl(var(--planet-hue) 84% 79% / .78);border-left-color:transparent;border-right-color:#ffffffaa;
+ border-radius:50%;transform:rotate(-25deg);filter:drop-shadow(0 0 7px hsl(var(--planet-hue) 85% 60% / .65));
+}
+#campaign .bb-planet-shape-2 .bb-planet-sphere:before,
+#campaign .bb-planet-shape-5 .bb-planet-sphere:before{
+ inset:18% 5% 25% 4%!important;border-radius:46%!important;
+ background:linear-gradient(165deg,#ffffff25 0 12%,transparent 35% 58%,#03081755 72%)!important;
+}
+#campaign .bb-planet-node strong{font-size:12px!important;letter-spacing:.15em!important}
+#campaign .bb-planet-node small{font-size:8px!important}
+#campaign #campaignBack{flex:0 0 38px}
+@media(max-width:520px){
+ #campaign .bb-planet-viewport{padding-top:4px!important;padding-bottom:10px!important}
+ #campaign .bb-planet-node{width:116px!important;height:146px!important}
+}
+
 </style>
 </body></html>
