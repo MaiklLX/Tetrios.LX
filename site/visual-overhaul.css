@@ -2160,6 +2160,31 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){#menu.home-dashboard>.hero .hero-arena-canvas{opacity:.55}}
 
 
+
+/* TETRIOS.LX — readability pass: stronger contrast for all hero labels. */
+#menu.home-dashboard>.hero .eyebrow{
+ color:#aaf8ff!important;
+ font-weight:950!important;
+ letter-spacing:.2em!important;
+ text-shadow:0 1px 2px #020817,0 0 7px rgba(35,211,255,.9),0 0 16px rgba(35,211,255,.5)!important;
+}
+#menu.home-dashboard>.hero p{
+ color:#fff!important;
+ font-weight:800!important;
+ letter-spacing:.105em!important;
+ text-shadow:0 2px 3px #020817,0 0 8px rgba(0,0,0,.98),0 0 15px rgba(35,211,255,.55)!important;
+ -webkit-text-stroke:.15px rgba(255,255,255,.5);
+}
+#menu.home-dashboard>.hero h1{
+ filter:drop-shadow(0 2px 0 #07112d) drop-shadow(0 5px 5px rgba(0,0,0,.95)) drop-shadow(0 0 18px rgba(54,210,255,.52))!important;
+}
+#menu.home-dashboard>.hero .hero-app-mark{
+ filter:drop-shadow(0 4px 8px rgba(0,0,0,.72)) drop-shadow(0 0 16px rgba(54,210,255,.35))!important;
+}
+@media(max-width:520px){
+ #menu.home-dashboard>.hero .eyebrow{font-size:8px!important;letter-spacing:.16em!important}
+ #menu.home-dashboard>.hero p{font-size:9px!important;letter-spacing:.07em!important;line-height:1.45!important}
+}
 /* TETRIOS.LX — centered hero emblem and playful high-contrast wordmark. */
 #menu.home-dashboard>.hero{display:block!important}
 #menu.home-dashboard>.hero .eyebrow{
