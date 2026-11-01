@@ -8487,6 +8487,7 @@ function bbArrangeModeHud(){
   /* Every mode uses the same four-card HUD above the complete play area. */
   layout.parentNode.insertBefore(hud,layout);
   game.classList.add('unified-game-layout');
+  game.dataset.mode=mode;
   game.classList.remove('block-run-mode');
   hud.classList.add('gamehud-top');
 }
@@ -8723,6 +8724,41 @@ if (resetProgressBtn) {
  #game .gamehud.gamehud-top .hudbox,#game .gamehud.gamehud-top #gameCoins{height:26px!important}
  #game .boardframe{height:min(54dvh,calc(100dvh - 150px),420px)!important;min-height:0!important}
 }
+</style>
+
+
+<style id="bb-final-board-geometry">
+/* One fixed geometry for both renderers; 2D canvas must never use its intrinsic size to enlarge the arena. */
+#game .playlayout{align-items:start!important}
+#game .playlayout>div:first-child{align-self:start!important;align-items:center!important}
+#game .boardframe{flex:0 0 auto!important;min-height:0!important;overflow:hidden!important}
+#game .boardframe #board{
+  display:block!important;flex:0 0 auto!important;
+  width:auto!important;height:100%!important;
+  max-width:100%!important;max-height:100%!important;
+  aspect-ratio:1/2!important;object-fit:contain!important;
+}
+#game .boardframe.bb-2d-arena-active #board{opacity:1!important;visibility:visible!important}
+@media(max-width:520px) and (orientation:portrait){
+  #game .gamehud.gamehud-top{margin-bottom:7px!important}
+  #game .playlayout{margin-top:5px!important;padding-top:0!important}
+  #game .boardframe{
+    height:min(58dvh,calc(100dvh - 236px),calc((100vw - 104px)*2))!important;
+  }
+  #game .boardframe #board{height:100%!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game .boardframe{height:min(56dvh,calc(100dvh - 228px),calc((100vw - 94px)*2))!important}
+}
+@media(max-width:520px) and (orientation:landscape){
+  #game .playlayout{margin-top:4px!important}
+  #game .boardframe{height:min(54dvh,calc(100dvh - 158px),420px)!important}
+}
+@media(min-width:521px){
+  #game .playlayout{margin-top:8px!important}
+}
+#game[data-mode="campaign"] .playlayout{align-items:start!important;margin-top:12px!important}
+#game[data-mode="campaign"] .playlayout>div:first-child{align-self:start!important}
 </style>
 
 </body></html>
