@@ -9560,4 +9560,55 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 @media(prefers-reduced-motion:reduce){#campaign .bb-galaxy-viewport:after,#campaign .bb-planet-viewport:after{animation:none!important;}}
 </style>
 
+
+
+<style id="bb-cosmic-atmosphere-mobile-fix">
+/* Mobile atlas atmosphere: stronger layered nebula, while keeping 3D canvas and map data untouched. */
+#campaign .bb-galaxy-viewport{
+  background:
+    radial-gradient(ellipse 82% 76% at 18% 76%,rgba(145,75,205,.52) 0%,rgba(103,61,166,.25) 38%,transparent 72%),
+    radial-gradient(ellipse 78% 70% at 84% 22%,rgba(20,157,178,.42) 0%,rgba(24,105,151,.2) 42%,transparent 74%),
+    radial-gradient(ellipse 62% 58% at 52% 48%,rgba(67,112,194,.38) 0%,rgba(43,73,143,.18) 48%,transparent 78%),
+    radial-gradient(ellipse 38% 34% at 50% 4%,rgba(119,112,205,.24) 0%,transparent 76%),
+    linear-gradient(180deg,#070d20 0%,#101b3b 48%,#080e20 100%)!important;
+  background-repeat:no-repeat!important;
+}
+#campaign .bb-galaxy-viewport:before{
+  opacity:.94!important;
+  background-image:
+    radial-gradient(1px 1px at 7% 19%,#f4f8ff 0 1px,transparent 1.8px),
+    radial-gradient(1.4px 1.4px at 23% 72%,#b9e7ff 0 1px,transparent 2px),
+    radial-gradient(1.5px 1.5px at 44% 31%,#fff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 61% 83%,#e3d5ff 0 1px,transparent 1.8px),
+    radial-gradient(1.4px 1.4px at 79% 48%,#b8f5ff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 94% 14%,#fff 0 1px,transparent 1.8px),
+    radial-gradient(ellipse 34% 25% at 19% 76%,rgba(190,102,236,.18),transparent 100%),
+    radial-gradient(ellipse 32% 27% at 83% 24%,rgba(48,205,214,.16),transparent 100%);
+  background-size:270px 210px,330px 250px,390px 280px,310px 240px,360px 270px,420px 300px,100% 100%,100% 100%;
+}
+#campaign .bb-galaxy-viewport:after{
+  z-index:0!important;
+  opacity:.88!important;
+  mix-blend-mode:screen;
+  background:
+    radial-gradient(ellipse 54% 34% at 15% 80%,rgba(168,79,218,.26) 0%,transparent 100%),
+    radial-gradient(ellipse 50% 38% at 88% 18%,rgba(27,190,202,.22) 0%,transparent 100%),
+    radial-gradient(ellipse 46% 30% at 52% 48%,rgba(96,133,220,.2) 0%,transparent 100%),
+    radial-gradient(ellipse at 50% 52%,transparent 28%,rgba(2,6,17,.12) 68%,rgba(2,6,17,.52) 100%),
+    linear-gradient(118deg,transparent 0 25%,rgba(180,154,255,.08) 44%,transparent 62%)!important;
+}
+#campaign .bb-galaxy-track{position:relative!important;z-index:2!important}
+#campaign .bb-galaxy-viewport>canvas.bb-galaxy-model-canvas{
+  position:absolute!important;z-index:1!important;background:transparent!important;pointer-events:none!important;
+}
+@media(max-width:700px){
+  #campaign .bb-galaxy-viewport{background-attachment:scroll!important}
+  #campaign .bb-galaxy-viewport:before{opacity:1!important}
+  #campaign .bb-galaxy-viewport:after{opacity:.92!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #campaign .bb-galaxy-viewport:after{animation:none!important}
+}
+</style>
+
 </body></html>
