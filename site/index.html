@@ -5478,7 +5478,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
   <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
   <strong id="dailyMissionGoalText">12 линий</strong>
 </div>
-<div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div></div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn" hidden>♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
+<div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div><div class="hudbox bb-coins-hud" id="gameCoins"><span>МОНЕТЫ</span><strong id="gameCoinsValue">0</strong></div></div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="600" aria-label="Игровое поле"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn" hidden>♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
 <audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
@@ -8470,7 +8470,7 @@ if (bbGame && bbPlayLayout && bbSideCol && bbBoardCol) {
   const bbProgress = bbGame.querySelector('.progresswrap');
 
 if (bbHud) bbLeftCol.appendChild(bbHud);
-if (bbCoins) bbSideCol.appendChild(bbCoins);
+/* Currency now lives in the shared top HUD; never push it into the sidebar. */
 if (bbProgress) bbLeftCol.appendChild(bbProgress);
 
   ['campaignGoals', 'rogueGoals'].forEach(id => {
@@ -8482,19 +8482,13 @@ if (bbProgress) bbLeftCol.appendChild(bbProgress);
 function bbArrangeModeHud(){
   const game=document.getElementById('game');
   const layout=game?.querySelector('.playlayout');
-  const left=layout?.querySelector('.gameleftcol');
   const hud=game?.querySelector('.gamehud');
-  if(!game||!layout||!left||!hud)return;
-  const isBlockRun=mode==='rogue';
-  game.classList.toggle('block-run-mode',isBlockRun);
-  if(isBlockRun){
-    /* Keep the live score strip above the board, never below the phone viewport. */
-    layout.parentNode.insertBefore(hud,layout);
-    hud.classList.add('block-run-hud');
-  }else{
-    left.insertBefore(hud,left.firstChild);
-    hud.classList.remove('block-run-hud');
-  }
+  if(!game||!layout||!hud)return;
+  /* Every mode uses the same four-card HUD above the complete play area. */
+  layout.parentNode.insertBefore(hud,layout);
+  game.classList.add('unified-game-layout');
+  game.classList.remove('block-run-mode');
+  hud.classList.add('gamehud-top');
 }
 
 function bbApplyDailyChronoLayout(){
@@ -8502,11 +8496,9 @@ function bbApplyDailyChronoLayout(){
   const layout=game?.querySelector('.playlayout');
   const side=layout?.querySelector('.sidecol');
   const left=layout?.querySelector('.gameleftcol');
-  const coins=document.getElementById('gameCoins');
-  /* One shared HUD layout for every mode; only the visible mode cards change. */
+  /* Shared top HUD is arranged once for every mode by bbArrangeModeHud. */
   game?.classList.add('unified-game-layout');
   game?.classList.remove('daily-chrono-layout');
-  if(coins&&side&&left) left.appendChild(coins);
 }
 
 
@@ -8598,7 +8590,7 @@ document.addEventListener('pointerdown', () => {
   bbSyncMusic();
 }, { once: true });
 
-setInterval(()=>{if(started&&!paused&&!gameOver){bbCoins++;bbSave()}},20000);
+setInterval(()=>{if(started&&!paused&&!gameOver){bbCoins++;bbSave();const value=$('gameCoinsValue');if(value)value.textContent=bbCoins.toLocaleString('ru-RU')}},20000);
 bbRefresh();
 bbLoadDailyQuests();
 bbRenderDailyQuests();
@@ -8669,4 +8661,39 @@ if (resetProgressBtn) {
 
 })();
 </script><script type="module" src="./hero-arena.js"></script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js"></script>
+<style id="bb-unified-hud-fit">
+/* One consistent top HUD in every game mode, including Block Run. */
+#game .gamehud.gamehud-top{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important;width:100%!important;margin:0 0 9px!important;align-items:stretch}
+#game .gamehud.gamehud-top .hudbox{display:flex;min-width:0;min-height:56px;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 5px!important;border:1px solid #385276;border-radius:12px;background:linear-gradient(145deg,#182743,#10182b);box-shadow:inset 0 1px #ffffff0b,0 4px 14px #0004;text-align:center}
+#game .gamehud.gamehud-top .hudbox span{display:block;color:#9fb4d6;font-size:8px;line-height:1.1;letter-spacing:.09em;white-space:nowrap}
+#game .gamehud.gamehud-top .hudbox strong{display:block;min-width:0;max-width:100%;color:#f4f7ff;font-size:clamp(12px,3.6vw,18px);line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#game .gamehud.gamehud-top .bb-coins-hud{border-color:#8b7048;background:linear-gradient(145deg,#3a3027,#171a2b 76%)}
+#game .gamehud.gamehud-top .bb-coins-hud span{color:#e9c77e}
+#game .gamehud.gamehud-top .bb-coins-hud strong{color:#ffe3a0}
+#game .playlayout,#game .playlayout>div:first-child{min-width:0}
+@media(max-width:520px) and (orientation:portrait){
+#game .gamehud.gamehud-top{gap:5px!important;margin-bottom:7px!important}
+#game .gamehud.gamehud-top .hudbox{min-height:48px;padding:5px 2px!important;border-radius:10px}
+#game .gamehud.gamehud-top .hudbox span{font-size:7px;letter-spacing:.04em}
+#game .gamehud.gamehud-top .hudbox strong{font-size:clamp(11px,3.5vw,15px)}
+#game .playlayout{grid-template-columns:minmax(0,1fr) clamp(78px,23vw,96px)!important;gap:6px!important;align-items:stretch!important}
+#game .boardframe{height:min(520px,calc(100dvh - 285px),calc((100vw - 125px)*2))!important;min-height:170px!important;max-height:calc(100dvh - 245px)!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:4px!important;overflow:hidden!important}
+#game .board{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;aspect-ratio:1/2!important;object-fit:contain!important;flex:0 1 auto!important}
+#game .sidecol{min-width:0;overflow:visible}
+}
+@media(max-width:380px) and (orientation:portrait){
+#game .gamehud.gamehud-top{gap:4px!important}
+#game .gamehud.gamehud-top .hudbox{min-height:45px;padding:4px 1px!important}
+#game .gamehud.gamehud-top .hudbox span{font-size:6px;letter-spacing:.025em}
+#game .gamehud.gamehud-top .hudbox strong{font-size:11px}
+#game .playlayout{grid-template-columns:minmax(0,1fr) 78px!important;gap:5px!important}
+#game .boardframe{height:min(480px,calc(100dvh - 275px),calc((100vw - 110px)*2))!important}
+}
+@media(max-width:520px) and (orientation:landscape){
+#game .gamehud.gamehud-top{gap:5px!important;margin-bottom:5px!important}
+#game .gamehud.gamehud-top .hudbox{min-height:40px;padding:4px!important}
+#game .boardframe{height:min(58dvh,calc(100dvh - 170px),420px)!important;min-height:130px!important}
+}
+</style>
+
 </body></html>
