@@ -7292,7 +7292,7 @@ if(mode==='daily'&&bbIsDailyMechanic('singularity')&&runSeconds>0&&runSeconds%20
   bbDailyMechanicState.gravityPenaltyMs=0;
   bbDailyMechanicState.gravityClears=0;
   restartDrop();
-}if(mode==='rogue'){if(bbRogueEncounter.hp>0){bbRogueEncounter.nextAttack--;if(bbRogueEncounter.nextAttack<=0)bbRogueEnemyAttack()}bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;restartDrop();if(soundOn)music()}
+}if(mode==='rogue'){if(bbRogueEncounter.hp>0){bbRogueEncounter.nextAttack--;if(bbRogueEncounter.nextAttack<=0)bbRogueEnemyAttack()}bbRenderGoals()}if(mode==='campaign'){bbRenderGoals();if(bbCheckCampaignCompletion())return}}},1000);dropMs=760;dropCurrentMs=dropMs;dropRampAt=performance.now();restartDrop();if(soundOn)music()}
 function fmt(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 
 let pieceBag = [];
@@ -7677,7 +7677,29 @@ function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
-function restartDrop(){if(dropTimer)clearInterval(dropTimer);dropTimer=setInterval(()=>{if(started&&!paused&&!gameOver)move(0,1)},dropMs)}
+let dropCurrentMs=760,dropRampAt=0;
+function restartDrop(){
+  if(dropTimer)clearTimeout(dropTimer);
+  if(mode!=='rogue'){
+    dropTimer=setInterval(()=>{if(started&&!paused&&!gameOver)move(0,1)},dropMs);
+    return;
+  }
+  const schedule=()=>{
+    dropTimer=setTimeout(()=>{
+      if(started&&!paused&&!gameOver){
+        const now=performance.now();
+        const elapsed=dropRampAt?Math.max(0,now-dropRampAt):0;
+        const blend=Math.min(1,elapsed/1100);
+        dropCurrentMs+=(dropMs-dropCurrentMs)*blend;
+        dropRampAt=now;
+        if(Math.abs(dropMs-dropCurrentMs)<1)dropCurrentMs=dropMs;
+        move(0,1);
+      }
+      schedule();
+    },Math.max(130,Math.round(dropCurrentMs)));
+  };
+  schedule();
+}
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><div class="eyebrow">ПЕРЕДЫШКА</div><h3>Пауза</h3><p>Партия на паузе. Можно спокойно проверить баланс и вернуться в игру.</p></div><div class="bb-pause-wallet"><span>🪙 <small>ТВОИ МОНЕТЫ</small></span><strong>${bbCoins.toLocaleString('ru-RU')}</strong><em>Баланс аккаунта</em></div><button class="action" id="resume">▶ ПРОДОЛЖИТЬ ИГРУ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
 /* Просмотр активных бустов с паузой */
