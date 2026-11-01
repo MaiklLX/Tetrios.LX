@@ -238,3 +238,17 @@ Do not claim device testing has happened; the user performs real-device testing.
 - The recovery baseline remains in commit `6c6a2fe08fb3ed0c4595a30d923b802c247d8b77`; do not reapply the failed expanded grid from `93628e5`.
 - Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Unified home emblem pass — 2026-11-01
+- CSS commit: `8a875c49add561a055180b70016f1fbefab662a6` (`refine(ui): unify centered neon home emblem`).
+- Replaced the accumulated, conflicting home-emblem CSS tail with one consolidated hero-only ruleset. The preceding site styles and the stable menu layout remain intact.
+- The logo now has one centered 76×76 neon square frame, a subtle orbit ring, and a single consistent 4×4 cell geometry for every tetromino.
+- Applied optical-centre offsets based on each shape's actual four-cell footprint (I/O/T/L/J/S/Z), rather than ad-hoc margins. Shape transitions use one animation per piece, avoiding competing transform animations.
+- Retained the product title in the header, removed the duplicate hero heading, and kept the short tagline.
+- No HTML, JavaScript, menu cards, navigation, game logic, data, gameplay arena, or backup branch changed.
+- The earlier web deployment and debug APK succeeded for source `e3d1b055ac76c92d9b8ead474617d4da484e10b2`; they do NOT include this new CSS pass. Verify fresh workflows for `8a875c49add561a055180b70016f1fbefab662a6` before saying this pass is live or offering its APK.
+- Signed release APK remains blocked by the separate signing workflow failure; debug APK is the current test-build route.
+- Physical Android review remains necessary; do not claim visual/device verification.
+- Preserve backup `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
