@@ -7084,8 +7084,12 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
 function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
-  const starter=upgrades[Math.floor(Math.random()*upgrades.length)];
+  const heroLevel=bbGetHeroProgress('blip').level;
+  const available=upgrades.slice();
+  const starter=available.splice(Math.floor(Math.random()*available.length),1)[0];
   if(starter)boosts.push(starter[3]);
+  if(heroLevel>=5&&available.length){const second=available.splice(Math.floor(Math.random()*available.length),1)[0];if(second)boosts.push(second[3]);}
+  if(heroLevel>=10&&available.length){const third=available[Math.floor(Math.random()*available.length)];if(third)boosts.push(third[3]);}
 }
 holdUsed=0;combo=0;lastClear=0;
 bbResetDailyMechanicState(
@@ -7383,8 +7387,8 @@ if(bbIsDailyMechanic('echoCombo')){
 }
 
 let mult=boosts.includes('mult')?1.5:1;
-if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15;
-if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1;if(boosts.includes('score'))mult*=1+combo*.15;if(boosts.includes('glow'))mult*=1.1;if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse')mult*=1.5;if(bbIsDailyMechanic('echoCombo')){
+if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15+Math.min(.15,(bbGetHeroProgress('prism').level-1)*.01);
+if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1+Math.min(.15,(bbGetHeroProgress('spark').level-1)*.01);if(boosts.includes('score'))mult*=1+combo*.15;if(boosts.includes('glow'))mult*=1.1;if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse')mult*=1.5;if(bbIsDailyMechanic('echoCombo')){
   mult*=bbDailyMechanicState.echoMultiplier;
 }
 if(
@@ -7601,7 +7605,7 @@ if (boostCard) {
 }
 
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('openHeroes').onclick=()=>show('heroes');
-$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?2:(boosts.includes('hold')?2:1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
+$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(boosts.includes('hold')?2:1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
 tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};
@@ -7833,6 +7837,12 @@ const bbHeroes = [
     skillDesc: 'Получает дополнительный бонус за серии очищенных линий.'
   }
 ];
+function bbGetHeroProgress(heroId){
+  const hero=bbHeroes.find(item=>item.id===heroId)||bbHeroes[0];
+  const level=Math.max(1,Number(bbGet('heroLevel_'+hero.id,hero.id==='plush'?bbHeroLevel:1))||1);
+  const xp=Math.max(0,Number(bbGet('xp_'+hero.id,hero.id==='plush'?bbXp:0))||0);
+  return {level,xp,xpNeeded:200+(level-1)*100,coinBonus:Math.min(25,(level-1)*2)};
+}
 
 let bbSelectedHero = localStorage.getItem('bbSelectedHero') || 'plush';
 let bbPreviewHero = bbSelectedHero;
@@ -7856,7 +7866,7 @@ function bbHeroShowcaseCosmetics(){return {'comet-trail':{name:'Кометный
 function bbOpenHeroShowcase(id){
  const hero=bbHeroes.find(h=>h.id===id)||bbHeroes[0];bbPreviewHero=hero.id;
  const cosmetics=bbHeroShowcaseCosmetics(),owned=typeof bbGetChestCosmetics==='function'?bbGetChestCosmetics():[],equippedId=bbGetHeroEquippedCosmetic(hero.id),equipped=cosmetics[equippedId];
- const level=bbGet('heroLevel_'+hero.id,hero.id==='plush'?bbHeroLevel:1),xp=bbGet('xp_'+hero.id,hero.id==='plush'?bbXp:0);
+ const progress=bbGetHeroProgress(hero.id),level=progress.level,xp=progress.xp;
  overlay(`<div class="bb-hero-showcase">
  <button type="button" class="bb-hero-showcase-close" aria-label="Закрыть">×</button>
  <div class="bb-hero-showcase-topline">ГЕРОЙ КОМАНДЫ · ${hero.role.toUpperCase()}</div>
@@ -7945,8 +7955,9 @@ function bbRefresh() {
   if ($('gems')) $('gems').textContent = bbGems;
 
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
-  const heroLevel = bbGet('heroLevel_' + hero.id, hero.id === 'plush' ? bbHeroLevel : 1);
-  const heroXp = bbGet('xp_' + hero.id, hero.id === 'plush' ? bbXp : 0);
+  const heroProgress=bbGetHeroProgress(hero.id);
+  const heroLevel=heroProgress.level;
+  const heroXp=heroProgress.xp;
   const trainCost = 50 + (heroLevel - 1) * 25;
 
   const levelEl = $('heroLevel');
@@ -8252,7 +8263,9 @@ endGame = function() {
 
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
   let earned = Math.max(8, Math.floor(lines * 2 + score / 250 + level * 3));
-
+  const heroLevel=bbGetHeroProgress(hero.id).level;
+  const heroCoinBonus=Math.min(25,Math.max(0,heroLevel-1)*2);
+  earned=Math.round(earned*(1+heroCoinBonus/100));
   if (bbPerks.includes('heart')) earned = Math.round(earned * 1.05);
   bbCoins += earned;
 
