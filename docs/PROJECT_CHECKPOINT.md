@@ -566,3 +566,11 @@ Do not claim device testing has happened; the user performs real-device testing.
 - No campaign route geometry, biome/planet numbering, progress records, purchases, coins, inventory, equipped items, hero statistics, game rules or save keys were intentionally changed.
 - Next: verify the latest Pages deployment, then test on iOS: finish a campaign planet, let the banner auto-dismiss and separately tap to dismiss it; confirm the next planet is centered and flashes; confirm board opens in 2D and the 3D toggle loads only when requested; inspect both galaxy atlas and planet route for 3D models.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 275. ПРОВЕРИТЬ DEPLOY И НА iOS: БАННЕР ЗАВЕРШЕНИЯ ПЛАНЕТЫ (4,2 СЕКУНДЫ / TAP ANYWHERE), ПЕРЕХОД И ВСПЫШКУ НОВОЙ ПЛАНЕТЫ, 2D ПО УМОЛЧАНИЮ И РУЧНОЙ 3D, МОДЕЛИ НА КАРТЕ ГАЛАКТИК И ПЛАНЕТ. МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+### Checkpoint 275 addendum — validation and deployment
+- Fixed literal escaped-newline formatting in the campaign map/arrival markup; the main inline gameplay script now passes a JavaScript syntax parse. Commit: `4b369eddc463c02aa2cc625bce48646ac467784a`.
+- Updated `site/validate-3d-runtime.mjs` so the runtime audit accepts cache-busted local module URLs while still requiring the import map to appear before the modules. Commit: `5e3ac4aef378c36554d635e38914137a37fc3ef3`.
+- Syntax checks passed for the main inline script, `arena-3d.js`, `universes-3d.js`, and the validator module.
+- GitHub Pages deployment for `4b369ed` completed successfully: https://github.com/MaiklLX/Tetrios.LX/actions/runs/41324231776.
+- Actual device-side iOS rendering remains to be tested; deployment success does not by itself prove that remote GLBs or the procedural 3D fallback render correctly on every device.
