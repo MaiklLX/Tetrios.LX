@@ -2983,3 +2983,6 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @keyframes bbHeroModalPop{0%{opacity:0;transform:translateY(42px) scale(.88);filter:blur(8px)}65%{opacity:1;transform:translateY(-5px) scale(1.015);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:390px){.bb-hero-showcase-modal{max-height:94dvh!important}.bb-hero-showcase{padding:19px 12px 14px}.bb-hero-showcase-stage{height:220px!important;min-height:210px}.bb-hero-showcase-heading h2{font-size:20px}.bb-hero-showcase-emblem{flex-basis:70px;width:70px;height:70px}}
 @media(prefers-reduced-motion:reduce){.bb-hero-showcase-modal{animation:none!important}.bb-hero-popup-card{transition:none!important}}
+
+.bb-unified-hero-avatar svg{width:56px!important;height:auto!important;max-width:100%}
+.bb-start-hero-emblem svg{width:58px;height:auto}
