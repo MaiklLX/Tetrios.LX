@@ -95,7 +95,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const canvas=document.createElement('canvas');
     canvas.className='bb-galaxy-model-canvas';
     canvas.setAttribute('aria-hidden','true');
-    grid.appendChild(canvas);
+    viewport.appendChild(canvas);
     let renderer;
     try{
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:'low-power'});
