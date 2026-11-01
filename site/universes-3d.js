@@ -95,7 +95,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const canvas=document.createElement('canvas');
     canvas.className='bb-galaxy-model-canvas';
     canvas.setAttribute('aria-hidden','true');
-    viewport.appendChild(canvas);
+    grid.appendChild(canvas);
     let renderer;
     try{
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:'low-power'});
@@ -201,7 +201,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
   }
 
   function scan(){
-    const viewport=document.querySelector('#campaign .bb-galaxy-viewport');
+    const viewport=document.querySelector('#campaign .bb-galaxy-viewport, #campaign .bb-planet-viewport');
     if(!viewport){if(active)stopCurrent();return}
     if(active?.viewport!==viewport){
       requestAnimationFrame(()=>{
