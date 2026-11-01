@@ -151,6 +151,12 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const canvas=document.createElement('canvas');
     canvas.className='bb-galaxy-model-canvas';
     canvas.setAttribute('aria-hidden','true');
+    // Inline fixed positioning prevents later campaign styles from demoting the WebGL layer.
+    Object.assign(canvas.style,{
+      position:'fixed',left:'0px',top:'0px',width:'1px',height:'1px',
+      zIndex:'9999',display:'block',pointerEvents:'none',
+      background:'transparent',maxWidth:'none',maxHeight:'none'
+    });
     document.body.appendChild(canvas);
     let renderer;
     try{
@@ -230,7 +236,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       if(active!==state)return;
       const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);
       renderer.setSize(w,h,false);
-      // Canvas is a child of the viewport, so its origin is stable while the page scrolls.
+      // Keep the body-level fixed canvas aligned to the active viewport.
       const vr=viewport.getBoundingClientRect();
       canvas.style.left=vr.left+'px';
       canvas.style.top=vr.top+'px';
@@ -254,7 +260,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       }
       const dt=Math.min(.05,(now-last)/1000||0);last=now;
       const vr=viewport.getBoundingClientRect();
-      // Keep the fixed overlay locked to the viewport's live screen position during page scroll.
+      // Reposition the fixed overlay to the active viewport's live screen coordinates.
       canvas.style.left=vr.left+'px';
       canvas.style.top=vr.top+'px';
       const cw=viewport.clientWidth,ch=viewport.clientHeight;
