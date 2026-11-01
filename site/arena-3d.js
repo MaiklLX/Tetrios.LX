@@ -8,9 +8,12 @@
   toggle.setAttribute('aria-pressed','false');
   toggle.title='Переключить объёмное игровое поле';
   frame.appendChild(toggle);
-  let THREE;
-  try{THREE=await import('./vendor/three/build/three.module.js')}
-  catch(error){toggle.title='Для 3D-режима требуется загрузка Three.js';toggle.addEventListener('click',()=>{toggle.textContent='3D НЕДОСТУПНО';setTimeout(()=>toggle.textContent='3D ARENA',1800)});return}
+  let THREE=null,threePromise=null;
+  const ensureThree=async()=>{
+    if(THREE)return THREE;
+    if(!threePromise)threePromise=import('./vendor/three/build/three.module.js');
+    THREE=await threePromise;return THREE;
+  };
   let renderer,scene,camera,boardGroup,activeGroup,ghostGroup,gridGroup,effectsGroup,resizeObserver,pulseGroups=[],enabled=false,resumeAfterContextRestore=false,lastBoardSignature='',lastPieceSignature='',raf=0,previousState=null,lastSyncAt=0,lastFrameAt=0,pieceOffsetX=0,pieceOffsetY=0,rotationAngle=0,rotationPivotX=0,rotationPivotY=0,lastClearAt=0,clearStreak=0,impactAt=0,impactStrength=0,arenaPulseMaterial=null,arenaPulseAt=0,arenaPulseStrength=0;
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const lowPowerDevice=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4);
@@ -391,62 +394,44 @@
     camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
   }
-  function setEnabled(next){
-    enabled=!!next;
-    toggle.setAttribute('aria-pressed',String(enabled));
-    toggle.textContent=enabled?'2D РЕЖИМ':'3D ARENA';
-    frame.classList.toggle('bb-3d-arena-active',enabled);
-    frame.classList.toggle('bb-2d-arena-active',!enabled);
-    // Keep the original 2D canvas at the exact same bounded size when returning from 3D.
-    boardCanvas.style.display='block';
-    boardCanvas.style.visibility='visible';
-    boardCanvas.style.opacity=enabled?'0':'1';
-    boardCanvas.style.width='auto';
-    boardCanvas.style.height='100%';
-    boardCanvas.style.maxWidth='100%';
-    boardCanvas.style.maxHeight='100%';
-    // The WebGL canvas is decorative and must never participate in layout.
-    if(renderer?.domElement){
-      renderer.domElement.style.display=enabled?'block':'none';
-      renderer.domElement.style.visibility=enabled?'visible':'hidden';
-      renderer.domElement.style.opacity=enabled?'1':'0';
+  async function setEnabled(next){
+    if(!next){
+      enabled=false;
+      toggle.setAttribute('aria-pressed','false');toggle.textContent='3D ARENA';
+      frame.classList.remove('bb-3d-arena-active');frame.classList.add('bb-2d-arena-active');
+      boardCanvas.style.display='block';boardCanvas.style.visibility='visible';boardCanvas.style.opacity='1';
+      boardCanvas.style.width='auto';boardCanvas.style.height='100%';boardCanvas.style.maxWidth='100%';boardCanvas.style.maxHeight='100%';
+      if(renderer?.domElement){renderer.domElement.style.display='none';renderer.domElement.style.visibility='hidden';renderer.domElement.style.opacity='0';}
+      if(raf){cancelAnimationFrame(raf);raf=0;}
+      return;
     }
-    if(!enabled&&raf){cancelAnimationFrame(raf);raf=0;}
-    if(enabled){
-      try{
-        init();
-        if(renderer?.domElement){
-          renderer.domElement.style.display='block';
-          renderer.domElement.style.visibility='visible';
-          renderer.domElement.style.opacity='1';
-        }
-        sync();lastSyncAt=performance.now();
-        if(!raf){lastFrameAt=0;animate()}
-      }catch(error){
-        enabled=false;frame.classList.remove('bb-3d-arena-active');
-        toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';
-        if(renderer?.domElement){
-          renderer.domElement.style.display='none';
-          renderer.domElement.style.visibility='hidden';
-          renderer.domElement.style.opacity='0';
-        }
-        console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);
-        setTimeout(()=>{toggle.textContent='3D ARENA'},2200)
-      }
-    }
+    if(enabled)return;
+    toggle.disabled=true;toggle.textContent='ЗАГРУЗКА 3D…';
+    try{
+      await ensureThree();
+      enabled=true;
+      init();
+      toggle.setAttribute('aria-pressed','true');toggle.textContent='2D РЕЖИМ';
+      frame.classList.add('bb-3d-arena-active');frame.classList.remove('bb-2d-arena-active');
+      boardCanvas.style.display='block';boardCanvas.style.visibility='visible';boardCanvas.style.opacity='0';
+      if(renderer?.domElement){renderer.domElement.style.display='block';renderer.domElement.style.visibility='visible';renderer.domElement.style.opacity='1';}
+      sync();lastSyncAt=performance.now();
+      if(!raf){lastFrameAt=0;animate();}
+    }catch(error){
+      enabled=false;frame.classList.remove('bb-3d-arena-active');frame.classList.add('bb-2d-arena-active');
+      toggle.setAttribute('aria-pressed','false');toggle.textContent='3D НЕДОСТУПНО';
+      if(renderer?.domElement){renderer.domElement.style.display='none';renderer.domElement.style.visibility='hidden';renderer.domElement.style.opacity='0';}
+      console.warn('[Tetrios 3D arena] WebGL unavailable; returning to 2D.',error);
+      setTimeout(()=>{toggle.textContent='3D ARENA'},2200);
+    }finally{toggle.disabled=false;}
   }
-  toggle.addEventListener('click',()=>{
-    setEnabled(!enabled);
-  });
+  toggle.addEventListener('click',()=>{if(enabled)setEnabled(false);else setEnabled(true);});
   const gameScreen=document.getElementById('game');
   if(gameScreen){
     const gameObserver=new MutationObserver(()=>{
-      const visible=!gameScreen.hidden;
-      if(visible&&!enabled)setEnabled(true);
-      else if(!visible&&enabled)setEnabled(false);
+      if(gameScreen.hidden&&enabled)setEnabled(false);
     });
     gameObserver.observe(gameScreen,{attributes:true,attributeFilter:['hidden']});
-    if(!gameScreen.hidden)setEnabled(true);
   }
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&raf){cancelAnimationFrame(raf);raf=0;}else if(!document.hidden&&enabled){sync();lastSyncAt=performance.now();if(!raf){lastFrameAt=0;animate();}}});
 })();
