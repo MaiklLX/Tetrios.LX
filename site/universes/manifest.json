@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "format": "glTF 2.0 / GLB",
+  "sourceKit": "Grab3D Cozy Space Kit",
+  "license": {
+    "name": "CC0 1.0 Universal",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "commercialUse": true,
+    "attributionRequired": false
+  },
+  "loading": "Remote GLB assets are lazy-loaded from the original publisher when a galaxy card enters the horizontal viewport.",
+  "universeOrder": [
+    "planet",
+    "earth-moon",
+    "lava-world",
+    "neptune",
+    "mars",
+    "uranus",
+    "saturn",
+    "black-hole",
+    "mercury",
+    "solar-system",
+    "spiral-galaxy",
+    "sun"
+  ],
+  "models": {
+    "planet": {
+      "title": "Зелёные равнины",
+      "file": "planet.glb",
+      "url": "https://grab3d.com/dl/planet/planet.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/planet/",
+      "triangles": 23537,
+      "description": "Blue ocean world with raised green continents and cloud shells."
+    },
+    "earth-moon": {
+      "title": "Шепчущий лес",
+      "file": "earth-and-moon.glb",
+      "url": "https://grab3d.com/dl/earth-and-moon/earth-and-moon.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/earth-and-moon/",
+      "triangles": 17273,
+      "description": "Earth with a separate moon and orbital arm."
+    },
+    "lava-world": {
+      "title": "Огненные земли",
+      "file": "planet-sphere.glb",
+      "url": "https://grab3d.com/dl/planet-sphere/planet-sphere.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/planet-sphere/",
+      "triangles": 23975,
+      "description": "Lava world with basalt plates, emissive cracks and rings."
+    },
+    "neptune": {
+      "title": "Ледяная корона",
+      "file": "neptune.glb",
+      "url": "https://grab3d.com/dl/neptune/neptune.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/neptune/",
+      "triangles": 14192,
+      "description": "Deep blue ice giant with raised white cloud streaks."
+    },
+    "mars": {
+      "title": "Пески времени",
+      "file": "mars.glb",
+      "url": "https://grab3d.com/dl/mars/mars.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/mars/",
+      "triangles": 11754,
+      "description": "Rust-red desert planet with canyon and polar caps."
+    },
+    "uranus": {
+      "title": "Затонувшее королевство",
+      "file": "uranus.glb",
+      "url": "https://grab3d.com/dl/uranus/uranus.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/uranus/",
+      "triangles": 18190,
+      "description": "Pale turquoise ice giant with a dramatic tilted axis and rings."
+    },
+    "saturn": {
+      "title": "Небесный архипелаг",
+      "file": "saturn.glb",
+      "url": "https://grab3d.com/dl/saturn/saturn.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/saturn/",
+      "triangles": 19614,
+      "description": "Pastel gas giant with a wide stepped ring system."
+    },
+    "black-hole": {
+      "title": "Мрачные топи",
+      "file": "black-hole.glb",
+      "url": "https://grab3d.com/dl/black-hole/black-hole.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/black-hole/",
+      "triangles": 18784,
+      "description": "Dark event horizon with glowing accretion disk and photon ring."
+    },
+    "mercury": {
+      "title": "Кристальные пещеры",
+      "file": "mercury-planet.glb",
+      "url": "https://grab3d.com/dl/mercury-planet/mercury-planet.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/mercury-planet/",
+      "triangles": 14024,
+      "description": "Warm grey cratered world with raised impact details."
+    },
+    "solar-system": {
+      "title": "Механический город",
+      "file": "solar-system.glb",
+      "url": "https://grab3d.com/dl/solar-system/solar-system.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/solar-system/",
+      "triangles": 18424,
+      "description": "A miniature solar system with a sun, planets and orbit rings."
+    },
+    "spiral-galaxy": {
+      "title": "Космический разлом",
+      "file": "galaxy.glb",
+      "url": "https://grab3d.com/dl/galaxy/galaxy.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/galaxy/",
+      "triangles": 18632,
+      "description": "Spiral galaxy with luminous arms and a bright core."
+    },
+    "sun": {
+      "title": "Сердце пустоты",
+      "file": "sun.glb",
+      "url": "https://grab3d.com/dl/sun/sun.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/sun/",
+      "triangles": 19920,
+      "description": "Glowing star with surface granulation and prominence arches."
+    }
+  }
+}
