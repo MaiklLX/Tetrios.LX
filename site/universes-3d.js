@@ -267,19 +267,31 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       renderer.setScissorTest(false);renderer.clear(true,true,true);renderer.setScissorTest(true);
       entries.forEach((entry,slot)=>{
         const rect=slot.getBoundingClientRect();
-        if(rect.right<vr.left||rect.left>vr.right||rect.bottom<vr.top||rect.top>vr.bottom)return;
-        const x=Math.max(0,rect.left-vr.left);
-        const y=Math.max(0,rect.top-vr.top);
-        const w=Math.min(cw-x,rect.width),h=Math.min(ch-y,rect.height);
-        if(w<2||h<2)return;
-        entry.camera.aspect=w/h;entry.camera.updateProjectionMatrix();
+        // Keep each model's full drawing viewport anchored to its real DOM slot.
+        // Clip only the visible intersection with the horizontal map viewport.
+        // Clamping the model origin before sizing used to stretch/re-centre cards
+        // entering from the left edge, making models overlap their neighbours.
+        const slotLeft=rect.left-vr.left;
+        const slotTop=rect.top-vr.top;
+        const slotRight=slotLeft+rect.width;
+        const slotBottom=slotTop+rect.height;
+        const clipLeft=Math.max(0,slotLeft);
+        const clipTop=Math.max(0,slotTop);
+        const clipRight=Math.min(cw,slotRight);
+        const clipBottom=Math.min(ch,slotBottom);
+        const clipWidth=clipRight-clipLeft;
+        const clipHeight=clipBottom-clipTop;
+        if(clipWidth<2||clipHeight<2||rect.width<2||rect.height<2)return;
+        entry.camera.aspect=rect.width/rect.height;entry.camera.updateProjectionMatrix();
         if(!reduceMotion.matches){
           entry.pivot.rotation.y+=dt*.18;
           entry.pivot.rotation.x=Math.sin(now*.00035+entry.index)*.035;
           entry.pivot.position.y=Math.sin(now*.0008+entry.index)*.025;
         }
-        renderer.setViewport(x,ch-y-h,w,h);
-        renderer.setScissor(x,ch-y-h,w,h);
+        // WebGL viewport may extend beyond the canvas; scissor performs the crop.
+        // This preserves the model's original size and centre while scrolling.
+        renderer.setViewport(slotLeft,ch-slotBottom,rect.width,rect.height);
+        renderer.setScissor(clipLeft,ch-clipBottom,clipWidth,clipHeight);
         renderer.render(entry.scene,entry.camera);
       });
       raf=requestAnimationFrame(draw);
