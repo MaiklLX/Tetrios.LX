@@ -7739,6 +7739,26 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key=
 // Persistent RPG economy, shop, character, surprise boxes and fast-flick hard drop.
 const bbGet=(k,d=0)=>{try{return JSON.parse(localStorage.getItem('bb_'+k))??d}catch{return d}};
 const bbPut=(k,v)=>localStorage.setItem('bb_'+k,JSON.stringify(v));
+function bbGetHeroEquippedCosmetic(heroId){
+  let equippedByHero=bbGet('equippedChestCosmetics',null);
+  if(!equippedByHero||typeof equippedByHero!=='object'||Array.isArray(equippedByHero)){
+    equippedByHero={};
+    const legacy=bbGet('equippedChestCosmetic','');
+    if(legacy){
+      equippedByHero[bbSelectedHero||'plush']=legacy;
+      bbPut('equippedChestCosmetics',equippedByHero);
+      localStorage.removeItem('bb_equippedChestCosmetic');
+    }
+  }
+  return equippedByHero[heroId]||'';
+}
+function bbSetHeroEquippedCosmetic(heroId,cosmeticId){
+  bbGetHeroEquippedCosmetic(heroId);
+  const equippedByHero=bbGet('equippedChestCosmetics',{});
+  if(cosmeticId)equippedByHero[heroId]=cosmeticId;
+  else delete equippedByHero[heroId];
+  bbPut('equippedChestCosmetics',equippedByHero);
+}
 let bbCoins=bbGet('coins',80),bbGems=bbGet('gems',3),bbXp=bbGet('xp',0),bbHeroLevel=bbGet('heroLevel',1),bbInventory=bbGet('inventory',{quick:1,shield:0,magnet:0}),bbPerks=bbGet('perks',[]),bbMusicLoop=null,bbMusicStep=0;
 const bbCatalog=[{id:'quick',emoji:'⚡',name:'Молниеносный старт',desc:'Бонус скорости и очков на один забег.',cost:35,currency:'coins'},{id:'shield',emoji:'🛡️',name:'Плюшевый щит',desc:'Спасает от одного проигрыша.',cost:55,currency:'coins'},{id:'magnet',emoji:'🧲',name:'Магнит монет',desc:'Больше монет за очищенные линии.',cost:75,currency:'coins'},{id:'lucky',emoji:'🍀',name:'Удача новичка',desc:'Постоянное улучшение удачи.',cost:2,currency:'gems'},{id:'heart',emoji:'💖',name:'Сердечко героя',desc:'Постоянно даёт +5% к наградам.',cost:3,currency:'gems'},{id:'rainbow',emoji:'🌈',name:'Радужный стиль',desc:'Косметическое улучшение героя.',cost:4,currency:'gems'}];
 function bbSave(){bbPut('coins',bbCoins);bbPut('gems',bbGems);bbPut('xp',bbXp);bbPut('heroLevel',bbHeroLevel);bbPut('inventory',bbInventory);bbPut('perks',bbPerks);bbRefresh()}
@@ -7827,7 +7847,7 @@ function bbHeroEmblem(id, size = 'roster') {
 function bbHeroShowcaseCosmetics(){return {'comet-trail':{name:'Кометный след',emoji:'☄️'},'void-crown':{name:'Корона пустоты',emoji:'👑'},'prism-shard':{name:'Призматический осколок',emoji:'🔮'},'star-sigil':{name:'Звёздная печать',emoji:'🌟'},'pixel-ghost':{name:'Пиксельный призрак',emoji:'👻'},'neon-wings':{name:'Неоновые крылья',emoji:'🪽'}}}
 function bbOpenHeroShowcase(id){
  const hero=bbHeroes.find(h=>h.id===id)||bbHeroes[0];bbPreviewHero=hero.id;
- const cosmetics=bbHeroShowcaseCosmetics(),owned=typeof bbGetChestCosmetics==='function'?bbGetChestCosmetics():[],equippedId=bbGet('equippedChestCosmetic',''),equipped=cosmetics[equippedId];
+ const cosmetics=bbHeroShowcaseCosmetics(),owned=typeof bbGetChestCosmetics==='function'?bbGetChestCosmetics():[],equippedId=bbGetHeroEquippedCosmetic(hero.id),equipped=cosmetics[equippedId];
  const level=bbGet('heroLevel_'+hero.id,hero.id==='plush'?bbHeroLevel:1),xp=bbGet('xp_'+hero.id,hero.id==='plush'?bbXp:0);
  overlay(`<div class="bb-hero-showcase">
  <button type="button" class="bb-hero-showcase-close" aria-label="Закрыть">×</button>
@@ -7844,8 +7864,8 @@ function bbOpenHeroShowcase(id){
  const modal=document.getElementById('modal');modal.classList.add('bb-hero-showcase-modal');
  modal.querySelector('.bb-hero-showcase-close')?.addEventListener('click',closeOverlay);
  modal.querySelector('#bbShowcaseSelect')?.addEventListener('click',()=>{bbSelectedHero=hero.id;bbPreviewHero=hero.id;localStorage.setItem('bbSelectedHero',hero.id);bbApplyHero();closeOverlay();bbRenderHeroes()});
- modal.querySelectorAll('[data-equip-cosmetic]').forEach(btn=>btn.addEventListener('click',()=>{bbPut('equippedChestCosmetic',btn.dataset.equipCosmetic);bbApplyHero();bbOpenHeroShowcase(hero.id)}));
- modal.querySelector('[data-unequip-cosmetic]')?.addEventListener('click',()=>{bbPut('equippedChestCosmetic','');bbApplyHero();bbOpenHeroShowcase(hero.id)});
+ modal.querySelectorAll('[data-equip-cosmetic]').forEach(btn=>btn.addEventListener('click',()=>{bbSetHeroEquippedCosmetic(hero.id,btn.dataset.equipCosmetic);bbApplyHero();bbOpenHeroShowcase(hero.id)}));
+ modal.querySelector('[data-unequip-cosmetic]')?.addEventListener('click',()=>{bbSetHeroEquippedCosmetic(hero.id,'');bbApplyHero();bbOpenHeroShowcase(hero.id)});
 }
 function bbRenderHeroes(){
  const roster=document.getElementById('heroesRoster'),details=document.getElementById('heroDetails');if(!roster)return;
@@ -7880,7 +7900,7 @@ function bbApplyHero() {
       'comet-trail':'☄️','void-crown':'👑','prism-shard':'🔮',
       'star-sigil':'🌟','pixel-ghost':'👻','neon-wings':'🪽'
     };
-    const equippedId = bbGet('equippedChestCosmetic', '');
+    const equippedId = bbGetHeroEquippedCosmetic(hero.id);
     const accessory = cosmeticEmojiById[equippedId];
     avatar.innerHTML = '<span class="bb-unified-hero-avatar">'+bbHeroEmblem(hero.id,'detail')+(accessory?'<span>'+accessory+'</span>':'')+'</span>';
     avatar.style.background = hero.color;
