@@ -9533,4 +9533,94 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 }
 </style>
 
+
+<style id="bb-campaign-map-atmospheres">
+/* Distinct, restrained environments for the two campaign maps.
+   Decorative layers stay behind the DOM map and never intercept touch input. */
+#campaign .bb-galaxy-viewport,
+#campaign .bb-planet-viewport{
+  position:relative!important;
+  isolation:isolate!important;
+  background-color:#070b16!important;
+  background-repeat:no-repeat!important;
+}
+#campaign .bb-galaxy-viewport{
+  background-image:
+    radial-gradient(ellipse at 50% 42%,#182b49a8 0,transparent 48%),
+    radial-gradient(ellipse at 18% 78%,#38245a55 0,transparent 43%),
+    radial-gradient(ellipse at 82% 18%,#164b5a42 0,transparent 40%),
+    linear-gradient(180deg,#080d1b 0%,#090f1e 52%,#070b16 100%)!important;
+}
+#campaign .bb-galaxy-viewport::before,
+#campaign .bb-planet-viewport::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-repeat:repeat;
+}
+#campaign .bb-galaxy-viewport::before{
+  opacity:.58;
+  background-image:
+    radial-gradient(1px 1px at 7% 19%,#e9f4ff 0 1px,transparent 1.7px),
+    radial-gradient(1px 1px at 23% 72%,#9bdcff 0 1px,transparent 1.8px),
+    radial-gradient(1.4px 1.4px at 44% 31%,#ffffff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 61% 83%,#c6b5ff 0 1px,transparent 1.8px),
+    radial-gradient(1px 1px at 79% 48%,#d9edff 0 1px,transparent 1.8px),
+    radial-gradient(1px 1px at 94% 14%,#ffffff 0 1px,transparent 1.8px);
+  background-size:310px 230px,370px 280px,420px 300px,340px 260px,390px 290px,460px 320px;
+}
+#campaign .bb-galaxy-viewport::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:.42;
+  background:
+    radial-gradient(ellipse at 50% 54%,transparent 34%,#02061155 100%),
+    linear-gradient(115deg,transparent 0 38%,#9e8aff0b 49%,transparent 62%);
+}
+#campaign .bb-galaxy-track{position:relative!important;z-index:1!important}
+#campaign .bb-galaxy-track::before{
+  opacity:.72!important;
+  filter:drop-shadow(0 0 8px #7fb7e855)!important;
+}
+#campaign .bb-planet-viewport{
+  background-image:
+    radial-gradient(ellipse at 50% 52%,#173b4b88 0,transparent 48%),
+    radial-gradient(ellipse at 14% 16%,#243b6855 0,transparent 42%),
+    radial-gradient(ellipse at 88% 88%,#4a315044 0,transparent 44%),
+    linear-gradient(180deg,#080f1b 0%,#0b1724 48%,#080d19 100%)!important;
+}
+#campaign .bb-planet-viewport::before{
+  opacity:.48;
+  background-image:
+    radial-gradient(1px 1px at 10% 24%,#d9f5ff 0 1px,transparent 1.8px),
+    radial-gradient(1px 1px at 31% 78%,#a8e7f4 0 1px,transparent 1.8px),
+    radial-gradient(1.3px 1.3px at 54% 16%,#ffffff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 73% 61%,#b9c9ff 0 1px,transparent 1.8px),
+    radial-gradient(1px 1px at 91% 34%,#e8f5ff 0 1px,transparent 1.8px);
+  background-size:350px 270px,410px 310px,380px 290px,440px 330px,390px 300px;
+}
+#campaign .bb-planet-viewport::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  opacity:.52;
+  background:
+    radial-gradient(ellipse at 50% 50%,transparent 28%,#03081266 100%),
+    radial-gradient(ellipse at 50% 100%,#4c9ca51a 0,transparent 55%);
+}
+#campaign .bb-planet-track{position:relative!important;z-index:1!important}
+#campaign .bb-treasure-trail{z-index:0!important}
+#campaign .bb-planet-node{z-index:2!important}
+@media(prefers-reduced-motion:no-preference){
+  #campaign .bb-galaxy-viewport::after{animation:bbGalaxyHaze 46s ease-in-out infinite alternate}
+  #campaign .bb-planet-viewport::after{animation:bbPlanetHaze 38s ease-in-out infinite alternate}
+}
+@keyframes bbGalaxyHaze{
+  from{opacity:.30;transform:translate3d(-.5%,0,0)}
+  to{opacity:.48;transform:translate3d(.5%,0,0)}
+}
+@keyframes bbPlanetHaze{
+  from{opacity:.40;transform:translate3d(.35%,0,0)}
+  to{opacity:.58;transform:translate3d(-.35%,0,0)}
+}
+@media(prefers-reduced-motion:reduce){
+  #campaign .bb-galaxy-viewport::after,#campaign .bb-planet-viewport::after{animation:none!important}
+}
+</style>
+
 </body></html>
