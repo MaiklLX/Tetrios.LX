@@ -5545,10 +5545,9 @@ function bbRogueStartRoom(){
 function bbRogueRenderEncounter(){
   if(mode!=='rogue')return '';
   const e=bbRogueEncounter,pct=Math.max(0,Math.min(100,e.hp/Math.max(1,e.maxHp)*100));
-  return '<div style="margin:10px 0;padding:12px;border:1px solid '+(e.boss?'#ff6b75':'#9d7cff')+'88;border-radius:14px;background:linear-gradient(120deg,#17172d,#111a30);color:#f5f2ff">'+
-    '<div style="display:flex;justify-content:space-between;gap:8px;font-weight:900"><span>'+(e.boss?'👹 БОСС ЭТАЖА':'👾 МОНСТР КОМНАТЫ')+'</span><span>ЭТАЖ '+e.floor+' · КОМНАТА '+e.room+'</span></div>'+
-    '<div style="height:9px;margin:9px 0 5px;background:#ffffff18;border-radius:9px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'linear-gradient(90deg,#ff596b,#ffb45e)':'linear-gradient(90deg,#9d7cff,#5cf5e8)')+'"></i></div>'+
-    '<div style="display:flex;justify-content:space-between;font-size:11px;color:#c7c4df"><b>HP '+e.hp+'/'+e.maxHp+'</b><span>АТАКА ЧЕРЕЗ '+e.nextAttack+'с</span></div></div>';
+  return '<div style="display:flex;align-items:center;gap:9px;padding:7px 9px;margin:5px 0 8px;border:1px solid '+(e.boss?'#ff6b75':'#9d7cff')+'66;border-radius:11px;background:linear-gradient(100deg,#17172d,#111a30);color:#f5f2ff;min-height:42px;box-sizing:border-box">'+
+    '<div style="font-size:20px">'+(e.boss?'👹':'👾')+'</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:5px;font-size:10px;font-weight:900"><span>'+(e.boss?'БОСС':'КОМНАТА '+e.room)+' · ЭТАЖ '+e.floor+'</span><span>HP '+e.hp+'/'+e.maxHp+'</span></div>'+
+    '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="font-size:9px;color:#b9c1d9">АТАКА ЧЕРЕЗ '+e.nextAttack+'с</div></div></div>';
 }
 function bbRogueDamageEnemy(amount){
   if(mode!=='rogue'||bbRogueEncounter.hp<=0)return;
@@ -6845,12 +6844,12 @@ function bbRenderGoals() {
     if (!panel) {
       panel = document.createElement('div');
       panel.id = 'rogueGoals';
-      panel.style.cssText = 'margin:10px 0;padding:12px;border:1px solid #9d7cff;border-radius:14px;background:#111a30;color:#f2f5ff;font-size:12px;line-height:1.5;';
+      panel.style.cssText = 'margin:5px 0 7px;padding:7px 9px;border:1px solid #9d7cff88;border-radius:12px;background:#111a30;color:#f2f5ff;font-size:11px;line-height:1.3;';
       const layout = game.querySelector('.playlayout');
       if (layout) game.insertBefore(panel, layout);
     }
 
-    panel.innerHTML = bbRogueRenderEncounter() + '<strong style="font-size:14px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
+    panel.innerHTML = bbRogueRenderEncounter() + '<strong style="font-size:11px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
       bbRogueGoals.map(g => {
         const value = g.value();
                 if (!g.claimed && value >= g.target) {
@@ -7525,7 +7524,7 @@ if(dailySpawnCollision){
 
 bbCheckCampaignCompletion();
 }
-function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.max(3,Math.ceil(needLines*1.25+(level-1)*.3-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)+(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
+function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.min(8,Math.max(3,Math.ceil(needLines*1.12+(level-1)*.12)-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)+(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
 function updateHud(){$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=boosts.length?'✧':'◇';$('boostName').textContent=boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления';$('boostNum').textContent=boosts.length?boosts.length+' усил.':'Выбери реликвию';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
