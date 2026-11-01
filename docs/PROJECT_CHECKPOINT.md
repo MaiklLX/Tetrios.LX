@@ -252,3 +252,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Physical Android review remains necessary; do not claim visual/device verification.
 - Preserve backup `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
+
+
+## Brand identity refinement — 2026-11-01
+- CSS commit: `4af089883ab63ee9b2729a7f7cc47ce2027cb5b7` — `refine(brand): add persistent T tetromino signature`.
+- Added a permanent four-cell T-shaped signature inside the emblem, using cyan-to-violet dimensional blocks and restrained glow. This gives TETRIOS.LX a repeatable visual mark even between the seven-piece transitions.
+- Refined the frame with subtle internal axis lines and a broken cyan/violet orbital ring, strengthening the sci-fi/arcade identity without adding clutter.
+- Kept the seven tetromino transitions and their existing shape geometry. The permanent T mark sits beneath the animated pieces and remains visible during transition gaps.
+- Scope remains CSS-only and hero-only. No HTML, JS, gameplay, menu layout, or backup branch changes.
+- Verified prior emblem CSS deployment and debug APK succeeded for `8a875c49add561a055180b70016f1fbefab662a6`; the new brand mark commit requires its own workflow verification before calling it deployed or offering its APK.
+- Physical Android visual review is still pending.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ С КОНТРОЛЬНОЙ ТОЧКИ**
