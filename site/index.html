@@ -7071,108 +7071,112 @@ function buildMap() {
 }
 
 function bbChooseHeroBeforeStart() {
-  const currentHero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
+  let chosenHero = (bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0]).id;
 
-  overlay(`
-    <div class="modalhead">
-      <div class="eyebrow">НОВОЕ ПРИКЛЮЧЕНИЕ</div>
-      <h3>Кем отправимся в путь?</h3>
-      <p>Выбери героя для этого забега. У каждого свои особенности и способности.</p>
-    </div>
+  const renderRoster = () => {
+    const selectedHero = bbHeroes.find(h => h.id === chosenHero) || bbHeroes[0];
+    overlay(`
+      <div class="modalhead">
+        <div class="eyebrow">НОВОЕ ПРИКЛЮЧЕНИЕ</div>
+        <h3>Выбери своего героя</h3>
+        <p>Открой карточку персонажа, изучи его характеристики и способность. Выбор можно изменить до начала игры.</p>
+      </div>
+      <div id="bbStartHeroList" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;">
+        ${bbHeroes.map(h => {
+          const active=h.id===chosenHero;
+          const progress=bbGetHeroProgress(h.id);
+          return `<button type="button" data-start-hero="${h.id}" style="position:relative;padding:12px 7px;border:2px solid ${active?h.color:'rgba(150,170,200,.22)'};border-radius:16px;background:${active?h.color+'24':'rgba(120,140,160,.08)'};color:inherit;cursor:pointer;text-align:center;min-width:0;box-shadow:${active?'0 0 0 2px '+h.color+'33,0 8px 22px '+h.color+'22':'none'}">
+            ${active?'<span style="position:absolute;top:6px;right:7px;font-size:9px;font-weight:900;color:'+h.color+'">✓ ВЫБРАН</span>':''}
+            <div class="bb-start-hero-emblem">${bbHeroEmblem(h.id)}</div>
+            <strong style="display:block;font-size:13px">${h.name}</strong>
+            <div style="font-size:10px;opacity:.75;margin-top:4px">${h.role} · УР. ${progress.level}</div>
+            <div style="font-size:10px;margin-top:7px;opacity:.9">ОТКРЫТЬ КАРТОЧКУ →</div>
+          </button>`;
+        }).join('')}
+      </div>
+      <div style="padding:12px;border:1px solid ${selectedHero.color}66;border-radius:14px;background:linear-gradient(120deg,${selectedHero.color}20,#11182788);margin:8px 0 14px">
+        <div style="font-size:9px;letter-spacing:.14em;color:#aebbd2">ТЕКУЩИЙ ВЫБОР</div>
+        <strong style="display:block;margin-top:4px;color:#fff">${selectedHero.name}</strong>
+        <div style="font-size:11px;color:#c4cee0;margin-top:3px">${selectedHero.skill} · ${selectedHero.skillDesc}</div>
+      </div>
+      <button class="action" id="bbConfirmStartHero">⚔ НАЧАТЬ ИГРУ ЗА ${selectedHero.name.toUpperCase()}</button>
+      <button class="action secondary" id="bbCancelStartHero">ОТМЕНА</button>
+    `);
 
-    <div id="bbStartHeroList"
-      style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0;">
-      ${bbHeroes.map(h => `
-        <button type="button" data-start-hero="${h.id}"
-          style="padding:12px 7px;border:2px solid ${h.id === currentHero.id ? h.color : 'rgba(150,170,200,.22)'};
-          border-radius:16px;background:${h.id === currentHero.id ? h.color + '22' : 'rgba(120,140,160,.08)'};
-          color:inherit;cursor:pointer;text-align:center;min-width:0;">
-          <div class="bb-start-hero-emblem">${bbHeroEmblem(h.id)}</div>
-          <strong style="display:block;font-size:13px">${h.name}</strong>
-          <div style="font-size:11px;opacity:.75;margin-top:4px">${h.role}</div>
-          <div style="font-size:10px;margin-top:7px">${h.skill}</div>
-        </button>
-      `).join('')}
-    </div>
-
-    <div id="bbStartHeroDescription"
-      style="font-size:12px;line-height:1.5;opacity:.85;margin-bottom:14px">
-      ${currentHero.skillDesc}
-    </div>
-
-    <button class="action" id="bbConfirmStartHero">⚔ НАЧАТЬ ИГРУ</button>
-    <button class="action secondary" id="bbCancelStartHero">ОТМЕНА</button>
-  `);
-
-  let chosenHero = currentHero.id;
-
-  const updateSelection = () => {
-    const hero = bbHeroes.find(h => h.id === chosenHero) || bbHeroes[0];
-
-    document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn => {
-      const selected = btn.dataset.startHero === chosenHero;
-      btn.style.borderColor = selected ? hero.color : 'rgba(150,170,200,.22)';
-      btn.style.background = selected ? hero.color + '22' : 'rgba(120,140,160,.08)';
+    document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn=>{
+      btn.onclick=()=>renderHeroCard(btn.dataset.startHero);
     });
 
-    const description = document.getElementById('bbStartHeroDescription');
-    if (description) description.textContent = hero.skillDesc;
-  };
-
-  document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn => {
-    btn.onclick = () => {
-      chosenHero = btn.dataset.startHero;
-      updateSelection();
-    };
-  });
-
-document.getElementById('bbConfirmStartHero').onclick = () => {
-    if (bbDailyReplayDate && !bbDailyReplayPaid) {
-      const price = bbDailyReplayPrice(bbDailyReplayDate);
-
-      if (bbCoins < price) {
-        toast('Недостаточно монет для повторного прохождения.');
-        return;
+    document.getElementById('bbConfirmStartHero').onclick=()=>{
+      if(bbDailyReplayDate&&!bbDailyReplayPaid){
+        const price=bbDailyReplayPrice(bbDailyReplayDate);
+        if(bbCoins<price){toast('Недостаточно монет для повторного прохождения.');return;}
+        bbCoins-=price;
+        localStorage.setItem('bbCoins',String(bbCoins));
+        localStorage.setItem('coins',String(bbCoins));
+        bbDailyReplayPaid=true;
       }
+      bbSelectedHero=chosenHero;
+      localStorage.setItem('bbSelectedHero',chosenHero);
+      bbApplyHero();
+      closeOverlay();
+      startGameNow();
+    };
 
-      bbCoins -= price;
-      localStorage.setItem('bbCoins', String(bbCoins));
-      localStorage.setItem('coins', String(bbCoins));
-      bbDailyReplayPaid = true;
-    }
-
-    bbSelectedHero = chosenHero;
-    localStorage.setItem('bbSelectedHero', chosenHero);
-    bbApplyHero();
-    closeOverlay();
-    startGameNow();
+    document.getElementById('bbCancelStartHero').onclick=()=>{
+      const wasDailyReplay=Boolean(bbDailyReplayDate);
+      if(wasDailyReplay){
+        bbDailyReplayDate=null;
+        bbDailyReplayRule=null;
+        bbDailyReplayPaid=false;
+        bbDailyReplayNoQuestReward=false;
+      }
+      closeOverlay();
+      if(mode==='campaign'){show('campaign');buildMap();}
+      else if(mode==='daily'){
+        show('daily');
+        if(wasDailyReplay)toast('Повторное испытание отменено. Монеты не списаны.');
+      }else show('menu');
+    };
   };
 
-document.getElementById('bbCancelStartHero').onclick = () => {
-  const wasDailyReplay = Boolean(bbDailyReplayDate);
+  const renderHeroCard = id => {
+    const hero=bbHeroes.find(h=>h.id===id)||bbHeroes[0];
+    const progress=bbGetHeroProgress(hero.id),level=progress.level;
+    const xpNeeded=200+(level-1)*100;
+    const cosmetics=bbHeroShowcaseCosmetics();
+    const equippedId=bbGetHeroEquippedCosmetic(hero.id);
+    const equipped=cosmetics[equippedId];
+    overlay(`<div class="bb-hero-showcase bb-start-hero-detail">
+      <button type="button" class="bb-hero-showcase-close" id="bbStartHeroBack" aria-label="Назад к выбору героев">‹</button>
+      <div class="bb-hero-showcase-topline">ДОСЬЕ ГЕРОЯ · ${hero.role.toUpperCase()}</div>
+      <div class="bb-hero-showcase-stage-wrap" style="--hero-accent:${hero.color}">
+        <div class="bb-3d-stage bb-hero-showcase-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-модель героя ${hero.name}">${equipped?'<span class="bb-hero-equipped-badge"><span>✦</span>'+equipped.emoji+'</span>':''}</div>
+      </div>
+      <div class="bb-hero-showcase-heading">
+        <div class="bb-hero-showcase-emblem">${bbHeroEmblem(hero.id,'detail')}${equipped?'<span>'+equipped.emoji+'</span>':''}</div>
+        <div><div class="bb-hero-showcase-kicker">ПЕРСОНАЖ · УРОВЕНЬ ${level}</div><h2>${hero.name}</h2><p>${hero.desc}</p></div>
+      </div>
+      <div class="bb-hero-showcase-stats">
+        <div><span>СТОЙКОСТЬ</span><strong>${'★'.repeat(hero.hp)}${'☆'.repeat(5-hero.hp)}</strong></div>
+        <div><span>МАСТЕРСТВО</span><strong>${'★'.repeat(hero.power)}${'☆'.repeat(5-hero.power)}</strong></div>
+      </div>
+      <div class="bb-hero-showcase-skill"><span>УНИКАЛЬНАЯ СПОСОБНОСТЬ</span><strong>${hero.skill}</strong><p>${hero.skillDesc}</p></div>
+      <div class="bb-hero-showcase-progress">ОПЫТ: ${progress.xp} / ${xpNeeded}</div>
+      <button type="button" class="action bb-hero-showcase-select" id="bbStartHeroChoose">${hero.id===chosenHero?'✓ ВЫБРАН ДЛЯ ЭТОГО ЗАБЕГА':'ВЫБРАТЬ ЭТОГО ГЕРОЯ'}</button>
+      <button type="button" class="action secondary" id="bbStartHeroBackBottom">← НАЗАД К ВЫБОРУ ГЕРОЕВ</button>
+    </div>`);
+    const modal=document.getElementById('modal');
+    modal.classList.add('bb-hero-showcase-modal');
+    document.getElementById('bbStartHeroBack')?.addEventListener('click',renderRoster);
+    document.getElementById('bbStartHeroBackBottom')?.addEventListener('click',renderRoster);
+    document.getElementById('bbStartHeroChoose')?.addEventListener('click',()=>{
+      chosenHero=hero.id;
+      renderRoster();
+    });
+  };
 
-  if (wasDailyReplay) {
-    bbDailyReplayDate = null;
-    bbDailyReplayRule = null;
-    bbDailyReplayPaid = false;
-    bbDailyReplayNoQuestReward = false;
-  }
-
-  closeOverlay();
-
-  if (mode === 'campaign') {
-    show('campaign');
-    buildMap();
-  } else if (mode === 'daily') {
-    show('daily');
-
-    if (wasDailyReplay) {
-      toast('Повторное испытание отменено. Монеты не списаны.');
-    }
-  } else {
-    show('menu');
-  }
-};
+  renderRoster();
 }
 
 function startGame() {
