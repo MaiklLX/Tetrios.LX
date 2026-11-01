@@ -382,3 +382,20 @@ Do not claim device testing has happened; the user performs real-device testing.
 - No dashboard layout, button labels, IDs, handlers, navigation, game logic, or save data changed.
 - Next: inspect the Pages Actions run/deployment for the latest site commit and resolve any failure before claiming the live site is updated. Continue only with small, isolated menu refinements.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
+
+
+## Submenus atmosphere polish — 2026-11-01
+- User resumed from checkpoint **TETRIOS.LX / SUBMENUS VISUAL PASS 1** and asked to continue while preserving checkpoint notes and a reusable resume phrase.
+- Implemented a second isolated visual pass in `site/visual-overhaul.css`, CSS commit `fc0f82557f7c39f558f803568440407544f2c4a0`:
+  - Added restrained layered atmosphere and depth to Campaign, Shop, and Heroes screens.
+  - Strengthened submenu headings and added a fine luminous divider for clearer hierarchy.
+  - Refined campaign challenge panels, active-node sheen, and visible keyboard/tap focus states.
+  - Added tactile pressed states to shop items and hero cards; improved shop-card edge lighting.
+  - Kept compact mobile sizing and reduced-motion support.
+- Updated the stylesheet cache token in `site/index.html` to `20261101-submenus-atmosphere-2`, commit `c55eb26b388f413ec4c8fedae8db63a06c744ffb`.
+- Current main source SHA at this checkpoint: `c55eb26b388f413ec4c8fedae8db63a06c744ffb`.
+- CSS brace check passed (1065 opening / 1065 closing braces).
+- Changes are CSS-only plus stylesheet cache token. No gameplay mechanics, economy, progress, save data, JavaScript handlers, element IDs, navigation, or content-generation logic were changed.
+- Deployment run/status for this exact SHA is not yet verified. Do not claim the changes are live until a matching Pages deployment is confirmed. Physical Android review also remains pending.
+- Next: verify the Pages deployment for this exact SHA; then visually review the three submenu screens on Android and refine only concrete readability/spacing issues. Preserve the established mobile-first layout and all game logic/data.
+- Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ c55eb26. ЗАТЕМ ПРОДОЛЖИТЬ ПОЛИРОВКУ КАРТЫ КАМПАНИИ, МАГАЗИНА И ГЕРОЕВ БЕЗ ИЗМЕНЕНИЯ МЕХАНИКИ И СОХРАНЕНИЙ. 🤘😎**
