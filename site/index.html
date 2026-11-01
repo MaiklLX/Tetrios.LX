@@ -7816,13 +7816,16 @@ cv.addEventListener('touchstart', e => {
       t.clientY >= r.top - safe && t.clientY <= r.bottom + safe;
   }
   if (!started || paused || gameOver || touchDropLocked) return;
-  if (e.target.closest('#board')) e.preventDefault();
-  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,suppressTap};
+  const boardGesture=!!e.target.closest('#board');
+  if (boardGesture && e.cancelable) e.preventDefault();
+  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,suppressTap,boardGesture};
   audioCtx();
 },{passive:false});
 
 cv.addEventListener('touchmove',e=>{
   if(!touch||touch.dropped||!started||paused||gameOver)return;
+  // iOS Safari: an active board swipe belongs to the game, not page scrolling.
+  if(touch.boardGesture && e.cancelable) e.preventDefault();
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
   if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
     touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
@@ -7847,7 +7850,7 @@ cv.addEventListener('touchmove',e=>{
       touch.lastY+=steps*22;
     }
   }
-},{passive:true});
+},{passive:false});
 
 cv.addEventListener('touchend',e=>{
   // Завершение касания кнопки не должно интерпретироваться как тап по игровому полю.
