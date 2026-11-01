@@ -590,3 +590,11 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Implementation refinement after source review: the WebGL canvas is a fixed overlay attached to `document.body`, and its screen position is refreshed from the active viewport's live bounding rectangle on every render frame. Currently visible slots are activated synchronously before the first IntersectionObserver callback. This avoids making the overlay a child of the horizontally scrolling viewport and reduces first-visible-frame delay.
 
 - Canvas CSS was made global (not campaign-descendant-scoped) because the fixed WebGL canvas is deliberately attached to `document.body`; this ensures the fixed positioning, stacking order and pointer-event behavior apply to the actual canvas element.
+
+
+## Checkpoint 276 addendum — restore WebGL canvas visibility — 2026-11-01
+- User reported that after the previous CSS change both the 2D fallback artwork and the 3D universe/planet models disappeared. Root cause identified: the renderer canvas is a direct child of `document.body`, so its visibility and stacking must be controlled as a body-level fixed overlay, not with campaign-descendant selectors.
+- Corrected `site/universes-3d.js`: canvas now receives explicit inline fixed positioning, live viewport coordinates, dimensions, high stacking order and pointer-events:none. This keeps it above the campaign artwork while not intercepting taps.
+- Corrected `site/index.html`: the canvas CSS now targets `body > canvas.bb-galaxy-model-canvas` and enforces the fixed overlay layer. No fallback artwork or model geometry was removed.
+- New fix commits: `9787ca308f9d34c75d53ea366c46ca676cbf600c` (JS), `528ae6cc70eb06e8b703b67d8e4a030f0ebc6a72` (HTML).
+- Deployment and real-device rendering must be checked before declaring restored; preserve the immediate procedural 3D path, background GLB upgrade, 2D fallback suppression only while 3D is active, route, progression, purchases and saves.
