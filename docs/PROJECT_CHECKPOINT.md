@@ -660,3 +660,12 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Source commit: `33acede3e867881e8348ecffc872ebb02e13236d` (`Bring completed planet checkmark into foreground of 3D model`).
 - Validate on the published phone view that the checkmark is visibly in front of the 3D planet and does not hide its recognizable shape.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 282. ПРОВЕРИТЬ, ЧТО ЗОЛОТАЯ ГАЛОЧКА ПРОЙДЕННОЙ ПЛАНЕТЫ ОТОБРАЖАЕТСЯ ПОВЕРХ 3D-МОДЕЛИ, НА ПЕРЕДНЕМ ПЛАНЕ, А НЕ ЗА НЕЙ; ОНА КРУПНАЯ, ЧИТАЕМАЯ И НЕ ЗАКРЫВАЕТ СУЩЕСТВЕННУЮ ЧАСТЬ ПЛАНЕТЫ. ПРОВЕРИТЬ НА ТЕЛЕФОНЕ. МАРШРУТ И СОХРАНЕНИЯ НЕ ТРОГАТЬ. 🤘😎**
+
+## Checkpoint 282 — отметка пройденной планеты рядом с номером (2026-11-01)
+
+- Убрана попытка размещать крупную галочку поверх 3D-модели планеты.
+- Для пройденной планеты галочка теперь отображается компактно справа от её номера.
+- Старый круглый значок над моделью скрыт только для статуса `is-cleared`; отметки доступной и закрытой планет сохранены.
+- Изменены только стили отображения; логика прогресса, маршрут, сохранения и награды не затронуты.
+- Source commit: `4e5e8f1f8be692eff74f148c111714e69ca0d924`.
+- Публикацию и внешний вид на телефоне необходимо проверить после GitHub Actions.
