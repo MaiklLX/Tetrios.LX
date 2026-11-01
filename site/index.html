@@ -6119,153 +6119,28 @@ function bbSaveDailyChallengeHistory(date, rule, status = 'completed') {
 
   localStorage.setItem(key, JSON.stringify(history));
 }
-function bbDailyCalendarOpen() {
-  const modal = document.getElementById('modal');
-  const overlay = document.getElementById('overlay');
-  if (!modal || !overlay) return;
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const offset = (firstDay + 6) % 7;
-
-const completedDate =
-  localStorage.getItem('bbDailyChallengeCompletedDate') || '';
-
-let history = {};
-
-try {
-  history = JSON.parse(
-    localStorage.getItem('bbDailyChallengeHistory') || '{}'
-  );
-} catch (error) {
-  history = {};
-}
-
-  let cells = '';
-
-  for (let i = 0; i < offset; i++) {
-    cells += '<div></div>';
+let bbDailyCalendarMonth=new Date(2026,9,1);
+function bbDailyCalendarOpen(){
+  const modal=$('modal'),overlayEl=$('overlay');if(!modal||!overlayEl)return;
+  const today=new Date(),todayKey=bbGetTodayKey(),minMonth=new Date(2026,9,1),maxMonth=new Date(today.getFullYear(),today.getMonth(),1);
+  if(bbDailyCalendarMonth<minMonth)bbDailyCalendarMonth=minMonth;
+  if(bbDailyCalendarMonth>maxMonth)bbDailyCalendarMonth=maxMonth;
+  const year=bbDailyCalendarMonth.getFullYear(),month=bbDailyCalendarMonth.getMonth();
+  const firstDay=new Date(year,month,1).getDay(),daysInMonth=new Date(year,month+1,0).getDate(),offset=(firstDay+6)%7;
+  let history={};try{history=JSON.parse(localStorage.getItem('bbDailyChallengeHistory')||'{}')}catch(e){history={}}
+  let cells='';for(let i=0;i<offset;i++)cells+='<div></div>';
+  for(let day=1;day<=daysInMonth;day++){
+    const date=[year,String(month+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-'),record=history[date],isToday=date===todayKey,isFuture=date>todayKey,isCompleted=Boolean(record)||localStorage.getItem('bbDailyChallengeCompletedDate')===date,isMissed=!isToday&&!isFuture&&!isCompleted;
+    const background=isCompleted?'#174a38':isToday?'#493719':isFuture?'#151b2b':'#202940',color=isCompleted?'#8dffca':isToday?'#ffe08a':isFuture?'#71809e':isMissed?'#ff9b9b':'#fff';
+    cells+='<button type="button" data-daily-date="'+date+'" style="min-height:38px;border:1px solid '+(isToday?'#ffd36a':'#ffffff16')+';border-radius:9px;background:'+background+';color:'+color+';font-weight:900">'+day+(isCompleted?' ✓':isMissed?' ×':isToday?' ★':'')+'</button>';
   }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = [
-      year,
-      String(month + 1).padStart(2, '0'),
-      String(day).padStart(2, '0')
-    ].join('-');
-
-    const isToday = day === today.getDate();
-    const isFuture = day > today.getDate();
-
-const record = history[date];
-const isCompleted = date === completedDate || Boolean(record);
-const isMissed = !isToday && !isFuture && !isCompleted;
-
-const challenge = bbDailyRuleForDate(date);
-
-    const background = isCompleted
-      ? '#174a38'
-      : isToday
-        ? '#493719'
-        : isFuture
-          ? '#151b2b'
-          : '#202940';
-
-    const border = isCompleted
-      ? '#5cf5a5'
-      : isToday
-        ? '#ffc86b'
-        : '#35415d';
-
-
-const symbol = isCompleted
-  ? '✓'
-  : isToday
-    ? '★'
-    : isFuture
-      ? '·'
-      : '×';
-
-const challengeSymbol = record
-  ? record.symbol
-  : challenge.symbol;
-
-cells += `
-      <div data-daily-date="${date}" style="
-        cursor:pointer;
-        min-height:58px;
-        border:1px solid ${border};
-        border-radius:10px;
-        background:${background};
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        gap:4px">
-<strong>${day}</strong>
-<span>${challengeSymbol} ${symbol}</span>
-      </div>`;
-  }
-
-  modal.innerHTML = `
-    <div class="modalhead">
-      <div class="bigicon">📅</div>
-      <div class="eyebrow">ИСТОРИЯ ИСПЫТАНИЙ</div>
-      <h3>${today.toLocaleDateString('ru-RU', {
-        month: 'long',
-        year: 'numeric'
-      })}</h3>
-      <p>Календарь режима «Ежедневный вызов».</p>
-    </div>
-
-    <div style="
-      display:grid;
-      grid-template-columns:repeat(7,minmax(0,1fr));
-      gap:6px;
-      text-align:center;
-      color:#b6c2df;
-      font-size:12px;
-      margin-bottom:8px">
-      ${['Пн','Вт','Ср','Чт','Пт','Сб','Вс']
-        .map(d => `<div>${d}</div>`).join('')}
-    </div>
-
-    <div style="
-      display:grid;
-      grid-template-columns:repeat(7,minmax(0,1fr));
-      gap:6px;
-      text-align:center;
-      color:#fff">
-      ${cells}
-    </div>
-
-    <div style="
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin:16px 0;
-      color:#b6c2df;
-      font-size:12px">
-<span>✓ Пройден</span>
-<span>★ Сегодня</span>
-<span>× Пропущен</span>
-<span>· Будущий день</span>
-    </div>
-
-    <button class="action secondary" id="bbDailyCalendarClose">
-      ЗАКРЫТЬ
-    </button>
-  `;
-
-  overlay.classList.add('show');
-
-document.getElementById('bbDailyCalendarClose').onclick =
-  closeOverlay;
+  const title=bbDailyCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}),prev=new Date(year,month-1,1)>=minMonth,next=new Date(year,month+1,1)<=maxMonth;
+  modal.innerHTML='<div class="modalhead"><div class="bigicon">📅</div><div class="eyebrow">АРХИВ ИСПЫТАНИЙ</div><h3>Календарь вызовов</h3><p>История доступна с месяца запуска проекта — октября 2026 года.</p></div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 14px"><button type="button" id="bbCalendarPrev" class="action secondary" style="width:auto;padding:9px 14px" ${prev?'':'disabled'}>‹</button><strong style="text-transform:capitalize;color:#f3d28a">${title}</strong><button type="button" id="bbCalendarNext" class="action secondary" style="width:auto;padding:9px 14px" ${next?'':'disabled'}>›</button></div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;color:#9daaca;font-size:11px;margin-bottom:8px">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=>'<b>'+d+'</b>').join('')}</div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center">${cells}</div><div style="display:flex;flex-wrap:wrap;gap:12px;margin:16px 0;color:#b6c2df;font-size:12px"><span>✓ Пройден</span><span>★ Сегодня</span><span>× Пропущен</span><span>· Будущий день</span></div><button class="action secondary" id="bbDailyCalendarClose">ЗАКРЫТЬ</button>';
+  overlayEl.classList.add('show');
+  $('bbCalendarPrev').onclick=()=>{bbDailyCalendarMonth=new Date(year,month-1,1);bbDailyCalendarOpen()};
+  $('bbCalendarNext').onclick=()=>{bbDailyCalendarMonth=new Date(year,month+1,1);bbDailyCalendarOpen()};
+  $('bbDailyCalendarClose').onclick=closeOverlay;
 }
-
 function bbDailyShowChallenge(date) {
   const modal = document.getElementById('modal');
   const today = new Date();
