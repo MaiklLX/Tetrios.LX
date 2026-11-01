@@ -5518,7 +5518,7 @@ function bbRogueHasSynergy(){
     {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'атаки монстров приходят реже'}
   ].filter(combo=>combo.ids.every(id=>(Number(r[id])||0)>0));
 }
-let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};
+let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};let bbRogueShieldCharges=0;
 function bbRogueStartRoom(){
   const e=bbRogueEncounter,floor=Math.floor((e.room-1)/5)+1,boss=e.room%5===0;
   const hp=boss?18+floor*7+e.room*2:5+floor*2+Math.floor(e.room/2);
@@ -5538,7 +5538,7 @@ function bbRogueDamageEnemy(amount){
   const e=bbRogueEncounter;e.hp=Math.max(0,e.hp-Math.max(0,amount));
   if(e.hp===0){
     e.defeated++;e.room++;
-    if(e.room%5===1&&e.room>1)toast('🏰 ЭТАЖ '+Math.floor((e.room-1)/5+1)+'! Враги стали сильнее.');
+    if(e.room%5===1&&e.room>1)toast('🏰 ЭТАЖ '+Math.floor((e.room-1)/5+1)+'! Враги стали сильнее.');if(boosts.includes('rift')){const clears=Math.min(3,bbGetUpgradeRank('rift'));for(let y=H-1;y>=H-clears;y--)board[y].fill(0);toast('🌀 РАЗЛОМ: очищены нижние '+clears+' ряда(ов)!')}
     else toast(e.boss?'👑 БОСС ПОВЕРЖЕН! Следующая комната открыта.':'⚔️ Монстр повержен! Следующая комната открыта.');
     dropMs=Math.max(170,dropMs-(e.boss?24:8));restartDrop();bbRogueStartRoom();
   }else bbRogueRenderEncounter();
@@ -7129,7 +7129,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
+function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
@@ -7423,7 +7423,7 @@ if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'){
   bbDailyMechanicState.gravityClears+=cleared;
   restartDrop();
 }
-bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);if(mode==='rogue')bbRogueDamageEnemy(cleared*(1+Math.floor(bbGetRogueCardRank('score')/3)));lines+=cleared;bbDailyAddLines(cleared);levelLines+=cleared;
+bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);if(mode==='rogue')bbRogueDamageEnemy(cleared*(1+Math.floor(bbGetRogueCardRank('score')/3)));lines+=cleared;if(boosts.includes('resonance')&&lines%4<cleared){levelLines+=bbGetUpgradeRank('resonance');toast('✧ РЕЗОНАНС: дополнительный заряд уровня!')}bbDailyAddLines(cleared);levelLines+=cleared;
 combo++;
 
 if(bbIsDailyMechanic('echoCombo')){
@@ -7452,7 +7452,7 @@ let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mul
     bbDailyMechanicState.echoCombo=0;
     bbDailyMechanicState.echoMultiplier=1;
   }
-}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){const shieldLeft=mode==='rogue'?Math.max(1,bbRogueShieldCharges):1;if(mode==='rogue'&&shieldLeft>1)bbRogueShieldCharges=shieldLeft-1;else{boosts=boosts.filter(x=>x!=='shield');bbRogueShieldCharges=0;}const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');const rows=mode==='rogue'?Math.max(1,bbGetRogueCardRank('nova')):1;for(let y=H-1;y>=Math.max(0,H-rows);y--)board[y].fill(0);toast('Сверхновая очистила '+rows+' нижн. линий!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
 if(
   mode==='daily' &&
   bbGetActiveDailyRule().mod==='artifactHunt'
@@ -7508,7 +7508,7 @@ if(dailySpawnCollision){
 
 bbCheckCampaignCompletion();
 }
-function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.max(3,Math.ceil(needLines*1.25+(level-1)*.3-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)-(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
+function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.max(3,Math.ceil(needLines*1.25+(level-1)*.3-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)+(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
 function updateHud(){$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=boosts.length?'✧':'◇';$('boostName').textContent=boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления';$('boostNum').textContent=boosts.length?boosts.length+' усил.':'Выбери реликвию';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
@@ -7531,6 +7531,7 @@ function showUpgrade(){
       if(synergies.length)toast('СИНЕРГИЯ АКТИВНА: '+synergies[synergies.length-1].name);
     }else{boosts.push(id);}
     if(id==='hold')holdUsed=0;
+    if(rogue&&(id==='shield'||id==='armor'))bbRogueShieldCharges=bbGetRogueCardRank('shield')+bbGetRogueCardRank('armor');
     if(id==='loop')needLines=Math.max(3,needLines-1);
     if(id==='slow')dropMs=Math.max(150,dropMs-30);
     closeOverlay();paused=false;updateHud();render();tone(880,.2,'sine',.04);restartDrop();
@@ -7635,7 +7636,8 @@ if (boostCard) {
       const rank=mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):1;
       const stars=mode==='rogue'?'★'.repeat(rank)+'☆'.repeat(5-rank):'АКТИВНО';
       const effects={
-        shield:'Запас спасений: '+(rank+(bbGetRogueCardRank('armor')||0))+' атаки',
+        shield:'Запас спасений: '+(bbRogueShieldCharges||rank)+' атаки',
+        armor:'Броня добавляет +1 заряд щита и усиливает защиту',
         slow:'Падение медленнее на '+(20+rank*5)+'%',
         mult:'Множитель очков ×'+(1+rank*.5).toFixed(2),
         score:'Комбо усиливает очки на '+(15*rank)+'% за шаг',
@@ -7680,7 +7682,7 @@ if (boostCard) {
 }
 
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('openHeroes').onclick=()=>show('heroes');
-$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(boosts.includes('hold')?2:1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
+$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(boosts.includes('hold')?(mode==='rogue'?1+bbGetRogueCardRank('hold'):2):1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
 tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};
