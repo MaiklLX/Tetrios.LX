@@ -2909,3 +2909,38 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
     transition:none!important;
   }
 }
+ 
+
+/* HERO CARD FLIP — reveal details inside the selected roster card */
+#heroesRoster.bb-hero-flip-roster{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin:16px 0!important;align-items:stretch}
+#heroesRoster .bb-hero-flip-card{display:block;min-width:0;width:100%;padding:0!important;border:1px solid rgba(143,165,221,.28)!important;border-radius:19px!important;background:transparent!important;color:#f5f7ff!important;perspective:1100px;overflow:visible;box-shadow:none!important;text-align:center}
+#heroesRoster .bb-hero-flip-card.is-open{grid-column:1/-1;min-height:0;border-color:rgba(92,245,232,.55)!important}
+.bb-hero-flip-inner{display:grid;grid-template:1fr/1fr;min-height:154px;width:100%;transform-style:preserve-3d;transition:transform .72s cubic-bezier(.2,.72,.18,1)}
+.bb-hero-flip-card.is-open .bb-hero-flip-inner{transform:rotateY(180deg)}
+.bb-hero-card-face{grid-area:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:154px;padding:13px 10px;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:linear-gradient(150deg,rgba(27,39,70,.98),rgba(12,20,40,.99))}
+.bb-hero-card-front{position:relative;border:1px solid rgba(143,165,221,.2)}
+.bb-hero-card-art{display:grid;place-items:center;min-height:65px;width:100%;margin-bottom:7px;filter:drop-shadow(0 9px 13px rgba(0,0,0,.28))}
+.bb-hero-card-face strong{font-size:14px;line-height:1.25}
+.bb-hero-card-role{font-size:10px;color:#aab8d8;margin-top:5px}
+.bb-hero-card-state{font-size:9px;font-weight:900;letter-spacing:.09em;margin-top:9px}
+.bb-hero-card-hint{font-size:8px;color:#8d9cbd;margin-top:5px;letter-spacing:.08em}
+.bb-hero-card-back{transform:rotateY(180deg);display:block;text-align:left;min-height:0;padding:0;border:1px solid rgba(92,245,232,.25);background:linear-gradient(145deg,#182543,#0b1225)}
+.bb-hero-card-back-inner{display:block;max-height:690px;overflow-y:auto;overscroll-behavior:contain;padding:10px}
+.bb-hero-card-back #heroDetails{margin:0!important;padding:12px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+#heroes #heroDetails .bb-3d-stage{height:170px;min-height:170px;margin:0 0 12px;border-radius:15px}
+.bb-hero-equipped-badge{position:absolute;z-index:5;top:12px;right:12px;display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid rgba(205,174,255,.65);border-radius:999px;background:linear-gradient(120deg,rgba(65,45,111,.96),rgba(19,27,54,.96));color:#fff;font-size:20px;box-shadow:0 0 22px rgba(167,139,250,.32),inset 0 1px rgba(255,255,255,.2);animation:bbCosmeticReveal .42s ease both}
+.bb-hero-equipped-badge span{font-size:10px;color:#d8c5ff}
+.bb-hero-portrait-accessory{position:absolute;transform:translate(32px,-34px);display:grid;place-items:center;width:30px;height:30px;border:1px solid #d5b5ff;border-radius:50%;background:#21183d;font-size:18px;box-shadow:0 0 14px rgba(167,139,250,.5)}
+.bb-hero-cosmetic-panel{margin-top:13px;padding:12px;border:1px solid rgba(167,139,250,.34);border-radius:15px;background:rgba(100,80,160,.1)}
+.bb-hero-cosmetic-heading{font-size:10px;letter-spacing:1.5px;opacity:.8;margin-bottom:6px}
+.bb-hero-cosmetic-status{font-size:12px;margin-bottom:10px;color:#e8ddff}
+.bb-hero-cosmetic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bb-hero-cosmetic-grid button,.bb-hero-unequip{min-width:0;min-height:58px;padding:9px 6px;border-radius:12px;border:1px solid rgba(150,170,200,.25);background:linear-gradient(145deg,rgba(42,47,82,.95),rgba(19,27,51,.98));color:#f4f1ff;font-size:11px;line-height:1.3;overflow-wrap:anywhere}
+.bb-hero-cosmetic-grid button>span{display:block;font-size:25px;margin-bottom:5px;filter:drop-shadow(0 0 8px rgba(190,157,255,.55))}
+.bb-hero-cosmetic-grid button small{display:block;margin-top:4px;color:#9ff9ed;font-size:8px;font-weight:900}
+.bb-hero-cosmetic-grid button.is-equipped{border-color:#b69aff;background:linear-gradient(145deg,rgba(101,71,160,.55),rgba(29,39,72,.98));box-shadow:0 0 17px rgba(167,139,250,.2)}
+.bb-hero-cosmetic-empty{grid-column:1/-1;font-size:11px;line-height:1.45;color:#aab8d8}
+.bb-hero-unequip{width:100%;min-height:42px;margin-top:9px}
+@keyframes bbCosmeticReveal{from{opacity:0;transform:translateY(-5px) scale(.9)}to{opacity:1;transform:none}}
+@media(max-width:380px){#heroesRoster.bb-hero-flip-roster{gap:8px!important}.bb-hero-flip-inner,.bb-hero-card-face{min-height:140px}.bb-hero-card-face{padding:10px 6px}.bb-hero-card-back-inner{padding:7px}#heroes #heroDetails .bb-3d-stage{height:145px;min-height:145px}}
+@media(prefers-reduced-motion:reduce){.bb-hero-flip-inner,.bb-hero-equipped-badge{transition:none!important;animation:none!important}}
