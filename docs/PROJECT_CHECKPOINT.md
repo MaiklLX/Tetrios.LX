@@ -506,3 +506,20 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Verification: current main source contains passive:false active touch handling; the hard-drop gesture remains present; iOS model optimization and cache token are present; manifest contains 12 unique universe model IDs. GitHub combined status for the latest source commit returned no status entries, so Pages deployment is not confirmed from this session.
 - Next: verify GitHub Pages deployment and re-test on iOS. Check whether Reachability still activates only when the gesture starts at the bottom system edge. Confirm at least the first visible galaxy card's GLB request succeeds; if fallback remains, inspect the remote request/CORS failure. Ask whether the user wants to remove the extra 8ms/24ms speed increase on monster/boss defeat so Block Run accelerates only at level-ups.
 - Resume phrase: TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 272. ПРОВЕРИТЬ DEPLOY И ПОВТОРНО ПРОТЕСТИРОВАТЬ iOS: FAST-DROP VS REACHABILITY, 12 GLB-ВСЕЛЕННЫХ И РЕЖИМ BLOCK RUN. СКОРОСТЬ МОНСТРОВ ПОКА НЕ МЕНЯТЬ; МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И ЭКИПИРОВКУ СОХРАНИТЬ. 🤘😎
+
+
+## Checkpoint 273 — Smooth Block Run acceleration — 2026-11-01
+- User chose to retain both acceleration sources in Block Run: ordinary monster/boss defeats and level-ups, while making speed transitions smoother.
+- Preserved the existing target-speed calculations unchanged:
+  - ordinary monster defeat: reduce target drop interval by 8ms;
+  - boss defeat: reduce target drop interval by 24ms;
+  - level-up: retain the existing reduction of 48ms + 3ms per current level, including existing relic/synergy modifiers and minimum speed cap.
+- Updated only the Block Run (rogue mode) drop scheduler in `site/index.html`: it now eases the actual falling interval toward the target over approximately 1.1 seconds using a smoothstep curve. The scheduler checks at 50ms intervals but moves a piece only when the currently eased interval has elapsed, preventing a large interval jump on the first tick.
+- Other modes retain their original `setInterval` drop scheduler; daily-mode gravity modifiers and their timing were not intentionally changed.
+- New-run reset initializes the eased interval to the original 760ms baseline.
+- Source commits: initial implementation `e11e257d152f62a1421ac45a802e85ed744ec817`; refined easing implementation `98271c733ee40397d7e84ecc08e9b7ec1e0b625e`.
+- Verification: latest source still contains both original monster/boss and level-up target-speed calculations; rogue scheduler uses smoothstep easing and a 50ms check; non-rogue modes retain their interval scheduler; new-run baseline reset remains present.
+- No monster attack logic, damage, abilities, relic values, level thresholds, scoring, campaign route geometry, purchases, inventory, equipped items, progress, save keys or saved game data were changed.
+- Pages deployment for `98271c7` is not yet confirmed. Test the published Block Run on mobile: defeat a regular monster, defeat a boss, and trigger a level-up separately; verify that the falling speed ramps smoothly and remains responsive. Confirm that pause/resume does not cause an immediate extra drop.
+- Next: verify the Pages deployment for `98271c7`, then perform the three gameplay checks above and adjust only the easing duration if the transition feels too slow or too fast.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 273. ПРОВЕРИТЬ DEPLOY ДЛЯ 98271c7 И ПРОТЕСТИРОВАТЬ ПЛАВНОЕ УСКОРЕНИЕ BLOCK RUN ПОСЛЕ МОНСТРА, БОССА И ПОВЫШЕНИЯ УРОВНЯ. ОБА ИСТОЧНИКА УСКОРЕНИЯ СОХРАНЕНЫ; МЕХАНИКУ, МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
