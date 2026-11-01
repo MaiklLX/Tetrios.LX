@@ -1618,3 +1618,181 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   #menu.home-dashboard > .hero .orb:after,
   #menu.home-dashboard .tetromino i{animation:none!important}
 }
+
+
+/* TETRIOS.LX — main menu visual polish, pass 1 (logo and layout intentionally untouched). */
+.topbar{
+  position:relative;
+  z-index:2;
+  border-color:rgba(91,218,255,.28)!important;
+  background:
+    linear-gradient(105deg,rgba(8,25,51,.96),rgba(15,24,53,.92) 54%,rgba(8,20,43,.96))!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.24),0 0 24px rgba(35,174,255,.08),inset 0 1px rgba(255,255,255,.1)!important;
+}
+.topbar .brandname{
+  color:#f3fbff!important;
+  background:linear-gradient(100deg,#fff 0%,#c7f6ff 48%,#9fc1ff 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 22px rgba(66,234,255,.2)!important;
+}
+.topbar .edition{
+  color:#8feeff!important;
+  border-color:rgba(91,218,255,.25)!important;
+  background:linear-gradient(90deg,rgba(24,117,164,.18),rgba(112,74,190,.14))!important;
+}
+.topbar .menu-trigger{
+  position:relative;
+  border-color:rgba(108,233,255,.62)!important;
+  box-shadow:0 0 0 3px rgba(53,204,255,.07),0 0 22px rgba(35,202,255,.2),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#menu.home-dashboard{
+  position:relative;
+  isolation:isolate;
+}
+#menu.home-dashboard>.sectionlabel{
+  color:#b8eaff!important;
+  text-shadow:0 0 14px rgba(53,197,255,.24);
+}
+#menu.home-dashboard>.modes>.mode{
+  isolation:isolate;
+  border-color:color-mix(in srgb,var(--glow) 48%,rgba(100,143,205,.35))!important;
+  background:
+    radial-gradient(ellipse at 0% 0%,color-mix(in srgb,var(--glow) 16%,transparent),transparent 68%),
+    linear-gradient(145deg,rgba(15,34,65,.98),rgba(5,15,34,.98) 76%)!important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.11),
+    inset 0 -1px rgba(0,0,0,.35),
+    0 8px 20px rgba(0,0,0,.2),
+    0 0 0 1px rgba(111,175,255,.035)!important;
+}
+#menu.home-dashboard>.modes>.mode:before{
+  opacity:.52!important;
+  background:linear-gradient(112deg,color-mix(in srgb,var(--glow) 32%,transparent),transparent 48%)!important;
+}
+#menu.home-dashboard>.modes>.mode .modeicon{
+  position:relative;
+  border:1px solid color-mix(in srgb,var(--glow) 58%,rgba(255,255,255,.18))!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--glow) 24%,#102443),rgba(6,16,35,.96))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.18),0 4px 12px rgba(0,0,0,.22),0 0 18px color-mix(in srgb,var(--glow) 18%,transparent)!important;
+}
+#menu.home-dashboard>.modes>.mode .modetitle{
+  color:#f4f8ff!important;
+  text-shadow:0 1px 10px rgba(132,196,255,.12);
+}
+#menu.home-dashboard>.modes>.mode .modesub{
+  color:#aebfdf!important;
+}
+#menu.home-dashboard>.modes>.mode .tag{
+  border:1px solid color-mix(in srgb,var(--glow) 32%,transparent);
+  background:color-mix(in srgb,var(--glow) 11%,rgba(5,14,31,.72))!important;
+  color:color-mix(in srgb,var(--glow) 48%,#eaf6ff)!important;
+}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"]{
+  border:1px solid rgba(103,239,255,.82)!important;
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(111,246,255,.28),transparent 54%),
+    linear-gradient(112deg,#075184 0%,#123c80 52%,#3a2375 100%)!important;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.36),
+    inset 0 -2px rgba(0,0,0,.22),
+    0 0 0 1px rgba(75,219,255,.2),
+    0 7px 0 rgba(3,15,39,.9),
+    0 12px 28px rgba(16,158,255,.18),
+    0 0 34px rgba(45,196,255,.18)!important;
+}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"] .modeicon{
+  border-color:rgba(160,249,255,.54)!important;
+  background:linear-gradient(145deg,rgba(148,250,255,.24),rgba(25,65,127,.5))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.28),0 0 18px rgba(75,231,255,.2)!important;
+}
+#menu.home-dashboard>#openHeroes,
+#menu.home-dashboard>#rpgPanel,
+#menu.home-dashboard>#bbVisitStreak,
+#menu.home-dashboard>.currency-panel,
+#menu.home-dashboard>#dailyQuestsPanel{
+  box-shadow:inset 0 1px rgba(255,255,255,.1),0 10px 24px rgba(0,0,0,.2)!important;
+}
+#menu.home-dashboard>#openHeroes{
+  border-color:rgba(255,190,112,.42)!important;
+  background:radial-gradient(ellipse at 0 0,rgba(255,185,92,.17),transparent 66%),linear-gradient(145deg,#382719,#171b2d 78%)!important;
+}
+#menu.home-dashboard>#openHeroes .modeicon{
+  border:1px solid rgba(255,190,112,.42);
+  background:linear-gradient(145deg,rgba(255,192,117,.24),rgba(39,26,28,.7));
+  box-shadow:inset 0 1px rgba(255,255,255,.2),0 0 16px rgba(255,174,83,.12);
+}
+#menu.home-dashboard>#rpgPanel .shop-main-button,
+#menu.home-dashboard>#rpgPanel .shopbutton{
+  border-color:rgba(78,205,255,.44)!important;
+  background:radial-gradient(ellipse at 0 0,rgba(65,204,255,.17),transparent 68%),linear-gradient(145deg,#0c2d50,#0a172d 82%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.13),0 8px 20px rgba(0,0,0,.2)!important;
+}
+#menu.home-dashboard>#bbVisitStreak{
+  border-color:rgba(183,129,255,.48)!important;
+  background:radial-gradient(ellipse at 0 0,rgba(181,112,255,.22),transparent 65%),linear-gradient(145deg,#281b4d,#111a34 82%)!important;
+}
+#menu.home-dashboard>.currency-panel{
+  border-color:rgba(91,166,255,.4)!important;
+  background:radial-gradient(ellipse at 0 0,rgba(66,149,255,.16),transparent 70%),linear-gradient(145deg,#10284a,#0a172e 82%)!important;
+}
+#menu.home-dashboard>.currency-panel .currency-card{
+  border:1px solid rgba(127,190,255,.24)!important;
+  border-radius:12px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08),0 5px 12px rgba(0,0,0,.16)!important;
+}
+#menu.home-dashboard>.bottomstats .stat{
+  border:1px solid rgba(113,174,255,.25)!important;
+  border-radius:13px!important;
+  background:linear-gradient(145deg,rgba(20,42,78,.96),rgba(7,18,38,.98))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.1),0 7px 16px rgba(0,0,0,.18)!important;
+}
+#menu.home-dashboard>.bottomstats .stat strong{
+  color:#eafaff!important;
+  text-shadow:0 0 16px rgba(65,205,255,.28)!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel{
+  border-color:rgba(66,221,255,.4)!important;
+  background:radial-gradient(ellipse at 0 0,rgba(44,193,255,.14),transparent 72%),linear-gradient(145deg,#0b203d,#09162c 85%)!important;
+}
+#menu.home-dashboard>#dailyQuestsPanel>div:first-child strong{
+  color:#8ff5ff!important;
+  text-shadow:0 0 16px rgba(66,234,255,.2);
+}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{
+  border:1px solid rgba(109,164,222,.26)!important;
+  border-radius:11px!important;
+  background:linear-gradient(145deg,rgba(21,46,78,.96),rgba(8,23,44,.98))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08)!important;
+}
+#menu.home-dashboard>.apk-download{
+  border-color:rgba(79,225,255,.48)!important;
+  background:radial-gradient(ellipse at 0 0,rgba(59,213,255,.18),transparent 70%),linear-gradient(110deg,#10395b,#101b39 72%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.14),0 9px 22px rgba(0,0,0,.2),0 0 20px rgba(52,199,255,.08)!important;
+}
+#menu.home-dashboard>.apk-download .apk-download-icon{
+  border:1px solid rgba(111,241,255,.32);
+  background:linear-gradient(145deg,rgba(82,234,255,.25),rgba(32,93,143,.2))!important;
+  box-shadow:0 0 16px rgba(58,219,255,.13);
+}
+#menu.home-dashboard :is(.mode,#openHeroes,.shopbutton,.apk-download){
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  #menu.home-dashboard>.modes>.mode:hover,
+  #menu.home-dashboard>#openHeroes:hover,
+  #menu.home-dashboard>#rpgPanel .shopbutton:hover,
+  #menu.home-dashboard>.apk-download:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.08);
+  }
+}
+@media(max-width:520px){
+  #menu.home-dashboard>.modes>.mode,
+  #menu.home-dashboard>#openHeroes,
+  #menu.home-dashboard>#rpgPanel .shopbutton{border-radius:14px!important}
+  #menu.home-dashboard>.bottomstats .stat{border-radius:11px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard :is(.mode,#openHeroes,.shopbutton,.apk-download){transition:none!important}
+}
