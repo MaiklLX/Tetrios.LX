@@ -98,7 +98,7 @@
    const dir=Math.sign(piece.targetX-piece.x);
    // A human-like controller occasionally hesitates or makes a small correction.
    if(piece.hesitation>0)piece.hesitation--;
-   else if(Math.random()>(piece.mistake?.12:.035)){
+   else if(Math.random()>(piece.mistake ? 0.12 : 0.035)){
     const nudge=piece.mistake&&Math.random()<.12?-dir:dir;
     if(fits(grid,piece,nudge,0))piece.x+=nudge;
     else if(fits(grid,piece,dir,0))piece.x+=dir;
