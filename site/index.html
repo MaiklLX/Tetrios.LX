@@ -5506,7 +5506,7 @@ location.reload();
 });
 const W=10,H=20,colors=['#5cf5e8','#9d7cff','#ffc86b','#ff6f9e','#6ca8ff','#b6f27c','#ff9868'];const shapes=[[[1,1,1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1],[1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];const names=['Призма','Пульсар','Гравитация','Фантом','Кубит','Хронос','Сингулярность'];
 const upgrades=[
-['✦','Ядро комбо','За каждую линию подряд +15% очков.','score',1],['◈','Квантовый щит','Один раз спасает от проигрыша.','shield',1],['⚡','Ускоритель мысли','Падение деталей быстрее, очки ×1.5.','mult',1],['⟲','Хроно-импульс','Замедляет падение на 20%.','slow',1],['✧','Резонанс','Каждая 4-я линия очищает случайную ячейку.','resonance',1],['⬡','Магнит линий','За двойную очистку +250 очков.','magnet',1],['☼','Солнечный заряд','Мягкое свечение деталей даёт бонус +10%.','glow',1],['◉','Эхо пустоты','Каждая пятая линия добавляет заряд уровня.','echo',1],['⌁','Нестабильный блок','Каждые 90 секунд +500 очков.','unstable',1],['✹','Звёздная пыль','За одиночную линию +100 очков.','dust',1],['⛨','Обшивка титана','Одна случайная клетка в поле становится бронёй.','armor',1],['↯','Двойной разряд','При тройной очистке +600 очков.','burst',1],['♢','Призма цвета','Новые детали переливаются разными оттенками.','prism',1],['⌬','Кристалл памяти','Порог следующего уровня растёт медленнее.','memory',1],['◌','Грави-якорь','Удержание детали доступно дважды.','hold',2],['✺','Реактор','Каждые 10 линий +1 уровень бонусом.','reactor',1],['☄','Кометный след','За быстрый уровень +300 очков.','comet',1],['⟁','Разлом','При входе на уровень случайная строка почти очищается.','rift',1],['⊹','Стабилизатор','Поворот деталей становится точнее.','stable',1],['❖','Артефакт удачи','Редкие детали приносят +20% очков.','luck',1],['◍','Тихая сингулярность','Раз в уровень поле слегка сжимает пустые промежутки.','void',1],['⚙','Механизм повторения','Каждый 5-й ход даёт +25 очков.','gear',1],['✴','Фотонный клинок','Очистка 2+ линий добавляет эффект вспышки.','flash',1],['⌘','Нейронный импульс','Первые 30 секунд уровня очки ×1.25.','neuron',1],['⟡','Код бесконечности','За каждую 10-ю линию +1 реликвия.','infinity',1],['⦿','Лунный прилив','Каждые 45 секунд +1 заряд уровня.','tide',1],['♜','Крепость данных','Уменьшает скорость роста сложности.','fortress',1],['✣','Сдвиг измерений','Поворот иногда даёт очки без очистки.','shift',1],['☷','Энергетический запас','После паузы падение медленнее 5 секунд.','reserve',1],['✵','Сверхновая','При проигрыше один раз очищает нижнюю линию.','nova',1],['♧','Живой кристалл','Усиления дают визуальную ауру детали.','aura',1],['⌖','Охотник за линиями','Линия в первые 2 секунды после падения +50%.','hunter',1],['◐','Зеркальная матрица','Каждые 7 линий зеркалит следующий блок.','mirror',1],['⚛','Квантовая петля','Порог уровня −1 линия (минимум 3).','loop',1],['❂','Плазменная волна','Сбрасывает задержку падения при очистке.','plasma',1]];
+['✦','Ядро комбо','За каждую линию подряд +15% очков.','score',1],['◈','Квантовый щит','Один раз спасает от проигрыша.','shield',1],['⚡','Ускоритель мысли','Падение деталей быстрее, очки ×1.5.','mult',1],['⟲','Хроно-импульс','Замедляет падение на 20%.','slow',1],['✧','Резонанс','Каждая 4-я очищенная линия добавляет заряд уровня.','resonance',1],['⬡','Магнит линий','За двойную очистку +250 очков.','magnet',1],['☼','Солнечный заряд','Мягкое свечение деталей даёт бонус +10%.','glow',1],['◉','Эхо пустоты','Каждая пятая линия добавляет заряд уровня.','echo',1],['⌁','Нестабильный блок','Каждые 90 секунд +500 очков.','unstable',1],['✹','Звёздная пыль','За одиночную линию +100 очков.','dust',1],['⛨','Обшивка титана','Усиливает щит и добавляет заряд спасения.','armor',1],['↯','Двойной разряд','При тройной очистке +600 очков.','burst',1],['♢','Призма цвета','Новые детали переливаются разными оттенками.','prism',1],['⌬','Кристалл памяти','Порог следующего уровня растёт медленнее.','memory',1],['◌','Грави-якорь','Удержание детали доступно дважды.','hold',2],['✺','Реактор','Каждые 10 линий +1 уровень бонусом.','reactor',1],['☄','Кометный след','За быстрый уровень +300 очков.','comet',1],['⟁','Разлом','При входе на уровень случайная строка почти очищается.','rift',1],['⊹','Стабилизатор','Поворот деталей становится точнее.','stable',1],['❖','Артефакт удачи','Редкие детали приносят +20% очков.','luck',1],['◍','Тихая сингулярность','Раз в уровень поле слегка сжимает пустые промежутки.','void',1],['⚙','Механизм повторения','Каждый 5-й ход даёт +25 очков.','gear',1],['✴','Фотонный клинок','Очистка 2+ линий добавляет эффект вспышки.','flash',1],['⌘','Нейронный импульс','Первые 30 секунд уровня очки ×1.25.','neuron',1],['⟡','Код бесконечности','За каждую 10-ю линию +1 реликвия.','infinity',1],['⦿','Лунный прилив','Каждые 45 секунд +1 заряд уровня.','tide',1],['♜','Крепость данных','Уменьшает скорость роста сложности.','fortress',1],['✣','Сдвиг измерений','Поворот иногда даёт очки без очистки.','shift',1],['☷','Энергетический запас','После паузы падение медленнее 5 секунд.','reserve',1],['✵','Сверхновая','При проигрыше один раз очищает нижнюю линию.','nova',1],['♧','Живой кристалл','Усиления дают визуальную ауру детали.','aura',1],['⌖','Охотник за линиями','Линия в первые 2 секунды после падения +50%.','hunter',1],['◐','Зеркальная матрица','Каждые 7 линий зеркалит следующий блок.','mirror',1],['⚛','Квантовая петля','Порог уровня −1 линия (минимум 3).','loop',1],['❂','Плазменная волна','Сбрасывает задержку падения при очистке.','plasma',1]];
 let bbRogueCardRanks={};
 function bbGetRogueCardRank(id){return mode==='rogue'?Math.max(0,Number(bbRogueCardRanks[id])||0):0;}
 function bbGetUpgradeRank(id){return mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):1;}
@@ -5535,7 +5535,7 @@ function bbRogueHasSynergy(){
     {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'атаки монстров приходят реже'}
   ].filter(combo=>combo.ids.every(id=>(Number(r[id])||0)>0));
 }
-let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};let bbRogueShieldCharges=0,bbRogueSkillReadyAt=0,bbCampaignGuardianUsed=false;
+let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};let bbRogueShieldCharges=0,bbRogueReserveCharges=0,bbRogueSkillReadyAt=0,bbCampaignGuardianUsed=false;
 function bbRogueStartRoom(){
   const e=bbRogueEncounter,floor=Math.floor((e.room-1)/5)+1,boss=e.room%5===0;
   const hp=boss?18+floor*7+e.room*2:5+floor*2+Math.floor(e.room/2);
@@ -5549,6 +5549,7 @@ function bbRogueRenderEncounter(){
     '<div style="font-size:20px">'+(e.boss?'👹':'👾')+'</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:5px;font-size:10px;font-weight:900"><span>'+(e.boss?'БОСС':'КОМНАТА '+e.room)+' · ЭТАЖ '+e.floor+'</span><span>HP '+e.hp+'/'+e.maxHp+'</span></div>'+
     '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="font-size:9px;color:#b9c1d9">АТАКА ЧЕРЕЗ '+e.nextAttack+'с</div></div>'+(heroLevel>=5?'<button type="button" id="bbHeroActiveSkill" '+(skillReady?'':'disabled')+' style="border:1px solid #5cf5e8;border-radius:9px;background:'+(skillReady?'#123c49':'#20283a')+';color:'+(skillReady?'#8efff1':'#78859d')+';padding:7px 8px;font-size:9px;font-weight:900;max-width:104px">'+(skillReady?'⚡ '+({plush:'МЕДВЕЖИЙ ЩИТ',prism:'КРИСТАЛЛЬНЫЙ УДАР',blip:'ГЛИТЧ ВРЕМЕНИ',pixel:'ПЕРЕЗАГРУЗКА',spark:'ЭЛЕКТРОРАЗРЯД'}[bbSelectedHero]||'СПОСОБНОСТЬ'):'⏳ ЗАРЯДКА')+'</button>':'<span style="font-size:9px;color:#9ca8c4">Навык: ур. 5</span>')+'</div>';
 }
+function bbRogueClearBottomRows(count){for(let n=0;n<count;n++){board.pop();board.unshift(Array(W).fill(0));}}
 function bbUseHeroActiveSkill(){
   if(mode!=='rogue'||!started||paused||gameOver)return;
   const lvl=bbGetHeroProgress(bbSelectedHero).level;if(lvl<5||Date.now()<bbRogueSkillReadyAt)return;
@@ -5556,7 +5557,7 @@ function bbUseHeroActiveSkill(){
   if(bbSelectedHero==='plush'){for(let y=0;y<Math.min(H,2+tier);y++)board[y].fill(0);toast('🐻 МЕДВЕЖИЙ ЩИТ! Верхние ряды очищены.')}
   else if(bbSelectedHero==='prism'){const damage=8+tier*5;bbRogueDamageEnemy(damage);toast('💎 КРИСТАЛЛЬНЫЙ УДАР! '+damage+' урона монстру.')}
   else if(bbSelectedHero==='blip'){e.nextAttack+=12+tier*4;toast('👾 ГЛИТЧ ВРЕМЕНИ! Атака монстра отложена.')}
-  else if(bbSelectedHero==='pixel'){for(let y=H-1;y>=Math.max(0,H-tier);y--)board[y].fill(0);levelLines+=tier;toast('🤖 ПЕРЕЗАГРУЗКА! Поле очищено, заряд уровня восстановлен.')}
+  else if(bbSelectedHero==='pixel'){bbRogueClearBottomRows(tier);levelLines+=tier;toast('🤖 ПЕРЕЗАГРУЗКА! Поле очищено, заряд уровня восстановлен.')}
   else{const damage=12+tier*5;bbRogueDamageEnemy(damage);flash();toast('⚡ ЭЛЕКТРОРАЗРЯД! '+damage+' урона монстру.')}
   bbRogueSkillReadyAt=Date.now()+45000;updateProgress();updateHud();render();bbRenderGoals();
 }
@@ -5566,7 +5567,7 @@ function bbRogueDamageEnemy(amount){
   const e=bbRogueEncounter;e.hp=Math.max(0,e.hp-Math.max(0,amount));
   if(e.hp===0){
     e.defeated++;e.room++;
-    if(e.room%5===1&&e.room>1)toast('🏰 ЭТАЖ '+Math.floor((e.room-1)/5+1)+'! Враги стали сильнее.');if(boosts.includes('rift')){const clears=Math.min(3,bbGetUpgradeRank('rift'));for(let y=H-1;y>=H-clears;y--)board[y].fill(0);toast('🌀 РАЗЛОМ: очищены нижние '+clears+' ряда(ов)!')}
+    if(e.room%5===1&&e.room>1)toast('🏰 ЭТАЖ '+Math.floor((e.room-1)/5+1)+'! Враги стали сильнее.');if(boosts.includes('rift')){const clears=Math.min(3,bbGetUpgradeRank('rift'));bbRogueClearBottomRows(clears);toast('🌀 РАЗЛОМ: очищены нижние '+clears+' ряда(ов)!')}
     else toast(e.boss?'👑 БОСС ПОВЕРЖЕН! Следующая комната открыта.':'⚔️ Монстр повержен! Следующая комната открыта.');
     dropMs=Math.max(170,dropMs-(e.boss?24:8));restartDrop();bbRogueStartRoom();
   }else bbRogueRenderEncounter();
@@ -5574,6 +5575,7 @@ function bbRogueDamageEnemy(amount){
 function bbRogueEnemyAttack(){
   if(mode!=='rogue'||!started||paused||gameOver)return;
   const e=bbRogueEncounter,chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
+  if(boosts.includes('reserve')&&bbRogueReserveCharges>0){bbRogueReserveCharges--;e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2);toast('🛡️ РЕЗЕРВ ПОГЛОТИЛ АТАКУ! Осталось зарядов: '+bbRogueReserveCharges);bbRogueRenderEncounter();return;}
   for(let n=0;n<(e.boss?2:1);n++){
     if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
     board.shift();const hole=Math.floor(Math.random()*W),garbage=Array(W).fill(7);garbage[hole]=0;board.push(garbage);
@@ -7330,7 +7332,7 @@ if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'){
   bbDailyMechanicState.gravityClears+=cleared;
   restartDrop();
 }
-bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);if(mode==='rogue')bbRogueDamageEnemy(cleared*(1+Math.floor(bbGetRogueCardRank('score')/3)));lines+=cleared;if(boosts.includes('resonance')&&lines%4<cleared){levelLines+=bbGetUpgradeRank('resonance');toast('✧ РЕЗОНАНС: дополнительный заряд уровня!')}bbDailyAddLines(cleared);levelLines+=cleared;
+bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);if(mode==='rogue')bbRogueDamageEnemy(cleared*(1+Math.floor(bbGetRogueCardRank('score')/3))+(cleared>=3?bbGetRogueCardRank('burst')*2:0)+(cleared>=2?bbGetRogueCardRank('hunter'):0));lines+=cleared;if(boosts.includes('resonance')&&lines%4<cleared){levelLines+=bbGetUpgradeRank('resonance');toast('✧ РЕЗОНАНС: дополнительный заряд уровня!')}bbDailyAddLines(cleared);levelLines+=cleared;
 combo++;
 
 if(bbIsDailyMechanic('echoCombo')){
@@ -7359,7 +7361,7 @@ let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mul
     bbDailyMechanicState.echoCombo=0;
     bbDailyMechanicState.echoMultiplier=1;
   }
-}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(mode==='campaign'&&bbHasCampaignPerk('guardian')&&!bbCampaignGuardianUsed){bbCampaignGuardianUsed=true;for(let y=0;y<Math.min(H,3+bbGetCampaignPerkLevel('guardian'));y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('🛡️ ТРЕНИРОВКА СТРАЖА! Герой удержал поле.');}else if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){const shieldLeft=mode==='rogue'?Math.max(1,bbRogueShieldCharges):1;if(mode==='rogue'&&shieldLeft>1)bbRogueShieldCharges=shieldLeft-1;else{boosts=boosts.filter(x=>x!=='shield');bbRogueShieldCharges=0;}const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');const rows=mode==='rogue'?Math.max(1,bbGetRogueCardRank('nova')):1;for(let y=H-1;y>=Math.max(0,H-rows);y--)board[y].fill(0);toast('Сверхновая очистила '+rows+' нижн. линий!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(mode==='campaign'&&bbHasCampaignPerk('guardian')&&!bbCampaignGuardianUsed){bbCampaignGuardianUsed=true;for(let y=0;y<Math.min(H,3+bbGetCampaignPerkLevel('guardian'));y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('🛡️ ТРЕНИРОВКА СТРАЖА! Герой удержал поле.');}else if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){const shieldLeft=mode==='rogue'?Math.max(1,bbRogueShieldCharges):1;if(mode==='rogue'&&shieldLeft>1)bbRogueShieldCharges=shieldLeft-1;else{boosts=boosts.filter(x=>x!=='shield');bbRogueShieldCharges=0;}const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');const rows=mode==='rogue'?Math.max(1,bbGetRogueCardRank('nova')):1;bbRogueClearBottomRows(rows);toast('Сверхновая очистила '+rows+' нижн. линий!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
 if(
   mode==='daily' &&
   bbGetActiveDailyRule().mod==='artifactHunt'
@@ -7438,7 +7440,8 @@ function showUpgrade(){
       if(synergies.length)toast('СИНЕРГИЯ АКТИВНА: '+synergies[synergies.length-1].name);
     }else{boosts.push(id);}
     if(id==='hold')holdUsed=0;
-    if(rogue&&(id==='shield'||id==='armor'))bbRogueShieldCharges=bbGetRogueCardRank('shield')+bbGetRogueCardRank('armor');
+    if(rogue&&id==='reserve')bbRogueReserveCharges=bbGetRogueCardRank('reserve');
+    if(rogue&&(id==='shield'||id==='armor')){if(!boosts.includes('shield'))boosts.push('shield');bbRogueShieldCharges=bbGetRogueCardRank('shield')+bbGetRogueCardRank('armor');}
     if(id==='loop')needLines=Math.max(3,needLines-1);
     if(id==='slow')dropMs=Math.max(150,dropMs-30);
     closeOverlay();paused=false;updateHud();render();tone(880,.2,'sine',.04);restartDrop();
