@@ -598,3 +598,13 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Corrected `site/index.html`: the canvas CSS now targets `body > canvas.bb-galaxy-model-canvas` and enforces the fixed overlay layer. No fallback artwork or model geometry was removed.
 - New fix commits: `9787ca308f9d34c75d53ea366c46ca676cbf600c` (JS), `528ae6cc70eb06e8b703b67d8e4a030f0ebc6a72` (HTML).
 - Deployment and real-device rendering must be checked before declaring restored; preserve the immediate procedural 3D path, background GLB upgrade, 2D fallback suppression only while 3D is active, route, progression, purchases and saves.
+
+
+## Checkpoint 276 addendum — visible map selection and slot refresh — 2026-11-01
+- Audited the shared renderer and found that `scan()` selected the first matching galaxy/planet viewport without checking whether it was currently visible. It also restarted only when the viewport element changed, not when the campaign reused the same viewport element but replaced its model slots.
+- Updated `site/universes-3d.js` to select a visible viewport that actually contains model slots, reject hidden/zero-size candidates, and detect slot replacement even when the viewport DOM node is reused. This prevents the renderer from remaining attached to stale or hidden map content after switching between universe and planet maps.
+- Kept the existing 12-model manifest, immediate procedural 3D fallback, asynchronous GLB upgrade, and body-level fixed transparent canvas. No route data, map coordinates, progression, purchases, inventory, equipment, save keys or stored data were changed.
+- Updated the module cache token in `site/index.html` to `20261101-instant-stable-3d-4`.
+- Source commits: `303ac5773bf8948a8cd42d6521024a640e629118` (viewport selection/slot refresh); `f69ab9f354e887463aefedc3714c79158e0634d8` (cache refresh).
+- Remaining verification: run the repository 3D runtime validator and confirm Pages deployment, then test both maps on-device. Specifically verify immediate procedural 3D display before GLB completion, removal of the 2D fallback only while its 3D model is active, correct model-to-slot alignment during horizontal and vertical scrolling, and top-of-page refresh behavior. Device-side WebGL rendering is not claimed verified by source inspection alone.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 277. ПРОВЕРИТЬ DEPLOY И НА УСТРОЙСТВЕ ОБЕ КАРТЫ: ВСЕ 3D-МОДЕЛИ ПЛАНЕТ И ВСЕЛЕННЫХ, МГНОВЕННОЕ ПОЯВЛЕНИЕ, ОТСУТСТВИЕ ДУБЛЕЙ 2D, ФИКСАЦИЯ ПРИ ПРОКРУТКЕ И СТАРТ СВЕРХУ ПОСЛЕ ОБНОВЛЕНИЯ. МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
