@@ -308,3 +308,20 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
 - Next menu passes should be incremental: assess the user-facing mobile hierarchy and readability, then improve secondary-panel details without changing the established layout or emblem.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
+
+
+## Main menu supporting-panel refinement — 2026-11-01
+- User resumed from the main-menu checkpoint with the exact phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**.
+- Continued the incremental menu pass without changing the established dashboard geometry or the dimensional Tetrios emblem.
+- CSS-only refinement in `site/visual-overhaul.css`, commit `338851a35f8262944cc094a5ef2ec31cfc468306`:
+  - Visit-streak panel: clearer purple/gold hierarchy, improved count/message contrast, and a more tactile recovery action.
+  - Resources: more legible currency labels and values, distinct coin/gem accents, and refined card depth.
+  - Daily quests: consistent dark surfaces, readable progress/reward labels, and a clearer cyan-violet progress fill.
+  - Bottom statistics: stronger numeric hierarchy and subtle top-edge highlights.
+- Stylesheet cache-bust updated in `site/index.html`, commit `0ca191482c6590644bfb3591d9504304afb380ea`, query token `20261101-main-menu-polish-2`.
+- Current main SHA: `0ca191482c6590644bfb3591d9504304afb380ea`.
+- No HTML structure, dashboard grid/order/dimensions, emblem, IDs, JavaScript handlers, navigation, game logic, save data, mechanics, or gameplay arena were changed.
+- Preserve `backup/main-before-aaa-release-2026-10-31` unchanged at `1a6548446c938d77d737accb202ee368a116943c`.
+- Verify the website deployment and Android WebView/debug APK workflows for this exact SHA before claiming it is live or sharing an APK. Physical Android review is still pending; do not claim device testing.
+- Next: inspect the refreshed menu on the user's phone and tune only concrete secondary-panel readability/spacing feedback. Keep the emblem and dashboard geometry locked unless the user explicitly requests a change.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
