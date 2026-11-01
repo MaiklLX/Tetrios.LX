@@ -523,3 +523,19 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Pages deployment for `98271c7` is not yet confirmed. Test the published Block Run on mobile: defeat a regular monster, defeat a boss, and trigger a level-up separately; verify that the falling speed ramps smoothly and remains responsive. Confirm that pause/resume does not cause an immediate extra drop.
 - Next: verify the Pages deployment for `98271c7`, then perform the three gameplay checks above and adjust only the easing duration if the transition feels too slow or too fast.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 273. ПРОВЕРИТЬ DEPLOY ДЛЯ 98271c7 И ПРОТЕСТИРОВАТЬ ПЛАВНОЕ УСКОРЕНИЕ BLOCK RUN ПОСЛЕ МОНСТРА, БОССА И ПОВЫШЕНИЯ УРОВНЯ. ОБА ИСТОЧНИКА УСКОРЕНИЯ СОХРАНЕНЫ; МЕХАНИКУ, МАРШРУТ, ПРОГРЕСС, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+## Checkpoint 274 — Full pre-game hero dossier and reversible selection — 2026-11-01
+- User reported that on iOS the pre-level hero picker in multiple game modes does not clearly show which hero is selected, and requested a full hero card similar to the Heroes page plus a reliable way to return to the hero list before starting.
+- Reworked only `bbChooseHeroBeforeStart()` in `site/index.html`.
+- Pre-game flow is now two-step:
+  1. A roster screen clearly marks the currently chosen hero, shows the hero emblem, role and level, and opens each hero's full dossier.
+  2. The dossier shows the existing 3D hero stage, equipped cosmetic marker when present, hero description, durability/mastery ratings, unique ability, level and XP.
+- The dossier has two explicit back controls ("Назад к выбору героев") returning to the roster. Choosing a hero in the dossier updates only the temporary pre-run selection and returns to the roster; the user can inspect another hero or cancel without committing the change.
+- The selected hero is persisted to `bbSelectedHero` and applied only after the final "Начать игру" confirmation. Existing daily replay payment handling remains at final confirmation, and cancel still returns to the correct campaign/daily/menu context without charging for an unconfirmed replay.
+- All modes continue to use the existing `startGame() -> bbChooseHeroBeforeStart()` entry point. No hero stats, abilities, progression, cosmetics, gameplay mechanics, campaign route geometry, purchases, inventory, equipped items or save keys were changed.
+- Source commit: `0af280f0b16cfc821c2f0a55812e683fe6bced79`.
+- Verification against the committed source: roster and dossier render functions are present; both back controls route to the roster; dossier selection updates the temporary `chosenHero` and returns to roster; persistent hero selection occurs only in the final start handler; campaign/daily cancellation branches remain present; all modes still enter through the same pre-game selector.
+- iOS visual interaction and GitHub Pages deployment are not yet confirmed. Test in the published site on iPhone: open pre-level selection in campaign, daily and Block Run; open each hero dossier; return to roster; choose a different hero; verify the selected badge and final in-game hero; cancel and verify the correct previous screen is restored.
+- Next: confirm Pages deployment and test the complete roster → dossier → back → confirm flow on iOS, including long dossier scrolling and the 3D stage.
+- Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 274. ПРОВЕРИТЬ DEPLOY И ПРОТЕСТИРОВАТЬ НОВЫЙ ДВУХШАГОВЫЙ ВЫБОР ГЕРОЯ НА iOS: СПИСОК → ПОЛНОЕ ДОСЬЕ → НАЗАД К СПИСКУ → ПОДТВЕРЖДЕНИЕ. ПРОВЕРИТЬ CAMPAIGN, DAILY И BLOCK RUN. ПРОГРЕСС, ХАРАКТЕРИСТИКИ, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
