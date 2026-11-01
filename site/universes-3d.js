@@ -289,12 +289,25 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
   }
 
   function scan(){
-    const viewport=document.querySelector('#campaign .bb-galaxy-viewport, #campaign .bb-planet-viewport');
+    // The campaign reuses #mapgrid when moving between galaxy and planet maps.
+    // Select the currently visible viewport and detect replaced model slots even
+    // when the viewport element itself was kept in the DOM.
+    const candidates=[...document.querySelectorAll('#campaign .bb-galaxy-viewport, #campaign .bb-planet-viewport')];
+    const viewport=candidates.find(candidate=>{
+      if(!candidate.isConnected||!candidate.querySelector('[data-universe-model]'))return false;
+      if(candidate.closest('[hidden]'))return false;
+      const style=getComputedStyle(candidate);
+      const rect=candidate.getBoundingClientRect();
+      return style.display!=='none'&&style.visibility!=='hidden'&&rect.width>0&&rect.height>0&&candidate.getClientRects().length>0;
+    });
     if(!viewport){if(active)stopCurrent();return}
-    if(active?.viewport!==viewport){
+    const slots=[...viewport.querySelectorAll('[data-universe-model]')];
+    const sameSlots=active?.viewport===viewport&&active.slots.length===slots.length&&active.slots.every((slot,index)=>slot===slots[index]&&slot.isConnected);
+    if(!sameSlots){
       requestAnimationFrame(()=>{
-        if(!viewport.isConnected)return;
-        if(viewport.getBoundingClientRect().width>0)startAtlas(viewport);
+        if(!viewport.isConnected||viewport.closest('[hidden]'))return;
+        const rect=viewport.getBoundingClientRect();
+        if(rect.width>0&&rect.height>0)startAtlas(viewport);
       });
     }
   }
