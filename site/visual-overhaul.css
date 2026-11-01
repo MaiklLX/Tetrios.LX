@@ -2003,3 +2003,24 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){
   #menu.home-dashboard .mode,#menu.home-dashboard .main-shop-button{transition:none!important}
 }
+
+/* Main menu tactile feedback — restrained press response for touch and pointer input. */
+#menu.home-dashboard>.modes>.mode,
+#menu.home-dashboard>#openHeroes,
+#menu.home-dashboard>#rpgPanel .shopbutton{
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease,filter .16s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#menu.home-dashboard>.modes>.mode:active,
+#menu.home-dashboard>#openHeroes:active,
+#menu.home-dashboard>#rpgPanel .shopbutton:active{
+  transform:translateY(1px) scale(.985)!important;
+  border-color:rgba(142,255,244,.62)!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.09),0 0 18px rgba(102,255,240,.12)!important;
+  filter:brightness(1.08);
+}
+#menu.home-dashboard>.modes>.mode:active .modeicon,
+#menu.home-dashboard>#openHeroes:active .modeicon,
+#menu.home-dashboard>#rpgPanel .shopbutton:active .shop-main-icon{
+  transform:scale(.94);
+}
