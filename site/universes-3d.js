@@ -57,6 +57,17 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     return {scene,camera,pivot,index};
   }
 
+  function disposeScene(scene){
+    scene?.traverse(object=>{
+      object.geometry?.dispose?.();
+      const materials=Array.isArray(object.material)?object.material:[object.material];
+      materials.filter(Boolean).forEach(material=>{
+        Object.values(material).forEach(value=>{if(value?.isTexture)value.dispose()});
+        material.dispose?.();
+      });
+    });
+  }
+
   function stopCurrent(){
     if(!active)return;
     cancelAnimationFrame(raf);raf=0;
@@ -64,7 +75,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     active.resizeObserver?.disconnect();
     if(active.resizeHandler)window.removeEventListener('resize',active.resizeHandler);
     if(active.scrollHandler)active.viewport.removeEventListener('scroll',active.scrollHandler);
+    active.entries.forEach(entry=>disposeScene(entry.scene));
+    active.entries.clear();
+    modelCache.clear();
     active.renderer?.dispose();
+    active.renderer?.forceContextLoss?.();
     active.canvas?.remove();
     active=null;
   }
@@ -101,8 +116,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       if(entries.has(slot))return;
       const id=slot.dataset.universeModel;
       const index=manifest.universeOrder.indexOf(id);
+      visibleSlots.add(slot);
       loadModel(id).then(source=>{
-        if(active!==state||!slot.isConnected)return;
+        if(active!==state||!slot.isConnected||!visibleSlots.has(slot))return;
         const clone=source.clone(true);
         const entry=buildScene(clone,Math.max(0,index));
         entries.set(slot,entry);
@@ -116,7 +132,14 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
     if('IntersectionObserver' in window){
       state.observer=new IntersectionObserver(items=>{
-        items.forEach(item=>{if(item.isIntersecting)activate(item.target)});
+        items.forEach(item=>{
+          if(item.isIntersecting)activate(item.target);
+          else{
+            const slot=item.target,id=slot.dataset.universeModel,entry=entries.get(slot);
+            visibleSlots.delete(slot);
+            if(entry){disposeScene(entry.scene);entries.delete(slot);modelCache.delete(id)}
+          }
+        });
       },{root:viewport,rootMargin:'0px 280px 0px 280px',threshold:0});
       slots.forEach(slot=>state.observer.observe(slot));
     }else slots.slice(0,3).forEach(activate);
