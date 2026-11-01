@@ -1923,3 +1923,77 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){
   #menu.home-dashboard>#bbVisitStreak #bbStreakRepairArea button{transition:none!important}
 }
+
+
+/* TETRIOS.LX — main menu controls: larger touch targets, icon-first navigation. */
+#menu.home-dashboard .modes{gap:12px!important}
+#menu.home-dashboard .mode{
+  min-height:104px;
+  padding:15px 16px!important;
+  gap:14px!important;
+  border-radius:20px!important;
+  border-width:1px!important;
+}
+#menu.home-dashboard .modeicon{
+  width:62px;height:62px;min-width:62px;
+  display:grid;place-items:center;
+  border:1px solid color-mix(in srgb,var(--glow) 42%,transparent);
+  border-radius:18px;
+  background:linear-gradient(145deg,var(--iconbg),rgba(255,255,255,.035));
+  font-size:34px!important;line-height:1;
+  filter:drop-shadow(0 5px 12px color-mix(in srgb,var(--glow) 24%,transparent));
+}
+#menu.home-dashboard .modetext{gap:0!important;min-width:0}
+#menu.home-dashboard .modetitle{
+  font-size:16px!important;line-height:1.2!important;
+  font-weight:950!important;letter-spacing:.015em!important;
+}
+#menu.home-dashboard .modesub,
+#menu.home-dashboard .mode .tag{display:none!important}
+#menu.home-dashboard .modearrow{
+  font-size:30px!important;line-height:1!important;
+  opacity:.8;flex:0 0 auto;
+}
+#menu.home-dashboard>#openHeroes{
+  min-height:94px;
+}
+#menu.home-dashboard>#openHeroes .modeicon{
+  width:58px;height:58px;min-width:58px;
+}
+#menu.home-dashboard .main-shop-button{
+  min-height:94px!important;
+  padding:15px 17px!important;
+  gap:14px!important;
+  border-radius:20px!important;
+}
+#menu.home-dashboard .main-shop-button .shop-main-icon{
+  width:60px;height:60px;min-width:60px;
+  display:grid;place-items:center;
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(255,190,91,.2),rgba(255,255,255,.04));
+  border:1px solid rgba(255,194,107,.32);
+  font-size:32px!important;
+}
+#menu.home-dashboard .main-shop-button .shop-main-text strong{
+  font-size:16px!important;letter-spacing:.04em;
+}
+#menu.home-dashboard .main-shop-button .shop-main-text small{display:none!important}
+#menu.home-dashboard .main-shop-button .shop-main-arrow{
+  font-size:30px!important;opacity:.8;
+}
+@media(max-width:520px){
+  #menu.home-dashboard .mode{
+    min-height:96px;padding:13px!important;gap:12px!important;
+  }
+  #menu.home-dashboard .modeicon{
+    width:56px;height:56px;min-width:56px;
+    border-radius:16px;font-size:31px!important;
+  }
+  #menu.home-dashboard .modetitle{font-size:15px!important}
+  #menu.home-dashboard>#openHeroes{min-height:90px}
+  #menu.home-dashboard .main-shop-button{min-height:90px!important;padding:13px!important}
+  #menu.home-dashboard .main-shop-button .shop-main-icon{width:54px;height:54px;min-width:54px;font-size:29px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard .mode,#menu.home-dashboard .main-shop-button{transition:none!important}
+}
