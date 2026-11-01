@@ -2117,3 +2117,21 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   }
 }
 
+
+
+/* TETRIOS.LX — daily quest progress feedback, pass 4.
+   Animate only the progress fill when quest rows refresh; no layout or game logic changes. */
+#menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3) > div{
+  transform-origin:left center;
+  animation:bbQuestProgressEnter 420ms cubic-bezier(.2,.72,.25,1) both;
+  filter:drop-shadow(0 0 5px rgba(72,218,255,.24));
+}
+@keyframes bbQuestProgressEnter{
+  from{transform:scaleX(.12);opacity:.62;filter:brightness(.82)}
+  to{transform:scaleX(1);opacity:1;filter:brightness(1.12)}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3) > div{
+    animation:none!important;
+  }
+}
