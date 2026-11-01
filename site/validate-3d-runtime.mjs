@@ -137,7 +137,14 @@ if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is 
 
 const importMapPosition = index.indexOf('<script type="importmap">');
 for (const modulePath of ['./visual-3d.js', './arena-3d.js']) {
+  const escapedPath = modulePath.replace(/[.*+?^${}()|[\]\\]/g, '\\for (const modulePath of ['./visual-3d.js', './arena-3d.js']) {
   const modulePosition = index.indexOf(`src="${modulePath}"`);
+  if (importMapPosition < 0 || modulePosition < 0 || importMapPosition > modulePosition) {
+    fail(`import map must be declared before ${modulePath}`);
+  }
+}');
+  const moduleMatch = new RegExp('src="' + escapedPath + '(?:\\?[^"]*)?"').exec(index);
+  const modulePosition = moduleMatch ? moduleMatch.index : -1;
   if (importMapPosition < 0 || modulePosition < 0 || importMapPosition > modulePosition) {
     fail(`import map must be declared before ${modulePath}`);
   }
