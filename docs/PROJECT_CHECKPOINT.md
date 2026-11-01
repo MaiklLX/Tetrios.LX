@@ -416,3 +416,21 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Physical Android review remains pending.
 - Next: verify the Pages deployment for `755562dafd311feae2c8970bf425c8283f1cff8c`; then inspect Campaign, Shop and Heroes on a phone and refine only concrete issues.
 - Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ 755562d. ЗАТЕМ ПРОВЕРИТЬ РАЗЛИЧИМОСТЬ БИОМОВ, КАТЕГОРИЙ МАГАЗИНА И КАРТОЧЕК ГЕРОЕВ. МЕХАНИКУ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+## Submenu clarity pass 4 — 2026-11-01
+- Confirmed the previous Pages deployment: workflow run `41301074238`, source SHA `755562dafd311feae2c8970bf425c8283f1cff8c`, final conclusion `success`. The deployment log explicitly reports `Reported success!` and resolves the live Pages URL to `https://maikllx.github.io/Tetrios.LX/`.
+- Added a focused CSS-only clarity and mobile-usability pass in `site/visual-overhaul.css`, commit `96656ff19057fa3aaf56c4d3ecddd03dc84981e8`:
+  - Campaign: stronger hierarchy for the current-biome panel, more readable biome progress bars and labels, clearer node labels, and improved tap/focus affordances.
+  - Shop: more consistent product-card layout, larger item icon blocks, readable descriptions, and full-width purchase controls with 42px minimum height. No prices, item IDs, inventory, or purchase handlers changed.
+  - Heroes: more consistent roster-card heights, clearer selected/preview labels, improved 3D-stage framing, and more readable stat panels.
+  - Added visible keyboard focus treatment and kept reduced-motion support.
+  - Tuned compact-screen sizing down to 360px widths.
+- Updated stylesheet cache token in `site/index.html` to `20261101-submenus-clarity-4`, commit `ef894c7355e629331d615500d3cc46351a535232`.
+- CSS brace validation passed: 1164 opening / 1164 closing braces.
+- Current source commit before this checkpoint: `ef894c7355e629331d615500d3cc46351a535232`.
+- No JavaScript, HTML structure, game mechanics, prices, inventory, purchases, campaign progression, hero selection, localStorage keys, or save data were changed.
+- Deployment for the clarity pass has not yet been confirmed. The successful deployment above is for the previous pass only.
+- Physical Android verification remains pending.
+- Next: confirm the Pages workflow for `ef894c7355e629331d615500d3cc46351a535232`, then review the published screens on a phone and address only observed issues.
+- Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ ef894c7. ЗАТЕМ ПРОВЕРИТЬ ЧИТАЕМОСТЬ И УДОБСТВО НА ТЕЛЕФОНЕ: КАРТА КАМПАНИИ, МАГАЗИН, ГЕРОИ. МЕХАНИКУ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
