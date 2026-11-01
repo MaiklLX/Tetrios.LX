@@ -5510,6 +5510,23 @@ const upgrades=[
 let bbRogueCardRanks={};
 function bbGetRogueCardRank(id){return mode==='rogue'?Math.max(0,Number(bbRogueCardRanks[id])||0):0;}
 function bbGetUpgradeRank(id){return mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):1;}
+function bbGetUpgradeEffectDescription(id,rank=1){
+  const r=Math.max(1,Math.min(5,Number(rank)||1));
+  const descriptions={
+    score:'Комбо даёт +'+(15*r)+'% очков за шаг',shield:'Щит выдержит '+(r+(bbRogueCardRanks.armor||0))+' атаки',
+    mult:'Множитель очков ×'+(1+r*.5).toFixed(2),slow:'Падение деталей замедлено на '+(r*25)+' мс за уровень',
+    resonance:'Каждые 4 линии дают +'+r+' заряд(а) уровня',magnet:'За двойную очистку +'+(250*r)+' очков',
+    glow:'Свечение деталей: +'+(10*r)+'% к очкам',echo:'Эхо даёт +'+r+' заряд(а) уровня',
+    unstable:'Каждые 90 секунд +'+(500*r)+' очков',dust:'За одиночную линию +'+(100*r)+' очков',
+    armor:'Добавляет +'+r+' дополнительный заряд щита',burst:'За тройную очистку +'+(600*r)+' очков',
+    hold:'Удержание доступно '+(1+r)+' раза',memory:'Порог уровня снижается на '+r+' линию(и)',
+    reactor:'Бонус уровня усиливается ×'+r,nova:'Аварийное спасение очищает '+r+' нижн. линию(и)',
+    tide:'Каждые 45 секунд +'+r+' заряд(а) уровня',fortress:'Замедляет рост сложности на '+(8*r)+'%',
+    rift:'При победе над монстром очищает '+r+' нижн. линию(и)',loop:'Порог уровня −'+r+' линию(и)',
+    comet:'Быстрый уровень приносит +'+(300*r)+' очков'
+  };
+  return descriptions[id]||upgrades.find(u=>u[3]===id)?.[2]||'Усиление ранга '+r;
+}
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
@@ -5548,7 +5565,7 @@ function bbRogueEnemyAttack(){
   const e=bbRogueEncounter,chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
   for(let n=0;n<(e.boss?2:1);n++){
     if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
-    board.shift();const hole=Math.floor(Math.random()*W),garbage=Array(W).fill(8);garbage[hole]=0;board.push(garbage);
+    board.shift();const hole=Math.floor(Math.random()*W),garbage=Array(W).fill(7);garbage[hole]=0;board.push(garbage);
   }
   e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2)-(chrono?8:0);
   toast(e.boss?'💥 БОСС ОБРУШИЛ ДВА РЯДА!':'👾 АТАКА МОНСТРА! На поле добавлен мусорный ряд.');
@@ -7519,7 +7536,7 @@ function showUpgrade(){
   const picks=pool.slice(0,3);
   const stage=rogue?Math.max(1,Math.floor((level-1)/3)+1):0;
   const synergyMarkup=rogue?bbRogueHasSynergy().map(x=>'<div class="rarity">✦ '+x.name+' · '+x.desc+'</div>').join('')+(bbRogueHasSynergy().length?'':'<div class="rarity">СОБИРАЙ ПАРЫ КАРТ — ОТКРОЮТСЯ СИНЕРГИИ</div>') : '';
-  overlay(`<div class="modalhead"><div class="bigicon">✧</div><div class="eyebrow">${rogue?'ЭВОЛЮЦИЯ КАРТ · ЭТАП '+stage:'УРОВЕНЬ '+level+' ДОСТИГНУТ'}</div><h3>${rogue?'Усиль свой билд':'Выбери реликвию'}</h3><p>${rogue?'Повторный выбор карты повышает её звёздность и усиливает эффект. Чем дальше забег, тем выше потенциал карт.':'Время замерло. Какую силу ты заберёшь с собой в следующий сектор?'}</p>${synergyMarkup}</div><div class="choices">${picks.map((u,i)=>{const rank=bbGetRogueCardRank(u[3]);const nextRank=Math.min(5,rank+1);const rarity=rogue?(nextRank>=5?'◆◆◆◆◆ МАКСИМАЛЬНАЯ':nextRank>=4?'◆◆◆◆ ЛЕГЕНДАРНАЯ':nextRank>=3?'◆◆◆ ЭПИЧЕСКАЯ':nextRank>=2?'◆◆ РЕДКАЯ':'◆ ОБЫЧНАЯ'):(i===0?'◆ НЕОБЫЧНАЯ':i===1?'◆◆ РЕДКАЯ':'◆◆◆ ЭПИЧЕСКАЯ');return `<button class="choice" data-up="${u[3]}"><div class="choiceicon">${u[0]}</div><div class="choicetext"><strong>${u[1]}</strong><span>${u[2]}</span><div class="rarity">${rogue?'ТЕКУЩИЙ УРОВЕНЬ: '+(rank?rank+'★':'НЕТ')+' → '+nextRank+'★':rarity}</div></div><span>›</span></button>`}).join('')}</div>`);
+  overlay(`<div class="modalhead"><div class="bigicon">✧</div><div class="eyebrow">${rogue?'ЭВОЛЮЦИЯ КАРТ · ЭТАП '+stage:'УРОВЕНЬ '+level+' ДОСТИГНУТ'}</div><h3>${rogue?'Усиль свой билд':'Выбери реликвию'}</h3><p>${rogue?'Повторный выбор карты повышает её звёздность и усиливает эффект. Чем дальше забег, тем выше потенциал карт.':'Время замерло. Какую силу ты заберёшь с собой в следующий сектор?'}</p>${synergyMarkup}</div><div class="choices">${picks.map((u,i)=>{const rank=bbGetRogueCardRank(u[3]);const nextRank=Math.min(5,rank+1);const rarity=rogue?(nextRank>=5?'◆◆◆◆◆ МАКСИМАЛЬНАЯ':nextRank>=4?'◆◆◆◆ ЛЕГЕНДАРНАЯ':nextRank>=3?'◆◆◆ ЭПИЧЕСКАЯ':nextRank>=2?'◆◆ РЕДКАЯ':'◆ ОБЫЧНАЯ'):(i===0?'◆ НЕОБЫЧНАЯ':i===1?'◆◆ РЕДКАЯ':'◆◆◆ ЭПИЧЕСКАЯ');return `<button class="choice" data-up="${u[3]}"><div class="choiceicon">${u[0]}</div><div class="choicetext"><strong>${u[1]}</strong><span>${rogue?bbGetUpgradeEffectDescription(u[3],nextRank):u[2]}</span><div class="rarity">${rogue?'ТЕКУЩИЙ УРОВЕНЬ: '+(rank?rank+'★':'НЕТ')+' → '+nextRank+'★':rarity}</div></div><span>›</span></button>`}).join('')}</div>`);
   $('modal').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{
     const id=b.dataset.up;
     if(rogue){
@@ -7646,7 +7663,7 @@ if (boostCard) {
         fortress:'Скорость роста угрозы снижена на '+(rank*8)+'%',
         nova:'Аварийное спасение: очищает '+rank+' нижн. линию(и)'
       };
-      return `<div class="choice"><div class="choiceicon">${item[0]}</div><div class="choicetext"><strong>${item[1]}</strong><span>${stars}</span><span>${effects[id]||item[2]+' · сила карты: '+rank+'★'}</span></div></div>`;
+      return `<div class="choice"><div class="choiceicon">${item[0]}</div><div class="choicetext"><strong>${item[1]}</strong><span>${stars}</span><span>${bbGetUpgradeEffectDescription(id,rank)}</span></div></div>`;
     }).filter(Boolean);
 
     overlay(`
