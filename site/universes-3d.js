@@ -17,7 +17,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
   let active=null,raf=0,last=0;
   const modelCache=new Map();
   const visibleSlots=new Set();
-  const lowPower=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const lowPower=isIOS||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
 
   function loadModel(id){
     if(modelCache.has(id))return modelCache.get(id);
@@ -143,7 +144,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
             if(entry){disposeScene(entry.scene);entries.delete(slot);modelCache.delete(id)}
           }
         });
-      },{root:viewport,rootMargin:'0px 280px 0px 280px',threshold:0});
+      },{root:viewport,rootMargin:lowPower?'0px 90px 0px 90px':'0px 280px 0px 280px',threshold:0});
       slots.forEach(slot=>state.observer.observe(slot));
     }else slots.slice(0,3).forEach(activate);
 
