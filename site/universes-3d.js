@@ -151,7 +151,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const canvas=document.createElement('canvas');
     canvas.className='bb-galaxy-model-canvas';
     canvas.setAttribute('aria-hidden','true');
-    viewport.appendChild(canvas);
+    document.body.appendChild(canvas);
     let renderer;
     try{
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:'low-power'});
@@ -205,6 +205,13 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       });
     };
 
+    // Activate currently visible slots synchronously, before the first observer callback.
+    const initialRect=viewport.getBoundingClientRect();
+    slots.forEach(slot=>{
+      const rect=slot.getBoundingClientRect();
+      if(rect.right>initialRect.left&&rect.left<initialRect.right&&rect.bottom>initialRect.top&&rect.top<initialRect.bottom)activate(slot);
+    });
+
     if('IntersectionObserver' in window){
       state.observer=new IntersectionObserver(items=>{
         items.forEach(item=>{
@@ -224,8 +231,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);
       renderer.setSize(w,h,false);
       // Canvas is a child of the viewport, so its origin is stable while the page scrolls.
-      canvas.style.left='0px';
-      canvas.style.top='0px';
+      const vr=viewport.getBoundingClientRect();
+      canvas.style.left=vr.left+'px';
+      canvas.style.top=vr.top+'px';
       canvas.style.width=w+'px';
       canvas.style.height=h+'px';
       requestRender();
@@ -246,6 +254,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       }
       const dt=Math.min(.05,(now-last)/1000||0);last=now;
       const vr=viewport.getBoundingClientRect();
+      // Keep the fixed overlay locked to the viewport's live screen position during page scroll.
+      canvas.style.left=vr.left+'px';
+      canvas.style.top=vr.top+'px';
       const cw=viewport.clientWidth,ch=viewport.clientHeight;
       renderer.setScissorTest(false);renderer.clear(true,true,true);renderer.setScissorTest(true);
       entries.forEach((entry,slot)=>{
