@@ -354,3 +354,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Only the Block-run icon and its visual styling/cache token changed. Menu layout, labels, data-mode, IDs, handlers, navigation, game logic, and other icons remain unchanged.
 - User still needs to visually confirm the refreshed website on the phone; do not claim live deployment or physical-device testing without evidence.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
+
+
+## Main menu tactile feedback pass — 2026-11-01
+- User approved the Block-run tetromino icon correction and asked to continue the main-menu refinement.
+- Added restrained pressed-state feedback to the three primary menu actions (mode cards, Heroes, Shop) in `site/visual-overhaul.css`:
+  - slight downward/scale response while pressed;
+  - brighter edge and restrained cyan glow;
+  - subtle icon compression to reinforce the tap.
+- CSS commit: `bebb68279c90c56385c6865c303c5b985ee0e9cf`.
+- Cache-bust token changed to `20261101-menu-tactile-1`, commit `f3096669e0845b3b2f56240c6b0c996cfdf16126`.
+- Verification: CSS braces balanced (878/878); all three active-state selectors present; referenced `openHeroes`, `rpgPanel`, and `shop-main-icon` hooks exist; cache token present.
+- No layout, button labels, event IDs, data-mode values, handlers, navigation, gameplay, or save data changed.
+- Website deployment and physical Android review are not confirmed; user should inspect the refreshed menu on their phone.
+- Next: get user's visual feedback on the tactile response before choosing another menu pass.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
