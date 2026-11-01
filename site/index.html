@@ -6791,6 +6791,8 @@ function bbCheckCampaignCompletion() {
   clearInterval(tickTimer);
 
   const completedNode = campaignNode;
+  const campaignRewardMarks=1+Math.floor((completedNode-1)/30);bbCampaignMarks+=campaignRewardMarks;localStorage.setItem('bbCampaignMarks',String(bbCampaignMarks));
+  const campaignXp=80+Math.floor(completedNode*2);bbAwardHeroXp(bbSelectedHero,campaignXp);
   const nextNode = Math.min(
     bbTotalNodes,
     Math.max(bbGetUnlockedNode(), completedNode + 1)
@@ -6806,6 +6808,7 @@ function bbCheckCampaignCompletion() {
     '<div class="eyebrow">УЗЕЛ ПРОЙДЕН</div>' +
     '<h3>Узел ' + String(completedNode).padStart(3, '0') + '</h3>' +
     '<p>Все цели выполнены! Следующий узел открыт.</p>' +
+    '<div class="reward-summary" style="margin:12px 0;padding:13px;border:1px solid #e8c36b88;border-radius:13px;background:linear-gradient(135deg,#332b19,#1d2438);color:#ffe4a0;text-align:center;font-weight:900">🏅 +'+campaignRewardMarks+' ЗВЁЗДНЫХ ЗНАКА · ⭐ +'+campaignXp+' ОПЫТА ГЕРОЮ</div>' +
     '</div>' +
     '<button class="action" id="nextNode">СЛЕДУЮЩИЙ УЗЕЛ</button>' +
     '<button class="action secondary" id="mapAfterWin">К КАРТЕ</button>'
@@ -7194,6 +7197,7 @@ if (mode === 'daily') {
   }
 
   if (mode === 'campaign') {
+    if(bbHasCampaignPerk('scout')){const starter=upgrades.find(u=>u[3]==='shield');if(starter)boosts.push(starter[3]);}
     $('gameTitle').textContent = 'Узел ' + String(campaignNode).padStart(2, '0');
     $('gameSub').textContent = 'Кампания · Сектор ' + Math.ceil(campaignNode / 3);
   } else {
@@ -7462,7 +7466,7 @@ if(bbIsDailyMechanic('echoCombo')){
   );
 }
 
-let mult=boosts.includes('mult')?1+0.5*bbGetUpgradeRank('mult'):1;
+let mult=boosts.includes('mult')?1+0.5*bbGetUpgradeRank('mult'):1;if(mode==='campaign'&&bbHasCampaignPerk('tactician'))mult*=1+.12*bbGetCampaignPerkLevel('tactician');
 if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15+Math.min(.15,(bbGetHeroProgress('prism').level-1)*.01);
 if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1+Math.min(.15,(bbGetHeroProgress('spark').level-1)*.01);if(boosts.includes('score'))mult*=1+combo*.15*bbGetUpgradeRank('score');if(boosts.includes('glow'))mult*=1+.1*bbGetUpgradeRank('glow');if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse')mult*=1.5;if(bbIsDailyMechanic('echoCombo')){mult*=bbDailyMechanicState.echoMultiplier;}
 if(mode==='rogue'&&bbGetRogueCardRank('score')&&bbGetRogueCardRank('mult'))mult*=1.12;
@@ -7480,7 +7484,7 @@ let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mul
     bbDailyMechanicState.echoCombo=0;
     bbDailyMechanicState.echoMultiplier=1;
   }
-}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){const shieldLeft=mode==='rogue'?Math.max(1,bbRogueShieldCharges):1;if(mode==='rogue'&&shieldLeft>1)bbRogueShieldCharges=shieldLeft-1;else{boosts=boosts.filter(x=>x!=='shield');bbRogueShieldCharges=0;}const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');const rows=mode==='rogue'?Math.max(1,bbGetRogueCardRank('nova')):1;for(let y=H-1;y>=Math.max(0,H-rows);y--)board[y].fill(0);toast('Сверхновая очистила '+rows+' нижн. линий!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(mode==='campaign'&&bbHasCampaignPerk('guardian')&&!bbCampaignGuardianUsed){bbCampaignGuardianUsed=true;for(let y=0;y<Math.min(H,3+bbGetCampaignPerkLevel('guardian'));y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('🛡️ ТРЕНИРОВКА СТРАЖА! Герой удержал поле.');}else if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){const shieldLeft=mode==='rogue'?Math.max(1,bbRogueShieldCharges):1;if(mode==='rogue'&&shieldLeft>1)bbRogueShieldCharges=shieldLeft-1;else{boosts=boosts.filter(x=>x!=='shield');bbRogueShieldCharges=0;}const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');const rows=mode==='rogue'?Math.max(1,bbGetRogueCardRank('nova')):1;for(let y=H-1;y>=Math.max(0,H-rows);y--)board[y].fill(0);toast('Сверхновая очистила '+rows+' нижн. линий!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
 if(
   mode==='daily' &&
   bbGetActiveDailyRule().mod==='artifactHunt'
@@ -7942,6 +7946,11 @@ const bbHeroes = [
     skillDesc: 'Получает дополнительный бонус за серии очищенных линий.'
   }
 ];
+let bbCampaignMarks=Math.max(0,Number(localStorage.getItem('bbCampaignMarks')||0));
+function bbAwardHeroXp(heroId,amount){const p=bbGetHeroProgress(heroId);let xp=p.xp+amount,level=p.level;while(xp>=200+(level-1)*100){xp-=200+(level-1)*100;level++}bbPut('xp_'+heroId,xp);bbPut('heroLevel_'+heroId,level);if(heroId==='plush'){bbXp=xp;bbHeroLevel=level;bbPut('xp',xp);bbPut('heroLevel',level)}bbRefresh()}
+function bbGetCampaignPerks(heroId=bbSelectedHero){const v=bbGet('bbCampaignPerks_'+heroId,{});return v&&typeof v==='object'?v:{}}
+function bbGetCampaignPerkLevel(id,heroId=bbSelectedHero){return Math.max(0,Number(bbGetCampaignPerks(heroId)[id])||0)}
+function bbHasCampaignPerk(id){return mode==='campaign'&&bbGetCampaignPerkLevel(id)>0}
 function bbGetHeroProgress(heroId){
   const hero=bbHeroes.find(item=>item.id===heroId)||bbHeroes[0];
   const level=Math.max(1,Number(bbGet('heroLevel_'+hero.id,hero.id==='plush'?bbHeroLevel:1))||1);
@@ -8232,6 +8241,7 @@ function bbHero(){
       <p>Тренировка даёт 40 опыта. Стоимость растёт с уровнем героя.</p>
 <button id="bbTrain">ТРЕНИРОВАТЬ · ${trainCost} 🪙</button>
     </div>
+    <div class="shopitem" style="border-color:#e8c36b66"><div class="emoji">🏅</div><strong>Тренировка перков кампании</strong><p>Знаки выдаются только за прохождение кампании. Эти улучшения работают только на звёздной карте.</p><div style="font-size:12px;color:#ffe4a0;margin:8px 0">ТВОИ ЗВЁЗДНЫЕ ЗНАКИ: <b>${bbCampaignMarks}</b></div><button id="bbCampaignTraining">ОТКРЫТЬ ТРЕНИРОВКУ</button></div>
     <button class="action secondary" id="bbHeroClose">НАЗАД</button>
   `);
 
@@ -8267,7 +8277,15 @@ function bbHero(){
   };
 
 
+  $('bbCampaignTraining').onclick=()=>bbOpenCampaignTraining(hero.id);
   $('bbHeroClose').onclick = closeOverlay;
+}
+function bbOpenCampaignTraining(heroId){
+  const hero=bbHeroes.find(h=>h.id===heroId)||bbHeroes[0],perks=bbGetCampaignPerks(heroId);
+  const options=[{id:'guardian',name:'Страж рубежа',icon:'🛡️',desc:'Один раз за узел спасает от поражения и очищает верхние ряды.',cost:1,max:3},{id:'tactician',name:'Тактический расчёт',icon:'🎯',desc:'Увеличивает очки в кампании на 12% за ранг.',cost:2,max:3},{id:'scout',name:'Разведчик',icon:'🧭',desc:'Начинает каждый узел кампании с бесплатным щитом.',cost:3,max:1}];
+  bbModal('<div class="modalhead"><div class="bigicon">🏅</div><div class="eyebrow">ПОЛИГОН КАМПАНИИ</div><h3>'+hero.name+' · Тренировка перков</h3><p>Улучшения действуют только в кампании. Блок-ран и ежедневные испытания не затрагиваются.</p><strong style="color:#ffe4a0">Звёздные знаки: '+bbCampaignMarks+'</strong></div><div class="shopgrid">'+options.map(p=>{const rank=Math.max(0,Number(perks[p.id])||0),cost=p.cost*(rank+1);return '<div class="shopitem"><div class="emoji">'+p.icon+'</div><strong>'+p.name+' · '+rank+'/'+p.max+'</strong><p>'+p.desc+'</p><button data-campaign-perk="'+p.id+'" '+(rank>=p.max||bbCampaignMarks<cost?'disabled':'')+'>'+(rank>=p.max?'МАКСИМУМ':'УЛУЧШИТЬ · '+cost+' 🏅')+'</button></div>'}).join('')+'</div><button class="action secondary" id="bbTrainingBack">НАЗАД К ГЕРОЮ</button>');
+  $('modal').querySelectorAll('[data-campaign-perk]').forEach(btn=>btn.onclick=()=>{const id=btn.dataset.campaignPerk,p=options.find(x=>x.id===id),current=bbGetCampaignPerks(heroId),rank=Math.max(0,Number(current[id])||0),cost=p.cost*(rank+1);if(rank>=p.max||bbCampaignMarks<cost)return;bbCampaignMarks-=cost;current[id]=rank+1;localStorage.setItem('bbCampaignMarks',String(bbCampaignMarks));bbPut('bbCampaignPerks_'+heroId,current);bbOpenCampaignTraining(heroId);toast('🏅 Перко-умение улучшено!')});
+  $('bbTrainingBack').onclick=()=>bbHero();
 }
 function bbBox(){if(bbCoins<60){toast('Сюрприз-бокс стоит 60 монет');return}bbCoins-=60;let r=Math.random(),reward;if(r<.58){let n=35+Math.floor(Math.random()*60);bbCoins+=n;reward=`🪙 +${n} монет`}else if(r<.82){let n=1+Math.floor(Math.random()*2);bbGems+=n;reward=`💎 +${n} самоцвета`}else if(r<.95){let id=['quick','shield','magnet'][Math.floor(Math.random()*3)];bbInventory[id]=(bbInventory[id]||0)+1;reward=`${bbCatalog.find(x=>x.id===id).emoji} ${bbCatalog.find(x=>x.id===id).name}`}else{let n=100+Math.floor(Math.random()*100);bbXp+=n;reward=`⭐ +${n} опыта`}bbSave();chime();bbModal(`<div class="modalhead bb-reward-modal"><div class="bigicon" style="animation:float 1s infinite">🎁</div><div class="eyebrow">ТА-ДААА!</div><h3>Сюрприз-бокс открыт!</h3><p>Внутри оказалось: <b>${reward}</b></p></div><button class="action" id="bbBoxOk">КЛАСС!</button>`);$('bbBoxOk').onclick=closeOverlay}
 const bbRelicChestTiers = [
