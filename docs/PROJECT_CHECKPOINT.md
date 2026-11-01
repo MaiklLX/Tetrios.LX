@@ -714,3 +714,12 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Source commit: `d27f6441babe13d709d048f477389c08a3a56ff1`.
 - Проверены наличие обеих независимых атмосфер, отключение перехвата касаний и поддержка reduced-motion. Публикацию и внешний вид на телефоне проверить после GitHub Actions; визуальная проверка на физическом устройстве не заявляется.
 - Resume phrase: **TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 287. ПРОВЕРИТЬ НА ОПУБЛИКОВАННОМ САЙТЕ ДВА ФОНА: КАРТА ВСЕЛЕННЫХ — ГЛУБОКИЙ КОСМОС С ТУМАННОСТЯМИ; КАРТА ПЛАНЕТ — БЛИЖНЕЕ МЕЖПЛАНЕТНОЕ ПРОСТРАНСТВО. УБЕДИТЬСЯ, ЧТО 3D-МОДЕЛИ ОСТАЮТСЯ ГЛАВНЫМИ, ПРОКРУТКА И КАСАНИЯ РАБОТАЮТ, НА МОБИЛЬНОМ НЕТ ЛИШНЕЙ ТЯЖЕСТИ. ПРОГРЕСС И НАВИГАЦИЮ НЕ ТРОГАТЬ. 🤘😎**
+
+## Checkpoint 288 — definitive campaign map atmosphere replacement
+- User reported that the new universe/planet map backgrounds were not visible after successful web deployment.
+- Inspected the current source CSS cascade and `site/universes-3d.js`. The shared WebGL canvas uses `alpha:true` and clears with alpha 0, so it should not paint an opaque layer over the map backgrounds.
+- Found legacy galaxy viewport background layers still declared in the shared-cosmos style block. Although the final atmosphere block was later in source order, the new atmosphere was too subdued to create an obvious visual change on mobile.
+- Removed the legacy galaxy viewport background fill from the shared-cosmos block and replaced the final atmosphere block with explicit `background` shorthands for both viewports. The galaxy map now has stronger blue/violet/teal nebula layers and star fields; the planet map has a distinct teal/blue close-space atmosphere with violet edge glow and stars.
+- Kept decorative pseudo-elements behind map content with `pointer-events:none`; 3D canvas/rendering, models, navigation, scrolling, game progress, saves, purchases and inventory logic unchanged.
+- Static source verification only. Wait for the web deployment to succeed and user to verify on the published site/mobile device.
+- Source commit: `91d45ed7ded5b478e04d7da027a3a2087fe6bf8e`.
