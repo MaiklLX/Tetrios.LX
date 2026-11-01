@@ -434,3 +434,22 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Physical Android verification remains pending.
 - Next: confirm the Pages workflow for `ef894c7355e629331d615500d3cc46351a535232`, then review the published screens on a phone and address only observed issues.
 - Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ ef894c7. ЗАТЕМ ПРОВЕРИТЬ ЧИТАЕМОСТЬ И УДОБСТВО НА ТЕЛЕФОНЕ: КАРТА КАМПАНИИ, МАГАЗИН, ГЕРОИ. МЕХАНИКУ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+## Hero card flip and equipped cosmetic preview — 2026-11-01
+- User reported two interaction issues in the Heroes screen: hero details appeared in a separate panel below the roster instead of flipping the selected card in place; equipping a cosmetic did not visibly alter the hero preview.
+- Root cause confirmed in the existing `bbRenderHeroes()`: the roster buttons and `#heroDetails` were rendered as separate siblings, and the cosmetic indicator was only applied to the small main-menu avatar. The 3D hero viewer itself remains a separate existing module in `site/visual-3d.js`.
+- Reworked `bbRenderHeroes()` in `site/index.html`:
+  - The selected hero card now expands across the roster width and flips to reveal the existing 3D stage, portrait, stats, ability and cosmetic controls on its reverse face.
+  - Tapping another hero changes the open card; tapping the currently previewed card returns to the selected hero.
+  - The existing `#heroDetails` element is moved into the active card rather than duplicated, preserving the existing 3D stage integration and its DOM identity.
+  - Equipped cosmetics now have a visible illuminated badge on the 3D showcase stage and a separate accessory marker on the hero portrait. Equipped state is highlighted in the cosmetic picker.
+  - Cosmetic equip/unequip still uses the existing `equippedChestCosmetic` key and existing ownership list. Hero confirmation still uses `bbSelectedHero`.
+- Added isolated styles in `site/visual-overhaul.css`, CSS commit `243d6f5ddbc59b099bdf6303b5a334155fbe94d3`.
+- Updated the stylesheet cache token to `20261101-hero-flip-cosmetics-1` in the HTML commit immediately preceding the CSS commit.
+- No changes to hero definitions, cosmetic IDs, item prices, currency, purchases, inventory ownership, campaign progress, gameplay, or save keys were intended.
+- Source-level checks: balanced CSS braces; verify current HTML cache token, flip markup, cosmetic indicators, and original save-key references before release.
+- Current main SHA at checkpoint: `243d6f5ddbc59b099bdf6303b5a334155fbe94d3`.
+- Pages deployment for this source SHA has not yet been confirmed. Do not claim the new card interaction is live until the matching Pages workflow completes successfully. Physical Android review remains pending.
+- Next: verify the Pages deployment for this SHA; then inspect hero card flipping and all six cosmetic previews on Android. If the 3D stage badge is obscured by the model, refine its placement without changing the 3D viewer or saved state.
+- Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ 243d6f5. ПРОТЕСТИРОВАТЬ ПЕРЕВОРОТ КАРТОЧЕК ГЕРОЕВ И ВИДИМОСТЬ ЭКИПИРОВАННЫХ УКРАШЕНИЙ. МЕХАНИКУ, ПОКУПКИ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
