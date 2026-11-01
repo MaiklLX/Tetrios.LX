@@ -369,3 +369,16 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Website deployment and physical Android review are not confirmed; user should inspect the refreshed menu on their phone.
 - Next: get user's visual feedback on the tactile response before choosing another menu pass.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
+
+
+## Main menu tactile response refinement — 2026-11-01
+- User reported that the latest changes were not yet visible on the live site and asked to continue.
+- Confirmed repository default branch is `main`; the Pages workflow is configured to trigger on pushes to `main` affecting `site/**`, and also supports manual dispatch.
+- The GitHub connector's commit-workflow lookup returned no runs because that endpoint wrapper only includes pull-request-triggered runs; this does not establish that a Pages deployment did not run. No live deployment success is confirmed.
+- Continued the source-level polish: added explicit transform/filter transitions to the mode icon and Shop icon so the pressed-state icon response animates smoothly.
+- CSS commit: `6de147c757cbda43c23cf72a352d1a0f593b532b`.
+- Cache-bust token updated to `20261101-menu-tactile-2`, commit `89e806c959e3f0bc274a7763a954af9edf9d3419`.
+- The Pages workflow source is `.github/workflows/deploy-pages.yml`; it downloads a CC0 soundtrack, prepares local Three.js, uploads `site/`, then deploys to Pages.
+- No dashboard layout, button labels, IDs, handlers, navigation, game logic, or save data changed.
+- Next: inspect the Pages Actions run/deployment for the latest site commit and resolve any failure before claiming the live site is updated. Continue only with small, isolated menu refinements.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
