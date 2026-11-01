@@ -118,7 +118,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       const index=manifest.universeOrder.indexOf(id);
       visibleSlots.add(slot);
       loadModel(id).then(source=>{
-        if(active!==state||!slot.isConnected||!visibleSlots.has(slot))return;
+        if(active!==state||!slot.isConnected)return;
+        if(!visibleSlots.has(slot)){modelCache.delete(id);return;}
         const clone=source.clone(true);
         const entry=buildScene(clone,Math.max(0,index));
         entries.set(slot,entry);
