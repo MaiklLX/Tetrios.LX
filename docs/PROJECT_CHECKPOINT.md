@@ -343,3 +343,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - User has not yet visually reviewed this pass on their phone. Confirm deployment and Android display before claiming it is live or device-tested.
 - Next: ask for the user's visual impression; tune icon choice/size or button height only from concrete feedback.
 - Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
+
+
+## Block-run Tetris icon correction — 2026-11-01
+- User noted that the 🧱 icon read as a Mario/platformer or construction reference rather than Tetris.
+- Replaced it with a custom four-cell L-tetromino mark in `site/index.html` and styled it in `site/visual-overhaul.css`.
+- HTML commit: `5849728d36c469e3c34f1a77f9909b13a2500913`.
+- CSS commit: `26be6ed261c38d6b877ec5cbca8df885322d48a3`.
+- Cache-bust token: `20261101-tetromino-icon-1`, commit `04adfd9ffe5c5ef77475abd1deb2ceaf0f96fd66`.
+- Only the Block-run icon and its visual styling/cache token changed. Menu layout, labels, data-mode, IDs, handlers, navigation, game logic, and other icons remain unchanged.
+- User still needs to visually confirm the refreshed website on the phone; do not claim live deployment or physical-device testing without evidence.
+- Resume phrase: **ТЕТРИОС — ПРОДОЛЖЕНИЕ КОНТРОЛЬНОЙ ТОЧКИ ГЛАВНОГО МЕНЮ**
