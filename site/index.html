@@ -7137,6 +7137,7 @@ function bbChooseHeroBeforeStart() {
       <button class="action" id="bbConfirmStartHero">⚔ НАЧАТЬ ИГРУ ЗА ${selectedHero.name.toUpperCase()}</button>
     `);
 
+    document.getElementById('modal').classList.add('bb-hero-showcase-modal');
     document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn=>{
       btn.onclick=()=>renderHeroCard(btn.dataset.startHero);
     });
