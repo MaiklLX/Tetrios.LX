@@ -2986,3 +2986,9 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 
 .bb-unified-hero-avatar svg{width:56px!important;height:auto!important;max-width:100%}
 .bb-start-hero-emblem svg{width:58px;height:auto}
+
+
+/* Unique cosmetic ownership: one equipped copy per hero */
+.bb-hero-cosmetic-grid button.is-unavailable,
+.bb-hero-cosmetic-grid button:disabled{opacity:.42;filter:grayscale(.75);cursor:not-allowed;border-style:dashed}
+.bb-hero-cosmetic-grid button.is-unavailable small{display:block;color:#e9b96d;font-size:9px;margin-top:4px}
