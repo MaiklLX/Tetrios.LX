@@ -7073,9 +7073,44 @@ function buildMap() {
 function bbChooseHeroBeforeStart() {
   let chosenHero = (bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0]).id;
 
+  const cancelHeroSelection = () => {
+    const wasDailyReplay=Boolean(bbDailyReplayDate);
+    if(wasDailyReplay){
+      bbDailyReplayDate=null;
+      bbDailyReplayRule=null;
+      bbDailyReplayPaid=false;
+      bbDailyReplayNoQuestReward=false;
+    }
+    closeOverlay();
+    if(mode==='campaign'){show('campaign');buildMap();}
+    else if(mode==='daily'){
+      show('daily');
+      if(wasDailyReplay)toast('Повторное испытание отменено. Монеты не списаны.');
+    }else show('menu');
+  };
+
+  const confirmHeroAndStart = heroId => {
+    const hero=bbHeroes.find(h=>h.id===heroId)||bbHeroes[0];
+    if(bbDailyReplayDate&&!bbDailyReplayPaid){
+      const price=bbDailyReplayPrice(bbDailyReplayDate);
+      if(bbCoins<price){toast('Недостаточно монет для повторного прохождения.');return;}
+      bbCoins-=price;
+      localStorage.setItem('bbCoins',String(bbCoins));
+      localStorage.setItem('coins',String(bbCoins));
+      bbDailyReplayPaid=true;
+    }
+    chosenHero=hero.id;
+    bbSelectedHero=hero.id;
+    localStorage.setItem('bbSelectedHero',hero.id);
+    bbApplyHero();
+    closeOverlay();
+    startGameNow();
+  };
+
   const renderRoster = () => {
     const selectedHero = bbHeroes.find(h => h.id === chosenHero) || bbHeroes[0];
     overlay(`
+      <button type="button" class="bb-start-hero-nav" id="bbStartHeroCancel" aria-label="Отменить выбор персонажа">×</button>
       <div class="modalhead">
         <div class="eyebrow">НОВОЕ ПРИКЛЮЧЕНИЕ</div>
         <h3>Выбери своего героя</h3>
@@ -7100,44 +7135,14 @@ function bbChooseHeroBeforeStart() {
         <div style="font-size:11px;color:#c4cee0;margin-top:3px">${selectedHero.skill} · ${selectedHero.skillDesc}</div>
       </div>
       <button class="action" id="bbConfirmStartHero">⚔ НАЧАТЬ ИГРУ ЗА ${selectedHero.name.toUpperCase()}</button>
-      <button class="action secondary" id="bbCancelStartHero">ОТМЕНА</button>
     `);
 
     document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn=>{
       btn.onclick=()=>renderHeroCard(btn.dataset.startHero);
     });
 
-    document.getElementById('bbConfirmStartHero').onclick=()=>{
-      if(bbDailyReplayDate&&!bbDailyReplayPaid){
-        const price=bbDailyReplayPrice(bbDailyReplayDate);
-        if(bbCoins<price){toast('Недостаточно монет для повторного прохождения.');return;}
-        bbCoins-=price;
-        localStorage.setItem('bbCoins',String(bbCoins));
-        localStorage.setItem('coins',String(bbCoins));
-        bbDailyReplayPaid=true;
-      }
-      bbSelectedHero=chosenHero;
-      localStorage.setItem('bbSelectedHero',chosenHero);
-      bbApplyHero();
-      closeOverlay();
-      startGameNow();
-    };
-
-    document.getElementById('bbCancelStartHero').onclick=()=>{
-      const wasDailyReplay=Boolean(bbDailyReplayDate);
-      if(wasDailyReplay){
-        bbDailyReplayDate=null;
-        bbDailyReplayRule=null;
-        bbDailyReplayPaid=false;
-        bbDailyReplayNoQuestReward=false;
-      }
-      closeOverlay();
-      if(mode==='campaign'){show('campaign');buildMap();}
-      else if(mode==='daily'){
-        show('daily');
-        if(wasDailyReplay)toast('Повторное испытание отменено. Монеты не списаны.');
-      }else show('menu');
-    };
+    document.getElementById('bbConfirmStartHero').onclick=()=>confirmHeroAndStart(chosenHero);
+    document.getElementById('bbStartHeroCancel').onclick=cancelHeroSelection;
   };
 
   const renderHeroCard = id => {
@@ -7148,7 +7153,7 @@ function bbChooseHeroBeforeStart() {
     const equippedId=bbGetHeroEquippedCosmetic(hero.id);
     const equipped=cosmetics[equippedId];
     overlay(`<div class="bb-hero-showcase bb-start-hero-detail">
-      <button type="button" class="bb-hero-showcase-close" id="bbStartHeroBack" aria-label="Назад к выбору героев">‹</button>
+      <button type="button" class="bb-start-hero-nav" id="bbStartHeroBack" aria-label="Назад к выбору героев">‹</button>
       <div class="bb-hero-showcase-topline">ДОСЬЕ ГЕРОЯ · ${hero.role.toUpperCase()}</div>
       <div class="bb-hero-showcase-stage-wrap" style="--hero-accent:${hero.color}">
         <div class="bb-3d-stage bb-hero-showcase-stage" data-hero-id="${hero.id}" data-hero-color="${hero.color}" data-hero-emoji="${hero.emoji}" aria-label="3D-модель героя ${hero.name}">${equipped?'<span class="bb-hero-equipped-badge"><span>✦</span>'+equipped.emoji+'</span>':''}</div>
@@ -7164,16 +7169,11 @@ function bbChooseHeroBeforeStart() {
       <div class="bb-hero-showcase-skill"><span>УНИКАЛЬНАЯ СПОСОБНОСТЬ</span><strong>${hero.skill}</strong><p>${hero.skillDesc}</p></div>
       <div class="bb-hero-showcase-progress">ОПЫТ: ${progress.xp} / ${xpNeeded}</div>
       <button type="button" class="action bb-hero-showcase-select" id="bbStartHeroChoose">${hero.id===chosenHero?'✓ ВЫБРАН ДЛЯ ЭТОГО ЗАБЕГА':'ВЫБРАТЬ ЭТОГО ГЕРОЯ'}</button>
-      <button type="button" class="action secondary" id="bbStartHeroBackBottom">← НАЗАД К ВЫБОРУ ГЕРОЕВ</button>
     </div>`);
     const modal=document.getElementById('modal');
     modal.classList.add('bb-hero-showcase-modal');
     document.getElementById('bbStartHeroBack')?.addEventListener('click',renderRoster);
-    document.getElementById('bbStartHeroBackBottom')?.addEventListener('click',renderRoster);
-    document.getElementById('bbStartHeroChoose')?.addEventListener('click',()=>{
-      chosenHero=hero.id;
-      renderRoster();
-    });
+    document.getElementById('bbStartHeroChoose')?.addEventListener('click',()=>confirmHeroAndStart(hero.id));
   };
 
   renderRoster();
@@ -9339,6 +9339,41 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
  color:#ffe39a;font-size:11px;font-weight:1000;line-height:1;
  background:linear-gradient(145deg,#594522,#171626);
  box-shadow:0 0 9px #f4ca7255;text-shadow:0 0 5px #ffdf8a;
+}
+</style>
+
+
+<style id="bb-start-hero-sticky-navigation">
+/* Keep roster cancel and dossier back controls reachable while the hero list/details scroll. */
+#modal.bb-hero-showcase-modal{
+ position:relative!important;
+ max-height:calc(100dvh - 36px)!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+}
+#modal.bb-hero-showcase-modal .bb-start-hero-nav{
+ position:sticky!important;
+ top:0!important;
+ z-index:30!important;
+ float:right!important;
+ display:grid!important;
+ place-items:center!important;
+ width:42px!important;height:42px!important;
+ margin:0 0 -42px auto!important;
+ padding:0!important;
+ border:1px solid #7cefe2aa!important;
+ border-radius:13px!important;
+ background:linear-gradient(145deg,#1c3850f5,#11182bf5)!important;
+ color:#eaffff!important;
+ font-size:25px!important;font-weight:900!important;line-height:1!important;
+ box-shadow:0 4px 16px #0008,0 0 14px #5cf5e833!important;
+ cursor:pointer!important;
+}
+#modal.bb-hero-showcase-modal .bb-start-hero-nav:active{transform:scale(.95)}
+#modal.bb-hero-showcase-modal .modalhead{padding-top:8px}
+@media(max-width:520px){
+ #modal.bb-hero-showcase-modal{max-height:calc(100dvh - 24px)!important}
+ #modal.bb-hero-showcase-modal .bb-start-hero-nav{width:40px!important;height:40px!important}
 }
 </style>
 
