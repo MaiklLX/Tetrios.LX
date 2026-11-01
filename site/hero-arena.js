@@ -6,7 +6,7 @@
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
  const colors=['#36dfff','#9d75ff','#ffbd55','#63f5bd','#ff6f9f','#6e9cff','#d7f36b'];
  const shapes=[[[0,1],[1,1],[2,1],[3,1]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[0,1],[0,2],[1,2]],[[1,0],[1,1],[1,2],[0,2]],[[1,0],[2,0],[0,1],[1,1]],[[0,0],[1,0],[1,1],[2,1]]];
- let w=0,h=0,dpr=1,cols=0,rows=0,cell=28,grid=[],piece=null,last=0,acc=0,raf=0,paused=false,linesTotal=0;
+ let w=0,h=0,dpr=1,cols=0,rows=0,cell=28,grid=[],piece=null,last=0,acc=0,raf=0,paused=false,linesTotal=0,bag=[];
  const clone=s=>s.map(([x,y])=>[x,y]);
  const rotate=s=>{const max=Math.max(...s.map(p=>p[0]));return s.map(([x,y])=>[max-y,x])};
  const normalize=s=>{const minX=Math.min(...s.map(p=>p[0])),minY=Math.min(...s.map(p=>p[1]));return s.map(([x,y])=>[x-minX,y-minY])};
@@ -19,33 +19,36 @@
   const top= Math.max(...heights);
   return aggregate*.48+holes*8.5+bump*.52+wells*1.35+top*.8-cleared*7.8;
  };
- const findMove=()=>{
+ const findMove=type=>{
   let best=null,bestScore=Infinity;
-  for(let type=0;type<7;type++){
-   let orientation=normalize(clone(shapes[type]));
-   for(let rot=0;rot<4;rot++){
-    const width=Math.max(...orientation.map(p=>p[0]))+1;
-    for(let x=0;x<=cols-width;x++){
-     const p={x,y:-4,shape:orientation};
-     if(!fits(grid,p))continue;
-     while(fits(grid,p,0,1))p.y++;
-     const board=grid.map(row=>row.slice());let invalid=false;
-     orientation.forEach(([sx,sy])=>{const yy=p.y+sy;if(yy<0)invalid=true;else board[yy][x+sx]=colors[type]});
-     if(invalid)continue;
-     let cleared=0;
-     for(let y=rows-1;y>=0;y--)if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(cols).fill(null));cleared++;y++}
-     const score=scoreBoard(board,cleared)+(Math.random()*.035);
-     if(score<bestScore){bestScore=score;best={x,shape:clone(orientation),type,cleared}}
-    }
-    orientation=normalize(rotate(orientation));
+  let orientation=normalize(clone(shapes[type]));
+  for(let rot=0;rot<4;rot++){
+   const width=Math.max(...orientation.map(p=>p[0]))+1;
+   for(let x=0;x<=cols-width;x++){
+    const p={x,y:-4,shape:orientation};
+    if(!fits(grid,p))continue;
+    while(fits(grid,p,0,1))p.y++;
+    const board=grid.map(row=>row.slice());let invalid=false;
+    orientation.forEach(([sx,sy])=>{const yy=p.y+sy;if(yy<0)invalid=true;else board[yy][x+sx]=colors[type]});
+    if(invalid)continue;
+    let cleared=0;
+    for(let y=rows-1;y>=0;y--)if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(cols).fill(null));cleared++;y++}
+    const score=scoreBoard(board,cleared)+(Math.random()*.035);
+    if(score<bestScore){bestScore=score;best={x,shape:clone(orientation),type,cleared}}
    }
+   orientation=normalize(rotate(orientation));
   }
   return best;
  };
+ const drawType=()=>{
+  if(!bag.length){bag=[0,1,2,3,4,5,6];for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bag[i],bag[j]]=[bag[j],bag[i]]}}
+  return bag.pop();
+ };
  const makePiece=()=>{
-  const move=findMove();
+  const type=drawType();
+  const move=findMove(type);
   if(!move){reset();return}
-  const p={type:move.type,shape:normalize(clone(shapes[move.type])),x:Math.max(0,Math.floor(cols/2)-2),y:-3,color:colors[move.type],targetX:move.x,targetShape:move.shape,planned:false};
+  const p={type,shape:normalize(clone(shapes[type])),x:Math.max(0,Math.floor(cols/2)-2),y:-3,color:colors[type],targetX:move.x,targetShape:move.shape,planned:false};
   piece=p;
  };
  const reset=()=>{grid=Array.from({length:rows},()=>Array(cols).fill(null));piece=null;makePiece()};
