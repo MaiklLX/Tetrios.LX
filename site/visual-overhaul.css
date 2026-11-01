@@ -1352,105 +1352,125 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 }
 
 
-/* Home logo centerpiece refinement: fixed shared geometry, calm spin and soft cross-fades. */
-#menu.home-dashboard>.hero .orb{
-  width:150px!important;height:92px!important;min-height:92px!important;
-  margin:0 auto!important;display:grid!important;place-items:center!important;
-}
-#menu.home-dashboard>.hero .relic.tetromino-showcase{
-  width:88px!important;height:88px!important;position:relative!important;
-  display:grid!important;place-items:center!important;perspective:520px;
-}
-#menu.home-dashboard .tetromino{
-  position:absolute;left:50%;top:50%;
-  width:76px;height:76px;inset:auto;
-  display:grid;grid-template-columns:repeat(4,16px);grid-template-rows:repeat(4,16px);
-  gap:2px;place-content:center;place-items:center;
-  opacity:0;transform:translate(-50%,-50%);
-  transform-origin:50% 50%;transform-style:preserve-3d;backface-visibility:hidden;
-  animation:tetromino-cycle 21s ease-in-out infinite,tetromino-spin 18s linear infinite;
-  will-change:opacity,transform;
-}
-#menu.home-dashboard .tetromino i{
-  width:16px;height:16px;min-width:16px;min-height:16px;
-  display:block;box-sizing:border-box;border-radius:4px;
-}
-#menu.home-dashboard .tetromino-i{animation-delay:0s,0s}
-#menu.home-dashboard .tetromino-o{animation-delay:-18s,-2.57s}
-#menu.home-dashboard .tetromino-t{animation-delay:-15s,-5.14s}
-#menu.home-dashboard .tetromino-l{animation-delay:-12s,-7.71s}
-#menu.home-dashboard .tetromino-j{animation-delay:-9s,-10.28s}
-#menu.home-dashboard .tetromino-s{animation-delay:-6s,-12.85s}
-#menu.home-dashboard .tetromino-z{animation-delay:-3s,-15.42s}
-@keyframes tetromino-cycle{
-  0%,100%{opacity:0}
-  2.5%{opacity:0}
-  5.5%{opacity:1}
-  10.5%{opacity:1}
-  14.285%{opacity:0}
-}
-@keyframes tetromino-spin{
-  from{transform:translate(-50%,-50%) rotateZ(-8deg) rotateY(-8deg)}
-  to{transform:translate(-50%,-50%) rotateZ(352deg) rotateY(8deg)}
-}
-@media(max-width:600px) and (orientation:portrait){
-  #menu.home-dashboard>.hero .orb{height:82px!important;min-height:82px!important;width:150px!important}
-  #menu.home-dashboard>.hero .relic.tetromino-showcase{width:84px!important;height:84px!important}
-}
-@media(prefers-reduced-motion:reduce){
-  #menu.home-dashboard .tetromino{animation:none!important;opacity:0!important;transform:translate(-50%,-50%)!important}
-  #menu.home-dashboard .tetromino-i{opacity:1!important}
-}
-
-
-/* Focused hero-only refinement: keep the existing menu layout untouched. */
+/* TETRIOS.LX — unified home emblem system (hero only). */
 #menu.home-dashboard > .hero h1{
   display:none!important;
 }
 #menu.home-dashboard > .hero .orb{
-  width:150px!important;
-  height:108px!important;
-  min-height:108px!important;
-  margin:4px auto 0!important;
+  width:156px!important;
+  height:112px!important;
+  min-height:112px!important;
+  margin:3px auto 0!important;
   display:grid!important;
   place-items:center!important;
+  position:relative!important;
+  isolation:isolate;
 }
 #menu.home-dashboard > .hero .orb:before{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
   width:76px!important;
   height:76px!important;
-  border-radius:17px!important;
-  transform:rotate(0deg);
-  animation:orb 18s linear infinite!important;
-  border-color:#46dfffaa!important;
-  box-shadow:0 0 32px #10aaff55,inset 0 0 22px #39dfff33!important;
+  margin:-38px 0 0 -38px!important;
+  border:1px solid #59eaffd9!important;
+  border-radius:19px!important;
+  background:linear-gradient(145deg,#1bfff00a,#6b75ff12)!important;
+  box-shadow:0 0 12px #24dfff66,0 0 34px #10aaff40,inset 0 0 22px #39dfff20!important;
+  transform-origin:50% 50%!important;
+  animation:tetrios-frame-turn 24s linear infinite!important;
+  z-index:0!important;
 }
 #menu.home-dashboard > .hero .orb:after{
-  width:112px!important;
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:116px!important;
   height:42px!important;
-  border-color:#a15cff88!important;
+  margin:-21px 0 0 -58px!important;
+  border:1px solid #a77bff8c!important;
+  border-radius:50%!important;
+  transform:rotate(-24deg)!important;
+  box-shadow:0 0 16px #9d7cff20!important;
+  z-index:0!important;
 }
 #menu.home-dashboard > .hero .relic.tetromino-showcase{
+  position:relative!important;
+  z-index:1!important;
   width:88px!important;
   height:88px!important;
+  margin:0!important;
+  display:block!important;
+  filter:none!important;
+  animation:none!important;
+  perspective:520px!important;
+}
+#menu.home-dashboard .tetromino{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:76px!important;
+  height:76px!important;
+  margin:0!important;
   display:grid!important;
+  grid-template-columns:repeat(4,16px)!important;
+  grid-template-rows:repeat(4,16px)!important;
+  gap:2px!important;
+  place-content:center!important;
   place-items:center!important;
+  opacity:0!important;
+  transform:translate(calc(-50% + var(--piece-x,0px)),calc(-50% + var(--piece-y,0px))) scale(.78)!important;
+  transform-origin:50% 50%!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:hidden!important;
+  animation:tetrios-piece-reveal 21s ease-in-out infinite!important;
+  will-change:opacity,transform;
 }
-#menu.home-dashboard .tetromino-t{
-  margin-left:-8px;
+#menu.home-dashboard .tetromino i{
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  min-height:16px!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  border-radius:4px!important;
+  border:1px solid color-mix(in srgb,var(--piece) 72%,white)!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--piece) 70%,white),var(--piece) 58%,color-mix(in srgb,var(--piece) 58%,#07152c))!important;
+  box-shadow:inset 0 2px #ffffff99,inset 0 -3px #0005,0 0 12px color-mix(in srgb,var(--piece) 68%,transparent)!important;
 }
-#menu.home-dashboard .tetromino-s,
-#menu.home-dashboard .tetromino-z{
-  margin-left:-8px;
-  margin-top:16px;
+#menu.home-dashboard .tetromino-i{--piece:#19c9ff;--piece-x:0px;--piece-y:8px;animation-delay:0s!important}
+#menu.home-dashboard .tetromino-o{--piece:#ffc23d;--piece-x:0px;--piece-y:0px;animation-delay:-18s!important}
+#menu.home-dashboard .tetromino-t{--piece:#ad70ff;--piece-x:-4px;--piece-y:4px;animation-delay:-15s!important}
+#menu.home-dashboard .tetromino-l{--piece:#ff9b42;--piece-x:4px;--piece-y:4px;animation-delay:-12s!important}
+#menu.home-dashboard .tetromino-j{--piece:#557cff;--piece-x:-4px;--piece-y:4px;animation-delay:-9s!important}
+#menu.home-dashboard .tetromino-s{--piece:#38e58b;--piece-x:-8px;--piece-y:16px;animation-delay:-6s!important}
+#menu.home-dashboard .tetromino-z{--piece:#ff557d;--piece-x:-8px;--piece-y:16px;animation-delay:-3s!important}
+@keyframes tetrios-piece-reveal{
+  0%,100%{opacity:0;transform:translate(calc(-50% + var(--piece-x,0px)),calc(-50% + var(--piece-y,0px))) scale(.78) rotateY(-24deg)}
+  2.5%,10.5%{opacity:1;transform:translate(calc(-50% + var(--piece-x,0px)),calc(-50% + var(--piece-y,0px))) scale(1) rotateY(0deg)}
+  14.285%{opacity:0;transform:translate(calc(-50% + var(--piece-x,0px)),calc(-50% + var(--piece-y,0px))) scale(.82) rotateY(24deg)}
+}
+@keyframes tetrios-frame-turn{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
 }
 @media(max-width:600px) and (orientation:portrait){
   #menu.home-dashboard > .hero .orb{
     width:150px!important;
-    height:104px!important;
-    min-height:104px!important;
+    height:106px!important;
+    min-height:106px!important;
     margin:2px auto 0!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
   #menu.home-dashboard > .hero .orb:before{animation:none!important}
+  #menu.home-dashboard .tetromino{animation:none!important;opacity:0!important}
+  #menu.home-dashboard .tetromino-i{
+    opacity:1!important;
+    transform:translate(calc(-50% + var(--piece-x,0px)),calc(-50% + var(--piece-y,0px)))!important;
+  }
 }
