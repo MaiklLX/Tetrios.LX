@@ -6,7 +6,7 @@
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
  const colors=['#36dfff','#9d75ff','#ffbd55','#63f5bd','#ff6f9f','#6e9cff','#d7f36b'];
  const shapes=[[[0,1],[1,1],[2,1],[3,1]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[0,1],[0,2],[1,2]],[[1,0],[1,1],[1,2],[0,2]],[[1,0],[2,0],[0,1],[1,1]],[[0,0],[1,0],[1,1],[2,1]]];
- let w=0,h=0,dpr=1,cols=0,rows=0,cell=28,grid=[],piece=null,last=0,acc=0,raf=0,paused=false,linesTotal=0,bag=[];
+ let w=0,h=0,dpr=1,cols=0,rows=0,cell=28,grid=[],piece=null,last=0,acc=0,raf=0,paused=false,linesTotal=0,bag=[],clearBursts=[],sparks=[];
  const clone=s=>s.map(([x,y])=>[x,y]);
  const rotate=s=>{const max=Math.max(...s.map(p=>p[0]));return s.map(([x,y])=>[max-y,x])};
  const normalize=s=>{const minX=Math.min(...s.map(p=>p[0])),minY=Math.min(...s.map(p=>p[1]));return s.map(([x,y])=>[x-minX,y-minY])};
@@ -57,13 +57,38 @@
   let top=false;
   piece.shape.forEach(([x,y])=>{const X=piece.x+x,Y=piece.y+y;if(Y<0)top=true;else if(grid[Y])grid[Y][X]=piece.color});
   let cleared=0;
-  for(let y=rows-1;y>=0;y--)if(grid[y].every(Boolean)){grid.splice(y,1);grid.unshift(Array(cols).fill(null));cleared++;y++}
+  for(let y=rows-1;y>=0;y--)if(grid[y].every(Boolean)){
+   const rowColors=grid[y].slice();
+   clearBursts.push({y,life:1});
+   for(let x=0;x<cols;x++)for(let n=0;n<2;n++){
+    const angle=Math.random()*Math.PI*2,speed=1.2+Math.random()*3.2;
+    sparks.push({x:(x+.5)*cell,y:(y+.5)*cell,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-1.2,color:rowColors[x]||'#fff',life:.65+Math.random()*.45,size:1.5+Math.random()*2.5});
+   }
+   grid.splice(y,1);grid.unshift(Array(cols).fill(null));cleared++;y++
+  }
   linesTotal+=cleared;
   if(top){reset();return}
   makePiece();
  };
  const block=(x,y,color,alpha=1)=>{const p=Math.max(1.5,cell*.065),bx=x*cell+p,by=y*cell+p,size=cell-p*2;ctx.save();ctx.globalAlpha=alpha;ctx.shadowColor=color;ctx.shadowBlur=cell*.3;const g=ctx.createLinearGradient(bx,by,bx+size,by+size);g.addColorStop(0,'#fff');g.addColorStop(.22,color);g.addColorStop(1,'#101a3a');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(bx,by,size,size,Math.max(3,cell*.14));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=color;ctx.globalAlpha=alpha*.65;ctx.stroke();ctx.fillStyle='#fff';ctx.globalAlpha=alpha*.35;ctx.fillRect(bx+size*.16,by+size*.13,size*.66,Math.max(1,size*.07));ctx.restore()};
- const render=()=>{ctx.clearRect(0,0,w,h);const glow=ctx.createRadialGradient(w*.5,h*.48,4,w*.5,h*.48,Math.max(w,h)*.7);glow.addColorStop(0,'rgba(22,128,220,.16)');glow.addColorStop(1,'rgba(3,8,24,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);ctx.strokeStyle='rgba(89,188,255,.105)';ctx.lineWidth=1;for(let x=0;x<=cols;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,h);ctx.stroke()}for(let y=0;y<=rows;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(w,y*cell);ctx.stroke()}for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(grid[y][x])block(x,y,grid[y][x],.48);if(piece)piece.shape.forEach(([x,y])=>{if(piece.y+y>=0)block(piece.x+x,piece.y+y,piece.color,.92)});const t=performance.now()*.000025;for(let i=0;i<22;i++){const x=(i*97.3+t*19)%w,y=(i*53.7+t*31)%h;ctx.fillStyle='rgba(132,218,255,.22)';ctx.beginPath();ctx.arc(x,y,1+(i%3)*.45,0,Math.PI*2);ctx.fill()}};
+ const render=()=>{
+  ctx.clearRect(0,0,w,h);
+  const glow=ctx.createRadialGradient(w*.5,h*.48,4,w*.5,h*.48,Math.max(w,h)*.7);glow.addColorStop(0,'rgba(22,128,220,.16)');glow.addColorStop(1,'rgba(3,8,24,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(89,188,255,.105)';ctx.lineWidth=1;
+  for(let x=0;x<=cols;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,h);ctx.stroke()}
+  for(let y=0;y<=rows;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(w,y*cell);ctx.stroke()}
+  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(grid[y][x])block(x,y,grid[y][x],.48);
+  if(piece)piece.shape.forEach(([x,y])=>{if(piece.y+y>=0)block(piece.x+x,piece.y+y,piece.color,.92)});
+  clearBursts.forEach(fx=>{
+   const alpha=Math.max(0,fx.life),yy=fx.y*cell;
+   ctx.save();ctx.globalAlpha=alpha*.8;ctx.shadowColor='#fff';ctx.shadowBlur=22;
+   const beam=ctx.createLinearGradient(0,yy,0,yy+cell);beam.addColorStop(0,'rgba(255,255,255,0)');beam.addColorStop(.5,'rgba(190,246,255,.95)');beam.addColorStop(1,'rgba(70,190,255,0)');
+   ctx.fillStyle=beam;ctx.fillRect(0,yy-cell*.15,w,cell*1.3);
+   ctx.fillStyle='rgba(255,255,255,.8)';ctx.fillRect(0,yy+cell*.43,w,Math.max(1,cell*.08));ctx.restore();
+  });
+  sparks.forEach(p=>{ctx.save();ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.restore()});
+  const t=performance.now()*.000025;for(let i=0;i<22;i++){const x=(i*97.3+t*19)%w,y=(i*53.7+t*31)%h;ctx.fillStyle='rgba(132,218,255,.22)';ctx.beginPath();ctx.arc(x,y,1+(i%3)*.45,0,Math.PI*2);ctx.fill()}
+ };
  const step=()=>{
   if(!piece)return;
   // The little AI steers toward its best landing, turning and shifting while descending.
@@ -71,7 +96,7 @@
   if(piece.x!==piece.targetX){const dir=Math.sign(piece.targetX-piece.x);if(fits(grid,piece,dir,0))piece.x+=dir}
   if(fits(grid,piece,0,1))piece.y++;else lock();
  };
- const frame=now=>{raf=0;if(paused||reduce.matches)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}render();raf=requestAnimationFrame(frame)};
+ const frame=now=>{raf=0;if(paused||reduce.matches)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
  const start=()=>{if(paused||reduce.matches||raf)return;last=0;raf=requestAnimationFrame(frame)};
  const stop=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
  const observer=new ResizeObserver(resize);observer.observe(host);
