@@ -732,3 +732,9 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Static source edits completed; must wait for web deployment and verify both maps on a real phone. Do not claim visual confirmation before user testing.
 - `site/universes-3d.js` source commit: `fe44a2e2ce4ee1af83f0637d901b9cca54e4dc83`.
 - `site/index.html` source commit: `0dcb29a4bb2c4073b52a630216b934799bb409b4`.
+## Checkpoint 290 — remove opaque active universe-card backing
+- Follow-up diagnosis found a legacy `#campaign .bb-galaxy-card.is-current` rule that paints a dark gradient panel over the shared nebula, even after the general card rule was made transparent.
+- Added a final targeted override forcing all universe card states to transparent backing while retaining only the subtle translucent biome glow on the current card.
+- No planet models, universe models, map navigation, progress, saves, purchases or inventory changed.
+- Source commit: `9dc3b63fb96d9d781f82d38b088ab317727c6515`.
+- Await web deployment and phone verification; this is a targeted code-level fix, not yet visually confirmed.
