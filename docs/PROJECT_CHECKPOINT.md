@@ -477,3 +477,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Pages deployment for the latest source SHA is pending verification. Physical Android review is also pending.
 - Next: verify the Pages workflow for `5b69dc4`, then check the popup entrance, 3D model sizing/scrolling and unified emblems on Android.
 - Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ 5b69dc4. ПРОВЕРИТЬ ВСПЛЫВАЮЩЕЕ ДОСЬЕ ГЕРОЯ С 3D-МОДЕЛЬЮ И ЕДИНЫЕ SVG-ЗНАЧКИ В МЕНЮ, ВЫБОРЕ ПЕРЕД УРОВНЕМ И ПРОФИЛЕ ГЕРОЯ. МЕХАНИКУ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
+
+
+## Checkpoint 271 — 3D universe loader repair and galaxy atlas polish — 2026-11-01
+- Resumed from user checkpoint 270. User requested validation of the 12 distinct 3D universe models on the published site and galaxy-map polish while preserving route geometry, campaign progress, purchases and equipped items.
+- Audited site/index.html, site/universes-3d.js, site/universes/manifest.json, site/visual-overhaul.css, and .github/workflows/deploy-pages.yml on main.
+- Confirmed the manifest contains 12 unique universe model IDs and 12 model entries in the same order used by the galaxy atlas: planet, earth-moon, lava-world, neptune, mars, uranus, saturn, black-hole, mercury, solar-system, spiral-galaxy, sun.
+- Found a runtime defect in site/universes-3d.js: visibleSlots was referenced by the IntersectionObserver loader but never declared. This could throw before GLB loading and prevent the 3D models from appearing.
+- Fixed the loader by declaring const visibleSlots = new Set() and clearing it during renderer teardown. Commit: fe67cdcb89171acd6c236c1052120dcc345b06fa.
+- Updated the module cache-bust URL in site/index.html to 20261101-universe-models-2, ensuring clients request the corrected loader. Commit: 40142b0a8eb26e0dd60e5952937f904848876b4d.
+- Applied a restrained atlas-only visual refinement: a 3px visual lift for the current galaxy card and a visible keyboard focus outline. Commit: 20eb144d712194dc36925fc311f6f734c2c1c23c.
+- Preservation check: the existing bb-treasure-map-and-arena-geometry style block remains present and untouched; the galaxy/planet ordering, route geometry, click handlers, campaign progress calculations, purchases, inventory and equipped-item state were not changed. No save keys or gameplay logic were edited.
+- Source-level verification after the changes: 12 manifest IDs / 12 model entries; loader declares, adds, deletes and clears visible-slot tracking; HTML references the cache-busted module; return-from-planet-map handler still points to renderGalaxyAtlas().
+- Deployment and live-device rendering of the repaired models are NOT yet confirmed in this checkpoint. A direct live-site fetch was unavailable from this session; do not claim the new models are already visible until the matching GitHub Pages deployment succeeds and the published site is visually checked.
+- Next: verify the Pages Actions deployment for source commit 20eb144d712194dc36925fc311f6f734c2c1c23c; then visually test all 12 models on the published site, including horizontal scrolling, mobile GPU stability, fallback behavior, and back-navigation. Continue polishing galaxy-card presentation without altering the route path or any saved game data.
+- Resume phrase: TETRIOS.LX — КОНТРОЛЬНАЯ ТОЧКА 271. ПРОВЕРИТЬ DEPLOY ДЛЯ 20eb144. ПРОТЕСТИРОВАТЬ ВСЕ 12 3D-ВСЕЛЕННЫХ НА ОПУБЛИКОВАННОМ САЙТЕ И ПОЛИРОВАТЬ КАРТУ ГАЛАКТИК. ГЕОМЕТРИЮ МАРШРУТА, ПРОГРЕСС, ПОКУПКИ И ЭКИПИРОВКУ НЕ МЕНЯТЬ. 🤘😎
