@@ -396,8 +396,16 @@
     toggle.setAttribute('aria-pressed',String(enabled));
     toggle.textContent=enabled?'2D РЕЖИМ':'3D ARENA';
     frame.classList.toggle('bb-3d-arena-active',enabled);
-    // Do not rely on stylesheet state alone: explicitly remove the WebGL canvas from
-    // layout/paint while 2D is active so a stale framebuffer can never cover the game.
+    frame.classList.toggle('bb-2d-arena-active',!enabled);
+    // Keep the original 2D canvas at the exact same bounded size when returning from 3D.
+    boardCanvas.style.display='block';
+    boardCanvas.style.visibility='visible';
+    boardCanvas.style.opacity=enabled?'0':'1';
+    boardCanvas.style.width='auto';
+    boardCanvas.style.height='100%';
+    boardCanvas.style.maxWidth='100%';
+    boardCanvas.style.maxHeight='100%';
+    // The WebGL canvas is decorative and must never participate in layout.
     if(renderer?.domElement){
       renderer.domElement.style.display=enabled?'block':'none';
       renderer.domElement.style.visibility=enabled?'visible':'hidden';
