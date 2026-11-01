@@ -462,3 +462,18 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Debug APK workflow `41302022761` for the same site source SHA was still running at the time of this update; do not offer an APK until its artifact is confirmed.
 - Signed release APK workflow `41302022729` failed separately. This does not affect the successful website deployment; do not alter signing credentials as part of this UI task.
 - The follow-up documentation commit is not a site-source change; the deployed website content matches the verified source SHA above.
+
+
+## Hero showcase popup and unified hero emblems — 2026-11-01
+- User requested replacing the in-place flip interaction with a floating animated popup containing the hero's 3D model, characteristics and abilities; also reported hero icons remained inconsistent in other parts of the game.
+- Replaced the Heroes screen flip-card renderer with a shared roster of authored SVG emblems. Tapping a hero now opens a cinematic modal dossier over the current screen, with an animated entrance, dimmed/blurred backdrop, large 3D stage, portrait emblem, role, level, stats, unique ability, XP and cosmetic equipment controls.
+- The selected hero can be confirmed from the popup. Cosmetic equip/unequip re-renders the same popup immediately and retains existing `equippedChestCosmetic` storage behavior.
+- Unified the authored SVG emblem across the Heroes roster, pre-level selection list, main-menu hero avatar, and hero training/progression modal. Remaining `hero.emoji` reference is only the 3D stage's fallback label metadata, not a UI icon.
+- Updated `overlay()` / `closeOverlay()` to remove the showcase-specific modal class when ordinary overlays open/close, avoiding style leakage into other dialogs.
+- Source commits: HTML `7769255932ec765e79c571a69f783f299a91c4d8`, menu emblem follow-up `e4784071c742d0f69a3410f77216d0394b4b5eeb`; CSS `b22216bfc427236af791159c83cb4bf812f2c26a`, avatar sizing `5b69dc43144c09cf4912ee95eeaf24403542c01c`.
+- Latest site source SHA: `5b69dc43144c09cf4912ee95eeaf24403542c01c`.
+- Checks: no old flip renderer remains; canonical emblem references are present in the roster, pre-level chooser, menu avatar and training modal; only 3D fallback metadata still reads `hero.emoji`; CSS braces balanced at 1253/1253.
+- Gameplay, hero abilities, item prices, currency, cosmetic ownership, campaign progress and save keys were not changed.
+- Pages deployment for the latest source SHA is pending verification. Physical Android review is also pending.
+- Next: verify the Pages workflow for `5b69dc4`, then check the popup entrance, 3D model sizing/scrolling and unified emblems on Android.
+- Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ 5b69dc4. ПРОВЕРИТЬ ВСПЛЫВАЮЩЕЕ ДОСЬЕ ГЕРОЯ С 3D-МОДЕЛЬЮ И ЕДИНЫЕ SVG-ЗНАЧКИ В МЕНЮ, ВЫБОРЕ ПЕРЕД УРОВНЕМ И ПРОФИЛЕ ГЕРОЯ. МЕХАНИКУ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
