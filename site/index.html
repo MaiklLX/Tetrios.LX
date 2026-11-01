@@ -9689,4 +9689,56 @@ body:has(#campaign:not([hidden])):before{
 }
 </style>
 
+
+
+<style id="bb-planet-full-bleed-cosmic-map">
+/* Use a real CC0 PNG nebula texture for both atlas states; tint it to the project's violet/cyan palette. */
+body:has(#campaign:not([hidden])):before{
+  background-image:
+    linear-gradient(118deg,rgba(94,32,174,.36) 0%,transparent 43%,rgba(0,163,208,.34) 100%),
+    radial-gradient(ellipse at 12% 28%,rgba(150,55,225,.36),transparent 48%),
+    radial-gradient(ellipse at 88% 72%,rgba(0,196,220,.28),transparent 52%),
+    linear-gradient(180deg,rgba(2,7,22,.12),rgba(3,7,22,.42)),
+    url("https://opengameart.org/sites/default/files/oga-textures/77816/space_nebula_01.png")!important;
+  background-size:cover,cover,cover,cover,cover!important;
+  background-position:center,center,center,center,center!important;
+  background-repeat:no-repeat!important;
+}
+#campaign .bb-planet-viewport{
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  background-color:transparent!important;
+  isolation:isolate!important;
+}
+#campaign .bb-planet-viewport:before{
+  opacity:.5!important;
+  background-image:
+    radial-gradient(1px 1px at 8% 18%,#fff 0 1px,transparent 2px),
+    radial-gradient(1.3px 1.3px at 28% 72%,#dff7ff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 51% 31%,#fff 0 1px,transparent 2px),
+    radial-gradient(1.4px 1.4px at 78% 64%,#e7d7ff 0 1px,transparent 2px),
+    radial-gradient(1px 1px at 94% 12%,#fff 0 1px,transparent 2px)!important;
+  background-size:220px 190px,300px 260px,360px 280px,290px 230px,400px 310px!important;
+}
+#campaign .bb-planet-viewport:after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  background:
+    radial-gradient(ellipse 56% 34% at 12% 78%,rgba(149,60,226,.22),transparent 100%),
+    radial-gradient(ellipse 54% 38% at 88% 20%,rgba(0,195,218,.2),transparent 100%),
+    linear-gradient(180deg,transparent 65%,rgba(2,6,18,.25))!important;
+}
+#campaign .bb-planet-track{position:relative!important;z-index:1!important}
+#campaign .bb-planet-node{z-index:2!important}
+@media(max-width:700px){
+  #campaign .bb-planet-viewport{background:transparent!important}
+}
+</style>
+
 </body></html>
