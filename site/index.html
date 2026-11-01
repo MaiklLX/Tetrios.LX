@@ -9480,4 +9480,57 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 }
 </style>
 
+
+<style id="bb-atlas-status-beside-identifiers">
+/* Keep all map status symbols beside the object's identifier, never floating over its art. */
+/* Planets: move current / cleared / locked markers beside the numeric title. */
+#campaign .bb-planet-node::before{display:none!important;content:none!important}
+#campaign .bb-planet-node strong{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+}
+#campaign .bb-planet-node strong::after{
+ display:inline-grid;place-items:center;flex:0 0 15px;
+ width:15px;height:15px;border:1px solid currentColor;border-radius:50%;
+ font-size:10px;font-weight:1000;line-height:1;background:#10182beF;
+ box-shadow:0 0 8px currentColor;text-shadow:0 0 5px currentColor;
+}
+#campaign .bb-planet-node.is-current strong::after{
+ content:"›";color:#65f0d4;border-color:#65f0d488;
+}
+#campaign .bb-planet-node.is-cleared strong::after{
+ content:"✓";color:#ffe39a;border-color:#f4ca72aa;
+ background:linear-gradient(145deg,#594522,#171626);
+}
+#campaign .bb-planet-node.is-locked strong::after{
+ content:"▣";color:#9aa7bf;border-color:#9aa7bf66;
+ box-shadow:none;text-shadow:none;
+}
+/* Universes: move their status badge from the top-right corner to the universe label. */
+#campaign .bb-galaxy-card::before{display:none!important;content:none!important}
+#campaign .bb-galaxy-card .bb-galaxy-index{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-index::after{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:16px;padding:2px 6px;border:1px solid currentColor;border-radius:20px;
+ font-size:7px;font-weight:950;letter-spacing:.08em;line-height:1;
+ background:#07101ddd;white-space:nowrap;
+}
+#campaign .bb-galaxy-card.is-current .bb-galaxy-index::after{
+ content:"● ДОСТУПНО";color:#65f0d4;border-color:#65f0d455;
+ box-shadow:0 0 10px #52e9c522;
+}
+#campaign .bb-galaxy-card.is-cleared .bb-galaxy-index::after{
+ content:"✓ ПРОЙДЕНО";color:#f4ca72;border-color:#f4ca7255;
+ box-shadow:0 0 10px #f4ca7222;
+}
+#campaign .bb-galaxy-card.is-locked .bb-galaxy-index::after{
+ content:"▣ ЗАКРЫТО";color:#9aa7bf;border-color:#9aa7bf33;
+}
+@media(max-width:520px){
+ #campaign .bb-galaxy-card .bb-galaxy-index{gap:5px!important}
+ #campaign .bb-galaxy-card .bb-galaxy-index::after{font-size:6px;min-height:15px;padding:2px 5px}
+}
+</style>
+
 </body></html>
