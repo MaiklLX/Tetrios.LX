@@ -5514,8 +5514,8 @@ function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
     {ids:['score','mult'],name:'КОМБО-РЕАКТОР',desc:'+12% к очкам'},
-    {ids:['shield','armor'],name:'ЖЕЛЕЗНАЯ КРЕПОСТЬ',desc:'защитная комбинация'},
-    {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'контроль сложности'}
+    {ids:['shield','armor'],name:'ЖЕЛЕЗНАЯ КРЕПОСТЬ',desc:'щит очищает больше рядов при спасении'},
+    {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'дополнительно замедляет рост сложности'}
   ].filter(combo=>combo.ids.every(id=>(Number(r[id])||0)>0));
 }
 
@@ -7401,7 +7401,7 @@ if(bbIsDailyMechanic('echoCombo')){
 let mult=boosts.includes('mult')?1+0.5*bbGetUpgradeRank('mult'):1;
 if(bbSelectedHero==='prism'&&cleared>=2)mult*=1.15+Math.min(.15,(bbGetHeroProgress('prism').level-1)*.01);
 if(bbSelectedHero==='spark'&&combo>=2)mult*=1.1+Math.min(.15,(bbGetHeroProgress('spark').level-1)*.01);if(boosts.includes('score'))mult*=1+combo*.15*bbGetUpgradeRank('score');if(boosts.includes('glow'))mult*=1+.1*bbGetUpgradeRank('glow');if(boosts.includes('neuron')&&runSeconds<30)mult*=1.25;if(mode==='daily'&&bbGetActiveDailyRule().mod==='pulse')mult*=1.5;if(bbIsDailyMechanic('echoCombo')){mult*=bbDailyMechanicState.echoMultiplier;}
-if(mode==='rogue'){if(bbGetRogueCardRank('score')&&bbGetRogueCardRank('mult'))mult*=1.12;if(bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor'))mult*=1.05;if(bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory'))mult*=1.05;}
+if(mode==='rogue'&&bbGetRogueCardRank('score')&&bbGetRogueCardRank('mult'))mult*=1.12;
 if(
   mode==='daily' &&
   bbGetActiveDailyRule().mod==='artifactHunt' &&
@@ -7416,7 +7416,7 @@ let pts=[0,100,300,500,800][Math.min(4,cleared)];score+=Math.round(pts*level*mul
     bbDailyMechanicState.echoCombo=0;
     bbDailyMechanicState.echoMultiplier=1;
   }
-}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-4&&Math.random()<.22?1:0));toast('Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
+}let dailySpawnCollision=false;piece=newPiece(nextType);nextType=randomType();if(collides(piece)){if(bbIsDailyMechanic('lastShield')&&bbDailyMechanicState.shieldRemaining<1){bbDailyMechanicState.shieldRemaining=1;for(let y=0;y<4;y++)board[y].fill(0);piece=newPiece(nextType);nextType=randomType();toast('⛨ ПОСЛЕДНИЙ ЩИТ! Верхние ряды очищены.');}else if(boosts.includes('shield')){boosts=boosts.filter(x=>x!=='shield');const fortressSynergy=mode==='rogue'&&bbGetRogueCardRank('shield')&&bbGetRogueCardRank('armor');board=Array.from({length:H},(_,y)=>Array.from({length:W},(_,x)=>y>H-(fortressSynergy?6:4)&&Math.random()<(fortressSynergy?.10:.22)?1:0));toast(fortressSynergy?'ЖЕЛЕЗНАЯ КРЕПОСТЬ! Щит очистил больше рядов.':'Квантовый щит спас забег!');}else if(boosts.includes('nova')){boosts=boosts.filter(x=>x!=='nova');board[H-1].fill(0);toast('Сверхновая очистила нижнюю линию!')}else if(bbSelectedHero==='plush'&&!bbPlushSaved){
 if(
   mode==='daily' &&
   bbGetActiveDailyRule().mod==='artifactHunt'
@@ -7472,7 +7472,7 @@ if(dailySpawnCollision){
 
 bbCheckCampaignCompletion();
 }
-function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;needLines=Math.max(3,Math.ceil(needLines*1.25+(level-1)*.3-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)-(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
+function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.max(3,Math.ceil(needLines*1.25+(level-1)*.3-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)-(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
 function updateHud(){$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=boosts.length?'✧':'◇';$('boostName').textContent=boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления';$('boostNum').textContent=boosts.length?boosts.length+' усил.':'Выбери реликвию';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
