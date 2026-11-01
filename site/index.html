@@ -9219,4 +9219,48 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 @keyframes bbArrivalOrbit{to{transform:rotate(385deg)}}
 @media(prefers-reduced-motion:reduce){.bb-campaign-arrival-icon:before,.bb-campaign-arrival-banner:before,#campaign .bb-planet-node.is-arrival .bb-planet-sphere{animation:none!important}}
 </style>
+
+<style id="bb-galaxy-atmosphere-polish">
+/* Smooth, native-feeling atlas movement without snapping every card abruptly. */
+#campaign .bb-galaxy-viewport,
+#campaign .bb-planet-viewport{
+  scroll-snap-type:x proximity!important;
+  scroll-behavior:smooth!important;
+  scroll-padding-inline:18px!important;
+  touch-action:pan-x pan-y!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-x:contain!important;
+}
+#campaign .bb-galaxy-track{scroll-snap-stop:normal!important}
+#campaign .bb-galaxy-card{
+  border:0!important;
+  outline:none;
+  border-radius:18px!important;
+  background:linear-gradient(155deg,#121b31aa,#080e1dbb 82%)!important;
+  box-shadow:none!important;
+  transition:background-color .35s ease,filter .35s ease!important;
+}
+#campaign .bb-galaxy-card::after{display:none!important}
+#campaign .bb-galaxy-card.is-current{
+  transform:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:radial-gradient(ellipse at 50% 38%,color-mix(in srgb,var(--biome-color) 13%,transparent),transparent 68%),linear-gradient(155deg,#17213baa,#080e1dcc 82%)!important;
+}
+#campaign .bb-galaxy-card:focus-visible{
+  outline:1px solid color-mix(in srgb,var(--biome-color) 72%,transparent)!important;
+  outline-offset:3px!important;
+}
+#campaign .bb-galaxy-orbit,
+#campaign .bb-galaxy-star,
+#campaign .bb-galaxy-core{display:none!important;animation:none!important}
+#campaign .bb-galaxy-model-fallback{animation:none!important}
+#campaign .bb-galaxy-art{isolation:isolate}
+@media(prefers-reduced-motion:reduce){
+  #campaign .bb-galaxy-viewport,
+  #campaign .bb-planet-viewport{scroll-behavior:auto!important}
+  #campaign .bb-galaxy-card{transition:none!important}
+}
+</style>
+
 </body></html>
