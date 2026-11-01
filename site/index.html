@@ -6860,6 +6860,7 @@ function buildMap() {
 
   const current = bbGetUnlockedNode();
   const activeBiome = bbGetBiome(current);
+  let viewedBiomeId = activeBiome.id;
   const planetEmojis = ['🪐','🌕','🌑','🌍','🌋','🧊','🔮','☄️','🌟','🌊'];
   const biomeAtmospheres = [
     'Живые континенты и сияющие долины',
@@ -6918,6 +6919,7 @@ function buildMap() {
           toast('Эта вселенная откроется после прохождения предыдущих миров');
           return;
         }
+        viewedBiomeId = b.id;
         renderPlanetSystem(b);
       });
       track.appendChild(card);
@@ -6943,7 +6945,7 @@ function buildMap() {
     next.onclick = () => viewport.scrollBy({left:viewport.clientWidth * .82, behavior:'smooth'});
     g.appendChild(controls);
 
-    const currentIndex = bbBiomes.findIndex(b => b.id === activeBiome.id);
+    const currentIndex = bbBiomes.findIndex(b => b.id === viewedBiomeId);
     requestAnimationFrame(() => {
       const target = track.children[Math.max(0,currentIndex)];
       if (target) viewport.scrollTo({left:Math.max(0,target.offsetLeft - 12),behavior:'smooth'});
