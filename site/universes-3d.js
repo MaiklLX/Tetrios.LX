@@ -62,6 +62,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     cancelAnimationFrame(raf);raf=0;
     active.observer?.disconnect();
     active.resizeObserver?.disconnect();
+    if(active.resizeHandler)window.removeEventListener('resize',active.resizeHandler);
+    if(active.scrollHandler)active.viewport.removeEventListener('scroll',active.scrollHandler);
     active.renderer?.dispose();
     active.canvas?.remove();
     active=null;
@@ -91,7 +93,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
     const slots=[...viewport.querySelectorAll('[data-universe-model]')];
     const entries=new Map();
-    const state={viewport,grid,canvas,renderer,observer:null,resizeObserver:null,entries,slots};
+    grid.style.position='relative';
+    const state={viewport,grid,canvas,renderer,observer:null,resizeObserver:null,resizeHandler:null,scrollHandler:null,entries,slots};
     active=state;
 
     const activate=slot=>{
@@ -131,6 +134,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     };
     state.resizeObserver=new ResizeObserver(resize);
     state.resizeObserver.observe(viewport);
+    state.resizeHandler=resize;
+    state.scrollHandler=requestRender;
     window.addEventListener('resize',resize,{passive:true});
     viewport.addEventListener('scroll',requestRender,{passive:true});
     resize();
