@@ -399,3 +399,20 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Deployment run/status for this exact SHA is not yet verified. Do not claim the changes are live until a matching Pages deployment is confirmed. Physical Android review also remains pending.
 - Next: verify the Pages deployment for this exact SHA; then visually review the three submenu screens on Android and refine only concrete readability/spacing issues. Preserve the established mobile-first layout and all game logic/data.
 - Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ c55eb26. ЗАТЕМ ПРОДОЛЖИТЬ ПОЛИРОВКУ КАРТЫ КАМПАНИИ, МАГАЗИНА И ГЕРОЕВ БЕЗ ИЗМЕНЕНИЯ МЕХАНИКИ И СОХРАНЕНИЙ. 🤘😎**
+
+
+## Submenu identity pass 3 — 2026-11-01
+- Continued the Campaign / Shop / Heroes visual pass with a deliberately more informative approach: distinct visual identities instead of another general atmosphere layer.
+- CSS-only implementation in `site/visual-overhaul.css`, commit `e383ef181aacf9ad10ebc4e18b4923472322b643`:
+  - Campaign: each of the 11 existing biome cards receives its own restrained color identity; the active biome is more clearly elevated, locked biomes remain visibly subdued, and cleared campaign nodes gain a separate completion treatment. Existing biome order, labels, unlock state, node state and click handlers are untouched.
+  - Shop: the six existing catalog cards receive category-specific accent colors tied only to their existing `data-bb-buy` IDs; price, inventory, purchase buttons, currency and reward logic remain unchanged.
+  - Heroes: each of the five existing roster cards receives a distinct accent and a clearer character-art stage; the selected/preview/owned state remains driven by the existing app markup and JS.
+  - Kept mobile card sizing and reduced-motion behavior.
+- Updated stylesheet cache token in `site/index.html` to `20261101-submenus-identity-3`, commit `755562dafd311feae2c8970bf425c8283f1cff8c`.
+- CSS brace validation passed: 1119 opening / 1119 closing braces.
+- Current main source commit after this pass: `755562dafd311feae2c8970bf425c8283f1cff8c`.
+- No HTML structure, JavaScript, IDs, handlers, game mechanics, prices, purchases, inventory, campaign progression, hero selection, localStorage keys, or save data were changed.
+- Website deployment for this exact SHA is not yet confirmed. The commit-workflow helper is limited to PR-triggered runs; an empty result from it is not evidence of a failed or missing Pages deployment. Do not claim the changes are live until an exact matching Pages deployment is verified.
+- Physical Android review remains pending.
+- Next: verify the Pages deployment for `755562dafd311feae2c8970bf425c8283f1cff8c`; then inspect Campaign, Shop and Heroes on a phone and refine only concrete issues.
+- Resume phrase: **TETRIOS.LX — ПРОВЕРИТЬ DEPLOY ДЛЯ 755562d. ЗАТЕМ ПРОВЕРИТЬ РАЗЛИЧИМОСТЬ БИОМОВ, КАТЕГОРИЙ МАГАЗИНА И КАРТОЧЕК ГЕРОЕВ. МЕХАНИКУ И СОХРАНЕНИЯ НЕ МЕНЯТЬ. 🤘😎**
