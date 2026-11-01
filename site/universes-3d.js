@@ -16,6 +16,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
   const loader=new GLTFLoader();
   let active=null,raf=0,last=0;
   const modelCache=new Map();
+  const visibleSlots=new Set();
   const lowPower=(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
 
   function loadModel(id){
@@ -78,6 +79,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     active.entries.forEach(entry=>disposeScene(entry.scene));
     active.entries.clear();
     modelCache.clear();
+    visibleSlots.clear();
     active.renderer?.dispose();
     active.renderer?.forceContextLoss?.();
     active.canvas?.remove();
