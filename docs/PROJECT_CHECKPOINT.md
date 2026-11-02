@@ -775,3 +775,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 316. СВЕРИТЬ 3D-АРЕНУ С 2D: ТЁМНО-СИНЯЯ ПОДЛОЖКА, ТОНКАЯ СЕТКА, УСИЛЕННЫЕ ЛИНИИ ЧЕРЕЗ ПЯТЬ КЛЕТОК, БИРЮЗОВЫЙ КОНТУР И БОЛЕЕ СПОКОЙНЫЕ ОБЪЁМНЫЕ БЛОКИ. ПРОВЕРИТЬ, ЧТО ПОЛЕ 10×23 АДАПТИВНО ЗАНИМАЕТ СВОБОДНОЕ ПРОСТРАНСТВО И ЦЕНТРИРУЕТСЯ БЕЗ ЖЁСТКОГО СДВИГА. СРАВНИТЬ 2D/3D НА ТЕЛЕФОНЕ, ПРОВЕРИТЬ ПОВОРОТЫ И ЖЕСТЫ; ИГРОВУЮ ЛОГИКУ НЕ МЕНЯТЬ. 🤘🏆**
 
 - CI follow-up: the first run exposed two stale validator assertions (the former camera envelope and former high-clearcoat block material). Updated both assertions to the new responsive envelope `10.4×23.2`, camera padding `1.006`, and restrained `0.35` clearcoat in validator commit `19fbfb30796991217fd19ddcbaaf9e0f7d09f6ec`. A fresh web deployment is being triggered from the latest main state; do not treat the earlier failed/cancelled runs as a published build.
+
+
+## Checkpoint 317 — rollback of broken adaptive layout (2026-11-02)
+
+- User reported that the adaptive arena CSS displaced/removed surrounding game elements and that 3D blocks appeared horizontally stretched.
+- Root cause confirmed in `bb-arena-adaptive-10x23-v1`: it rewrote `#game .playlayout` to `display:block` on mobile and forced the first child to `width/height:100%`, which changed the layout contract for sibling game elements. It also overrode the board canvas sizing independently of the established layout.
+- Rolled back the entire experimental adaptive stylesheet and removed its validator requirement. Existing HUD, side rails, and boardframe layout rules are restored unchanged. No game logic or controls changed.
+- 3D canvas continues to size from the actual 2D board canvas bounds; camera keeps the 10×23 geometry envelope and orthographic aspect fit. Re-check square cell proportions after the layout rollback before any further visual work.
+- Do not attempt another global `.playlayout` override. Future sizing changes must target only the boardframe within its existing parent layout, measure the available rectangle, and preserve the 10:23 aspect ratio for the board canvas.
+- Source rollback commits: `b108c30d01da21ab7de76b1e5c1fac1dce63fc12` (layout) and `2a06bcfd39ecb8bbd018febb4ae96659136a7ece` (validator). User must verify live mobile layout before further tuning.
+- Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 317. ВОССТАНОВИТЬ ПРАВИЛЬНОЕ РАСПОЛОЖЕНИЕ HUD И БОКОВЫХ ЭЛЕМЕНТОВ ПОСЛЕ ОТКАТА ЭКСПЕРИМЕНТАЛЬНОГО ADAPTIVE CSS. ПРОВЕРИТЬ, ЧТО КЛЕТКИ 3D СНОВА КВАДРАТНЫЕ И НЕ РАСТЯНУТЫ. НЕ МЕНЯТЬ ИГРОВУЮ ЛОГИКУ, УПРАВЛЕНИЕ И СУЩЕСТВУЮЩУЮ КОМПОНОВКУ. ДАЛЬШЕ МАСШТАБИРОВАТЬ ТОЛЬКО BOARD FRAME ВНУТРИ ЕГО РОДНОГО КОНТЕЙНЕРА.**
