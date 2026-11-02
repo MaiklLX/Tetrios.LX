@@ -597,8 +597,8 @@
     padding: 22px;
   }
   #daily > .screenhead { grid-area: head; min-width: 0; }
-  #daily > .challengebox:first-of-type { grid-area: mission; }
-  #daily > .challengebox:nth-of-type(2) { grid-area: rule; }
+  #daily > .challengebox:has(#dailyGoal) { grid-area: mission; }
+  #daily > .challengebox:has(#dailyRule) { grid-area: rule; }
   #daily > #dailyStart { grid-area: start; justify-self: end; width: min(100%, 360px); margin: 0; }
   #daily > #dailyCalendarOpen { grid-area: calendar; justify-self: start; width: min(100%, 360px); margin: 0; }
   #daily .challengebox { min-width: 0; height: 100%; margin: 0; padding: 22px; }
@@ -626,8 +626,8 @@
     margin: 0 !important;
     padding: 12px 16px;
   }
-  #shopScreen > .surprise-shop-card:first-of-type { grid-area: surprise; }
-  #shopScreen > .surprise-shop-card:nth-of-type(2) { grid-area: relics; }
+  #shopScreen > .surprise-shop-card:has(#shopBuyBox) { grid-area: surprise; }
+  #shopScreen > .surprise-shop-card:has(#bbRelicChestOptions) { grid-area: relics; }
   #shopScreen > .surprise-shop-card {
     min-width: 0;
     min-height: 190px;
