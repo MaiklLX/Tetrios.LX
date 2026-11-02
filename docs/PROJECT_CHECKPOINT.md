@@ -804,3 +804,17 @@ Do not claim device testing has happened; the user performs real-device testing.
 - No changes to the 10×23 board, 2D/3D rendering, controls, pause behavior, or existing layout sizing.
 - GitHub Actions for the feature are running from the latest source commit; web deployment and APK build results must be checked before treating the feature as published. Visual confirmation still requires the user's phone/browser check.
 - Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 318. ОТСЕК ГЕРОЕВ: ПРОВЕРИТЬ НОВЫЙ СЛОТ В ПРАВОЙ НИЖНЕЙ ЧАСТИ ИГРОВОГО HUD, ПОРТРЕТ ВЫБРАННОГО ГЕРОЯ, ОТКРЫТИЕ СПОСОБНОСТИ С 5 УРОВНЯ И ПЕРЕЗАРЯДКУ 45 СЕКУНД. ПРОВЕРИТЬ УМЕНИЯ ВСЕХ ПЯТИ ГЕРОЕВ В ОБЫЧНОМ РЕЖИМЕ И В БЛОК-РАНЕ. НЕ МЕНЯТЬ СЕТКУ 10×23, 2D/3D-АРЕНУ, РАЗМЕРЫ ПОЛЯ И СУЩЕСТВУЮЩИЕ УПРАВЛЕНИЯ.**
+
+
+## Checkpoint 319 — one-time daily challenge rewards (2026-11-02)
+
+- Fixed the daily challenge completion/retry flow so a successful same-day challenge cannot be restarted from the result overlay to farm its 500 coins and relic reward.
+- The daily challenge start button now changes to a completed state and is disabled after today's reward has been claimed.
+- Added a second guard inside the actual game-start function, so bypassing the menu or reaching the hero-selection confirmation cannot start a second paid-reward run.
+- Added a completion-history check alongside the existing completion-date flag. The reward claim is recorded before currency/relic payout, making the claim path idempotent.
+- The result screen's primary action in daily mode now returns to the daily challenge screen instead of attempting another run. Other modes keep their existing retry behavior.
+- Historical replay rules remain separate: a replay of an older missed date continues to use the existing replay eligibility/payment/one-time replay ledger; the daily fix does not grant extra rewards for completed historical dates.
+- Source commit: `8bab563d343466fad8b9bf40a9677757e05b7a1a` (`site/index.html`).
+- No changes to board dimensions, gameplay physics, controls, hero progression, or rewards in other modes.
+- Deployment and runtime checks must pass before considering the fix live.
+- Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 319. ЗАЩИТА ЕЖЕДНЕВНЫХ НАГРАД: ПОСЛЕ УСПЕШНОГО ВЫЗОВА КНОПКА СТАРТА ДОЛЖНА БЫТЬ ЗАБЛОКИРОВАНА, А КНОПКА В ИТОГОВОМ ОКНЕ ВОЗВРАЩАЕТ К СПИСКУ ЕЖЕДНЕВНЫХ ВЫЗОВОВ. ПРОВЕРИТЬ, ЧТО 500 МОНЕТ И РЕЛИКВИИ НАЧИСЛЯЮТСЯ ТОЛЬКО ОДИН РАЗ ЗА ДЕНЬ, В ТОМ ЧИСЛЕ ПРИ ПОВТОРНОМ ВХОДЕ ИЛИ ПЕРЕЗАПУСКЕ. ПОВТОРЫ СТАРЫХ ПРОПУЩЕННЫХ ДАТ ОСТАЮТСЯ ОТДЕЛЬНЫМ ПЛАТНЫМ РЕЖИМОМ.**
