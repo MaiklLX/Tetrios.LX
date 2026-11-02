@@ -9692,7 +9692,7 @@ body:has(#campaign:not([hidden])):before{
 
 
 <style id="bb-planet-full-bleed-cosmic-map">
-/* Shared deep-space skybox: keep it on the home screen AND extend it behind both atlas maps. */
+/* Keep the same deep-space skybox on the home page. */
 html,body{
   min-height:100%!important;
   background-color:#030716!important;
@@ -9707,32 +9707,56 @@ html,body{
   background-repeat:no-repeat!important;
   background-attachment:fixed!important;
 }
-/* Let the shared skybox show through the app shell on every screen, including home. */
-body .app{
-  background:transparent!important;
-  background-color:transparent!important;
-}
-/* The atlas itself must remain transparent and span the full available page height. */
+body .app{background:transparent!important;background-color:transparent!important}
+
+/* Explicitly paint the campaign page itself with the skybox. */
 #campaign,
-#campaign.screen,
-#campaign .screen{
-  min-height:calc(100dvh - 46px)!important;
-  background:transparent!important;
-  background-color:transparent!important;
+#campaign.screen{
+  position:relative!important;
+  min-height:100dvh!important;
+  background-color:#030716!important;
+  background-image:
+    linear-gradient(118deg,rgba(94,32,174,.24) 0%,transparent 43%,rgba(0,163,208,.22) 100%),
+    radial-gradient(ellipse at 12% 28%,rgba(150,55,225,.24),transparent 48%),
+    radial-gradient(ellipse at 88% 72%,rgba(0,196,220,.18),transparent 52%),
+    linear-gradient(180deg,rgba(2,7,22,.08),rgba(3,7,22,.32)),
+    url("./assets/deep_space_no_sun_2k.webp")!important;
+  background-size:cover,cover,cover,cover,cover!important;
+  background-position:center top,center,center,center,center!important;
+  background-repeat:no-repeat!important;
+  background-attachment:fixed!important;
 }
-/* Atlas viewports reveal the same page background instead of creating separate image panels. */
+/* Remove legacy opaque atlas fills that were hiding the page skybox. */
+#campaign #mapgrid.bb-galaxy-atlas,
+#campaign #mapgrid.bb-planet-map,
 #campaign .bb-galaxy-viewport,
 #campaign .bb-planet-viewport{
   background:transparent!important;
   background-color:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+/* Give both horizontal map viewports the actual skybox too, so it remains visible on mobile. */
+#campaign .bb-galaxy-viewport,
+#campaign .bb-planet-viewport{
+  position:relative!important;
+  isolation:isolate!important;
   border:0!important;
   outline:0!important;
   border-radius:0!important;
-  box-shadow:none!important;
-  isolation:isolate!important;
+  background-color:#030716!important;
+  background-image:
+    linear-gradient(118deg,rgba(94,32,174,.20) 0%,transparent 43%,rgba(0,163,208,.18) 100%),
+    radial-gradient(ellipse at 12% 28%,rgba(150,55,225,.20),transparent 48%),
+    radial-gradient(ellipse at 88% 72%,rgba(0,196,220,.15),transparent 52%),
+    url("./assets/deep_space_no_sun_2k.webp")!important;
+  background-size:cover,cover,cover,cover!important;
+  background-position:center,center,center,center!important;
+  background-repeat:no-repeat!important;
+  background-attachment:fixed!important;
 }
 #campaign .bb-galaxy-viewport:before,
-#campaign .bb-planet-viewport:before{opacity:.5!important}
+#campaign .bb-planet-viewport:before{opacity:.28!important}
 #campaign .bb-galaxy-viewport:after,
 #campaign .bb-planet-viewport:after{
   content:""!important;
@@ -9741,9 +9765,9 @@ body .app{
   z-index:0!important;
   pointer-events:none!important;
   background:
-    radial-gradient(ellipse 56% 34% at 12% 78%,rgba(149,60,226,.16),transparent 100%),
-    radial-gradient(ellipse 54% 38% at 88% 20%,rgba(0,195,218,.14),transparent 100%),
-    linear-gradient(180deg,transparent 65%,rgba(2,6,18,.18))!important;
+    radial-gradient(ellipse 56% 34% at 12% 78%,rgba(149,60,226,.10),transparent 100%),
+    radial-gradient(ellipse 54% 38% at 88% 20%,rgba(0,195,218,.09),transparent 100%),
+    linear-gradient(180deg,transparent 65%,rgba(2,6,18,.12))!important;
 }
 #campaign .bb-galaxy-track,
 #campaign .bb-planet-track{position:relative!important;z-index:2!important}
