@@ -5300,7 +5300,9 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 <style id="bb-desktop-mobile-layout-v1">
 /* Desktop reuses the proven mobile-first component order and vertical flow. */
+/* Screen navigation relies on the HTML hidden attribute; keep it stronger than desktop display rules. */
 @media (min-width: 901px) {
+  .screen[hidden] { display:none !important; }
   html, body { min-height:100%; height:auto; overflow-x:hidden !important; overflow-y:auto !important; }
   body { display:block !important; }
   .app {
