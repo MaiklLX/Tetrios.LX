@@ -82,16 +82,15 @@
     const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(-4,7,12);scene.add(key);
     const rim=new THREE.PointLight(0x45f4ff,18,28);rim.position.set(5,0,8);scene.add(rim);
     const violet=new THREE.PointLight(0x9566ff,13,24);violet.position.set(-6,2,-4);scene.add(violet);
-    const shell=new THREE.Mesh(new THREE.BoxGeometry(10.25,23.45,.78),new THREE.MeshStandardMaterial({color:0x101a34,roughness:.3,metalness:.82,emissive:0x111c3c,emissiveIntensity:.55}));
-    shell.position.set(0,0,-.62);scene.add(shell);
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(9.9,22.9),new THREE.MeshStandardMaterial({color:0x0b1429,roughness:.34,metalness:.28,transparent:true,opacity:.96}));
-    plane.position.z=-.18;scene.add(plane);
-    const inset=new THREE.Mesh(new THREE.PlaneGeometry(9.55,22.55),new THREE.MeshBasicMaterial({color:0x102341,transparent:true,opacity:.24}));
-    inset.position.z=-.15;scene.add(inset);
-    const sideGlowMat=new THREE.MeshBasicMaterial({color:0x54fff0,transparent:true,opacity:.32});
-    [-5.06,5.06].forEach(x=>{const glow=new THREE.Mesh(new THREE.BoxGeometry(.035,22.8,.04),sideGlowMat);glow.position.set(x,0,-.08);scene.add(glow)});
-    const topGlow=new THREE.Mesh(new THREE.BoxGeometry(10.12,.035,.04),new THREE.MeshBasicMaterial({color:0xa98aff,transparent:true,opacity:.55}));
-    topGlow.position.set(0,11.52,-.08);scene.add(topGlow);
+    // Open 3D playfield: remove the solid backing box and large plates. The cells float in the game space.
+    const sideGlowMat=new THREE.MeshBasicMaterial({color:0x54fff0,transparent:true,opacity:.2});
+    [-5.035,5.035].forEach(x=>{const glow=new THREE.Mesh(new THREE.BoxGeometry(.018,22.5,.025),sideGlowMat);glow.position.set(x,0,-.08);scene.add(glow)});
+    // Short corner markers replace the enclosing rectangular frame.
+    const cornerMat=new THREE.MeshBasicMaterial({color:0x75fff0,transparent:true,opacity:.58});
+    [[-5,11.5,1,1],[5,11.5,-1,1],[-5,-11.5,1,-1],[5,-11.5,-1,-1]].forEach(([x,y,sx,sy])=>{
+      const h=new THREE.Mesh(new THREE.BoxGeometry(.42,.025,.035),cornerMat);h.position.set(x+sx*.2,y,-.035);scene.add(h);
+      const v=new THREE.Mesh(new THREE.BoxGeometry(.025,.42,.035),cornerMat);v.position.set(x,y-sy*.2,-.035);scene.add(v);
+    });
     gridGroup=new THREE.Group();scene.add(gridGroup);
     const lineMaterial=new THREE.LineBasicMaterial({color:0x385477,transparent:true,opacity:.55});
     const positions=[];
@@ -101,23 +100,17 @@
     gridGroup.add(new THREE.LineSegments(gridGeo,lineMaterial));
     const borderGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-5,-11.5,.04),new THREE.Vector3(5,-11.5,.04),new THREE.Vector3(5,11.5,.04),new THREE.Vector3(-5,11.5,.04),new THREE.Vector3(-5,-11.5,.04)]);
     gridGroup.add(new THREE.Line(borderGeo,new THREE.LineBasicMaterial({color:0x75fff0,transparent:true,opacity:.8})));
-    // Floating side rails and corner beacons give the board a framed arcade-arena silhouette.
-    const railMat=new THREE.MeshStandardMaterial({color:0x5df8ee,emissive:0x1a8e9c,emissiveIntensity:1.6,metalness:.65,roughness:.22});
+    // Keep only slim floating side guides; no enclosing rails, corner balls or bottom bar.
+    const railMat=new THREE.MeshStandardMaterial({color:0x5df8ee,emissive:0x1a8e9c,emissiveIntensity:1.15,metalness:.65,roughness:.22});
     arenaPulseMaterial=railMat;
-    const railGeo=new THREE.BoxGeometry(.075,23.6,.16);
-    [-5.34,5.34].forEach((x,i)=>{
-      const rail=new THREE.Mesh(railGeo,railMat);rail.position.set(x,0,-.04);gridGroup.add(rail);
-      const beaconGeo=new THREE.SphereGeometry(.105,12,8);
-      [-11.65,11.65].forEach(y=>{const beacon=new THREE.Mesh(beaconGeo,new THREE.MeshBasicMaterial({color:i?0xa98aff:0x75fff0}));beacon.position.set(x,y,.12);gridGroup.add(beacon)});
-    });
-    const base=new THREE.Mesh(new THREE.BoxGeometry(10.9,.16,.65),new THREE.MeshStandardMaterial({color:0x182442,metalness:.8,roughness:.28,emissive:0x101e42,emissiveIntensity:.7}));
-    base.position.set(0,-11.98,-.12);gridGroup.add(base);
+    const railGeo=new THREE.BoxGeometry(.025,22.4,.045);
+    [-5.18,5.18].forEach(x=>{const rail=new THREE.Mesh(railGeo,railMat);rail.position.set(x,0,-.04);gridGroup.add(rail)});
     boardGroup=new THREE.Group();scene.add(boardGroup);
     activeGroup=new THREE.Group();scene.add(activeGroup);
     ghostGroup=new THREE.Group();scene.add(ghostGroup);
     pulseGroups=[boardGroup,activeGroup,ghostGroup];
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
-    const resize=()=>{if(!renderer)return;const frameRect=frame.getBoundingClientRect(),boardRect=boardCanvas.getBoundingClientRect();const w=Math.max(1,boardRect.width),h=Math.max(1,boardRect.height),aspect=w/h;renderer.domElement.style.left=(boardRect.left-frameRect.left-frame.clientLeft)+'px';renderer.domElement.style.top=(boardRect.top-frameRect.top-frame.clientTop)+'px';renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';const arenaWidth=10.9,arenaHeight=24.2,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.025,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
+    const resize=()=>{if(!renderer)return;const frameRect=frame.getBoundingClientRect(),boardRect=boardCanvas.getBoundingClientRect();const w=Math.max(1,boardRect.width),h=Math.max(1,boardRect.height),aspect=w/h;renderer.domElement.style.left=(boardRect.left-frameRect.left-frame.clientLeft)+'px';renderer.domElement.style.top=(boardRect.top-frameRect.top-frame.clientTop)+'px';renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';const arenaWidth=10.36,arenaHeight=23.55,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.008,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resizeObserver.observe(boardCanvas);window.addEventListener('resize',resize,{passive:true});resize();
   }
   function blockInto(target,x,y,color,ghost=false){
@@ -360,8 +353,8 @@
       const arenaPulseAge=now-arenaPulseAt,arenaPulseProgress=Math.min(1,arenaPulseAge/720);
       const arenaPulse=arenaPulseAt&&arenaPulseAge<720?Math.sin(arenaPulseProgress*Math.PI)*(1-arenaPulseProgress)*arenaPulseStrength:0;
       if(arenaPulseMaterial)arenaPulseMaterial.emissiveIntensity=1.6+arenaPulse;
-      camera.position.x=shake;
-      camera.position.y=0;
+      camera.position.x=shake-.22;
+      camera.position.y=.34;
       for(let g=0;g<pulseGroups.length;g++){
         const cells=pulseGroups[g].children;
         for(let i=0;i<cells.length;i++){
@@ -391,7 +384,7 @@
         );
       }
     }
-    camera.lookAt(0,0,0);renderer.render(scene,camera);
+    camera.lookAt(-.22,.34,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
   }
   async function setEnabled(next){
