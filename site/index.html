@@ -5280,181 +5280,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 @media(min-width:600px){.bb-training-perks{grid-template-columns:repeat(2,minmax(0,1fr))}.bb-training-perk:first-child{grid-column:1/-1}}
 @media(max-width:380px){.bb-training-hero{gap:7px;padding:9px}.bb-training-hero-emblem{width:39px;height:39px}.bb-training-wallet b{font-size:13px}.bb-training-perk{padding:10px}}
 </style>
-<style id="bb-hud-arena-v2">
-/* TETRIOS LX — compact shared HUD and open arena, v2 */
-#game{
-  max-width:1120px!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-}
-#game .screenhead{
-  min-height:30px;
-  margin:0 0 5px!important;
-  padding:0 2px 4px!important;
-  border:0!important;
-}
-#game .screenhead h2{font-size:clamp(16px,2vw,23px)!important}
-#game .gamehud.gamehud-top{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) minmax(64px,.78fr)!important;
-  gap:5px!important;
-  width:100%;
-  margin:0 0 5px!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-}
-#game .gamehud.gamehud-top .hudbox,
-#game .gamehud.gamehud-top #gameCoins{
-  display:flex!important;
-  min-width:0;
-  min-height:34px;
-  align-items:center;
-  justify-content:space-between;
-  gap:5px;
-  margin:0!important;
-  padding:5px 8px!important;
-  border:0!important;
-  border-bottom:1px solid #4b6b8b88!important;
-  border-radius:0!important;
-  background:linear-gradient(90deg,#13243b99,#0b142599)!important;
-  box-shadow:none!important;
-  text-align:left;
-}
-#game .gamehud.gamehud-top .hudbox:after{display:none!important}
-#game .gamehud.gamehud-top .hudbox span,
-#game .gamehud.gamehud-top #gameCoins span{
-  display:flex;
-  align-items:center;
-  gap:4px;
-  min-width:0;
-  color:#9eb6d2!important;
-  font-size:8px!important;
-  line-height:1.1;
-  letter-spacing:.08em!important;
-  white-space:nowrap;
-}
-#game .gamehud.gamehud-top .hudbox strong,
-#game .gamehud.gamehud-top #gameCoins strong{
-  min-width:0;
-  margin:0!important;
-  color:#f2f8ff!important;
-  font-size:clamp(14px,1.6vw,19px)!important;
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-  white-space:nowrap;
-}
-#game .gamehud.gamehud-top .hudbox:nth-child(1) span:before{content:"✧";color:#5cf5e8;font-size:12px}
-#game .gamehud.gamehud-top .hudbox:nth-child(2) span:before{content:"▤";color:#9d7cff;font-size:11px}
-#game .gamehud.gamehud-top .hudbox:nth-child(3) span:before{content:"◈";color:#ffc86b;font-size:11px}
-#game .gamehud.gamehud-top #gameCoins span:before{content:"●";color:#ffc86b;font-size:8px}
-#dailyMissionGoal{
-  min-height:28px;
-  margin:0 0 5px!important;
-  padding:4px 9px!important;
-  border:0!important;
-  border-left:2px solid #ffc86b!important;
-  border-radius:0 8px 8px 0!important;
-  background:linear-gradient(90deg,#ffc86b20,transparent 88%)!important;
-  box-shadow:none!important;
-}
-#dailyMissionGoal .daily-mission-label{font-size:8px!important;letter-spacing:.1em}
-#dailyMissionGoal .daily-mission-label:before{content:"✦ ";font-size:11px}
-#dailyMissionGoalText{font-size:12px!important}
-#game #rogueGoals,
-#game #campaignGoals{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:4px 6px;
-  width:100%;
-  margin:0 0 5px!important;
-  padding:0 0 4px!important;
-  border:0!important;
-  border-bottom:1px solid #536d8b55!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-}
-#game #rogueGoals > div:first-child{
-  grid-column:1/-1;
-  min-height:32px!important;
-  margin:0!important;
-  padding:5px 8px!important;
-  border:1px solid #9d7cff55!important;
-  border-radius:8px!important;
-  background:linear-gradient(100deg,#34265a66,#111a30aa)!important;
-}
-#game #rogueGoals > strong,
-#game #campaignGoals > strong{
-  grid-column:1/-1;
-  margin:0!important;
-  color:#c8d6f2;
-  font-size:8px!important;
-  letter-spacing:.1em;
-}
-#game #rogueGoals > div:not(:first-child),
-#game #campaignGoals > div{
-  min-width:0;
-  margin:0!important;
-  padding:4px 5px;
-  border-left:1px solid #5cf5e833;
-  color:#b9c9e4;
-  font-size:8px!important;
-  line-height:1.2;
-  overflow-wrap:anywhere;
-}
-#game .playlayout{
-  padding:0!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-}
-#game .gameleftcol,
-#game .sidecol{background:transparent!important;border:0!important;box-shadow:none!important}
-@media(min-width:901px){
-  #game .boardframe{height:min(72dvh,720px)!important;min-height:0!important}
-  #game .gamehud.gamehud-top .hudbox,
-  #game .gamehud.gamehud-top #gameCoins{min-height:38px;padding:6px 11px!important}
-}
-@media(max-width:900px) and (orientation:portrait){
-  #game .gamehud.gamehud-top{gap:3px!important;margin-bottom:4px!important}
-  #game .gamehud.gamehud-top .hudbox,
-  #game .gamehud.gamehud-top #gameCoins{min-height:30px;padding:4px 5px!important;gap:3px}
-  #game .gamehud.gamehud-top .hudbox span,
-  #game .gamehud.gamehud-top #gameCoins span{font-size:7px!important;letter-spacing:.02em!important}
-  #game .gamehud.gamehud-top .hudbox strong,
-  #game .gamehud.gamehud-top #gameCoins strong{font-size:14px!important}
-  #game #dailyMissionGoal{min-height:25px;padding:3px 7px!important;margin-bottom:4px!important}
-  #game #dailyMissionGoal .daily-mission-label{font-size:7px!important}
-  #game #dailyMissionGoalText{font-size:11px!important}
-  #game #rogueGoals{gap:3px 4px;margin-bottom:4px!important;padding-bottom:3px!important}
-  #game #rogueGoals > div:first-child{min-height:29px!important;padding:4px 6px!important}
-  #game #rogueGoals > strong{font-size:7px!important}
-  #game #rogueGoals > div:not(:first-child){font-size:7px!important;padding:3px 3px}
-  #game .boardframe{height:clamp(260px,calc(100dvh - 245px),620px)!important;min-height:0!important}
-}
-@media(max-width:380px) and (orientation:portrait){
-  #game .gamehud.gamehud-top{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(48px,.68fr)!important}
-  #game .gamehud.gamehud-top .hudbox,
-  #game .gamehud.gamehud-top #gameCoins{padding-left:3px!important;padding-right:3px!important}
-  #game .gamehud.gamehud-top .hudbox span,
-  #game .gamehud.gamehud-top #gameCoins span{font-size:6px!important}
-  #game .gamehud.gamehud-top .hudbox strong,
-  #game .gamehud.gamehud-top #gameCoins strong{font-size:12px!important}
-  #game #rogueGoals{grid-template-columns:repeat(3,minmax(0,1fr))}
-  #game .boardframe{height:clamp(240px,calc(100dvh - 225px),560px)!important}
-}
-@media(prefers-reduced-motion:reduce){
-  #game .gamehud.gamehud-top .hudbox,
-  #game #dailyMissionGoal{transition:none!important}
-}
-</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
@@ -10018,4 +9844,179 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+<style id="bb-hud-arena-v2">
+/* TETRIOS LX — compact shared HUD and open arena, v2 */
+#game{
+  max-width:1120px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#game .screenhead{
+  min-height:30px;
+  margin:0 0 5px!important;
+  padding:0 2px 4px!important;
+  border:0!important;
+}
+#game .screenhead h2{font-size:clamp(16px,2vw,23px)!important}
+#game .gamehud{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) minmax(64px,.78fr)!important;
+  gap:5px!important;
+  width:100%;
+  margin:0 0 5px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#game .gamehud .hudbox,
+#game .gamehud #gameCoins{
+  display:flex!important;
+  min-width:0;
+  min-height:34px;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  margin:0!important;
+  padding:5px 8px!important;
+  border:0!important;
+  border-bottom:1px solid #4b6b8b88!important;
+  border-radius:0!important;
+  background:linear-gradient(90deg,#13243b99,#0b142599)!important;
+  box-shadow:none!important;
+  text-align:left;
+}
+#game .gamehud .hudbox:after{display:none!important}
+#game .gamehud .hudbox span,
+#game .gamehud #gameCoins span{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  min-width:0;
+  color:#9eb6d2!important;
+  font-size:8px!important;
+  line-height:1.1;
+  letter-spacing:.08em!important;
+  white-space:nowrap;
+}
+#game .gamehud .hudbox strong,
+#game .gamehud #gameCoins strong{
+  min-width:0;
+  margin:0!important;
+  color:#f2f8ff!important;
+  font-size:clamp(14px,1.6vw,19px)!important;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+#game .gamehud .hudbox:nth-child(1) span:before{content:"✧";color:#5cf5e8;font-size:12px}
+#game .gamehud .hudbox:nth-child(2) span:before{content:"▤";color:#9d7cff;font-size:11px}
+#game .gamehud .hudbox:nth-child(3) span:before{content:"◈";color:#ffc86b;font-size:11px}
+#game .gamehud #gameCoins span:before{content:"●";color:#ffc86b;font-size:8px}
+#dailyMissionGoal{
+  min-height:28px;
+  margin:0 0 5px!important;
+  padding:4px 9px!important;
+  border:0!important;
+  border-left:2px solid #ffc86b!important;
+  border-radius:0 8px 8px 0!important;
+  background:linear-gradient(90deg,#ffc86b20,transparent 88%)!important;
+  box-shadow:none!important;
+}
+#dailyMissionGoal .daily-mission-label{font-size:8px!important;letter-spacing:.1em}
+#dailyMissionGoal .daily-mission-label:before{content:"✦ ";font-size:11px}
+#dailyMissionGoalText{font-size:12px!important}
+#game #rogueGoals,
+#game #campaignGoals{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:4px 6px;
+  width:100%;
+  margin:0 0 5px!important;
+  padding:0 0 4px!important;
+  border:0!important;
+  border-bottom:1px solid #536d8b55!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#game #rogueGoals > div:first-child{
+  grid-column:1/-1;
+  min-height:32px!important;
+  margin:0!important;
+  padding:5px 8px!important;
+  border:1px solid #9d7cff55!important;
+  border-radius:8px!important;
+  background:linear-gradient(100deg,#34265a66,#111a30aa)!important;
+}
+#game #rogueGoals > strong,
+#game #campaignGoals > strong{
+  grid-column:1/-1;
+  margin:0!important;
+  color:#c8d6f2;
+  font-size:8px!important;
+  letter-spacing:.1em;
+}
+#game #rogueGoals > div:not(:first-child),
+#game #campaignGoals > div{
+  min-width:0;
+  margin:0!important;
+  padding:4px 5px;
+  border-left:1px solid #5cf5e833;
+  color:#b9c9e4;
+  font-size:8px!important;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+#game .playlayout{
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#game .gameleftcol,
+#game .sidecol{background:transparent!important;border:0!important;box-shadow:none!important}
+@media(min-width:901px){
+  #game .boardframe{height:min(72dvh,720px)!important;min-height:0!important}
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins{min-height:38px;padding:6px 11px!important}
+}
+@media(max-width:900px) and (orientation:portrait){
+  #game .gamehud{gap:3px!important;margin-bottom:4px!important}
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins{min-height:30px;padding:4px 5px!important;gap:3px}
+  #game .gamehud .hudbox span,
+  #game .gamehud #gameCoins span{font-size:7px!important;letter-spacing:.02em!important}
+  #game .gamehud .hudbox strong,
+  #game .gamehud #gameCoins strong{font-size:14px!important}
+  #game #dailyMissionGoal{min-height:25px;padding:3px 7px!important;margin-bottom:4px!important}
+  #game #dailyMissionGoal .daily-mission-label{font-size:7px!important}
+  #game #dailyMissionGoalText{font-size:11px!important}
+  #game #rogueGoals{gap:3px 4px;margin-bottom:4px!important;padding-bottom:3px!important}
+  #game #rogueGoals > div:first-child{min-height:29px!important;padding:4px 6px!important}
+  #game #rogueGoals > strong{font-size:7px!important}
+  #game #rogueGoals > div:not(:first-child){font-size:7px!important;padding:3px 3px}
+  #game .boardframe{height:clamp(260px,calc(100dvh - 245px),620px)!important;min-height:0!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game .gamehud{grid-template-columns:repeat(3,minmax(0,1fr)) minmax(48px,.68fr)!important}
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins{padding-left:3px!important;padding-right:3px!important}
+  #game .gamehud .hudbox span,
+  #game .gamehud #gameCoins span{font-size:6px!important}
+  #game .gamehud .hudbox strong,
+  #game .gamehud #gameCoins strong{font-size:12px!important}
+  #game #rogueGoals{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #game .boardframe{height:clamp(240px,calc(100dvh - 225px),560px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #game .gamehud .hudbox,
+  #game #dailyMissionGoal{transition:none!important}
+}
+</style>
 </body></html>
