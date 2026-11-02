@@ -5479,7 +5479,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
-<section id="game" class="screen" hidden><div class="screenhead"><button class="back" id="gameBack" aria-label="Назад к режимам">‹</button><div style="flex:1"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" aria-label="Пауза" title="Пауза">Ⅱ</button></div>
+<section id="game" class="screen" hidden><div class="screenhead"><div class="game-heading-copy" style="flex:1;min-width:0"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" type="button" aria-label="Пауза" title="Пауза"><svg class="pause-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13M16 5.5v13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button></div>
 <div id="dailyMissionGoal" hidden>
   <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
   <strong id="dailyMissionGoalText">12 линий</strong>
@@ -7775,7 +7775,7 @@ if (boostCard) {
 }
 
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('openHeroes').onclick=()=>show('heroes');
-$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('gameBack').onclick=pauseGame;$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(boosts.includes('hold')?(mode==='rogue'?1+bbGetRogueCardRank('hold'):2):1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
+$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(boosts.includes('hold')?(mode==='rogue'?1+bbGetRogueCardRank('hold'):2):1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
 tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};
@@ -9776,6 +9776,71 @@ body .app{background:transparent!important;background-color:transparent!importan
   position:absolute!important;z-index:1!important;pointer-events:none!important;background:transparent!important;
 }
 #campaign .bb-planet-node{z-index:2!important}
+</style>
+
+
+<style id="bb-game-pause-control-v1">
+/* One compact pause control shared by every game mode. */
+#game .screenhead{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-height:40px;
+}
+#game .game-heading-copy{min-width:0;flex:1 1 auto}
+#game .screenhead #pauseBtn{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  box-sizing:border-box!important;
+  width:38px!important;
+  height:38px!important;
+  min-width:38px!important;
+  min-height:38px!important;
+  flex:0 0 38px!important;
+  padding:0!important;
+  margin:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(92,245,232,.42)!important;
+  border-radius:12px!important;
+  color:#a9fff3!important;
+  background:linear-gradient(145deg,rgba(22,42,59,.92),rgba(9,18,34,.96))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.10),0 2px 8px rgba(0,0,0,.28)!important;
+  position:relative!important;
+  overflow:hidden!important;
+  font-size:0!important;
+  line-height:0!important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease;
+}
+#game .screenhead #pauseBtn::before,
+#game .screenhead #pauseBtn::after{content:none!important;display:none!important}
+#game .screenhead #pauseBtn .pause-glyph{
+  display:block!important;
+  width:19px!important;
+  height:19px!important;
+  overflow:visible;
+}
+#game .screenhead #pauseBtn:active{
+  transform:scale(.94)!important;
+  border-color:rgba(92,245,232,.8)!important;
+  background:linear-gradient(145deg,#1c4650,#102b39)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08),0 0 12px rgba(92,245,232,.16)!important;
+}
+#game .screenhead #pauseBtn:focus-visible{
+  outline:2px solid #5cf5e8!important;
+  outline-offset:3px;
+}
+@media(max-width:420px){
+  #game .screenhead{gap:8px!important;margin-bottom:7px!important}
+  #game .screenhead #pauseBtn{
+    width:36px!important;height:36px!important;
+    min-width:36px!important;min-height:36px!important;flex-basis:36px!important;
+    border-radius:11px!important;
+  }
+  #game .screenhead #pauseBtn .pause-glyph{width:18px!important;height:18px!important}
+}
 </style>
 
 </body></html>
