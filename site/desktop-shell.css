@@ -1,0 +1,535 @@
+/* TETRIOS.LX — isolated desktop shell v1
+   This file intentionally contains desktop rules only. Mobile/tablet layouts stay untouched. */
+@media (min-width: 901px) {
+  :root {
+    --bb-desktop-max: 1560px;
+    --bb-desktop-gap: clamp(14px, 1.25vw, 22px);
+    --bb-desktop-surface: linear-gradient(145deg, rgba(20, 30, 57, .94), rgba(9, 16, 34, .96));
+    --bb-desktop-border: rgba(135, 164, 230, .2);
+  }
+
+  html, body { min-height: 100%; }
+  body { overflow-x: hidden; }
+  .app {
+    width: 100%;
+    min-height: 100dvh;
+    padding: 22px clamp(22px, 3vw, 52px) 34px;
+  }
+
+  .topbar {
+    width: min(100%, var(--bb-desktop-max));
+    max-width: none;
+    min-height: 66px;
+    margin: 0 auto 22px;
+    padding: 10px 18px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 18px;
+    background: linear-gradient(110deg, rgba(17, 27, 53, .94), rgba(8, 14, 30, .88));
+    box-shadow: 0 12px 34px rgba(0, 0, 0, .22), inset 0 1px rgba(255,255,255,.05);
+    backdrop-filter: blur(16px);
+  }
+  .brandmark { width: 44px; height: 44px; }
+  .brandname { font-size: 17px; }
+  .edition { font-size: 9px; }
+  .topbar .iconbtn { width: 42px; height: 42px; }
+
+  #menu.home-dashboard {
+    width: min(100%, var(--bb-desktop-max));
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    margin: 0 auto;
+    overflow: visible;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.62fr) minmax(330px, .92fr);
+    grid-template-areas:
+      "hero download"
+      "modes streak"
+      "quests resources"
+      "heroes profile"
+      "shop stats"
+      "reset reset";
+    grid-template-rows: auto auto auto auto auto auto;
+    align-items: stretch;
+    gap: var(--bb-desktop-gap);
+  }
+  #menu.home-dashboard > * { min-width: 0; max-width: 100%; }
+  #menu.home-dashboard > .hero {
+    grid-area: hero;
+    min-height: 230px;
+    height: auto;
+    margin: 0;
+    padding: clamp(24px, 3vw, 42px) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: left !important;
+    border: 1px solid rgba(122, 164, 255, .24) !important;
+    border-radius: 24px !important;
+    background:
+      radial-gradient(ellipse at 85% 25%, rgba(92,245,232,.13), transparent 38%),
+      radial-gradient(ellipse at 15% 100%, rgba(157,124,255,.18), transparent 48%),
+      linear-gradient(145deg, #172344, #0b1329 76%) !important;
+    box-shadow: 0 18px 48px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.07) !important;
+  }
+  #menu.home-dashboard > .hero::before,
+  #menu.home-dashboard > .hero::after { display: none; }
+  #menu.home-dashboard > .hero .eyebrow {
+    margin: 0 0 14px;
+    font-size: 10px !important;
+    letter-spacing: .2em;
+  }
+  #menu.home-dashboard > .hero .hero-brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+  }
+  #menu.home-dashboard > .hero .hero-app-mark {
+    flex: 0 0 62px;
+    width: 62px;
+    height: 62px;
+  }
+  #menu.home-dashboard > .hero h1 {
+    margin: 0 !important;
+    font-size: clamp(46px, 5.2vw, 78px) !important;
+    line-height: .92 !important;
+    letter-spacing: -.065em !important;
+  }
+  #menu.home-dashboard > .hero p {
+    max-width: none !important;
+    margin: 16px 0 0 !important;
+    font-size: clamp(14px, 1.15vw, 17px) !important;
+    line-height: 1.45 !important;
+    text-align: left !important;
+  }
+
+  #menu.home-dashboard > .apk-download {
+    grid-area: download;
+    align-self: stretch;
+    width: 100%;
+    max-width: none;
+    min-height: 100px;
+    margin: 0;
+    padding: 20px 22px;
+    border-radius: 20px;
+  }
+  #menu.home-dashboard > .apk-download .apk-download-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+  }
+  #menu.home-dashboard > .apk-download .apk-download-copy strong { font-size: 13px; }
+  #menu.home-dashboard > .apk-download .apk-download-copy small { font-size: 11px; }
+
+  #menu.home-dashboard > .sectionlabel {
+    display: none;
+  }
+  #menu.home-dashboard > .modes {
+    grid-area: modes;
+    min-height: 168px;
+    height: auto;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 1fr;
+    gap: 12px;
+    align-items: stretch;
+  }
+  #menu.home-dashboard > .modes > .mode {
+    width: 100%;
+    min-width: 0;
+    min-height: 168px;
+    height: 100%;
+    margin: 0;
+    padding: 20px 16px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+    border-radius: 19px !important;
+    text-align: left;
+  }
+  #menu.home-dashboard > .modes > .mode .modeicon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    font-size: 25px;
+  }
+  #menu.home-dashboard > .modes > .mode .modetext { width: 100%; }
+  #menu.home-dashboard > .modes > .mode .modetitle {
+    font-size: clamp(13px, 1.1vw, 16px) !important;
+    line-height: 1.2;
+  }
+  #menu.home-dashboard > .modes > .mode .modesub {
+    display: block;
+    min-height: 2.7em;
+    margin-top: 6px;
+    font-size: 10px !important;
+    line-height: 1.35;
+  }
+  #menu.home-dashboard > .modes > .mode .tag {
+    display: inline-block;
+    margin-top: 9px;
+    font-size: 8px !important;
+    line-height: 1.2;
+    padding: 4px 7px;
+  }
+  #menu.home-dashboard > .modes > .mode .modearrow {
+    display: none;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="rogue"] {
+    grid-column: auto;
+    grid-row: auto;
+    border-color: rgba(169,138,255,.42) !important;
+    background: linear-gradient(145deg, rgba(55,42,91,.96), rgba(16,23,47,.98)) !important;
+  }
+
+  #menu.home-dashboard > #bbVisitStreak {
+    grid-area: streak;
+    height: 100%;
+    min-height: 168px;
+    margin: 0 !important;
+    padding: 22px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(255,200,107,.3) !important;
+    border-radius: 20px !important;
+    background: radial-gradient(ellipse at 100% 0%, rgba(255,200,107,.13), transparent 55%), var(--bb-desktop-surface) !important;
+  }
+  #menu.home-dashboard > #bbVisitStreak #bbStreakCount { font-size: 25px !important; }
+  #menu.home-dashboard > #bbVisitStreak #bbStreakMessage { font-size: 12px !important; }
+
+  #menu.home-dashboard > #dailyQuestsPanel {
+    grid-area: quests;
+    height: 100%;
+    margin: 0 !important;
+    padding: 20px 22px !important;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 20px;
+    background: var(--bb-desktop-surface);
+    box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child strong { font-size: 13px !important; }
+  #menu.home-dashboard > #dailyQuestsPanel > div:nth-child(2) { font-size: 11px !important; }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div {
+    min-width: 0;
+    margin: 0 !important;
+    padding: 12px !important;
+    border: 1px solid rgba(136,158,215,.16);
+    border-radius: 12px;
+    background: rgba(255,255,255,.035) !important;
+  }
+
+  #menu.home-dashboard > .currency-panel {
+    grid-area: resources;
+    min-height: 100%;
+    margin: 0 !important;
+    padding: 18px 20px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 20px;
+    background: var(--bb-desktop-surface);
+    box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  }
+  #menu.home-dashboard > .currency-panel .currency-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  #menu.home-dashboard > .currency-panel .currency-card { min-width: 0; padding: 12px; }
+  #menu.home-dashboard > .currency-panel .currency-info strong { font-size: 22px !important; }
+
+  #menu.home-dashboard > #openHeroes {
+    grid-area: heroes;
+    width: 100%;
+    min-height: 86px;
+    margin: 0 !important;
+    padding: 14px 18px !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 17px !important;
+  }
+  #menu.home-dashboard > #openHeroes .modeicon { flex: 0 0 42px; width: 42px; height: 42px; }
+  #menu.home-dashboard > #openHeroes .modesub { display: block; font-size: 10px; }
+  #menu.home-dashboard > #rpgPanel {
+    grid-area: profile;
+    min-height: 86px;
+    height: 100%;
+    margin: 0 !important;
+    border-radius: 17px !important;
+  }
+  #menu.home-dashboard > .shopbuttons {
+    grid-area: shop;
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+    margin: 0 !important;
+  }
+  #menu.home-dashboard > .shopbuttons .shopbutton {
+    min-height: 86px;
+    height: 100%;
+    margin: 0 !important;
+  }
+  #menu.home-dashboard > .bottomstats {
+    grid-area: stats;
+    min-height: 86px;
+    height: 100%;
+    margin: 0 !important;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+  #menu.home-dashboard > .bottomstats .stat {
+    min-width: 0;
+    padding: 12px 8px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+  }
+  #menu.home-dashboard > .bottomstats .stat strong { font-size: 21px !important; }
+  #menu.home-dashboard > .bottomstats .stat span { font-size: 8px !important; }
+  #menu.home-dashboard > .home-reset {
+    grid-area: reset;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 !important;
+  }
+  #menu.home-dashboard > .home-reset #resetProgressBtn {
+    width: auto !important;
+    min-height: 34px;
+    margin: 0 !important;
+    padding: 7px 13px !important;
+    font-size: 9px !important;
+  }
+
+  /* All game screens share a wider desktop canvas; screen-specific layout follows in the next pass. */
+  .screen:not(#menu) {
+    width: min(100%, 1360px);
+    max-width: none;
+    margin-inline: auto;
+  }
+}
+
+
+@media (min-width: 901px) {
+  /* Desktop arena v1 — enlarge the playfield and give the HUD a clear hierarchy. */
+  #game:not([hidden]) {
+    width: min(100%, 1480px);
+    max-width: none;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 14px;
+    padding: 0 0 18px;
+  }
+  #game > .screenhead {
+    min-height: 58px;
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 16px;
+    background: linear-gradient(110deg, rgba(17,27,53,.9), rgba(8,14,30,.82));
+  }
+  #game .game-heading-copy h2 {
+    margin: 0;
+    color: #f4f7ff;
+    font-size: clamp(20px, 1.8vw, 27px);
+    letter-spacing: -.035em;
+  }
+  #game .game-heading-copy p {
+    margin: 4px 0 0;
+    color: #9eafd2;
+    font-size: 11px;
+  }
+  #game #pauseBtn {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(92,245,232,.35);
+    border-radius: 13px;
+    background: linear-gradient(145deg, rgba(31,54,83,.95), rgba(13,24,44,.98));
+    color: #73f7eb;
+    box-shadow: 0 0 18px rgba(92,245,232,.08), inset 0 1px rgba(255,255,255,.08);
+  }
+  #game #pauseBtn .pause-glyph { width: 23px; height: 23px; display: block; }
+  #game #dailyMissionGoal:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(255,200,107,.28);
+    border-radius: 13px;
+    background: linear-gradient(100deg, rgba(72,53,27,.45), rgba(17,27,48,.8));
+  }
+  #game .daily-mission-label { color: #e7bd72; font-size: 10px; font-weight: 850; letter-spacing: .16em; }
+  #game #dailyMissionGoalText { color: #fff0ca; font-size: 15px; }
+  #game > .gamehud {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+  #game .gamehud .hudbox {
+    min-height: 74px;
+    padding: 13px 18px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 15px;
+    background: linear-gradient(145deg, rgba(20,30,57,.94), rgba(9,16,34,.96));
+    box-shadow: 0 9px 24px rgba(0,0,0,.16), inset 0 1px rgba(255,255,255,.04);
+  }
+  #game .gamehud .hudbox span { font-size: 9px; letter-spacing: .16em; color: #91a3c9; }
+  #game .gamehud .hudbox strong { margin-top: 5px; font-size: clamp(22px, 2vw, 30px); line-height: 1; }
+  #game .gamehud #gameCoins strong { color: #ffd27a; }
+  #game > .playlayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 330px);
+    align-items: stretch;
+    gap: 18px;
+    margin: 0;
+  }
+  #game > .playlayout > div:first-child {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border: 1px solid rgba(135,164,230,.14);
+    border-radius: 22px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(50,78,130,.18), transparent 60%), rgba(5,10,23,.35);
+  }
+  #game .boardframe {
+    width: fit-content;
+    max-width: 100%;
+    padding: 8px;
+    border: 1px solid rgba(92,245,232,.28);
+    border-radius: 17px;
+    background: linear-gradient(145deg, rgba(25,39,69,.98), rgba(7,13,28,.99));
+    box-shadow: 0 18px 48px rgba(0,0,0,.42), 0 0 34px rgba(92,245,232,.08), inset 0 1px rgba(255,255,255,.07);
+  }
+  #game .board {
+    width: auto;
+    height: min(67dvh, 720px);
+    max-height: calc(100dvh - 270px);
+    max-width: 100%;
+    aspect-ratio: 10 / 23;
+    border-radius: 10px;
+    background: #070c19;
+    image-rendering: auto;
+  }
+  #game > .playlayout > .sidecol {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(128px, auto);
+    align-content: start;
+    gap: 11px;
+  }
+  #game .sidecol > .sidecard {
+    min-width: 0;
+    min-height: 128px;
+    padding: 14px 12px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(20,30,57,.96), rgba(9,16,34,.98));
+    box-shadow: 0 10px 25px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.04);
+  }
+  #game .sidecol > .sidecard label { font-size: 8px; letter-spacing: .14em; color: #91a3c9; }
+  #game .sidecol .charge-ring { width: min(100%, 104px); margin: 9px auto 6px; }
+  #game .sidecol .charge-ring-inner strong { font-size: 24px; }
+  #game .sidecol .nextcanvas { width: min(100%, 120px); height: auto; margin: 8px auto 0; }
+  #game .sidecol .boosticon { margin: 10px 0 4px; font-size: 25px; }
+  #game .sidecol .boostname { font-size: 10px; }
+  #game .sidecol .boostnum { font-size: 9px; }
+  #game .sidecol .chrono-card { grid-column: 1 / -1; min-height: 148px; }
+  #game .sidecol .chrono-ring { width: 92px; margin: 8px auto 5px; }
+  #game .sidecol .chrono-ring-inner strong { font-size: 24px; }
+  #game .sidecol > .sidecard:has(#timer) { min-height: 112px; }
+  #game .sidecol > .sidecard:has(#musicBtn) { min-height: 112px; }
+  #game .sidecol #timer { font-size: 22px !important; font-variant-numeric: tabular-nums; color: #f4f7ff; }
+  #game .sidecol .smallbtn {
+    min-height: 34px;
+    margin-top: 8px;
+    padding: 7px 8px;
+    border: 1px solid rgba(120,151,210,.25);
+    border-radius: 9px;
+    background: rgba(34,49,79,.82);
+    color: #dbe7ff;
+    font-size: 9px;
+  }
+  #game .sidecol .side-drop {
+    min-height: 36px;
+    margin-top: 8px;
+    border: 1px solid rgba(92,245,232,.5);
+    border-radius: 10px;
+    background: linear-gradient(100deg, #5cf5e8, #83b7ff);
+    color: #071321;
+    font-size: 10px;
+  }
+  #game .sidecol > #bbHeroSkillCard {
+    grid-column: 1 / -1;
+    min-width: 0;
+    min-height: 92px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 16px;
+    border: 1px solid rgba(157,124,255,.35);
+    border-radius: 16px;
+    background: radial-gradient(ellipse at 0% 50%, rgba(157,124,255,.17), transparent 65%), linear-gradient(145deg, rgba(28,34,69,.98), rgba(10,16,34,.98));
+    color: #f4f5ff;
+    text-align: left;
+    box-shadow: 0 10px 25px rgba(0,0,0,.2), inset 0 1px rgba(255,255,255,.05);
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art { flex: 0 0 52px; width: 52px; height: 52px; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong { font-size: 11px; letter-spacing: .12em; color: #e8dcff; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small { font-size: 10px; color: #c2c9e4; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy em { font-size: 8px; font-style: normal; color: #9d7cff; letter-spacing: .1em; }
+  #game #bbHeroSkillCard .bb-hero-skill-pulse { margin-left: auto; color: #b9a4ff; }
+  #game > .controls {
+    width: min(100%, 540px);
+    margin: 0 auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  #game > .controls .control {
+    height: 48px;
+    border-radius: 13px;
+    border-color: rgba(135,164,230,.24);
+    background: linear-gradient(145deg, rgba(25,39,69,.98), rgba(10,17,35,.98));
+    box-shadow: 0 4px 0 #050a16, inset 0 1px rgba(255,255,255,.05);
+    font-size: 21px;
+  }
+  #game > .hint {
+    margin: -4px 0 0;
+    color: #7488b0;
+    font-size: 10px;
+    letter-spacing: .03em;
+  }
+  @media (max-height: 820px) {
+    #game > .playlayout > div:first-child { padding: 10px; }
+    #game .board { height: min(61dvh, 620px); max-height: calc(100dvh - 245px); }
+    #game .sidecol > .sidecard { min-height: 112px; padding: 10px; }
+    #game > .playlayout > .sidecol { grid-auto-rows: minmax(112px, auto); gap: 8px; }
+  }
+  @media (min-width: 901px) and (max-width: 1120px) {
+    #game > .playlayout { grid-template-columns: minmax(0, 1fr) 250px; gap: 12px; }
+    #game > .playlayout > .sidecol { grid-template-columns: 1fr 1fr; gap: 8px; }
+    #game .sidecol > .sidecard { padding: 10px 8px; }
+  }
+}
