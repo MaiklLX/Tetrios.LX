@@ -10472,4 +10472,57 @@ body .app{background:transparent!important;background-color:transparent!importan
 
 
 
+
+<style id="bb-desktop-container-fit-v1">
+/* Desktop arena: size from the actual page content container, not monitor/viewport units.
+   The board keeps its 10:23 shape; short browser windows may scroll instead of clipping it. */
+@media (min-width:901px) {
+  .app { container-type: inline-size; }
+  #game:not([hidden]) {
+    width:100%!important;
+    max-width:1480px!important;
+    margin-inline:auto!important;
+  }
+  #game>.playlayout {
+    grid-template-columns:minmax(0,1fr) clamp(190px,20cqw,284px)!important;
+    gap:clamp(10px,1.2cqw,18px)!important;
+    align-items:stretch!important;
+  }
+  #game>.playlayout>div:first-child {
+    min-width:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:0!important;
+  }
+  #game .boardframe {
+    box-sizing:border-box!important;
+    width:clamp(185px,23cqw,330px)!important;
+    height:auto!important;
+    max-width:100%!important;
+    max-height:none!important;
+    aspect-ratio:10 / 23!important;
+    flex:0 1 auto!important;
+  }
+  #game .board {
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    aspect-ratio:auto!important;
+  }
+  #game>.playlayout>.sidecol {
+    min-width:0!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:clamp(6px,.65cqw,9px)!important;
+  }
+  #game .sidecol>.sidecard {
+    min-width:0!important;
+    min-height:clamp(88px,7.8cqw,116px)!important;
+    padding:clamp(7px,.8cqw,11px)!important;
+  }
+  #game .sidecol>.chrono-card { min-height:clamp(108px,8.8cqw,126px)!important; }
+  #game>.controls { width:min(100%,440px)!important; }
+}
+</style>
 </body></html>
