@@ -5656,11 +5656,14 @@ function bbUseHeroActiveSkill(){
     }else if(bbSelectedHero==='prism'){
       const bonus=300*tier;score+=bonus;toast('💎 КРИСТАЛЛЬНЫЙ РАСЧЁТ! +'+bonus+' очков.');
     }else if(bbSelectedHero==='blip'){
-      const bonus=Math.min(950,dropMs+120*tier)-dropMs;dropMs+=bonus;restartDrop();
-      toast('👾 ГЛИТЧ! Гравитация замедлена.');
+      const bonus=Math.min(950,dropMs+120*tier)-dropMs,runToken=modeStart;
+      dropMs+=bonus;restartDrop();
+      setTimeout(()=>{if(bonus&&started&&!gameOver&&modeStart===runToken){dropMs=Math.max(130,dropMs-bonus);restartDrop();}},8000);
+      toast('👾 ГЛИТЧ! Гравитация замедлена на 8 секунд.');
     }else if(bbSelectedHero==='pixel'){
-      bbRogueClearBottomRows(tier);levelLines+=tier;
+      bbRogueClearBottomRows(tier);levelLines=Math.min(needLines,levelLines+tier);
       toast('🤖 ПЕРЕЗАГРУЗКА! Поле очищено, заряд уровня восстановлен.');
+      if(levelLines>=needLines)levelUp();
     }else{
       const bonus=400*tier;score+=bonus;flash();toast('⚡ ЭЛЕКТРОРАЗРЯД! +'+bonus+' очков.');
     }
