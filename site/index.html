@@ -5281,6 +5281,22 @@ body:has(#menu:not([hidden])) .app > .topbar {
 @media(max-width:380px){.bb-training-hero{gap:7px;padding:9px}.bb-training-hero-emblem{width:39px;height:39px}.bb-training-wallet b{font-size:13px}.bb-training-perk{padding:10px}}
 </style>
 
+<style id="bb-hero-skill-slot-v1">
+.bb-hero-skill-slot{position:relative;display:flex;align-items:center;gap:7px;width:100%;min-width:0;margin-top:1px;padding:7px 6px;border:1px solid #3b6380;border-radius:13px;background:radial-gradient(circle at 8% 50%,#245d7055,transparent 58%),linear-gradient(145deg,#132b42,#0b1428);color:#eafcff;text-align:left;box-shadow:inset 0 1px #ffffff12,0 0 15px #42e9ff12;overflow:hidden;transition:border-color .2s,box-shadow .2s,opacity .2s}
+.bb-hero-skill-slot:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 15%,#75f7ff12 48%,transparent 78%);transform:translateX(-110%);animation:bbHeroSlotSweep 5s ease-in-out infinite;pointer-events:none}
+@keyframes bbHeroSlotSweep{55%,100%{transform:translateX(110%)}}
+.bb-hero-skill-slot:not(:disabled){border-color:#55e7e4;box-shadow:inset 0 1px #ffffff18,0 0 18px #42e9ff24}
+.bb-hero-skill-slot:disabled{opacity:.82;cursor:default}
+.bb-hero-skill-art{position:relative;z-index:1;display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border-radius:11px;background:radial-gradient(circle,#ffffff1b,transparent 72%);border:1px solid #ffffff20}
+.bb-hero-skill-art svg{width:37px;height:34px;filter:drop-shadow(0 0 7px currentColor)}
+.bb-hero-skill-copy{position:relative;z-index:1;display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.bb-hero-skill-copy strong{font-size:8px;letter-spacing:.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-hero-skill-copy small{font-size:8px;line-height:1.2;color:#b7c9e7;white-space:normal}
+.bb-hero-skill-copy em{font-style:normal;font-size:7px;font-weight:900;letter-spacing:.08em;color:#5cf5e8}
+.bb-hero-skill-pulse{position:relative;z-index:1;flex:0 0 auto;font-size:15px;color:#70f6ee;text-shadow:0 0 10px #5cf5e8}
+.bb-hero-skill-slot:disabled .bb-hero-skill-pulse{opacity:.4}
+@media(max-width:520px){.bb-hero-skill-slot{gap:5px;padding:6px 4px;border-radius:11px}.bb-hero-skill-art{flex-basis:34px;width:34px;height:34px}.bb-hero-skill-art svg{width:32px;height:30px}.bb-hero-skill-copy strong{font-size:7px}.bb-hero-skill-copy small{font-size:7px}.bb-hero-skill-copy em{font-size:6px}}
+</style>
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
@@ -5335,7 +5351,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <button class="mode" id="openHeroes" style="--glow:#ffb86b;--iconbg:#ffb86b20;width:100%;margin-top:14px;box-sizing:border-box">
   <div class="modeicon">🦸</div>
   <div class="modetext">
-    <div class="modetitle">Герои команды</div>
+    <div class="modetitle">Отсек героев</div>
     <div class="modesub">Способности, характеристики и развитие персонажей</div>
     <span class="tag" style="color:#ffca8a;background:#ffb86b20">МОЯ КОМАНДА</span>
   </div>
@@ -5463,8 +5479,8 @@ body:has(#menu:not([hidden])) .app > .topbar {
   <div class="screenhead">
     <button class="back" id="heroesBack">‹</button>
     <div>
-      <h2>Герои команды</h2>
-      <p>Выбирай героя, изучай способности и развивай его</p>
+      <h2>Отсек героев</h2>
+      <p>Экипаж, уникальные способности и развитие героев</p>
     </div>
   </div>
 
@@ -5485,7 +5501,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
   <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
   <strong id="dailyMissionGoalText">12 линий</strong>
 </div>
-<div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div><div class="hudbox bb-coins-hud" id="gameCoins"><span>МОНЕТЫ</span><strong id="gameCoinsValue">0</strong></div></div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="690" aria-label="Игровое поле 10 на 23"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn" hidden>♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
+<div class="gamehud"><div class="hudbox"><span>ОЧКИ</span><strong id="score">0</strong></div><div class="hudbox"><span>ЛИНИИ</span><strong id="lines">0</strong></div><div class="hudbox"><span>УРОВЕНЬ</span><strong id="level">1</strong></div><div class="hudbox bb-coins-hud" id="gameCoins"><span>МОНЕТЫ</span><strong id="gameCoinsValue">0</strong></div></div><div class="playlayout"><div><div class="boardframe"><canvas id="board" class="board" width="300" height="690" aria-label="Игровое поле 10 на 23"></canvas></div></div><aside class="sidecol"><div class="sidecard charge-card"><label>ЗАРЯД УРОВНЯ</label><div class="charge-ring" id="chargeRing" style="--charge-progress:0%"><div class="charge-ring-inner"><span class="charge-symbol">✦</span><strong id="progressText">0/5</strong><small>ЛИНИЙ</small></div></div><div class="charge-caption" id="progressLabel">ДО НОВОГО УРОВНЯ</div></div><div class="sidecard"><label>СЛЕДУЮЩАЯ</label><canvas id="next" class="nextcanvas" width="100" height="90"></canvas></div><div class="sidecard"><label>АКТИВНЫЙ БУСТ</label><div class="boosticon" id="boostIcon">◇</div><div class="boostname" id="boostName">Нет усиления</div><div class="boostnum" id="boostNum">Выбери реликвию</div></div><div class="sidecard chrono-card" id="chronoCard" hidden><label>ХРОНОРАЗЛОМ</label><div class="chrono-ring" id="chronoRing"><div class="chrono-ring-inner"><span class="chrono-hourglass">⌛</span><strong id="chronoSeconds">20</strong><small>СЕКУНД</small></div></div><div class="chrono-caption" id="chronoCaption">ОЧИСТИ ЛИНИЮ</div><div class="chrono-track"><i id="chronoTrackFill"></i></div></div><div class="sidecard"><label>ЗАБЕГ</label><div style="font-size:17px;margin-top:8px" id="timer">00:00</div><button class="smallbtn" id="holdBtn">УДЕРЖАТЬ</button></div><div class="sidecard"><label>МУЗЫКА</label><button class="smallbtn" id="musicBtn" hidden>♫ ВКЛ</button><button class="control primary drop side-drop" data-act="drop" aria-label="Сбросить фигуру вниз">↓ DROP</button></div><button type="button" class="bb-hero-skill-slot" id="bbHeroSkillCard" aria-label="Активировать способность выбранного героя"><span class="bb-hero-skill-art" id="bbHeroSkillArt"></span><span class="bb-hero-skill-copy"><strong id="bbHeroSkillName">ГЕРОЙ</strong><small id="bbHeroSkillAbility">СПОСОБНОСТЬ</small><em id="bbHeroSkillState">НАВЫК · УР. 5</em></span><span class="bb-hero-skill-pulse">✦</span></button></aside></div><div class="controls"><button class="control" data-act="left" aria-label="Влево">←</button><button class="control" data-act="rotate" aria-label="Повернуть">↻</button><button class="control" data-act="right" aria-label="Вправо">→</button></div><div class="hint">Свайп ← → для движения · вверх — поворот · вниз — ускорить падение</div></section></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div><!-- Gameplay track: “Chills” by Holizna, CC0, OpenGameArt.org. -->
 <audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
@@ -5604,18 +5620,55 @@ function bbRogueRenderEncounter(){
     '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="font-size:9px;color:#b9c1d9">АТАКА ЧЕРЕЗ '+e.nextAttack+'с</div></div>'+(heroLevel>=5?'<button type="button" id="bbHeroActiveSkill" '+(skillReady?'':'disabled')+' style="border:1px solid #5cf5e8;border-radius:9px;background:'+(skillReady?'#123c49':'#20283a')+';color:'+(skillReady?'#8efff1':'#78859d')+';padding:7px 8px;font-size:9px;font-weight:900;max-width:104px">'+(skillReady?'⚡ '+({plush:'МЕДВЕЖИЙ ЩИТ',prism:'КРИСТАЛЛЬНЫЙ УДАР',blip:'ГЛИТЧ ВРЕМЕНИ',pixel:'ПЕРЕЗАГРУЗКА',spark:'ЭЛЕКТРОРАЗРЯД'}[bbSelectedHero]||'СПОСОБНОСТЬ'):'⏳ ЗАРЯДКА')+'</button>':'<span style="font-size:9px;color:#9ca8c4">Навык: ур. 5</span>')+'</div>';
 }
 function bbRogueClearBottomRows(count){for(let n=0;n<count;n++){board.pop();board.unshift(Array(W).fill(0));}}
-function bbUseHeroActiveSkill(){
-  if(mode!=='rogue'||!started||paused||gameOver)return;
-  const lvl=bbGetHeroProgress(bbSelectedHero).level;if(lvl<5||Date.now()<bbRogueSkillReadyAt)return;
-  const tier=1+Math.floor((lvl-5)/5),e=bbRogueEncounter;
-  if(bbSelectedHero==='plush'){for(let y=0;y<Math.min(H,2+tier);y++)board[y].fill(0);toast('🐻 МЕДВЕЖИЙ ЩИТ! Верхние ряды очищены.')}
-  else if(bbSelectedHero==='prism'){const damage=8+tier*5;bbRogueDamageEnemy(damage);toast('💎 КРИСТАЛЛЬНЫЙ УДАР! '+damage+' урона монстру.')}
-  else if(bbSelectedHero==='blip'){e.nextAttack+=12+tier*4;toast('👾 ГЛИТЧ ВРЕМЕНИ! Атака монстра отложена.')}
-  else if(bbSelectedHero==='pixel'){bbRogueClearBottomRows(tier);levelLines+=tier;toast('🤖 ПЕРЕЗАГРУЗКА! Поле очищено, заряд уровня восстановлен.')}
-  else{const damage=12+tier*5;bbRogueDamageEnemy(damage);flash();toast('⚡ ЭЛЕКТРОРАЗРЯД! '+damage+' урона монстру.')}
-  bbRogueSkillReadyAt=Date.now()+45000;updateProgress();updateHud();render();bbRenderGoals();
+function bbRenderHeroSkillSlot(){
+  const button=document.getElementById('bbHeroSkillCard');if(!button)return;
+  const hero=bbHeroes.find(item=>item.id===bbSelectedHero)||bbHeroes[0];
+  const progress=bbGetHeroProgress(hero.id),level=progress.level;
+  const remaining=Math.max(0,Math.ceil((bbRogueSkillReadyAt-Date.now())/1000));
+  const art=document.getElementById('bbHeroSkillArt'),name=document.getElementById('bbHeroSkillName');
+  const ability=document.getElementById('bbHeroSkillAbility'),state=document.getElementById('bbHeroSkillState');
+  if(art)art.innerHTML=bbHeroEmblem(hero.id);
+  if(name)name.textContent=hero.name.toUpperCase();
+  if(ability)ability.textContent=hero.skill;
+  if(state)state.textContent=level<5?'РАЗБЛОКИРОВКА · УР. 5':remaining?'ПЕРЕЗАРЯДКА · '+remaining+' С':'НАЖМИ ДЛЯ АКТИВАЦИИ';
+  button.disabled=!started||paused||gameOver||level<5||remaining>0;
+  button.style.setProperty('--hero-accent',hero.color);
+  button.setAttribute('aria-label',hero.name+' — '+hero.skill+(level<5?' (откроется на 5 уровне)':remaining?' (перезарядка '+remaining+' секунд)':' — активировать'));
 }
-document.addEventListener('click',event=>{if(event.target.closest('#bbHeroActiveSkill'))bbUseHeroActiveSkill()});
+function bbUseHeroActiveSkill(){
+  if(!started||paused||gameOver)return;
+  const lvl=bbGetHeroProgress(bbSelectedHero).level;
+  if(lvl<5){toast('🔒 Сверхспособность откроется на 5 уровне героя.');return}
+  const remaining=Math.ceil((bbRogueSkillReadyAt-Date.now())/1000);
+  if(remaining>0){toast('⏳ Способность перезаряжается: '+remaining+' сек.');return}
+  const tier=1+Math.floor((lvl-5)/5),e=bbRogueEncounter;
+  if(mode==='rogue'){
+    if(bbSelectedHero==='plush'){for(let y=0;y<Math.min(H,2+tier);y++)board[y].fill(0);toast('🐻 МЕДВЕЖИЙ ЩИТ! Верхние ряды очищены.')}
+    else if(bbSelectedHero==='prism'){const damage=8+tier*5;bbRogueDamageEnemy(damage);toast('💎 КРИСТАЛЛЬНЫЙ УДАР! '+damage+' урона монстру.')}
+    else if(bbSelectedHero==='blip'){e.nextAttack+=12+tier*4;toast('👾 ГЛИТЧ ВРЕМЕНИ! Атака монстра отложена.')}
+    else if(bbSelectedHero==='pixel'){bbRogueClearBottomRows(tier);levelLines+=tier;toast('🤖 ПЕРЕЗАГРУЗКА! Поле очищено, заряд уровня восстановлен.')}
+    else{const damage=12+tier*5;bbRogueDamageEnemy(damage);flash();toast('⚡ ЭЛЕКТРОРАЗРЯД! '+damage+' урона монстру.')}
+  }else{
+    if(bbSelectedHero==='plush'){
+      if(!boosts.includes('shield'))boosts.push('shield');
+      else bbRogueClearBottomRows(1);
+      toast('🐻 МЕДВЕЖИЙ ЩИТ! Защита активирована.');
+    }else if(bbSelectedHero==='prism'){
+      const bonus=300*tier;score+=bonus;toast('💎 КРИСТАЛЛЬНЫЙ РАСЧЁТ! +'+bonus+' очков.');
+    }else if(bbSelectedHero==='blip'){
+      const bonus=Math.min(950,dropMs+120*tier)-dropMs;dropMs+=bonus;restartDrop();
+      toast('👾 ГЛИТЧ! Гравитация замедлена.');
+    }else if(bbSelectedHero==='pixel'){
+      bbRogueClearBottomRows(tier);levelLines+=tier;
+      toast('🤖 ПЕРЕЗАГРУЗКА! Поле очищено, заряд уровня восстановлен.');
+    }else{
+      const bonus=400*tier;score+=bonus;flash();toast('⚡ ЭЛЕКТРОРАЗРЯД! +'+bonus+' очков.');
+    }
+  }
+  bbRogueSkillReadyAt=Date.now()+45000;
+  updateProgress();updateHud();render();bbRenderGoals();bbRenderHeroSkillSlot();
+}
+document.addEventListener('click',event=>{if(event.target.closest('#bbHeroActiveSkill')||event.target.closest('#bbHeroSkillCard'))bbUseHeroActiveSkill()});
 function bbRogueDamageEnemy(amount){
   if(mode!=='rogue'||bbRogueEncounter.hp<=0)return;
   const e=bbRogueEncounter;e.hp=Math.max(0,e.hp-Math.max(0,amount));
@@ -7240,7 +7293,7 @@ if (mode === 'daily') {
     $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
   }
 }
-show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);
+show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);bbRenderHeroSkillSlot();
 if(
   mode==='daily' &&
   bbIsDailyMechanic('chronoRift') &&
@@ -7576,7 +7629,7 @@ if(dailySpawnCollision){
 bbCheckCampaignCompletion();
 }
 function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.min(8,Math.max(3,Math.ceil(needLines*1.12+(level-1)*.12)-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)+(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
-function updateHud(){$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=boosts.length?'✧':'◇';$('boostName').textContent=boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления';$('boostNum').textContent=boosts.length?boosts.length+' усил.':'Выбери реликвию';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
+function updateHud(){bbRenderHeroSkillSlot();$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=boosts.length?'✧':'◇';$('boostName').textContent=boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления';$('boostNum').textContent=boosts.length?boosts.length+' усил.':'Выбери реликвию';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
   const rogue=mode==='rogue';
