@@ -1334,3 +1334,182 @@
     #menu.home-dashboard > .modes > .mode .modesub { font-size: 8px !important; }
   }
 }
+
+
+/* Desktop arena proportions v2 — larger portrait playfield, compact support rail.
+   Deliberately scoped to desktop; mobile/tablet layout and cosmic background are untouched. */
+@media (min-width: 901px) {
+  #game:not([hidden]) {
+    width: min(100%, 1480px);
+    gap: clamp(10px, 1.15vw, 16px);
+  }
+
+  #game > .gamehud {
+    gap: clamp(8px, .85vw, 12px);
+  }
+  #game .gamehud .hudbox {
+    min-height: 64px;
+    padding: 10px 16px;
+  }
+
+  #game > .playlayout {
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 310px);
+    align-items: stretch;
+    gap: clamp(12px, 1.2vw, 18px);
+  }
+  #game > .playlayout > div:first-child {
+    min-height: 0;
+    padding: clamp(10px, 1.1vw, 16px);
+    overflow: visible;
+  }
+  #game .boardframe {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+    padding: 7px;
+    border-radius: 16px;
+  }
+  #game .board {
+    display: block;
+    width: auto;
+    height: min(76dvh, 780px);
+    max-height: calc(100dvh - 235px);
+    max-width: 100%;
+    aspect-ratio: 10 / 23;
+  }
+
+  #game > .playlayout > .sidecol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, auto);
+    align-content: start;
+    align-items: stretch;
+    gap: 9px;
+  }
+  #game .sidecol > .sidecard {
+    min-height: 112px;
+    padding: 10px 9px;
+    border-radius: 14px;
+  }
+  #game .sidecol > .sidecard label {
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+  #game .sidecol .charge-ring {
+    width: min(100%, 82px);
+    margin: 7px auto 4px;
+  }
+  #game .sidecol .charge-ring-inner strong {
+    font-size: 21px;
+  }
+  #game .sidecol .charge-caption {
+    margin-top: 3px;
+    font-size: 7px;
+  }
+  #game .sidecol .nextcanvas {
+    width: min(100%, 104px);
+    max-height: 82px;
+    margin: 5px auto 0;
+  }
+  #game .sidecol .boosticon {
+    margin: 6px 0 2px;
+    font-size: 22px;
+  }
+  #game .sidecol .boostname {
+    font-size: 9px;
+  }
+  #game .sidecol .boostnum {
+    margin-top: 3px;
+    font-size: 8px;
+  }
+  #game .sidecol > .sidecard:has(#timer),
+  #game .sidecol > .sidecard:has(#musicBtn) {
+    min-height: 104px;
+  }
+  #game .sidecol #timer {
+    margin-top: 6px !important;
+    font-size: 20px !important;
+  }
+  #game .sidecol .smallbtn {
+    min-height: 30px;
+    margin-top: 6px;
+    padding: 6px 7px;
+    font-size: 8px;
+  }
+  #game .sidecol .side-drop {
+    min-height: 31px;
+    margin-top: 6px;
+    font-size: 9px;
+  }
+  #game .sidecol .chrono-card {
+    grid-column: 1 / -1;
+    min-height: 122px;
+  }
+  #game .sidecol .chrono-ring {
+    width: 76px;
+    margin: 6px auto 4px;
+  }
+  #game .sidecol .chrono-ring-inner strong {
+    font-size: 21px;
+  }
+  #game .sidecol > #bbHeroSkillCard {
+    grid-column: 1 / -1;
+    min-height: 78px;
+    padding: 9px 12px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong {
+    font-size: 10px;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small {
+    font-size: 9px;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy em {
+    font-size: 7px;
+  }
+
+  #game > .controls {
+    width: min(100%, 480px);
+    gap: 10px;
+    margin-top: 0;
+  }
+  #game > .controls .control {
+    height: 44px;
+    border-radius: 12px;
+    font-size: 19px;
+  }
+  #game > .hint {
+    margin-top: -2px;
+  }
+
+  @media (max-height: 820px) {
+    #game .board {
+      height: min(72dvh, 680px);
+      max-height: calc(100dvh - 225px);
+    }
+    #game .sidecol > .sidecard {
+      min-height: 100px;
+      padding: 8px;
+    }
+    #game .sidecol > #bbHeroSkillCard {
+      min-height: 70px;
+    }
+  }
+  @media (min-width: 901px) and (max-width: 1120px) {
+    #game > .playlayout {
+      grid-template-columns: minmax(0, 1fr) 252px;
+      gap: 10px;
+    }
+    #game > .playlayout > .sidecol {
+      gap: 7px;
+    }
+    #game .sidecol > .sidecard {
+      padding: 8px 7px;
+    }
+  }
+}

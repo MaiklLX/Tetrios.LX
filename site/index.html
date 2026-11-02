@@ -5298,7 +5298,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 @media(max-width:520px){.bb-hero-skill-slot{gap:5px;padding:6px 4px;border-radius:11px}.bb-hero-skill-art{flex-basis:34px;width:34px;height:34px}.bb-hero-skill-art svg{width:32px;height:30px}.bb-hero-skill-copy strong{font-size:7px}.bb-hero-skill-copy small{font-size:7px}.bb-hero-skill-copy em{font-size:6px}}
 </style>
 
-<link rel="stylesheet" href="./desktop-shell.css?v=20261102-desktop-shell-v6">
+<link rel="stylesheet" href="./desktop-shell.css?v=20261102-desktop-shell-v8">
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
@@ -10372,9 +10372,157 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
-<style id="bb-board-arena-10x23-v2">/* TETRIOS LX signature 10x25 arena */#game .boardframe{display:flex!important;align-items:stretch!important;justify-content:center!important;min-width:0!important;overflow:hidden!important}#game .board{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:10 / 23!important;flex:0 1 auto!important}@media(max-width:900px){#game .boardframe{padding:1px!important}}</style>
+<style id="bb-board-arena-10x23-v2">/* TETRIOS LX signature 10x25 arena */#game .boardframe{display:flex!important;align-items:stretch!important;justify-content:center!important;min-width:0!important;overflow:hidden!important}#game .board{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:10 / 23!important;flex:0 1 auto!important}@media(max-width:900px){#game .boardframe{padding:1px!important}}
+/* Desktop arena composition — authoritative override after legacy inline rules.
+   Keep mobile/tablet untouched. Center the board in its own visual column and
+   give the support HUD a stable rail instead of squeezing every card. */
+@media(min-width:901px){
+ #game{width:min(100%,1480px)!important;gap:14px!important}
+ #game>.gamehud{gap:12px!important;margin-bottom:12px!important}
+ #game>.gamehud .hudbox{min-height:68px!important;padding:10px 16px!important}
+ #game>.playlayout{
+   grid-template-columns:minmax(0,1fr) 284px!important;
+   gap:18px!important;align-items:stretch!important
+ }
+ #game>.playlayout>div:first-child{
+   min-width:0!important;display:flex!important;flex-direction:column!important;
+   align-items:center!important;justify-content:flex-start!important;
+   padding:10px 14px!important;overflow:visible!important
+ }
+ #game .boardframe{
+   height:min(75dvh,760px)!important;max-height:calc(100dvh - 230px)!important;
+   width:auto!important;max-width:100%!important;flex:0 0 auto!important;
+   padding:7px!important;border-radius:17px!important
+ }
+ #game .board{
+   display:block!important;width:auto!important;height:100%!important;
+   max-width:100%!important;aspect-ratio:10/23!important
+ }
+ #game>.playlayout>.sidecol{
+   display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   grid-auto-rows:minmax(116px,auto)!important;align-content:start!important;
+   align-items:stretch!important;gap:10px!important;min-width:0!important
+ }
+ #game .sidecol>.sidecard{
+   min-width:0!important;min-height:116px!important;padding:11px 9px!important;
+   border-radius:15px!important
+ }
+ #game .sidecol>.sidecard label{font-size:8px!important;letter-spacing:.12em!important}
+ #game .sidecol .charge-ring{width:min(100%,82px)!important;margin:7px auto 4px!important}
+ #game .sidecol .charge-ring-inner strong{font-size:21px!important}
+ #game .sidecol .nextcanvas{width:min(100%,104px)!important;max-height:82px!important;margin:5px auto 0!important}
+ #game .sidecol .chrono-card{grid-column:1/-1!important;min-height:126px!important}
+ #game .sidecol .chrono-ring{width:76px!important;margin:6px auto 4px!important}
+ #game .sidecol>#bbHeroSkillCard{grid-column:1/-1!important;min-height:78px!important;padding:9px 12px!important}
+ #game>#gameplayControls,
+ #game>.controls{width:min(100%,440px)!important;gap:10px!important;margin:12px auto 0!important}
+ #game>.controls .control{height:46px!important;border-radius:12px!important}
+}
+@media(min-width:901px) and (max-height:820px){
+ #game .boardframe{height:min(70dvh,650px)!important;max-height:calc(100dvh - 210px)!important}
+ #game>.playlayout>.sidecol{grid-auto-rows:minmax(102px,auto)!important;gap:8px!important}
+ #game .sidecol>.sidecard{min-height:102px!important;padding:8px!important}
+}
+@media(min-width:901px) and (max-width:1120px){
+ #game>.playlayout{grid-template-columns:minmax(0,1fr) 250px!important;gap:12px!important}
+ #game>.playlayout>.sidecol{gap:7px!important}
+}
+/* Visual pass — remove the nested-card look and give the arena a clear focal point. */
+@media(min-width:901px){
+ #game>.playlayout>div:first-child{
+   border:0!important;border-radius:0!important;background:transparent!important;
+   box-shadow:none!important;padding:0!important;
+ }
+ #game .boardframe{
+   padding:8px!important;border:1px solid rgba(92,245,232,.48)!important;
+   border-radius:12px!important;
+   background:linear-gradient(145deg,rgba(18,31,54,.96),rgba(5,11,25,.98))!important;
+   box-shadow:0 0 0 1px rgba(157,124,255,.10),0 18px 52px rgba(0,0,0,.48),
+     0 0 30px rgba(92,245,232,.11),inset 0 1px rgba(255,255,255,.09)!important;
+ }
+ #game .board{border-radius:5px!important;box-shadow:0 0 22px rgba(92,245,232,.06)!important}
+ #game>.playlayout>.sidecol{gap:9px!important;align-content:start!important}
+ #game .sidecol>.sidecard{
+   position:relative!important;overflow:hidden!important;
+   border:1px solid rgba(116,145,202,.16)!important;
+   border-left:2px solid rgba(92,245,232,.44)!important;
+   border-radius:10px!important;
+   background:linear-gradient(105deg,rgba(17,29,52,.88),rgba(8,15,30,.68))!important;
+   box-shadow:inset 0 1px rgba(255,255,255,.035),0 7px 18px rgba(0,0,0,.12)!important;
+ }
+ #game .sidecol>.sidecard:after{
+   content:"";position:absolute;inset:0;pointer-events:none;
+   background:radial-gradient(ellipse at 0 0,rgba(92,245,232,.07),transparent 65%);
+ }
+ #game .sidecol>.chrono-card{
+   border-left-color:rgba(57,169,255,.72)!important;
+   background:linear-gradient(105deg,rgba(13,35,65,.92),rgba(7,15,32,.78))!important;
+ }
+ #game .sidecol>#bbHeroSkillCard{
+   border:1px solid rgba(157,124,255,.32)!important;
+   border-left:2px solid rgba(157,124,255,.78)!important;
+   border-radius:12px!important;
+   background:linear-gradient(105deg,rgba(34,27,66,.76),rgba(10,16,34,.9))!important;
+ }
+ #game>.controls{max-width:440px!important}
+ #game>.controls .control{box-shadow:0 3px 0 rgba(3,8,19,.9),inset 0 1px rgba(255,255,255,.07)!important}
+}
+</style>
 
 
 
 
+
+<style id="bb-desktop-container-fit-v1">
+/* Desktop arena: size from the actual page content container, not monitor/viewport units.
+   The board keeps its 10:23 shape; short browser windows may scroll instead of clipping it. */
+@media (min-width:901px) {
+  .app { container-type: inline-size; }
+  #game:not([hidden]) {
+    width:100%!important;
+    max-width:1480px!important;
+    margin-inline:auto!important;
+  }
+  #game>.playlayout {
+    grid-template-columns:minmax(0,1fr) clamp(190px,20cqw,284px)!important;
+    gap:clamp(10px,1.2cqw,18px)!important;
+    align-items:stretch!important;
+  }
+  #game>.playlayout>div:first-child {
+    min-width:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:0!important;
+  }
+  #game .boardframe {
+    box-sizing:border-box!important;
+    width:auto!important;
+    height:clamp(230px,min(52.9cqw,calc(100dvh - 250px)),759px)!important;
+    max-width:100%!important;
+    max-height:none!important;
+    aspect-ratio:11 / 23!important;
+    flex:0 1 auto!important;
+  }
+  #game .board {
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    aspect-ratio:auto!important;
+  }
+  #game>.playlayout>.sidecol {
+    min-width:0!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:clamp(6px,.65cqw,9px)!important;
+  }
+  #game .sidecol>.sidecard {
+    min-width:0!important;
+    min-height:clamp(88px,7.8cqw,116px)!important;
+    padding:clamp(7px,.8cqw,11px)!important;
+  }
+  #game .sidecol>.chrono-card { min-height:clamp(108px,8.8cqw,126px)!important; }
+  #game>.controls { width:min(100%,440px)!important; }
+}
+</style>
 </body></html>
