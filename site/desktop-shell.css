@@ -324,7 +324,7 @@
 @media (min-width: 901px) {
   /* Desktop arena v1 — enlarge the playfield and give the HUD a clear hierarchy. */
   #game:not([hidden]) {
-    width: min(100%, 1480px);
+    width: min(100%, 1220px);
     max-width: none;
     margin: 0 auto;
     display: grid;
@@ -396,7 +396,7 @@
   #game .gamehud #gameCoins strong { color: #ffd27a; }
   #game > .playlayout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(270px, 330px);
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
     align-items: stretch;
     gap: 18px;
     margin: 0;
@@ -422,8 +422,8 @@
   }
   #game .board {
     width: auto;
-    height: min(67dvh, 720px);
-    max-height: calc(100dvh - 270px);
+    height: min(74dvh, 780px);
+    max-height: calc(100dvh - 230px);
     max-width: 100%;
     aspect-ratio: 10 / 23;
     border-radius: 10px;
@@ -523,12 +523,12 @@
   }
   @media (max-height: 820px) {
     #game > .playlayout > div:first-child { padding: 10px; }
-    #game .board { height: min(61dvh, 620px); max-height: calc(100dvh - 245px); }
+    #game .board { height: min(68dvh, 700px); max-height: calc(100dvh - 210px); }
     #game .sidecol > .sidecard { min-height: 112px; padding: 10px; }
     #game > .playlayout > .sidecol { grid-auto-rows: minmax(112px, auto); gap: 8px; }
   }
   @media (min-width: 901px) and (max-width: 1120px) {
-    #game > .playlayout { grid-template-columns: minmax(0, 1fr) 250px; gap: 12px; }
+    #game > .playlayout { grid-template-columns: minmax(0, 1fr) 260px; gap: 12px; }
     #game > .playlayout > .sidecol { grid-template-columns: 1fr 1fr; gap: 8px; }
     #game .sidecol > .sidecard { padding: 10px 8px; }
   }
