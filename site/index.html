@@ -10644,4 +10644,20 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-arena-restoration-v2">
+@media(min-width:901px){
+#game .playlayout{grid-template-columns:minmax(300px,.9fr) minmax(360px,1.1fr)!important;gap:clamp(16px,2vw,28px)!important;align-items:center!important;width:min(100%,1080px)!important;margin:0 auto!important}
+#game .playlayout>div:first-child{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important}
+#game .boardframe{width:max-content!important;max-width:100%!important;height:clamp(360px,69dvh,690px)!important;aspect-ratio:10/23!important;box-sizing:content-box!important}
+#game .board{width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;aspect-ratio:10/23!important}
+#game .playlayout>.sidecol{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:minmax(124px,auto)!important;align-content:center!important;gap:10px!important;min-width:0!important}
+#game .sidecol>.sidecard{min-width:0!important;min-height:124px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+#game #bbHeroSkillCard{grid-column:1/-1!important;width:100%!important;margin:0!important}
+#game .controls,#game .sidecol .side-drop{display:none!important}
+}
+@media(min-width:901px) and (max-height:760px){#game .boardframe{height:clamp(300px,57dvh,500px)!important}#game .sidecol{grid-auto-rows:minmax(108px,auto)!important;gap:7px!important}#game .sidecol>.sidecard{min-height:108px!important}}
+@media(min-width:901px) and (max-width:1120px){#game .playlayout{grid-template-columns:minmax(270px,.82fr) minmax(320px,1.18fr)!important;gap:12px!important}}
+</style>
+
 </body></html>
