@@ -62,7 +62,7 @@ for (const path of [
 
 if (!arena.includes('new THREE.OrthographicCamera(') || !arena.includes('camera.position.set(0,0,34)')) fail('3D arena camera must face the board head-on without a horizontal/vertical offset');
 if (!arena.includes('boardCanvas.getBoundingClientRect()') || !arena.includes('boardRect.left-frameRect.left-frame.clientLeft') || !arena.includes('boardRect.top-frameRect.top-frame.clientTop')) fail('3D arena canvas must align to the exact visible 2D board bounds');
-if (!arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.025') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full board and rails to the exact board aspect ratio');
+if (!arena.includes('const arenaWidth=10.36,arenaHeight=23.55') || !arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.008') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full 10×23 board in the available canvas while preserving its aspect ratio');
 if (arena.includes('camera.position.x=3+') || arena.includes('camera.position.y=2+')) fail('3D arena must not reintroduce the off-centre camera drift that crops the board');
 if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js does not load local Three.js');
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
