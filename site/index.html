@@ -5298,444 +5298,89 @@ body:has(#menu:not([hidden])) .app > .topbar {
 @media(max-width:520px){.bb-hero-skill-slot{gap:5px;padding:6px 4px;border-radius:11px}.bb-hero-skill-art{flex-basis:34px;width:34px;height:34px}.bb-hero-skill-art svg{width:32px;height:30px}.bb-hero-skill-copy strong{font-size:7px}.bb-hero-skill-copy small{font-size:7px}.bb-hero-skill-copy em{font-size:6px}}
 </style>
 
-<style id="bb-desktop-layout-unified-v1">
-/* One authoritative desktop layout. Older overlapping desktop patches are removed. */
+<style id="bb-desktop-mobile-layout-v1">
+/* Desktop reuses the proven mobile-first component order and vertical flow. */
 @media (min-width: 901px) {
-  [hidden] { display:none !important; }
-  html, body { width:100%; height:100%; min-height:0; overflow:hidden !important; }
-  body { overflow:hidden !important; }
+  html, body { min-height:100%; height:auto; overflow-x:hidden !important; overflow-y:auto !important; }
+  body { display:block !important; }
   .app {
-    display:flex !important;
-    flex-direction:column !important;
-    width:100% !important;
-    height:100dvh !important;
-    min-height:0 !important;
-    max-height:100dvh !important;
-    overflow:hidden !important;
-    padding:8px clamp(12px,1.6vw,28px) 10px !important;
+    display:block !important; width:100% !important; max-width:760px !important;
+    min-height:100dvh !important; height:auto !important; max-height:none !important;
+    margin:0 auto !important; padding:18px 14px 28px !important; overflow:visible !important;
   }
-  .topbar {
-    flex:0 0 42px !important;
-    min-height:42px !important;
-    width:min(100%,1500px) !important;
-    max-width:1500px !important;
-    margin:0 auto 6px !important;
-  }
+  .app > .topbar { display:flex !important; width:100% !important; max-width:620px !important; margin:0 auto 12px !important; }
   .screen {
-    width:min(100%,1500px) !important;
-    max-width:1500px !important;
-    min-height:0 !important;
-    margin:0 auto !important;
+    display:block; width:100% !important; max-width:620px !important; height:auto !important;
+    min-height:0 !important; max-height:none !important; margin:0 auto !important;
+    overflow:visible !important; padding:0 !important;
   }
-
-  /* Home dashboard — every direct child has exactly one grid area. */
   #menu.home-dashboard {
-    flex:1 1 auto !important;
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    grid-template-areas:
-      "hero hero hero"
-      "download download download"
-      "section section section"
-      "modes modes modes"
-      "streak heroes currency"
-      "quests quests quests"
-      "reset shop stats" !important;
-    grid-template-rows:
-      minmax(58px,.72fr)
-      minmax(40px,.48fr)
-      minmax(12px,.16fr)
-      minmax(84px,1.08fr)
-      minmax(76px,.92fr)
-      minmax(98px,1.2fr)
-      minmax(38px,.44fr) !important;
-    gap:clamp(4px,.65vw,9px) !important;
-    align-content:stretch !important;
-    align-items:stretch !important;
-    justify-content:stretch !important;
-    width:min(100%,1500px) !important;
-    height:100% !important;
-    max-height:100% !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    padding:0 !important;
+    display:flex !important; flex-direction:column !important; align-items:stretch !important;
+    justify-content:flex-start !important; gap:0 !important; width:100% !important;
+    max-width:620px !important; height:auto !important; min-height:0 !important;
+    max-height:none !important; margin:0 auto !important; padding:0 !important; overflow:visible !important;
   }
-  #menu > * {
-    box-sizing:border-box !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    max-width:100% !important;
-    max-height:100% !important;
-    margin:0 !important;
-    align-self:stretch !important;
-    justify-self:stretch !important;
-  }
-  #menu > .hero {
-    grid-area:hero !important;
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    align-items:center !important;
-    padding:3px 12px !important;
-    overflow:hidden !important;
-  }
-  #menu > .hero .hero-arena-canvas { max-height:100% !important; }
-  #menu > .hero .eyebrow { font-size:clamp(7px,.65vw,9px) !important; line-height:1.1 !important; }
-  #menu > .hero h1 {
-    font-size:clamp(24px,2.55vw,40px) !important;
-    line-height:.94 !important;
-    margin:2px 0 !important;
-  }
-  #menu > .hero p { font-size:clamp(8px,.72vw,11px) !important; line-height:1.2 !important; margin:2px 0 0 !important; }
-  #menu > .apk-download {
-    grid-area:download !important;
-    display:flex !important;
-    width:min(100%,520px) !important;
-    min-height:0 !important;
-    justify-self:center !important;
-    align-self:stretch !important;
-    padding:3px 12px !important;
-    gap:9px !important;
-    overflow:hidden !important;
-  }
-  #menu > .apk-download .apk-download-icon { width:30px !important; height:30px !important; font-size:19px !important; }
-  #menu > .apk-download-copy { min-width:0 !important; gap:1px !important; }
-  #menu > .apk-download-copy strong { font-size:clamp(8px,.78vw,10px) !important; }
-  #menu > .apk-download-copy small { font-size:clamp(7px,.65vw,9px) !important; }
-  #menu > .sectionlabel {
-    grid-area:section !important;
-    display:flex !important;
-    align-items:center !important;
-    padding:0 4px !important;
-    font-size:clamp(7px,.65vw,9px) !important;
-    overflow:hidden !important;
-  }
+  #menu > * { min-width:0 !important; max-width:100% !important; max-height:none !important; flex:0 0 auto !important; }
+  #menu > .hero, #menu > .apk-download, #menu > #dailyQuestsPanel,
+  #menu > .bottomstats, #menu > .home-reset, #menu > #rpgPanel,
+  #menu .shopbuttons, #menu .currency-panel { width:100% !important; }
   #menu > .modes {
-    grid-area:modes !important;
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    grid-template-rows:minmax(0,1fr) !important;
-    gap:clamp(5px,.8vw,11px) !important;
-    overflow:hidden !important;
+    display:flex !important; flex-direction:column !important; width:100% !important;
+    gap:10px !important; overflow:visible !important;
   }
-  #menu > .modes > .mode {
-    display:flex !important;
-    width:100% !important;
-    height:100% !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    padding:clamp(5px,.75vw,11px) !important;
-    gap:clamp(5px,.7vw,10px) !important;
-    overflow:hidden !important;
-  }
-  #menu > .modes > .mode .modeicon {
-    flex:0 0 clamp(26px,2.7vw,38px) !important;
-    width:clamp(26px,2.7vw,38px) !important;
-    height:clamp(26px,2.7vw,38px) !important;
-    font-size:clamp(14px,1.55vw,21px) !important;
-  }
-  #menu > .modes > .mode .modetext { flex:1 1 auto !important; min-width:0 !important; overflow:hidden !important; }
-  #menu > .modes > .mode .modetitle { font-size:clamp(9px,.95vw,13px) !important; line-height:1.15 !important; }
-  #menu > .modes > .mode .modesub { font-size:clamp(7px,.67vw,9px) !important; line-height:1.2 !important; overflow-wrap:anywhere !important; }
-  #menu > .modes > .mode .tag { font-size:clamp(6px,.56vw,8px) !important; margin-top:3px !important; }
-  #menu > #bbVisitStreak {
-    grid-area:streak !important;
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    padding:clamp(5px,.75vw,10px) !important;
-    overflow:hidden !important;
-  }
-  #menu > #bbVisitStreak > div:first-child { gap:6px !important; }
-  #menu > #bbVisitStreak > div:first-child > div:first-child {
-    width:clamp(26px,2.6vw,36px) !important;
-    height:clamp(26px,2.6vw,36px) !important;
-    font-size:18px !important;
-  }
-  #menu #bbStreakCount { font-size:clamp(11px,1.15vw,16px) !important; line-height:1.1 !important; }
-  #menu #bbStreakBest, #menu #bbStreakMessage { font-size:clamp(7px,.68vw,9px) !important; line-height:1.2 !important; margin-top:3px !important; }
-  #menu > #openHeroes {
-    grid-area:heroes !important;
-    display:flex !important;
-    align-items:center !important;
-    padding:clamp(5px,.75vw,10px) !important;
-    gap:6px !important;
-    overflow:hidden !important;
-  }
-  #menu > #openHeroes .modeicon {
-    flex:0 0 clamp(26px,2.6vw,36px) !important;
-    width:clamp(26px,2.6vw,36px) !important;
-    height:clamp(26px,2.6vw,36px) !important;
-    font-size:18px !important;
-  }
-  #menu > #openHeroes .modetext { min-width:0 !important; overflow:hidden !important; }
-  #menu > #openHeroes .modetitle { font-size:clamp(9px,.85vw,12px) !important; line-height:1.15 !important; }
-  #menu > #openHeroes .modesub { font-size:clamp(7px,.65vw,9px) !important; line-height:1.2 !important; }
-  #menu > #openHeroes .tag { font-size:6px !important; margin-top:3px !important; }
-  #menu > .currency-panel {
-    grid-area:currency !important;
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    padding:clamp(5px,.7vw,9px) !important;
-    overflow:hidden !important;
-  }
-  #menu > .currency-panel .currency-heading { font-size:clamp(7px,.7vw,9px) !important; margin:0 0 4px !important; gap:4px !important; }
-  #menu > .currency-panel .currency-grid { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:5px !important; min-height:0 !important; }
-  #menu > .currency-panel .currency-card {
-    display:flex !important;
-    flex-direction:row !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:5px !important;
-    padding:4px !important;
-    min-width:0 !important;
-    min-height:0 !important;
-  }
-  #menu > .currency-panel .currency-icon { font-size:clamp(13px,1.3vw,18px) !important; }
-  #menu > .currency-panel .currency-info { min-width:0 !important; text-align:left !important; }
-  #menu > .currency-panel .currency-label, #menu > .currency-panel .currency-caption { font-size:6px !important; line-height:1.1 !important; }
-  #menu > .currency-panel .currency-info strong { display:block !important; font-size:clamp(10px,1vw,14px) !important; line-height:1.1 !important; }
-  #menu > #dailyQuestsPanel {
-    grid-area:quests !important;
-    display:grid !important;
-    grid-template-rows:auto auto minmax(0,1fr) !important;
-    padding:clamp(6px,.8vw,10px) !important;
-    overflow:hidden !important;
-  }
-  #menu > #dailyQuestsPanel > div:first-child { min-width:0 !important; gap:6px !important; margin:0 0 3px !important; }
-  #menu > #dailyQuestsPanel > div:first-child strong { font-size:clamp(9px,.9vw,12px) !important; }
-  #menu > #dailyQuestsPanel > div:first-child span { font-size:clamp(6px,.6vw,8px) !important; text-align:right !important; }
-  #menu > #dailyQuestsPanel > div:nth-child(2) { font-size:clamp(7px,.68vw,9px) !important; line-height:1.15 !important; }
-  #menu > #dailyQuestsPanel #dailyQuestsList {
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    gap:clamp(4px,.6vw,7px) !important;
-    min-height:0 !important;
-    margin-top:4px !important;
-    overflow:hidden !important;
-  }
-  #menu > #dailyQuestsPanel #dailyQuestsList > div {
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    margin:0 !important;
-    padding:clamp(4px,.6vw,7px) !important;
-    overflow:hidden !important;
-  }
-  #menu > #dailyQuestsPanel #dailyQuestsList > div > div:first-child { font-size:clamp(7px,.7vw,10px) !important; line-height:1.15 !important; overflow-wrap:anywhere !important; }
-  #menu > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(2), #menu > #dailyQuestsPanel #dailyQuestsList > div > div:last-child { font-size:clamp(6px,.6vw,8px) !important; line-height:1.1 !important; margin-top:2px !important; }
-  #menu > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3) { height:4px !important; flex:0 0 4px !important; margin-top:3px !important; }
-  #menu > .home-reset { grid-area:reset !important; overflow:hidden !important; }
-  #menu > .home-reset button { width:100% !important; height:100% !important; min-height:0 !important; margin:0 !important; padding:4px !important; font-size:clamp(7px,.7vw,9px) !important; line-height:1.1 !important; }
-  /* bbApplyHero() moves the shop action into #rpgPanel; .shopbuttons is obsolete. */
-  #menu > #rpgPanel {
-    grid-area:shop !important;
-    display:flex !important;
-    align-items:stretch !important;
-    justify-content:center !important;
-    padding:4px !important;
-    overflow:hidden !important;
-    border-radius:12px !important;
-  }
-  #menu > #rpgPanel #openShop {
-    display:flex !important;
-    width:100% !important;
-    height:100% !important;
-    min-height:0 !important;
-    margin:0 !important;
-    padding:4px !important;
-    align-items:center !important;
-    justify-content:center !important;
-    gap:5px !important;
-  }
-  #menu > #rpgPanel #openShop .shop-main-icon { font-size:clamp(14px,1.45vw,20px) !important; }
-  #menu > #rpgPanel #openShop .shop-main-text { min-width:0 !important; }
-  #menu > #rpgPanel #openShop .shop-main-text strong { font-size:clamp(8px,.8vw,10px) !important; }
-  #menu > #rpgPanel #openShop .shop-main-text small { font-size:clamp(6px,.6vw,8px) !important; line-height:1.1 !important; }
-  #menu > .shopbuttons { display:none !important; }
-  #menu > .bottomstats {
-    grid-area:stats !important;
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    grid-template-rows:minmax(0,1fr) !important;
-    gap:4px !important;
-    overflow:hidden !important;
-  }
-  #menu > .bottomstats .stat {
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    padding:3px 2px !important;
-  }
-  #menu > .bottomstats .stat strong { font-size:clamp(10px,1vw,13px) !important; line-height:1.1 !important; }
-  #menu > .bottomstats .stat span { font-size:clamp(5px,.55vw,7px) !important; line-height:1.1 !important; }
-
-  /* Secondary pages share a bounded, scrollable desktop canvas. */
+  #menu > .modes > .mode { width:100% !important; min-height:76px !important; height:auto !important; overflow:visible !important; }
   #shopScreen, #heroes, #campaign, #daily {
-    flex:1 1 auto !important;
-    display:block !important;
-    min-height:0 !important;
-    max-height:100% !important;
-    overflow-x:hidden !important;
-    overflow-y:auto !important;
-    overscroll-behavior:contain !important;
-    padding:4px 8px 16px !important;
+    display:block !important; width:100% !important; max-width:620px !important;
+    height:auto !important; max-height:none !important; overflow:visible !important;
   }
-  #shopScreen > .screenhead, #heroes > .screenhead, #campaign > .screenhead, #daily > .screenhead { margin:2px 0 14px !important; }
-  #campaign .mapgrid { grid-template-columns:repeat(auto-fit,minmax(132px,1fr)) !important; gap:10px !important; }
-  #heroes #heroesRoster { grid-template-columns:repeat(auto-fit,minmax(170px,1fr)) !important; gap:12px !important; }
-  #heroes #heroDetails { width:100% !important; }
-  #shopScreen .surprise-shop-card { display:flex !important; gap:14px !important; align-items:center !important; }
-  #shopScreen #shopContent .shopgrid { grid-template-columns:repeat(auto-fit,minmax(190px,1fr)) !important; gap:12px !important; }
-  #daily .challengebox { margin-bottom:12px !important; }
-  #overlay .modal:not(.bb-daily-calendar-modal):not(.bb-hero-showcase-modal) { width:min(92vw,560px) !important; max-height:88dvh !important; overflow-y:auto !important; }
-
-  /* Arena: one board column plus one information rail. No competing layouts. */
   #game {
-    flex:1 1 auto !important;
-    display:flex !important;
-    flex-direction:column !important;
-    width:min(100%,1500px) !important;
-    height:auto !important;
-    max-height:100% !important;
-    min-height:0 !important;
-    overflow:hidden !important;
-    padding:0 8px 2px !important;
+    display:flex !important; flex-direction:column !important; width:100% !important;
+    max-width:620px !important; height:auto !important; min-height:0 !important;
+    max-height:none !important; margin:0 auto !important; padding:0 !important; overflow:visible !important;
   }
-  #game .screenhead {
-    flex:0 0 auto !important;
-    min-height:36px !important;
-    margin:0 0 6px !important;
-    padding:0 2px 4px !important;
-  }
-  #game .screenhead h2 { font-size:clamp(16px,1.4vw,20px) !important; }
-  #game .screenhead p { font-size:clamp(8px,.7vw,10px) !important; margin-top:2px !important; }
-  #game #dailyMissionGoal { flex:0 0 auto !important; margin:0 0 6px !important; }
-  #game .gamehud {
-    flex:0 0 auto !important;
-    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
-    gap:7px !important;
-    margin:0 0 8px !important;
-  }
-  #game .gamehud .hudbox, #game .gamehud #gameCoins { min-width:0 !important; min-height:40px !important; padding:5px 9px !important; }
-  #game .gamehud .hudbox span, #game .gamehud #gameCoins span { font-size:7px !important; }
-  #game .gamehud .hudbox strong, #game .gamehud #gameCoins strong { font-size:clamp(14px,1.25vw,18px) !important; margin-top:0 !important; }
+  #game .screenhead, #game .gamehud { flex:0 0 auto !important; }
   #game .playlayout {
-    flex:1 1 0 !important;
-    display:grid !important;
-    grid-template-columns:minmax(220px,.72fr) minmax(320px,1.28fr) !important;
-    gap:clamp(12px,1.5vw,22px) !important;
-    align-items:stretch !important;
-    width:min(100%,1120px) !important;
-    height:auto !important;
-    min-height:0 !important;
-    margin:0 auto !important;
+    display:grid !important; grid-template-columns:minmax(0,1fr) 96px !important;
+    grid-template-rows:minmax(0,1fr) !important; align-items:start !important; gap:10px !important;
+    width:100% !important; height:auto !important; min-height:0 !important;
+    margin:0 !important; padding:0 !important; overflow:visible !important;
   }
   #game .playlayout > div:first-child {
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    height:100% !important;
+    display:flex !important; flex-direction:column !important; align-items:stretch !important;
+    justify-content:center !important; width:100% !important; min-width:0 !important;
+    min-height:0 !important; overflow:visible !important;
   }
   #game .boardframe {
-    display:flex !important;
-    justify-content:center !important;
-    align-items:stretch !important;
-    width:auto !important;
-    height:min(100%,68dvh) !important;
-    max-height:700px !important;
-    min-height:0 !important;
-    aspect-ratio:10 / 23 !important;
-    box-sizing:border-box !important;
-    padding:5px !important;
-    overflow:hidden !important;
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    width:100% !important; height:clamp(300px,calc(100dvh - 430px),620px) !important;
+    min-height:260px !important; max-height:620px !important; padding:4px !important;
+    box-sizing:border-box !important; overflow:hidden !important;
   }
   #game .board {
-    display:block !important;
-    width:auto !important;
-    height:100% !important;
-    max-width:100% !important;
-    max-height:100% !important;
-    aspect-ratio:10 / 23 !important;
+    display:block !important; width:auto !important; height:100% !important;
+    max-width:100% !important; max-height:100% !important; aspect-ratio:10 / 23 !important;
+    object-fit:contain !important; flex:0 1 auto !important;
   }
-  #game .playlayout > .sidecol {
-    display:grid !important;
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    grid-template-rows:repeat(3,minmax(0,1fr)) minmax(48px,.52fr) !important;
-    grid-auto-rows:unset !important;
-    align-content:stretch !important;
-    align-items:stretch !important;
-    gap:clamp(5px,.65vw,9px) !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    height:100% !important;
-    padding:0 !important;
-    overflow:hidden !important;
+  #game .sidecol {
+    position:relative !important; inset:auto !important; display:flex !important;
+    flex-direction:column !important; justify-content:flex-start !important; align-items:stretch !important;
+    width:96px !important; min-width:0 !important; max-width:96px !important; height:100% !important;
+    min-height:0 !important; gap:6px !important; overflow-x:hidden !important; overflow-y:auto !important;
   }
-  #game .sidecol > .sidecard {
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    min-width:0 !important;
-    min-height:0 !important;
-    height:100% !important;
-    padding:clamp(4px,.55vw,8px) !important;
-    overflow:hidden !important;
+  #game .sidecard {
+    display:block !important; flex:0 0 auto !important; width:100% !important;
+    min-width:0 !important; height:auto !important; min-height:0 !important;
+    padding:6px 4px !important; overflow:hidden !important;
   }
-  #game .sidecol > .sidecard[hidden] { display:none !important; }
-  #game .sidecol > #bbHeroSkillCard {
-    display:flex !important;
-    grid-column:1 / -1 !important;
-    min-width:0 !important;
-    min-height:48px !important;
-    height:100% !important;
-    margin:0 !important;
-  }
-  #game .sidecol .charge-ring, #game .sidecol .chrono-ring { width:min(100%,58px) !important; margin:3px auto !important; }
-  #game .sidecol .chrono-ring-inner strong { font-size:clamp(15px,1.5vw,20px) !important; }
-  #game .sidecol .nextcanvas { width:min(100%,82px) !important; max-height:48px !important; margin:3px auto !important; }
-  #game .sidecol .boosticon { font-size:clamp(15px,1.4vw,19px) !important; margin:2px 0 !important; }
-  #game .sidecol .boostname, #game .sidecol .boostnum { font-size:clamp(7px,.68vw,9px) !important; line-height:1.15 !important; overflow-wrap:anywhere !important; }
-  #game .sidecol .sidecard label { font-size:clamp(6px,.62vw,8px) !important; line-height:1.1 !important; }
-  #game .sidecol #timer { font-size:clamp(12px,1.2vw,16px) !important; margin:2px 0 !important; }
-  #game .sidecol .smallbtn { min-height:22px !important; margin-top:3px !important; padding:3px !important; font-size:8px !important; line-height:1.1 !important; }
-  #game .controls, #game .sidecol .side-drop { display:none !important; }
-  #game .hint { flex:0 0 auto !important; margin:5px 0 0 !important; font-size:8px !important; line-height:1.15 !important; text-align:center !important; }
+  #game .sidecard[hidden] { display:none !important; }
+  #game .nextcanvas { max-width:100% !important; max-height:64px !important; }
+  #game .controls, #game .side-drop { display:none !important; }
+  #game .hint { display:block !important; text-align:center !important; }
 }
-@media (min-width:901px) and (max-height:700px) {
-  .app { padding-top:5px !important; padding-bottom:6px !important; }
-  .topbar { flex-basis:36px !important; min-height:36px !important; margin-bottom:4px !important; }
-  #menu.home-dashboard {
-    grid-template-rows:minmax(52px,.68fr) minmax(34px,.42fr) minmax(10px,.14fr) minmax(76px,1fr) minmax(68px,.86fr) minmax(88px,1.15fr) minmax(34px,.4fr) !important;
-    gap:4px !important;
-  }
-  #menu > .hero h1 { font-size:clamp(21px,2.2vw,30px) !important; }
-  #menu > .modes > .mode .tag { display:none !important; }
-  #game .screenhead { min-height:32px !important; margin-bottom:4px !important; }
-  #game .gamehud { margin-bottom:5px !important; }
-  #game .gamehud .hudbox, #game .gamehud #gameCoins { min-height:34px !important; }
-  #game .playlayout { gap:8px !important; }
-  #game .boardframe { height:min(100%,64dvh) !important; }
-  #game .playlayout > .sidecol { gap:4px !important; grid-template-rows:repeat(3,minmax(0,1fr)) minmax(38px,.42fr) !important; }
-  #game .sidecol > .sidecard { padding:3px !important; }
-  #game .sidecol > #bbHeroSkillCard { min-height:38px !important; }
-  #game .sidecol .charge-ring, #game .sidecol .chrono-ring { width:min(100%,42px) !important; }
-  #game .sidecol .nextcanvas { max-height:34px !important; }
-  #game .sidecol .smallbtn { min-height:18px !important; font-size:7px !important; }
-}
-@media (min-width:901px) and (max-width:1100px) {
-  #menu.home-dashboard { gap:5px !important; }
-  #menu > .modes > .mode { padding:4px 5px !important; gap:4px !important; }
-  #menu > .modes > .mode .modeicon { width:27px !important; height:27px !important; flex-basis:27px !important; }
-  #menu > .modes > .mode .modearrow { display:none !important; }
-  #game .playlayout { grid-template-columns:minmax(205px,.68fr) minmax(270px,1.32fr) !important; gap:8px !important; }
+@media (min-width:901px) and (max-height:760px) {
+  #game .boardframe { height:clamp(250px,calc(100dvh - 390px),500px) !important; }
+  #game .sidecol { gap:4px !important; }
+  #game .sidecard { padding:4px 3px !important; }
 }
 </style>
 
@@ -10814,7 +10459,6 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 <style id="bb-board-arena-10x23-v2">/* TETRIOS LX signature 10x25 arena */#game .boardframe{display:flex!important;align-items:stretch!important;justify-content:center!important;min-width:0!important;overflow:hidden!important}#game .board{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:10 / 23!important;flex:0 1 auto!important}@media(max-width:900px){#game .boardframe{padding:1px!important}}</style>
-
 
 
 </body></html>
