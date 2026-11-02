@@ -5267,7 +5267,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 
 </style>
-<link rel="stylesheet" href="./visual-overhaul.css?v=20261102-desktop-menu-2"><script type="importmap">
+<link rel="stylesheet" href="./visual-overhaul.css?v=20261102-desktop-restore-322"><script type="importmap">
 {"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}
 </script>
 <style id="bb-training-wallet-polish">
@@ -5296,195 +5296,6 @@ body:has(#menu:not([hidden])) .app > .topbar {
 .bb-hero-skill-pulse{position:relative;z-index:1;flex:0 0 auto;font-size:15px;color:#70f6ee;text-shadow:0 0 10px #5cf5e8}
 .bb-hero-skill-slot:disabled .bb-hero-skill-pulse{opacity:.4}
 @media(max-width:520px){.bb-hero-skill-slot{gap:5px;padding:6px 4px;border-radius:11px}.bb-hero-skill-art{flex-basis:34px;width:34px;height:34px}.bb-hero-skill-art svg{width:32px;height:30px}.bb-hero-skill-copy strong{font-size:7px}.bb-hero-skill-copy small{font-size:7px}.bb-hero-skill-copy em{font-size:6px}}
-</style>
-
-<style id="bb-desktop-mobile-layout-v1">
-/* Desktop reuses the proven mobile-first component order and vertical flow. */
-/* Screen navigation relies on the HTML hidden attribute; keep it stronger than desktop display rules. */
-@media (min-width: 901px) {
-  #menu[hidden], #shopScreen[hidden], #heroes[hidden], #campaign[hidden], #daily[hidden], #game[hidden] {
-    display:none !important;
-  }
-  html, body { min-height:100%; height:auto; overflow-x:hidden !important; overflow-y:auto !important; }
-  body { display:block !important; }
-  .app {
-    display:block !important; width:100% !important; max-width:760px !important;
-    min-height:100dvh !important; height:auto !important; max-height:none !important;
-    margin:0 auto !important; padding:18px 14px 28px !important; overflow:visible !important;
-  }
-  .app > .topbar { display:flex !important; width:100% !important; max-width:620px !important; margin:0 auto 12px !important; }
-  .screen {
-    display:block; width:100% !important; max-width:620px !important; height:auto !important;
-    min-height:0 !important; max-height:none !important; margin:0 auto !important;
-    overflow:visible !important; padding:0 !important;
-  }
-  #menu.home-dashboard {
-    display:flex !important; flex-direction:column !important; align-items:stretch !important;
-    justify-content:flex-start !important; gap:0 !important; width:100% !important;
-    max-width:620px !important; height:auto !important; min-height:0 !important;
-    max-height:none !important; margin:0 auto !important; padding:0 !important; overflow:visible !important;
-  }
-  #menu > * { min-width:0 !important; max-width:100% !important; max-height:none !important; flex:0 0 auto !important; }
-  #menu > .hero, #menu > .apk-download, #menu > #dailyQuestsPanel,
-  #menu > .bottomstats, #menu > .home-reset, #menu > #rpgPanel,
-  #menu .shopbuttons, #menu .currency-panel { width:100% !important; }
-  #menu > .modes {
-    display:flex !important; flex-direction:column !important; width:100% !important;
-    gap:10px !important; overflow:visible !important;
-  }
-  #menu > .modes > .mode { width:100% !important; min-height:76px !important; height:auto !important; overflow:visible !important; }
-  #shopScreen, #heroes, #campaign, #daily {
-    display:block !important; width:100% !important; max-width:620px !important;
-    height:auto !important; max-height:none !important; overflow:visible !important;
-  }
-  #game {
-    display:flex !important; flex-direction:column !important; width:100% !important;
-    max-width:620px !important; height:auto !important; min-height:0 !important;
-    max-height:none !important; margin:0 auto !important; padding:0 !important; overflow:visible !important;
-  }
-  #game .screenhead, #game .gamehud { flex:0 0 auto !important; }
-  #game .playlayout {
-    display:grid !important; grid-template-columns:minmax(0,1fr) 96px !important;
-    grid-template-rows:minmax(0,1fr) !important; align-items:start !important; gap:10px !important;
-    width:100% !important; height:auto !important; min-height:0 !important;
-    margin:0 !important; padding:0 !important; overflow:visible !important;
-  }
-  #game .playlayout > div:first-child {
-    display:flex !important; flex-direction:column !important; align-items:stretch !important;
-    justify-content:center !important; width:100% !important; min-width:0 !important;
-    min-height:0 !important; overflow:visible !important;
-  }
-  #game .boardframe {
-    display:flex !important; align-items:center !important; justify-content:center !important;
-    width:100% !important; height:clamp(300px,calc(100dvh - 430px),620px) !important;
-    min-height:260px !important; max-height:620px !important; padding:4px !important;
-    box-sizing:border-box !important; overflow:hidden !important;
-  }
-  #game .board {
-    display:block !important; width:auto !important; height:100% !important;
-    max-width:100% !important; max-height:100% !important; aspect-ratio:10 / 23 !important;
-    object-fit:contain !important; flex:0 1 auto !important;
-  }
-  #game .sidecol {
-    position:relative !important; inset:auto !important; display:flex !important;
-    flex-direction:column !important; justify-content:flex-start !important; align-items:stretch !important;
-    width:96px !important; min-width:0 !important; max-width:96px !important; height:100% !important;
-    min-height:0 !important; gap:6px !important; overflow-x:hidden !important; overflow-y:auto !important;
-  }
-  #game .sidecard {
-    display:block !important; flex:0 0 auto !important; width:100% !important;
-    min-width:0 !important; height:auto !important; min-height:0 !important;
-    padding:6px 4px !important; overflow:hidden !important;
-  }
-  #game .sidecard[hidden] { display:none !important; }
-  #game .nextcanvas { max-width:100% !important; max-height:64px !important; }
-  #game .controls, #game .side-drop { display:none !important; }
-  #game .hint { display:block !important; text-align:center !important; }
-}
-@media (min-width:901px) and (max-height:760px) {
-  #game .boardframe { height:clamp(250px,calc(100dvh - 390px),500px) !important; }
-  #game .sidecol { gap:4px !important; }
-  #game .sidecard { padding:4px 3px !important; }
-}
-
-  /* Desktop menu: show the same three mode choices together, in source order. */
-  @media (min-width:901px) {
-    .app { max-width:1120px !important; padding:14px 24px 28px !important; }
-    .app > .topbar { max-width:1040px !important; margin-bottom:8px !important; }
-    #menu.home-dashboard, .screen { max-width:1040px !important; }
-    #menu .hero {
-      padding:10px 8px 8px !important;
-      border-radius:22px !important;
-    }
-    #menu .hero h1 {
-      margin:7px 0 6px !important;
-      font-size:clamp(38px,4.5vw,54px) !important;
-    }
-    #menu .hero p { font-size:11px !important; }
-    #menu .orb { height:82px !important; margin:4px auto 0 !important; }
-    #menu .apk-download {
-      max-width:520px !important;
-      margin:8px auto 10px !important;
-      padding:8px 12px !important;
-    }
-    #menu .apk-download-icon { width:32px !important; height:32px !important; }
-    #menu .sectionlabel { margin:8px 2px !important; }
-    #menu > .modes {
-      display:grid !important;
-      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-      align-items:stretch !important;
-      gap:12px !important;
-      width:100% !important;
-      overflow:visible !important;
-    }
-    #menu > .modes > .mode {
-      display:flex !important;
-      flex-direction:column !important;
-      align-items:flex-start !important;
-      justify-content:flex-start !important;
-      gap:8px !important;
-      width:100% !important;
-      min-width:0 !important;
-      min-height:148px !important;
-      height:100% !important;
-      padding:13px !important;
-      border-radius:17px !important;
-      order:0 !important;
-      visibility:visible !important;
-      opacity:1 !important;
-    }
-    #menu > .modes > .mode .modeicon {
-      width:40px !important;
-      height:40px !important;
-      flex:0 0 40px !important;
-      font-size:20px !important;
-    }
-    #menu > .modes > .mode .modetext {
-      width:100% !important;
-      min-width:0 !important;
-    }
-    #menu > .modes > .mode .modetitle { font-size:13px !important; }
-    #menu > .modes > .mode .modesub {
-      font-size:10px !important;
-      line-height:1.35 !important;
-      min-height:27px !important;
-    }
-    #menu > .modes > .mode .tag {
-      margin-top:4px !important;
-      font-size:7px !important;
-    }
-    #menu > .modes > .mode .modearrow {
-      position:absolute !important;
-      right:12px !important;
-      top:12px !important;
-      font-size:20px !important;
-    }
-    #menu > #bbVisitStreak { margin-top:10px !important; padding:11px !important; }
-    #game { max-width:1040px !important; }
-    #game .playlayout {
-      grid-template-columns:minmax(0,1fr) 116px !important;
-      gap:12px !important;
-      align-items:stretch !important;
-    }
-    #game .playlayout > div:first-child { align-items:center !important; }
-    #game .boardframe {
-      width:min(100%,380px) !important;
-      height:min(78dvh,760px) !important;
-      min-height:320px !important;
-      max-height:760px !important;
-      margin-inline:auto !important;
-      padding:2px !important;
-    }
-    #game .board {
-      height:100% !important;
-      max-height:100% !important;
-      width:auto !important;
-      max-width:100% !important;
-      aspect-ratio:10 / 23 !important;
-    }
-    #game .sidecol { width:116px !important; max-width:116px !important; gap:7px !important; }
-    #game .sidecard { padding:7px 5px !important; }
-  }
 </style>
 
 </head>
@@ -10563,4 +10374,287 @@ body .app{background:transparent!important;background-color:transparent!importan
 <style id="bb-board-arena-10x23-v2">/* TETRIOS LX signature 10x25 arena */#game .boardframe{display:flex!important;align-items:stretch!important;justify-content:center!important;min-width:0!important;overflow:hidden!important}#game .board{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:10 / 23!important;flex:0 1 auto!important}@media(max-width:900px){#game .boardframe{padding:1px!important}}</style>
 
 
+
+<style id="bb-desktop-restoration-recovered-322">
+/* Desktop-only recovery from checkpoint #322, with arena refinements from #323. */
+@media (min-width: 901px) {
+  .app {
+    width: 100% !important;
+    max-width: none !important;
+    padding: clamp(16px, 1.6vw, 28px) clamp(20px, 2.4vw, 40px) 36px !important;
+  }
+  .topbar {
+    width: 100% !important;
+    max-width: 1500px !important;
+    margin: 0 auto 18px !important;
+  }
+  .screen:not(#menu) {
+    width: min(100%, 1480px) !important;
+    max-width: 1480px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  #menu.home-dashboard {
+    width: min(100%, 1500px) !important;
+    max-width: 1500px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Campaign atlas — use the monitor width for a readable world/planet grid. */
+  #campaign, #shopScreen, #heroes, #daily {
+    padding: clamp(20px, 2vw, 34px) !important;
+    border-radius: 26px !important;
+  }
+  #campaign .challengebox {
+    padding: 20px 22px !important;
+  }
+  #campaign .mapgrid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+    gap: clamp(12px, 1.1vw, 18px) !important;
+    margin: 20px 0 22px !important;
+  }
+  #campaign .worldcard {
+    min-height: 158px !important;
+    padding: 17px 12px !important;
+  }
+  #campaign .worldcard > span:first-child { font-size: 42px !important; }
+  #campaign .worldcard strong { font-size: 13px !important; }
+  #campaign .worldcard small { font-size: 9px !important; }
+  #campaign .node { min-height: 128px !important; }
+  #campaign #campaignStart {
+    display: block !important;
+    width: min(100%, 460px) !important;
+    margin: 18px auto 0 !important;
+  }
+
+  /* Shop — two featured reward stations, then a broad product grid. */
+  #shopScreen {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-content: start !important;
+    gap: 16px !important;
+  }
+  #shopScreen > .screenhead,
+  #shopScreen > .wallet,
+  #shopScreen > #shopContent {
+    grid-column: 1 / -1 !important;
+    min-width: 0 !important;
+  }
+  #shopScreen .wallet { justify-content: flex-start !important; gap: 28px !important; }
+  #shopScreen .surprise-shop-card {
+    min-width: 0 !important;
+    min-height: 190px !important;
+    align-items: flex-start !important;
+    padding: 20px !important;
+  }
+  #shopScreen .surprise-shop-info { flex: 1 1 auto !important; min-width: 0 !important; }
+  #shopScreen #bbRelicChestOptions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  #shopScreen #shopContent .shopgrid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+    gap: 14px !important;
+  }
+  #shopScreen .shopitem { min-height: 220px !important; padding: 18px !important; }
+  #shopScreen .shopitem strong { font-size: 14px !important; }
+  #shopScreen .shopitem p { font-size: 11px !important; }
+
+  /* Crew deck — cards breathe, while the selected hero dossier gets a full row. */
+  #heroes #heroesRoster {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+    gap: 15px !important;
+    margin: 20px 0 24px !important;
+  }
+  #heroes #heroesRoster [data-hero-card] {
+    min-height: 184px !important;
+    padding: 18px 13px !important;
+  }
+  #heroes #heroDetails { padding: 22px !important; }
+  #heroes #heroDetails .bb-3d-stage {
+    min-height: 300px !important;
+    height: 320px !important;
+    margin-bottom: 20px !important;
+  }
+  #heroes #confirmHero {
+    display: block !important;
+    width: min(100%, 520px) !important;
+    margin: 18px auto 0 !important;
+  }
+
+  /* Daily challenge — balanced information columns, clear action area. */
+  #daily {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-content: start !important;
+    gap: 16px !important;
+  }
+  #daily > .screenhead,
+  #daily > .action {
+    grid-column: 1 / -1 !important;
+  }
+  #daily > .action {
+    width: min(100%, 440px) !important;
+    justify-self: center !important;
+    margin: 2px auto 0 !important;
+  }
+  #daily .challengebox { min-width: 0 !important; height: 100% !important; margin: 0 !important; }
+
+  /* Arena — actual markup has two children: board column and side rail.
+     Remove the stale three-column placement that referenced a missing gameleftcol. */
+  #game {
+    width: min(100%, 1420px) !important;
+    max-width: 1420px !important;
+    padding: 0 clamp(8px, 1vw, 16px) 18px !important;
+    margin: 0 auto !important;
+  }
+  #game .screenhead {
+    min-height: 42px !important;
+    margin: 0 0 10px !important;
+    padding: 0 2px 8px !important;
+  }
+  #game .screenhead h2 { font-size: clamp(20px, 1.8vw, 27px) !important; }
+  #game .screenhead p { font-size: 12px !important; }
+  #game .gamehud {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin: 0 0 12px !important;
+  }
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins {
+    min-height: 48px !important;
+    padding: 8px 13px !important;
+  }
+  #game .gamehud .hudbox span,
+  #game .gamehud #gameCoins span {
+    font-size: 9px !important;
+    letter-spacing: .1em !important;
+  }
+  #game .gamehud .hudbox strong,
+  #game .gamehud #gameCoins strong {
+    font-size: clamp(18px, 1.5vw, 23px) !important;
+  }
+  #game .playlayout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(184px, 220px) !important;
+    grid-auto-flow: row !important;
+    gap: clamp(14px, 1.5vw, 24px) !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  #game .playlayout > div:first-child {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  #game .playlayout > .sidecol {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 4px 0 !important;
+  }
+  #game .sidecol > .sidecard {
+    padding: 12px 10px !important;
+    border: 1px solid rgba(113, 161, 220, .24) !important;
+    border-radius: 14px !important;
+    background: linear-gradient(145deg, rgba(20, 38, 67, .88), rgba(7, 15, 31, .94)) !important;
+    box-shadow: inset 0 1px rgba(255,255,255,.055), 0 8px 20px rgba(0,0,0,.18) !important;
+  }
+  #game .sidecol > .sidecard:not(:last-child)::after { display: none !important; }
+  #game .sidecol > .sidecard label { font-size: 9px !important; letter-spacing: .12em !important; }
+  #game .sidecol .charge-ring { width: min(100%, 92px) !important; margin: 9px auto 6px !important; }
+  #game .sidecol .chrono-ring { width: min(100%, 92px) !important; margin: 8px auto 6px !important; }
+  #game .sidecol .nextcanvas { width: min(100%, 132px) !important; max-height: 94px !important; }
+  #game .sidecol .boostname,
+  #game .sidecol .boostnum { font-size: 10px !important; }
+  #game .boardframe {
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    height: min(76dvh, 780px) !important;
+    min-height: 0 !important;
+    padding: 3px !important;
+    border: 1px solid rgba(111, 164, 198, .52) !important;
+    border-radius: 14px !important;
+    background: linear-gradient(145deg, rgba(13,29,49,.96), rgba(5,12,26,.98)) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,.36), 0 0 22px rgba(92,245,232,.08), inset 0 0 0 1px rgba(255,255,255,.035) !important;
+  }
+  #game .board {
+    display: block !important;
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 10 / 23 !important;
+    flex: 0 1 auto !important;
+    border-radius: 9px !important;
+  }
+  #game .controls,
+  #game .sidecol .side-drop { display: none !important; }
+  #game .hint {
+    margin-top: 12px !important;
+    font-size: 10px !important;
+    line-height: 1.5 !important;
+    color: #91a9ce !important;
+    text-align: center !important;
+  }
+  #game .hint::after {
+    content: "← → ДВИЖЕНИЕ   ·   ↑ ПОВОРОТ   ·   ↓ УСКОРИТЬ   ·   ПРОБЕЛ — ДРОП";
+    display: block !important;
+    font-size: 10px !important;
+    letter-spacing: .06em !important;
+  }
+
+  /* Keep desktop dialogs proportionate instead of phone-sized. */
+  #overlay .modal:not(.bb-daily-calendar-modal):not(.bb-hero-showcase-modal) {
+    width: min(92vw, 680px) !important;
+    max-width: 680px !important;
+    max-height: 88dvh !important;
+    overflow-y: auto !important;
+  }
+  #overlay .bb-hero-showcase-modal {
+    width: min(88vw, 760px) !important;
+    max-width: 760px !important;
+    max-height: 90dvh !important;
+  }
+}
+@media (min-width: 901px) and (max-height: 760px) {
+  #game .boardframe { height: min(62dvh, 590px) !important; }
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins { min-height: 40px !important; }
+  #game .playlayout { gap: 12px !important; }
+}
+@media (min-width: 1400px) {
+  #campaign .mapgrid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important; }
+  #heroes #heroesRoster { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+  #shopScreen #shopContent .shopgrid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+
+
+@media(min-width:901px){
+#game .playlayout{grid-template-columns:minmax(300px,.9fr) minmax(360px,1.1fr)!important;gap:clamp(16px,2vw,28px)!important;align-items:center!important;width:min(100%,1080px)!important;margin:0 auto!important}
+#game .playlayout>div:first-child{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important}
+#game .boardframe{width:max-content!important;max-width:100%!important;height:clamp(360px,69dvh,690px)!important;aspect-ratio:10/23!important;box-sizing:content-box!important}
+#game .board{width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;aspect-ratio:10/23!important}
+#game .playlayout>.sidecol{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:minmax(124px,auto)!important;align-content:center!important;gap:10px!important;min-width:0!important}
+#game .sidecol>.sidecard{min-width:0!important;min-height:124px!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
+#game #bbHeroSkillCard{grid-column:1/-1!important;width:100%!important;margin:0!important}
+#game .controls,#game .sidecol .side-drop{display:none!important}
+}
+@media(min-width:901px) and (max-height:760px){#game .boardframe{height:clamp(300px,57dvh,500px)!important}#game .sidecol{grid-auto-rows:minmax(108px,auto)!important;gap:7px!important}#game .sidecol>.sidecard{min-height:108px!important}}
+@media(min-width:901px) and (max-width:1120px){#game .playlayout{grid-template-columns:minmax(270px,.82fr) minmax(320px,1.18fr)!important;gap:12px!important}}
+
+@media(min-width:901px){#game .sidecol>.sidecard[hidden]{display:none!important}}
+</style>
 </body></html>
