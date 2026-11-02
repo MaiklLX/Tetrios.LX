@@ -10019,4 +10019,156 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game #dailyMissionGoal{transition:none!important}
 }
 </style>
+<style id="bb-side-rail-v1">
+/* TETRIOS LX — lightweight side rail, shared across every game mode */
+#game .playlayout{
+  grid-template-columns:minmax(0,1fr) 148px!important;
+  gap:9px!important;
+  align-items:stretch!important;
+}
+#game .sidecol{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  min-width:0!important;
+  padding:2px 0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#game .sidecol > .sidecard{
+  position:relative!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:7px 6px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:linear-gradient(110deg,#17294366,transparent 92%)!important;
+  box-shadow:none!important;
+  text-align:center!important;
+  overflow:visible!important;
+}
+#game .sidecol > .sidecard:not(:last-child)::after{
+  content:"";
+  position:absolute;
+  left:16%;right:16%;bottom:-3px;height:1px;
+  background:linear-gradient(90deg,transparent,#77a4c744,transparent);
+  pointer-events:none;
+}
+#game .sidecol > .sidecard label{
+  display:block!important;
+  margin:0!important;
+  color:#9eb7d4!important;
+  font-size:8px!important;
+  line-height:1.2!important;
+  letter-spacing:.11em!important;
+  overflow-wrap:anywhere;
+  text-shadow:none!important;
+}
+#game .sidecol > .sidecard:nth-child(1) label::before{content:"◉ ";color:#5cf5e8}
+#game .sidecol > .sidecard:nth-child(2) label::before{content:"↗ ";color:#8fdcff}
+#game .sidecol > .sidecard:nth-child(3) label::before{content:"✦ ";color:#b69aff}
+#game .sidecol > .sidecard:nth-child(4) label::before{content:"⌛ ";color:#ffc86b}
+#game .sidecol > .sidecard:nth-child(5) label::before{content:"◷ ";color:#8fdcff}
+#game .sidecol .charge-ring{
+  width:min(100%,76px)!important;
+  margin:6px auto 4px!important;
+  filter:drop-shadow(0 0 8px #5cf5e833);
+}
+#game .sidecol .charge-ring-inner strong{font-size:17px!important}
+#game .sidecol .charge-ring-inner small{font-size:6px!important;letter-spacing:.08em}
+#game .sidecol .charge-caption,
+#game .sidecol .chrono-caption{
+  font-size:7px!important;
+  line-height:1.2!important;
+  letter-spacing:.06em!important;
+}
+#game .sidecol .nextcanvas{
+  display:block!important;
+  width:min(100%,112px)!important;
+  max-height:76px!important;
+  margin:3px auto 0!important;
+  filter:drop-shadow(0 4px 8px #0008);
+}
+#game .sidecol .boosticon{
+  margin:4px 0 2px!important;
+  font-size:22px!important;
+  line-height:1.1!important;
+}
+#game .sidecol .boostname,
+#game .sidecol .boostnum{
+  font-size:9px!important;
+  line-height:1.2!important;
+  overflow-wrap:anywhere;
+}
+#game .sidecol .chrono-ring{
+  width:min(100%,78px)!important;
+  margin:6px auto 5px!important;
+}
+#game .sidecol .chrono-ring-inner strong{font-size:22px!important}
+#game .sidecol #timer{
+  margin-top:4px!important;
+  font-size:17px!important;
+  line-height:1.15!important;
+  font-variant-numeric:tabular-nums;
+}
+#game .sidecol .smallbtn{
+  min-height:34px!important;
+  margin-top:5px!important;
+  padding:6px 4px!important;
+  border:1px solid #4c7790aa!important;
+  border-radius:9px!important;
+  background:linear-gradient(135deg,#172b43,#101a2d)!important;
+  color:#dffcff!important;
+  font-size:9px!important;
+  line-height:1.15!important;
+  letter-spacing:.04em!important;
+}
+#game .sidecol .side-drop{
+  width:100%!important;
+  min-height:36px!important;
+  height:36px!important;
+  margin:5px 0 0!important;
+  padding:0 4px!important;
+  border-radius:9px!important;
+  font-size:10px!important;
+}
+#game .sidecol #musicBtn{min-height:30px!important}
+@media(max-width:900px){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 82px!important;gap:6px!important}
+  #game .sidecol{gap:3px!important;padding:0!important}
+  #game .sidecol > .sidecard{padding:5px 3px!important}
+  #game .sidecol > .sidecard label{font-size:7px!important;letter-spacing:.06em!important}
+  #game .sidecol .charge-ring{width:min(100%,60px)!important;margin:4px auto 3px!important}
+  #game .sidecol .charge-ring-inner strong{font-size:14px!important}
+  #game .sidecol .charge-ring-inner small{font-size:5px!important}
+  #game .sidecol .charge-caption,
+  #game .sidecol .chrono-caption{font-size:6px!important}
+  #game .sidecol .nextcanvas{width:min(100%,70px)!important;max-height:52px!important;margin:2px auto 0!important}
+  #game .sidecol .boosticon{font-size:18px!important;margin:3px 0 1px!important}
+  #game .sidecol .boostname,
+  #game .sidecol .boostnum{font-size:7px!important;line-height:1.15!important}
+  #game .sidecol .chrono-ring{width:min(100%,62px)!important;margin:4px auto!important}
+  #game .sidecol .chrono-ring-inner strong{font-size:18px!important}
+  #game .sidecol #timer{font-size:14px!important}
+  #game .sidecol .smallbtn{min-height:30px!important;margin-top:4px!important;padding:5px 2px!important;font-size:8px!important}
+  #game .sidecol .side-drop{min-height:32px!important;height:32px!important;margin-top:4px!important;font-size:9px!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 74px!important;gap:5px!important}
+  #game .sidecol > .sidecard{padding:4px 2px!important}
+  #game .sidecol > .sidecard label{font-size:6px!important;letter-spacing:.035em!important}
+  #game .sidecol .nextcanvas{width:min(100%,64px)!important;max-height:46px!important}
+  #game .sidecol .boostname,
+  #game .sidecol .boostnum{font-size:6.5px!important}
+  #game .sidecol .smallbtn{font-size:7px!important}
+  #game .sidecol .side-drop{font-size:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #game .sidecol .boosticon{animation:none!important}
+}
+</style>
+
 </body></html>
