@@ -10374,4 +10374,273 @@ body .app{background:transparent!important;background-color:transparent!importan
 <style id="bb-board-arena-10x23-v2">/* TETRIOS LX signature 10x25 arena */#game .boardframe{display:flex!important;align-items:stretch!important;justify-content:center!important;min-width:0!important;overflow:hidden!important}#game .board{display:block!important;width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:10 / 23!important;flex:0 1 auto!important}@media(max-width:900px){#game .boardframe{padding:1px!important}}</style>
 
 
+
+<style id="bb-desktop-restoration-v1">
+/* TETRIOS LX — desktop restoration pass 1.
+   Desktop gets its own spacious composition; mobile rules below 901px stay untouched. */
+@media (min-width: 901px) {
+  .app {
+    width: 100% !important;
+    max-width: none !important;
+    padding: clamp(16px, 1.6vw, 28px) clamp(20px, 2.4vw, 40px) 36px !important;
+  }
+  .topbar {
+    width: 100% !important;
+    max-width: 1500px !important;
+    margin: 0 auto 18px !important;
+  }
+  .screen:not(#menu) {
+    width: min(100%, 1480px) !important;
+    max-width: 1480px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  #menu.home-dashboard {
+    width: min(100%, 1500px) !important;
+    max-width: 1500px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Campaign atlas — use the monitor width for a readable world/planet grid. */
+  #campaign, #shopScreen, #heroes, #daily {
+    padding: clamp(20px, 2vw, 34px) !important;
+    border-radius: 26px !important;
+  }
+  #campaign .challengebox {
+    padding: 20px 22px !important;
+  }
+  #campaign .mapgrid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+    gap: clamp(12px, 1.1vw, 18px) !important;
+    margin: 20px 0 22px !important;
+  }
+  #campaign .worldcard {
+    min-height: 158px !important;
+    padding: 17px 12px !important;
+  }
+  #campaign .worldcard > span:first-child { font-size: 42px !important; }
+  #campaign .worldcard strong { font-size: 13px !important; }
+  #campaign .worldcard small { font-size: 9px !important; }
+  #campaign .node { min-height: 128px !important; }
+  #campaign #campaignStart {
+    display: block !important;
+    width: min(100%, 460px) !important;
+    margin: 18px auto 0 !important;
+  }
+
+  /* Shop — two featured reward stations, then a broad product grid. */
+  #shopScreen {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-content: start !important;
+    gap: 16px !important;
+  }
+  #shopScreen > .screenhead,
+  #shopScreen > .wallet,
+  #shopScreen > #shopContent {
+    grid-column: 1 / -1 !important;
+    min-width: 0 !important;
+  }
+  #shopScreen .wallet { justify-content: flex-start !important; gap: 28px !important; }
+  #shopScreen .surprise-shop-card {
+    min-width: 0 !important;
+    min-height: 190px !important;
+    align-items: flex-start !important;
+    padding: 20px !important;
+  }
+  #shopScreen .surprise-shop-info { flex: 1 1 auto !important; min-width: 0 !important; }
+  #shopScreen #bbRelicChestOptions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  #shopScreen #shopContent .shopgrid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+    gap: 14px !important;
+  }
+  #shopScreen .shopitem { min-height: 220px !important; padding: 18px !important; }
+  #shopScreen .shopitem strong { font-size: 14px !important; }
+  #shopScreen .shopitem p { font-size: 11px !important; }
+
+  /* Crew deck — cards breathe, while the selected hero dossier gets a full row. */
+  #heroes #heroesRoster {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+    gap: 15px !important;
+    margin: 20px 0 24px !important;
+  }
+  #heroes #heroesRoster [data-hero-card] {
+    min-height: 184px !important;
+    padding: 18px 13px !important;
+  }
+  #heroes #heroDetails { padding: 22px !important; }
+  #heroes #heroDetails .bb-3d-stage {
+    min-height: 300px !important;
+    height: 320px !important;
+    margin-bottom: 20px !important;
+  }
+  #heroes #confirmHero {
+    display: block !important;
+    width: min(100%, 520px) !important;
+    margin: 18px auto 0 !important;
+  }
+
+  /* Daily challenge — balanced information columns, clear action area. */
+  #daily {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-content: start !important;
+    gap: 16px !important;
+  }
+  #daily > .screenhead,
+  #daily > .action {
+    grid-column: 1 / -1 !important;
+  }
+  #daily > .action {
+    width: min(100%, 440px) !important;
+    justify-self: center !important;
+    margin: 2px auto 0 !important;
+  }
+  #daily .challengebox { min-width: 0 !important; height: 100% !important; margin: 0 !important; }
+
+  /* Arena — actual markup has two children: board column and side rail.
+     Remove the stale three-column placement that referenced a missing gameleftcol. */
+  #game {
+    width: min(100%, 1420px) !important;
+    max-width: 1420px !important;
+    padding: 0 clamp(8px, 1vw, 16px) 18px !important;
+    margin: 0 auto !important;
+  }
+  #game .screenhead {
+    min-height: 42px !important;
+    margin: 0 0 10px !important;
+    padding: 0 2px 8px !important;
+  }
+  #game .screenhead h2 { font-size: clamp(20px, 1.8vw, 27px) !important; }
+  #game .screenhead p { font-size: 12px !important; }
+  #game .gamehud {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin: 0 0 12px !important;
+  }
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins {
+    min-height: 48px !important;
+    padding: 8px 13px !important;
+  }
+  #game .gamehud .hudbox span,
+  #game .gamehud #gameCoins span {
+    font-size: 9px !important;
+    letter-spacing: .1em !important;
+  }
+  #game .gamehud .hudbox strong,
+  #game .gamehud #gameCoins strong {
+    font-size: clamp(18px, 1.5vw, 23px) !important;
+  }
+  #game .playlayout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(184px, 220px) !important;
+    grid-auto-flow: row !important;
+    gap: clamp(14px, 1.5vw, 24px) !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  #game .playlayout > div:first-child {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  #game .playlayout > .sidecol {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 4px 0 !important;
+  }
+  #game .sidecol > .sidecard {
+    padding: 12px 10px !important;
+    border: 1px solid rgba(113, 161, 220, .24) !important;
+    border-radius: 14px !important;
+    background: linear-gradient(145deg, rgba(20, 38, 67, .88), rgba(7, 15, 31, .94)) !important;
+    box-shadow: inset 0 1px rgba(255,255,255,.055), 0 8px 20px rgba(0,0,0,.18) !important;
+  }
+  #game .sidecol > .sidecard:not(:last-child)::after { display: none !important; }
+  #game .sidecol > .sidecard label { font-size: 9px !important; letter-spacing: .12em !important; }
+  #game .sidecol .charge-ring { width: min(100%, 92px) !important; margin: 9px auto 6px !important; }
+  #game .sidecol .chrono-ring { width: min(100%, 92px) !important; margin: 8px auto 6px !important; }
+  #game .sidecol .nextcanvas { width: min(100%, 132px) !important; max-height: 94px !important; }
+  #game .sidecol .boostname,
+  #game .sidecol .boostnum { font-size: 10px !important; }
+  #game .boardframe {
+    display: flex !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    height: min(76dvh, 780px) !important;
+    min-height: 0 !important;
+    padding: 3px !important;
+    border: 1px solid rgba(111, 164, 198, .52) !important;
+    border-radius: 14px !important;
+    background: linear-gradient(145deg, rgba(13,29,49,.96), rgba(5,12,26,.98)) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,.36), 0 0 22px rgba(92,245,232,.08), inset 0 0 0 1px rgba(255,255,255,.035) !important;
+  }
+  #game .board {
+    display: block !important;
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 10 / 23 !important;
+    flex: 0 1 auto !important;
+    border-radius: 9px !important;
+  }
+  #game .controls,
+  #game .sidecol .side-drop { display: none !important; }
+  #game .hint {
+    margin-top: 12px !important;
+    font-size: 10px !important;
+    line-height: 1.5 !important;
+    color: #91a9ce !important;
+    text-align: center !important;
+  }
+  #game .hint::after {
+    content: "← → ДВИЖЕНИЕ   ·   ↑ ПОВОРОТ   ·   ↓ УСКОРИТЬ   ·   ПРОБЕЛ — ДРОП";
+    display: block !important;
+    font-size: 10px !important;
+    letter-spacing: .06em !important;
+  }
+
+  /* Keep desktop dialogs proportionate instead of phone-sized. */
+  #overlay .modal:not(.bb-daily-calendar-modal):not(.bb-hero-showcase-modal) {
+    width: min(92vw, 680px) !important;
+    max-width: 680px !important;
+    max-height: 88dvh !important;
+    overflow-y: auto !important;
+  }
+  #overlay .bb-hero-showcase-modal {
+    width: min(88vw, 760px) !important;
+    max-width: 760px !important;
+    max-height: 90dvh !important;
+  }
+}
+@media (min-width: 901px) and (max-height: 760px) {
+  #game .boardframe { height: min(62dvh, 590px) !important; }
+  #game .gamehud .hudbox,
+  #game .gamehud #gameCoins { min-height: 40px !important; }
+  #game .playlayout { gap: 12px !important; }
+}
+@media (min-width: 1400px) {
+  #campaign .mapgrid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important; }
+  #heroes #heroesRoster { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+  #shopScreen #shopContent .shopgrid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+</style>
+
 </body></html>
