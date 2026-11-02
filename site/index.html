@@ -6090,7 +6090,7 @@ function show(id){
   if(typeof bbSyncMusic==='function')bbSyncMusic()
 }
 
-function overlay(html){$('modal').classList.remove('bb-hero-showcase-modal');$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show');$('modal').classList.remove('bb-hero-showcase-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
+function overlay(html){$('modal').classList.remove('bb-hero-showcase-modal');$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function setupDaily(){let d=new Date(),today=bbGetTodayKey(),rule=bbDailyRuleForDate(today),completed=localStorage.getItem('bbDailyChallengeCompletedDate')===today;$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+(completed?' Испытание уже пройдено — награда получена.':' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.');$('dailyStart').textContent=completed?'✓ ВЫЗОВ УЖЕ ПРОЙДЕН':'НАЧАТЬ ИСПЫТАНИЕ';$('dailyStart').disabled=completed;$('dailyStart').style.opacity=completed?'.65':'1';bbUpdateVisitStreak()}
@@ -6234,6 +6234,7 @@ function bbSaveDailyChallengeHistory(date, rule, status = 'completed') {
 let bbDailyCalendarMonth=new Date(2026,9,1);
 function bbDailyCalendarOpen(){
   const modal=$('modal'),overlayEl=$('overlay');if(!modal||!overlayEl)return;
+  modal.classList.add('bb-daily-calendar-modal');overlayEl.classList.add('bb-daily-calendar-overlay');
   const today=new Date(),todayKey=bbGetTodayKey(),minMonth=new Date(2026,9,1),maxMonth=new Date(today.getFullYear(),today.getMonth(),1);
   if(bbDailyCalendarMonth<minMonth)bbDailyCalendarMonth=minMonth;
   if(bbDailyCalendarMonth>maxMonth)bbDailyCalendarMonth=maxMonth;
@@ -6289,6 +6290,26 @@ function bbDailyCalendarOpen(){
     .bb-cal-legend .done i{background:#5cf5b0}.bb-cal-legend .now i{background:#ffc86b}.bb-cal-legend .miss i{background:#ff7ca6}.bb-cal-legend .next i{background:#5cf5e8}
     @media(max-width:390px){.bb-cal-week,.bb-cal-grid{gap:3px}.bb-cal-day{min-height:61px;padding:4px 1px 3px;border-radius:8px}.bb-cal-symbol{font-size:17px}.bb-cal-name{font-size:6.5px;min-height:15px}.bb-cal-date{font-size:9px;padding:0 2px}.bb-cal-head{margin:10px 0}.bb-cal-legend span{font-size:9px;padding:6px}}
     @media(prefers-reduced-motion:reduce){.bb-cal-day{transition:none}}
+    /* Calendar is a full-screen atlas surface, not a nested legacy card. */
+    #overlay.bb-daily-calendar-overlay{align-items:flex-start!important;justify-content:center!important;padding:clamp(12px,3vh,28px) 12px!important;background:radial-gradient(ellipse at 50% 0%,#152d4b99,transparent 58%),#050916ed!important;backdrop-filter:blur(9px)!important}
+    #modal.bb-daily-calendar-modal{position:relative!important;width:min(100%,620px)!important;max-width:620px!important;max-height:calc(100dvh - 24px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;margin:auto!important;padding:10px 5px 14px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f3f7ff!important}
+    #modal.bb-daily-calendar-modal:before{content:"";position:absolute;top:0;left:5%;right:5%;height:1px;background:linear-gradient(90deg,transparent,#5cf5e899,#9d7cff88,transparent);pointer-events:none}
+    #modal.bb-daily-calendar-modal .modalhead{position:relative;padding:9px 8px 13px;margin-bottom:10px;border-bottom:1px solid #35476788;background:linear-gradient(180deg,#14243d55,transparent);text-align:left}
+    #modal.bb-daily-calendar-modal .modalhead .bigicon{display:inline-grid;width:42px;height:42px;place-items:center;margin:0 11px 0 0;vertical-align:middle;border:1px solid #5cf5e866;border-radius:13px;background:radial-gradient(circle,#5cf5e822,#101a2e);font-size:23px;filter:drop-shadow(0 0 10px #5cf5e844)}
+    #modal.bb-daily-calendar-modal .modalhead .eyebrow{display:inline-block;vertical-align:middle;color:#70f7e9}
+    #modal.bb-daily-calendar-modal .modalhead h3{display:inline-block;margin:8px 0 4px;font-size:clamp(21px,5vw,27px);letter-spacing:-.04em;text-shadow:0 0 22px #5cf5e822}
+    #modal.bb-daily-calendar-modal .modalhead p{max-width:none;margin:4px 0 0;text-align:left;color:#9eafcf}
+    #modal.bb-daily-calendar-modal .bb-cal-head{margin:8px 0 12px;border-left:0;border-right:0;border-radius:0;background:linear-gradient(90deg,#13263eaa,#11182c55);box-shadow:none}
+    #modal.bb-daily-calendar-modal .bb-cal-week{padding:0 2px;color:#8fa7c8}
+    #modal.bb-daily-calendar-modal .bb-cal-grid{gap:clamp(4px,1vw,7px)}
+    #modal.bb-daily-calendar-modal .bb-cal-day{min-height:clamp(72px,11vw,92px);border-radius:11px;background:linear-gradient(155deg,#172840dd,#0b1426ee);box-shadow:inset 0 1px #ffffff0b,0 5px 16px #0002}
+    #modal.bb-daily-calendar-modal .bb-cal-day.completed{background:radial-gradient(circle at 50% 20%,#174b47aa,#10202fee 78%)}
+    #modal.bb-daily-calendar-modal .bb-cal-day.today{background:radial-gradient(circle at 50% 20%,#51401fbb,#1b2033 78%)}
+    #modal.bb-daily-calendar-modal .bb-cal-day.missed{background:linear-gradient(155deg,#352238dd,#191b2dee)}
+    #modal.bb-daily-calendar-modal .bb-cal-legend{margin:15px 0 12px;padding:10px 0;border-top:1px solid #34445f88;border-bottom:1px solid #34445f88}
+    #modal.bb-daily-calendar-modal .bb-cal-legend span{border:0;border-radius:0;background:transparent;padding:4px 3px}
+    #modal.bb-daily-calendar-modal #bbDailyCalendarClose{max-width:260px;display:block;margin:14px auto 0;border-color:#3d5976;background:linear-gradient(100deg,#172c43,#121c31);color:#bfeeea}
+    @media(max-width:520px){#overlay.bb-daily-calendar-overlay{padding:8px 7px!important}#modal.bb-daily-calendar-modal{max-height:calc(100dvh - 16px)!important;padding:8px 2px 12px!important}#modal.bb-daily-calendar-modal .modalhead{padding:8px 5px 12px}#modal.bb-daily-calendar-modal .bb-cal-day{min-height:clamp(62px,16vw,76px);border-radius:9px}#modal.bb-daily-calendar-modal .bb-cal-name{font-size:7px}}
   </style>
   <div class="modalhead"><div class="bigicon">📅</div><div class="eyebrow">АРХИВ ИСПЫТАНИЙ</div><h3>Календарь вызовов</h3><p>Каждая дата хранит своё испытание. Нажми на день, чтобы открыть его условия.</p></div>
   <div class="bb-cal-head"><button type="button" id="bbCalendarPrev" class="bb-cal-nav" ${prev?'':'disabled'} aria-label="Предыдущий месяц">‹</button><strong class="bb-cal-month">${title}</strong><button type="button" id="bbCalendarNext" class="bb-cal-nav" ${next?'':'disabled'} aria-label="Следующий месяц">›</button></div>
@@ -6303,6 +6324,8 @@ function bbDailyCalendarOpen(){
 }
 function bbDailyShowChallenge(date) {
   const modal = document.getElementById('modal');
+  modal.classList.remove('bb-daily-calendar-modal');
+  $('overlay').classList.remove('bb-daily-calendar-overlay');
   const today = new Date();
   const selected = new Date(date + 'T12:00:00');
   const todayKey = [
