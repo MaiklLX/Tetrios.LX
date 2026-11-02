@@ -5386,6 +5386,95 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .sidecol { gap:4px !important; }
   #game .sidecard { padding:4px 3px !important; }
 }
+
+  /* Desktop polish pass: keep the campaign entry unmistakably visible,
+     widen the content column, and give the portrait arena more height. */
+  @media (min-width:901px) {
+    .app {
+      max-width:900px !important;
+      padding:16px 22px 30px !important;
+    }
+    .app > .topbar {
+      max-width:820px !important;
+      margin-bottom:10px !important;
+    }
+    .screen {
+      max-width:820px !important;
+    }
+    #menu.home-dashboard {
+      max-width:820px !important;
+    }
+    #menu .hero {
+      padding:15px 10px 12px !important;
+    }
+    #menu .hero h1 {
+      margin:9px 0 8px !important;
+      font-size:clamp(42px,5.2vw,60px) !important;
+    }
+    #menu .hero p {
+      font-size:12px !important;
+    }
+    #menu > .modes {
+      display:flex !important;
+      flex-direction:column !important;
+      gap:9px !important;
+      width:100% !important;
+      visibility:visible !important;
+      opacity:1 !important;
+    }
+    #menu > .modes > button[data-mode="campaign"] {
+      order:-1 !important;
+      display:flex !important;
+      visibility:visible !important;
+      opacity:1 !important;
+      position:relative !important;
+      z-index:1 !important;
+      min-height:82px !important;
+      border:2px solid #5cf5e8 !important;
+      background:
+        radial-gradient(ellipse at 0% 50%,#5cf5e82b,transparent 72%),
+        linear-gradient(115deg,#142b3d,#11172a 72%) !important;
+      box-shadow:0 0 0 1px #5cf5e81c,0 8px 24px #0005,0 0 22px #5cf5e812 !important;
+    }
+    #menu > .modes > button[data-mode="campaign"] .modetitle {
+      color:#dffffb !important;
+    }
+    #game {
+      max-width:820px !important;
+    }
+    #game .playlayout {
+      grid-template-columns:minmax(0,1fr) 116px !important;
+      gap:12px !important;
+      align-items:stretch !important;
+    }
+    #game .playlayout > div:first-child {
+      align-items:center !important;
+    }
+    #game .boardframe {
+      width:min(100%,380px) !important;
+      height:min(78dvh,760px) !important;
+      min-height:320px !important;
+      max-height:760px !important;
+      margin-inline:auto !important;
+      padding:2px !important;
+    }
+    #game .board {
+      height:100% !important;
+      max-height:100% !important;
+      width:auto !important;
+      max-width:100% !important;
+      aspect-ratio:10 / 23 !important;
+    }
+    #game .sidecol {
+      width:116px !important;
+      max-width:116px !important;
+      gap:7px !important;
+    }
+    #game .sidecard {
+      padding:7px 5px !important;
+    }
+  }
+
 </style>
 
 </head>
