@@ -6240,14 +6240,62 @@ function bbDailyCalendarOpen(){
   const year=bbDailyCalendarMonth.getFullYear(),month=bbDailyCalendarMonth.getMonth();
   const firstDay=new Date(year,month,1).getDay(),daysInMonth=new Date(year,month+1,0).getDate(),offset=(firstDay+6)%7;
   let history={};try{history=JSON.parse(localStorage.getItem('bbDailyChallengeHistory')||'{}')}catch(e){history={}}
-  let cells='';for(let i=0;i<offset;i++)cells+='<div></div>';
+  let cells='';for(let i=0;i<offset;i++)cells+='<div class="bb-cal-empty" aria-hidden="true"></div>';
   for(let day=1;day<=daysInMonth;day++){
-    const date=[year,String(month+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-'),record=history[date],isBeforeStart=date<'2026-10-24',isToday=date===todayKey,isFuture=date>todayKey,isCompleted=!isBeforeStart&&(Boolean(record)||localStorage.getItem('bbDailyChallengeCompletedDate')===date),isMissed=!isBeforeStart&&!isToday&&!isFuture&&!isCompleted;
-    const background=isCompleted?'#174a38':isToday?'#493719':isFuture?'#151b2b':'#202940',color=isCompleted?'#8dffca':isToday?'#ffe08a':isFuture?'#71809e':isMissed?'#ff9b9b':'#fff';
-    cells+='<button type="button" '+(isBeforeStart?'disabled':'data-daily-date="'+date+'"')+' style="min-height:38px;border:1px solid '+(isToday?'#ffd36a':'#ffffff16')+';border-radius:9px;background:'+(isBeforeStart?'#111827':background)+';color:'+(isBeforeStart?'#4a5671':color)+';font-weight:900">'+day+(isBeforeStart?'':isCompleted?' ✓':isMissed?' ×':isToday?' ★':'')+'</button>';
+    const date=[year,String(month+1).padStart(2,'0'),String(day).padStart(2,'0')].join('-');
+    const record=history[date],isBeforeStart=date<'2026-10-24',isToday=date===todayKey,isFuture=date>todayKey;
+    const isCompleted=!isBeforeStart&&(Boolean(record)||localStorage.getItem('bbDailyChallengeCompletedDate')===date);
+    const isMissed=!isBeforeStart&&!isToday&&!isFuture&&!isCompleted;
+    const challenge=record||bbDailyRuleForDate(date);
+    const status=isBeforeStart?'archived':isCompleted?'completed':isToday?'today':isFuture?'upcoming':'missed';
+    const statusMark=isCompleted?'✓':isToday?'★':isMissed?'×':isFuture?'·':'';
+    const label=challenge?.title||'Испытание';
+    const symbol=challenge?.symbol||'◈';
+    const safeTitle=String(label).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    cells+='<button type="button" class="bb-cal-day '+status+'" '+(isBeforeStart?'disabled':'data-daily-date="'+date+'"')+' title="'+day+'. '+safeTitle+'" aria-label="'+day+'. '+safeTitle+'. '+status+'" '+(isBeforeStart?'':'')+'>'+
+      '<span class="bb-cal-date">'+day+'<i>'+statusMark+'</i></span>'+
+      '<span class="bb-cal-symbol">'+symbol+'</span>'+
+      '<span class="bb-cal-name">'+safeTitle+'</span>'+
+      '</button>';
   }
   const title=bbDailyCalendarMonth.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}),prev=new Date(year,month-1,1)>=minMonth,next=new Date(year,month+1,1)<=maxMonth;
-  modal.innerHTML='<div class="modalhead"><div class="bigicon">📅</div><div class="eyebrow">АРХИВ ИСПЫТАНИЙ</div><h3>Календарь вызовов</h3><p>История доступна с месяца запуска проекта — октября 2026 года.</p></div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 14px"><button type="button" id="bbCalendarPrev" class="action secondary" style="width:auto;padding:9px 14px" '+(prev?'':'disabled')+'>‹</button><strong style="text-transform:capitalize;color:#f3d28a">'+title+'</strong><button type="button" id="bbCalendarNext" class="action secondary" style="width:auto;padding:9px 14px" '+(next?'':'disabled')+'>›</button></div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center;color:#9daaca;font-size:11px;margin-bottom:8px">'+['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=>'<b>'+d+'</b>').join('')+'</div><div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center">'+cells+'</div><div style="display:flex;flex-wrap:wrap;gap:12px;margin:16px 0;color:#b6c2df;font-size:12px"><span>✓ Пройден</span><span>★ Сегодня</span><span>× Пропущен</span><span>· Будущий день</span></div><button class="action secondary" id="bbDailyCalendarClose">ЗАКРЫТЬ</button>'
+  modal.innerHTML=`
+  <style>
+    .bb-cal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 13px;padding:9px 10px;border:1px solid #344563;border-radius:13px;background:linear-gradient(110deg,#172943,#10182b);box-shadow:inset 0 1px #ffffff0b}
+    .bb-cal-month{color:#dffcff;font-size:14px;font-weight:900;text-transform:capitalize;letter-spacing:.03em;text-shadow:0 0 12px #5cf5e833}
+    .bb-cal-nav{width:34px;height:34px;border:1px solid #42617b;border-radius:10px;background:linear-gradient(145deg,#1b3047,#101a2e);color:#a9fff3;font-size:22px;line-height:1}
+    .bb-cal-week,.bb-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+    .bb-cal-week{margin-bottom:6px;color:#8fa7c8;font-size:9px;font-weight:900;letter-spacing:.08em;text-align:center}
+    .bb-cal-day{position:relative;display:flex;min-width:0;min-height:68px;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;padding:5px 2px 4px;border:1px solid #344563;border-radius:10px;background:linear-gradient(145deg,#18243b,#0d1527);color:#dce8fa;overflow:hidden;box-shadow:inset 0 1px #ffffff0a;transition:border-color .16s,transform .16s,box-shadow .16s}
+    .bb-cal-day:not(:disabled):active{transform:scale(.96)}
+    .bb-cal-day:not(:disabled):focus-visible{outline:2px solid #5cf5e8;outline-offset:2px}
+    .bb-cal-date{width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 3px;color:#dce8fa;font-size:10px;font-weight:900;line-height:1}
+    .bb-cal-date i{font-size:10px;font-style:normal}
+    .bb-cal-symbol{font-size:19px;line-height:1.15;filter:drop-shadow(0 0 7px #5cf5e855)}
+    .bb-cal-name{display:-webkit-box;width:100%;min-height:18px;overflow:hidden;color:#aabbd6;font-size:7px;font-weight:800;line-height:1.15;text-align:center;overflow-wrap:anywhere;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .bb-cal-day.completed{border-color:#42c99b;background:radial-gradient(circle at 50% 30%,#174b47,#102b32 72%);box-shadow:inset 0 0 13px #5cf5a51b,0 0 9px #5cf5a510}
+    .bb-cal-day.completed .bb-cal-date,.bb-cal-day.completed .bb-cal-date i{color:#8dffca}
+    .bb-cal-day.today{border-color:#ffc86b;background:radial-gradient(circle at 50% 30%,#51401f,#252033 76%);box-shadow:inset 0 0 14px #ffc86b20,0 0 12px #ffc86b20}
+    .bb-cal-day.today .bb-cal-date,.bb-cal-day.today .bb-cal-date i{color:#ffe08a}
+    .bb-cal-day.missed{border-color:#854c68;background:linear-gradient(145deg,#352238,#1b1a2d)}
+    .bb-cal-day.missed .bb-cal-date,.bb-cal-day.missed .bb-cal-date i{color:#ff9bba}
+    .bb-cal-day.upcoming{border-color:#42617b;background:linear-gradient(145deg,#172b43,#10182c)}
+    .bb-cal-day.upcoming .bb-cal-date{color:#9fe9f1}
+    .bb-cal-day.archived{opacity:.28;border-color:#29334a;background:#0c1220;color:#68758e}
+    .bb-cal-day.archived .bb-cal-symbol{filter:none;opacity:.45}
+    .bb-cal-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:13px 0 15px}
+    .bb-cal-legend span{display:flex;align-items:center;gap:7px;min-width:0;padding:7px 8px;border:1px solid #2c3b59;border-radius:9px;background:#111b2e;color:#aebdd6;font-size:10px}
+    .bb-cal-legend i{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#71809e;box-shadow:0 0 8px currentColor}
+    .bb-cal-legend .done i{background:#5cf5b0}.bb-cal-legend .now i{background:#ffc86b}.bb-cal-legend .miss i{background:#ff7ca6}.bb-cal-legend .next i{background:#5cf5e8}
+    @media(max-width:390px){.bb-cal-week,.bb-cal-grid{gap:3px}.bb-cal-day{min-height:61px;padding:4px 1px 3px;border-radius:8px}.bb-cal-symbol{font-size:17px}.bb-cal-name{font-size:6.5px;min-height:15px}.bb-cal-date{font-size:9px;padding:0 2px}.bb-cal-head{margin:10px 0}.bb-cal-legend span{font-size:9px;padding:6px}}
+    @media(prefers-reduced-motion:reduce){.bb-cal-day{transition:none}}
+  </style>
+  <div class="modalhead"><div class="bigicon">📅</div><div class="eyebrow">АРХИВ ИСПЫТАНИЙ</div><h3>Календарь вызовов</h3><p>Каждая дата хранит своё испытание. Нажми на день, чтобы открыть его условия.</p></div>
+  <div class="bb-cal-head"><button type="button" id="bbCalendarPrev" class="bb-cal-nav" ${prev?'':'disabled'} aria-label="Предыдущий месяц">‹</button><strong class="bb-cal-month">${title}</strong><button type="button" id="bbCalendarNext" class="bb-cal-nav" ${next?'':'disabled'} aria-label="Следующий месяц">›</button></div>
+  <div class="bb-cal-week">${['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'].map(d=>'<span>'+d+'</span>').join('')}</div>
+  <div class="bb-cal-grid">${cells}</div>
+  <div class="bb-cal-legend"><span class="done"><i></i>Пройдено</span><span class="now"><i></i>Сегодня</span><span class="miss"><i></i>Пропущено</span><span class="next"><i></i>Предстоит</span></div>
+  <button class="action secondary" id="bbDailyCalendarClose">ЗАКРЫТЬ</button>`;
   overlayEl.classList.add('show');
   $('bbCalendarPrev').onclick=()=>{bbDailyCalendarMonth=new Date(year,month-1,1);bbDailyCalendarOpen()};
   $('bbCalendarNext').onclick=()=>{bbDailyCalendarMonth=new Date(year,month+1,1);bbDailyCalendarOpen()};
