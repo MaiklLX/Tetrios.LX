@@ -9692,9 +9692,18 @@ body:has(#campaign:not([hidden])):before{
 
 
 <style id="bb-planet-full-bleed-cosmic-map">
-/* One continuous CC0 deep-space background across the whole app/page. */
+/* Keep the original home screen; use the deep-space skybox only on the universe/planet atlas page. */
 html,body{
-  min-height:100%!important;
+  background-color:var(--bg)!important;
+  background-image:none!important;
+  background-attachment:scroll!important;
+}
+body .app{
+  background:radial-gradient(ellipse at 50% -10%,#27305b 0,transparent 48%),linear-gradient(160deg,#080b18,#0b1021 60%,#090b17)!important;
+}
+/* The campaign atlas gets one continuous full-page cosmic background. */
+#campaign{
+  min-height:calc(100dvh - 46px)!important;
   background-color:#030716!important;
   background-image:
     linear-gradient(118deg,rgba(94,32,174,.24) 0%,transparent 43%,rgba(0,163,208,.22) 100%),
@@ -9703,18 +9712,16 @@ html,body{
     linear-gradient(180deg,rgba(2,7,22,.08),rgba(3,7,22,.32)),
     url("./assets/deep_space_no_sun_2k.webp")!important;
   background-size:cover,cover,cover,cover,cover!important;
-  background-position:center,center,center,center,center!important;
+  background-position:center top,center,center,center,center!important;
   background-repeat:no-repeat!important;
   background-attachment:fixed!important;
 }
-/* Remove opaque page-sized layers so the shared skybox remains visible everywhere. */
-body .app,
-#campaign,
+/* Keep nested atlas panels transparent so the skybox fills the entire map page. */
+#campaign.screen,
 #campaign .screen{
   background:transparent!important;
   background-color:transparent!important;
 }
-/* Atlas viewports reveal the same page background instead of creating a separate image panel. */
 #campaign .bb-galaxy-viewport,
 #campaign .bb-planet-viewport{
   background:transparent!important;
