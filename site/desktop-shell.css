@@ -319,3 +319,216 @@
     margin-inline: auto;
   }
 }
+
+
+  /* Desktop arena v1 — enlarge the playfield and give the HUD a clear hierarchy. */
+  #game:not([hidden]) {
+    width: min(100%, 1480px);
+    max-width: none;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 14px;
+    padding: 0 0 18px;
+  }
+  #game > .screenhead {
+    min-height: 58px;
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 16px;
+    background: linear-gradient(110deg, rgba(17,27,53,.9), rgba(8,14,30,.82));
+  }
+  #game .game-heading-copy h2 {
+    margin: 0;
+    color: #f4f7ff;
+    font-size: clamp(20px, 1.8vw, 27px);
+    letter-spacing: -.035em;
+  }
+  #game .game-heading-copy p {
+    margin: 4px 0 0;
+    color: #9eafd2;
+    font-size: 11px;
+  }
+  #game #pauseBtn {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(92,245,232,.35);
+    border-radius: 13px;
+    background: linear-gradient(145deg, rgba(31,54,83,.95), rgba(13,24,44,.98));
+    color: #73f7eb;
+    box-shadow: 0 0 18px rgba(92,245,232,.08), inset 0 1px rgba(255,255,255,.08);
+  }
+  #game #pauseBtn .pause-glyph { width: 23px; height: 23px; display: block; }
+  #game #dailyMissionGoal:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(255,200,107,.28);
+    border-radius: 13px;
+    background: linear-gradient(100deg, rgba(72,53,27,.45), rgba(17,27,48,.8));
+  }
+  #game .daily-mission-label { color: #e7bd72; font-size: 10px; font-weight: 850; letter-spacing: .16em; }
+  #game #dailyMissionGoalText { color: #fff0ca; font-size: 15px; }
+  #game > .gamehud {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+  #game .gamehud .hudbox {
+    min-height: 74px;
+    padding: 13px 18px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 15px;
+    background: linear-gradient(145deg, rgba(20,30,57,.94), rgba(9,16,34,.96));
+    box-shadow: 0 9px 24px rgba(0,0,0,.16), inset 0 1px rgba(255,255,255,.04);
+  }
+  #game .gamehud .hudbox span { font-size: 9px; letter-spacing: .16em; color: #91a3c9; }
+  #game .gamehud .hudbox strong { margin-top: 5px; font-size: clamp(22px, 2vw, 30px); line-height: 1; }
+  #game .gamehud #gameCoins strong { color: #ffd27a; }
+  #game > .playlayout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 330px);
+    align-items: stretch;
+    gap: 18px;
+    margin: 0;
+  }
+  #game > .playlayout > div:first-child {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border: 1px solid rgba(135,164,230,.14);
+    border-radius: 22px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(50,78,130,.18), transparent 60%), rgba(5,10,23,.35);
+  }
+  #game .boardframe {
+    width: fit-content;
+    max-width: 100%;
+    padding: 8px;
+    border: 1px solid rgba(92,245,232,.28);
+    border-radius: 17px;
+    background: linear-gradient(145deg, rgba(25,39,69,.98), rgba(7,13,28,.99));
+    box-shadow: 0 18px 48px rgba(0,0,0,.42), 0 0 34px rgba(92,245,232,.08), inset 0 1px rgba(255,255,255,.07);
+  }
+  #game .board {
+    width: auto;
+    height: min(67dvh, 720px);
+    max-height: calc(100dvh - 270px);
+    max-width: 100%;
+    aspect-ratio: 10 / 23;
+    border-radius: 10px;
+    background: #070c19;
+    image-rendering: auto;
+  }
+  #game > .playlayout > .sidecol {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(128px, auto);
+    align-content: start;
+    gap: 11px;
+  }
+  #game .sidecol > .sidecard {
+    min-width: 0;
+    min-height: 128px;
+    padding: 14px 12px;
+    border: 1px solid var(--bb-desktop-border);
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(20,30,57,.96), rgba(9,16,34,.98));
+    box-shadow: 0 10px 25px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.04);
+  }
+  #game .sidecol > .sidecard label { font-size: 8px; letter-spacing: .14em; color: #91a3c9; }
+  #game .sidecol .charge-ring { width: min(100%, 104px); margin: 9px auto 6px; }
+  #game .sidecol .charge-ring-inner strong { font-size: 24px; }
+  #game .sidecol .nextcanvas { width: min(100%, 120px); height: auto; margin: 8px auto 0; }
+  #game .sidecol .boosticon { margin: 10px 0 4px; font-size: 25px; }
+  #game .sidecol .boostname { font-size: 10px; }
+  #game .sidecol .boostnum { font-size: 9px; }
+  #game .sidecol .chrono-card { grid-column: 1 / -1; min-height: 148px; }
+  #game .sidecol .chrono-ring { width: 92px; margin: 8px auto 5px; }
+  #game .sidecol .chrono-ring-inner strong { font-size: 24px; }
+  #game .sidecol > .sidecard:has(#timer) { min-height: 112px; }
+  #game .sidecol > .sidecard:has(#musicBtn) { min-height: 112px; }
+  #game .sidecol #timer { font-size: 22px !important; font-variant-numeric: tabular-nums; color: #f4f7ff; }
+  #game .sidecol .smallbtn {
+    min-height: 34px;
+    margin-top: 8px;
+    padding: 7px 8px;
+    border: 1px solid rgba(120,151,210,.25);
+    border-radius: 9px;
+    background: rgba(34,49,79,.82);
+    color: #dbe7ff;
+    font-size: 9px;
+  }
+  #game .sidecol .side-drop {
+    min-height: 36px;
+    margin-top: 8px;
+    border: 1px solid rgba(92,245,232,.5);
+    border-radius: 10px;
+    background: linear-gradient(100deg, #5cf5e8, #83b7ff);
+    color: #071321;
+    font-size: 10px;
+  }
+  #game .sidecol > #bbHeroSkillCard {
+    grid-column: 1 / -1;
+    min-width: 0;
+    min-height: 92px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 16px;
+    border: 1px solid rgba(157,124,255,.35);
+    border-radius: 16px;
+    background: radial-gradient(ellipse at 0% 50%, rgba(157,124,255,.17), transparent 65%), linear-gradient(145deg, rgba(28,34,69,.98), rgba(10,16,34,.98));
+    color: #f4f5ff;
+    text-align: left;
+    box-shadow: 0 10px 25px rgba(0,0,0,.2), inset 0 1px rgba(255,255,255,.05);
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art { flex: 0 0 52px; width: 52px; height: 52px; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong { font-size: 11px; letter-spacing: .12em; color: #e8dcff; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small { font-size: 10px; color: #c2c9e4; }
+  #game #bbHeroSkillCard .bb-hero-skill-copy em { font-size: 8px; font-style: normal; color: #9d7cff; letter-spacing: .1em; }
+  #game #bbHeroSkillCard .bb-hero-skill-pulse { margin-left: auto; color: #b9a4ff; }
+  #game > .controls {
+    width: min(100%, 540px);
+    margin: 0 auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  #game > .controls .control {
+    height: 48px;
+    border-radius: 13px;
+    border-color: rgba(135,164,230,.24);
+    background: linear-gradient(145deg, rgba(25,39,69,.98), rgba(10,17,35,.98));
+    box-shadow: 0 4px 0 #050a16, inset 0 1px rgba(255,255,255,.05);
+    font-size: 21px;
+  }
+  #game > .hint {
+    margin: -4px 0 0;
+    color: #7488b0;
+    font-size: 10px;
+    letter-spacing: .03em;
+  }
+  @media (max-height: 820px) {
+    #game > .playlayout > div:first-child { padding: 10px; }
+    #game .board { height: min(61dvh, 620px); max-height: calc(100dvh - 245px); }
+    #game .sidecol > .sidecard { min-height: 112px; padding: 10px; }
+    #game > .playlayout > .sidecol { grid-auto-rows: minmax(112px, auto); gap: 8px; }
+  }
+  @media (min-width: 901px) and (max-width: 1120px) {
+    #game > .playlayout { grid-template-columns: minmax(0, 1fr) 250px; gap: 12px; }
+    #game > .playlayout > .sidecol { grid-template-columns: 1fr 1fr; gap: 8px; }
+    #game .sidecol > .sidecard { padding: 10px 8px; }
+  }
+}
