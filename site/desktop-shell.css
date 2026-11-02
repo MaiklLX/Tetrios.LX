@@ -699,3 +699,112 @@
     #shopScreen:not([hidden]) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "wallet" "surprise" "relics" "catalog"; }
   }
 }
+
+
+/* Desktop cosmic atlas v2 — make the galaxy selector feel like a wide-screen destination. */
+@media (min-width: 901px) {
+  #campaign:not([hidden]) {
+    width: min(100%, 1480px);
+    gap: 10px;
+    padding-top: 4px;
+  }
+  #campaign > .screenhead {
+    margin-bottom: 0;
+    padding: 8px 4px 12px;
+    border: 0;
+    border-bottom: 1px solid rgba(135,164,230,.16);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  #campaign > .screenhead h2 {
+    font-size: clamp(24px, 2.1vw, 32px);
+  }
+  #campaign #mapgrid.bb-galaxy-atlas,
+  #campaign #mapgrid.bb-planet-map {
+    gap: 16px;
+    margin: 4px 0 8px;
+  }
+  #campaign .bb-atlas-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "eyebrow legend" "title legend" "desc legend";
+    align-items: center;
+    column-gap: 24px;
+    row-gap: 5px;
+    padding: 8px 4px 10px;
+  }
+  #campaign .bb-atlas-intro > span { grid-area: eyebrow; }
+  #campaign .bb-atlas-intro > strong { grid-area: title; font-size: 28px; }
+  #campaign .bb-atlas-intro > small { grid-area: desc; font-size: 12px; }
+  #campaign .bb-atlas-intro .bb-atlas-status-legend {
+    grid-area: legend;
+    justify-content: flex-end;
+    align-self: center;
+    gap: 14px;
+  }
+  #campaign .bb-galaxy-viewport {
+    width: 100%;
+    margin: 0;
+    padding: 14px 6px 24px;
+    scroll-padding-inline: 6px;
+  }
+  #campaign .bb-galaxy-track {
+    gap: 18px;
+    padding: 6px 4px 14px;
+  }
+  #campaign .bb-galaxy-card {
+    width: clamp(310px, 23vw, 360px);
+    min-height: 382px;
+    padding: 18px 20px 20px !important;
+    gap: 10px;
+    scroll-snap-align: start;
+  }
+  #campaign .bb-galaxy-card:hover {
+    transform: translateY(-5px);
+    filter: brightness(1.08);
+  }
+  #campaign .bb-galaxy-card.is-current:hover {
+    transform: translateY(-7px);
+  }
+  #campaign .bb-galaxy-art {
+    width: 230px;
+    height: 205px;
+  }
+  #campaign .bb-galaxy-index { font-size: 9px; }
+  #campaign .bb-galaxy-card strong { font-size: 19px; }
+  #campaign .bb-galaxy-card small { font-size: 11px; min-height: 30px; }
+  #campaign .bb-galaxy-status { font-size: 9px; }
+  #campaign .bb-atlas-controls {
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 8px;
+    font-size: 9px;
+  }
+  #campaign .bb-atlas-controls button {
+    width: 44px;
+    height: 38px;
+    border-radius: 13px;
+    transition: border-color .18s, background .18s, transform .18s;
+  }
+  #campaign .bb-atlas-controls button:hover {
+    border-color: #5cf5e8;
+    background: #20385a;
+    transform: translateY(-2px);
+  }
+  #campaign .bb-planet-viewport {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px 8px 22px !important;
+  }
+  #campaign .bb-planet-heading {
+    padding: 16px 20px !important;
+    border-radius: 0 14px 14px 0;
+  }
+  #campaign .bb-planet-heading strong { font-size: 24px; }
+  #campaign .bb-cosmos-back {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+  }
+}
