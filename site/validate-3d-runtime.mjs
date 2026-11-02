@@ -174,5 +174,9 @@ for (const id of requiredCharacters) {
   if (!await exists(modelPath)) fail(`character "${id}" model file is missing: ${modelPath}`);
 }
 
+if (!arena.includes('const arenaWidth=10.12,arenaHeight=23.12') || !arena.includes('camera.lookAt(0,0,0)')) fail('3D arena camera must fit and centre the responsive 10x23 board');
+if (!arena.includes('new THREE.PlaneGeometry(10,23)') || !arena.includes('color:0x38506f,transparent:true,opacity:.78') || !arena.includes('color:0x75a6c9,transparent:true,opacity:.58')) fail('3D board surface and grid must visually match the 2D arena contrast and five-cell guides');
+if (!index.includes('id="bb-arena-adaptive-10x23-v1"') || !index.includes('aspect-ratio:10 / 23!important') || !index.includes('calc((100vw - 88px)*2.3)')) fail('game arena must size itself responsively from the available 10x23 play area');
+
 if (process.exitCode) process.exit(process.exitCode);
 console.log('PASS: Three.js 0.180.0, GLTFLoader, import-map order and character asset references are valid.');
