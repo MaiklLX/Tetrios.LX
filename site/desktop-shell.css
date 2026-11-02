@@ -1019,3 +1019,112 @@
     min-height: 46px;
   }
 }
+
+
+/* Desktop home dashboard v2 — turn daily quests into an open mission strip. */
+@media (min-width: 901px) {
+  #menu.home-dashboard > #dailyQuestsPanel {
+    min-width: 0;
+    padding: 18px 0 8px !important;
+    border: 0 !important;
+    border-top: 1px solid rgba(92,245,232,.28) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child {
+    align-items: baseline !important;
+    margin: 0 0 8px !important;
+    padding: 0 2px;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child strong {
+    color: #7df8ed !important;
+    font-size: 14px !important;
+    letter-spacing: .08em;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child span {
+    color: #7f91b4 !important;
+    font-size: 9px !important;
+    letter-spacing: .12em;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:nth-child(2) {
+    margin: 0 2px 14px;
+    color: #93a5c8 !important;
+    font-size: 11px !important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 !important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div {
+    display: flex;
+    min-height: 146px;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 0 !important;
+    padding: 16px 15px 14px !important;
+    border: 0 !important;
+    border-left: 1px solid rgba(157,124,255,.42) !important;
+    border-radius: 0 12px 12px 0 !important;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(157,124,255,.12), transparent 68%),
+      linear-gradient(110deg, rgba(18,27,49,.72), rgba(10,17,33,.22)) !important;
+    box-shadow: none !important;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div:hover {
+    transform: translateY(-2px);
+    border-left-color: rgba(92,245,232,.72) !important;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(92,245,232,.13), transparent 68%),
+      linear-gradient(110deg, rgba(18,34,55,.86), rgba(10,17,33,.32)) !important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:first-child {
+    min-height: 34px;
+    color: #edf3ff !important;
+    font-size: 12px !important;
+    line-height: 1.4;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(2) {
+    margin-top: 9px !important;
+    color: #a8b9d9 !important;
+    font-size: 10px !important;
+    font-variant-numeric: tabular-nums;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3) {
+    height: 5px !important;
+    margin-top: 8px !important;
+    border-radius: 99px !important;
+    background: rgba(111,130,169,.22) !important;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.35);
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3) > div {
+    border-radius: inherit;
+    background: linear-gradient(90deg, #9d7cff, #5cf5e8) !important;
+    box-shadow: 0 0 9px rgba(92,245,232,.28);
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:last-child {
+    margin-top: auto !important;
+    padding-top: 12px;
+    color: #c6a8ff !important;
+    font-size: 9px !important;
+    letter-spacing: .04em;
+  }
+  #menu.home-dashboard > .home-reset #resetProgressBtn {
+    border: 1px solid rgba(255,105,125,.25) !important;
+    background: rgba(70,20,37,.28) !important;
+    box-shadow: none !important;
+    color: #b9788c !important;
+    opacity: .78;
+  }
+  #menu.home-dashboard > .home-reset #resetProgressBtn:hover {
+    border-color: rgba(255,105,125,.65) !important;
+    color: #ff9fb3 !important;
+    opacity: 1;
+  }
+  @media (max-width: 1180px) {
+    #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList { gap: 8px; }
+    #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div { padding: 13px 11px 12px !important; }
+  }
+}
