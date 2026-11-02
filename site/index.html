@@ -6093,7 +6093,7 @@ function show(id){
 function overlay(html){$('modal').classList.remove('bb-hero-showcase-modal');$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show');$('modal').classList.remove('bb-hero-showcase-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function setupDaily(){let d=new Date(),rule=bbDailyRuleForDate(bbGetTodayKey());$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.';$('dailyStart').textContent=dailyDone===dateKey()?'ПОВТОРИТЬ ВЫЗОВ':'НАЧАТЬ ИСПЫТАНИЕ';bbUpdateVisitStreak()}
+function setupDaily(){let d=new Date(),today=bbGetTodayKey(),rule=bbDailyRuleForDate(today),completed=localStorage.getItem('bbDailyChallengeCompletedDate')===today;$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+(completed?' Испытание уже пройдено — награда получена.':' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.');$('dailyStart').textContent=completed?'✓ ВЫЗОВ УЖЕ ПРОЙДЕН':'НАЧАТЬ ИСПЫТАНИЕ';$('dailyStart').disabled=completed;$('dailyStart').style.opacity=completed?'.65':'1';bbUpdateVisitStreak()}
 
 // BLOCK BUDDIES — серия ежедневных посещений и редкий предмет восстановления.
 function bbStreakRead() {
@@ -7251,7 +7251,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];
+function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
@@ -7402,11 +7402,14 @@ function bbCheckDailyCompletion() {
   const rule = bbGetActiveDailyRule();
 
   // Обычный сегодняшний вызов можно пройти только один раз.
-  if (
-    !isReplay &&
-    localStorage.getItem('bbDailyChallengeCompletedDate') === today
-  ) {
-    return false;
+  // Проверяем и основной флаг, и журнал: повторный вход через любое меню
+  // не должен повторно выдавать монеты или реликвии.
+  if (!isReplay) {
+    let history = {};
+    try { history = JSON.parse(localStorage.getItem('bbDailyChallengeHistory') || '{}'); } catch (e) { history = {}; }
+    if (localStorage.getItem('bbDailyChallengeCompletedDate') === today || history[today]?.status === 'completed') {
+      return false;
+    }
   }
 
   if (!rule || !rule.goal) return false;
@@ -7482,8 +7485,10 @@ if (isReplay) {
     return true;
   }
 
-  // Обычный ежедневный вызов.
+  // Обычный ежедневный вызов. Сначала фиксируем право на награду,
+  // затем начисляем её: повторный запуск не сможет пройти этот участок снова.
   localStorage.setItem('bbDailyChallengeCompletedDate', today);
+  localStorage.setItem('bbDailyRewardClaimed:' + today, '1');
   bbSaveDailyChallengeHistory(today, rule, 'completed');
 
   bbCoins += 500;
@@ -7683,7 +7688,7 @@ if(mode==='campaign'){
     localStorage.nrNode=campaignNode;
   }
 }
-if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();const rewardSummary=mode==='daily'&&bbDailyRewardsForEnd?'<div class="reward-summary" style="margin:16px 0;padding:14px 16px;border:1px solid #bda0ff;border-radius:14px;background:linear-gradient(135deg,#302044,#201b31);color:#f1e7ff;text-align:center;font-weight:800;line-height:1.5">'+bbDailyRewardsForEnd+'</div>':'';bbDailyRewardsForEnd=null;overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div>${rewardSummary}<div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">ПОПРОБОВАТЬ СНОВА</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`);$('retry').onclick=()=>{closeOverlay();startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
+if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();const rewardSummary=mode==='daily'&&bbDailyRewardsForEnd?'<div class="reward-summary" style="margin:16px 0;padding:14px 16px;border:1px solid #bda0ff;border-radius:14px;background:linear-gradient(135deg,#302044,#201b31);color:#f1e7ff;text-align:center;font-weight:800;line-height:1.5">'+bbDailyRewardsForEnd+'</div>':'';bbDailyRewardsForEnd=null;const retryLabel=mode==='daily'?'ВЕРНУТЬСЯ К ЕЖЕДНЕВНЫМ ВЫЗОВАМ':'ПОПРОБОВАТЬ СНОВА';overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div>${rewardSummary}<div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">${retryLabel}</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`);$('retry').onclick=()=>{closeOverlay();if(mode==='daily'){show('daily');setupDaily();toast('Награда за сегодняшний вызов уже получена.')}else startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
 function bbDailyGlitchColor(index){
   const glitchColors=[
     '#ff3155',
