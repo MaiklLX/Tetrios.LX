@@ -7653,7 +7653,20 @@ function bbDailyGlitchColor(index){
   return glitchColors[index%glitchColors.length];
 }
 function bbSyncDailyPreview(){const preview=$('next');if(preview)preview.style.visibility=(bbIsDailyMechanic('blindAssembly')||bbIsDailyMechanic('silent'))?'hidden':'';}
-function render(){bbSyncDailyPreview();let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Neon tactical grid: visible cell boundaries plus stronger five-cell guides */ctx.strokeStyle='#263957';ctx.lineWidth=.8;for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.save();ctx.strokeStyle='#416486';ctx.lineWidth=1.15;ctx.globalAlpha=.58;for(let x=5;x<W;x+=5){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,ch);ctx.stroke()}for(let y=5;y<H;y+=5){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(cw,y*cell);ctx.stroke()}ctx.restore();/* Top and bottom are spawn/exit rails, not playable rows: keep them visually separate from the grid */ctx.save();ctx.fillStyle='#17243a';ctx.fillRect(0,0,cw,cell*.18);ctx.fillRect(0,ch-cell*.18,cw,cell*.18);ctx.strokeStyle='#607c9b';ctx.globalAlpha=.75;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(0,cell*.18);ctx.lineTo(cw,cell*.18);ctx.moveTo(0,ch-cell*.18);ctx.lineTo(cw,ch-cell*.18);ctx.stroke();ctx.restore();/* subtle center glow and frame edge */const glow=ctx.createRadialGradient(cw*.5,ch*.45,cell,cw*.5,ch*.45,cw*.72);glow.addColorStop(0,'#1c8bba12');glow.addColorStop(1,'#050a1600');ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
+function render(){bbSyncDailyPreview();let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Precision arena grid: crisp cell boundaries and stronger five-cell guides */
+ctx.save();ctx.fillStyle='#0a1222';ctx.fillRect(0,0,cw,ch);
+for(let y=0;y<H;y++){if(y%2===1){ctx.fillStyle='#ffffff04';ctx.fillRect(0,y*cell,cw,cell);}}
+ctx.beginPath();
+for(let x=0;x<=W;x++){const px=Math.round(x*cell)+.5;ctx.moveTo(px,0);ctx.lineTo(px,ch);}
+for(let y=0;y<=H;y++){const py=Math.round(y*cell)+.5;ctx.moveTo(0,py);ctx.lineTo(cw,py);}
+ctx.strokeStyle='#38506f';ctx.globalAlpha=.78;ctx.lineWidth=1;ctx.stroke();
+ctx.beginPath();
+for(let x=5;x<W;x+=5){const px=Math.round(x*cell)+.5;ctx.moveTo(px,0);ctx.lineTo(px,ch);}
+for(let y=5;y<H;y+=5){const py=Math.round(y*cell)+.5;ctx.moveTo(0,py);ctx.lineTo(cw,py);}
+ctx.strokeStyle='#75a6c9';ctx.globalAlpha=.58;ctx.lineWidth=1.5;ctx.stroke();
+ctx.globalAlpha=.9;ctx.strokeStyle='#7bd8e8';ctx.lineWidth=1;ctx.strokeRect(.5,.5,cw-1,ch-1);ctx.restore();
+const glow=ctx.createRadialGradient(cw*.5,ch*.45,cell,cw*.5,ch*.45,cw*.72);glow.addColorStop(0,'#1c8bba0c');glow.addColorStop(1,'#050a1600');ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
+/* Red-zone warning remains a distinct gameplay overlay. */
 if(bbIsDailyMechanic('redZone')){
   ctx.fillStyle='#ff304022';
   ctx.fillRect(0,0,cw,cell*3);
@@ -7679,7 +7692,7 @@ window.bbGet3DBoardState=function(){
   }
   return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),lines:Number(lines)||0,started:!!started,paused:!!paused,gameOver:!!gameOver};
 };
-function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.4,py=y*cell+1.4,s=cell-2.8;ctx.save();if(ghost){ctx.globalAlpha=.2;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1.4;ctx.strokeRect(px+1,py+1,s-2,s-2);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.3;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(px,py,s,s,Math.max(2,cell*.12));ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#ffffff75';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#ffffff45';ctx.fillRect(px+3,py+3,s-6,Math.max(1,s*.09));ctx.restore()}
+function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.25,py=y*cell+1.25,s=cell-2.5;ctx.save();if(ghost){ctx.globalAlpha=.22;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1;ctx.strokeRect(Math.round(px)+.5,Math.round(py)+.5,s-1,s-1);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.22;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.fillRect(px,py,s,s);ctx.shadowBlur=0;ctx.strokeStyle='#ffffffa8';ctx.lineWidth=1;ctx.strokeRect(Math.round(px)+.5,Math.round(py)+.5,Math.floor(s)-1,Math.floor(s)-1);ctx.fillStyle='#ffffff55';ctx.fillRect(px+2,py+2,Math.max(0,s-4),Math.max(1,s*.075));ctx.restore()}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
@@ -10169,6 +10182,25 @@ body .app{background:transparent!important;background-color:transparent!importan
 @media(prefers-reduced-motion:reduce){
   #game .sidecol .boosticon{animation:none!important}
 }
+</style>
+
+<style id="bb-board-arena-precision-v1">
+/* TETRIOS LX — make the playfield the visual center, with minimal frame waste. */
+#game .playlayout{grid-template-columns:minmax(0,1fr) 148px!important;column-gap:7px!important;align-items:stretch!important}
+#game .playlayout > div:first-child{min-width:0!important}
+#game .boardframe{box-sizing:border-box!important;padding:2px!important;border:1px solid rgba(111,164,198,.48)!important;border-radius:10px!important;background:linear-gradient(145deg,rgba(13,29,49,.92),rgba(5,12,26,.96))!important;box-shadow:0 8px 24px #0005,0 0 16px #5cf5e80a,inset 0 0 0 1px #ffffff08!important}
+#game .board{display:block!important;border-radius:6px!important;background:#0a1222!important;image-rendering:auto}
+@media(min-width:901px){#game .playlayout{column-gap:8px!important}#game .boardframe{height:min(78dvh,780px)!important;padding:3px!important}}
+@media(max-width:900px){
+ #game .playlayout{grid-template-columns:minmax(0,1fr) 78px!important;column-gap:5px!important}
+ #game .boardframe{height:clamp(270px,calc(100dvh - 218px),680px)!important;padding:2px!important;border-radius:9px!important}
+ #game .board{border-radius:5px!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+ #game .playlayout{grid-template-columns:minmax(0,1fr) 70px!important;column-gap:4px!important}
+ #game .boardframe{height:clamp(250px,calc(100dvh - 205px),620px)!important}
+}
+@media(max-width:520px) and (max-height:650px){#game .boardframe{height:clamp(205px,calc(100dvh - 185px),430px)!important}}
 </style>
 
 </body></html>
