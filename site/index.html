@@ -9692,21 +9692,33 @@ body:has(#campaign:not([hidden])):before{
 
 
 <style id="bb-planet-full-bleed-cosmic-map">
-/* CC0 deep-space skybox is painted directly on BOTH atlas viewports.
-   Keep the existing star/nebula pseudo-layers and 3D canvases above it. */
-#campaign .bb-galaxy-viewport,
-#campaign .bb-planet-viewport{
+/* One continuous CC0 deep-space background across the whole app/page. */
+html,body{
+  min-height:100%!important;
   background-color:#030716!important;
   background-image:
-    linear-gradient(118deg,rgba(94,32,174,.28) 0%,transparent 43%,rgba(0,163,208,.26) 100%),
-    radial-gradient(ellipse at 12% 28%,rgba(150,55,225,.28),transparent 48%),
-    radial-gradient(ellipse at 88% 72%,rgba(0,196,220,.22),transparent 52%),
+    linear-gradient(118deg,rgba(94,32,174,.24) 0%,transparent 43%,rgba(0,163,208,.22) 100%),
+    radial-gradient(ellipse at 12% 28%,rgba(150,55,225,.24),transparent 48%),
+    radial-gradient(ellipse at 88% 72%,rgba(0,196,220,.18),transparent 52%),
     linear-gradient(180deg,rgba(2,7,22,.08),rgba(3,7,22,.32)),
     url("./assets/deep_space_no_sun_2k.webp")!important;
   background-size:cover,cover,cover,cover,cover!important;
   background-position:center,center,center,center,center!important;
   background-repeat:no-repeat!important;
-  background-attachment:scroll!important;
+  background-attachment:fixed!important;
+}
+/* Remove opaque page-sized layers so the shared skybox remains visible everywhere. */
+body .app,
+#campaign,
+#campaign .screen{
+  background:transparent!important;
+  background-color:transparent!important;
+}
+/* Atlas viewports reveal the same page background instead of creating a separate image panel. */
+#campaign .bb-galaxy-viewport,
+#campaign .bb-planet-viewport{
+  background:transparent!important;
+  background-color:transparent!important;
   border:0!important;
   outline:0!important;
   border-radius:0!important;
@@ -9714,16 +9726,7 @@ body:has(#campaign:not([hidden])):before{
   isolation:isolate!important;
 }
 #campaign .bb-galaxy-viewport:before,
-#campaign .bb-planet-viewport:before{
-  opacity:.5!important;
-  background-image:
-    radial-gradient(1px 1px at 8% 18%,#fff 0 1px,transparent 2px),
-    radial-gradient(1.3px 1.3px at 28% 72%,#dff7ff 0 1px,transparent 2px),
-    radial-gradient(1px 1px at 51% 31%,#fff 0 1px,transparent 2px),
-    radial-gradient(1.4px 1.4px at 78% 64%,#e7d7ff 0 1px,transparent 2px),
-    radial-gradient(1px 1px at 94% 12%,#fff 0 1px,transparent 2px)!important;
-  background-size:220px 190px,300px 260px,360px 280px,290px 230px,400px 310px!important;
-}
+#campaign .bb-planet-viewport:before{opacity:.5!important}
 #campaign .bb-galaxy-viewport:after,
 #campaign .bb-planet-viewport:after{
   content:""!important;
@@ -9732,9 +9735,9 @@ body:has(#campaign:not([hidden])):before{
   z-index:0!important;
   pointer-events:none!important;
   background:
-    radial-gradient(ellipse 56% 34% at 12% 78%,rgba(149,60,226,.22),transparent 100%),
-    radial-gradient(ellipse 54% 38% at 88% 20%,rgba(0,195,218,.2),transparent 100%),
-    linear-gradient(180deg,transparent 65%,rgba(2,6,18,.25))!important;
+    radial-gradient(ellipse 56% 34% at 12% 78%,rgba(149,60,226,.16),transparent 100%),
+    radial-gradient(ellipse 54% 38% at 88% 20%,rgba(0,195,218,.14),transparent 100%),
+    linear-gradient(180deg,transparent 65%,rgba(2,6,18,.18))!important;
 }
 #campaign .bb-galaxy-track,
 #campaign .bb-planet-track{position:relative!important;z-index:2!important}
