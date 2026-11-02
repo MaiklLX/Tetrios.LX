@@ -75,29 +75,55 @@
   }
   #menu.home-dashboard > .hero::before,
   #menu.home-dashboard > .hero::after { display: none; }
+  /* Restore the desktop lockup flow: visual-overhaul.css previously left
+     the emblem/wordmark absolutely centered in a vertical stack. */
   #menu.home-dashboard > .hero .eyebrow {
-    margin: 0 0 14px;
+    position: static !important;
+    inset: auto !important;
+    align-self: flex-start;
+    margin: 0 0 14px !important;
+    text-align: left !important;
     font-size: 10px !important;
-    letter-spacing: .2em;
+    letter-spacing: .2em !important;
   }
   #menu.home-dashboard > .hero .hero-brand-lockup {
-    display: flex;
-    align-items: center;
-    gap: 18px;
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    align-self: flex-start;
+    gap: clamp(14px, 1.5vw, 22px) !important;
+    width: auto !important;
+    max-width: 100% !important;
     min-width: 0;
   }
   #menu.home-dashboard > .hero .hero-app-mark {
-    flex: 0 0 62px;
-    width: 62px;
-    height: 62px;
+    flex: 0 0 clamp(58px, 4.8vw, 74px) !important;
+    width: clamp(58px, 4.8vw, 74px) !important;
+    height: clamp(58px, 4.8vw, 74px) !important;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
   }
   #menu.home-dashboard > .hero h1 {
+    display: flex !important;
+    flex: 0 1 auto;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-width: 0;
     margin: 0 !important;
-    font-size: clamp(46px, 5.2vw, 78px) !important;
-    line-height: .92 !important;
-    letter-spacing: -.065em !important;
+    font-size: clamp(42px, 4.6vw, 68px) !important;
+    line-height: 1 !important;
+    letter-spacing: -.045em !important;
   }
   #menu.home-dashboard > .hero p {
+    position: static !important;
+    inset: auto !important;
+    align-self: flex-start;
     max-width: none !important;
     margin: 16px 0 0 !important;
     font-size: clamp(14px, 1.15vw, 17px) !important;
