@@ -747,3 +747,14 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Source commits: `a99cfbf01656bf3972bf0a0106f874e0f8776369` (3D) and `6bb43c6ae9d5d0253e6473b9a10545ab2dbaa431` (2D/core).
 - Static checks passed for the 10×23 logical dimensions, 300×690 canvas, 10:23 CSS ratio, 23-row 3D grid and updated 3D board/camera geometry. Deployment and real-device verification remain pending.
 - Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 314. ПРОВЕРИТЬ НА ОПУБЛИКОВАННОМ САЙТЕ АРЕНУ 10×23 В ОБЫЧНОМ И 3D-РЕЖИМЕ. УБЕДИТЬСЯ, ЧТО 3D-СЕТКА ИМЕЕТ 23 РЯДА, ФИГУРЫ СОВПАДАЮТ С КЛЕТКАМИ, ВЕРХ И НИЗ АРЕНЫ НЕ ОБРЕЗАНЫ, КАМЕРА ПОМЕЩАЕТ ВСЁ ПОЛЕ. ПРОВЕРИТЬ BLOCK RUN, ДВИЖЕНИЕ, ПОВОРОТ, СТОЛКНОВЕНИЯ И ОЧИСТКУ ЛИНИЙ. СКОРОСТЬ ПАДЕНИЯ НЕ МЕНЯТЬ. 🤘🏆**
+
+## Checkpoint 315 — open 3D arena and expanded playfield (2026-11-02)
+
+- User asked to remove the 3D board from its heavy rectangular block and use the unused space toward the lower-right of the play area.
+- Removed the solid 3D shell, opaque board planes, full top edge, corner beacons and bottom base bar. The board now floats in the game space with the cell grid, restrained side guides and short corner accents instead of a closed rectangular box.
+- Tightened the orthographic camera framing (from a 24.2-unit arena envelope with 2.5% padding to a 23.55-unit envelope with 0.8% padding) so the 10×23 grid occupies more of the available 3D canvas.
+- Shifted the camera target slightly upper-left so the arena appears slightly farther right and down, using the spare space requested by the user. Gameplay coordinates and cell dimensions remain unchanged.
+- The 10-column × 23-row grid, 2D canvas and gameplay logic are unchanged; this is a 3D presentation/camera update only.
+- Source commit: `e4cc2602329c71c5cf8686635c93814dd69cb4cd` (`site/arena-3d.js`).
+- Static checks passed for removal of the solid shell/planes/base/beacons, tighter camera framing, lower-right visual shift and preservation of the 23-row grid. Web deployment and physical-device visual verification are not yet confirmed.
+- Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 315. ПРОВЕРИТЬ ОТКРЫТУЮ 3D-АРЕНУ: ПОЛЕ БОЛЬШЕ НЕ ДОЛЖНО ВЫГЛЯДЕТЬ ЗАКЛЮЧЁННЫМ В ТЯЖЁЛУЮ ПРЯМОУГОЛЬНУЮ КОРОБКУ. УБЕДИТЬСЯ, ЧТО СЕТКА 10×23 СТАЛА КРУПНЕЕ, СМЕЩЕНА ЧУТЬ ВПРАВО И ВНИЗ, ВСЕ 23 РЯДА И 10 КОЛОНОК ПОМЕЩАЮТСЯ, ФИГУРЫ И ЭФФЕКТЫ НЕ ОБРЕЗАНЫ. ПРОВЕРИТЬ 3D НА ТЕЛЕФОНЕ И В BLOCK RUN; 2D, СКОРОСТЬ ПАДЕНИЯ И ИГРОВУЮ ЛОГИКУ НЕ МЕНЯТЬ. 🤘🏆**
