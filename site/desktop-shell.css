@@ -47,7 +47,7 @@
       "modes streak"
       "quests resources"
       "heroes profile"
-      "shop stats"
+      "stats stats"
       "reset reset";
     grid-template-rows: auto auto auto auto auto auto;
     align-items: stretch;
@@ -259,24 +259,80 @@
   }
   #menu.home-dashboard > #openHeroes .modeicon { flex: 0 0 42px; width: 42px; height: 42px; }
   #menu.home-dashboard > #openHeroes .modesub { display: block; font-size: 10px; }
+  /* The shop action is moved into #rpgPanel by bbApplyHero().
+     Keep the empty legacy wrapper out of the desktop grid. */
   #menu.home-dashboard > #rpgPanel {
     grid-area: profile;
+    display: flex !important;
+    align-items: stretch;
+    min-width: 0;
     min-height: 86px;
     height: 100%;
     margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop {
+    display: flex !important;
+    align-items: center;
+    gap: 14px;
+    width: 100% !important;
+    min-width: 0;
+    min-height: 86px;
+    height: 100%;
+    margin: 0 !important;
+    padding: 16px 20px !important;
+    border: 1px solid rgba(92,245,232,.28) !important;
     border-radius: 17px !important;
+    background:
+      radial-gradient(ellipse at 0% 50%, rgba(92,245,232,.12), transparent 65%),
+      linear-gradient(120deg, rgba(17,37,55,.96), rgba(12,20,40,.98)) !important;
+    box-shadow: inset 0 1px rgba(255,255,255,.05), 0 10px 26px rgba(0,0,0,.16) !important;
+    text-align: left;
+    transition: border-color .18s ease, transform .18s ease, filter .18s ease;
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop:hover {
+    border-color: rgba(92,245,232,.68) !important;
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop .shop-main-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(92,245,232,.22);
+    border-radius: 14px;
+    background: rgba(92,245,232,.08);
+    font-size: 25px;
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop .shop-main-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop .shop-main-text strong {
+    color: #eafaff;
+    font-size: 12px;
+    letter-spacing: .15em;
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop .shop-main-text small {
+    color: #91a8c8;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  #menu.home-dashboard > #rpgPanel > #openShop .shop-main-arrow {
+    color: #71f7eb;
+    font-size: 25px;
   }
   #menu.home-dashboard > .shopbuttons {
-    grid-area: shop;
-    display: block !important;
-    width: 100%;
-    min-width: 0;
-    margin: 0 !important;
-  }
-  #menu.home-dashboard > .shopbuttons .shopbutton {
-    min-height: 86px;
-    height: 100%;
-    margin: 0 !important;
+    display: none !important;
   }
   #menu.home-dashboard > .bottomstats {
     grid-area: stats;
