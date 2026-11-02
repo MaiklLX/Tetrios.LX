@@ -10203,4 +10203,40 @@ body .app{background:transparent!important;background-color:transparent!importan
 @media(max-width:520px) and (max-height:650px){#game .boardframe{height:clamp(205px,calc(100dvh - 185px),430px)!important}}
 </style>
 
+<style id="bb-board-arena-scale-v2">
+/* TETRIOS LX — second proportional playfield enlargement.
+   Give the 10x20 canvas more width and height without changing game coordinates. */
+@media(max-width:900px){
+  #game .playlayout{
+    grid-template-columns:minmax(0,1fr) 68px!important;
+    column-gap:3px!important;
+  }
+  #game .boardframe{
+    height:clamp(290px,calc(100dvh - 194px),700px)!important;
+    padding:1px!important;
+  }
+  #game .board{
+    width:auto!important;
+    height:100%!important;
+    max-width:100%!important;
+    aspect-ratio:10 / 20!important;
+    flex:0 1 auto!important;
+  }
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game .playlayout{
+    grid-template-columns:minmax(0,1fr) 62px!important;
+    column-gap:2px!important;
+  }
+  #game .boardframe{
+    height:clamp(270px,calc(100dvh - 182px),670px)!important;
+  }
+}
+@media(max-width:520px) and (max-height:650px){
+  #game .boardframe{
+    height:clamp(225px,calc(100dvh - 168px),455px)!important;
+  }
+}
+</style>
+
 </body></html>
