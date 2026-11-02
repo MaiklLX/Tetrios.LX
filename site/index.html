@@ -5298,7 +5298,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 @media(max-width:520px){.bb-hero-skill-slot{gap:5px;padding:6px 4px;border-radius:11px}.bb-hero-skill-art{flex-basis:34px;width:34px;height:34px}.bb-hero-skill-art svg{width:32px;height:30px}.bb-hero-skill-copy strong{font-size:7px}.bb-hero-skill-copy small{font-size:7px}.bb-hero-skill-copy em{font-size:6px}}
 </style>
 
-<link rel="stylesheet" href="./desktop-shell.css?v=20261102-desktop-shell-v7">
+<link rel="stylesheet" href="./desktop-shell.css?v=20261102-desktop-shell-v8">
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
   <span class="apk-download-icon">↓</span>
@@ -10426,7 +10426,48 @@ body .app{background:transparent!important;background-color:transparent!importan
 @media(min-width:901px) and (max-width:1120px){
  #game>.playlayout{grid-template-columns:minmax(0,1fr) 250px!important;gap:12px!important}
  #game>.playlayout>.sidecol{gap:7px!important}
-}</style>
+}
+/* Visual pass — remove the nested-card look and give the arena a clear focal point. */
+@media(min-width:901px){
+ #game>.playlayout>div:first-child{
+   border:0!important;border-radius:0!important;background:transparent!important;
+   box-shadow:none!important;padding:0!important;
+ }
+ #game .boardframe{
+   padding:8px!important;border:1px solid rgba(92,245,232,.48)!important;
+   border-radius:12px!important;
+   background:linear-gradient(145deg,rgba(18,31,54,.96),rgba(5,11,25,.98))!important;
+   box-shadow:0 0 0 1px rgba(157,124,255,.10),0 18px 52px rgba(0,0,0,.48),
+     0 0 30px rgba(92,245,232,.11),inset 0 1px rgba(255,255,255,.09)!important;
+ }
+ #game .board{border-radius:5px!important;box-shadow:0 0 22px rgba(92,245,232,.06)!important}
+ #game>.playlayout>.sidecol{gap:9px!important;align-content:start!important}
+ #game .sidecol>.sidecard{
+   position:relative!important;overflow:hidden!important;
+   border:1px solid rgba(116,145,202,.16)!important;
+   border-left:2px solid rgba(92,245,232,.44)!important;
+   border-radius:10px!important;
+   background:linear-gradient(105deg,rgba(17,29,52,.88),rgba(8,15,30,.68))!important;
+   box-shadow:inset 0 1px rgba(255,255,255,.035),0 7px 18px rgba(0,0,0,.12)!important;
+ }
+ #game .sidecol>.sidecard:after{
+   content:"";position:absolute;inset:0;pointer-events:none;
+   background:radial-gradient(ellipse at 0 0,rgba(92,245,232,.07),transparent 65%);
+ }
+ #game .sidecol>.chrono-card{
+   border-left-color:rgba(57,169,255,.72)!important;
+   background:linear-gradient(105deg,rgba(13,35,65,.92),rgba(7,15,32,.78))!important;
+ }
+ #game .sidecol>#bbHeroSkillCard{
+   border:1px solid rgba(157,124,255,.32)!important;
+   border-left:2px solid rgba(157,124,255,.78)!important;
+   border-radius:12px!important;
+   background:linear-gradient(105deg,rgba(34,27,66,.76),rgba(10,16,34,.9))!important;
+ }
+ #game>.controls{max-width:440px!important}
+ #game>.controls .control{box-shadow:0 3px 0 rgba(3,8,19,.9),inset 0 1px rgba(255,255,255,.07)!important}
+}
+</style>
 
 
 
