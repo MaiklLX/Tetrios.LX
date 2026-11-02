@@ -738,3 +738,12 @@ Do not claim device testing has happened; the user performs real-device testing.
 - No planet models, universe models, map navigation, progress, saves, purchases or inventory changed.
 - Source commit: `9dc3b63fb96d9d781f82d38b088ab317727c6515`.
 - Await web deployment and phone verification; this is a targeted code-level fix, not yet visually confirmed.
+
+## Checkpoint 314 — signature 10×23 arena in 2D and 3D (2026-11-02)
+- Reduced the shared logical board from 10×25 to 10×23. Canvas backing is now 300×690 and CSS aspect ratio is 10:23.
+- Updated `site/arena-3d.js`: 3D shell, board planes, side glows, grid (23 row intervals), border, rails, beacons, camera framing, block positions and line-clear/landing/rotation effects now use the 23-row vertical span.
+- 3D block cell centres are mapped from row 0..22 to y=+11..-11, with grid boundaries at ±11.5. The board remains 10 columns wide.
+- Gravity interval, scoring, controls, collision and line-clear rules were not deliberately changed; the logical grid dimensions drive the existing game core.
+- Source commits: `a99cfbf01656bf3972bf0a0106f874e0f8776369` (3D) and `6bb43c6ae9d5d0253e6473b9a10545ab2dbaa431` (2D/core).
+- Static checks passed for the 10×23 logical dimensions, 300×690 canvas, 10:23 CSS ratio, 23-row 3D grid and updated 3D board/camera geometry. Deployment and real-device verification remain pending.
+- Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 314. ПРОВЕРИТЬ НА ОПУБЛИКОВАННОМ САЙТЕ АРЕНУ 10×23 В ОБЫЧНОМ И 3D-РЕЖИМЕ. УБЕДИТЬСЯ, ЧТО 3D-СЕТКА ИМЕЕТ 23 РЯДА, ФИГУРЫ СОВПАДАЮТ С КЛЕТКАМИ, ВЕРХ И НИЗ АРЕНЫ НЕ ОБРЕЗАНЫ, КАМЕРА ПОМЕЩАЕТ ВСЁ ПОЛЕ. ПРОВЕРИТЬ BLOCK RUN, ДВИЖЕНИЕ, ПОВОРОТ, СТОЛКНОВЕНИЯ И ОЧИСТКУ ЛИНИЙ. СКОРОСТЬ ПАДЕНИЯ НЕ МЕНЯТЬ. 🤘🏆**
