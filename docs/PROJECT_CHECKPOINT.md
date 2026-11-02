@@ -786,3 +786,21 @@ Do not claim device testing has happened; the user performs real-device testing.
 - Do not attempt another global `.playlayout` override. Future sizing changes must target only the boardframe within its existing parent layout, measure the available rectangle, and preserve the 10:23 aspect ratio for the board canvas.
 - Source rollback commits: `b108c30d01da21ab7de76b1e5c1fac1dce63fc12` (layout) and `2a06bcfd39ecb8bbd018febb4ae96659136a7ece` (validator). User must verify live mobile layout before further tuning.
 - Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 317. ВОССТАНОВИТЬ ПРАВИЛЬНОЕ РАСПОЛОЖЕНИЕ HUD И БОКОВЫХ ЭЛЕМЕНТОВ ПОСЛЕ ОТКАТА ЭКСПЕРИМЕНТАЛЬНОГО ADAPTIVE CSS. ПРОВЕРИТЬ, ЧТО КЛЕТКИ 3D СНОВА КВАДРАТНЫЕ И НЕ РАСТЯНУТЫ. НЕ МЕНЯТЬ ИГРОВУЮ ЛОГИКУ, УПРАВЛЕНИЕ И СУЩЕСТВУЮЩУЮ КОМПОНОВКУ. ДАЛЬШЕ МАСШТАБИРОВАТЬ ТОЛЬКО BOARD FRAME ВНУТРИ ЕГО РОДНОГО КОНТЕЙНЕРА.**
+
+
+## Checkpoint 318 — hero skill slot and “Отсек героев” (2026-11-02)
+
+- Renamed the main-menu hero entry and hero screen to **«Отсек героев»**, with copy focused on the crew, unique abilities and progression.
+- Added a compact hero slot at the bottom of the existing game side rail. It displays the currently selected hero's SVG emblem, name, signature skill, unlock level and cooldown state. The slot uses the existing side-column flow; no `.playlayout`, boardframe, canvas, camera or arena dimensions were changed.
+- The hero ability unlocks at hero level 5 and uses the existing 45-second cooldown. The selected hero's portrait is the primary in-game activation target. Removed the duplicate ability button from the roguelike encounter strip so there is one consistent activation location.
+- Ability behavior:
+  - Captain Plush: activates a shield in standard modes; retains the upper-row rescue effect in Block Run.
+  - Prism: grants a level-scaled score burst in standard modes; retains monster damage in Block Run.
+  - Blip: slows gravity for 8 seconds in standard modes; retains the enemy-attack delay in Block Run.
+  - Pixel: clears rows and restores level charge; level charge is capped and can trigger the normal level-up flow.
+  - Spark: grants a level-scaled score burst and visual flash in standard modes; retains monster damage in Block Run.
+- Skill cooldown refreshes in the existing game timer. Hero level and XP continue to use the existing per-hero progression/training system in the hero hub.
+- Source commits: `887ceede9603bed4ec1314a78f91bcea7097db53` (initial UI and skill slot), `cdf84062da9df799bcfc8f5f6ae3525a91ee0d58` (single activation control), `101245692c21d2f898d066968f90e8b696444ede` (temporary Blip effect and Pixel charge guard).
+- No changes to the 10×23 board, 2D/3D rendering, controls, pause behavior, or existing layout sizing.
+- GitHub Actions for the feature are running from the latest source commit; web deployment and APK build results must be checked before treating the feature as published. Visual confirmation still requires the user's phone/browser check.
+- Resume phrase: **TETRIOS LX — КОНТРОЛЬНАЯ ТОЧКА 318. ОТСЕК ГЕРОЕВ: ПРОВЕРИТЬ НОВЫЙ СЛОТ В ПРАВОЙ НИЖНЕЙ ЧАСТИ ИГРОВОГО HUD, ПОРТРЕТ ВЫБРАННОГО ГЕРОЯ, ОТКРЫТИЕ СПОСОБНОСТИ С 5 УРОВНЯ И ПЕРЕЗАРЯДКУ 45 СЕКУНД. ПРОВЕРИТЬ УМЕНИЯ ВСЕХ ПЯТИ ГЕРОЕВ В ОБЫЧНОМ РЕЖИМЕ И В БЛОК-РАНЕ. НЕ МЕНЯТЬ СЕТКУ 10×23, 2D/3D-АРЕНУ, РАЗМЕРЫ ПОЛЯ И СУЩЕСТВУЮЩИЕ УПРАВЛЕНИЯ.**
