@@ -23,13 +23,13 @@
     const key=String(color)+':'+ghost;
     if(!colorCache.has(key)){
       const options={
-        color,roughness:ghost?.52:.2,metalness:ghost?.08:.62,
-        emissive:color,emissiveIntensity:ghost?.08:.28,
+        color,roughness:ghost?.52:.3,metalness:ghost?.08:.22,
+        emissive:color,emissiveIntensity:ghost?.08:.12,
         transparent:ghost,opacity:ghost?.18:1
       };
       const material=lowPowerDevice
         ?new THREE.MeshStandardMaterial(options)
-        :new THREE.MeshPhysicalMaterial({...options,clearcoat:ghost?0:.9,clearcoatRoughness:.12});
+        :new THREE.MeshPhysicalMaterial({...options,clearcoat:ghost?0:.35,clearcoatRoughness:.2});
       colorCache.set(key,material);sharedMaterials.add(material);
     }
     return colorCache.get(key);
@@ -82,35 +82,41 @@
     const key=new THREE.DirectionalLight(0xffffff,3.1);key.position.set(-4,7,12);scene.add(key);
     const rim=new THREE.PointLight(0x45f4ff,18,28);rim.position.set(5,0,8);scene.add(rim);
     const violet=new THREE.PointLight(0x9566ff,13,24);violet.position.set(-6,2,-4);scene.add(violet);
-    // Open 3D playfield: remove the solid backing box and large plates. The cells float in the game space.
-    const sideGlowMat=new THREE.MeshBasicMaterial({color:0x54fff0,transparent:true,opacity:.2});
+    // Open 3D playfield with the same dark base, alternating rows and readable grid as the 2D arena.
+    const boardSurface=new THREE.Mesh(new THREE.PlaneGeometry(10,23),new THREE.MeshBasicMaterial({color:0x0a1222}));
+    boardSurface.position.z=-.2;scene.add(boardSurface);
+    const rowBandMaterial=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.016,depthWrite:false});
+    for(let y=1;y<23;y+=2){
+      const band=new THREE.Mesh(new THREE.PlaneGeometry(10,.999),rowBandMaterial);
+      band.position.set(0,11-y,-.17);scene.add(band);
+    }
+    const sideGlowMat=new THREE.MeshBasicMaterial({color:0x54fff0,transparent:true,opacity:.16});
     [-5.035,5.035].forEach(x=>{const glow=new THREE.Mesh(new THREE.BoxGeometry(.018,22.5,.025),sideGlowMat);glow.position.set(x,0,-.08);scene.add(glow)});
-    // Short corner markers replace the enclosing rectangular frame.
-    const cornerMat=new THREE.MeshBasicMaterial({color:0x75fff0,transparent:true,opacity:.58});
-    [[-5,11.5,1,1],[5,11.5,-1,1],[-5,-11.5,1,-1],[5,-11.5,-1,-1]].forEach(([x,y,sx,sy])=>{
-      const h=new THREE.Mesh(new THREE.BoxGeometry(.42,.025,.035),cornerMat);h.position.set(x+sx*.2,y,-.035);scene.add(h);
-      const v=new THREE.Mesh(new THREE.BoxGeometry(.025,.42,.035),cornerMat);v.position.set(x,y-sy*.2,-.035);scene.add(v);
-    });
     gridGroup=new THREE.Group();scene.add(gridGroup);
-    const lineMaterial=new THREE.LineBasicMaterial({color:0x385477,transparent:true,opacity:.55});
+    const lineMaterial=new THREE.LineBasicMaterial({color:0x38506f,transparent:true,opacity:.78});
     const positions=[];
     for(let x=0;x<=10;x++){const px=x-5;positions.push(px,-11.5,.01,px,11.5,.01)}
     for(let y=0;y<=23;y++){const py=11.5-y;positions.push(-5,py,.01,5,py,.01)}
     const gridGeo=new THREE.BufferGeometry();gridGeo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
     gridGroup.add(new THREE.LineSegments(gridGeo,lineMaterial));
+    const majorPositions=[];
+    for(let x=5;x<10;x+=5){const px=x-5;majorPositions.push(px,-11.5,.025,px,11.5,.025)}
+    for(let y=5;y<23;y+=5){const py=11.5-y;majorPositions.push(-5,py,.025,5,py,.025)}
+    const majorGeo=new THREE.BufferGeometry();majorGeo.setAttribute('position',new THREE.Float32BufferAttribute(majorPositions,3));
+    gridGroup.add(new THREE.LineSegments(majorGeo,new THREE.LineBasicMaterial({color:0x75a6c9,transparent:true,opacity:.58})));
     const borderGeo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-5,-11.5,.04),new THREE.Vector3(5,-11.5,.04),new THREE.Vector3(5,11.5,.04),new THREE.Vector3(-5,11.5,.04),new THREE.Vector3(-5,-11.5,.04)]);
-    gridGroup.add(new THREE.Line(borderGeo,new THREE.LineBasicMaterial({color:0x75fff0,transparent:true,opacity:.8})));
-    // Keep only slim floating side guides; no enclosing rails, corner balls or bottom bar.
-    const railMat=new THREE.MeshStandardMaterial({color:0x5df8ee,emissive:0x1a8e9c,emissiveIntensity:1.15,metalness:.65,roughness:.22});
+    gridGroup.add(new THREE.Line(borderGeo,new THREE.LineBasicMaterial({color:0x7bd8e8,transparent:true,opacity:.9})));
+    // A restrained cyan edge glow keeps the arena open instead of enclosing it in a box.
+    const railMat=new THREE.MeshStandardMaterial({color:0x5df8ee,emissive:0x1a8e9c,emissiveIntensity:.8,metalness:.35,roughness:.3});
     arenaPulseMaterial=railMat;
-    const railGeo=new THREE.BoxGeometry(.025,22.4,.045);
+    const railGeo=new THREE.BoxGeometry(.018,22.4,.03);
     [-5.18,5.18].forEach(x=>{const rail=new THREE.Mesh(railGeo,railMat);rail.position.set(x,0,-.04);gridGroup.add(rail)});
     boardGroup=new THREE.Group();scene.add(boardGroup);
     activeGroup=new THREE.Group();scene.add(activeGroup);
     ghostGroup=new THREE.Group();scene.add(ghostGroup);
     pulseGroups=[boardGroup,activeGroup,ghostGroup];
     effectsGroup=new THREE.Group();scene.add(effectsGroup);
-    const resize=()=>{if(!renderer)return;const frameRect=frame.getBoundingClientRect(),boardRect=boardCanvas.getBoundingClientRect();const w=Math.max(1,boardRect.width),h=Math.max(1,boardRect.height),aspect=w/h;renderer.domElement.style.left=(boardRect.left-frameRect.left-frame.clientLeft)+'px';renderer.domElement.style.top=(boardRect.top-frameRect.top-frame.clientTop)+'px';renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';const arenaWidth=10.36,arenaHeight=23.55,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.008,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
+    const resize=()=>{if(!renderer)return;const frameRect=frame.getBoundingClientRect(),boardRect=boardCanvas.getBoundingClientRect();const w=Math.max(1,boardRect.width),h=Math.max(1,boardRect.height),aspect=w/h;renderer.domElement.style.left=(boardRect.left-frameRect.left-frame.clientLeft)+'px';renderer.domElement.style.top=(boardRect.top-frameRect.top-frame.clientTop)+'px';renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';const arenaWidth=10.12,arenaHeight=23.12,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.006,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resizeObserver.observe(boardCanvas);window.addEventListener('resize',resize,{passive:true});resize();
   }
   function blockInto(target,x,y,color,ghost=false){
@@ -133,23 +139,12 @@
     });
     const mesh=new THREE.Mesh(geo,materialFor(color,ghost));
     cell.add(mesh);
-    const edges=new THREE.LineSegments(geometryFor('block-edges',()=>new THREE.EdgesGeometry(geo)),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.28:.78}));
+    const edges=new THREE.LineSegments(geometryFor('block-edges',()=>new THREE.EdgesGeometry(geo)),new THREE.LineBasicMaterial({color:ghost?0x91eaff:0xe6ffff,transparent:true,opacity:ghost?.22:.52}));
     edges.position.z=.002;cell.add(edges);
     if(!ghost){
-      // A recessed-looking luminous core and machined metal rails give each block its own material identity.
-      const core=new THREE.Mesh(geometryFor('block-core',()=>new THREE.BoxGeometry(.43,.43,.025)),coreMaterialFor(color));
-      core.position.set(.035,-.015,.323);cell.add(core);
-      const frameMat=edgeMaterialFor(color);
-      const topRail=new THREE.Mesh(geometryFor('block-top-rail',()=>new THREE.BoxGeometry(.62,.035,.035)),frameMat);
-      topRail.position.set(0,.365,.29);cell.add(topRail);
-      const sideRail=new THREE.Mesh(geometryFor('block-side-rail',()=>new THREE.BoxGeometry(.035,.56,.035)),frameMat);
-      sideRail.position.set(.365,-.015,.29);cell.add(sideRail);
-      const shine=new THREE.Mesh(geometryFor('block-shine',()=>new THREE.BoxGeometry(.52,.025,.018)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.72}));
+      // Keep one soft top highlight, echoing the simple highlight used by 2D cells.
+      const shine=new THREE.Mesh(geometryFor('block-shine',()=>new THREE.BoxGeometry(.52,.025,.018)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.5}));
       shine.position.set(-.025,.285,.338);cell.add(shine);
-      const accent=new THREE.Mesh(geometryFor('block-accent',()=>new THREE.BoxGeometry(.035,.42,.025)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.35}));
-      accent.position.set(-.345,-.045,.326);cell.add(accent);
-      const corner=new THREE.Mesh(geometryFor('block-corner',()=>new THREE.BoxGeometry(.12,.035,.025)),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.62}));
-      corner.position.set(.275,-.345,.326);cell.add(corner);
     }
     target.add(cell);
   }
@@ -353,8 +348,8 @@
       const arenaPulseAge=now-arenaPulseAt,arenaPulseProgress=Math.min(1,arenaPulseAge/720);
       const arenaPulse=arenaPulseAt&&arenaPulseAge<720?Math.sin(arenaPulseProgress*Math.PI)*(1-arenaPulseProgress)*arenaPulseStrength:0;
       if(arenaPulseMaterial)arenaPulseMaterial.emissiveIntensity=1.6+arenaPulse;
-      camera.position.x=shake-.22;
-      camera.position.y=.34;
+      camera.position.x=shake;
+      camera.position.y=0;
       for(let g=0;g<pulseGroups.length;g++){
         const cells=pulseGroups[g].children;
         for(let i=0;i<cells.length;i++){
@@ -384,7 +379,7 @@
         );
       }
     }
-    camera.lookAt(-.22,.34,0);renderer.render(scene,camera);
+    camera.lookAt(0,0,0);renderer.render(scene,camera);
     raf=requestAnimationFrame(animate);
   }
   async function setEnabled(next){
