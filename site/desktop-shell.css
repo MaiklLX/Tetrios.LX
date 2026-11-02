@@ -1184,3 +1184,25 @@
     #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div { padding: 13px 11px 12px !important; }
   }
 }
+
+
+/* CHECKPOINT 347 — authoritative desktop dashboard grid.
+   visual-overhaul.css still contains a legacy !important three-column template.
+   Reassert the current two-column desktop layout after that stylesheet.
+   The <=900px tablet/mobile compositions are intentionally untouched. */
+@media (min-width: 901px) {
+  #menu.home-dashboard {
+    grid-template-columns: minmax(0, 1.62fr) minmax(330px, .92fr) !important;
+    grid-template-areas:
+      "hero download"
+      "modes streak"
+      "quests resources"
+      "heroes profile"
+      "stats stats"
+      "reset reset" !important;
+    grid-template-rows: auto auto auto auto auto auto !important;
+  }
+  #menu.home-dashboard > .hero {
+    grid-column: auto !important;
+  }
+}
