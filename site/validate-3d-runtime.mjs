@@ -62,7 +62,7 @@ for (const path of [
 
 if (!arena.includes('new THREE.OrthographicCamera(') || !arena.includes('camera.position.set(0,0,34)')) fail('3D arena camera must face the board head-on without a horizontal/vertical offset');
 if (!arena.includes('boardCanvas.getBoundingClientRect()') || !arena.includes('boardRect.left-frameRect.left-frame.clientLeft') || !arena.includes('boardRect.top-frameRect.top-frame.clientTop')) fail('3D arena canvas must align to the exact visible 2D board bounds');
-if (!arena.includes('const arenaWidth=10.36,arenaHeight=23.55') || !arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.008') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full 10×23 board in the available canvas while preserving its aspect ratio');
+if (!arena.includes('const arenaWidth=10.4,arenaHeight=23.2') || !arena.includes('viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.006') || !arena.includes('camera.left=-viewWidth/2') || !arena.includes('camera.right=viewWidth/2')) fail('3D arena must fit the full 10×23 board in the available canvas while preserving its aspect ratio');
 if (arena.includes('camera.position.x=3+') || arena.includes('camera.position.y=2+')) fail('3D arena must not reintroduce the off-centre camera drift that crops the board');
 if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js does not load local Three.js');
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
@@ -130,7 +130,7 @@ if (!index.includes("localStorage.bb_haptics=hapticsOn?'1':'0'")) fail('haptic p
 if (!index.includes('function bbHandleVisibilityChange()') || !index.includes('if (document.hidden && started && !paused && !gameOver)') || !index.includes("document.addEventListener('visibilitychange', bbHandleVisibilityChange)")) fail('an active game must auto-pause when the app is backgrounded and require manual resume');
 if (index.includes('bbSetupMobileGameHud') || index.includes('mobile-game-hud-trigger') || index.includes('bb-mobile-game-active')) fail('experimental immersive mobile HUD must remain removed');
 if (mobileCss.includes('#game .sidecol{display:none!important}') || mobileCss.includes('position:fixed!important;inset:0!important')) fail('visual stylesheet must not force a fullscreen mobile board');
-if (!arena.includes('new THREE.ExtrudeGeometry(shape,') || !arena.includes('bevelEnabled:true') || !arena.includes('clearcoat:ghost?0:.9')) fail('3D blocks must use beveled, premium physical surfaces');
+if (!arena.includes('new THREE.ExtrudeGeometry(shape,') || !arena.includes('bevelEnabled:true') || !arena.includes('clearcoat:ghost?0:.35')) fail('3D blocks must use beveled, premium physical surfaces');
 if (!index.includes('src="./audio/chills.mp3"')) fail('index.html must use the bundled local soundtrack');
 if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('soundtrack attribution must document the author and CC0 license');
 if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
