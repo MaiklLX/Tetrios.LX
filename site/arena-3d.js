@@ -252,13 +252,38 @@
       lastBoardSignature=boardSignature;
       disposeGroup(boardGroup);
       const colors=state.colors||[];
+      const settleSourceByTarget=new Map();
+      if(linesChanged&&!reducedMotion.matches&&previousState?.piece){
+        const beforeClear=(previousState.board||[]).map(row=>row.slice());
+        const oldPiece=previousState.piece;
+        oldPiece.shape.forEach((row,dy)=>row.forEach((value,dx)=>{
+          const x=oldPiece.x+dx,y=oldPiece.y+dy;
+          if(value&&y>=0&&beforeClear[y]?.[x]!==undefined)beforeClear[y][x]=oldPiece.t+1;
+        }));
+        const clearedRows=beforeClear.map((row,y)=>row.length&&row.every(Boolean)?y:-1).filter(y=>y>=0);
+        if(clearedRows.length){
+          for(let oldY=0;oldY<beforeClear.length;oldY++){
+            if(clearedRows.includes(oldY))continue;
+            const targetY=oldY+clearedRows.filter(row=>row>oldY).length;
+            settleSourceByTarget.set(targetY,oldY);
+          }
+        }
+      }
+      const settleAt=performance.now();
       for(let y=0;y<state.height;y++)for(let x=0;x<state.width;x++){
         const v=state.board[y]?.[x];
         if(v){
-          blockInto(boardGroup,x,y,colors[v-1]||'#69f4ff');
+          const sourceY=settleSourceByTarget.has(y)?settleSourceByTarget.get(y):y;
+          blockInto(boardGroup,x,sourceY,colors[v-1]||'#69f4ff');
           const cell=boardGroup.children[boardGroup.children.length-1];
+          if(sourceY!==y){
+            cell.userData.settleFromY=sourceY;
+            cell.userData.settleToY=y;
+            cell.userData.settleStartedAt=settleAt;
+            cell.userData.settleDuration=280;
+          }
           if(!reducedMotion.matches&&landingKeys.has(x+','+y)){
-            cell.userData.landAt=performance.now();
+            cell.userData.landAt=settleAt;
             cell.scale.set(1,.78,1);
           }
         }
@@ -356,12 +381,25 @@
           const cell=cells[i];
           if(cell.isGroup){
             const pulse=1+Math.sin(now*.004+cell.userData.pulsePhase)*.008;
+            if(cell.userData.settleStartedAt){
+              const progress=Math.min(1,(now-cell.userData.settleStartedAt)/(cell.userData.settleDuration||280));
+              const eased=1-Math.pow(1-progress,3);
+              const y=cell.userData.settleFromY+(cell.userData.settleToY-cell.userData.settleFromY)*eased;
+              cell.position.y=11-y;
+              if(progress>=1){
+                cell.position.y=11-cell.userData.settleToY;
+                delete cell.userData.settleStartedAt;
+                delete cell.userData.settleFromY;
+                delete cell.userData.settleToY;
+                delete cell.userData.settleDuration;
+              }
+            }
             if(cell.userData.landAt){
               const progress=Math.min(1,(now-cell.userData.landAt)/260);
               const rebound=1-.22*Math.exp(-progress*7)*Math.cos(progress*12);
               cell.scale.set(pulse,pulse*rebound,1);
               if(progress>=1)delete cell.userData.landAt;
-            }else cell.scale.set(pulse,pulse,1);
+            }else if(!cell.userData.settleStartedAt)cell.scale.set(pulse,pulse,1);
           }
         }
       }
