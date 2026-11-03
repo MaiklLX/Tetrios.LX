@@ -11795,4 +11795,118 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-mobile-golden-icon-rail-v1">
+/* TETRIOS LX #381 — icon-first mobile utility rail.
+   Keep meaningful live values; remove cramped micro-copy from the visual layout.
+   Desktop Golden Baseline #372 is outside this media query. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>.sidecard>label{
+    position:relative!important;
+    display:block!important;
+    height:15px!important;
+    min-height:15px!important;
+    margin:0 auto 2px!important;
+    padding:0!important;
+    overflow:hidden!important;
+    color:transparent!important;
+    font-size:0!important;
+    line-height:0!important;
+    text-align:center!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard>label::after{
+    display:block!important;
+    color:#b9e8ff!important;
+    font-size:12px!important;
+    font-weight:900!important;
+    line-height:15px!important;
+    text-shadow:0 0 8px rgba(92,245,232,.45)!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard:nth-child(1)>label::after{content:"✦"}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(2)>label::after{content:"▦"}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(3)>label::after{content:"⚡"}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(4)>label::after{content:"⌛"}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(5)>label::after{content:"◷"}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(6)>label::after{content:"♫"}
+  #game>.playlayout>.sidecol>.charge-caption,
+  #game>.playlayout>.sidecol>.chrono-caption{
+    display:none!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard{
+    padding:5px 4px!important;
+    gap:2px!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    margin:0 auto!important;
+  }
+  #game>.playlayout>.sidecol .boostname,
+  #game>.playlayout>.sidecol .boostnum{
+    display:none!important;
+  }
+  #game>.playlayout>.sidecol .boosticon{
+    display:grid!important;
+    place-items:center!important;
+    min-height:34px!important;
+    margin:0!important;
+    font-size:25px!important;
+    line-height:1!important;
+    text-shadow:0 0 12px rgba(92,245,232,.28)!important;
+  }
+  #game>.playlayout>.sidecol #timer{
+    margin:0 auto 3px!important;
+    font-size:17px!important;
+    letter-spacing:.03em!important;
+  }
+  #game>.playlayout>.sidecol #holdBtn{
+    min-height:28px!important;
+    margin:0!important;
+    padding:3px!important;
+    font-size:0!important;
+    line-height:1!important;
+  }
+  #game>.playlayout>.sidecol #holdBtn::after{
+    content:"▣"!important;
+    color:inherit!important;
+    font-size:17px!important;
+    line-height:20px!important;
+  }
+  #game>.playlayout>.sidecol .side-drop{
+    min-height:30px!important;
+    margin:0!important;
+    padding:3px!important;
+    font-size:0!important;
+    line-height:1!important;
+  }
+  #game>.playlayout>.sidecol .side-drop::after{
+    content:"⬇"!important;
+    font-size:20px!important;
+    line-height:22px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-height:54px!important;
+    height:54px!important;
+    padding:5px!important;
+    gap:0!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 36px!important;
+    width:36px!important;
+    height:36px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    display:none!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-pulse{
+    position:absolute!important;
+    right:5px!important;
+    top:4px!important;
+    font-size:10px!important;
+  }
+}
+</style>
+
 </body></html>
