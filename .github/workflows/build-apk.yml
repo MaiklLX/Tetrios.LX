@@ -168,6 +168,44 @@ jobs:
           test -s "$ASSET_DIR/universes/manifest.json"
           test -s "$ASSET_DIR/universes-3d.js"
           echo "Synced space backgrounds and 3D universe atlas into Android assets"
+          # Download every GLB into the APK and rewrite only the packaged manifest.
+          # The website keeps its remote URLs; Android becomes fully offline for universe models.
+          python3 - "$ASSET_DIR/universes/manifest.json" "$ASSET_DIR/universes/models" <<'PY'
+          import json
+          import pathlib
+          import subprocess
+          import sys
+
+          manifest_path = pathlib.Path(sys.argv[1])
+          models_dir = pathlib.Path(sys.argv[2])
+          models_dir.mkdir(parents=True, exist_ok=True)
+          manifest = json.loads(manifest_path.read_text())
+          models = manifest.get("models", {})
+          if len(models) != 12:
+              raise SystemExit(f"Expected 12 universe models, found {len(models)}")
+          for model_id, entry in models.items():
+              url = entry.get("url", "")
+              filename = pathlib.Path(entry.get("file", "")).name
+              if not url.startswith("https://") or not filename.endswith(".glb"):
+                  raise SystemExit(f"Invalid GLB metadata for {model_id}")
+              target = models_dir / filename
+              subprocess.run([
+                  "curl", "--fail", "--location", "--retry", "3",
+                  "--retry-all-errors", "--connect-timeout", "20",
+                  "--max-time", "240", "--user-agent", "TetriosLX-Android-Asset-Bundler/1.0",
+                  url, "--output", str(target)
+              ], check=True)
+              with target.open("rb") as stream:
+                  magic = stream.read(4)
+              if magic != b"glTF" or target.stat().st_size < 1024:
+                  raise SystemExit(f"Invalid or incomplete GLB: {target}")
+              entry["url"] = "./universes/models/" + filename
+              print(f"Bundled {model_id}: {target.stat().st_size} bytes")
+          manifest["loading"] = "All 12 GLB universe models are bundled locally for offline Android use."
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\\n")
+          PY
+          test "$(find "$ASSET_DIR/universes/models" -maxdepth 1 -type f -name '*.glb' | wc -l)" -eq 12
+          echo "Bundled all 12 universe models locally in APK"
 
           if [ ! -s "$GITHUB_WORKSPACE/site/audio/chills.mp3" ]; then
             echo "::error::Bundled soundtrack is missing"
@@ -215,6 +253,18 @@ jobs:
           grep -q 'WebViewAssetLoader' "$MAIN_ACTIVITY"
           grep -q 'appassets.androidplatform.net/assets/index.html' "$MAIN_ACTIVITY"
           echo "Hardened Android WebView with local HTTPS asset origin"
+
+          # Use one stable debug signing identity across CI builds so Android can update
+          # the installed test APK in place instead of requiring uninstall/reinstall.
+          mkdir -p "$RUNNER_TEMP/tetrios-signing"
+          base64 --decode "$GITHUB_WORKSPACE/android/debug-signing.keystore.b64" \
+            > "$RUNNER_TEMP/tetrios-signing/debug.keystore"
+          export TETRIOS_DEBUG_KEYSTORE="$RUNNER_TEMP/tetrios-signing/debug.keystore"
+          export TETRIOS_DEBUG_STORE_PASSWORD="tetrios-debug-only"
+          export TETRIOS_DEBUG_KEY_ALIAS="tetrios-debug"
+          export TETRIOS_DEBUG_KEY_PASSWORD="tetrios-debug-only"
+          python3 "$GITHUB_WORKSPACE/scripts/configure-stable-android-debug-signing.py" "$PROJECT_DIR"
+          echo "Configured persistent debug signing for in-place APK updates"
 
       - name: Install Android SDK components
         shell: bash
