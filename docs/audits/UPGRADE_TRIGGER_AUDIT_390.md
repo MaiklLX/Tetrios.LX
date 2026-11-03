@@ -52,3 +52,10 @@ These are not to be treated as active effects merely because their catalogue des
 - `randomType()` uses a seven-piece bag: every shape is inserted once, shuffled, and consumed once before the next bag. This is a uniform distribution, not a rarity system.
 - Calling one existing piece “rare” would be arbitrary and would misrepresent the current generator. Adding weighted rarity would alter core piece fairness and should be a deliberate design decision, not a silent implementation detail.
 - Keep Luck inactive until a clear rarity rule is approved (which pieces are rare, how often they appear, and whether the reward is additive or a multiplier).
+
+## Follow-up source scan — remaining visual cards
+
+- `prism`: catalogue-only occurrence plus unrelated Prism hero/name references; no `boosts.includes('prism')`, `bbGetUpgradeRank('prism')`, or `bbGetRogueCardRank('prism')` trigger found. The render path has a dedicated daily-glitch color override, but no Prism upgrade hook.
+- `aura`: one catalogue occurrence; no upgrade-owned render or gameplay hook found.
+- `void`: one catalogue occurrence; no board compaction/compression hook found.
+- These remain inactive. Do not repurpose daily visual effects or hero identity code as substitutes for card-owned triggers.
