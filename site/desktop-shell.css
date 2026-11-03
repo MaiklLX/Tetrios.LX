@@ -1382,7 +1382,7 @@
   #game canvas#board.board {
     display: block;
     flex: none;
-    width: clamp(200px, min(24vw, calc((100dvh - 270px) * .4347826)), 320px) !important;
+    width: clamp(200px, 22vw, 300px) !important;
     height: auto !important;
     max-width: none !important;
     max-height: none !important;
