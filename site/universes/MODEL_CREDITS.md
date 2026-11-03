@@ -37,7 +37,7 @@ All selected source pages explicitly identify their individual model as CC0 1.0 
 
 ## Expanded atlas models
 
-The expanded atlas adds fifteen distinct CC0 models. Twelve are assigned as companion objects across the twelve campaign universes; the remaining models expand the available visual library for future map scenes.
+The expanded atlas adds sixteen distinct CC0 models. Twelve are assigned as companion objects across the twelve campaign universes; the remaining models expand the available visual library for future map scenes.
 
 | Model | In-game object | Original source |
 |---|---|---|
