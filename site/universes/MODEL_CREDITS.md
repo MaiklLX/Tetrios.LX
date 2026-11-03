@@ -1,22 +1,36 @@
 # Universe model credits
 
-The 12 campaign atlas models are loaded as GLB assets from the original publisher, Grab3D, Cozy Space Kit.
+The campaign atlas uses 24 GLB models from Grab3D's Cozy Space Kit and Cozy Sci-Fi Base Kit. The publisher marks each listed model **CC0 1.0 Universal** (public domain dedication), permitting commercial use and modification without required attribution. We retain the source links as a courtesy.
 
-All listed models are marked **CC0 1.0 Universal** by the publisher. Commercial use and modification are permitted; attribution is not required. We retain these credits as a courtesy. Source pages and original download endpoints are recorded in `manifest.json`.
+The website loads from original publisher endpoints; the Android APK build downloads and bundles the same GLB files locally. Each source URL and original filename is also recorded in `manifest.json`.
 
-| Universe | Model | Source |
+| Model | In-game object | Original source |
 |---|---|---|
-| Green Plains | Planet | https://grab3d.com/models/sci-fi/planet/ |
-| Whispering Forest | Earth and Moon | https://grab3d.com/models/sci-fi/earth-and-moon/ |
-| Firelands | Planet Sphere | https://grab3d.com/models/sci-fi/planet-sphere/ |
-| Ice Crown | Neptune | https://grab3d.com/models/sci-fi/neptune/ |
-| Sands of Time | Mars | https://grab3d.com/models/sci-fi/mars/ |
-| Sunken Kingdom | Uranus | https://grab3d.com/models/sci-fi/uranus/ |
-| Sky Archipelago | Saturn | https://grab3d.com/models/sci-fi/saturn/ |
-| Dark Marshes | Black Hole | https://grab3d.com/models/sci-fi/black-hole/ |
-| Crystal Caves | Mercury | https://grab3d.com/models/sci-fi/mercury-planet/ |
-| Mechanical City | Solar System | https://grab3d.com/models/sci-fi/solar-system/ |
-| Cosmic Rift | Spiral Galaxy | https://grab3d.com/models/sci-fi/galaxy/ |
-| Heart of the Void | Sun | https://grab3d.com/models/sci-fi/sun/ |
+| planet | Blue-green planet | https://grab3d.com/models/sci-fi/planet/ |
+| earth-and-moon | Earth and Moon | https://grab3d.com/models/sci-fi/earth-and-moon/ |
+| planet-sphere | Lava planet | https://grab3d.com/models/sci-fi/planet-sphere/ |
+| neptune | Ice giant | https://grab3d.com/models/sci-fi/neptune/ |
+| mars | Red desert planet | https://grab3d.com/models/sci-fi/mars/ |
+| uranus | Tilted ice giant | https://grab3d.com/models/sci-fi/uranus/ |
+| saturn | Ringed gas giant | https://grab3d.com/models/sci-fi/saturn/ |
+| black-hole | Black hole and accretion disk | https://grab3d.com/models/sci-fi/black-hole/ |
+| mercury-planet | Cratered rocky planet | https://grab3d.com/models/sci-fi/mercury-planet/ |
+| solar-system | Miniature solar system | https://grab3d.com/models/sci-fi/solar-system/ |
+| galaxy | Spiral galaxy | https://grab3d.com/models/sci-fi/galaxy/ |
+| sun | Star | https://grab3d.com/models/sci-fi/sun/ |
+| cargo-spaceship | Cargo freighter | https://grab3d.com/models/sci-fi/cargo-spaceship/ |
+| cargo-shuttle | Cargo shuttle | https://grab3d.com/models/sci-fi/cargo-shuttle/ |
+| escape-pod | Escape capsule | https://grab3d.com/models/sci-fi/escape-pod/ |
+| space-fighter | Starfighter | https://grab3d.com/models/sci-fi/space-fighter/ |
+| sci-fi-spaceship | Exploration spaceship | https://grab3d.com/models/sci-fi/sci-fi-spaceship/ |
+| moon-base-dome | Lunar colony dome | https://grab3d.com/models/sci-fi/moon-base-dome/ |
+| drone-bot | Scout drone | https://grab3d.com/models/sci-fi/drone-bot/ |
+| mech-walker | Expedition mech | https://grab3d.com/models/sci-fi/mech-walker/ |
+| portal-gate | Portal gate | https://grab3d.com/models/sci-fi/portal-gate/ |
+| antenna-array | Communications array | https://grab3d.com/models/sci-fi/antenna-array/ |
+| alien-egg | Alien egg | https://grab3d.com/models/sci-fi/alien-egg/ |
+| alien-plant | Alien flora | https://grab3d.com/models/sci-fi/alien-plant/ |
 
-The models are lazy-loaded only as their galaxy cards approach the visible horizontal atlas. The atlas retains its emoji artwork if WebGL or the external model host is unavailable.
+## Licensing note
+
+All selected source pages explicitly identify their individual model as CC0 1.0 Universal. We do not treat a generic "free download" label as a license; the original page for each model is retained above and in the manifest.
