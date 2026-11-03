@@ -10626,4 +10626,94 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-panels-readable-v1">
+/* TETRIOS LX — readable desktop side panels and HUD */
+@media (min-width:901px){
+  #game>.gamehud{
+    grid-template-columns:minmax(0,1fr)!important;grid-auto-rows:minmax(54px,auto)!important;
+    align-content:start!important;gap:8px!important;width:100%!important;
+  }
+  #game>.gamehud .hudbox,#game>.gamehud #gameCoins{
+    box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+    align-items:center!important;justify-content:space-between!important;gap:12px!important;
+    width:100%!important;min-width:0!important;min-height:54px!important;height:auto!important;
+    margin:0!important;padding:10px 14px!important;overflow:visible!important;
+  }
+  #game>.gamehud .hudbox span,#game>.gamehud #gameCoins span{
+    display:block!important;flex:1 1 auto!important;min-width:0!important;
+    white-space:nowrap!important;overflow:visible!important;font-size:10px!important;
+    line-height:1.2!important;letter-spacing:.09em!important;
+  }
+  #game>.gamehud .hudbox strong,#game>.gamehud #gameCoins strong{
+    display:block!important;flex:0 0 auto!important;position:static!important;
+    min-width:2ch!important;margin:0!important;padding:0!important;white-space:nowrap!important;
+    overflow:visible!important;overflow-wrap:normal!important;word-break:normal!important;
+    text-align:right!important;font-size:clamp(20px,1.6vw,25px)!important;
+    line-height:1.1!important;font-variant-numeric:tabular-nums!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-template-columns:minmax(0,1fr)!important;grid-template-rows:none!important;
+    grid-auto-rows:minmax(88px,auto)!important;gap:9px!important;width:100%!important;
+    min-width:0!important;align-content:start!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard,#game>.playlayout>.sidecol>#bbHeroSkillCard{
+    box-sizing:border-box!important;width:100%!important;min-width:0!important;
+    min-height:88px!important;height:auto!important;margin:0!important;padding:10px 14px!important;
+    overflow:visible!important;border-radius:13px!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard{
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    justify-content:center!important;gap:5px!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard label{
+    display:block!important;width:100%!important;white-space:normal!important;
+    overflow-wrap:normal!important;word-break:normal!important;font-size:10px!important;
+    line-height:1.25!important;letter-spacing:.08em!important;text-align:center!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,#game>.playlayout>.sidecol .chrono-ring{
+    width:clamp(52px,6vh,72px)!important;flex:0 0 auto!important;margin:4px auto!important;
+  }
+  #game>.playlayout>.sidecol .charge-caption,#game>.playlayout>.sidecol .chrono-caption{
+    max-width:100%!important;font-size:9px!important;line-height:1.25!important;
+    overflow-wrap:normal!important;word-break:normal!important;text-align:center!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{
+    display:block!important;width:min(100%,125px)!important;height:64px!important;
+    max-width:100%!important;max-height:64px!important;margin:3px auto 0!important;
+    object-fit:contain!important;
+  }
+  #game>.playlayout>.sidecol .boosticon{font-size:26px!important;line-height:1.1!important;margin:3px 0!important}
+  #game>.playlayout>.sidecol .boostname,#game>.playlayout>.sidecol .boostnum{
+    width:100%!important;max-width:100%!important;font-size:10px!important;line-height:1.3!important;
+    white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important;
+    text-align:center!important;
+  }
+  #game>.playlayout>.sidecol #timer{font-size:21px!important;line-height:1.2!important;white-space:nowrap!important}
+  #game>.playlayout>.sidecol .smallbtn,#game>.playlayout>.sidecol .side-drop{
+    width:min(100%,180px)!important;min-width:0!important;min-height:34px!important;height:auto!important;
+    margin:4px auto 0!important;padding:8px 12px!important;white-space:nowrap!important;font-size:10px!important;
+  }
+  #game>.playlayout>.sidecol>.chrono-card{grid-column:auto!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    display:flex!important;flex-direction:row!important;align-items:center!important;
+    justify-content:flex-start!important;gap:10px!important;min-height:76px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{min-width:0!important;flex:1 1 auto!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong,
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    display:block!important;white-space:normal!important;overflow-wrap:break-word!important;line-height:1.25!important;
+  }
+}
+@media (min-width:901px) and (max-height:760px){
+  #game>.gamehud{grid-auto-rows:minmax(46px,auto)!important;gap:6px!important}
+  #game>.gamehud .hudbox,#game>.gamehud #gameCoins{min-height:46px!important;padding:7px 11px!important}
+  #game>.playlayout>.sidecol{grid-auto-rows:minmax(74px,auto)!important;gap:6px!important}
+  #game>.playlayout>.sidecol>.sidecard{min-height:74px!important;padding:7px 10px!important}
+  #game>.playlayout>.sidecol .charge-ring,#game>.playlayout>.sidecol .chrono-ring{width:48px!important}
+  #game>.playlayout>.sidecol .nextcanvas{height:46px!important;max-height:46px!important}
+}
+</style>
+
 </body></html>
