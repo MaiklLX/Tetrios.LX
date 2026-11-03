@@ -63,24 +63,36 @@ const targets = [
     await page.locator('#bbCloseCardLibrary').click();
 
     // Campaign is a standard ruleset: show its own mission objectives, never card picks.
-    await page.locator('button.mode[data-mode="campaign"]').click();
-    await page.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#campaignStart').click();
-    await page.locator('#bbStartHeroList [data-start-hero]').first().click();
-    await page.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#bbStartHeroChoose').click();
-    await page.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
-    const campaignMissionState = await page.evaluate(() => ({
-      objectiveRows: Math.max(0, document.querySelectorAll('#campaignGoals > div').length - 1),
-      boostLabel: document.querySelector('#boostName')?.textContent || '',
-      cardChoices: document.querySelectorAll('#modal [data-up]').length
-    }));
+    // Use a separate page so WebKit reload quirks cannot interrupt the Rogue preview.
+    const campaignPage = await context.newPage();
+    campaignPage.setDefaultTimeout(15000);
+    campaignPage.setDefaultNavigationTimeout(30000);
+    campaignPage.on('pageerror', error => pageErrors.push('campaign: ' + (error.stack || String(error))));
+    await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await campaignPage.locator('button.mode[data-mode="campaign"]').click();
+    await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
+    await campaignPage.locator('#campaignStart').click();
+    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
+    await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
+    await campaignPage.locator('#bbStartHeroChoose').click();
+    await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
+    await campaignPage.waitForTimeout(900);
+    const campaignMissionState = await campaignPage.evaluate(() => {
+      const goals = document.querySelector('#campaignGoals');
+      return {
+        objectiveRows: Math.max(0, goals ? Array.from(goals.children).filter(node => node.tagName === 'DIV').length - 1 : 0),
+        boostLabel: document.querySelector('#boostName')?.textContent || '',
+        cardChoices: document.querySelectorAll('#modal [data-up]').length,
+        missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
+        viewportHeight: innerHeight
+      };
+    });
     if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
     if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
-    await page.screenshot({ path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
+    if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
+    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+    await campaignPage.close();
 
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
