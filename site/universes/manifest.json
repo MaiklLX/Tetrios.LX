@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "format": "glTF 2.0 / GLB",
-  "sourceKit": "Grab3D Cozy Space Kit",
+  "sourceKit": "Grab3D Cozy Space Kit + Cozy Sci-Fi Base Kit",
   "license": {
     "name": "CC0 1.0 Universal",
     "url": "https://creativecommons.org/publicdomain/zero/1.0/",
     "commercialUse": true,
     "attributionRequired": false
   },
-  "loading": "40 locally packaged CC0 GLB models; the web atlas lazily loads the same models from the original publisher. Every campaign universe has a unique planet model and a unique companion object.",
+  "loading": "40 locally packaged CC0 GLB models; the web atlas lazily loads the same models from the original publisher. Each of 12 campaign universes has a unique showcase planet and companion prop; all 360 campaign nodes use deterministic non-repeating procedural planet variants.",
   "universeOrder": [
     "planet",
     "cargo-spaceship",
