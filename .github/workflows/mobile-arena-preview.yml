@@ -111,17 +111,28 @@ jobs:
                 return {
                   viewport: { width: innerWidth, height: innerHeight },
                   frame: rect(frame), board: rect(board), side: rect(side), left: rect(left),
-                  ratio, documentWidth: document.documentElement.scrollWidth
+                  ratio, documentWidth: document.documentElement.scrollWidth,
+                  computed: frame ? {
+                    width: getComputedStyle(frame).width,
+                    height: getComputedStyle(frame).height,
+                    aspectRatio: getComputedStyle(frame).aspectRatio,
+                    minHeight: getComputedStyle(frame).minHeight,
+                    maxHeight: getComputedStyle(frame).maxHeight,
+                    flex: getComputedStyle(frame).flex,
+                    parent: rect(frame.parentElement),
+                    parentHeight: getComputedStyle(frame.parentElement).height,
+                    parentAlign: getComputedStyle(frame.parentElement).alignItems
+                  } : null
                 };
               });
               console.log('ARENA_GEOMETRY_' + viewport.name, JSON.stringify(geometry));
               await page.screenshot({ path: 'preview-artifacts/arena-2d-' + viewport.name + '.png' });
               fs.writeFileSync('preview-artifacts/geometry-' + viewport.name + '.json', JSON.stringify(geometry, null, 2));
-              if (geometry.ratio < 0.39 || geometry.ratio > 0.48) {
-                throw new Error('Arena frame ratio outside expected 10:23 range at ' + viewport.name + ': ' + geometry.ratio);
+              if (geometry.ratio < 0.42 || geometry.ratio > 0.45) {
+                failures.push('Arena frame ratio outside expected 10:23 range at ' + viewport.name + ': ' + geometry.ratio);
               }
               if (geometry.documentWidth > viewport.width + 2) {
-                throw new Error('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
+                failures.push('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
               }
               const toggle = page.locator('#game .boardframe .bb-arena-toggle');
               await toggle.waitFor({ state: 'visible', timeout: 10000 });
@@ -140,7 +151,7 @@ jobs:
                 } : null;
               });
               if (!overlay || overlay.delta > 3) {
-                throw new Error('3D canvas does not align with 2D board at ' + viewport.name + ': ' + JSON.stringify(overlay));
+                failures.push('3D canvas does not align with 2D board at ' + viewport.name + ': ' + JSON.stringify(overlay));
               }
               await page.screenshot({ path: 'preview-artifacts/arena-3d-' + viewport.name + '.png' });
               results.push({ viewport: viewport.name, geometry, overlay, pageErrors });
