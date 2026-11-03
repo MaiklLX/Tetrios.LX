@@ -226,27 +226,36 @@
     // A locked piece becomes part of the settled board. Brief cell flashes make that transition readable.
     if(boardChanged&&previousState?.piece&&!linesChanged){
       const oldPiece=previousState.piece,now=performance.now();
-      const dropDistance=Math.max(0,(Number.isFinite(previousState.ghostY)?previousState.ghostY:oldPiece.y)-oldPiece.y);
+      const impactY=Number.isFinite(previousState.ghostY)?previousState.ghostY:oldPiece.y;
+      const dropDistance=Math.max(0,impactY-oldPiece.y);
       impactAt=now;impactStrength=Math.min(.32,.08+dropDistance*.025);
       oldPiece.shape.forEach((row,dy)=>row.forEach((v,dx)=>{
-        if(!v||oldPiece.y+dy<0)return;
+        if(!v||impactY+dy<0)return;
         const mat=new THREE.MeshBasicMaterial({color:0x8ffff7,transparent:true,opacity:.82,side:THREE.DoubleSide});
         const flash=new THREE.Mesh(new THREE.PlaneGeometry(.82,.82),mat);
-        flash.position.set(oldPiece.x+dx-4.5,11-(oldPiece.y+dy),.52);
+        flash.position.set(oldPiece.x+dx-4.5,11-(impactY+dy),.52);
         flash.userData.createdAt=now;flash.userData.life=360;
         addEffect(flash);
       }));
-      // Ground shockwave: a quick horizontal energy sweep under the locked piece.
+      // Ground shockwave: a quick horizontal energy sweep beneath the actual landing point.
       const shockMat=new THREE.MeshBasicMaterial({color:0x75fff0,transparent:true,opacity:.9,side:THREE.DoubleSide});
       const shock=new THREE.Mesh(new THREE.PlaneGeometry(8.8,.055),shockMat);
-      shock.position.set(0,Math.max(-11.22,Math.min(11.22,11-oldPiece.y)),.5);
+      shock.position.set(0,Math.max(-11.22,Math.min(11.22,11-impactY)),.5);
       shock.userData.createdAt=now;shock.userData.life=300;shock.userData.shockwave=true;
       addEffect(shock);
     }
     const landingKeys=new Set();
+    const landingSourceByCell=new Map();
     const landedPiece=boardChanged&&previousState?.piece&&!linesChanged?previousState.piece:null;
+    const landingY=landedPiece&&Number.isFinite(previousState.ghostY)?previousState.ghostY:landedPiece?.y;
+    const dropDistance=landedPiece?Math.max(0,landingY-landedPiece.y):0;
     if(landedPiece)landedPiece.shape.forEach((row,dy)=>row.forEach((v,dx)=>{
-      if(v&&landedPiece.y+dy>=0)landingKeys.add((landedPiece.x+dx)+','+(landedPiece.y+dy));
+      const targetY=landingY+dy,sourceY=landedPiece.y+dy;
+      if(v&&targetY>=0){
+        const key=(landedPiece.x+dx)+','+targetY;
+        landingKeys.add(key);
+        if(dropDistance>0&&!reducedMotion.matches)landingSourceByCell.set(key,sourceY);
+      }
     }));
     if(boardChanged){
       lastBoardSignature=boardSignature;
@@ -273,14 +282,15 @@
       for(let y=0;y<state.height;y++)for(let x=0;x<state.width;x++){
         const v=state.board[y]?.[x];
         if(v){
-          const sourceY=settleSourceByTarget.has(y)?settleSourceByTarget.get(y):y;
+          const cellKey=x+','+y;
+          const sourceY=landingSourceByCell.has(cellKey)?landingSourceByCell.get(cellKey):(settleSourceByTarget.has(y)?settleSourceByTarget.get(y):y);
           blockInto(boardGroup,x,sourceY,colors[v-1]||'#69f4ff');
           const cell=boardGroup.children[boardGroup.children.length-1];
           if(sourceY!==y){
             cell.userData.settleFromY=sourceY;
             cell.userData.settleToY=y;
             cell.userData.settleStartedAt=settleAt;
-            cell.userData.settleDuration=280;
+            cell.userData.settleDuration=landingSourceByCell.has(cellKey)?Math.min(520,Math.max(170,dropDistance*24)):280;
           }
           if(!reducedMotion.matches&&landingKeys.has(x+','+y)){
             cell.userData.landAt=settleAt;
@@ -299,7 +309,7 @@
       // inverse visual angle and ease to the new orientation around the piece centre.
       pieceOffsetX=!reducedMotion.matches&&sameFallingPiece?oldPiece.x-newPiece.x:0;
       const fallDistance=sameFallingPiece?newPiece.y-oldPiece.y:0;
-      pieceOffsetY=!reducedMotion.matches&&fallDistance>0?Math.min(fallDistance,2.5):0;
+      pieceOffsetY=!reducedMotion.matches&&fallDistance>0?Math.min(fallDistance,3.5):0;
       rotationAngle=0;rotationPivotX=0;rotationPivotY=0;
       if(!reducedMotion.matches&&samePieceType&&!sameFallingPiece){
         const oldShape=oldPiece.shape,newShape=newPiece.shape;
@@ -404,7 +414,7 @@
         }
       }
       if(pieceOffsetX||pieceOffsetY||Math.abs(rotationAngle)>.002){
-        const ease=Math.exp(-deltaSeconds*24);
+        const ease=Math.exp(-deltaSeconds*9);
         pieceOffsetX*=ease;pieceOffsetY*=ease;rotationAngle*=ease;
         if(Math.abs(pieceOffsetX)<.015)pieceOffsetX=0;
         if(Math.abs(pieceOffsetY)<.015)pieceOffsetY=0;
