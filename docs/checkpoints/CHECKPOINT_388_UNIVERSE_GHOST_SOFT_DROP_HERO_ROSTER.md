@@ -34,7 +34,7 @@
 
 - Android WebView source audit **#221** — SUCCESS.
 - Mobile Arena Visual Preview **#76** — SUCCESS.
-- Android APK build **#798** — running at checkpoint creation; no APK is declared ready until the run completes and artifact is verified.
+- Android APK build **#798** — SUCCESS. Artifact ID `13237848929`; verified APK size 47,009,111 bytes and SHA-256 `15c25da442db68baed20854e22173566ba09cc55dbbbcbc7c2f84d0099fd8b9f`. Signing certificate matches the previously tested #764/#776 certificate. The APK contains the updated index, 3D runtime and 40-model manifest.
 - No production deployment performed.
 - Golden Desktop Baseline #372 unchanged; `main` unchanged; PR #48 remains open and unmerged.
 
