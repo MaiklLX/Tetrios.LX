@@ -77,7 +77,7 @@ requireMatch(
 );
 requireMatch(
   'Aura must draw a glow around the active piece only while the card is owned',
-  /if\(piece&&!gameOver\)\{if\(boosts\.includes\('aura'\)\)\{ctx\.save\(\);ctx\.globalAlpha=\.72;ctx\.shadowColor=colors\[piece\.t\]/
+  /if\(piece&&!gameOver\)\{\s*const activeColor=boosts\.includes\('prism'\)\?bbPrismColor\(piece\.t\):bbDailyGlitchColor\(piece\.t\);\s*if\(boosts\.includes\('aura'\)\)\{\s*ctx\.save\(\);ctx\.globalAlpha=\.72;ctx\.shadowColor=activeColor/
 );
 requireMatch(
   'Shift must award rank-scaled points only after a successful rotation',
