@@ -12043,46 +12043,42 @@ body .app{background:transparent!important;background-color:transparent!importan
 
 
 <style id="bb-mobile-visual-polish-384">
-/* #384 — unify the daily objective with the holographic arena HUD. */
-#dailyMissionGoal{
-  position:relative!important;
-  overflow:hidden!important;
-  min-height:48px!important;
-  padding:9px 13px!important;
-  border:1px solid rgba(102,245,232,.42)!important;
-  border-radius:13px!important;
-  background:
-    radial-gradient(ellipse at 12% 50%,rgba(92,245,232,.16),transparent 48%),
-    linear-gradient(110deg,rgba(18,43,67,.96),rgba(12,19,39,.98) 58%,rgba(36,27,67,.94))!important;
-  color:#dffcff!important;
-  box-shadow:0 7px 20px rgba(0,0,0,.22),0 0 20px rgba(92,245,232,.08),inset 0 1px rgba(255,255,255,.08)!important;
+/* #384 — mobile-only polish. Desktop Golden Baseline #372 is outside this scope. */
+@media(max-width:900px){
+  /* Unify the daily objective with the holographic arena HUD. */
+  #dailyMissionGoal{
+    position:relative!important;overflow:hidden!important;min-height:48px!important;
+    padding:9px 13px!important;border:1px solid rgba(102,245,232,.42)!important;
+    border-radius:13px!important;
+    background:radial-gradient(ellipse at 12% 50%,rgba(92,245,232,.16),transparent 48%),
+      linear-gradient(110deg,rgba(18,43,67,.96),rgba(12,19,39,.98) 58%,rgba(36,27,67,.94))!important;
+    color:#dffcff!important;
+    box-shadow:0 7px 20px rgba(0,0,0,.22),0 0 20px rgba(92,245,232,.08),inset 0 1px rgba(255,255,255,.08)!important;
+  }
+  #dailyMissionGoal:before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(105deg,rgba(255,255,255,.07),transparent 38%,transparent 72%,rgba(157,124,255,.08));
+  }
+  #dailyMissionGoal .daily-mission-label{
+    position:relative;color:#9ffaf0!important;font-size:9px!important;
+    letter-spacing:.13em!important;text-shadow:0 0 12px rgba(92,245,232,.22);
+  }
+  #dailyMissionGoalText{
+    position:relative;color:#fff!important;font-size:14px!important;
+    font-weight:900!important;text-shadow:0 0 14px rgba(92,245,232,.2);
+  }
+  /* The heading/caption already names each meter; avoid repeating units inside the rings. */
+  #game .charge-ring-inner>small,#game .chrono-ring-inner>small{display:none!important}
+  /* Keep the character picker stable while WebView promotes the 3D preview canvas. */
+  #overlay.show #modal.bb-hero-showcase-modal{
+    animation:none!important;transform:translateZ(0)!important;
+    backface-visibility:hidden!important;will-change:opacity!important;transition:none!important;
+  }
+  #overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage{
+    transform:translateZ(0);backface-visibility:hidden;
+  }
 }
-#dailyMissionGoal:before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,rgba(255,255,255,.07),transparent 38%,transparent 72%,rgba(157,124,255,.08));
-}
-#dailyMissionGoal .daily-mission-label{
-  position:relative;color:#9ffaf0!important;font-size:9px!important;
-  letter-spacing:.13em!important;text-shadow:0 0 12px rgba(92,245,232,.22);
-}
-#dailyMissionGoalText{
-  position:relative;color:#fff!important;font-size:14px!important;
-  font-weight:900!important;text-shadow:0 0 14px rgba(92,245,232,.2);
-}
-/* The heading/caption already names each meter; avoid repeating units inside the rings. */
-#game .charge-ring-inner>small,
-#game .chrono-ring-inner>small{display:none!important}
-/* The character picker is a single stable surface; avoid layered pop/transform animations
-   that can flash while the WebView promotes the 3D preview canvas. */
-#overlay.show #modal.bb-hero-showcase-modal{
-  animation:none!important;transform:translateZ(0)!important;
-  backface-visibility:hidden!important;will-change:opacity!important;
-  transition:none!important;
-}
-#overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage{
-  transform:translateZ(0);backface-visibility:hidden;
-}
-@media(prefers-reduced-motion:reduce){
+@media(max-width:900px) and (prefers-reduced-motion:reduce){
   #dailyMissionGoal,#dailyMissionGoal:before{animation:none!important;transition:none!important}
 }
 </style>
