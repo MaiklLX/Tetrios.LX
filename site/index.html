@@ -11260,4 +11260,14 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-arena-final-viewport-nudge-v1">
+/* TETRIOS LX — tiny final downward correction: move only the board, not the HUD or side panels. */
+@media (min-width:901px){
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe{
+    transform:translateY(clamp(6px,1.1dvh,11px))!important;
+  }
+}
+</style>
+
 </body></html>
