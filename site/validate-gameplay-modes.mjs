@@ -153,6 +153,14 @@ requireMatch(
   /function bbSchedulePrismAnimation\(\)[\s\S]*?!started\|\|paused\|\|gameOver[\s\S]*?prefers-reduced-motion/
 );
 requireMatch(
+  'Prism color must also reach the next-piece preview',
+  /function drawNext\(\)[\s\S]*?const s=shapes\[nextType\],color=bbPrismColor\(nextType\)/
+);
+requireMatch(
+  'Prism animation must be scheduled by the 2D renderer',
+  /bbSchedulePrismAnimation\(\);\s*\}\s*window\.bbGet3DBoardState/
+);
+requireMatch(
   '3D board state must expose Prism color and Aura ownership for the active piece',
   /pieceColor:active\?\(boosts\.includes\('prism'\)\?bbPrismColor\(active\.t\):bbDailyGlitchColor\(active\.t\)\):null,aura:!!\(active&&boosts\.includes\('aura'\)\)/
 );
