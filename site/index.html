@@ -7170,7 +7170,7 @@ function buildMap() {
       planet.style.setProperty('--planet-delay', (local % 9) * -0.23 + 's');
       planet.innerHTML =
         '<span class="bb-planet-orbit"></span>' +
-        '<span class="bb-planet-sphere" data-universe-model="' + universeModelIds[(b.id + local) % universeModelIds.length] + '"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '✹' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
+        '<span class="bb-planet-sphere" data-universe-model="planet" data-universe-variant="' + (b.id * planetCount + local + 1) + '"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '✹' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
         '<strong>' + String(n).padStart(3,'0') + '</strong>' +
         '<small>' + (done ? 'ПРОЙДЕНА' : n === current ? 'ДОСТУПНА' : 'ЗАКРЫТА') + '</small>';
       planet.onclick = () => {
