@@ -60,6 +60,10 @@ requireMatch(
   /attack\.label[\s\S]*?АТАКА ЧЕРЕЗ/
 );
 requireMatch(
+  'Gear must award points once per fifth locked piece while active',
+  /if\(boosts\.includes\('gear'\)\)\{bbGearMoveCount\+\+;if\(bbGearMoveCount%5===0\)\{const bonus=25\*bbGetUpgradeRank\('gear'\);score\+=bonus/
+);
+requireMatch(
   'Plasma must reset the next fall delay only after a line clear',
   /if\(cleared&&boosts\.includes\('plasma'\)\)\{\s*if\(mode==='rogue'\)dropLastStepAt=performance\.now\(\);\s*else restartDrop\(\);\s*\}/
 );
