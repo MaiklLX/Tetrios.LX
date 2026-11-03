@@ -9169,18 +9169,27 @@ if (resetProgressBtn) {
         };
       },
       testVoidCompression(){
-        const sample=Array.from({length:H},()=>Array(W).fill(0));
-        sample[4][0]=1;sample[6][1]=2;
-        const result=bbBuildVoidCompressedBoard(sample);
+        const previous={mode,boosts,board,piece,level,voidLevel:bbVoidLastAppliedLevel,toast};
         const count=rows=>rows.reduce((sum,row)=>sum+row.filter(Boolean).length,0);
-        return {
-          succeeded:!!result,
-          rowCount:result?.board.length||0,
-          blocksBefore:count(sample),
-          blocksAfter:result?count(result.board):0,
-          compressedRow:result?.collapsedRow??null,
-          topSpawnRowsEmpty:!!result&&result.board.slice(0,4).every(row=>row.every(cell=>!cell))
-        };
+        try{
+          mode='rogue';boosts=['void'];level=2;bbVoidLastAppliedLevel=1;piece=null;toast=()=>{};
+          board=Array.from({length:H},()=>Array(W).fill(0));
+          board[4][0]=1;board[6][1]=2;
+          const blocksBefore=count(board);
+          const firstActivation=bbApplyVoidCompression();
+          const compressed=board.map(row=>row.slice());
+          const secondActivation=bbApplyVoidCompression();
+          return {
+            firstActivation,secondActivation,
+            rowCount:board.length,
+            blocksBefore,blocksAfter:count(board),
+            compressedRow:compressed.findIndex((row,index)=>row.some(Boolean)&&index>=4),
+            topSpawnRowsEmpty:board.slice(0,4).every(row=>row.every(cell=>!cell))
+          };
+        }finally{
+          mode=previous.mode;boosts=previous.boosts;board=previous.board;piece=previous.piece;
+          level=previous.level;bbVoidLastAppliedLevel=previous.voidLevel;toast=previous.toast;
+        }
       }
     };
   }
