@@ -209,6 +209,7 @@ for (const id of requiredCharacters) {
 }
 
 if (!arena.includes('const arenaWidth=10.4,arenaHeight=23.2') || !arena.includes('camera.lookAt(0,0,0)')) fail('3D arena camera must fit and centre the responsive 10x23 board');
+if (!arena.includes('function blockInto(target,x,y,color,ghost=false,aura=false)') || !arena.includes('if(aura&&!ghost)') || !arena.includes('state.pieceColor||colors[p.t]')) fail('3D active piece must render the card-gated Aura halo and Prism color without changing the board geometry');
 if (!arena.includes('new THREE.PlaneGeometry(10,23)') || !arena.includes('color:0x38506f,transparent:true,opacity:.78') || !arena.includes('color:0x75a6c9,transparent:true,opacity:.58')) fail('3D board surface and grid must visually match the 2D arena contrast and five-cell guides');
 // Preserve the established playlayout and side-panel flow; arena sizing must not reflow sibling HUD elements.
 
