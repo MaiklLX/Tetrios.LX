@@ -67,6 +67,8 @@ if (!arena.includes('const arenaWidth=10.4,arenaHeight=23.2') || !arena.includes
 if (arena.includes('camera.position.x=3+') || arena.includes('camera.position.y=2+')) fail('3D arena must not reintroduce the off-centre camera drift that crops the board');
 if (!arena.includes('./vendor/three/build/three.module.js')) fail('arena-3d.js does not load local Three.js');
 if (!arena.includes('pieceOffsetX') || !arena.includes('pieceOffsetY')) fail('3D arena must interpolate horizontal and vertical active-piece movement');
+if (!arena.includes('landingSourceByCell') || !arena.includes('Math.min(520,Math.max(170,dropDistance*24))')) fail('hard-dropped tetrominoes must visibly travel from their falling position to the landing point');
+if (!arena.includes('const ease=Math.exp(-deltaSeconds*9)')) fail('vertical falling movement must use the slower eased descent animation');
 if (!arena.includes('function rotateMatrix(matrix,direction)') || !arena.includes('rotationAngle=-direction*Math.PI/2')) fail('3D arena must animate quarter-turn piece rotations');
 if (!arena.includes('activeGroup.rotation.z=rotationAngle')) fail('3D arena must apply the eased rotation to the active piece');
 if (!arena.includes('new THREE.TorusGeometry(.78,.035,5,18,Math.PI*1.55)') || !arena.includes('rotationArc.userData.rotationArc=true') || !arena.includes('effect.userData.rotationArc')) fail('3D piece rotations must emit a short-lived, animated arc cue');
@@ -158,8 +160,8 @@ try { universeManifest = JSON.parse(universeManifestText); }
 catch { fail('universes/manifest.json must be valid JSON'); }
 const universeModels = universeManifest?.models || {};
 const universeOrder = universeManifest?.universeOrder || [];
-if (Object.keys(universeModels).length !== 24) fail(`expected 24 universe GLB models, got ${Object.keys(universeModels).length}`);
-if (universeOrder.length !== 24 || new Set(universeOrder).size !== 24) fail('universeOrder must contain 24 unique model IDs');
+if (Object.keys(universeModels).length !== 40) fail(`expected 40 universe GLB models, got ${Object.keys(universeModels).length}`);
+if (universeOrder.length !== 40 || new Set(universeOrder).size !== 40) fail('universeOrder must contain 40 unique model IDs');
 if (universeOrder.some(id => !universeModels[id]) || Object.keys(universeModels).some(id => !universeOrder.includes(id))) fail('universeOrder must match the complete model manifest');
 if (universeManifest?.license?.name !== 'CC0 1.0 Universal') fail('universe manifest must record the CC0 1.0 collection license');
 const universeFiles = new Set();
@@ -170,9 +172,15 @@ for (const [id, entry] of Object.entries(universeModels)) {
 }
 const modelArrayMatch = index.match(/const universeModelIds = \[([^\]]+)\]/);
 const modelIdsInIndex = modelArrayMatch ? [...modelArrayMatch[1].matchAll(/'([^']+)'/g)].map(match => match[1]) : [];
-if (modelIdsInIndex.length !== 24 || new Set(modelIdsInIndex).size !== 24 || modelIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must reference all 24 unique manifest model IDs');
+const objectIdsMatch = index.match(/const universeObjectIds = \[([^\]]+)\]/);
+const objectIdsInIndex = objectIdsMatch ? [...objectIdsMatch[1].matchAll(/'([^']+)'/g)].map(match => match[1]) : [];
+if (modelIdsInIndex.length !== 12 || new Set(modelIdsInIndex).size !== 12 || modelIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique planet models');
+if (objectIdsInIndex.length !== 12 || new Set(objectIdsInIndex).size !== 12 || objectIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique companion object models');
+if (modelIdsInIndex.some(id => objectIdsInIndex.includes(id))) fail('a campaign universe must not reuse its planet model as its companion object');
+if (!index.includes('bb-galaxy-companion-slot') || !index.includes('universeObjectIds[index]')) fail('each campaign universe must render its own companion 3D object');
 if (!index.includes('A vertical gesture never moves the active piece mid-swipe') || !index.includes('Commit exactly once on touchend')) fail('mobile vertical drop gestures must be committed once, at touchend');
 if (index.indexOf('id="bbHeroSkillCard"') < 0 || index.indexOf('id="bbHeroSkillCard"') > index.indexOf('data-act="drop"')) fail('hero superpower must appear before hard drop in the mobile utility rail');
+if (!index.includes('Новый герой скоро появится') || !index.includes('БУДУЩЕЕ ОБНОВЛЕНИЕ') || !index.includes('Скоро в команде')) fail('hero roster must tease a locked future hero slot without making it selectable');
 if (!index.includes('>↓ DROP</button></div><div hidden aria-hidden="true"><button class="smallbtn" id="musicBtn"')) fail('hard-drop card must close before the hidden music control so :has(#musicBtn) cannot hide it');
 
 const requiredCharacters = ['plush', 'prism', 'blip', 'pixel', 'spark'];
