@@ -11980,4 +11980,62 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+
+<style id="bb-mobile-golden-drop-flow-fix-v2">
+/* #382 follow-up: target the live drop control directly; the parent card may be
+   conditionally collapsed by older utility-rail rules. */
+@media(max-width:520px) and (orientation:portrait){
+  #game .sidecard:has(>.side-drop){
+    display:flex!important;
+    position:relative!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:54px!important;
+    height:auto!important;
+    align-items:stretch!important;
+    justify-content:center!important;
+    margin:0!important;
+    padding:5px!important;
+    border:1px solid rgba(76,255,151,.48)!important;
+    border-radius:10px!important;
+    background:linear-gradient(155deg,rgba(16,77,57,.98),rgba(5,34,31,.98))!important;
+    overflow:visible!important;
+  }
+  #game .sidecard:has(>.side-drop)>label{display:none!important}
+  #game .sidecard>.side-drop{
+    position:relative!important;
+    inset:auto!important;
+    display:flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    z-index:2!important;
+    box-sizing:border-box!important;
+    flex:1 1 auto!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:42px!important;
+    height:42px!important;
+    margin:0!important;
+    padding:3px!important;
+    border:1px solid #a5ffc5!important;
+    border-radius:8px!important;
+    font-size:0!important;
+    line-height:1!important;
+    box-shadow:0 3px 0 #03451f,0 0 14px rgba(39,237,107,.28)!important;
+    touch-action:manipulation!important;
+  }
+  #game .sidecard>.side-drop::after{
+    content:"⬇"!important;
+    display:block!important;
+    color:#f3fff7!important;
+    font-size:24px!important;
+    font-weight:1000!important;
+    line-height:28px!important;
+    text-shadow:0 0 9px rgba(255,255,255,.35)!important;
+  }
+}
+</style>
+
 </body></html>
