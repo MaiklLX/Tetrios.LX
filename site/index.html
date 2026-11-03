@@ -11230,4 +11230,34 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.sidecol{align-self:center!important}
 }
 </style>
+
+<style id="bb-desktop-sidepanels-viewport-guard-v1">
+/* TETRIOS LX — keep monster/objectives panels inside the desktop viewport.
+   The arena's previous 82dvh minimum height inflated the shared grid track,
+   pushing the dynamically mounted side panels below the visible game area. */
+@media (min-width:901px){
+  #game>.playlayout>div:not(.gameleftcol){
+    min-height:0!important;
+    height:auto!important;
+    align-self:center!important;
+  }
+  #game>.playlayout>.sidecol{
+    box-sizing:border-box!important;
+    height:auto!important;
+    max-height:calc(100dvh - 145px)!important;
+    min-height:0!important;
+    align-self:center!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    scrollbar-width:thin!important;
+  }
+  #game>.playlayout>.sidecol>#rogueGoals,
+  #game>.playlayout>.sidecol>#campaignGoals{
+    flex:0 0 auto!important;
+    margin-top:4px!important;
+    margin-bottom:4px!important;
+  }
+}
+</style>
+
 </body></html>
