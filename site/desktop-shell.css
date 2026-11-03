@@ -1124,10 +1124,9 @@
 
 
 
-/* CHECKPOINT 354 — single-source desktop gameplay viewport.
-   The arena is the center track of a symmetric 3-column grid; the side rail
-   remains in normal flow. Only the canvas height is controlled, so its
-   intrinsic 300x690 ratio (10:23) determines its width without distortion. */
+/* CHECKPOINT 355 — explicit arena frame geometry.
+   The frame itself owns the 10:23 ratio and a viewport-derived width.
+   The canvas fills that exact frame; no auto-width flex stretching. */
 @media (min-width: 901px) {
   html:has(body #game:not([hidden])),
   body:has(#game:not([hidden])) {
@@ -1143,27 +1142,18 @@
     height: 100dvh;
     min-height: 0;
     max-height: 100dvh;
-    padding: 8px clamp(16px, 2.2vw, 34px) 10px;
+    padding: 8px clamp(16px, 2vw, 30px) 10px;
     overflow: hidden;
   }
   body:has(#game:not([hidden])) .topbar {
     box-sizing: border-box;
-    flex: 0 0 52px;
+    flex: 0 0 50px;
     width: min(100%, 1600px);
-    min-height: 52px;
-    height: 52px;
-    margin: 0 auto 8px;
+    min-height: 50px;
+    height: 50px;
+    margin: 0 auto 7px;
     padding: 5px 14px;
   }
-  body:has(#game:not([hidden])) .topbar .brandmark {
-    width: 38px;
-    height: 38px;
-  }
-  body:has(#game:not([hidden])) .topbar .iconbtn {
-    width: 36px;
-    height: 36px;
-  }
-
   #game:not([hidden]) {
     box-sizing: border-box;
     display: grid !important;
@@ -1178,45 +1168,20 @@
     padding: 0 !important;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto auto minmax(0, 1fr);
-    align-content: stretch;
-    gap: clamp(5px, .7vh, 8px);
+    gap: clamp(5px, .65vh, 8px);
     overflow: hidden !important;
   }
-  #game > .screenhead {
-    box-sizing: border-box;
-    min-height: 38px;
-    margin: 0 !important;
-    padding: 3px 12px;
-  }
+  #game > .screenhead { min-height: 36px; margin: 0 !important; padding: 2px 12px; }
   #game .game-heading-copy h2 { font-size: clamp(16px, 1.3vw, 21px); }
   #game .game-heading-copy p { margin-top: 2px; font-size: 9px; }
   #game #pauseBtn { flex: 0 0 34px; width: 34px; height: 34px; }
-
-  #game #dailyMissionGoal:not([hidden]) {
-    min-height: 28px;
-    margin: 0 !important;
-    padding: 4px 10px !important;
-  }
-  #game > .gamehud {
-    box-sizing: border-box;
-    min-height: 42px;
-    margin: 0 !important;
-    gap: clamp(7px, 1vw, 14px);
-  }
+  #game #dailyMissionGoal:not([hidden]) { min-height: 26px; margin: 0 !important; padding: 3px 10px !important; }
+  #game > .gamehud { min-height: 40px; margin: 0 !important; gap: clamp(7px, 1vw, 14px); }
   #game .gamehud .hudbox,
-  #game .gamehud #gameCoins {
-    box-sizing: border-box;
-    min-height: 42px;
-    padding: 5px 12px !important;
-  }
+  #game .gamehud #gameCoins { min-height: 40px; padding: 4px 11px !important; }
   #game .gamehud .hudbox strong,
-  #game .gamehud #gameCoins strong {
-    margin-top: 2px;
-    font-size: clamp(16px, 1.35vw, 22px) !important;
-  }
+  #game .gamehud #gameCoins strong { margin-top: 2px; font-size: clamp(16px, 1.3vw, 21px) !important; }
 
-  /* Symmetric left/right flexible gutters make the arena's center track
-     coincide with the viewport center, not the center of the left column. */
   #game > .playlayout {
     position: relative;
     box-sizing: border-box;
@@ -1229,50 +1194,48 @@
     padding: 0 !important;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
-    align-items: stretch;
+    align-items: center;
     gap: 0 !important;
     overflow: hidden;
   }
   #game > .playlayout > div:first-child {
     grid-column: 2;
     grid-row: 1;
-    box-sizing: border-box;
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: auto;
     height: 100%;
     min-width: 0;
     min-height: 0;
     margin: 0;
     padding: 0;
-    align-items: center;
-    justify-content: center;
     overflow: visible;
-    border: 0;
-    border-radius: 18px;
     background: radial-gradient(ellipse at 50% 45%, rgba(92,245,232,.10), transparent 62%);
   }
   #game .boardframe {
     position: relative;
     display: block;
     flex: 0 0 auto;
-    box-sizing: content-box;
-    width: auto;
-    height: calc(100% - 14px);
+    align-self: center;
+    box-sizing: border-box;
+    width: min(38vw, calc((100dvh - 190px) / 2.3), 430px);
+    min-width: 0;
     max-width: none;
-    max-height: none;
+    height: auto;
     aspect-ratio: 10 / 23;
     margin: 0;
     padding: 6px;
     overflow: hidden;
-    border: 1px solid rgba(92,245,232,.5);
-    border-radius: 16px;
+    border: 1px solid rgba(92,245,232,.52);
+    border-radius: 17px;
     background: linear-gradient(145deg, rgba(22,39,69,.98), rgba(5,12,27,.99));
     box-shadow: 0 18px 46px rgba(0,0,0,.4), 0 0 30px rgba(92,245,232,.12), inset 0 1px rgba(255,255,255,.08);
   }
   #game canvas#board.board {
     display: block;
-    box-sizing: content-box;
-    width: auto !important;
+    box-sizing: border-box;
+    width: 100% !important;
     height: 100% !important;
     min-width: 0;
     min-height: 0;
@@ -1284,30 +1247,24 @@
     background: #060b18;
     image-rendering: auto;
   }
-  #game .boardframe > .bb-arena-canvas {
-    max-width: none !important;
-    max-height: none !important;
-  }
+  #game .boardframe > .bb-arena-canvas { max-width: none !important; max-height: none !important; }
 
-  /* Right-hand modules use their own reserved third track; nothing floats
-     over the arena and the symmetric center track remains mathematically fixed. */
   #game > .playlayout > .sidecol {
     grid-column: 3;
     grid-row: 1;
     box-sizing: border-box;
     display: grid !important;
-    width: clamp(196px, 18vw, 270px);
+    justify-self: start;
+    width: clamp(190px, 17vw, 250px);
     height: 100%;
     min-width: 0;
     min-height: 0;
-    margin: 0 0 0 clamp(18px, 2vw, 30px);
+    margin: 0 0 0 clamp(14px, 1.6vw, 24px);
     padding: 0;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(3, minmax(0, 1fr)) auto;
     grid-auto-rows: minmax(0, 1fr);
-    align-content: stretch;
-    align-items: stretch;
-    gap: clamp(5px, .7vh, 9px);
+    gap: clamp(5px, .65vh, 8px);
     overflow: hidden;
   }
   #game .sidecol > .sidecard {
@@ -1316,7 +1273,7 @@
     min-height: 0;
     height: auto;
     margin: 0;
-    padding: clamp(4px, .6vh, 8px) 6px;
+    padding: clamp(4px, .55vh, 7px) 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1326,52 +1283,25 @@
     border-radius: 12px;
     background: linear-gradient(145deg, rgba(20,30,57,.92), rgba(9,16,34,.96));
   }
-  #game .sidecol > .sidecard label {
-    font-size: clamp(7px, .52vw, 9px);
-    line-height: 1.15;
-    text-align: center;
-  }
-  #game .sidecol .charge-ring {
-    width: clamp(42px, 5.5vh, 66px);
-    margin: 3px auto 2px;
-  }
+  #game .sidecol > .sidecard label { font-size: clamp(7px, .52vw, 9px); line-height: 1.15; text-align: center; }
+  #game .sidecol .charge-ring { width: clamp(38px, 5vh, 60px); margin: 3px auto 2px; }
   #game .sidecol .charge-ring-inner strong { font-size: clamp(14px, 1.2vw, 19px); }
   #game .sidecol .charge-caption,
   #game .sidecol .chrono-caption { font-size: 7px; }
-  #game .sidecol .nextcanvas {
-    width: auto;
-    height: clamp(30px, 5.5vh, 54px);
-    max-width: 100%;
-    max-height: 100%;
-    margin: 2px auto 0;
-  }
-  #game .sidecol .boosticon {
-    margin: 2px 0;
-    font-size: clamp(16px, 1.4vw, 21px);
-  }
+  #game .sidecol .nextcanvas { width: auto; height: clamp(28px, 5vh, 50px); max-width: 100%; max-height: 100%; margin: 2px auto 0; }
+  #game .sidecol .boosticon { margin: 2px 0; font-size: clamp(16px, 1.4vw, 21px); }
   #game .sidecol .boostname,
   #game .sidecol .boostnum { font-size: 7px; line-height: 1.15; text-align: center; }
   #game .sidecol .chrono-card { grid-column: 1 / -1; }
-  #game .sidecol .chrono-ring { width: clamp(40px, 5.2vh, 58px); margin: 2px auto; }
+  #game .sidecol .chrono-ring { width: clamp(38px, 5vh, 56px); margin: 2px auto; }
   #game .sidecol .chrono-ring-inner strong { font-size: 15px; }
-  #game .sidecol #timer {
-    margin-top: 2px !important;
-    font-size: clamp(13px, 1.1vw, 17px) !important;
-    font-variant-numeric: tabular-nums;
-  }
+  #game .sidecol #timer { margin-top: 2px !important; font-size: clamp(13px, 1.1vw, 17px) !important; font-variant-numeric: tabular-nums; }
   #game .sidecol .smallbtn,
-  #game .sidecol .side-drop {
-    min-height: 23px;
-    height: auto;
-    margin-top: 3px;
-    padding: 3px 5px;
-    font-size: 7px;
-    line-height: 1.1;
-  }
+  #game .sidecol .side-drop { min-height: 22px; height: auto; margin-top: 3px; padding: 3px 5px; font-size: 7px; line-height: 1.1; }
   #game .sidecol > #bbHeroSkillCard {
     grid-column: 1 / -1;
     box-sizing: border-box;
-    min-height: 38px;
+    min-height: 36px;
     height: auto;
     margin: 0;
     padding: 4px 7px;
@@ -1379,18 +1309,11 @@
     align-items: center;
     gap: 6px;
   }
-  #game #bbHeroSkillCard .bb-hero-skill-art {
-    flex: 0 0 28px;
-    width: 28px;
-    height: 28px;
-  }
+  #game #bbHeroSkillCard .bb-hero-skill-art { flex: 0 0 28px; width: 28px; height: 28px; }
   #game #bbHeroSkillCard .bb-hero-skill-copy { gap: 1px; }
   #game #bbHeroSkillCard .bb-hero-skill-copy strong { font-size: 8px; }
   #game #bbHeroSkillCard .bb-hero-skill-copy small { font-size: 7px; }
   #game #bbHeroSkillCard .bb-hero-skill-copy em { font-size: 6px; }
-
-  /* Keyboard controls are represented by the side DROP button and hint-free
-     desktop interaction; touch-only bottom row is not part of the arena. */
   #game > .controls,
   #game > .hint { display: none !important; }
 
@@ -1398,19 +1321,14 @@
     body:has(#game:not([hidden])) .app { padding-top: 5px; padding-bottom: 6px; }
     body:has(#game:not([hidden])) .topbar { flex-basis: 44px; height: 44px; min-height: 44px; margin-bottom: 5px; }
     #game:not([hidden]) { gap: 4px; }
-    #game > .screenhead { min-height: 32px; padding-block: 2px; }
-    #game > .gamehud,
-    #game .gamehud .hudbox,
-    #game .gamehud #gameCoins { min-height: 36px; }
+    #game .boardframe { width: min(38vw, calc((100dvh - 160px) / 2.3), 390px); }
     #game .sidecol > .sidecard { padding-block: 2px; }
-    #game .sidecol .charge-ring { width: 36px; }
-    #game .sidecol .nextcanvas { height: 26px; }
-    #game .sidecol > #bbHeroSkillCard { min-height: 32px; }
+    #game .sidecol .charge-ring { width: 34px; }
+    #game .sidecol .nextcanvas { height: 24px; }
+    #game .sidecol > #bbHeroSkillCard { min-height: 30px; }
   }
   @media (min-width: 901px) and (max-width: 1120px) {
-    #game > .playlayout > .sidecol {
-      width: 188px;
-      margin-left: 14px;
-    }
+    #game .boardframe { width: min(38vw, calc((100dvh - 190px) / 2.3), 350px); }
+    #game > .playlayout > .sidecol { width: 180px; margin-left: 12px; }
   }
 }
