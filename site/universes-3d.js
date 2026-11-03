@@ -79,8 +79,21 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       const surface=new THREE.MeshStandardMaterial({color,roughness:.84,metalness:.04});
       const land=new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL((variant*.071)%1,.42,.58),roughness:.9});
       const glow=new THREE.MeshBasicMaterial({color:new THREE.Color().setHSL((variant*.113)%1,.78,.68),transparent:true,opacity:.2,side:THREE.BackSide});
-      sphere(.68,surface);
+      const shape=variant%7;
+      const core=sphere(.68,surface);
+      // Give campaign worlds visibly different silhouettes, not just different colors.
+      const shapeScale=[
+        [1,1,1], [1.28,.72,.94], [.82,1.3,.88], [1.38,.86,.78],
+        [.9,1.18,.94], [1.08,.88,1.2], [.96,1.04,.9]
+      ][shape];
+      core.scale.set(...shapeScale);
+      if(shape===6){core.geometry.dispose();core.geometry=new THREE.IcosahedronGeometry(.68,1);}
+      if(shape===5){
+        sphere(.28,surface,.43,.08,.12).scale.set(1,.78,.9);
+        sphere(.2,surface,-.36,-.22,.24).scale.set(.92,1.12,.82);
+      }
       const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(.73,segments,Math.max(12,Math.floor(segments*.7))),glow);
+      atmosphere.scale.set(...shapeScale.map(value=>value*1.055));
       group.add(atmosphere);
       const landCount=3+Math.floor(random(2)*6);
       for(let i=0;i<landCount;i++){
