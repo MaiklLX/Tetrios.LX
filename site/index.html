@@ -11504,4 +11504,38 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+<style id="bb-mobile-golden-arena-sizing-v3">
+/* TETRIOS LX #375 — size the frame from its width and canonical 10:23 ratio.
+   Earlier rules constrained height but left width to intrinsic/flex sizing,
+   which could make the board look narrower than the available mobile column. */
+@media(max-width:520px) and (orientation:portrait){
+  #game .boardframe{
+    box-sizing:border-box!important;
+    width:min(100%,30.44dvh,calc(43.48dvh - 91px),calc(100vw - 104px))!important;
+    height:auto!important;
+    aspect-ratio:10/23!important;
+    max-width:100%!important;
+    max-height:none!important;
+    min-height:0!important;
+    flex:0 0 auto!important;
+    margin:0 auto!important;
+  }
+  #game .boardframe #board,
+  #game .boardframe .bb-arena-canvas{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    max-height:none!important;
+    aspect-ratio:auto!important;
+  }
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game .boardframe{
+    width:min(100%,30.44dvh,calc(43.48dvh - 91px),calc(100vw - 94px))!important;
+  }
+}
+</style>
+
 </body></html>
