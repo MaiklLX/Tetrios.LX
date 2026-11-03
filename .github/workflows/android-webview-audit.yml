@@ -1,19 +1,7 @@
 name: Android WebView source audit
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "scripts/patch-android-webview.py"
-      - "scripts/fetch-3d-characters.sh"
-      - "scripts/validate-glb-characters.py"
-      - "site/validate-3d-runtime.mjs"
-      - "site/visual-3d.js"
-      - "site/visual-overhaul.css"
-      - "site/arena-3d.js"
-      - "site/characters/**"
-      - "Block_Buddies_Android_APK_Project_v1.zip"
+  workflow_dispatch:
   push:
     branches:
       - fix/3d-character-render-lifecycle
