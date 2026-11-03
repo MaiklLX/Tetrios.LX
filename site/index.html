@@ -11509,6 +11509,12 @@ body .app{background:transparent!important;background-color:transparent!importan
    Earlier rules constrained height but left width to intrinsic/flex sizing,
    which could make the board look narrower than the available mobile column. */
 @media(max-width:520px) and (orientation:portrait){
+  /* Override the older, more-specific unified-HUD height clamp as well. */
+  #game.unified-game-layout .boardframe,
+  #game.daily-chrono-layout .boardframe{
+    height:auto!important;
+    aspect-ratio:10/23!important;
+  }
   #game .boardframe{
     box-sizing:border-box!important;
     width:min(100%,30.44dvh,calc(43.48dvh - 91px),calc(100vw - 104px))!important;
