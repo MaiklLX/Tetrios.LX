@@ -68,6 +68,10 @@ requireMatch(
   /if\(cleared&&boosts\.includes\('plasma'\)\)\{\s*if\(mode==='rogue'\)dropLastStepAt=performance\.now\(\);\s*else restartDrop\(\);\s*\}/
 );
 requireMatch(
+  'Shift must award rank-scaled points only after a successful rotation',
+  /if\(boosts\.includes\('shift'\)&&Math\.random\(\)<0\.25\)\{score\+=25\*bbGetUpgradeRank\('shift'\);updateHud\(\)\}/
+);
+requireMatch(
   'Stable upgrade must extend deterministic rotation wall-kicks only in Block Run',
   /const rank=mode==='rogue'\?bbGetRogueCardRank\('stable'\):0,maxKick=rank\?Math\.min\(4,1\+rank\):1/
 );
