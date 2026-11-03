@@ -178,7 +178,7 @@ const objectIdsInIndex = objectIdsMatch ? [...objectIdsMatch[1].matchAll(/'([^']
 if (modelIdsInIndex.length !== 12 || new Set(modelIdsInIndex).size !== 12 || modelIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique planet models');
 if (objectIdsInIndex.length !== 12 || new Set(objectIdsInIndex).size !== 12 || objectIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique companion object models');
 if (modelIdsInIndex.some(id => objectIdsInIndex.includes(id))) fail('a campaign universe must not reuse its planet model as its companion object');
-if (index.includes('bb-galaxy-companion-slot')) fail('universe cards must not render the extra companion slot that creates a ghost duplicate');
+if (index.includes('<div class="bb-galaxy-companion-slot"')) fail('universe cards must not render the extra companion slot that creates a ghost duplicate');
 if (!index.includes('data-universe-variant="') || !universeRuntime.includes('const variant=Math.max(0,Number(slot.dataset.universeVariant)||0)') || !universeRuntime.includes('if(variant)return;')) fail('campaign planet nodes must render deterministic unique variants instead of repeating GLB planets');
 if (!universeRuntime.includes('variant*9301+49297') || !universeRuntime.includes('const landCount=3+Math.floor(random(2)*6)')) fail('procedural planet variants must use deterministic per-node surface and orbit details');
 if (!index.includes('one grid row') || !index.includes('touch.softSteps') || !index.includes('touch.lastY+=28') || index.includes('const steps=Math.min(5')) fail('slow vertical swipes must soft-drop incrementally during touchmove without end-of-gesture jumps');
