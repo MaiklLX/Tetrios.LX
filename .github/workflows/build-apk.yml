@@ -181,9 +181,20 @@ jobs:
           models_dir.mkdir(parents=True, exist_ok=True)
           manifest = json.loads(manifest_path.read_text())
           models = manifest.get("models", {})
-          if len(models) != 12:
-              raise SystemExit(f"Expected 12 universe models, found {len(models)}")
+          if len(models) != 24:
+              raise SystemExit(f"Expected 24 universe models, found {len(models)}")
+          if len(manifest.get("universeOrder", [])) != len(models):
+              raise SystemExit("universeOrder must list every packaged model exactly once")
+          if set(manifest["universeOrder"]) != set(models):
+              raise SystemExit("universeOrder and model manifest IDs do not match")
+          if manifest.get("license", {}).get("name") != "CC0 1.0 Universal":
+              raise SystemExit("The model collection license must be recorded as CC0 1.0")
+          filenames = [entry.get("file") for entry in models.values()]
+          if len(filenames) != len(set(filenames)):
+              raise SystemExit("Universe model filenames must be unique")
           for model_id, entry in models.items():
+              if not entry.get("sourcePage", "").startswith("https://"):
+                  raise SystemExit(f"Missing original source page for {model_id}")
               url = entry.get("url", "")
               filename = pathlib.Path(entry.get("file", "")).name
               if not url.startswith("https://") or not filename.endswith(".glb"):
@@ -201,11 +212,11 @@ jobs:
                   raise SystemExit(f"Invalid or incomplete GLB: {target}")
               entry["url"] = "./universes/models/" + filename
               print(f"Bundled {model_id}: {target.stat().st_size} bytes")
-          manifest["loading"] = "All 12 GLB universe models are bundled locally for offline Android use."
+          manifest["loading"] = "All 24 GLB universe models are bundled locally for offline Android use."
           manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
           PY
-          test "$(find "$ASSET_DIR/universes/models" -maxdepth 1 -type f -name '*.glb' | wc -l)" -eq 12
-          echo "Bundled all 12 universe models locally in APK"
+          test "$(find "$ASSET_DIR/universes/models" -maxdepth 1 -type f -name '*.glb' | wc -l)" -eq 24
+          echo "Bundled all 24 diverse universe models locally in APK"
 
           if [ ! -s "$GITHUB_WORKSPACE/site/audio/chills.mp3" ]; then
             echo "::error::Bundled soundtrack is missing"
