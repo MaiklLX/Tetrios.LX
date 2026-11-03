@@ -11037,6 +11037,86 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+<style id="bb-desktop-hud-left-rail-final-v1">
+/* TETRIOS LX — authoritative desktop placement for the live, script-reordered HUD.
+   The game script adds .gamehud-top; this layer deliberately overrides its compact top-strip rules. */
+@media (min-width:901px){
+  #game:not([hidden]){
+    grid-template-columns:minmax(205px,clamp(215px,18vw,270px)) minmax(300px,1fr) minmax(215px,clamp(225px,19vw,280px))!important;
+    grid-template-rows:42px minmax(0,1fr)!important;
+    align-content:stretch!important;
+    column-gap:clamp(14px,1.8vw,26px)!important;
+    row-gap:clamp(7px,1vh,12px)!important;
+  }
+  #game>.screenhead{grid-column:1/-1!important;grid-row:1!important}
+  #game>.gamehud,
+  #game>.gamehud.gamehud-top{
+    grid-column:1!important;grid-row:2!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:repeat(4,minmax(48px,auto))!important;
+    grid-auto-flow:row!important;grid-auto-rows:minmax(48px,auto)!important;
+    align-content:start!important;align-items:stretch!important;
+    gap:8px!important;width:100%!important;height:auto!important;
+    min-height:0!important;max-height:none!important;
+    margin:0!important;padding:0!important;overflow:visible!important;
+    border:0!important;border-radius:0!important;background:transparent!important;
+    box-shadow:none!important;
+  }
+  #game>.gamehud.gamehud-top>.hudbox,
+  #game>.gamehud.gamehud-top>#gameCoins{
+    display:flex!important;position:relative!important;
+    grid-column:1!important;grid-row:auto!important;
+    flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
+    box-sizing:border-box!important;float:none!important;clear:both!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:auto!important;min-height:48px!important;max-height:none!important;
+    margin:0!important;padding:9px 13px!important;overflow:visible!important;
+    border:1px solid rgba(106,164,210,.22)!important;border-left:3px solid rgba(92,245,232,.58)!important;
+    border-radius:11px!important;
+    background:linear-gradient(105deg,rgba(18,34,59,.96),rgba(9,17,34,.98))!important;
+    box-shadow:0 5px 16px rgba(0,0,0,.16)!important;
+    text-align:left!important;
+  }
+  #game>.gamehud.gamehud-top>.hudbox span,
+  #game>.gamehud.gamehud-top>#gameCoins span{
+    display:block!important;position:static!important;flex:1 1 auto!important;
+    width:auto!important;min-width:0!important;margin:0!important;padding:0!important;
+    text-align:left!important;white-space:nowrap!important;overflow:visible!important;
+    color:#a9bedb!important;font-size:9px!important;line-height:1.2!important;letter-spacing:.09em!important;
+  }
+  #game>.gamehud.gamehud-top>.hudbox strong,
+  #game>.gamehud.gamehud-top>#gameCoins strong{
+    display:block!important;position:static!important;flex:0 0 auto!important;
+    width:auto!important;min-width:2ch!important;max-width:none!important;margin:0!important;padding:0!important;
+    text-align:right!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
+    color:#f1f6ff!important;font-size:clamp(20px,1.55vw,25px)!important;line-height:1.05!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  #game>.gamehud.gamehud-top>#gameCoins{border-left-color:rgba(255,200,107,.78)!important}
+  #game>.gamehud.gamehud-top>#gameCoins span{color:#d8c18e!important}
+  #game>.gamehud.gamehud-top>#gameCoins strong{color:#ffe0a0!important}
+  #game>.playlayout{display:contents!important}
+  #game>.playlayout>div:first-child{
+    grid-column:2!important;grid-row:2!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+    margin:0!important;padding:0!important;overflow:visible!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:3!important;grid-row:2!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:none!important;grid-auto-rows:minmax(0,auto)!important;
+    align-content:start!important;justify-self:stretch!important;
+    width:100%!important;max-width:280px!important;max-height:calc(100dvh - 105px)!important;
+    min-width:0!important;min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+  }
+  #game .boardframe{max-height:calc(100dvh - 100px)!important}
+  #game .charge-ring-inner small,
+  #game .chrono-ring-inner small{display:none!important}
+  #game .charge-ring-inner strong,
+  #game .chrono-ring-inner strong{margin:0!important}
+}
+</style>
 
 <style id="bb-desktop-left-hud-stack-fix">
 /* TETRIOS LX — force the four left-side metrics into independent, non-overlapping rows. */
