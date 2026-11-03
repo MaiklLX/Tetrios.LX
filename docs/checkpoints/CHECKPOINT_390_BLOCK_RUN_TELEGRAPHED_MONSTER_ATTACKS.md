@@ -55,3 +55,17 @@ Date: 2026-11-03
 
 ### Continuation phrase
 `TETRIOS LX — продолжаем с контрольной точки #390. Ветка feature/gameplay-evolution-389-2026-11-03, commits 815cd90 (телеграфированные атаки Block Run) и d559209 (проверки режимов). Добавлены breach/crossfire/siege, предупреждение атаки и детерминированные ряды; Reserve блокирует атаку и переводит цикл дальше. CI runs 41665678315 / 41665678736 / 41665678933 проверить и изучить скриншоты. PR #50 не сливать, main не менять. Затем аудит реальных триггеров всех 35 карт. Сохранить Golden Desktop Baseline #372 и mobile baseline; APK без необходимости не собирать.`
+
+
+### Follow-up audit
+- Added `docs/audits/UPGRADE_TRIGGER_AUDIT_390.md`.
+- The source audit found eight catalogue cards with no card-owned gameplay trigger in the current code: `prism`, `stable`, `luck`, `void`, `gear`, `shift`, `aura`, `plasma`.
+- It also found rank/description mismatches for `mult`, `glow`, `comet`, `flash`, and `neuron`; dedicated paths for `shield`, `armor`, `hold`, `reserve`, `nova`, and `hunter` are documented separately.
+- This is a static source audit, not a claim that all cards have been dynamically tested. The 35-card pool is unchanged; no card has been removed or silently rebalanced.
+
+### Latest branch state
+- Audit document commit: `6e376069151cb8e674e0248dfefc7274cd784a1a`.
+- PR #50 head at audit update: `6e376069151cb8e674e0248dfefc7274cd784a1a`.
+- Run `41665678315` (Android WebView source audit) remained in progress.
+- Runs `41665678736` (cross-platform visual preview) and `41665678933` (mobile arena preview) had not yet exposed job results; screenshot acceptance remains pending.
+- Next implementation should repair the eight inactive cards and align rank formulas/descriptions, with tests and mode gating. Do not change the 35-card count without approval.
