@@ -5615,7 +5615,7 @@ function bbGetUpgradeEffectDescription(id,rank=1){
     reactor:'Бонус уровня усиливается ×'+r,nova:'Аварийное спасение очищает '+r+' нижн. линию(и)',
     tide:'Каждые 45 секунд +'+r+' заряд(а) уровня',fortress:'Замедляет рост сложности на '+(8*r)+'%',
     rift:'При победе над монстром очищает '+r+' нижн. линию(и)',loop:'Порог уровня −'+r+' линию(и)',
-    comet:'Быстрый уровень приносит +'+(300*r)+' очков',plasma:'Сбрасывает задержку следующего падения при очистке линии',stable:'Точность поворота: до '+(1+r)+' клеток бокового смещения'
+    comet:'Быстрый уровень приносит +'+(300*r)+' очков',gear:'Каждая 5-я установленная фигура: +'+(25*r)+' очков',plasma:'Сбрасывает задержку следующего падения при очистке линии',stable:'Точность поворота: до '+(1+r)+' клеток бокового смещения'
   };
   return descriptions[id]||upgrades.find(u=>u[3]===id)?.[2]||'Усиление ранга '+r;
 }
@@ -7404,7 +7404,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];
+function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(mode==='rogue'&&bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
@@ -7665,7 +7665,7 @@ if (isReplay) {
   return true;
 }
 
-function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));const bbBoardBeforeClear=board.map(row=>row.slice());
+function lockPiece(){if(!piece)return;if(boosts.includes('gear')){bbGearMoveCount++;if(bbGearMoveCount%5===0){const bonus=25*bbGetUpgradeRank('gear');score+=bonus;toast('⚙ МЕХАНИЗМ: +'+bonus+' очков');updateHud();}}piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));const bbBoardBeforeClear=board.map(row=>row.slice());
 const bbClearedRows=[];
 let cleared=0;
 for(let y=H-1;y>=0;y--){
@@ -7965,6 +7965,7 @@ function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i
 function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
 let dropCurrentMs=760,dropRampAt=0,dropRampFromMs=760,dropLastStepAt=0;
+let bbGearMoveCount=0;
 function restartDrop(){
   if(dropTimer)clearTimeout(dropTimer);
   if(mode!=='rogue'){
