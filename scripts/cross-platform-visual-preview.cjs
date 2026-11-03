@@ -62,6 +62,25 @@ const targets = [
     }
     await page.locator('#bbCloseCardLibrary').click();
 
+    // Campaign is a standard ruleset: show its own mission objectives, never card picks.
+    await page.locator('button.mode[data-mode="campaign"]').click();
+    await page.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
+    await page.locator('#campaignStart').click();
+    await page.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
+    await page.locator('#bbStartHeroChoose').click();
+    await page.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
+    const campaignMissionState = await page.evaluate(() => ({
+      objectiveRows: Math.max(0, document.querySelectorAll('#campaignGoals > div').length - 1),
+      boostLabel: document.querySelector('#boostName')?.textContent || '',
+      cardChoices: document.querySelectorAll('#modal [data-up]').length
+    }));
+    if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
+    if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
+    if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
+    await page.screenshot({ path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
+
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#bbConfirmStartHero').click();
