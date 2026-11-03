@@ -11041,7 +11041,13 @@ body .app{background:transparent!important;background-color:transparent!importan
 <style id="bb-desktop-left-hud-stack-fix">
 /* TETRIOS LX — force the four left-side metrics into independent, non-overlapping rows. */
 @media (min-width:901px){
+  /* Keep the parent grid content-sized: a 1fr final row can collapse the HUD when #game has no fixed height. */
+  #game:not([hidden]){
+    grid-template-rows:42px auto auto!important;
+    align-content:start!important;
+  }
   #game>.gamehud{
+    grid-row:3!important;
     display:grid!important;
     grid-template-columns:minmax(0,1fr)!important;
     grid-template-rows:repeat(4,minmax(48px,auto))!important;
