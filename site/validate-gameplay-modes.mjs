@@ -21,7 +21,7 @@ requireMatch(
 );
 requireMatch(
   'Only Block Run level-ups may open card selection',
-  /function levelUp\(\)[\s\S]*?if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}else\{paused=false;/
+  /function levelUp\(\)[\s\S]*?if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}[\s\S]*?else\{paused=false;/
 );
 requireMatch(
   'Blip random card starter must be Block Run-only',
@@ -123,7 +123,7 @@ requireMatch(
 );
 requireMatch(
   'Campaign and daily level-ups must continue without opening card selection',
-  /if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}else\{paused=false;if\(mode==='campaign'\)/
+  /function levelUp\(\)[\s\S]*?if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}[\s\S]*?else\{paused=false;if\(mode==='campaign'\)/
 );
 
 
