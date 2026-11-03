@@ -11037,4 +11037,57 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-left-hud-stack-fix">
+/* TETRIOS LX — force the four left-side metrics into independent, non-overlapping rows. */
+@media (min-width:901px){
+  #game>.gamehud{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:repeat(4,minmax(48px,auto))!important;
+    grid-auto-flow:row!important;grid-auto-rows:minmax(48px,auto)!important;
+    align-content:start!important;align-items:stretch!important;
+    justify-items:stretch!important;gap:7px!important;
+    width:100%!important;min-width:0!important;height:auto!important;
+    min-height:0!important;max-height:none!important;
+    margin:0!important;padding:0!important;overflow:visible!important;
+  }
+  #game>.gamehud>.hudbox,
+  #game>.gamehud>#gameCoins{
+    position:relative!important;inset:auto!important;
+    grid-column:1!important;grid-row:auto!important;
+    display:flex!important;flex-direction:row!important;
+    align-items:center!important;justify-content:space-between!important;
+    box-sizing:border-box!important;float:none!important;clear:both!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:auto!important;min-height:48px!important;max-height:none!important;
+    margin:0!important;padding:8px 12px!important;
+    transform:none!important;white-space:normal!important;
+    overflow:visible!important;
+  }
+  #game>.gamehud>.hudbox span,
+  #game>.gamehud>#gameCoins span{
+    display:block!important;position:static!important;flex:1 1 auto!important;
+    width:auto!important;min-width:0!important;margin:0!important;
+    text-align:left!important;white-space:nowrap!important;
+    font-size:9px!important;line-height:1.2!important;
+    letter-spacing:.12em!important;word-spacing:.1em!important;
+  }
+  #game>.gamehud>.hudbox strong,
+  #game>.gamehud>#gameCoins strong{
+    display:block!important;position:static!important;flex:0 0 auto!important;
+    width:auto!important;min-width:2ch!important;margin:0!important;padding:0!important;
+    text-align:right!important;white-space:nowrap!important;
+    font-size:clamp(19px,1.4vw,22px)!important;line-height:1.05!important;
+    transform:none!important;
+  }
+}
+@media (min-width:901px) and (max-height:760px){
+  #game>.gamehud{grid-template-rows:repeat(4,minmax(42px,auto))!important;gap:5px!important}
+  #game>.gamehud>.hudbox,#game>.gamehud>#gameCoins{
+    min-height:42px!important;padding:6px 10px!important;
+  }
+}
+</style>
+
 </body></html>
