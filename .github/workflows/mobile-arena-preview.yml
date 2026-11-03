@@ -114,13 +114,15 @@ jobs:
                   ratio, documentWidth: document.documentElement.scrollWidth
                 };
               });
+              console.log('ARENA_GEOMETRY_' + viewport.name, JSON.stringify(geometry));
+              await page.screenshot({ path: 'preview-artifacts/arena-2d-' + viewport.name + '.png' });
+              fs.writeFileSync('preview-artifacts/geometry-' + viewport.name + '.json', JSON.stringify(geometry, null, 2));
               if (geometry.ratio < 0.39 || geometry.ratio > 0.48) {
                 throw new Error('Arena frame ratio outside expected 10:23 range at ' + viewport.name + ': ' + geometry.ratio);
               }
               if (geometry.documentWidth > viewport.width + 2) {
                 throw new Error('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
               }
-              await page.screenshot({ path: 'preview-artifacts/arena-2d-' + viewport.name + '.png' });
               const toggle = page.locator('#game .boardframe .bb-arena-toggle');
               await toggle.waitFor({ state: 'visible', timeout: 10000 });
               await toggle.click();
@@ -155,9 +157,10 @@ jobs:
           NODE_PATH="$GITHUB_WORKSPACE/node_modules" node "$RUNNER_TEMP/mobile-arena-preview.cjs"
 
       - name: Upload mobile preview screenshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: tetrios-mobile-arena-preview
           path: preview-artifacts/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
