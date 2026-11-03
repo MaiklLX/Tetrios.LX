@@ -23,7 +23,7 @@ Campaign node objectives now draw from a larger deterministic pool:
 2. Reach a score target.
 3. Reach a level.
 4. Survive for a target duration.
-5. Clear multiple lines in one placement.
+5. Perform a single-line clear.
 6. Place a target number of pieces.
 7. Rotate pieces a target number of times.
 8. Use Hold.
@@ -37,6 +37,7 @@ Campaign node objectives now draw from a larger deterministic pool:
 - Mission count grows from 2 to 5 as the campaign advances.
 - Campaign-only counters track placements, successful rotations, Hold uses, Hard Drops, double/triple/Tetris clears, and best clear streak.
 - Rotation and Hold progress refresh immediately.
+- A single-clear counter distinguishes single-line missions from double/triple/Tetris objectives.
 - Mutually exclusive Hold / no-Hold objectives cannot be selected together.
 - Failed challenge conditions are visibly marked as “УСЛОВИЕ НАРУШЕНО”.
 - These missions use standard gameplay and do not grant or activate roguelike cards.
@@ -57,3 +58,8 @@ Campaign node objectives now draw from a larger deterministic pool:
 2. Inspect screenshots for any campaign mission rail overflow on desktop and mobile.
 3. If mission rail needs compacting, adjust only its presentation; do not alter Golden Desktop Baseline #372 or mobile board ratio.
 4. Continue with the remaining upgrade audit only after the campaign mode separation is verified.
+
+## Visual test harness follow-up
+- Cross-platform preview now expects all 35 cards in the Block Run filter and asserts that no shared/standard filter remains.
+- It also opens the campaign map, starts a node, and checks that at least two mission rows appear with no card choices or active boost label.
+- The first campaign preview attempt exposed a harness-only selector issue: the hero roster requires opening a hero detail before confirming. The script now follows that actual two-step flow; rerun is pending.
