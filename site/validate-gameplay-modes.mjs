@@ -144,13 +144,6 @@ requireMatch(
   /Все карты относятся к рогалик-системе и работают только в режиме Block Run/
 );
 
-if (failures.length) {
-  console.error('Gameplay mode validation failed:\n- ' + failures.join('\n- '));
-  process.exit(1);
-}
-
-console.log('Gameplay mode validation passed: roguelike card ranks, monster encounters and random starter cards are isolated to Block Run; standard reward and daily-rule paths remain present.');
-
 requireMatch(
   'Prism must animate only the active/preview piece without changing board cells',
   /function bbPrismColor\(index,now=performance\.now\(\)\)[\s\S]*?if\(!boosts\.includes\('prism'\)/
@@ -163,3 +156,11 @@ requireMatch(
   '3D board state must expose Prism color and Aura ownership for the active piece',
   /pieceColor:active\?\(boosts\.includes\('prism'\)\?bbPrismColor\(active\.t\):bbDailyGlitchColor\(active\.t\)\):null,aura:!!\(active&&boosts\.includes\('aura'\)\)/
 );
+
+
+if (failures.length) {
+  console.error('Gameplay mode validation failed:\n- ' + failures.join('\n- '));
+  process.exit(1);
+}
+
+console.log('Gameplay mode validation passed: roguelike card ranks, monster encounters and random starter cards are isolated to Block Run; standard reward and daily-rule paths remain present.');
