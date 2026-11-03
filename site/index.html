@@ -11637,4 +11637,162 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-mobile-golden-right-rail-v1">
+/* TETRIOS LX #380 — improve utility rail legibility without changing arena geometry.
+   Portrait phones only. Desktop Golden Baseline #372 and game logic remain untouched. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    min-width:0!important;
+    align-self:start!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-rows:minmax(0,auto)!important;
+    align-content:start!important;
+    gap:5px!important;
+    padding:0 1px 2px 0!important;
+    box-sizing:border-box!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard{
+    box-sizing:border-box!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    padding:6px 4px!important;
+    gap:3px!important;
+    border:1px solid rgba(102,190,225,.24)!important;
+    border-radius:9px!important;
+    background:linear-gradient(155deg,rgba(18,35,57,.96),rgba(7,16,31,.94))!important;
+    box-shadow:0 3px 10px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.035)!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard label{
+    display:block!important;
+    max-width:100%!important;
+    margin:0!important;
+    color:#a9cce0!important;
+    font-size:7px!important;
+    font-weight:800!important;
+    line-height:1.2!important;
+    letter-spacing:.045em!important;
+    text-align:center!important;
+    overflow-wrap:anywhere!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:43px!important;
+    min-width:43px!important;
+    max-width:43px!important;
+    height:43px!important;
+    min-height:43px!important;
+    margin:2px auto!important;
+    flex:0 0 43px!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner,
+  #game>.playlayout>.sidecol .chrono-ring-inner{
+    width:calc(100% - 8px)!important;
+    height:calc(100% - 8px)!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner strong,
+  #game>.playlayout>.sidecol .chrono-ring-inner strong{
+    font-size:12px!important;
+    line-height:1!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner small,
+  #game>.playlayout>.sidecol .chrono-ring-inner small{font-size:5px!important}
+  #game>.playlayout>.sidecol .charge-caption,
+  #game>.playlayout>.sidecol .chrono-caption{
+    margin:1px 0!important;
+    color:#b7c9df!important;
+    font-size:6px!important;
+    line-height:1.2!important;
+    letter-spacing:0!important;
+    text-align:center!important;
+    overflow-wrap:anywhere!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{
+    display:block!important;
+    width:100%!important;
+    max-width:58px!important;
+    height:43px!important;
+    max-height:43px!important;
+    margin:1px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .boosticon{
+    margin:0!important;
+    font-size:21px!important;
+    line-height:1.1!important;
+  }
+  #game>.playlayout>.sidecol .boostname,
+  #game>.playlayout>.sidecol .boostnum{
+    max-width:100%!important;
+    color:#d5e5f4!important;
+    font-size:7px!important;
+    line-height:1.2!important;
+    text-align:center!important;
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+  }
+  #game>.playlayout>.sidecol #timer{
+    margin:1px 0!important;
+    color:#f0f7ff!important;
+    font-size:16px!important;
+    line-height:1.1!important;
+    font-variant-numeric:tabular-nums!important;
+    text-align:center!important;
+  }
+  #game>.playlayout>.sidecol .smallbtn,
+  #game>.playlayout>.sidecol .side-drop{
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:27px!important;
+    height:auto!important;
+    margin:3px 0 0!important;
+    padding:5px 2px!important;
+    border-radius:7px!important;
+    font-size:7px!important;
+    line-height:1.15!important;
+    letter-spacing:.025em!important;
+    white-space:normal!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    box-sizing:border-box!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:4px!important;
+    min-width:0!important;
+    min-height:54px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:5px 4px!important;
+    border-radius:9px!important;
+    overflow:hidden!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 25px!important;
+    width:25px!important;
+    height:25px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    min-width:0!important;
+    flex:1 1 auto!important;
+    gap:2px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{
+    font-size:7px!important;
+    line-height:1.15!important;
+    overflow-wrap:anywhere!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    font-size:6px!important;
+    line-height:1.15!important;
+    overflow-wrap:anywhere!important;
+  }
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game>.playlayout{grid-template-columns:minmax(0,1fr) 78px!important}
+}
+</style>
+
 </body></html>
