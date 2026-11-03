@@ -173,6 +173,7 @@ const modelIdsInIndex = modelArrayMatch ? [...modelArrayMatch[1].matchAll(/'([^'
 if (modelIdsInIndex.length !== 24 || new Set(modelIdsInIndex).size !== 24 || modelIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must reference all 24 unique manifest model IDs');
 if (!index.includes('A vertical gesture never moves the active piece mid-swipe') || !index.includes('Commit exactly once on touchend')) fail('mobile vertical drop gestures must be committed once, at touchend');
 if (index.indexOf('id="bbHeroSkillCard"') < 0 || index.indexOf('id="bbHeroSkillCard"') > index.indexOf('data-act="drop"')) fail('hero superpower must appear before hard drop in the mobile utility rail');
+if (!index.includes('>↓ DROP</button></div><div hidden aria-hidden="true"><button class="smallbtn" id="musicBtn"')) fail('hard-drop card must close before the hidden music control so :has(#musicBtn) cannot hide it');
 
 const requiredCharacters = ['plush', 'prism', 'blip', 'pixel', 'spark'];
 for (const id of requiredCharacters) {
