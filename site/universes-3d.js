@@ -32,7 +32,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     return promise;
   }
 
-  function createProceduralModel(id,index){
+  function createProceduralModel(id,index,variant=0){
     const group=new THREE.Group();
     const palettes={
       planet:0x3c9cbd,'earth-moon':0x3f9db9,'lava-world':0xd85b24,neptune:0x3159c8,
@@ -69,7 +69,43 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,height,lowPower?10:16),mat);
       mesh.position.set(x,y,z);mesh.rotation.x=rotateX;group.add(mesh);return mesh;
     };
-    if(id==='black-hole'){
+    if(id==='planet'&&variant>0){
+      // Each of the 360 campaign nodes receives a deterministic, non-repeating world.
+      // The atlas nodes use procedural variants so a shared base GLB never repeats.
+      const seed=variant*9301+49297;
+      const random=(n)=>{const x=Math.sin(seed+n*127.1)*43758.5453;return x-Math.floor(x);};
+      const palettes=[0x3c9cbd,0x6c8bd8,0xb56b56,0x79a98c,0xb99a62,0x806bb8,0x4e9b9a,0xc47d92,0x7c8c9d,0x9c754f,0x5d77a8,0x8aaf6c];
+      const color=new THREE.Color(palettes[Math.floor(random(1)*palettes.length)]);
+      const surface=new THREE.MeshStandardMaterial({color,roughness:.84,metalness:.04});
+      const land=new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL((variant*.071)%1,.42,.58),roughness:.9});
+      const glow=new THREE.MeshBasicMaterial({color:new THREE.Color().setHSL((variant*.113)%1,.78,.68),transparent:true,opacity:.2,side:THREE.BackSide});
+      sphere(.68,surface);
+      const atmosphere=new THREE.Mesh(new THREE.SphereGeometry(.73,segments,Math.max(12,Math.floor(segments*.7))),glow);
+      group.add(atmosphere);
+      const landCount=3+Math.floor(random(2)*6);
+      for(let i=0;i<landCount;i++){
+        const lat=(random(i+3)-.5)*Math.PI*.82,lon=random(i+13)*Math.PI*2;
+        const patch=sphere(.11+random(i+23)*.14,land,Math.cos(lat)*Math.cos(lon)*.61,Math.sin(lat)*.61,Math.cos(lat)*Math.sin(lon)*.61);
+        patch.scale.set(1.35,.42,.86);
+        patch.lookAt(0,0,0);
+      }
+      if(random(31)>.28){
+        const ringMat=new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL((variant*.037+.12)%1,.48,.72),metalness:.35,roughness:.42,transparent:true,opacity:.82});
+        const ringMesh=ring(.82,.035+random(32)*.035,ringMat,(random(33)-.5)*.9);
+        ringMesh.scale.set(1,1+random(34)*.35,1);
+      }
+      const moonCount=Math.floor(random(35)*3);
+      for(let i=0;i<moonCount;i++){
+        const angle=random(i+40)*Math.PI*2,orbit=.96+random(i+50)*.38;
+        sphere(.055+random(i+60)*.045,new THREE.MeshStandardMaterial({color:0xcbd5e1,roughness:.9}),Math.cos(angle)*orbit,Math.sin(angle)*.3,Math.sin(angle)*orbit);
+      }
+      const craterCount=2+Math.floor(random(70)*5);
+      for(let i=0;i<craterCount;i++){
+        const angle=random(i+80)*Math.PI*2,dist=.42+random(i+90)*.18;
+        const crater=sphere(.045+random(i+100)*.035,dark,Math.cos(angle)*dist,Math.sin(i*2.1)*.26,Math.sin(angle)*dist);
+        crater.scale.set(1,.55,1);
+      }
+    }else if(id==='black-hole'){
       sphere(.62,new THREE.MeshBasicMaterial({color:0x03030b}));
       ring(.83,.12,new THREE.MeshStandardMaterial({color:0x9b5cff,emissive:0x713bff,emissiveIntensity:2,metalness:.35,roughness:.24}),.22);
       ring(1.02,.035,new THREE.MeshBasicMaterial({color:0xffbd72}),-.12);
@@ -276,11 +312,12 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       if(entries.has(slot))return;
       const id=slot.dataset.universeModel;
       const index=Math.max(0,manifest.universeOrder.indexOf(id));
+      const variant=Math.max(0,Number(slot.dataset.universeVariant)||0);
       visibleSlots.add(slot);
 
-      // Draw a local 3D model immediately; never leave the animated 2D icon underneath it.
+      // Campaign planet nodes use deterministic unique procedural worlds, not a repeated GLB.
       try{
-        const immediate=buildScene(createProceduralModel(id,index),index);
+        const immediate=buildScene(createProceduralModel(id,index,variant),index);
         entries.set(slot,immediate);
         slot.classList.add('is-loaded','is-model-fallback');
         slot.closest('.bb-planet-node')?.classList.add('is-3d');
@@ -288,8 +325,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       }catch(error){
         console.warn(log,'immediate procedural model failed for '+id+'.',error);
       }
+      if(variant)return;
 
-      // Upgrade the visible local model to the detailed GLB when the remote asset arrives.
+      // Upgrade ordinary universe showcase slots to their detailed GLB model.
       loadModel(id).then(source=>{
         if(active!==state||!slot.isConnected||!visibleSlots.has(slot))return;
         const previous=entries.get(slot);
