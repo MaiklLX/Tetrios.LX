@@ -5636,19 +5636,37 @@ function bbRogueHasSynergy(){
     {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'атаки монстров приходят реже'}
   ].filter(combo=>combo.ids.every(id=>(Number(r[id])||0)>0));
 }
-let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};let bbRogueShieldCharges=0,bbRogueReserveCharges=0,bbRogueSkillReadyAt=0,bbCampaignGuardianUsed=false;
+let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0,attackIndex:0};
+let bbRogueShieldCharges=0,bbRogueReserveCharges=0,bbRogueSkillReadyAt=0,bbCampaignGuardianUsed=false;
+function bbRogueGetAttackProfile(){
+  const e=bbRogueEncounter;
+  const cycle=e.boss?['siege','crossfire']:['breach','crossfire'];
+  const id=cycle[Math.max(0,Number(e.attackIndex)||0)%cycle.length];
+  const profiles={
+    breach:{id:'breach',label:'БРЕШЬ · 1 РЯД',description:'Один мусорный ряд · один проход',rows:1,holes:1,toast:'👾 МОНСТР ПРОРВАЛ ОБОРОНУ! +1 мусорный ряд.'},
+    crossfire:{id:'crossfire',label:'ПЕРЕКРЁСТНЫЙ ЗАЛП · 2 РЯДА',description:'Два ряда · по два смещённых прохода',rows:2,holes:2,toast:'⚡ ПЕРЕКРЁСТНЫЙ ЗАЛП! На поле обрушились два ряда.'},
+    siege:{id:'siege',label:'ОСАДА БОССА · 2 РЯДА',description:'Два ряда · узкий проход в каждом',rows:2,holes:1,toast:'💥 ОСАДА БОССА! Два плотных мусорных ряда.'}
+  };
+  return profiles[id];
+}
+function bbRogueBuildGarbageRow(profile,rowIndex){
+  const e=bbRogueEncounter,row=Array(W).fill(7);
+  const seed=(e.room*3+e.attackIndex*5+rowIndex*2)%W;
+  for(let hole=0;hole<profile.holes;hole++)row[(seed+hole*4)%W]=0;
+  return row;
+}
 function bbRogueStartRoom(){
   const e=bbRogueEncounter,floor=Math.floor((e.room-1)/5)+1,boss=e.room%5===0;
   const hp=boss?18+floor*7+e.room*2:5+floor*2+Math.floor(e.room/2);
-  e.floor=floor;e.boss=boss;e.hp=hp;e.maxHp=hp;e.nextAttack=boss?20:Math.max(23,34-floor*2);
+  e.floor=floor;e.boss=boss;e.hp=hp;e.maxHp=hp;e.attackIndex=0;e.nextAttack=boss?20:Math.max(23,34-floor*2);
   bbRogueRenderEncounter();
 }
 function bbRogueRenderEncounter(){
   if(mode!=='rogue')return '';
-  const e=bbRogueEncounter,pct=Math.max(0,Math.min(100,e.hp/Math.max(1,e.maxHp)*100)),heroLevel=bbGetHeroProgress(bbSelectedHero).level,skillReady=Date.now()>=bbRogueSkillReadyAt;
-  return '<div style="display:flex;align-items:center;gap:9px;padding:7px 9px;margin:5px 0 8px;border:1px solid '+(e.boss?'#ff6b75':'#9d7cff')+'66;border-radius:11px;background:linear-gradient(100deg,#17172d,#111a30);color:#f5f2ff;min-height:42px;box-sizing:border-box">'+
+  const e=bbRogueEncounter,attack=bbRogueGetAttackProfile(),pct=Math.max(0,Math.min(100,e.hp/Math.max(1,e.maxHp)*100)),heroLevel=bbGetHeroProgress(bbSelectedHero).level,warning=e.nextAttack<=5;
+  return '<div style="display:flex;align-items:center;gap:9px;padding:7px 9px;margin:5px 0 8px;border:1px solid '+(warning?'#ffbd59':e.boss?'#ff6b75':'#9d7cff')+'88;border-radius:11px;background:linear-gradient(100deg,'+(warning?'#38251a':'#17172d')+',#111a30);color:#f5f2ff;min-height:42px;box-sizing:border-box">'+
     '<div style="font-size:20px">'+(e.boss?'👹':'👾')+'</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:5px;font-size:10px;font-weight:900"><span>'+(e.boss?'БОСС':'КОМНАТА '+e.room)+' · ЭТАЖ '+e.floor+'</span><span>HP '+e.hp+'/'+e.maxHp+'</span></div>'+
-    '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="font-size:9px;color:#b9c1d9">АТАКА ЧЕРЕЗ '+e.nextAttack+'с</div></div>'+(heroLevel>=5?'<span style="font-size:9px;color:#5cf5e8;font-weight:900;white-space:nowrap">НАВЫК · ПРАВЫЙ СЛОТ</span>':'<span style="font-size:9px;color:#9ca8c4">Навык: ур. 5</span>')+'</div>';
+    '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:9px;color:'+(warning?'#ffd18a':'#b9c1d9')+'"><strong>'+(warning?'⚠ ':'')+attack.label+'</strong><span>АТАКА ЧЕРЕЗ '+e.nextAttack+'с</span></div><div style="font-size:8px;color:#8795b4;margin-top:2px">'+attack.description+'</div></div>'+(heroLevel>=5?'<span style="font-size:9px;color:#5cf5e8;font-weight:900;white-space:nowrap">НАВЫК · ПРАВЫЙ СЛОТ</span>':'<span style="font-size:9px;color:#9ca8c4">Навык: ур. 5</span>')+'</div>';
 }
 function bbRogueClearBottomRows(count){for(let n=0;n<count;n++){board.pop();board.unshift(Array(W).fill(0));}}
 function bbRenderHeroSkillSlot(){
@@ -5715,14 +5733,20 @@ function bbRogueDamageEnemy(amount){
 }
 function bbRogueEnemyAttack(){
   if(mode!=='rogue'||!started||paused||gameOver)return;
-  const e=bbRogueEncounter,chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
-  if(boosts.includes('reserve')&&bbRogueReserveCharges>0){bbRogueReserveCharges--;e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2);toast('🛡️ РЕЗЕРВ ПОГЛОТИЛ АТАКУ! Осталось зарядов: '+bbRogueReserveCharges);bbRogueRenderEncounter();return;}
-  for(let n=0;n<(e.boss?2:1);n++){
-    if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
-    board.shift();const hole=Math.floor(Math.random()*W),garbage=Array(W).fill(7);garbage[hole]=0;board.push(garbage);
+  const e=bbRogueEncounter,attack=bbRogueGetAttackProfile(),chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
+  if(boosts.includes('reserve')&&bbRogueReserveCharges>0){
+    bbRogueReserveCharges--;e.attackIndex++;
+    e.nextAttack=Math.max(e.boss?12:17,(e.boss?20:34-e.floor*2)-(chrono?8:0));
+    toast('🛡️ РЕЗЕРВ ПОГЛОТИЛ АТАКУ! Осталось зарядов: '+bbRogueReserveCharges);
+    bbRogueRenderEncounter();return;
   }
-  e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2)-(chrono?8:0);
-  toast(e.boss?'💥 БОСС ОБРУШИЛ ДВА РЯДА!':'👾 АТАКА МОНСТРА! На поле добавлен мусорный ряд.');
+  for(let n=0;n<attack.rows;n++){
+    if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
+    board.shift();board.push(bbRogueBuildGarbageRow(attack,n));
+  }
+  e.attackIndex++;
+  e.nextAttack=Math.max(e.boss?12:17,(e.boss?20:34-e.floor*2)-(chrono?8:0));
+  toast(attack.toast);
   render();bbRogueRenderEncounter();
 }
 
