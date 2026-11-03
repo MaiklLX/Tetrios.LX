@@ -175,6 +175,11 @@ requireMatch(
   /function bbApplyVoidCompression\(\)[\s\S]*?mode!=='rogue'[\s\S]*?bbVoidLastAppliedLevel===level[\s\S]*?if\(piece&&collides\(piece\)\)/
 );
 
+requireMatch(
+  'Void is invoked from the real level-up flow only when its card is owned',
+  /function levelUp\(\)[\s\S]*?if\(boosts\.includes\('void'\)\)bbApplyVoidCompression\(\)/
+);
+
 if (failures.length) {
   console.error('Gameplay mode validation failed:\n- ' + failures.join('\n- '));
   process.exit(1);
