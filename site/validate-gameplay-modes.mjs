@@ -68,6 +68,10 @@ requireMatch(
   /if\(cleared&&boosts\.includes\('plasma'\)\)\{\s*if\(mode==='rogue'\)dropLastStepAt=performance\.now\(\);\s*else restartDrop\(\);\s*\}/
 );
 requireMatch(
+  'Aura must draw a glow around the active piece only while the card is owned',
+  /if\(piece&&!gameOver\)\{if\(boosts\.includes\('aura'\)\)\{ctx\.save\(\);ctx\.globalAlpha=\.72;ctx\.shadowColor=colors\[piece\.t\]/
+);
+requireMatch(
   'Shift must award rank-scaled points only after a successful rotation',
   /if\(boosts\.includes\('shift'\)&&Math\.random\(\)<0\.25\)\{score\+=25\*bbGetUpgradeRank\('shift'\);updateHud\(\)\}/
 );
