@@ -38,7 +38,11 @@ const targets = [
     page.setDefaultTimeout(15000);
     page.setDefaultNavigationTimeout(25000);
     const pageErrors = [];
+    const consoleErrors = [];
+    const failedRequests = [];
     page.on('pageerror', error => pageErrors.push(error.stack || String(error)));
+    page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
+    page.on('requestfailed', request => failedRequests.push({url:request.url(),failure:request.failure()?.errorText||'unknown'}));
 
     console.log('Starting visual capture: ' + target.name + ' (' + target.engine + ')');
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
