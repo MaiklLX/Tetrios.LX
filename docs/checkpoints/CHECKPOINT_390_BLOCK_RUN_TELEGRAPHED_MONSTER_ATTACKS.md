@@ -69,3 +69,10 @@ Date: 2026-11-03
 - Run `41665678315` (Android WebView source audit) remained in progress.
 - Runs `41665678736` (cross-platform visual preview) and `41665678933` (mobile arena preview) had not yet exposed job results; screenshot acceptance remains pending.
 - Next implementation should repair the eight inactive cards and align rank formulas/descriptions, with tests and mode gating. Do not change the 35-card count without approval.
+
+
+### Automation correction — Android audit workflow
+- Inspection of the actual `.github/workflows/android-webview-audit.yml` revealed that this separate workflow also compiled and uploaded a debug APK on every PR to `main`; this was broader than the earlier `build-apk.yml` fix.
+- Run `41665678315` was already executing its `Compile debug APK without publishing` step when this was discovered. It was an automatic PR-triggered audit run, not a user-requested APK build. It may complete and upload its test artifact; no release signing or deployment is involved.
+- Updated the audit workflow's `pull_request.paths` filter so it only runs when Android WebView patching, Android project archive, 3D runtime/character assets or related 3D source files change. Ordinary gameplay/card-library changes no longer request an Android APK build.
+- This workflow change is on the feature branch and will not be merged/deployed automatically.
