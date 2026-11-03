@@ -7600,7 +7600,23 @@ if (isReplay) {
   return true;
 }
 
-function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));let cleared=0;for(let y=H-1;y>=0;y--){if(board[y].every(v=>v)){board.splice(y,1);board.unshift(Array(W).fill(0));cleared++;y++}}
+function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));const bbBoardBeforeClear=board.map(row=>row.slice());
+const bbClearedRows=[];
+let cleared=0;
+for(let y=H-1;y>=0;y--){
+  if(board[y].every(v=>v)){
+    bbClearedRows.push(y);
+    board.splice(y,1);board.unshift(Array(W).fill(0));cleared++;y++;
+  }
+}
+if(cleared){
+  bbLineClearAnimation={
+    board:bbBoardBeforeClear,
+    clearedRows:bbClearedRows,
+    startedAt:performance.now(),
+    duration:280
+  };
+}
 
 if(
   mode==='daily' &&
@@ -7803,6 +7819,7 @@ function bbDailyGlitchColor(index){
   return glitchColors[index%glitchColors.length];
 }
 function bbSyncDailyPreview(){const preview=$('next');if(preview)preview.style.visibility=(bbIsDailyMechanic('blindAssembly')||bbIsDailyMechanic('silent'))?'hidden':'';}
+let bbLineClearAnimation=null,bbLineClearAnimationRaf=0;
 function render(){bbSyncDailyPreview();let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Precision arena grid: crisp cell boundaries and stronger five-cell guides */
 ctx.save();ctx.fillStyle='#0a1222';ctx.fillRect(0,0,cw,ch);
 for(let y=0;y<H;y++){if(y%2===1){ctx.fillStyle='#ffffff04';ctx.fillRect(0,y*cell,cw,cell);}}
@@ -7829,8 +7846,38 @@ if(bbIsDailyMechanic('redZone')){
   ctx.stroke();
   ctx.setLineDash([]);
 }
-for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);
-if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext()}
+if(bbLineClearAnimation){
+  const animation=bbLineClearAnimation;
+  const progress=Math.min(1,Math.max(0,(performance.now()-animation.startedAt)/animation.duration));
+  const eased=1-Math.pow(1-progress,3);
+  const cleared=new Set(animation.clearedRows);
+  for(let y=0;y<H;y++){
+    if(cleared.has(y))continue;
+    let rowsBelow=0;
+    for(const row of animation.clearedRows)if(row>y)rowsBelow++;
+    const drawY=y+rowsBelow*eased;
+    for(let x=0;x<W;x++)if(animation.board[y][x])drawCell(ctx,x,drawY,bbDailyGlitchColor(animation.board[y][x]-1),cell);
+  }
+  if(progress<1){
+    ctx.save();ctx.globalAlpha=(1-progress)*.72;ctx.fillStyle='#8ffcf4';
+    for(const row of animation.clearedRows){ctx.shadowColor='#5cf5e8';ctx.shadowBlur=cell*.9;ctx.fillRect(0,row*cell,cw,Math.max(2,cell*.12));}
+    ctx.restore();
+  }else bbLineClearAnimation=null;
+}else{
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);
+}
+if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext();
+if(bbLineClearAnimation){
+  if(!bbLineClearAnimationRaf){
+    bbLineClearAnimationRaf=requestAnimationFrame(()=>{
+      bbLineClearAnimationRaf=0;
+      render();
+    });
+  }
+}else if(bbLineClearAnimationRaf){
+  cancelAnimationFrame(bbLineClearAnimationRaf);bbLineClearAnimationRaf=0;
+}
+}
 window.bbGet3DBoardState=function(){
   const settled=board.map(row=>row.slice());
   let active=null,ghostY=null;
@@ -12068,7 +12115,10 @@ body .app{background:transparent!important;background-color:transparent!importan
     font-weight:900!important;text-shadow:0 0 14px rgba(92,245,232,.2);
   }
   /* The heading/caption already names each meter; avoid repeating units inside the rings. */
-  #game .charge-ring-inner>small,#game .chrono-ring-inner>small{display:none!important}
+  #game .charge-ring-inner>small,#game .chrono-ring-inner>small,
+  #game .charge-ring-inner>.charge-symbol,#game .chrono-ring-inner>.chrono-hourglass{
+    display:none!important;
+  }
   /* Keep the character picker stable while WebView promotes the 3D preview canvas. */
   #overlay.show #modal.bb-hero-showcase-modal{
     animation:none!important;transform:translateZ(0)!important;
