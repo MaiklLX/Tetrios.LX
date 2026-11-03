@@ -55,7 +55,7 @@ The expanded atlas adds sixteen distinct CC0 models. Twelve are assigned as comp
 | hydroponics-rack | Hydroponics rack | https://grab3d.com/models/sci-fi/hydroponics-rack/ |
 | medical-pod | Medical pod | https://grab3d.com/models/sci-fi/medical-pod/ |
 | repair-bot | Repair robot | https://grab3d.com/models/sci-fi/repair-bot/ |
-| sci-fi-airlock | Space station airlock | https://grab3d.com/models/sci-fi/sci-fi-airlock/ |
+| sci-fi-airlock | Space station airlock | https://grab3d.com/models/sci-fi/airlock/ |
 | solar-panel-array | Solar panel array | https://grab3d.com/models/sci-fi/solar-panel-array/ |
 
 The 360 numbered campaign planets are procedurally generated with deterministic per-node seeds. Each planet receives its own combination of surface color, continent patches, craters, atmosphere, optional ring system and moons; these node variants deliberately stay procedural instead of upgrading to one repeated GLB.
