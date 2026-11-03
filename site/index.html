@@ -6555,7 +6555,7 @@ function bbGetUnlockedNode() {
 }
 
 
-let bbCampaignRun = {maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};
+let bbCampaignRun = {maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};
 function bbGetNodeGoals(node) {
   const info=bbGetNodeInfo(node),local=info.localNumber,difficulty=Math.floor((node-1)/30);
   const count=Math.min(5,2+Math.floor((node-1)/24));
@@ -6564,7 +6564,7 @@ function bbGetNodeGoals(node) {
     {id:'score',label:'Набрать очки',target:700+node*95,value:()=>score},
     {id:'level',label:'Достичь уровня',target:2+Math.floor(node/45),value:()=>level},
     {id:'time',label:'Продержаться, секунд',target:35+difficulty*8+(local%5)*5,value:()=>runSeconds},
-    {id:'multi',label:'Очистить несколько линий за один ход',target:local%10===0?3:2,value:()=>bbCampaignRun.maxClear},
+    {id:'single',label:'Выполнить одиночную очистку',target:1,value:()=>bbCampaignRun.singleClears},
     {id:'pieces',label:'Установить фигур',target:8+difficulty*2+(local%3),value:()=>bbCampaignRun.piecesPlaced},
     {id:'rotations',label:'Повернуть фигуры',target:2+(local%4)+Math.floor(difficulty/2),value:()=>bbCampaignRun.rotations},
     {id:'hold',label:'Использовать удержание',target:1,value:()=>bbCampaignRun.holdUses},
@@ -6572,7 +6572,7 @@ function bbGetNodeGoals(node) {
     {id:'triple',label:'Выполнить тройную очистку',target:1,value:()=>bbCampaignRun.tripleClears,bossOnly:true},
     {id:'tetris',label:'Очистить 4 линии одним ходом',target:1,value:()=>bbCampaignRun.tetrisClears,bossOnly:true},
     {id:'noHardDrop',label:'Установить 8 фигур без жёсткого сброса',target:8,value:()=>bbCampaignRun.hardDrops===0?bbCampaignRun.piecesPlaced:0,failed:()=>bbCampaignRun.hardDrops>0},
-    {id:'noHold',label:'Установить 8 фигур, сохранив удержание',target:8,value:()=>bbCampaignRun.holdUses===0?bbCampaignRun.piecesPlaced:0,failed:()=>bbCampaignRun.holdUses>0},
+    {id:'noHold',label:'Установить 8 фигур, не используя удержание',target:8,value:()=>bbCampaignRun.holdUses===0?bbCampaignRun.piecesPlaced:0,failed:()=>bbCampaignRun.holdUses>0},
     {id:'streak',label:'Собрать серию из очисток подряд',target:local%10===0?3:2,value:()=>bbCampaignRun.maxCombo}
   ].filter(goal=>!goal.bossOnly||info.boss);
   const offset=(node*7+info.biome.id*3)%pool.length,goals=[];
@@ -7371,7 +7371,7 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
+function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(mode==='rogue'&&bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
@@ -7667,7 +7667,7 @@ if(
 }
 
 if(cleared){
-if(mode==='campaign'){if(cleared===2)bbCampaignRun.doubleClears++;if(cleared===3)bbCampaignRun.tripleClears++;if(cleared>=4)bbCampaignRun.tetrisClears++;}
+if(mode==='campaign'){if(cleared===1)bbCampaignRun.singleClears++;if(cleared===2)bbCampaignRun.doubleClears++;if(cleared===3)bbCampaignRun.tripleClears++;if(cleared>=4)bbCampaignRun.tetrisClears++;}
 bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16);
 if(bbIsDailyMechanic('chronoRift')){
   bbDailyMechanicState.chronoRemaining=20;
