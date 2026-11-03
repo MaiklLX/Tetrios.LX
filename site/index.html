@@ -11360,3 +11360,29 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 </body></html>
+
+<style id="bb-mobile-arena-golden-ratio-v1">
+/* TETRIOS LX — mobile arena follows the canonical 10x23 board ratio.
+   Isolated to phone/tablet widths; the accepted desktop Golden Baseline is untouched. */
+@media (max-width:900px){
+  #game .boardframe #board{
+    width:auto!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    aspect-ratio:10 / 23!important;
+    object-fit:contain!important;
+    flex:0 1 auto!important;
+  }
+}
+@media(max-width:520px) and (orientation:portrait){
+  #game .boardframe{
+    height:min(58dvh,calc(100dvh - 236px),calc((100vw - 104px)*2.3))!important;
+  }
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game .boardframe{
+    height:min(56dvh,calc(100dvh - 228px),calc((100vw - 94px)*2.3))!important;
+  }
+}
+</style>
