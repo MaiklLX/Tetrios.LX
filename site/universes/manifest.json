@@ -8,20 +8,32 @@
     "commercialUse": true,
     "attributionRequired": false
   },
-  "loading": "Remote GLB assets are lazy-loaded from the original publisher when a galaxy card enters the horizontal viewport.",
+  "loading": "24 locally packaged CC0 GLB models for offline Android; the web atlas lazily loads the same models from the original publisher.",
   "universeOrder": [
     "planet",
-    "earth-moon",
+    "cargo-spaceship",
     "lava-world",
     "neptune",
+    "moon-base-dome",
+    "space-fighter",
     "mars",
-    "uranus",
+    "portal-gate",
     "saturn",
+    "drone-bot",
+    "spiral-galaxy",
+    "sci-fi-spaceship",
+    "earth-moon",
+    "uranus",
     "black-hole",
     "mercury",
     "solar-system",
-    "spiral-galaxy",
-    "sun"
+    "sun",
+    "cargo-shuttle",
+    "escape-pod",
+    "mech-walker",
+    "antenna-array",
+    "alien-egg",
+    "alien-plant"
   ],
   "models": {
     "planet": {
@@ -119,6 +131,138 @@
       "sourcePage": "https://grab3d.com/models/sci-fi/sun/",
       "triangles": 19920,
       "description": "Glowing star with surface granulation and prominence arches."
+    },
+    "cargo-spaceship": {
+      "title": "Грузовой фрегат",
+      "file": "cargo-spaceship.glb",
+      "url": "https://grab3d.com/dl/cargo-spaceship/cargo-spaceship.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/cargo-spaceship/",
+      "triangles": 29188,
+      "description": "Длинный межзвёздный грузовик с контейнерами и складными опорами.",
+      "kit": "Cozy Space Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "cargo-shuttle": {
+      "title": "Транспортный шаттл",
+      "file": "cargo-shuttle.glb",
+      "url": "https://grab3d.com/dl/cargo-shuttle/cargo-shuttle.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/cargo-shuttle/",
+      "triangles": 27560,
+      "description": "Небольшой грузовой челнок с открытой рампой, контейнерами и двигателями.",
+      "kit": "Cozy Space Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "escape-pod": {
+      "title": "Спасательная капсула",
+      "file": "escape-pod.glb",
+      "url": "https://grab3d.com/dl/escape-pod/escape-pod.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/escape-pod/",
+      "triangles": 22372,
+      "description": "Одноместная спасательная капсула с иллюминаторами и посадочными опорами.",
+      "kit": "Cozy Space Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "space-fighter": {
+      "title": "Звёздный истребитель",
+      "file": "space-fighter.glb",
+      "url": "https://grab3d.com/dl/space-fighter/space-fighter.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/space-fighter/",
+      "triangles": 29483,
+      "description": "Манёвренный одноместный истребитель с парными светящимися двигателями.",
+      "kit": "Cozy Space Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "sci-fi-spaceship": {
+      "title": "Исследовательский корабль",
+      "file": "sci-fi-spaceship.glb",
+      "url": "https://grab3d.com/dl/sci-fi-spaceship/sci-fi-spaceship.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/sci-fi-spaceship/",
+      "triangles": 29965,
+      "description": "Корабль дальнего радиуса действия с кабиной, крыльями и складными шасси.",
+      "kit": "Cozy Space Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "moon-base-dome": {
+      "title": "Лунная колония",
+      "file": "moon-base-dome.glb",
+      "url": "https://grab3d.com/dl/moon-base-dome/moon-base-dome.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/moon-base-dome/",
+      "triangles": 24660,
+      "description": "Геодезический купол базы на кратерной поверхности с антеннами и шлюзом.",
+      "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "drone-bot": {
+      "title": "Дрон-разведчик",
+      "file": "drone-bot.glb",
+      "url": "https://grab3d.com/dl/drone-bot/drone-bot.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/drone-bot/",
+      "triangles": 13760,
+      "description": "Парящий робот-разведчик с большим сенсором и манипуляторами.",
+      "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "mech-walker": {
+      "title": "Мех-экспедиционер",
+      "file": "mech-walker.glb",
+      "url": "https://grab3d.com/dl/mech-walker/mech-walker.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/mech-walker/",
+      "triangles": 25340,
+      "description": "Двуногий исследовательский мех с кабиной, прожекторами и захватами.",
+      "kit": "Cozy Space Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "portal-gate": {
+      "title": "Портал перехода",
+      "file": "portal-gate.glb",
+      "url": "https://grab3d.com/dl/portal-gate/portal-gate.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/portal-gate/",
+      "triangles": 24768,
+      "description": "Кольцевые врата с сияющей поверхностью и световыми элементами.",
+      "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "antenna-array": {
+      "title": "Радиообсерватория",
+      "file": "antenna-array.glb",
+      "url": "https://grab3d.com/dl/antenna-array/antenna-array.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/antenna-array/",
+      "triangles": 21812,
+      "description": "Наземная станция связи с крупной антенной, мачтой и радаром.",
+      "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "alien-egg": {
+      "title": "Яйцо пришельца",
+      "file": "alien-egg.glb",
+      "url": "https://grab3d.com/dl/alien-egg/alien-egg.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/alien-egg/",
+      "triangles": 11232,
+      "description": "Таинственный светящийся артефакт в гнезде инопланетной флоры.",
+      "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "alien-plant": {
+      "title": "Ксеносад",
+      "file": "alien-plant.glb",
+      "url": "https://grab3d.com/dl/alien-plant/alien-plant.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/alien-plant/",
+      "triangles": 14826,
+      "description": "Необычная инопланетная флора с мягко светящимися бутонами.",
+      "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
     }
   }
 }
