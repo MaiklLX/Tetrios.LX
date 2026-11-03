@@ -40,6 +40,30 @@ requireMatch(
   /if\(mode==='rogue'\)\{if\(bbRogueEncounter\.hp>0\)/
 );
 requireMatch(
+  'Monster attacks must expose distinct telegraphed profiles',
+  /function bbRogueGetAttackProfile\(\)[\s\S]*?breach:[\s\S]*?crossfire:[\s\S]*?siege:/
+);
+requireMatch(
+  'Normal encounters and bosses must use different attack cycles',
+  /const cycle=e\.boss\?\['siege','crossfire'\]:\['breach','crossfire'\]/
+);
+requireMatch(
+  'Monster attack patterns must be deterministic from room and attack index',
+  /function bbRogueBuildGarbageRow\(profile,rowIndex\)[\s\S]*?const seed=\(e\.room\*3\+e\.attackIndex\*5\+rowIndex\*2\)%W/
+);
+requireMatch(
+  'Monster encounter UI must show the next attack and a low-time warning',
+  /attack\.label[\s\S]*?АТАКА ЧЕРЕЗ[\s\S]*?warning=e\.nextAttack<=5/
+);
+requireMatch(
+  'Reserve must consume and block one fully telegraphed attack',
+  /bbRogueReserveCharges--;e\.attackIndex\+\+;[\s\S]*?РЕЗЕРВ ПОГЛОТИЛ АТАКУ/
+);
+requireMatch(
+  'Monster attack resolution must apply the selected profile row count',
+  /for\(let n=0;n<attack\.rows;n\+\+\)[\s\S]*?bbRogueBuildGarbageRow\(attack,n\)/
+);
+requireMatch(
   'Daily challenge rules must remain independently gated',
   /mode\s*===\s*'daily'[\s\S]{0,160}bbIsDailyMechanic/
 );
