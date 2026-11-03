@@ -202,7 +202,7 @@ jobs:
               entry["url"] = "./universes/models/" + filename
               print(f"Bundled {model_id}: {target.stat().st_size} bytes")
           manifest["loading"] = "All 12 GLB universe models are bundled locally for offline Android use."
-          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\\n")
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
           PY
           test "$(find "$ASSET_DIR/universes/models" -maxdepth 1 -type f -name '*.glb' | wc -l)" -eq 12
           echo "Bundled all 12 universe models locally in APK"
@@ -263,6 +263,7 @@ jobs:
           export TETRIOS_DEBUG_STORE_PASSWORD="tetrios-debug-only"
           export TETRIOS_DEBUG_KEY_ALIAS="tetrios-debug"
           export TETRIOS_DEBUG_KEY_PASSWORD="tetrios-debug-only"
+          keytool -list -keystore "$TETRIOS_DEBUG_KEYSTORE" -storepass "$TETRIOS_DEBUG_STORE_PASSWORD" -alias "$TETRIOS_DEBUG_KEY_ALIAS" >/dev/null
           python3 "$GITHUB_WORKSPACE/scripts/configure-stable-android-debug-signing.py" "$PROJECT_DIR"
           echo "Configured persistent debug signing for in-place APK updates"
 
