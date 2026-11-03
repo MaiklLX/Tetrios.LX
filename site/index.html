@@ -11176,4 +11176,36 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-arena-center-after-hud-v1">
+/* TETRIOS LX — restore the board to the true center track.
+   .gameleftcol is a legacy wrapper left behind when bbArrangeModeHud moves the HUD out. */
+@media (min-width:901px){
+  #game>.playlayout>.gameleftcol{
+    display:none!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol){
+    grid-column:2!important;
+    grid-row:2!important;
+    justify-self:stretch!important;
+    align-self:stretch!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:3!important;
+    grid-row:2!important;
+  }
+  #game>.gamehud.gamehud-top{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+}
+</style>
+
 </body></html>
