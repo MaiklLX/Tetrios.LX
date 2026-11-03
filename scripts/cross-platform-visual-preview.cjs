@@ -136,6 +136,10 @@ const targets = [
     if (visualBoostState && (!visualBoostState.prismColor || !/^#[0-9a-f]{6}$/i.test(visualBoostState.prismColor))) {
       failures.push(target.name + ': Prism did not produce a valid spectral color');
     }
+    const voidState = await page.evaluate(() => window.__TETRIOS_QA__?.testVoidCompression?.() || null);
+    if (!voidState || !voidState.succeeded || voidState.rowCount !== 23 || voidState.blocksBefore !== voidState.blocksAfter || !voidState.topSpawnRowsEmpty) {
+      failures.push(target.name + ': Void compression invariants failed (' + JSON.stringify(voidState) + ')');
+    }
     await page.waitForTimeout(180);
 
     const geometry = await page.evaluate(() => {
@@ -238,7 +242,7 @@ const targets = [
       console.log('Captured 3D arena: ' + target.name);
     }
 
-    report.push({ target: target.name, engine: target.engine, geometry, webglAvailable, threeD, visualBoostState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
+    report.push({ target: target.name, engine: target.engine, geometry, webglAvailable, threeD, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
   }
