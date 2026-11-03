@@ -59,3 +59,11 @@ These are not to be treated as active effects merely because their catalogue des
 - `aura`: one catalogue occurrence; no upgrade-owned render or gameplay hook found.
 - `void`: one catalogue occurrence; no board compaction/compression hook found.
 - These remain inactive. Do not repurpose daily visual effects or hero identity code as substitutes for card-owned triggers.
+
+## Follow-up — Aura (`aura`) implemented
+
+- The active falling piece receives a soft glow using its own palette color while the Aura card is owned.
+- The glow is drawn behind the piece cells and does not affect settled blocks, ghost-piece logic, collision, score, or board geometry.
+- Catalog text now names the active-piece aura directly.
+- Static gameplay validator asserts the card-gated render path.
+- Mobile preview caught a short-screen objective rail edge case (375×812, bottom 813.5px); a narrow-width-only compact spacing rule was added. Re-run passed with the objective rail ending at 799.91px. The 10:23 board ratio remained unchanged.
