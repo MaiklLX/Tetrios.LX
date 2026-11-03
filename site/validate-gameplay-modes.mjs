@@ -68,6 +68,10 @@ requireMatch(
   /if\(cleared&&boosts\.includes\('plasma'\)\)\{\s*if\(mode==='rogue'\)dropLastStepAt=performance\.now\(\);\s*else restartDrop\(\);\s*\}/
 );
 requireMatch(
+  'Short mobile Block Run objective rail must use compact spacing below 380px',
+  /@media\(max-width:380px\) and \(orientation:portrait\)\{\s*#game \.gameleftcol #rogueGoals\{gap:3px!important\}/
+);
+requireMatch(
   'Aura must draw a glow around the active piece only while the card is owned',
   /if\(piece&&!gameOver\)\{if\(boosts\.includes\('aura'\)\)\{ctx\.save\(\);ctx\.globalAlpha=\.72;ctx\.shadowColor=colors\[piece\.t\]/
 );
