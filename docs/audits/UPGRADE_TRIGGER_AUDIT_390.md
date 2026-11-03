@@ -5,10 +5,10 @@ Base: `site/index.html` at Block Run attack implementation commit `815cd906ea2a9
 These IDs occur in the upgrade catalogue, but a search of their exact upgrade IDs found no `boosts.includes(id)`, `bbGetUpgradeRank(id)`, `bbGetRogueCardRank(id)` or dedicated gameplay trigger:
 - `prism` — catalogue says new pieces shimmer in different shades; no card-owned gameplay/render trigger found (hero Prism references are unrelated).
 - `stable` — no rotation handling tied to the card.
-- `luck` — no rare-piece or score trigger.
+- `luck` — no rare-piece or score trigger; current 7-bag gives each of the seven shapes exactly once per bag, so there is no existing rarity tier to reward.
 - `void` — no field compression trigger.
 - `gear` — no every-fifth-turn score trigger.
-- `shift` — no rotation bonus trigger.
+- `shift` — implemented after this audit: successful rotation has a 25% chance to award +25 points (rank-scaled in Block Run).
 - `aura` — no card-owned visual aura trigger.
 - `plasma` — no drop-delay reset trigger.
 
@@ -38,3 +38,17 @@ These are not to be treated as active effects merely because their catalogue des
 3. Align catalogue text and rank descriptions with actual effect formulas.
 4. Add deterministic tests for stacking, caps, cooldowns, and trigger frequency.
 5. Do not change the 35-card count or remove cards from the pool without a separate user-facing decision/checkpoint.
+
+## Follow-up — Shift and Luck review
+
+### Shift (`shift`) — implemented
+- A successful rotation only (after a valid wall-kick/rotation) rolls a 25% reward chance.
+- On success, awards +25 points; in Block Run the amount scales by the card rank (`25 × rank`).
+- Failed rotations do not roll or award points. Merely holding/pressing rotate against a collision cannot farm the bonus.
+- Catalog text now states the chance and base reward.
+- Added a static validator assertion for the trigger.
+
+### Luck (`luck`) — intentionally deferred
+- `randomType()` uses a seven-piece bag: every shape is inserted once, shuffled, and consumed once before the next bag. This is a uniform distribution, not a rarity system.
+- Calling one existing piece “rare” would be arbitrary and would misrepresent the current generator. Adding weighted rarity would alter core piece fairness and should be a deliberate design decision, not a silent implementation detail.
+- Keep Luck inactive until a clear rarity rule is approved (which pieces are rare, how often they appear, and whether the reward is additive or a multiplier).
