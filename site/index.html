@@ -10932,4 +10932,109 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-hud-compact-sidepanels-v1">
+/* TETRIOS LX — compact desktop HUD and side rail; mobile layout remains untouched. */
+@media (min-width:901px){
+  /* Keep each metric on its own line, with a clear label/value hierarchy. */
+  #game>.gamehud{
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-rows:minmax(48px,auto)!important;
+    gap:6px!important;
+  }
+  #game>.gamehud .hudbox,
+  #game>.gamehud #gameCoins{
+    min-height:48px!important;padding:6px 12px!important;gap:2px!important;
+  }
+  #game>.gamehud .hudbox span,
+  #game>.gamehud #gameCoins span{
+    font-size:9px!important;letter-spacing:.13em!important;word-spacing:.12em!important;
+  }
+  #game>.gamehud .hudbox strong,
+  #game>.gamehud #gameCoins strong{
+    font-size:clamp(19px,1.4vw,22px)!important;line-height:1.05!important;
+  }
+
+  /* Compact right rail so every card, including the selected hero, stays in view. */
+  #game>.playlayout>.sidecol{
+    grid-auto-rows:minmax(0,auto)!important;gap:6px!important;
+    align-content:start!important;max-height:calc(100dvh - 118px)!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    padding:0 2px 2px 0!important;scrollbar-width:thin!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard{
+    min-height:0!important;height:auto!important;padding:6px 9px!important;
+    gap:3px!important;border-radius:11px!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard label{
+    font-size:9px!important;line-height:1.2!important;
+    letter-spacing:.09em!important;word-spacing:.08em!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:76px!important;min-width:76px!important;max-width:76px!important;
+    height:76px!important;min-height:76px!important;
+    margin:4px auto!important;flex:0 0 76px!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner,
+  #game>.playlayout>.sidecol .chrono-ring-inner{
+    width:calc(100% - 12px)!important;height:calc(100% - 12px)!important;
+  }
+  #game>.playlayout>.sidecol .charge-caption,
+  #game>.playlayout>.sidecol .chrono-caption{
+    margin:2px 0 3px!important;font-size:8px!important;
+    letter-spacing:.045em!important;word-spacing:.08em!important;line-height:1.2!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{
+    width:108px!important;height:72px!important;max-height:72px!important;
+    margin:1px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .boosticon{font-size:21px!important;margin:0!important}
+  #game>.playlayout>.sidecol .boostname,
+  #game>.playlayout>.sidecol .boostnum{
+    font-size:9px!important;line-height:1.2!important;
+    letter-spacing:.035em!important;word-spacing:.08em!important;
+  }
+  #game>.playlayout>.sidecol #timer{
+    margin:1px 0!important;font-size:19px!important;line-height:1.1!important;
+  }
+  #game>.playlayout>.sidecol .smallbtn,
+  #game>.playlayout>.sidecol .side-drop{
+    min-height:28px!important;height:auto!important;margin:2px auto 0!important;
+    padding:5px 9px!important;font-size:9px!important;
+    letter-spacing:.07em!important;word-spacing:.08em!important;
+  }
+  #game>.playlayout>.sidecol>.chrono-card{min-height:0!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    min-height:58px!important;height:auto!important;padding:6px 9px!important;
+    gap:8px!important;overflow:hidden!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 32px!important;width:32px!important;height:32px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{min-width:0!important;gap:2px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{
+    font-size:9px!important;letter-spacing:.06em!important;word-spacing:.08em!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    font-size:8px!important;line-height:1.2!important;
+    letter-spacing:.035em!important;word-spacing:.08em!important;
+  }
+}
+@media (min-width:901px) and (max-height:760px){
+  #game>.gamehud{grid-auto-rows:minmax(43px,auto)!important;gap:5px!important}
+  #game>.gamehud .hudbox,#game>.gamehud #gameCoins{min-height:43px!important;padding:5px 10px!important}
+  #game>.playlayout>.sidecol{max-height:calc(100dvh - 104px)!important;gap:5px!important}
+  #game>.playlayout>.sidecol>.sidecard{padding:5px 8px!important}
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:66px!important;min-width:66px!important;max-width:66px!important;
+    height:66px!important;min-height:66px!important;flex-basis:66px!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{height:60px!important;max-height:60px!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{min-height:52px!important;padding:5px 8px!important}
+}
+</style>
+
 </body></html>
