@@ -72,9 +72,9 @@ const targets = [
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.locator('#campaignStart').click({ force: true });
-    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click({ force: true });
+    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
     await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.locator('#bbStartHeroChoose').click({ force: true });
+    await campaignPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.waitForTimeout(900);
     const campaignMissionState = await campaignPage.evaluate(() => {
@@ -96,7 +96,7 @@ const targets = [
 
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#bbConfirmStartHero').click({ force: true });
+    await page.locator('#bbConfirmStartHero').evaluate(element => element.click());
     await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
