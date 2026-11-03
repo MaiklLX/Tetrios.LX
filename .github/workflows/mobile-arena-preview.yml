@@ -135,6 +135,12 @@ jobs:
               if (geometry.documentWidth > viewport.width + 2) {
                 failures.push('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
               }
+              if (geometry.left && geometry.left.y < geometry.frame.bottom + 2) {
+                failures.push('Lower objective rail overlaps the arena at ' + viewport.name + ': ' + JSON.stringify({frameBottom:geometry.frame.bottom,railTop:geometry.left.y}));
+              }
+              if (geometry.left && geometry.left.bottom > viewport.height + 2) {
+                failures.push('Lower objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+              }
               const toggle = page.locator('#game .boardframe .bb-arena-toggle');
               await toggle.waitFor({ state: 'visible', timeout: 10000 });
               await toggle.click();
