@@ -77,14 +77,8 @@ const targets = [
     await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.waitForFunction(() => {
-      const root=document.querySelector('#campaign');
-      if(!root)return false;
-      const style=getComputedStyle(root),rect=root.getBoundingClientRect();
-      return style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>.95&&rect.width>0&&rect.height>0;
-    }, null, {timeout:10000});
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
-    await campaignPage.waitForTimeout(2200);
+    await campaignPage.waitForTimeout(3000);
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
       return {
