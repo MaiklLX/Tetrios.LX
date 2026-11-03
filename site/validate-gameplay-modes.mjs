@@ -168,11 +168,11 @@ requireMatch(
 
 requireMatch(
   'Void compresses one fully empty internal row while preserving board dimensions and every occupied cell',
-  /function bbBuildVoidCompressedBoard\\(source\\)[\\s\\S]*?compressed\\.splice\\(y,1\\);[\\s\\S]*?compressed\\.unshift\\(Array\\(W\\)\\.fill\\(0\\)\\)/
+  /function bbBuildVoidCompressedBoard\(source\)[\s\S]*?compressed\.splice\(y,1\);[\s\S]*?compressed\.unshift\(Array\(W\)\.fill\(0\)\)/
 );
 requireMatch(
   'Void compression is once per level, Block Run-only, and guarded against active-piece collision',
-  /function bbApplyVoidCompression\\(\\)[\\s\\S]*?mode!=='rogue'[\\s\\S]*?bbVoidLastAppliedLevel===level[\\s\\S]*?if\\(piece&&collides\\(piece\\)\\)/
+  /function bbApplyVoidCompression\(\)[\s\S]*?mode!=='rogue'[\s\S]*?bbVoidLastAppliedLevel===level[\s\S]*?if\(piece&&collides\(piece\)\)/
 );
 
 if (failures.length) {
