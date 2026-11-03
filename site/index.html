@@ -6577,6 +6577,7 @@ function bbGetNodeGoals(node) {
   ].filter(goal=>!goal.bossOnly||info.boss);
   const offset=(node*7+info.biome.id*3)%pool.length,goals=[];
   for(let i=0;i<pool.length&&goals.length<count;i++)goals.push(pool[(offset+i*5)%pool.length]);
+  if(goals.some(goal=>goal.id==='hold')&&goals.some(goal=>goal.id==='noHold'))goals.splice(goals.findIndex(goal=>goal.id==='noHold'),1);
   return goals.map(goal=>({id:goal.id,label:goal.label,target:goal.target,value:goal.value,failed:goal.failed}));
 }
 
@@ -7006,6 +7007,7 @@ toast('Цель выполнена! +' + g.reward + ' монет');
     goals.map(g => {
       const value = g.value();
       const complete = value >= g.target;
+      const failed = typeof g.failed === 'function' && g.failed();
       return '<div style="margin:6px 0">' +
         '<div style="display:flex;justify-content:space-between;gap:8px">' +
         '<span>' + (failed?'✕ ':complete ? '✅ ' : '◯ ') + g.label + '</span>' +
