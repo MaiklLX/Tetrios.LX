@@ -11386,4 +11386,122 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+<style id="bb-mobile-golden-layout-structure-v2">
+/* TETRIOS LX #374 — repair the mobile grid after the script creates .gameleftcol.
+   The arena and utility rail share the primary row; objectives/progress live below.
+   Desktop Golden Baseline #372 is not affected. */
+@media (max-width:520px) and (orientation:portrait){
+  #game>.playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) clamp(66px,20vw,82px)!important;
+    grid-template-rows:minmax(0,auto) auto!important;
+    align-items:start!important;
+    align-content:start!important;
+    column-gap:6px!important;
+    row-gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+  }
+  /* Explicitly place the real arena wrapper; :first-child is now .gameleftcol. */
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    grid-column:1!important;
+    grid-row:1!important;
+    display:flex!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:2!important;
+    grid-row:1!important;
+    align-self:start!important;
+    justify-self:stretch!important;
+    width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  #game>.playlayout>.gameleftcol{
+    grid-column:1/-1!important;
+    grid-row:2!important;
+    position:relative!important;
+    inset:auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    width:100%!important;
+    max-width:none!important;
+    max-height:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  #game .boardframe{
+    box-sizing:border-box!important;
+    flex:0 0 auto!important;
+    width:auto!important;
+    height:min(58dvh,calc(100dvh - 236px),calc((100vw - 104px)*2.3))!important;
+    max-width:100%!important;
+    max-height:none!important;
+    min-width:0!important;
+    min-height:0!important;
+    aspect-ratio:10/23!important;
+    margin:0 auto!important;
+    padding:2px!important;
+    overflow:hidden!important;
+  }
+  #game .boardframe #board{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    max-height:none!important;
+    aspect-ratio:auto!important;
+    object-fit:fill!important;
+  }
+  #game .gameleftcol #campaignGoals,
+  #game .gameleftcol #rogueGoals,
+  #game .gameleftcol .progresswrap{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game>.playlayout{grid-template-columns:minmax(0,1fr) 72px!important;column-gap:5px!important}
+  #game .boardframe{height:min(56dvh,calc(100dvh - 228px),calc((100vw - 94px)*2.3))!important}
+}
+@media (max-width:520px) and (orientation:landscape){
+  #game>.playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(66px,18vw)!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    align-items:start!important;
+    column-gap:6px!important;
+    row-gap:6px!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){grid-column:1!important;grid-row:1!important;display:flex!important;justify-content:center!important;min-width:0!important}
+  #game>.playlayout>.sidecol{grid-column:2!important;grid-row:1!important;width:100%!important;margin:0!important}
+  #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important;position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;height:auto!important;max-height:none!important}
+  #game .boardframe{height:min(54dvh,calc(100dvh - 158px),420px)!important;width:auto!important;aspect-ratio:10/23!important;margin:0 auto!important}
+}
+</style>
+
 </body></html>
