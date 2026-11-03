@@ -178,12 +178,12 @@ const objectIdsInIndex = objectIdsMatch ? [...objectIdsMatch[1].matchAll(/'([^']
 if (modelIdsInIndex.length !== 12 || new Set(modelIdsInIndex).size !== 12 || modelIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique planet models');
 if (objectIdsInIndex.length !== 12 || new Set(objectIdsInIndex).size !== 12 || objectIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique companion object models');
 if (modelIdsInIndex.some(id => objectIdsInIndex.includes(id))) fail('a campaign universe must not reuse its planet model as its companion object');
-if (!index.includes('bb-galaxy-companion-slot') || !index.includes('universeObjectIds[index]')) fail('each campaign universe must render its own companion 3D object');
+if (index.includes('bb-galaxy-companion-slot')) fail('universe cards must not render the extra companion slot that creates a ghost duplicate');
 if (!index.includes('data-universe-variant="') || !universeRuntime.includes('const variant=Math.max(0,Number(slot.dataset.universeVariant)||0)') || !universeRuntime.includes('if(variant)return;')) fail('campaign planet nodes must render deterministic unique variants instead of repeating GLB planets');
 if (!universeRuntime.includes('variant*9301+49297') || !universeRuntime.includes('const landCount=3+Math.floor(random(2)*6)')) fail('procedural planet variants must use deterministic per-node surface and orbit details');
-if (!index.includes('A vertical gesture never moves the active piece mid-swipe') || !index.includes('Commit exactly once on touchend')) fail('mobile vertical drop gestures must be committed once, at touchend');
+if (!index.includes('one grid row') || !index.includes('touch.softSteps') || !index.includes('touch.lastY+=28') || index.includes('const steps=Math.min(5')) fail('slow vertical swipes must soft-drop incrementally during touchmove without end-of-gesture jumps');
 if (index.indexOf('id="bbHeroSkillCard"') < 0 || index.indexOf('id="bbHeroSkillCard"') > index.indexOf('data-act="drop"')) fail('hero superpower must appear before hard drop in the mobile utility rail');
-if (!index.includes('Новый герой скоро появится') || !index.includes('БУДУЩЕЕ ОБНОВЛЕНИЕ') || !index.includes('Скоро в команде')) fail('hero roster must tease a locked future hero slot without making it selectable');
+if (!index.includes('bb-hero-future-card') || !index.includes('БУДУЩЕЕ ОБНОВЛЕНИЕ') || !index.includes('Скоро в команде') || index.includes('aria-label="Новый герой скоро появится"')) fail('future hero teaser must exist only in the dedicated heroes roster, not the pre-level picker');
 if (!index.includes('>↓ DROP</button></div><div hidden aria-hidden="true"><button class="smallbtn" id="musicBtn"')) fail('hard-drop card must close before the hidden music control so :has(#musicBtn) cannot hide it');
 
 const requiredCharacters = ['plush', 'prism', 'blip', 'pixel', 'spark'];
