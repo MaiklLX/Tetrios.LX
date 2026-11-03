@@ -126,6 +126,24 @@ requireMatch(
   /if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}else\{paused=false;if\(mode==='campaign'\)/
 );
 
+
+requireMatch(
+  'Campaign mission selection must avoid contradictory Hold and no-Hold objectives',
+  /if\(goals\.some\(goal=>goal\.id==='hold'\)&&goals\.some\(goal=>goal\.id==='noHold'\)\)goals\.splice\(goals\.findIndex\(goal=>goal\.id==='noHold'\),1\)/
+);
+requireMatch(
+  'Campaign rotation and Hold objectives must refresh progress immediately',
+  /if\(mode==='campaign'\)bbRenderGoals\(\)/
+);
+requireMatch(
+  'Upgrade ranks must be inactive outside Block Run',
+  /function bbGetUpgradeRank\(id\)\{return mode==='rogue'\?Math\.max\(1,bbGetRogueCardRank\(id\)\):0;\}/
+);
+requireMatch(
+  'The card archive must not advertise shared or standard cards',
+  /Все карты относятся к рогалик-системе и работают только в режиме Block Run/
+);
+
 if (failures.length) {
   console.error('Gameplay mode validation failed:\n- ' + failures.join('\n- '));
   process.exit(1);
