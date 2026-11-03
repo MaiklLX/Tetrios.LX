@@ -14,12 +14,13 @@ const exists = async path => {
 };
 const fail = message => { console.error(`FAIL: ${message}`); process.exitCode = 1; };
 
-const [index, arena, visual, packageJsonText, manifestText, audioCredits, mobileCss] = await Promise.all([
+const [index, arena, visual, packageJsonText, manifestText, universeManifestText, audioCredits, mobileCss] = await Promise.all([
   read('site/index.html'),
   read('site/arena-3d.js'),
   read('site/visual-3d.js'),
   read('site/vendor/three/package.json'),
   read('site/characters/manifest.json'),
+  read('site/universes/manifest.json'),
   read('site/audio/README.txt'),
   read('site/visual-overhaul.css')
 ]);
@@ -151,6 +152,27 @@ for (const modulePath of ['./visual-3d.js', './arena-3d.js']) {
 let manifest;
 try { manifest = JSON.parse(manifestText); }
 catch { fail('characters/manifest.json must be valid JSON'); }
+
+let universeManifest;
+try { universeManifest = JSON.parse(universeManifestText); }
+catch { fail('universes/manifest.json must be valid JSON'); }
+const universeModels = universeManifest?.models || {};
+const universeOrder = universeManifest?.universeOrder || [];
+if (Object.keys(universeModels).length !== 24) fail(`expected 24 universe GLB models, got ${Object.keys(universeModels).length}`);
+if (universeOrder.length !== 24 || new Set(universeOrder).size !== 24) fail('universeOrder must contain 24 unique model IDs');
+if (universeOrder.some(id => !universeModels[id]) || Object.keys(universeModels).some(id => !universeOrder.includes(id))) fail('universeOrder must match the complete model manifest');
+if (universeManifest?.license?.name !== 'CC0 1.0 Universal') fail('universe manifest must record the CC0 1.0 collection license');
+const universeFiles = new Set();
+for (const [id, entry] of Object.entries(universeModels)) {
+  if (!entry.file?.endsWith('.glb') || universeFiles.has(entry.file)) fail(`universe model ${id} must have a unique GLB filename`);
+  universeFiles.add(entry.file);
+  if (!/^https:\/\//.test(entry.url || '') || !/^https:\/\//.test(entry.sourcePage || '')) fail(`universe model ${id} must retain its original HTTPS source and source page`);
+}
+const modelArrayMatch = index.match(/const universeModelIds = \[([^\]]+)\]/);
+const modelIdsInIndex = modelArrayMatch ? [...modelArrayMatch[1].matchAll(/'([^']+)'/g)].map(match => match[1]) : [];
+if (modelIdsInIndex.length !== 24 || new Set(modelIdsInIndex).size !== 24 || modelIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must reference all 24 unique manifest model IDs');
+if (!index.includes('A vertical gesture never moves the active piece mid-swipe') || !index.includes('Commit exactly once on touchend')) fail('mobile vertical drop gestures must be committed once, at touchend');
+if (index.indexOf('id="bbHeroSkillCard"') < 0 || index.indexOf('id="bbHeroSkillCard"') > index.indexOf('data-act="drop"')) fail('hero superpower must appear before hard drop in the mobile utility rail');
 
 const requiredCharacters = ['plush', 'prism', 'blip', 'pixel', 'spark'];
 for (const id of requiredCharacters) {
