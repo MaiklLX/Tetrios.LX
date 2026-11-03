@@ -181,8 +181,8 @@ jobs:
           models_dir.mkdir(parents=True, exist_ok=True)
           manifest = json.loads(manifest_path.read_text())
           models = manifest.get("models", {})
-          if len(models) != 24:
-              raise SystemExit(f"Expected 24 universe models, found {len(models)}")
+          if len(models) != 40:
+              raise SystemExit(f"Expected 40 universe models, found {len(models)}")
           if len(manifest.get("universeOrder", [])) != len(models):
               raise SystemExit("universeOrder must list every packaged model exactly once")
           if set(manifest["universeOrder"]) != set(models):
