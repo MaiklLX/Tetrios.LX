@@ -107,7 +107,7 @@ requireMatch(
 );
 requireMatch(
   'Campaign missions must reset independent counters at run start',
-  /bbCampaignRun=\{maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0\}/
+  /bbCampaignRun=\{maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0\}/
 );
 requireMatch(
   'Campaign placement, rotation, hold, and clear events must update mission counters',
