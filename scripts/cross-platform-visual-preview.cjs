@@ -41,7 +41,7 @@ const targets = [
     page.on('pageerror', error => pageErrors.push(error.stack || String(error)));
 
     console.log('Starting visual capture: ' + target.name + ' (' + target.engine + ')');
-    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
     await page.screenshot({ path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
@@ -68,6 +68,8 @@ const targets = [
     campaignPage.setDefaultTimeout(15000);
     campaignPage.setDefaultNavigationTimeout(30000);
     campaignPage.on('pageerror', error => pageErrors.push('campaign: ' + (error.stack || String(error))));
+    campaignPage.on('console', message => { if (message.type() === 'error') consoleErrors.push('campaign: '+message.text()); });
+    campaignPage.on('requestfailed', request => failedRequests.push({url:request.url(),failure:request.failure()?.errorText||'unknown',page:'campaign'}));
     await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
@@ -87,7 +89,7 @@ const targets = [
         viewportHeight: innerHeight
       };
     });
-    if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
+    if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');\n    if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
     if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
@@ -164,11 +166,19 @@ const targets = [
     console.log('Captured 2D arena: ' + target.name);
 
     let threeD = null;
-    if (target.engine === 'chromium') {
+    const webglAvailable = await page.evaluate(() => {
+      try { const canvas=document.createElement('canvas'); return !!(canvas.getContext('webgl2')||canvas.getContext('webgl')); }
+      catch { return false; }
+    });
+    if (target.engine === 'chromium' || webglAvailable) {
       const toggle = page.locator('#game .boardframe .bb-arena-toggle');
       await toggle.waitFor({ state: 'visible', timeout: 10000 });
       await toggle.click();
-      await page.locator('#game .boardframe.bb-3d-arena-active').waitFor({ state: 'attached', timeout: 15000 });
+      try {
+        await page.locator('#game .boardframe.bb-3d-arena-active').waitFor({ state: 'attached', timeout: 15000 });
+      } catch (error) {
+        if (webglAvailable) failures.push(target.name + ': WebGL reports support but 3D arena did not activate: ' + error.message);
+      }
       await page.waitForTimeout(1200);
       threeD = await page.evaluate(() => {
         const board = document.querySelector('#game #board')?.getBoundingClientRect();
@@ -192,7 +202,7 @@ const targets = [
       console.log('Captured 3D arena: ' + target.name);
     }
 
-    report.push({ target: target.name, engine: target.engine, geometry, threeD, pageErrors });
+    report.push({ target: target.name, engine: target.engine, geometry, webglAvailable, threeD, visualBoostState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
   }
