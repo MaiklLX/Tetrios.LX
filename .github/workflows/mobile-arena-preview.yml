@@ -107,6 +107,8 @@ jobs:
                 const frame = document.querySelector('#game .boardframe');
                 const board = document.querySelector('#game #board');
                 const side = document.querySelector('#game .sidecol');
+                const drop = document.querySelector('#game .side-drop');
+                const hold = document.querySelector('#game #holdBtn');
                 const left = document.querySelector('#game .gameleftcol');
                 const goals = document.querySelector('#game #rogueGoals, #game #campaignGoals');
                 const sideChildren = side ? Array.from(side.children).map((element,index) => ({
@@ -118,7 +120,7 @@ jobs:
                 const ratio = frame ? frame.getBoundingClientRect().width / frame.getBoundingClientRect().height : 0;
                 return {
                   viewport: { width: innerWidth, height: innerHeight },
-                  frame: rect(frame), board: rect(board), side: rect(side), sideChildren, left: rect(left),
+                  frame: rect(frame), board: rect(board), side: rect(side), sideChildren, drop: rect(drop), hold: rect(hold), left: rect(left),
                   goals: rect(goals),
                   goalChildren: goals ? Array.from(goals.children).map((element,index) => ({index,tag:element.tagName,rect:rect(element),scrollHeight:element.scrollHeight,clientHeight:element.clientHeight})) : [],
                   leftMetrics: left ? {scrollHeight:left.scrollHeight,clientHeight:left.clientHeight,overflowY:getComputedStyle(left).overflowY} : null,
@@ -150,6 +152,15 @@ jobs:
               }
               if (geometry.left && geometry.left.bottom > viewport.height + 2) {
                 failures.push('Lower objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+              }
+              if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36 ||
+                  geometry.drop.x < geometry.side.x - 1 || geometry.drop.right > geometry.side.right + 1 ||
+                  geometry.drop.bottom > viewport.height + 2) {
+                failures.push('Hard-drop control is missing, too small, or outside the utility rail at ' + viewport.name + ': ' + JSON.stringify(geometry.drop));
+              }
+              if (!geometry.hold || geometry.hold.width < 30 || geometry.hold.height < 24 ||
+                  geometry.hold.x < geometry.side.x - 1 || geometry.hold.right > geometry.side.right + 1) {
+                failures.push('Hold control is missing or too small at ' + viewport.name + ': ' + JSON.stringify(geometry.hold));
               }
               if (!geometry.side || geometry.side.width < 68 || geometry.side.right > viewport.width + 2) {
                 failures.push('Mobile utility rail width/position is invalid at ' + viewport.name + ': ' + JSON.stringify(geometry.side));
