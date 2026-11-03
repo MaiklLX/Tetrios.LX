@@ -90,7 +90,9 @@ const targets = [
         boostLabel: document.querySelector('#boostName')?.textContent || '',
         cardChoices: document.querySelectorAll('#modal [data-up]').length,
         missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
-        viewportHeight: innerHeight
+        viewportHeight: innerHeight,
+        proceduralModels: document.querySelectorAll('.bb-planet-node.is-model-fallback').length,
+        loadedModels: document.querySelectorAll('.bb-planet-node.is-loaded').length
       };
     });
     if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');
@@ -107,6 +109,15 @@ const targets = [
     await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
+
+    const visualBoostState = await page.evaluate(() => window.__TETRIOS_QA__?.activatePrismAura?.() || null);
+    if (!visualBoostState || !visualBoostState.activePiece || !visualBoostState.boosts.includes('prism') || !visualBoostState.auraOwned) {
+      failures.push(target.name + ': Prism/Aura QA activation failed (' + JSON.stringify(visualBoostState) + ')');
+    }
+    if (visualBoostState && (!visualBoostState.prismColor || !/^#[0-9a-f]{6}$/i.test(visualBoostState.prismColor))) {
+      failures.push(target.name + ': Prism did not produce a valid spectral color');
+    }
+    await page.waitForTimeout(180);
 
     const geometry = await page.evaluate(() => {
       const rect = element => {
@@ -168,7 +179,8 @@ const targets = [
     }
 
     await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d.png', fullPage: false });
-    console.log('Captured 2D arena: ' + target.name);
+    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-prism-aura.png', fullPage: false });
+    console.log('Captured 2D arena and Prism/Aura state: ' + target.name);
 
     let threeD = null;
     const webglAvailable = await page.evaluate(() => {
