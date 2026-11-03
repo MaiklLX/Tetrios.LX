@@ -109,10 +109,16 @@ jobs:
                 const side = document.querySelector('#game .sidecol');
                 const left = document.querySelector('#game .gameleftcol');
                 const goals = document.querySelector('#game #rogueGoals, #game #campaignGoals');
+                const sideChildren = side ? Array.from(side.children).map((element,index) => ({
+                  index, id:element.id || '', className:typeof element.className === 'string' ? element.className : '',
+                  rect:rect(element), scrollWidth:element.scrollWidth, clientWidth:element.clientWidth,
+                  scrollHeight:element.scrollHeight, clientHeight:element.clientHeight,
+                  overflowX:getComputedStyle(element).overflowX, overflowY:getComputedStyle(element).overflowY
+                })) : [];
                 const ratio = frame ? frame.getBoundingClientRect().width / frame.getBoundingClientRect().height : 0;
                 return {
                   viewport: { width: innerWidth, height: innerHeight },
-                  frame: rect(frame), board: rect(board), side: rect(side), left: rect(left),
+                  frame: rect(frame), board: rect(board), side: rect(side), sideChildren, left: rect(left),
                   goals: rect(goals),
                   goalChildren: goals ? Array.from(goals.children).map((element,index) => ({index,tag:element.tagName,rect:rect(element),scrollHeight:element.scrollHeight,clientHeight:element.clientHeight})) : [],
                   leftMetrics: left ? {scrollHeight:left.scrollHeight,clientHeight:left.clientHeight,overflowY:getComputedStyle(left).overflowY} : null,
@@ -144,6 +150,17 @@ jobs:
               }
               if (geometry.left && geometry.left.bottom > viewport.height + 2) {
                 failures.push('Lower objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+              }
+              if (!geometry.side || geometry.side.width < 68 || geometry.side.right > viewport.width + 2) {
+                failures.push('Mobile utility rail width/position is invalid at ' + viewport.name + ': ' + JSON.stringify(geometry.side));
+              }
+              for (const child of geometry.sideChildren || []) {
+                if (child.rect && (child.rect.left < geometry.side.x - 1 || child.rect.right > geometry.side.right + 1)) {
+                  failures.push('Utility card escapes the rail at ' + viewport.name + ': ' + JSON.stringify(child));
+                }
+                if (child.scrollWidth > child.clientWidth + 2 && child.overflowX !== 'auto') {
+                  failures.push('Utility card has horizontal content overflow at ' + viewport.name + ': ' + JSON.stringify(child));
+                }
               }
               if (geometry.goals && geometry.goals.bottom > viewport.height - 2) {
                 failures.push('Objective panel is clipped by the viewport at ' + viewport.name + ': ' + JSON.stringify({goals:geometry.goals,children:geometry.goalChildren,leftMetrics:geometry.leftMetrics}));
