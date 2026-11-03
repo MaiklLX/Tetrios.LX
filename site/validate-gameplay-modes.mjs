@@ -8,16 +8,20 @@ function requireMatch(label, pattern) {
 }
 
 requireMatch(
-  'Roguelike-only card IDs must be explicitly classified',
-  /const bbRogueOnlyUpgradeIds\s*=\s*new Set\(\['burst','rift','reserve','hunter'\]\)/
+  'Every upgrade card must be classified as Block Run-only',
+  /const bbRogueOnlyUpgradeIds\s*=\s*new Set\(upgrades\.map\(upgrade=>upgrade\[3\]\)\)/
 );
 requireMatch(
-  'Standard modes must receive a filtered upgrade pool',
-  /function bbGetModeUpgradePool\(targetMode=mode\)[\s\S]*?upgrades\.filter\(upgrade=>!bbRogueOnlyUpgradeIds\.has\(upgrade\[3\]\)\)/
+  'Only Block Run may receive an upgrade-card pool',
+  /function bbGetModeUpgradePool\(targetMode=mode\)\{return targetMode==='rogue'\?upgrades\.slice\(\):\[\];\}/
 );
 requireMatch(
-  'Level-up reward selection must use the mode-specific pool',
-  /function showUpgrade\(\)[\s\S]*?let pool=rogue\?bbGetModeUpgradePool\('rogue'\):bbGetModeUpgradePool\(mode\)\.filter/
+  'Upgrade selection must exit immediately outside Block Run',
+  /function showUpgrade\(\)\{\s*if\(mode!=='rogue'\)\{paused=false;restartDrop\(\);return;\}/
+);
+requireMatch(
+  'Only Block Run level-ups may open card selection',
+  /function levelUp\(\)[\s\S]*?if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}else\{paused=false;/
 );
 requireMatch(
   'Blip random card starter must be Block Run-only',
@@ -94,6 +98,32 @@ requireMatch(
 requireMatch(
   'Daily challenge rules must remain independently gated',
   /mode\s*===\s*'daily'[\s\S]{0,160}bbIsDailyMechanic/
+);
+
+
+requireMatch(
+  'Campaign mission pool must include tactical and skill-based objectives',
+  /function bbGetNodeGoals\(node\)[\s\S]*?id:'rotations'[\s\S]*?id:'hold'[\s\S]*?id:'doubles'[\s\S]*?id:'noHardDrop'[\s\S]*?id:'streak'/
+);
+requireMatch(
+  'Campaign missions must reset independent counters at run start',
+  /bbCampaignRun=\{maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0\}/
+);
+requireMatch(
+  'Campaign placement, rotation, hold, and clear events must update mission counters',
+  /function lockPiece\(\)\{if\(!piece\)return;if\(mode==='campaign'\)bbCampaignRun\.piecesPlaced\+\+;[\s\S]*?if\(mode==='campaign'\)\{if\(cleared===2\)bbCampaignRun\.doubleClears\+\+/
+);
+requireMatch(
+  'Campaign Scout perk must not inject a Block Run card',
+  /mode==='campaign'&&bbHasCampaignPerk\('scout'\)\?2:1/
+);
+requireMatch(
+  'Inventory card-like consumables must only apply in Block Run',
+  /if\(!started\|\|gameOver\|\|!Array\.isArray\(board\)\|\|board\.length!==H\|\|mode!=='rogue'\)return;\s*if\(bbInventory\.quick>0\)/
+);
+requireMatch(
+  'Campaign and daily level-ups must continue without opening card selection',
+  /if\(mode==='rogue'\)\{paused=true;showUpgrade\(\)\}else\{paused=false;if\(mode==='campaign'\)/
 );
 
 if (failures.length) {
