@@ -111,7 +111,7 @@ requireMatch(
 );
 requireMatch(
   'Campaign placement, rotation, hold, and clear events must update mission counters',
-  /function lockPiece\(\)\{if\(!piece\)return;if\(mode==='campaign'\)bbCampaignRun\.piecesPlaced\+\+;[\s\S]*?if\(mode==='campaign'\)\{if\(cleared===2\)bbCampaignRun\.doubleClears\+\+/
+  /function lockPiece\(\)\{if\(!piece\)return;if\(mode==='campaign'\)bbCampaignRun\.piecesPlaced\+\+;[\s\S]*?if\(mode==='campaign'\)\{if\(cleared===1\)bbCampaignRun\.singleClears\+\+;if\(cleared===2\)bbCampaignRun\.doubleClears\+\+/
 );
 requireMatch(
   'Campaign Scout perk must not inject a Block Run card',
