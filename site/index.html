@@ -5336,6 +5336,11 @@ body:has(#menu:not([hidden])) .app > .topbar {
     <div class="modearrow">›</div>
   </button>
 </div>
+<button type="button" class="mode" id="bbOpenCardLibrary" style="--glow:#5cf5e8;--iconbg:#5cf5e81c;width:100%;margin-top:12px;box-sizing:border-box">
+  <div class="modeicon" aria-hidden="true">▤</div>
+  <div class="modetext"><div class="modetitle">Библиотека усилений</div><div class="modesub">Изучи эффекты и синергии карт до начала забега</div><span class="tag">35 КАРТ · СПРАВОЧНИК</span></div>
+  <div class="modearrow">›</div>
+</button>
 
 <section id="bbVisitStreak" aria-label="Серия ежедневных посещений" style="margin-top:14px;padding:16px;border:1px solid #ffc86b55;border-radius:18px;background:linear-gradient(135deg,#29213aee,#141b30f5);box-shadow:inset 0 1px #ffffff0b">
   <div style="display:flex;align-items:center;gap:12px">
@@ -5605,6 +5610,24 @@ function bbGetUpgradeEffectDescription(id,rank=1){
   };
   return descriptions[id]||upgrades.find(u=>u[3]===id)?.[2]||'Усиление ранга '+r;
 }
+function bbOpenCardLibrary(){
+  const renderCards=(filter='all')=>{
+    const cards=upgrades.filter(item=>filter==='all'||(filter==='rogue'?bbRogueOnlyUpgradeIds.has(item[3]):!bbRogueOnlyUpgradeIds.has(item[3])));
+    $('bbCardLibraryList').innerHTML=cards.map(item=>{
+      const rogueOnly=bbRogueOnlyUpgradeIds.has(item[3]);
+      const rank=1;
+      return '<article style="display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid '+(rogueOnly?'#9d7cff55':'#5cf5e833')+';border-radius:13px;background:linear-gradient(135deg,#ffffff08,#ffffff03)"><div style="width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:'+(rogueOnly?'#9d7cff20':'#5cf5e818')+';font-size:22px">'+item[0]+'</div><div style="min-width:0;flex:1"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><strong style="font-size:13px">'+item[1]+'</strong>'+(rogueOnly?'<span style="font-size:8px;font-weight:900;color:#c5b4ff;background:#9d7cff20;padding:3px 6px;border-radius:99px">ТОЛЬКО BLOCK RUN</span>':'<span style="font-size:8px;font-weight:900;color:#7cebdc;background:#5cf5e818;padding:3px 6px;border-radius:99px">ОБЩЕЕ</span>')+'</div><div style="font-size:11px;color:#b9c5dc;line-height:1.45;margin-top:5px">'+item[2]+'</div><div style="font-size:10px;color:#8fe9df;margin-top:6px">'+bbGetUpgradeEffectDescription(item[3],rank)+'</div></div></article>';
+    }).join('');
+    $('bbCardLibraryCount').textContent=cards.length+' / '+upgrades.length+' КАРТ';
+    document.querySelectorAll('[data-bb-card-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.bbCardFilter===filter)));
+  };
+  overlay('<div class="modalhead"><div class="bigicon">▤</div><div class="eyebrow">АРХИВ ТАКТИЧЕСКИХ СИСТЕМ</div><h3>Библиотека усилений</h3><p>Изучи назначение карт до старта. Фильтр показывает, где разрешено применение: специальные карты Block Run не попадают в кампанию и ежедневные испытания.</p></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin:0 0 10px"><button class="smallbtn" data-bb-card-filter="all" aria-pressed="true">ВСЕ</button><button class="smallbtn" data-bb-card-filter="rogue" aria-pressed="false">BLOCK RUN</button><button class="smallbtn" data-bb-card-filter="standard" aria-pressed="false">ОБЩИЕ</button><span id="bbCardLibraryCount" style="margin-left:auto;align-self:center;font-size:9px;color:#9eacc8;font-weight:900"></span></div><div id="bbCardLibraryList" style="display:grid;gap:8px;max-height:min(55vh,560px);overflow:auto;padding:2px 3px 8px"></div><button class="action" id="bbCloseCardLibrary" style="margin-top:10px">ЗАКРЫТЬ БИБЛИОТЕКУ</button>');
+  renderCards('all');
+  document.querySelectorAll('[data-bb-card-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbCardFilter)));
+  $('bbCloseCardLibrary').onclick=closeOverlay;
+}
+$('bbOpenCardLibrary')?.addEventListener('click',bbOpenCardLibrary);
+
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
