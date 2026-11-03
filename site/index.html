@@ -6885,6 +6885,20 @@ function bbCheckCampaignCompletion() {
   tone(620,0.28,'triangle',0.05);
   return true;
 }
+function bbGoalsRail(game) {
+  const layout = game?.querySelector('.playlayout');
+  if (!game || !layout) return null;
+  let rail = layout.querySelector('.gameleftcol');
+  if (!rail) {
+    rail = document.createElement('aside');
+    rail.className = 'gameleftcol';
+    rail.setAttribute('aria-label', 'Статистика и цели уровня');
+    const board = layout.querySelector(':scope > div:first-child');
+    layout.insertBefore(rail, board || layout.firstChild);
+  }
+  return rail;
+}
+
 function bbRenderGoals() {
   const rogueOld = $('rogueGoals');
   const campaignOld = $('campaignGoals');
@@ -6905,8 +6919,8 @@ function bbRenderGoals() {
       panel = document.createElement('div');
       panel.id = 'rogueGoals';
       panel.style.cssText = 'margin:5px 0 7px;padding:7px 9px;border:1px solid #9d7cff88;border-radius:12px;background:#111a30;color:#f2f5ff;font-size:11px;line-height:1.3;';
-      const layout = game.querySelector('.playlayout');
-      if (layout) game.insertBefore(panel, layout);
+      const rail = bbGoalsRail(game);
+      if (rail) rail.appendChild(panel);
     }
 
     panel.innerHTML = bbRogueRenderEncounter() + '<strong style="font-size:11px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
@@ -6946,8 +6960,8 @@ toast('Цель выполнена! +' + g.reward + ' монет');
       'margin:10px 0;padding:12px;border:1px solid #52658d;' +
       'border-radius:14px;background:#111a30;color:#f2f5ff;' +
       'font-size:12px;line-height:1.5;';
-    const layout = game.querySelector('.playlayout');
-    if (layout) game.insertBefore(panel, layout);
+    const rail = bbGoalsRail(game);
+    if (rail) rail.appendChild(panel);
   }
 
   const goals = bbGetNodeGoals(campaignNode);
