@@ -71,7 +71,7 @@ const targets = [
     await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.locator('#campaignStart').click();
+    await campaignPage.locator('#campaignStart').click({ force: true });
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
     await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.locator('#bbStartHeroChoose').click();
