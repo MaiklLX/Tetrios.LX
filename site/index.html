@@ -8785,7 +8785,35 @@ endGame = function() {
   bbDailyOldEnd();
 };
 
-const bbOldStart=startGame;startGame=function(){bbDailyRecordedThisGame=false;bbOldStart();if(bbInventory.quick>0){bbInventory.quick--;if(!boosts.includes('mult'))boosts.push('mult');dropMs=Math.max(150,dropMs-90);restartDrop()}if(bbInventory.shield>0){bbInventory.shield--;if(!boosts.includes('shield'))boosts.push('shield')}if(bbInventory.magnet>0){bbInventory.magnet--;if(!boosts.includes('magnet'))boosts.push('magnet')}bbSave();updateHud();render()};
+const bbOldStart=startGame;
+startGame=function(){
+  // Opening the hero picker is not the start of a round. Do not render a
+  // half-initialised board or consume inventory before the player confirms.
+  bbDailyRecordedThisGame=false;
+  bbOldStart();
+};
+const bbOldStartNow=startGameNow;
+startGameNow=function(){
+  bbOldStartNow();
+  if(!started||gameOver||!Array.isArray(board)||board.length!==H)return;
+  if(bbInventory.quick>0){
+    bbInventory.quick--;
+    if(!boosts.includes('mult'))boosts.push('mult');
+    dropMs=Math.max(150,dropMs-90);
+    restartDrop();
+  }
+  if(bbInventory.shield>0){
+    bbInventory.shield--;
+    if(!boosts.includes('shield'))boosts.push('shield');
+  }
+  if(bbInventory.magnet>0){
+    bbInventory.magnet--;
+    if(!boosts.includes('magnet'))boosts.push('magnet');
+  }
+  bbSave();
+  updateHud();
+  render();
+};
 
 
 /* Единая игровая панель */
