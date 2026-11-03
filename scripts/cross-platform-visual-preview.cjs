@@ -66,6 +66,7 @@ const targets = [
     await page.locator('button.mode[data-mode="campaign"]').click();
     await page.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#campaignStart').click();
+    await page.locator('#bbStartHeroList [data-start-hero]').first().click();
     await page.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#bbStartHeroChoose').click();
     await page.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
