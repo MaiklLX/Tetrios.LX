@@ -137,7 +137,7 @@ const targets = [
       failures.push(target.name + ': Prism did not produce a valid spectral color');
     }
     const voidState = await page.evaluate(() => window.__TETRIOS_QA__?.testVoidCompression?.() || null);
-    if (!voidState || !voidState.succeeded || voidState.rowCount !== 23 || voidState.blocksBefore !== voidState.blocksAfter || !voidState.topSpawnRowsEmpty) {
+    if (!voidState || !voidState.firstActivation || voidState.secondActivation || voidState.rowCount !== 23 || voidState.blocksBefore !== voidState.blocksAfter || !voidState.topSpawnRowsEmpty) {
       failures.push(target.name + ': Void compression invariants failed (' + JSON.stringify(voidState) + ')');
     }
     await page.waitForTimeout(180);
