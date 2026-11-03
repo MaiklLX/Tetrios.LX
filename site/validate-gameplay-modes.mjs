@@ -52,8 +52,16 @@ requireMatch(
   /function bbRogueBuildGarbageRow\(profile,rowIndex\)[\s\S]*?const seed=\(e\.room\*3\+e\.attackIndex\*5\+rowIndex\*2\)%W/
 );
 requireMatch(
-  'Monster encounter UI must show the next attack and a low-time warning',
-  /attack\.label[\s\S]*?АТАКА ЧЕРЕЗ[\s\S]*?warning=e\.nextAttack<=5/
+  'Monster encounter warning must activate at five seconds or less',
+  /warning=e\.nextAttack<=5/
+);
+requireMatch(
+  'Monster encounter UI must show the selected next attack and countdown',
+  /attack\.label[\s\S]*?АТАКА ЧЕРЕЗ/
+);
+requireMatch(
+  'Stable upgrade must extend deterministic rotation wall-kicks only in Block Run',
+  /const rank=mode==='rogue'\?bbGetRogueCardRank\('stable'\):0,maxKick=rank\?Math\.min\(4,1\+rank\):1/
 );
 requireMatch(
   'Reserve must consume and block one fully telegraphed attack',
