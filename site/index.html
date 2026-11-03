@@ -8267,7 +8267,7 @@ function bbOpenHeroShowcase(id){
 function bbRenderHeroes(){
  const roster=document.getElementById('heroesRoster'),details=document.getElementById('heroDetails');if(!roster)return;
  if(details){details.hidden=true;details.innerHTML=''}roster.classList.remove('bb-hero-flip-roster');
- roster.innerHTML=bbHeroes.map(hero=>`<button type="button" class="bb-hero-popup-card ${hero.id===bbSelectedHero?'is-selected':''}" data-hero-card="${hero.id}" aria-label="Посмотреть героя ${hero.name}"><span class="bb-hero-popup-art" style="--hero-accent:${hero.color}">${bbHeroEmblem(hero.id)}</span><strong>${hero.name}</strong><span>${hero.role}</span><small>${hero.id===bbSelectedHero?'✓ ВЫБРАН':'ОТКРЫТЬ ДОСЬЕ'}</small></button>`).join('')+`<div class="bb-hero-popup-card bb-hero-future-card" aria-label="Новый герой появится в будущем обновлении"><span class="bb-hero-popup-art">◈</span><strong>Новый герой</strong><span>Скоро в команде</span><small>🔒 БУДУЩЕЕ ОБНОВЛЕНИЕ</small></div>`;
+ roster.innerHTML=bbHeroes.map(hero=>`<button type="button" class="bb-hero-popup-card ${hero.id===bbSelectedHero?'is-selected':''}" data-hero-card="${hero.id}" aria-label="Посмотреть героя ${hero.name}"><span class="bb-hero-popup-art" style="--hero-accent:${hero.color}">${bbHeroEmblem(hero.id)}</span><strong>${hero.name}</strong><span>${hero.role}</span><small>${hero.id===bbSelectedHero?'✓ ВЫБРАН':'ОТКРЫТЬ ДОСЬЕ'}</small></button>`).join('')+`<button type="button" class="bb-hero-popup-card bb-hero-future-card" disabled aria-label="Новый герой появится в будущем обновлении"><span class="bb-hero-popup-art">◈</span><strong>Новый герой</strong><span>Скоро в команде</span><small>🔒 БУДУЩЕЕ ОБНОВЛЕНИЕ</small></button>`;
  roster.querySelectorAll('[data-hero-card]').forEach(btn=>btn.addEventListener('click',()=>bbOpenHeroShowcase(btn.dataset.heroCard)));
 }
 
@@ -9435,7 +9435,7 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
  #campaign .bb-galaxy-model-fallback{animation:none!important}
 }
 </style>
-<script type="module" src="./universes-3d.js?v=20261101-scroll-clip-fix-1"></script>
+<script type="module" src="./universes-3d.js?v=20261103-silhouette-no-ghost-2"></script>
 
 
 <style id="bb-campaign-planet-arrival">
