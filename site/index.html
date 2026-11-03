@@ -5615,7 +5615,7 @@ function bbGetUpgradeEffectDescription(id,rank=1){
     reactor:'Бонус уровня усиливается ×'+r,nova:'Аварийное спасение очищает '+r+' нижн. линию(и)',
     tide:'Каждые 45 секунд +'+r+' заряд(а) уровня',fortress:'Замедляет рост сложности на '+(8*r)+'%',
     rift:'При победе над монстром очищает '+r+' нижн. линию(и)',loop:'Порог уровня −'+r+' линию(и)',
-    comet:'Быстрый уровень приносит +'+(300*r)+' очков',stable:'Точность поворота: до '+(1+r)+' клеток бокового смещения'
+    comet:'Быстрый уровень приносит +'+(300*r)+' очков',plasma:'Сбрасывает задержку следующего падения при очистке линии',stable:'Точность поворота: до '+(1+r)+' клеток бокового смещения'
   };
   return descriptions[id]||upgrades.find(u=>u[3]===id)?.[2]||'Усиление ранга '+r;
 }
@@ -7681,6 +7681,12 @@ if(cleared){
     startedAt:performance.now(),
     duration:280
   };
+}
+
+// Plasma restarts the next automatic fall interval after a successful line clear.
+if(cleared&&boosts.includes('plasma')){
+  if(mode==='rogue')dropLastStepAt=performance.now();
+  else restartDrop();
 }
 
 if(
