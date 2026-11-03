@@ -51,13 +51,17 @@ const targets = [
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
+    // Capture the default archive before switching filters so the primary visual
+    // artifact represents the complete 35-card library, not the 4-card Block Run subset.
+    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-card-filter="rogue"]').click();
     const rogueCards = await page.locator('#bbCardLibraryList article').count();
     if (rogueCards !== 4) failures.push(target.name + ': expected 4 Block Run-only cards, got ' + rogueCards);
-    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
+    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library-block-run.png', fullPage: false });
     await page.locator('[data-bb-card-filter="standard"]').click();
     const standardCards = await page.locator('#bbCardLibraryList article').count();
     if (standardCards !== 31) failures.push(target.name + ': expected 31 shared cards, got ' + standardCards);
+    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library-shared.png', fullPage: false });
     await page.locator('#bbCloseCardLibrary').click();
 
     await page.locator('button.mode[data-mode="rogue"]').click();
