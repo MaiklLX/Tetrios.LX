@@ -77,6 +77,19 @@ const targets = [
     await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
+    await campaignPage.waitForTimeout(1200);
+    const campaignAtlasState = await campaignPage.evaluate(() => ({
+      slots: document.querySelectorAll('#campaign [data-universe-model]').length,
+      proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
+      loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length,
+      visibleFallbacks: Array.from(document.querySelectorAll('#campaign [data-universe-model].is-model-fallback')).filter(node => {
+        const r=node.getBoundingClientRect(); return r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight;
+      }).length
+    }));
+    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-atlas.png', fullPage: false });
+    if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
+      failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
+    }
     await campaignPage.locator('#campaignStart').click({ force: true });
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
     await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
@@ -91,8 +104,8 @@ const targets = [
         cardChoices: document.querySelectorAll('#modal [data-up]').length,
         missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
         viewportHeight: innerHeight,
-        proceduralModels: document.querySelectorAll('.bb-planet-node.is-model-fallback').length,
-        loadedModels: document.querySelectorAll('.bb-planet-node.is-loaded').length
+        proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
+        loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length
       };
     });
     if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');
@@ -219,7 +232,7 @@ const targets = [
       console.log('Captured 3D arena: ' + target.name);
     }
 
-    report.push({ target: target.name, engine: target.engine, geometry, webglAvailable, threeD, visualBoostState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
+    report.push({ target: target.name, engine: target.engine, geometry, webglAvailable, threeD, visualBoostState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
   }
