@@ -37,11 +37,22 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const palettes={
       planet:0x3c9cbd,'earth-moon':0x3f9db9,'lava-world':0xd85b24,neptune:0x3159c8,
       mars:0xb85d3d,uranus:0x71c9c9,saturn:0xd7b36d,'black-hole':0x28203f,
-      mercury:0x9a8b82,'solar-system':0xf4b94e,'spiral-galaxy':0x9874dc,sun:0xffb83e
+      mercury:0x9a8b82,'solar-system':0xf4b94e,'spiral-galaxy':0x9874dc,sun:0xffb83e,
+      'cargo-spaceship':0x9bbad1,'cargo-shuttle':0xe6c47c,'escape-pod':0xf0a45e,
+      'space-fighter':0xe77d79,'sci-fi-spaceship':0x8ac9e5,'moon-base-dome':0x93cbd0,
+      'drone-bot':0x9d8bd9,'mech-walker':0x83b9a4,'portal-gate':0xa98bff,
+      'antenna-array':0x9bb8d0,'alien-egg':0xc29be8,'alien-plant':0x79c8a5
     };
     const color=palettes[id]||0x6d8fd8;
     const segments=lowPower?20:32;
-    const bodyMaterial=new THREE.MeshStandardMaterial({color,roughness:id==='sun'||id==='black-hole'?.38:.72,metalness:.12,emissive:id==='sun'||id==='lava-world'?color:0x000000,emissiveIntensity:id==='sun'?.42:id==='lava-world'?.18:0});
+    const bodyMaterial=new THREE.MeshStandardMaterial({
+      color,roughness:id==='sun'||id==='black-hole'||id==='portal-gate'?.38:.72,
+      metalness:.12,emissive:id==='sun'||id==='lava-world'||id==='portal-gate'?color:0x000000,
+      emissiveIntensity:id==='sun'?.42:id==='lava-world'?.18:id==='portal-gate'?.2:0
+    });
+    const accent=new THREE.MeshStandardMaterial({color:0x65e9ed,metalness:.3,roughness:.28,emissive:0x1b9ba9,emissiveIntensity:.42});
+    const pale=new THREE.MeshStandardMaterial({color:0xe5edf2,metalness:.22,roughness:.48});
+    const dark=new THREE.MeshStandardMaterial({color:0x18253b,metalness:.45,roughness:.38});
     const sphere=(radius,mat,x=0,y=0,z=0)=>{
       const mesh=new THREE.Mesh(new THREE.SphereGeometry(radius,segments,Math.max(12,Math.floor(segments*.7))),mat);
       mesh.position.set(x,y,z);group.add(mesh);return mesh;
@@ -49,6 +60,14 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     const ring=(radius,tube,mat,rotation=0)=>{
       const mesh=new THREE.Mesh(new THREE.TorusGeometry(radius,tube,8,lowPower?36:64),mat);
       mesh.rotation.x=Math.PI/2+rotation;group.add(mesh);return mesh;
+    };
+    const box=(w,h,d,mat,x=0,y=0,z=0)=>{
+      const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+      mesh.position.set(x,y,z);group.add(mesh);return mesh;
+    };
+    const cylinder=(rt,rb,height,mat,x=0,y=0,z=0,rotateX=0)=>{
+      const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,height,lowPower?10:16),mat);
+      mesh.position.set(x,y,z);mesh.rotation.x=rotateX;group.add(mesh);return mesh;
     };
     if(id==='black-hole'){
       sphere(.62,new THREE.MeshBasicMaterial({color:0x03030b}));
@@ -68,6 +87,86 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         ring(r,.009,new THREE.MeshBasicMaterial({color:0x8db9ff,transparent:true,opacity:.4}),.02*i);
         sphere(.065+i*.012,new THREE.MeshStandardMaterial({color:[0x62c9ee,0xd8a26c,0x6d87d9,0x75cba8][i]}),Math.cos(i*1.5)*r,Math.sin(i*1.5)*r*.22,Math.sin(i*1.5)*r);
       });
+    }else if(id==='cargo-spaceship'||id==='cargo-shuttle'||id==='space-fighter'||id==='sci-fi-spaceship'){
+      const fighter=id==='space-fighter',shuttle=id==='cargo-shuttle';
+      box(.34,.22,1.25,bodyMaterial,0,0,0);
+      const nose=new THREE.Mesh(new THREE.ConeGeometry(fighter?.2:.25,.48,8),pale);
+      nose.rotation.x=Math.PI/2;nose.position.z=.82;group.add(nose);
+      box(fighter?1.45:1.05,.07,.52,pale,0,-.01,.08);
+      box(.13,.28,.36,bodyMaterial,0,.13,-.48);
+      box(.26,.08,.25,dark,0,.15,.2);
+      for(const side of [-1,1]){
+        cylinder(.095,.095,.48,accent,side*.28,0,-.5,Math.PI/2);
+        sphere(.11,accent,side*.28,0,-.76);
+      }
+      if(id==='cargo-spaceship'||shuttle){
+        for(let i=0;i<(shuttle?4:6);i++){
+          const x=(i%2?1:-1)*.22,y=.17,z=(shuttle?-.22:-.42)+Math.floor(i/2)*.28;
+          box(.28,.2,.23,[pale,new THREE.MeshStandardMaterial({color:0xe7b978}),new THREE.MeshStandardMaterial({color:0x82cbd1})][i%3],x,y,z);
+        }
+        if(shuttle)box(.55,.08,.34,dark,0,-.16,-.82);
+      }
+    }else if(id==='escape-pod'){
+      const pod=sphere(.68,bodyMaterial);pod.scale.set(.78,1,.8);
+      ring(.62,.07,pale,.05);
+      sphere(.24,dark,0,.08,.48);
+      sphere(.14,accent,0,.08,.59);
+      for(let i=0;i<4;i++){const a=i*Math.PI/2;box(.12,.32,.12,pale,Math.cos(a)*.55,-.48,Math.sin(a)*.55);}
+    }else if(id==='asteroid'){
+      const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.8,1),bodyMaterial);
+      rock.scale.set(1.15,.82,.9);rock.rotation.set(.35,.55,.2);group.add(rock);
+      for(let i=0;i<5;i++){
+        const a=i*2.4,r=.48+(i%2)*.12;
+        sphere(.12,dark,Math.cos(a)*r,Math.sin(a)*r*.7,.45*Math.sin(a*.7));
+      }
+    }else if(id==='moon-base-dome'){
+      cylinder(.78,.82,.18,dark,0,-.56,0);
+      const dome=new THREE.Mesh(new THREE.SphereGeometry(.67,24,12,0,Math.PI*2,0,Math.PI/2),pale);
+      dome.position.y=-.46;group.add(dome);
+      for(let i=0;i<6;i++){const a=i*Math.PI/3;box(.035,.78,.035,accent,Math.cos(a)*.58,-.2,Math.sin(a)*.58);}
+      box(.32,.24,.34,bodyMaterial,0,-.48,.7);
+      cylinder(.035,.045,.75,accent,.65,.04,-.2);
+    }else if(id==='drone-bot'){
+      sphere(.58,pale,0,.05,0);
+      ring(.72,.07,accent,.18);
+      sphere(.25,dark,0,.06,.48);
+      sphere(.16,accent,0,.06,.62);
+      for(const side of [-1,1]){box(.24,.08,.16,bodyMaterial,side*.64,-.05,0);cylinder(.04,.04,.35,pale,side*.72,-.28,0);}
+    }else if(id==='mech-walker'){
+      box(.65,.55,.38,bodyMaterial,0,.12,0);
+      sphere(.32,pale,0,.58,.06);
+      sphere(.12,accent,0,.58,.38);
+      for(const side of [-1,1]){
+        cylinder(.13,.17,.55,dark,side*.25,-.43,0);
+        box(.24,.12,.34,pale,side*.25,-.77,.1);
+        box(.32,.12,.22,bodyMaterial,side*.52,.18,0);
+      }
+    }else if(id==='portal-gate'){
+      const gate=new THREE.Mesh(new THREE.TorusGeometry(.72,.1,12,48),pale);
+      group.add(gate);
+      const glow=new THREE.Mesh(new THREE.CircleGeometry(.62,40),new THREE.MeshBasicMaterial({color:0x8d6cff,transparent:true,opacity:.48,side:THREE.DoubleSide}));
+      glow.position.z=-.035;group.add(glow);
+      const swirl=new THREE.Mesh(new THREE.TorusGeometry(.36,.035,8,36),accent);swirl.rotation.z=.7;swirl.position.z=.03;group.add(swirl);
+      box(.18,.85,.2,dark,-.76,-.35,0);box(.18,.85,.2,dark,.76,-.35,0);box(1.9,.14,.48,pale,0,-.88,0);
+    }else if(id==='antenna-array'){
+      cylinder(.52,.62,.16,dark,0,-.65,0);
+      cylinder(.045,.055,1.2,pale,0,-.02,0);
+      const dish=new THREE.Mesh(new THREE.SphereGeometry(.42,20,12,0,Math.PI*2,0,Math.PI/2),pale);
+      dish.rotation.x=Math.PI/2;dish.position.set(0,.42,.12);group.add(dish);
+      sphere(.08,accent,0,.44,.38);
+      box(.38,.24,.28,bodyMaterial,.48,-.48,0);
+    }else if(id==='alien-egg'){
+      const egg=sphere(.62,bodyMaterial);egg.scale.set(.78,1.12,.68);egg.rotation.z=-.18;
+      ring(.52,.045,accent,-.3);
+      for(let i=0;i<4;i++){const leaf=sphere(.22,new THREE.MeshStandardMaterial({color:[0x8dd7b4,0x71bfa6,0x9b8be0,0x68d5d2][i]}),Math.cos(i*Math.PI/2)*.62,-.35,Math.sin(i*Math.PI/2)*.5);leaf.scale.set(.65,1.7,.4);leaf.rotation.z=(i-1.5)*.32;}
+    }else if(id==='alien-plant'){
+      cylinder(.34,.4,.28,pale,0,-.68,0);
+      cylinder(.055,.075,.75,new THREE.MeshStandardMaterial({color:0x5c9e7c}),0,-.18,0);
+      for(let i=0;i<5;i++){
+        const a=i*Math.PI*2/5,x=Math.cos(a)*.48,y=.12+(i%2)*.14,z=Math.sin(a)*.28;
+        const leaf=sphere(.2,new THREE.MeshStandardMaterial({color:0x6fc59b}),x,y,z);leaf.scale.set(.55,1.6,.42);leaf.rotation.z=-a;
+        sphere(.12,accent,x*1.25,.55+(i%2)*.12,z*1.2);
+      }
     }else{
       sphere(.78,bodyMaterial);
       if(id==='earth-moon'){
@@ -78,12 +177,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         ring(1.02,.12,new THREE.MeshStandardMaterial({color:id==='saturn'?0xd8bd85:0x9be2e2,metalness:.35,roughness:.55,side:THREE.DoubleSide}),id==='uranus'?.72:.12);
         ring(1.17,.025,new THREE.MeshBasicMaterial({color:id==='saturn'?0xf4dfb0:0x74d2e0,transparent:true,opacity:.72}),id==='uranus'?.72:.12);
       }
-      if(id==='sun'){
-        ring(.96,.018,new THREE.MeshBasicMaterial({color:0xffd77a,transparent:true,opacity:.75}),.4);
-      }
-      if(id==='lava-world'){
-        ring(.91,.035,new THREE.MeshBasicMaterial({color:0xff6a26,emissive:0xff3b12}),.2);
-      }
+      if(id==='sun')ring(.96,.018,new THREE.MeshBasicMaterial({color:0xffd77a,transparent:true,opacity:.75}),.4);
+      if(id==='lava-world')ring(.91,.035,new THREE.MeshBasicMaterial({color:0xff6a26,emissive:0xff3b12}),.2);
     }
     return group;
   }
