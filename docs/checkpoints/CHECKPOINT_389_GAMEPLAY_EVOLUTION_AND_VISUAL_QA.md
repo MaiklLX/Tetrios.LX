@@ -59,3 +59,20 @@
 ## Continuation phrase
 
 `TETRIOS LX — продолжаем с #389: ветка feature/gameplay-evolution-389-2026-11-03 от точного #388 / APK #799. Сохраняем Golden Desktop Baseline #372 и мобильную арену. Roguelike — только Block Run; каталог карт и стратегии; новые телеграфированные атаки монстров; уникальные способности пяти героев. ПК и мобильная веб-версия равноправны. Визуальные тесты: Chromium desktop + mobile WebKit/iPhone, скриншоты из CI artifacts. APK не собираем без необходимости. Контрольные точки обязательны.`
+
+## Implementation update — 2026-11-03
+
+- Added a pre-run **Библиотека усилений** entry to the main menu.
+- The archive renders all 35 existing upgrade cards with their current effect descriptions.
+- Added filters: all cards, Block Run-only cards, and shared cards.
+- The four current Block Run-only IDs are `burst`, `rift`, `reserve`, and `hunter`; 31 cards are currently shared.
+- The archive is read-only: opening it does not award cards, alter a run, or modify progression.
+- Extended `scripts/cross-platform-visual-preview.cjs` to assert 35 / 4 / 31 catalog counts and capture the archive at desktop Chromium and iOS WebKit viewports.
+- Implementation commit: `caf47005e51689e18540ea8954db93a2540a4398`.
+- Visual test commit: `a844403b009f0cbd5911b4a79734c859e2d2e65a`.
+- Draft PR #50: https://github.com/MaiklLX/Tetrios.LX/pull/50. It is not merged and no production deployment has been requested.
+- CI runs at the time of this update are still in progress; screenshots and assertions are not yet accepted.
+
+## Automation note
+
+Opening draft PR #50 triggered the repository's existing pull-request workflows, including its pre-existing Android APK build workflow. That APK workflow was not manually requested. Going forward, the PR workflow configuration must be adjusted so visual/code review does not trigger native APK builds unless explicitly needed.
