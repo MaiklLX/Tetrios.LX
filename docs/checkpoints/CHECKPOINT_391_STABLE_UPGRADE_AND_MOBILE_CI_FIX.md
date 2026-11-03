@@ -4,7 +4,7 @@ Date: 2026-11-03
 ## Branch and safety
 - Branch: `feature/gameplay-evolution-389-2026-11-03`
 - PR: #50 (draft/open; base `main`)
-- Implementation HEAD before this checkpoint: `20e2e1a2da02944ce497f3dbbbd67a2e21cd0602`
+- Implementation commits: `82793fa21bbafd1c16e944f05bed6884aaa95459` (Stable + mobile spacing) and `20e2e1a2da02944ce497f3dbbbd67a2e21cd0602` (validator correction). Latest source touch: `0a0051f1bca06c07e59baf9259a31af9efdf7795`.
 - Golden Desktop Baseline #372 remains protected; no merge, production deployment, or APK build.
 
 ## Completed
@@ -24,11 +24,9 @@ Date: 2026-11-03
 - The mobile screenshot artifact was reviewed; board aspect ratio remained 10:23 and the mobile controls/monster HUD were present.
 
 ## CI after fixes
-- New runs for the updated head are in progress:
-  - Cross-platform Visual Preview #50
-  - Cross-platform Visual Preview #49 (duplicate push-triggered run)
-  - Mobile Arena Visual Preview #94
-- Do not mark visual acceptance complete until the runs and their screenshots are reviewed.
+- Mobile Arena Visual Preview #94 completed successfully; the compact 375x812 and 412x915 geometry checks passed. The artifact was inspected and the goals panel now ends at y=803.91 on the 812px viewport.
+- Cross-platform Visual Preview #49 and #50 both reached browser installation and local server startup, but their screenshot-capture steps were cancelled by overlapping concurrency runs. They are not accepted as passing.
+- A subsequent source-only comment commit (`0a0051f`) was pushed to request a clean cross-platform rerun. The PR-filtered run listing has not yet surfaced that push-triggered run; visual acceptance remains pending.
 - No real-device iPhone Safari test has been performed.
 
 ## Upgrade audit remaining
@@ -37,8 +35,7 @@ The other seven catalog IDs still requiring implementation or explicit product d
 Do not invent effects before checking their descriptions against existing gameplay flow. Keep the 35-card pool intact. Next candidate: inspect `plasma` against the drop-timer lifecycle; implement only if the advertised reset is not already happening for every lock/clear.
 
 ## Next steps
-1. Review the three in-progress visual runs and inspect screenshots at desktop and mobile sizes.
-2. Confirm compact-screen goals panel no longer clips.
-3. Audit the drop timer and decide whether `plasma` has a real missing trigger.
-4. Add the next card in a separate tested increment.
-5. Keep Block Run-only mechanics gated to `mode==='rogue'`; campaign and daily challenge must remain unchanged.
+1. Confirm the clean cross-platform preview run and inspect desktop Chromium / iOS WebKit screenshots.
+2. Audit the drop timer and decide whether `plasma` has a real missing trigger.
+3. Add the next card in a separate tested increment.
+4. Keep Block Run-only mechanics gated to `mode==='rogue'`; campaign and daily challenge must remain unchanged.
