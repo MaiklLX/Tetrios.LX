@@ -35,10 +35,14 @@ const targets = [
       hasTouch: target.mobile
     });
     const page = await context.newPage();
+    page.setDefaultTimeout(15000);
+    page.setDefaultNavigationTimeout(25000);
     const pageErrors = [];
     page.on('pageerror', error => pageErrors.push(error.stack || String(error)));
 
-    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'networkidle' });
+    console.log('Starting visual capture: ' + target.name + ' (' + target.engine + ')');
+    await page.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
     await page.screenshot({ path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
@@ -109,6 +113,7 @@ const targets = [
     }
 
     await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d.png', fullPage: false });
+    console.log('Captured 2D arena: ' + target.name);
 
     let threeD = null;
     if (target.engine === 'chromium') {
@@ -136,6 +141,7 @@ const targets = [
         failures.push(target.name + ': 3D overlay is missing or misaligned (' + JSON.stringify(threeD) + ')');
       }
       await page.screenshot({ path: outputDir + '/' + target.name + '-arena-3d.png', fullPage: false });
+      console.log('Captured 3D arena: ' + target.name);
     }
 
     report.push({ target: target.name, engine: target.engine, geometry, threeD, pageErrors });
