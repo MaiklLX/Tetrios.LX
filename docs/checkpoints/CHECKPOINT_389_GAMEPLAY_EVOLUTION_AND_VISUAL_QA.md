@@ -76,3 +76,16 @@
 ## Automation note
 
 Opening draft PR #50 triggered the repository's existing pull-request workflows, including its pre-existing Android APK build workflow. That APK workflow was not manually requested. Going forward, the PR workflow configuration must be adjusted so visual/code review does not trigger native APK builds unless explicitly needed.
+
+
+## Visual QA follow-up — 2026-11-03
+
+- Cross-platform visual preview on the pre-adjustment test commit `076bf9740c291c2a15cb27791c7f5e2a6413786b` completed successfully: run `41662895309`, artifact `13242464580`.
+- Mobile Arena Visual Preview on the updated test commit `f2620d2b3abc19864e9e49d041b571f4ff81b927` completed successfully: run `41664481652`, artifact `13246030477`.
+- Android WebView source audit on `f2620d2b3abc19864e9e49d041b571f4ff81b927` completed successfully: run `41664482048`.
+- Screenshot review confirmed the library layout renders on desktop Chromium and iPhone-sized WebKit viewports; the list itself is scrollable. The first artifact's primary library screenshot showed the 4-card Block Run filter because the test captured after changing filters, not the default all-cards view.
+- Corrected the visual test to capture the default 35-card view first, then separate Block Run (4) and shared (31) filter screenshots. Test-only commit: `f2620d2b3abc19864e9e49d041b571f4ff81b927`.
+- Latest cross-platform preview runs `41664481743` and `41664479828` were still running at checkpoint update; the mobile preview and Android source audit were green. Do not mark screenshot acceptance complete until the latest cross-platform artifact is uploaded and inspected.
+- APK workflow configuration on this branch was verified to trigger only on `workflow_dispatch` or pushes to `main`; it no longer has a `pull_request` trigger. The earlier APK run caused by the pre-existing PR trigger remains an acknowledged incident.
+- PR #50 remains draft/open, base `main`, head `f2620d2b3abc19864e9e49d041b571f4ff81b927`; no merge or production deploy.
+- Initial gameplay audit: Block Run currently has a single generic garbage-row monster attack (two rows for bosses) with a countdown but no distinct attack telegraph/counterplay. The existing upgrade pool has 35 entries and the selection/rank system is present, but implementation is distributed across line-clear, timer, level-up, hold, death, and monster-defeat code. Build an event/trigger map before refactoring; do not infer that an upgrade is missing solely from a lack of `boosts.includes` (some are implemented through dedicated state or rendering paths).
