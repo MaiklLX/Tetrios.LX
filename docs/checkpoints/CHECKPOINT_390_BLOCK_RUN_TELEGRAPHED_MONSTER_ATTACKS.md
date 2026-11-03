@@ -1,0 +1,57 @@
+# TETRIOS LX — CHECKPOINT #390
+## Block Run: telegraphed monster attack patterns
+Date: 2026-11-03
+
+### Base and scope
+- Repository: `MaiklLX/Tetrios.LX`
+- Working branch: `feature/gameplay-evolution-389-2026-11-03`
+- Base gameplay and card-library work: checkpoint #389.
+- This increment changes Block Run monster encounters only. Campaign, Daily Challenge, desktop arena baseline #372 and mobile arena layout are out of scope and must remain unchanged.
+- No merge to `main`, no production deployment, no APK build requested.
+
+### Implemented
+- Added three explicit attack profiles:
+  - `breach`: one garbage row with one open cell.
+  - `crossfire`: two garbage rows with two offset openings per row.
+  - `siege`: boss-only two-row attack with one narrow opening per row.
+- Normal encounters cycle through breach and crossfire; bosses cycle through siege and crossfire.
+- Encounter panel now names the upcoming attack, describes its shape and shows a stronger warning treatment when five seconds or less remain.
+- Attack row openings are deterministic from room, attack index and row index; the same encounter sequence can be reproduced in tests.
+- Reserve still blocks a complete attack, consumes one charge and advances to the next telegraphed pattern.
+- Existing counterplay remains: clear lines to damage the monster, use Reserve to absorb an attack, and Blip's active ability delays the attack timer.
+- All attack logic remains guarded to `mode==='rogue'`.
+
+### Automated checks added
+- `site/validate-gameplay-modes.mjs` now asserts:
+  - distinct attack profiles and boss/normal cycles;
+  - deterministic row construction;
+  - attack label and <=5-second warning in the encounter panel;
+  - Reserve consumption and attack profile row resolution;
+  - existing Block Run-only mode guards.
+- Validation is awaiting the GitHub Actions runs below. Do not mark as green until completed.
+
+### Commits
+- Attack implementation: `815cd906ea2a92bfdd60f232ab26450d98b19939`
+- Gameplay validation: `d5592098cd3926a3a0013afdb743d7c6b18263c1`
+
+### CI at checkpoint creation
+- Android WebView source audit run: `41665678315` — in progress.
+- Cross-platform visual preview run: `41665678736` — pending.
+- Mobile Arena Visual Preview run: `41665678933` — pending.
+- No APK workflow was triggered by these commits; APK workflow remains configured without a `pull_request` trigger. The earlier legacy PR-triggered APK run is documented in checkpoint #389.
+
+### Manual review still required
+- Inspect desktop Chromium and iPhone-sized WebKit screenshots after CI.
+- Verify the warning text fits the monster panel at mobile widths.
+- Play an actual Block Run encounter to confirm the cadence feels readable and fair; WebKit automation is not a substitute for real iPhone Safari.
+- Confirm that campaign and daily modes never render or process these attacks.
+- Do not merge PR #50 until the user explicitly approves after review.
+
+### Next
+1. Complete and inspect CI artifacts for #390.
+2. Add focused gameplay tests for attack resolution and counterplay if the test harness permits deterministic board fixtures.
+3. Audit all 35 upgrades against their real trigger paths; distinguish active effects, descriptive-only cards and effects that are implemented through dedicated state.
+4. Only then begin a unified upgrade event layer. Preserve the existing 35-card pool until that audit is complete.
+
+### Continuation phrase
+`TETRIOS LX — продолжаем с контрольной точки #390. Ветка feature/gameplay-evolution-389-2026-11-03, commits 815cd90 (телеграфированные атаки Block Run) и d559209 (проверки режимов). Добавлены breach/crossfire/siege, предупреждение атаки и детерминированные ряды; Reserve блокирует атаку и переводит цикл дальше. CI runs 41665678315 / 41665678736 / 41665678933 проверить и изучить скриншоты. PR #50 не сливать, main не менять. Затем аудит реальных триггеров всех 35 карт. Сохранить Golden Desktop Baseline #372 и mobile baseline; APK без необходимости не собирать.`
