@@ -9108,6 +9108,23 @@ if (resetProgressBtn) {
   });
 }
 
+  // Explicitly gated visual QA hook; absent from normal gameplay sessions.
+  if(new URLSearchParams(location.search).get('qaVisual')==='1'){
+    window.__TETRIOS_QA__={
+      activatePrismAura(){
+        boosts=['prism','aura'];
+        if(typeof render==='function')render();
+        if(typeof bbSchedulePrismAnimation==='function')bbSchedulePrismAnimation();
+        return {
+          activePiece:!!piece,
+          boosts:[...boosts],
+          prismColor:typeof bbPrismColor==='function'?bbPrismColor(piece?.t||0,performance.now()):null,
+          auraOwned:boosts.includes('aura')
+        };
+      }
+    };
+  }
+
 })();
 </script><script type="module" src="./hero-arena.js"></script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js?v=20261101-opt-in-2d"></script>
 
