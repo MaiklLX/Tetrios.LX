@@ -212,11 +212,11 @@ jobs:
                   raise SystemExit(f"Invalid or incomplete GLB: {target}")
               entry["url"] = "./universes/models/" + filename
               print(f"Bundled {model_id}: {target.stat().st_size} bytes")
-          manifest["loading"] = "All 24 GLB universe models are bundled locally for offline Android use."
+          manifest["loading"] = "All 40 GLB universe models are bundled locally for offline Android use."
           manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
           PY
-          test "$(find "$ASSET_DIR/universes/models" -maxdepth 1 -type f -name '*.glb' | wc -l)" -eq 24
-          echo "Bundled all 24 diverse universe models locally in APK"
+          test "$(find "$ASSET_DIR/universes/models" -maxdepth 1 -type f -name '*.glb' | wc -l)" -eq 40
+          echo "Bundled all 40 diverse universe models locally in APK"
 
           if [ ! -s "$GITHUB_WORKSPACE/site/audio/chills.mp3" ]; then
             echo "::error::Bundled soundtrack is missing"
