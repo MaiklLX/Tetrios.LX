@@ -11208,4 +11208,26 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-desktop-arena-vertical-center-v1">
+/* TETRIOS LX — center the arena vertically inside the usable game viewport. */
+@media (min-width:901px){
+  #game>.playlayout{
+    min-height:min(82dvh,calc(100dvh - 170px))!important;
+    align-items:center!important;
+    align-content:center!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol){
+    align-self:center!important;
+    justify-self:stretch!important;
+    height:100%!important;
+    min-height:min(82dvh,calc(100dvh - 170px))!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe{
+    align-self:center!important;
+    margin-block:auto!important;
+  }
+  #game>.playlayout>.sidecol{align-self:center!important}
+}
+</style>
 </body></html>
