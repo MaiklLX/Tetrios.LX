@@ -1334,3 +1334,84 @@
     #menu.home-dashboard > .modes > .mode .modesub { font-size: 8px !important; }
   }
 }
+
+
+/* CHECKPOINT 350 — desktop arena proportions.
+   Keep the 10x23 canvas at its native aspect ratio. The old height-only sizing
+   let the flex/grid constraints squeeze the board horizontally on some PCs. */
+@media (min-width: 901px) {
+  #game:not([hidden]) {
+    width: min(100%, 1440px) !important;
+    max-width: 1440px !important;
+    margin-inline: auto !important;
+    gap: 12px !important;
+  }
+  #game > .playlayout {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 350px) !important;
+    align-items: stretch;
+    gap: clamp(16px, 1.8vw, 26px) !important;
+  }
+  #game > .playlayout > div:first-child {
+    min-width: 0;
+    min-height: min(72dvh, 760px);
+    padding: clamp(12px, 1.5vw, 22px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    background:
+      radial-gradient(ellipse at 50% 38%, rgba(92,245,232,.10), transparent 54%),
+      radial-gradient(ellipse at 50% 100%, rgba(157,124,255,.08), transparent 60%);
+    border: 1px solid rgba(92,245,232,.16);
+    border-radius: 22px;
+  }
+  #game .boardframe {
+    flex: 0 0 auto;
+    width: fit-content;
+    max-width: none;
+    padding: 9px;
+    border: 1px solid rgba(92,245,232,.42);
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(22,39,69,.98), rgba(5,12,27,.99));
+    box-shadow:
+      0 22px 60px rgba(0,0,0,.48),
+      0 0 38px rgba(92,245,232,.12),
+      inset 0 1px rgba(255,255,255,.09);
+  }
+  #game canvas#board.board {
+    display: block;
+    flex: none;
+    width: clamp(200px, min(24vw, calc((100dvh - 270px) * .4347826)), 320px) !important;
+    height: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    aspect-ratio: 10 / 23;
+    border-radius: 10px;
+    background: #060b18;
+  }
+  #game > .playlayout > .sidecol {
+    min-width: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(116px, auto);
+    align-content: center;
+    gap: 10px;
+  }
+  #game .sidecol > .sidecard {
+    min-width: 0;
+    min-height: 116px;
+    padding: 12px 10px;
+    border-radius: 15px;
+    background:
+      radial-gradient(ellipse at 100% 0%, rgba(92,245,232,.055), transparent 58%),
+      linear-gradient(145deg, rgba(20,30,57,.96), rgba(8,15,32,.98));
+  }
+  #game .sidecol .charge-ring { width: min(100%, 92px); }
+  #game .sidecol .nextcanvas { width: min(100%, 108px); }
+  #game .sidecol > #bbHeroSkillCard { min-height: 84px; }
+  #game > .controls,
+  #game > .hint {
+    justify-self: center;
+    width: min(100%, 620px);
+  }
+}
