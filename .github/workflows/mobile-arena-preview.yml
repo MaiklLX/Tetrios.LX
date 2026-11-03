@@ -108,10 +108,14 @@ jobs:
                 const board = document.querySelector('#game #board');
                 const side = document.querySelector('#game .sidecol');
                 const left = document.querySelector('#game .gameleftcol');
+                const goals = document.querySelector('#game #rogueGoals, #game #campaignGoals');
                 const ratio = frame ? frame.getBoundingClientRect().width / frame.getBoundingClientRect().height : 0;
                 return {
                   viewport: { width: innerWidth, height: innerHeight },
                   frame: rect(frame), board: rect(board), side: rect(side), left: rect(left),
+                  goals: rect(goals),
+                  goalChildren: goals ? Array.from(goals.children).map((element,index) => ({index,tag:element.tagName,rect:rect(element),scrollHeight:element.scrollHeight,clientHeight:element.clientHeight})) : [],
+                  leftMetrics: left ? {scrollHeight:left.scrollHeight,clientHeight:left.clientHeight,overflowY:getComputedStyle(left).overflowY} : null,
                   ratio, documentWidth: document.documentElement.scrollWidth,
                   computed: frame ? {
                     width: getComputedStyle(frame).width,
@@ -140,6 +144,9 @@ jobs:
               }
               if (geometry.left && geometry.left.bottom > viewport.height + 2) {
                 failures.push('Lower objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+              }
+              if (geometry.goals && geometry.goals.bottom > viewport.height - 2) {
+                failures.push('Objective panel is clipped by the viewport at ' + viewport.name + ': ' + JSON.stringify({goals:geometry.goals,children:geometry.goalChildren,leftMetrics:geometry.leftMetrics}));
               }
               const toggle = page.locator('#game .boardframe .bb-arena-toggle');
               await toggle.waitFor({ state: 'visible', timeout: 10000 });
