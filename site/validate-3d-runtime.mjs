@@ -14,10 +14,11 @@ const exists = async path => {
 };
 const fail = message => { console.error(`FAIL: ${message}`); process.exitCode = 1; };
 
-const [index, arena, visual, packageJsonText, manifestText, universeManifestText, audioCredits, mobileCss] = await Promise.all([
+const [index, arena, visual, universeRuntime, packageJsonText, manifestText, universeManifestText, audioCredits, mobileCss] = await Promise.all([
   read('site/index.html'),
   read('site/arena-3d.js'),
   read('site/visual-3d.js'),
+  read('site/universes-3d.js'),
   read('site/vendor/three/package.json'),
   read('site/characters/manifest.json'),
   read('site/universes/manifest.json'),
@@ -178,6 +179,8 @@ if (modelIdsInIndex.length !== 12 || new Set(modelIdsInIndex).size !== 12 || mod
 if (objectIdsInIndex.length !== 12 || new Set(objectIdsInIndex).size !== 12 || objectIdsInIndex.some(id => !universeModels[id])) fail('campaign atlas must assign twelve unique companion object models');
 if (modelIdsInIndex.some(id => objectIdsInIndex.includes(id))) fail('a campaign universe must not reuse its planet model as its companion object');
 if (!index.includes('bb-galaxy-companion-slot') || !index.includes('universeObjectIds[index]')) fail('each campaign universe must render its own companion 3D object');
+if (!index.includes('data-universe-variant=\'') || !universeRuntime.includes('const variant=Math.max(0,Number(slot.dataset.universeVariant)||0)') || !universeRuntime.includes('if(variant)return;')) fail('campaign planet nodes must render deterministic unique variants instead of repeating GLB planets');
+if (!universeRuntime.includes('variant*9301+49297') || !universeRuntime.includes('const landCount=3+Math.floor(random(2)*6)')) fail('procedural planet variants must use deterministic per-node surface and orbit details');
 if (!index.includes('A vertical gesture never moves the active piece mid-swipe') || !index.includes('Commit exactly once on touchend')) fail('mobile vertical drop gestures must be committed once, at touchend');
 if (index.indexOf('id="bbHeroSkillCard"') < 0 || index.indexOf('id="bbHeroSkillCard"') > index.indexOf('data-act="drop"')) fail('hero superpower must appear before hard drop in the mobile utility rail');
 if (!index.includes('Новый герой скоро появится') || !index.includes('БУДУЩЕЕ ОБНОВЛЕНИЕ') || !index.includes('Скоро в команде')) fail('hero roster must tease a locked future hero slot without making it selectable');
