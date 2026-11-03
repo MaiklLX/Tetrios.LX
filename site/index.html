@@ -7055,7 +7055,6 @@ function buildMap() {
         '<div class="bb-galaxy-art">' +
           '<div class="bb-galaxy-orbit orbit-a"></div><div class="bb-galaxy-orbit orbit-b"></div>' +
           '<div class="bb-galaxy-model-slot" data-universe-model="' + universeModelId + '"><span class="bb-galaxy-model-fallback">' + (unlocked ? b.icon : '🔒') + '</span></div>' +
-          '<div class="bb-galaxy-companion-slot" data-universe-model="' + universeObjectIds[index] + '" aria-label="Уникальный объект вселенной"><span class="bb-galaxy-model-fallback">✦</span></div>' +
           '<i class="bb-galaxy-star star-a">✦</i><i class="bb-galaxy-star star-b">·</i><i class="bb-galaxy-star star-c">✧</i>' +
         '</div>' +
         '<span class="bb-galaxy-index">UNIVERSE ' + String(index + 1).padStart(2,'0') + '</span>' +
@@ -7276,13 +7275,6 @@ function bbChooseHeroBeforeStart() {
             <div style="font-size:10px;margin-top:7px;opacity:.9">ОТКРЫТЬ КАРТОЧКУ →</div>
           </button>`;
         }).join('')}
-        <div aria-label="Новый герой скоро появится" style="position:relative;padding:12px 7px;border:1px dashed rgba(157,124,255,.65);border-radius:16px;background:linear-gradient(145deg,rgba(157,124,255,.12),rgba(92,245,232,.045));color:inherit;text-align:center;min-width:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:148px">
-          <span style="position:absolute;top:7px;right:7px;font-size:8px;font-weight:900;letter-spacing:.08em;color:#b9a4ff">БУДУЩЕЕ ОБНОВЛЕНИЕ</span>
-          <span style="font-size:42px;line-height:1;filter:drop-shadow(0 0 12px #9d7cff66);opacity:.78">◈</span>
-          <strong style="font-size:13px">Новый герой</strong>
-          <span style="font-size:10px;opacity:.72">Скоро в команде</span>
-          <span style="font-size:9px;color:#b9a4ff">🔒 ЗАКРЫТО</span>
-        </div>
       </div>
       <div style="padding:12px;border:1px solid ${selectedHero.color}66;border-radius:14px;background:linear-gradient(120deg,${selectedHero.color}20,#11182788);margin:8px 0 14px">
         <div style="font-size:9px;letter-spacing:.14em;color:#aebbd2">ТЕКУЩИЙ ВЫБОР</div>
@@ -8069,7 +8061,7 @@ cv.addEventListener('touchstart', e => {
   if (!started || paused || gameOver || touchDropLocked) return;
   const boardGesture=!!e.target.closest('#board');
   if (boardGesture && e.cancelable) e.preventDefault();
-  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,suppressTap,boardGesture};
+  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,softSteps:0,suppressTap,boardGesture};
   audioCtx();
 },{passive:false});
 
@@ -8084,9 +8076,15 @@ cv.addEventListener('touchmove',e=>{
   if(touch.axis==='x'){
     const dx=t.clientX-touch.lastX;
     if(Math.abs(dx)>=26){move(dx>0?1:-1);touch.lastX=t.clientX;}
+  }else if(touch.axis==='y'&&ty>0){
+    // Soft-drop is incremental and visible while the finger moves: one grid row
+    // per 28 CSS pixels. A long slow drag never becomes a single end-of-gesture jump.
+    while(t.clientY-touch.lastY>=28&&!touch.dropped){
+      touch.lastY+=28;
+      touch.softSteps=(touch.softSteps||0)+1;
+      if(!move(0,1)){touch.dropped=true;break;}
+    }
   }
-  // A vertical gesture never moves the active piece mid-swipe.
-  // Commit exactly once on touchend to avoid soft-drop + hard-drop conflicts.
 },{passive:false});
 
 cv.addEventListener('touchend',e=>{
@@ -8094,22 +8092,15 @@ cv.addEventListener('touchend',e=>{
   if(!touch)return;
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
   const elapsed=Date.now()-touch.at;
-  const verticalSwipe=touch.axis==='y'&&dy>=32&&dy>Math.abs(dx)*1.15;
-  const fastDownSwipe=verticalSwipe&&dy>=110&&elapsed<650&&dy>Math.abs(dx)*1.35;
+  const verticalSwipe=touch.axis==='y'&&dy>=28&&dy>Math.abs(dx)*1.15;
+  const fastDownSwipe=verticalSwipe&&dy>=110&&elapsed<220&&dy>Math.abs(dx)*1.35;
 
   if(!touch.dropped&&!touch.suppressTap&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
     rotatePiece();
-  }else if(!touch.dropped&&verticalSwipe&&started&&!paused&&!gameOver){
-    touch.dropped=true;
-    lockTouchDrop();
-    if(fastDownSwipe){
-      hardDrop();
-    }else{
-      // Slow downward swipes remain a controlled soft drop, applied only
-      // after the gesture has ended so no second handler can shift the piece.
-      const steps=Math.min(5,Math.max(1,Math.floor(dy/32)));
-      for(let i=0;i<steps;i++)if(!move(0,1))break;
-    }
+  }else if(verticalSwipe&&started&&!paused&&!gameOver){
+    // Only a genuinely quick flick performs the remaining hard drop. Slow
+    // swipes have already moved row-by-row in touchmove; touchend adds no jump.
+    if(fastDownSwipe){lockTouchDrop();hardDrop();}
   }
   touch=null;
 },{passive:true});
@@ -8276,7 +8267,7 @@ function bbOpenHeroShowcase(id){
 function bbRenderHeroes(){
  const roster=document.getElementById('heroesRoster'),details=document.getElementById('heroDetails');if(!roster)return;
  if(details){details.hidden=true;details.innerHTML=''}roster.classList.remove('bb-hero-flip-roster');
- roster.innerHTML=bbHeroes.map(hero=>`<button type="button" class="bb-hero-popup-card ${hero.id===bbSelectedHero?'is-selected':''}" data-hero-card="${hero.id}" aria-label="Посмотреть героя ${hero.name}"><span class="bb-hero-popup-art" style="--hero-accent:${hero.color}">${bbHeroEmblem(hero.id)}</span><strong>${hero.name}</strong><span>${hero.role}</span><small>${hero.id===bbSelectedHero?'✓ ВЫБРАН':'ОТКРЫТЬ ДОСЬЕ'}</small></button>`).join('');
+ roster.innerHTML=bbHeroes.map(hero=>`<button type="button" class="bb-hero-popup-card ${hero.id===bbSelectedHero?'is-selected':''}" data-hero-card="${hero.id}" aria-label="Посмотреть героя ${hero.name}"><span class="bb-hero-popup-art" style="--hero-accent:${hero.color}">${bbHeroEmblem(hero.id)}</span><strong>${hero.name}</strong><span>${hero.role}</span><small>${hero.id===bbSelectedHero?'✓ ВЫБРАН':'ОТКРЫТЬ ДОСЬЕ'}</small></button>`).join('')+`<div class="bb-hero-popup-card bb-hero-future-card" aria-label="Новый герой появится в будущем обновлении"><span class="bb-hero-popup-art">◈</span><strong>Новый герой</strong><span>Скоро в команде</span><small>🔒 БУДУЩЕЕ ОБНОВЛЕНИЕ</small></div>`;
  roster.querySelectorAll('[data-hero-card]').forEach(btn=>btn.addEventListener('click',()=>bbOpenHeroShowcase(btn.dataset.heroCard)));
 }
 
