@@ -140,6 +140,32 @@ jobs:
           mkdir -p "$ASSET_DIR/characters"
           cp -a "$GITHUB_WORKSPACE/site/characters/." "$ASSET_DIR/characters/"
 
+          # Preserve the premium space background and the 3D galaxy atlas in
+          # the offline Android WebView package. These were present on the web
+          # build but were omitted from the APK asset sync.
+          for asset in universes-3d.js; do
+            SOURCE="$GITHUB_WORKSPACE/site/$asset"
+            if [ ! -s "$SOURCE" ]; then
+              echo "::error::Required universe runtime is missing: $SOURCE"
+              exit 1
+            fi
+            cp "$SOURCE" "$ASSET_DIR/$asset"
+          done
+          for dir in assets universes; do
+            SOURCE_DIR="$GITHUB_WORKSPACE/site/$dir"
+            if [ ! -d "$SOURCE_DIR" ]; then
+              echo "::error::Required visual asset directory is missing: $SOURCE_DIR"
+              exit 1
+            fi
+            mkdir -p "$ASSET_DIR/$dir"
+            cp -a "$SOURCE_DIR/." "$ASSET_DIR/$dir/"
+          done
+          test -s "$ASSET_DIR/assets/deep_space_no_sun_2k.webp"
+          test -s "$ASSET_DIR/assets/space-nebula-01.png"
+          test -s "$ASSET_DIR/universes/manifest.json"
+          test -s "$ASSET_DIR/universes-3d.js"
+          echo "Synced space backgrounds and 3D universe atlas into Android assets"
+
           if [ ! -s "$GITHUB_WORKSPACE/site/audio/chills.mp3" ]; then
             echo "::error::Bundled soundtrack is missing"
             exit 1
@@ -152,6 +178,12 @@ jobs:
           for asset in index.html favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
             if [ ! -s "$ASSET_DIR/$asset" ]; then
               echo "::error::Android WebView asset was not synced: $asset"
+              exit 1
+            fi
+          done
+          for asset in universes-3d.js assets/deep_space_no_sun_2k.webp assets/space-nebula-01.png universes/manifest.json; do
+            if [ ! -s "$ASSET_DIR/$asset" ]; then
+              echo "::error::Android space/universe asset was not synced: $asset"
               exit 1
             fi
           done
