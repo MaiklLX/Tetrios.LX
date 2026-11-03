@@ -76,3 +76,8 @@ Date: 2026-11-03
 - Run `41665678315` was already executing its `Compile debug APK without publishing` step when this was discovered. It was an automatic PR-triggered audit run, not a user-requested APK build. It may complete and upload its test artifact; no release signing or deployment is involved.
 - Updated the audit workflow's `pull_request.paths` filter so it only runs when Android WebView patching, Android project archive, 3D runtime/character assets or related 3D source files change. Ordinary gameplay/card-library changes no longer request an Android APK build.
 - This workflow change is on the feature branch and will not be merged/deployed automatically.
+
+
+- Follow-up found the scoped `pull_request.paths` filter still matched the full PR #50 diff because the branch also contains earlier 3D/Android-related file changes. A second automatic run `41666284649` therefore started before the final correction.
+- Final correction: removed the `pull_request` trigger from `.github/workflows/android-webview-audit.yml` entirely and added `workflow_dispatch`. The existing explicit push triggers for the dedicated 3D maintenance branches remain. Android WebView/APK audit is now manual for PR-based gameplay work.
+- The already-started automatic audit run `41666284649` is not retroactively cancelled; it may finish. Run `41665678315` completed successfully and included a debug APK artifact, despite no release signing or deployment.
