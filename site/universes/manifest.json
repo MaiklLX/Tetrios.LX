@@ -8,7 +8,7 @@
     "commercialUse": true,
     "attributionRequired": false
   },
-  "loading": "39 locally packaged CC0 GLB models; the web atlas lazily loads the same models from the original publisher. Each campaign world receives a unique planet/celestial body and a unique environmental prop.",
+  "loading": "40 locally packaged CC0 GLB models; the web atlas lazily loads the same models from the original publisher. Every campaign universe has a unique planet model and a unique companion object.",
   "universeOrder": [
     "planet",
     "cargo-spaceship",
@@ -48,7 +48,8 @@
     "medical-pod",
     "repair-bot",
     "sci-fi-airlock",
-    "solar-panel-array"
+    "solar-panel-array",
+    "ringed-planet"
   ],
   "models": {
     "planet": {
@@ -441,6 +442,17 @@
       "triangles": 11100,
       "description": "Развёрнутая группа солнечных панелей на опорной раме.",
       "kit": "Cozy Sci-Fi Base Kit",
+      "license": "CC0 1.0 Universal",
+      "publisher": "Grab3D"
+    },
+    "ringed-planet": {
+      "title": "Кольцевая планета",
+      "file": "ringed-planet.glb",
+      "url": "https://grab3d.com/dl/ringed-planet/ringed-planet.glb",
+      "sourcePage": "https://grab3d.com/models/sci-fi/ringed-planet/",
+      "triangles": 20300,
+      "description": "Полосатый газовый гигант с тремя парящими кольцами и коралловым штормом.",
+      "kit": "Cozy Space Kit",
       "license": "CC0 1.0 Universal",
       "publisher": "Grab3D"
     }
