@@ -7504,7 +7504,7 @@ function rotate(m){return m[0].map((_,i)=>m.map(r=>r[i]).reverse())}function new
 function collides(p,dx=0,dy=0,shape=p.shape){for(let y=0;y<shape.length;y++)for(let x=0;x<shape[y].length;x++)if(shape[y][x]){let nx=p.x+x+dx,ny=p.y+y+dy;if(nx<0||nx>=W||ny>=H)return true;if(ny>=0&&board[ny][nx])return true}return false}
 function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&bbGetActiveDailyRule().mod==='mirror')dx=-dx;if(!collides(piece,dx,dy)){piece.x+=dx;piece.y+=dy;render();if(dy)tone(170,.025,'sine',.009);return true}if(dy>0)lockPiece();return false}
 // Stable card extends horizontal wall-kicks by rank, only inside Block Run.
-function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;const rank=mode==='rogue'?bbGetRogueCardRank('stable'):0,maxKick=rank?Math.min(4,1+rank):1,kicks=[0,-1,1];for(let distance=2;distance<=maxKick;distance++)kicks.push(-distance,distance);for(const dx of kicks){if(!collides(piece,dx,0,s)){piece.x+=dx;piece.shape=s;rotated=true;break}}if(rotated){if(mode==='campaign')bbCampaignRun.rotations++;if(boosts.includes('shift')&&Math.random()<0.25){score+=25*bbGetUpgradeRank('shift');updateHud()}bbHaptic(9);chime();render()}}
+function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;const rank=mode==='rogue'?bbGetRogueCardRank('stable'):0,maxKick=rank?Math.min(4,1+rank):1,kicks=[0,-1,1];for(let distance=2;distance<=maxKick;distance++)kicks.push(-distance,distance);for(const dx of kicks){if(!collides(piece,dx,0,s)){piece.x+=dx;piece.shape=s;rotated=true;break}}if(rotated){if(mode==='campaign')bbCampaignRun.rotations++;if(boosts.includes('shift')&&Math.random()<0.25){score+=25*bbGetUpgradeRank('shift');updateHud()}bbHaptic(9);chime();render();if(mode==='campaign')bbRenderGoals()}}
 function hardDrop(){if(!started||paused||gameOver)return;if(mode==='campaign')bbCampaignRun.hardDrops++;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;bbHaptic(16);lockPiece()}
 
 
@@ -8029,6 +8029,7 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.datase
 $('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;const holdLimit=bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(mode==='rogue'&&boosts.includes('hold')?1+bbGetRogueCardRank('hold'):mode==='campaign'&&bbHasCampaignPerk('scout')?2:1);if(holdUsed<holdLimit){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;if(mode==='campaign')bbCampaignRun.holdUses++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
+if(mode==='campaign')bbRenderGoals();
 tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};
 const hapticButton=$('hapticBtn');
 if(hapticButton){
