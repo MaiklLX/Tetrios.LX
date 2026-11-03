@@ -12133,4 +12133,25 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-android-campaign-space-background-v1">
+/* Android WebView: explicitly paint the campaign atlas from the bundled local skybox. */
+@media(max-width:900px){
+  #campaign,#campaign.screen,#campaign .bb-galaxy-viewport,#campaign .bb-planet-viewport{
+    background-color:#030716!important;
+  }
+  #campaign,#campaign.screen{
+    background-image:
+      linear-gradient(180deg,rgba(2,7,22,.08),rgba(3,7,22,.38)),
+      url("./assets/deep_space_no_sun_2k.webp")!important;
+    background-size:cover,cover!important;
+    background-position:center top,center!important;
+    background-repeat:no-repeat!important;
+    background-attachment:scroll!important;
+  }
+  #campaign .bb-galaxy-viewport,#campaign .bb-planet-viewport{
+    background:transparent!important;
+  }
+}
+</style>
 </body></html>
