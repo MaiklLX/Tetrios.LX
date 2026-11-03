@@ -77,15 +77,27 @@ const targets = [
     await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.waitForTimeout(1200);
-    const campaignAtlasState = await campaignPage.evaluate(() => ({
-      slots: document.querySelectorAll('#campaign [data-universe-model]').length,
-      proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
-      loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length,
-      visibleFallbacks: Array.from(document.querySelectorAll('#campaign [data-universe-model].is-model-fallback')).filter(node => {
-        const r=node.getBoundingClientRect(); return r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight;
-      }).length
-    }));
+    await campaignPage.waitForFunction(() => {
+      const root=document.querySelector('#campaign');
+      if(!root)return false;
+      const style=getComputedStyle(root),rect=root.getBoundingClientRect();
+      return style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>.95&&rect.width>0&&rect.height>0;
+    }, null, {timeout:10000});
+    await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
+    await campaignPage.waitForTimeout(2200);
+    const campaignAtlasState = await campaignPage.evaluate(() => {
+      const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
+      return {
+        slots: document.querySelectorAll('#campaign [data-universe-model]').length,
+        proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
+        loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length,
+        visibleFallbacks: Array.from(document.querySelectorAll('#campaign [data-universe-model].is-model-fallback')).filter(node => {
+          const r=node.getBoundingClientRect(); return r.width>0&&r.height>0&&r.bottom>0&&r.top<innerHeight;
+        }).length,
+        root: rect?{x:rect.x,y:rect.y,width:rect.width,height:rect.height,opacity:style.opacity,display:style.display}:null,
+        cards: document.querySelectorAll('#campaign .bb-galaxy-card').length
+      };
+    });
     await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-atlas.png', fullPage: false });
     if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
       failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
