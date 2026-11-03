@@ -8759,9 +8759,10 @@ if (bbHud) bbLeftCol.appendChild(bbHud);
 /* Currency now lives in the shared top HUD; never push it into the sidebar. */
 if (bbProgress) bbLeftCol.appendChild(bbProgress);
 
+  /* Monster and objective panels belong to the dedicated lower-left rail, not the right side column. */
   ['campaignGoals', 'rogueGoals'].forEach(id => {
     const panel = document.getElementById(id);
-    if (panel) bbSideCol.appendChild(panel);
+    if (panel) bbLeftCol.appendChild(panel);
   });
 }
 
@@ -11297,6 +11298,49 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.sidecol{
     grid-row:2!important;
     align-self:center!important;
+  }
+}
+</style>
+
+
+
+<style id="bb-desktop-left-monster-goals-restore-v1">
+/* TETRIOS LX — restore monster and objectives to the lower-left rail.
+   Keep the viewport-centered arena, right rail, and top-left metric HUD unchanged. */
+@media (min-width:901px){
+  #game:not([hidden]){position:relative!important}
+  #game>.playlayout>.gameleftcol{
+    display:flex!important;
+    position:absolute!important;
+    left:0!important;
+    bottom:0!important;
+    z-index:4!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    width:clamp(215px,18vw,270px)!important;
+    max-width:270px!important;
+    max-height:calc(100dvh - 300px)!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:flex-end!important;
+    gap:7px!important;
+    margin:0!important;
+    padding:0 3px 2px 0!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    scrollbar-width:thin!important;
+    pointer-events:auto!important;
+  }
+  #game>.playlayout>.gameleftcol>#campaignGoals,
+  #game>.playlayout>.gameleftcol>#rogueGoals{
+    display:block!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
   }
 }
 </style>
