@@ -60,6 +60,10 @@ requireMatch(
   /attack\.label[\s\S]*?АТАКА ЧЕРЕЗ/
 );
 requireMatch(
+  'Plasma must reset the next fall delay only after a line clear',
+  /if\(cleared&&boosts\.includes\('plasma'\)\)\{\s*if\(mode==='rogue'\)dropLastStepAt=performance\.now\(\);\s*else restartDrop\(\);\s*\}/
+);
+requireMatch(
   'Stable upgrade must extend deterministic rotation wall-kicks only in Block Run',
   /const rank=mode==='rogue'\?bbGetRogueCardRank\('stable'\):0,maxKick=rank\?Math\.min\(4,1\+rank\):1/
 );
