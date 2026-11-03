@@ -81,3 +81,12 @@ Date: 2026-11-03
 - Follow-up found the scoped `pull_request.paths` filter still matched the full PR #50 diff because the branch also contains earlier 3D/Android-related file changes. A second automatic run `41666284649` therefore started before the final correction.
 - Final correction: removed the `pull_request` trigger from `.github/workflows/android-webview-audit.yml` entirely and added `workflow_dispatch`. The existing explicit push triggers for the dedicated 3D maintenance branches remain. Android WebView/APK audit is now manual for PR-based gameplay work.
 - The already-started automatic audit run `41666284649` is not retroactively cancelled; it may finish. Run `41665678315` completed successfully and included a debug APK artifact, despite no release signing or deployment.
+
+
+### Final state at 2026-11-03 15:41 UTC
+- PR #50 remains open/draft and has not been merged.
+- Branch head: `383358cb6ef3b155fc6f00ee8f9ac91bd70734dc`.
+- Android WebView source audit run `41665678315` completed successfully. It also produced debug APK artifact `13244483247` (19,000,951 bytes) and source snapshot artifact `13243893857`; this was an automatic pre-correction run, not a requested APK build.
+- The later automatic Android audit run `41666284649` was already in progress before the final removal of the PR trigger; it is not retroactively cancelled.
+- Cross-platform visual runs `41665678736`, `41666285024` and mobile preview runs `41665678933`, `41666284679` had not yet exposed job results when checked. Run `41666289429` was cancelled during dependency preparation; screenshot acceptance is still pending.
+- Android WebView audit workflow now has `workflow_dispatch` instead of a generic `pull_request` trigger. Do not trigger it automatically for future gameplay-only PRs.
