@@ -12794,4 +12794,14 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+<style id="bb-mobile-390-row-clearance-v1">
+/* At 390px WebKit computed a shorter grid track than the fixed-ratio cabinet.
+   Reserve the cabinet's full capped height before placing the goals rail. */
+@media(min-width:381px) and (max-width:400px) and (orientation:portrait){
+  #game:not([hidden]){
+    grid-template-rows:auto auto auto minmax(min(66dvh,570px),max-content) auto auto auto!important;
+  }
+}
+</style>
 </body></html>
