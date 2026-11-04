@@ -12815,84 +12815,176 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
-<style id="bb-mobile-utility-rail-fit-v1">
-/* Fit every live utility tile beside the 10:23 arena without an inner scroll area.
-   Keep the controls and live readouts visible; compact only their surrounding chrome. */
+<style id="bb-mobile-utility-rail-hud-v2">
+/* Mobile utility dock redesign: compact functional HUD tiles, not a scaled desktop sidebar.
+   Keep every live control and readout in the original DOM so game logic and input handlers stay intact. */
 @media(max-width:520px) and (orientation:portrait){
   #game>.playlayout>.sidecol{
-    display:flex!important;
-    flex-direction:column!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:minmax(0,1fr)!important;
+    align-content:stretch!important;
+    justify-content:stretch!important;
     gap:3px!important;
-    padding:2px!important;
+    padding:3px!important;
     overflow:hidden!important;
-    overscroll-behavior: none!important;
+    overscroll-behavior:none!important;
+    border:1px solid rgba(112,178,201,.34)!important;
+    border-radius:11px!important;
+    background:
+      linear-gradient(180deg,rgba(17,31,51,.98),rgba(6,13,25,.98))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.07),0 5px 16px rgba(0,0,0,.3)!important;
   }
   #game>.playlayout>.sidecol>.sidecard,
-  #game>.playlayout>.sidecol>.drop-card,
   #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    position:relative!important;
     box-sizing:border-box!important;
-    flex:1 1 0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
     min-height:0!important;
     height:auto!important;
     max-height:none!important;
-    padding:2px!important;
     margin:0!important;
-    gap:1px!important;
+    padding:3px 2px!important;
+    gap:2px!important;
     overflow:hidden!important;
+    border:1px solid rgba(115,159,190,.25)!important;
+    border-radius:8px!important;
+    background:linear-gradient(150deg,rgba(31,49,72,.94),rgba(11,20,36,.98))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.07)!important;
   }
+  #game>.playlayout>.sidecol>.sidecard:before{
+    content:""!important;
+    position:absolute!important;
+    left:0!important;top:5px!important;bottom:5px!important;
+    width:2px!important;border-radius:2px!important;
+    background:rgba(111,190,215,.62)!important;
+    pointer-events:none!important;
+  }
+  #game>.playlayout>.sidecol>.charge-card:before{background:#55d9cb!important}
+  #game>.playlayout>.sidecol>.chrono-card:before{background:#b69aff!important}
+  #game>.playlayout>.sidecol>.drop-card:before{background:#62e99b!important}
   #game>.playlayout>.sidecol>.sidecard>label{
-    height:12px!important;
-    min-height:12px!important;
-    margin:0 auto 1px!important;
-    line-height:12px!important;
+    position:relative!important;display:block!important;
+    width:100%!important;height:12px!important;min-height:12px!important;
+    margin:0!important;padding:0!important;
+    color:#9fb7cc!important;font-size:6px!important;font-weight:900!important;
+    line-height:12px!important;letter-spacing:.06em!important;text-align:center!important;
+    white-space:nowrap!important;
   }
-  #game>.playlayout>.sidecol .nextcanvas{
-    width:100%!important;
-    max-height:36px!important;
-    margin:1px auto 0!important;
-  }
+  #game>.playlayout>.sidecol>.sidecard>label:after{display:none!important;content:none!important}
+  #game>.playlayout>.sidecol>.charge-card>label:before{content:"✦  "!important;color:#65e7dc!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(2)>label:before{content:"NEXT  "!important;color:#8ddcff!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(3)>label:before{content:"BOOST  "!important;color:#ffc66f!important}
+  #game>.playlayout>.sidecol>.chrono-card>label:before{content:"RIFT  "!important;color:#c5aaff!important}
+  #game>.playlayout>.sidecol>.sidecard:has(#timer)>label:before{content:"RUN  "!important;color:#8ddcff!important}
   #game>.playlayout>.sidecol .charge-ring,
   #game>.playlayout>.sidecol .chrono-ring{
-    width:min(100%,40px)!important;
+    width:min(100%,43px)!important;max-width:43px!important;
     margin:1px auto!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner strong,
+  #game>.playlayout>.sidecol .chrono-ring-inner strong{
+    font-size:12px!important;line-height:1!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner small,
+  #game>.playlayout>.sidecol .chrono-ring-inner small,
+  #game>.playlayout>.sidecol .charge-ring-inner>.charge-symbol,
+  #game>.playlayout>.sidecol .chrono-ring-inner>.chrono-hourglass{
+    display:none!important;
   }
   #game>.playlayout>.sidecol .charge-caption,
   #game>.playlayout>.sidecol .chrono-caption{
-    display:none!important;
+    display:block!important;max-width:100%!important;
+    margin:0!important;color:#a9bfd1!important;
+    font-size:5px!important;line-height:1.1!important;text-align:center!important;
+    white-space:normal!important;
   }
-  #game>.playlayout>.sidecol #timer{
-    margin:0 auto!important;
-    font-size:15px!important;
-    line-height:1.1!important;
+  #game>.playlayout>.sidecol .chrono-track{
+    width:80%!important;height:3px!important;margin:1px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{
+    display:block!important;width:100%!important;height:auto!important;
+    max-height:46px!important;min-height:0!important;margin:0 auto!important;
+    object-fit:contain!important;
   }
   #game>.playlayout>.sidecol .boosticon{
-    min-height:22px!important;
-    margin:1px 0!important;
-    font-size:19px!important;
+    display:grid!important;place-items:center!important;
+    min-height:25px!important;margin:0!important;
+    color:#ffd38a!important;font-size:22px!important;line-height:1!important;
   }
-  #game>.playlayout>.sidecol #bbHeroSkillCard{
-    min-height:0!important;
-    height:auto!important;
+  #game>.playlayout>.sidecol .boostname{
+    display:block!important;max-width:100%!important;
+    color:#f1f6ff!important;font-size:6px!important;font-weight:800!important;
+    line-height:1.1!important;text-align:center!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
   }
-  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-art{
-    width:30px!important;
-    height:30px!important;
-    flex-basis:30px!important;
-  }
-  #game>.playlayout>.sidecol .sidecard:has(>.side-drop){
-    min-height:0!important;
-  }
-  #game>.playlayout>.sidecol .side-drop{
-    min-height:34px!important;
-    height:34px!important;
-    padding:1px!important;
+  #game>.playlayout>.sidecol .boostnum{display:none!important}
+  #game>.playlayout>.sidecol #timer{
+    margin:0 auto!important;color:#f4fbff!important;
+    font-size:15px!important;font-weight:900!important;line-height:1.1!important;
+    font-variant-numeric:tabular-nums!important;
   }
   #game>.playlayout>.sidecol #holdBtn{
-    min-height:27px!important;
-    height:27px!important;
-    margin:1px 0 0!important;
-    padding:1px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:25px!important;height:25px!important;
+    margin:1px 0 0!important;padding:2px!important;
+    border:1px solid rgba(143,196,225,.38)!important;border-radius:6px!important;
+    background:linear-gradient(145deg,#253c56,#111e32)!important;
+    color:#d9efff!important;font-size:7px!important;font-weight:900!important;
+    line-height:1!important;white-space:nowrap!important;
   }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    flex-direction:row!important;justify-content:center!important;
+    gap:3px!important;padding:3px!important;
+    border-color:rgba(120,224,218,.38)!important;
+    background:linear-gradient(145deg,rgba(21,55,66,.96),rgba(10,24,38,.98))!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 30px!important;width:30px!important;height:30px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    display:flex!important;min-width:0!important;flex:1 1 auto!important;
+    flex-direction:column!important;gap:1px!important;text-align:left!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{
+    display:block!important;color:#e9ffff!important;font-size:6px!important;
+    line-height:1.1!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small{
+    display:block!important;color:#9edbdc!important;font-size:5px!important;
+    line-height:1.1!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    display:block!important;color:#bce9c9!important;font-size:5px!important;
+    line-height:1.1!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-pulse{
+    position:absolute!important;right:3px!important;top:2px!important;font-size:8px!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(>.side-drop){
+    border-color:rgba(83,238,145,.5)!important;
+    background:linear-gradient(145deg,rgba(20,79,57,.98),rgba(7,34,29,.98))!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(>.side-drop):before{background:#69f2a2!important}
+  #game>.playlayout>.sidecol .side-drop{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    box-sizing:border-box!important;width:100%!important;min-width:0!important;
+    min-height:34px!important;height:34px!important;margin:0!important;padding:2px!important;
+    border:1px solid rgba(171,255,202,.85)!important;border-radius:7px!important;
+    background:linear-gradient(180deg,#38c979,#087c48)!important;
+    color:#fff!important;font-size:10px!important;font-weight:1000!important;
+    line-height:1!important;letter-spacing:.04em!important;
+    box-shadow:0 2px 0 #034b2c,0 0 10px rgba(50,230,125,.16)!important;
+    touch-action:manipulation!important;
+  }
+  #game>.playlayout>.sidecol .side-drop:after{display:none!important;content:none!important}
+  #game>.playlayout>.sidecol .sidecard:has(#timer)>label{font-size:6px!important}
 }
 </style>
 
