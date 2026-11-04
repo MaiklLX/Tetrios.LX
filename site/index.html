@@ -13139,4 +13139,96 @@ body .app{background:transparent!important;background-color:transparent!importan
 #game>.controls{visibility:hidden!important;pointer-events:none!important}
 </style>
 
+
+<style id="bb-home-dashboard-layout-kt398">
+/* KT-398: real responsive home-menu composition.
+   The Android build bundles index.html itself, so these rules deliberately live here. */
+#menu.home-dashboard > .shopbuttons:not(:has(#openShop)){display:none!important}
+@media (max-width: 900px) {
+  #menu.home-dashboard:not([hidden]) {
+    box-sizing:border-box!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:
+      "hero"
+      "sectionlabel"
+      "modes"
+      "quests"
+      "streak"
+      "heroes"
+      "profile"
+      "resources"
+      "stats"
+      "library"
+      "download"
+      "reset"!important;
+    grid-template-rows:none!important;
+    align-items:stretch!important;
+    gap:12px!important;
+    width:100%!important;
+    max-width:760px!important;
+    margin-inline:auto!important;
+    padding:0 12px 24px!important;
+    overflow:visible!important;
+  }
+  #menu.home-dashboard > .hero{grid-area:hero!important;margin:0!important}
+  #menu.home-dashboard > .sectionlabel{grid-area:sectionlabel!important;margin:4px 2px -4px!important}
+  #menu.home-dashboard > .modes{
+    grid-area:modes!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:9px!important;
+    margin:0!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel{grid-area:quests!important;margin:0!important}
+  #menu.home-dashboard > #bbVisitStreak{grid-area:streak!important;margin:0!important}
+  #menu.home-dashboard > #openHeroes{grid-area:heroes!important;width:100%!important;margin:0!important}
+  #menu.home-dashboard > #rpgPanel{grid-area:profile!important;min-width:0!important;margin:0!important}
+  #menu.home-dashboard > .currency-panel{grid-area:resources!important;margin:0!important}
+  #menu.home-dashboard > .bottomstats{grid-area:stats!important;margin:0!important}
+  #menu.home-dashboard > #bbOpenCardLibrary{grid-area:library!important;width:100%!important;margin:0!important}
+  #menu.home-dashboard > .apk-download{grid-area:download!important;width:100%!important;margin:0!important}
+  #menu.home-dashboard > .home-reset{grid-area:reset!important;margin:4px 0 0!important}
+  #menu.home-dashboard > .home-reset .action{min-height:44px!important}
+  #menu.home-dashboard > .currency-panel .currency-grid{gap:9px!important}
+  #menu.home-dashboard > .bottomstats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+  #menu.home-dashboard > .bottomstats .stat{min-width:0!important;padding:10px 5px!important}
+  #menu.home-dashboard > .bottomstats .stat strong{font-size:clamp(17px,5vw,23px)!important}
+  #menu.home-dashboard > .bottomstats .stat span{font-size:8px!important;letter-spacing:.06em!important}
+}
+@media (min-width:600px) and (max-width:900px) {
+  #menu.home-dashboard:not([hidden]){
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-areas:
+      "hero hero"
+      "sectionlabel sectionlabel"
+      "modes modes"
+      "quests quests"
+      "streak streak"
+      "heroes profile"
+      "resources stats"
+      "library download"
+      "reset reset"!important;
+    gap:14px!important;
+  }
+  #menu.home-dashboard > .modes{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  #menu.home-dashboard > .modes > .mode{min-width:0!important;min-height:150px!important;padding:12px 9px!important}
+  #menu.home-dashboard > .modes > .mode .modeicon{width:36px!important;height:36px!important;flex-basis:36px!important}
+  #menu.home-dashboard > .modes > .mode .modetitle{font-size:12px!important}
+  #menu.home-dashboard > .modes > .mode .modesub{font-size:9px!important;line-height:1.3!important}
+  #menu.home-dashboard > #rpgPanel,
+  #menu.home-dashboard > #openHeroes{height:100%!important;min-height:86px!important}
+  #menu.home-dashboard > .currency-panel,
+  #menu.home-dashboard > .bottomstats{height:100%!important;min-height:100%!important}
+  #menu.home-dashboard > .apk-download,
+  #menu.home-dashboard > #bbOpenCardLibrary{height:100%!important;min-height:86px!important}
+}
+@media (max-width:599px) {
+  #menu.home-dashboard > .hero{min-height:190px!important}
+  #menu.home-dashboard > .modes > .mode{min-height:88px!important}
+  #menu.home-dashboard > #dailyQuestsPanel{padding:13px!important}
+  #menu.home-dashboard > #bbVisitStreak{padding:13px!important}
+}
+</style>
+
 </body></html>
