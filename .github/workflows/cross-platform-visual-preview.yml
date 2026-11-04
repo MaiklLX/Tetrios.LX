@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - 'feature/gameplay-evolution-*'
+      - 'feature/visual-redesign-*'
     paths:
       - 'site/**'
       - 'scripts/cross-platform-visual-preview.cjs'
