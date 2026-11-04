@@ -8061,13 +8061,13 @@ function drawCell(ctx,x,y,color,cell,ghost=false){
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){
   const c=$('next'),ctx=c.getContext('2d');
+  const s=shapes[nextType],color=bbPrismColor(nextType);
   const hidden=mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started;
-  const color=hidden?'':bbPrismColor(nextType);
   const signature=[c.width,c.height,nextType,hidden?1:0,color].join(':');
   if(signature===bbNextPreviewSignature)return;
   bbNextPreviewSignature=signature;ctx.clearRect(0,0,c.width,c.height);
   if(hidden)return;
-  const s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length));
+  const cell=Math.min(20,78/Math.max(s[0].length,s.length));
   const ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;
   for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){
     const px=ox+x*cell+1,py=oy+y*cell+1;
