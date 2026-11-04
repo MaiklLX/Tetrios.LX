@@ -13058,4 +13058,58 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-mobile-utility-rail-copy-v4">
+/* Give every compact HUD tile a stable label/content lane; remove artwork/text collisions. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>.sidecard>label{
+    position:absolute!important;top:3px!important;left:3px!important;
+    width:calc(100% - 6px)!important;height:8px!important;min-height:8px!important;
+    line-height:8px!important;font-size:0!important;z-index:2!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard>label:before{
+    display:block!important;font-size:6.5px!important;line-height:8px!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:34px!important;max-width:34px!important;margin:7px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .charge-caption,
+  #game>.playlayout>.sidecol .chrono-caption{display:none!important}
+  #game>.playlayout>.sidecol .chrono-track{margin:2px auto 0!important}
+  #game>.playlayout>.sidecol .nextcanvas{max-height:31px!important;margin:8px auto 0!important}
+  #game>.playlayout>.sidecol .boosticon{min-height:17px!important;margin-top:7px!important;font-size:17px!important}
+  #game>.playlayout>.sidecol .boostname{
+    min-height:14px!important;max-height:14px!important;
+    font-size:6.5px!important;line-height:1.1!important;
+    white-space:normal!important;overflow-wrap:anywhere!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(#timer)>label{top:3px!important}
+  #game>.playlayout>.sidecol #timer{margin-top:7px!important;font-size:14px!important}
+  #game>.playlayout>.sidecol #holdBtn{margin-top:1px!important}
+  #game>.playlayout>.sidecol>.drop-card>label{display:none!important}
+  #game>.playlayout>.sidecol .side-drop{height:44px!important;min-height:44px!important;margin:auto!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    flex-direction:column!important;justify-content:center!important;gap:1px!important;
+    padding:3px 2px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{display:none!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    display:flex!important;width:100%!important;min-width:0!important;flex:0 0 auto!important;
+    flex-direction:column!important;align-items:center!important;gap:2px!important;text-align:center!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong,
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    display:block!important;width:100%!important;max-width:100%!important;height:auto!important;
+    max-height:8px!important;min-height:0!important;overflow:hidden!important;
+    text-overflow:clip!important;white-space:nowrap!important;text-align:center!important;
+    line-height:1.1!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:6.2px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:5.6px!important}
+}
+</style>
+
 </body></html>
