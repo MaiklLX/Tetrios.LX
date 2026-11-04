@@ -12784,4 +12784,14 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 </style>
+
+<style id="bb-mobile-arena-row-intrinsic-v1">
+/* Do not compress the arena grid track below the 10:23 cabinet height on WebKit phones.
+   The previous 1fr track let the cabinet overflow into the full-width goals row. */
+@media(min-width:381px) and (max-width:520px) and (orientation:portrait){
+  #game:not([hidden]){
+    grid-template-rows:auto auto auto max-content auto auto auto!important;
+  }
+}
+</style>
 </body></html>
