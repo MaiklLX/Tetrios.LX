@@ -12814,4 +12814,86 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.hint{transform:translateY(22px)!important}
 }
 </style>
+
+<style id="bb-mobile-utility-rail-fit-v1">
+/* Fit every live utility tile beside the 10:23 arena without an inner scroll area.
+   Keep the controls and live readouts visible; compact only their surrounding chrome. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:3px!important;
+    padding:2px!important;
+    overflow:hidden!important;
+    overscroll-behavior: none!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>.drop-card,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    box-sizing:border-box!important;
+    flex:1 1 0!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    padding:2px!important;
+    margin:0!important;
+    gap:1px!important;
+    overflow:hidden!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard>label{
+    height:12px!important;
+    min-height:12px!important;
+    margin:0 auto 1px!important;
+    line-height:12px!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{
+    width:100%!important;
+    max-height:36px!important;
+    margin:1px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:min(100%,40px)!important;
+    margin:1px auto!important;
+  }
+  #game>.playlayout>.sidecol .charge-caption,
+  #game>.playlayout>.sidecol .chrono-caption{
+    display:none!important;
+  }
+  #game>.playlayout>.sidecol #timer{
+    margin:0 auto!important;
+    font-size:15px!important;
+    line-height:1.1!important;
+  }
+  #game>.playlayout>.sidecol .boosticon{
+    min-height:22px!important;
+    margin:1px 0!important;
+    font-size:19px!important;
+  }
+  #game>.playlayout>.sidecol #bbHeroSkillCard{
+    min-height:0!important;
+    height:auto!important;
+  }
+  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-art{
+    width:30px!important;
+    height:30px!important;
+    flex-basis:30px!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(>.side-drop){
+    min-height:0!important;
+  }
+  #game>.playlayout>.sidecol .side-drop{
+    min-height:34px!important;
+    height:34px!important;
+    padding:1px!important;
+  }
+  #game>.playlayout>.sidecol #holdBtn{
+    min-height:27px!important;
+    height:27px!important;
+    margin:1px 0 0!important;
+    padding:1px!important;
+  }
+}
+</style>
+
 </body></html>
