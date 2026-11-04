@@ -16,6 +16,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
   const loader=new GLTFLoader();
   let active=null,raf=0,last=0;
   const modelCache=new Map();
+  // Grab3D's public GLB endpoint does not expose browser CORS access.
+  // Use the authored procedural scenes until the licensed models are self-hosted in this repository.
+  const USE_REMOTE_GLB_SHOWCASES=false;
   const visibleSlots=new Set();
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const lowPower=isIOS||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
@@ -338,7 +341,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       }catch(error){
         console.warn(log,'immediate procedural model failed for '+id+'.',error);
       }
-      if(variant)return;
+      if(variant||!USE_REMOTE_GLB_SHOWCASES)return;
 
       // Upgrade ordinary universe showcase slots to their detailed GLB model.
       loadModel(id).then(source=>{
