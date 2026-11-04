@@ -12736,4 +12736,15 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+<style id="bb-mobile-narrow-viewport-clearance-v1">
+@media(max-width:380px) and (orientation:portrait){
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(60dvh,calc((100vw - 142px)*2.3),570px)/2.3))!important;
+    max-height:min(60dvh,calc((100vw - 142px)*2.3),570px)!important;
+    align-self:start!important;
+    margin-top:0!important;
+  }
+}
+</style>
 </body></html>
