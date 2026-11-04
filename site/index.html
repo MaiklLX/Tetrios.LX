@@ -12804,4 +12804,14 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+<style id="bb-mobile-390-goals-clearance-v2">
+/* WebKit 390x844: the cabinet keeps its full 10:23 height; move the lower
+   information/control rows below it instead of shrinking the playfield. */
+@media(min-width:381px) and (max-width:400px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:translateY(22px)!important}
+}
+</style>
 </body></html>
