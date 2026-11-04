@@ -1,0 +1,71 @@
+/* TETRIOS.LX visual system — KT-402
+   Original SVG asset kit + responsive component skin.
+   This layer is intentionally additive: gameplay DOM, ids, handlers and data remain untouched. */
+:root{
+ --bb-ink:#f4f7ff;--bb-muted:#9aa9ca;--bb-cyan:#64f4ed;--bb-blue:#66a9ff;
+ --bb-violet:#a58aff;--bb-gold:#ffd36f;--bb-panel:#111a31;--bb-panel-hi:#1b2949;
+ --bb-edge:rgba(146,178,255,.25);--bb-shadow:0 18px 44px rgba(0,0,0,.34);
+}
+body{background-color:#070b19}
+.app{background:
+ radial-gradient(ellipse at 50% -12%,rgba(63,103,196,.22),transparent 48%),
+ radial-gradient(ellipse at 88% 42%,rgba(114,69,196,.10),transparent 35%),
+ linear-gradient(160deg,#070b18 0%,#0b1226 56%,#070b17 100%)}
+.topbar{border-color:rgba(121,170,255,.24)!important;background:linear-gradient(110deg,rgba(18,31,59,.96),rgba(9,16,34,.94))!important;box-shadow:0 12px 36px #0005,inset 0 1px #ffffff12!important}
+.brandmark{border-radius:13px!important;background:linear-gradient(145deg,#8ffff1,#4b9eff 62%,#8b76ff)!important;box-shadow:0 0 28px #52d9ff55,inset 0 1px #fff9!important}
+.iconbtn,.back{border:1px solid rgba(135,173,255,.32)!important;background:linear-gradient(145deg,#1b2a4b,#101a32)!important;box-shadow:inset 0 1px #ffffff12,0 5px 14px #0003!important}
+.hero{border:1px solid rgba(132,178,255,.3)!important;background:
+ radial-gradient(ellipse at 50% 0%,rgba(81,151,255,.2),transparent 58%),
+ linear-gradient(145deg,rgba(25,42,76,.98),rgba(10,18,37,.98))!important;
+ box-shadow:0 22px 55px #0006,inset 0 1px #ffffff14,0 0 34px #477dff16!important}
+.hero:before{content:"";position:absolute;inset:8px;border:1px solid rgba(143,194,255,.12);border-radius:inherit;pointer-events:none}
+.hero:after{background:linear-gradient(115deg,#ffffff0c,transparent 30%,transparent 72%,#64f4ed0c)!important}
+.hero-brand-lockup h1{text-shadow:0 0 28px #68caff35}
+.mode,.shopbutton,.action,.choice,.smallbtn,.control,.surprise-shop-buy{
+ border:1px solid rgba(128,167,245,.29)!important;
+ background:linear-gradient(145deg,#203153 0%,#121e38 58%,#0d172d 100%)!important;
+ box-shadow:inset 0 1px #ffffff12,0 8px 20px #0003!important;
+}
+.mode:before{background:linear-gradient(115deg,#ffffff0c,transparent 42%,#6af4ed09)!important;opacity:1!important}
+.mode:hover,.shopbutton:hover,.action:hover{border-color:#75eee8a6!important;box-shadow:inset 0 1px #ffffff20,0 12px 30px #0005,0 0 22px #58dcd51c!important}
+.modeicon{border:1px solid #ffffff18!important;box-shadow:inset 0 1px #ffffff22,0 6px 15px #0003!important}
+.tag{border:1px solid #69eee52c!important;box-shadow:inset 0 1px #ffffff12}
+.currency-grid{gap:11px!important}
+.currency-card{position:relative;overflow:hidden;border:1px solid rgba(255,207,112,.38)!important;border-radius:18px!important;background:
+ radial-gradient(circle at 18% 12%,rgba(255,211,111,.18),transparent 42%),
+ linear-gradient(145deg,#3b3025,#1d2235 58%,#111a30)!important;
+ box-shadow:inset 0 1px #fff2,0 12px 25px #0004!important}
+.currency-card.gems-card{border-color:#83aaff66!important;background:radial-gradient(circle at 18% 12%,#6e9dff35,transparent 42%),linear-gradient(145deg,#263653,#18213c 60%,#111a30)!important}
+.currency-icon{filter:drop-shadow(0 3px 7px #0008)!important}
+.currency-label{letter-spacing:.2em!important;color:#ffe0a0!important}
+.gems-card .currency-label{color:#b9d6ff!important}
+.currency-info strong{font-size:clamp(22px,5vw,30px)!important;text-shadow:0 2px 10px #0008}
+.currency-caption{color:#c1cbe0!important}
+.currency-glow{opacity:.7!important}
+.wallet{border:1px solid rgba(255,211,111,.34)!important;border-radius:16px!important;background:linear-gradient(110deg,#49371e66,#1a2743 72%)!important;box-shadow:inset 0 1px #ffffff14,0 9px 20px #0003!important}
+.stat,.hudbox,.sidecard{border-color:rgba(130,168,239,.24)!important;background:linear-gradient(145deg,#1a2948,#101a31)!important;box-shadow:inset 0 1px #ffffff0d,0 7px 16px #0002!important}
+.stat strong,.hudbox strong{color:#f4f8ff;text-shadow:0 0 14px #75c9ff20}
+.boardframe{border:1px solid #82b5ff55!important;background:linear-gradient(145deg,#263b60,#111b34)!important;box-shadow:0 18px 42px #0007,0 0 24px #57d9ed13,inset 0 1px #ffffff22!important}
+.board{box-shadow:inset 0 0 0 1px #9bcaff1c,0 0 24px #0008}
+.control.primary,.control.drop{background:linear-gradient(145deg,#8bfff1,#58c7ef 54%,#718aff)!important;color:#081629!important;border-color:#c0fff6!important;box-shadow:0 5px 0 #234b75,0 9px 20px #43d5ec25!important}
+.overlay{background:#050916df!important;backdrop-filter:blur(15px)}
+.modal{border:1px solid #83a9ed66!important;background:linear-gradient(145deg,#1d2d4d,#101a31)!important;box-shadow:0 28px 80px #000a,inset 0 1px #ffffff18!important}
+.apk-download{border-color:#6cf0e875!important;background:linear-gradient(110deg,#17404b,#172441)!important;box-shadow:inset 0 1px #ffffff18,0 10px 26px #0004!important}
+.shopbutton{border-radius:17px!important}
+.shop-main-icon,.surprise-shop-icon{filter:drop-shadow(0 5px 8px #0008)}
+/* Compact mobile balance; do not alter the game's existing layout model. */
+@media(max-width:600px){
+ .app{padding:12px 10px 24px}
+ .topbar{margin-bottom:14px!important;padding:9px 11px!important;border-radius:17px!important}
+ .hero{border-radius:22px!important}
+ .currency-grid{gap:8px!important}
+ .currency-card{min-width:0;padding:10px 8px!important}
+ .currency-icon{font-size:25px!important}
+ .currency-info strong{font-size:23px!important}
+ .mode{border-radius:17px!important}
+ .boardframe{border-radius:15px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .mode,.shopbutton,.action,.control,.iconbtn{transition:none!important}
+ .hero:after{animation:none!important}
+}
