@@ -205,44 +205,18 @@ const targets = [
     await page.screenshot({ path: outputDir + '/' + target.name + '-arena-prism-aura.png', fullPage: false });
     console.log('Captured 2D arena and Prism/Aura state: ' + target.name);
 
-    let threeD = null;
-    const webglAvailable = await page.evaluate(() => {
-      try { const canvas=document.createElement('canvas'); return !!(canvas.getContext('webgl2')||canvas.getContext('webgl')); }
-      catch { return false; }
-    });
-    if (target.engine === 'chromium' || webglAvailable) {
-      const toggle = page.locator('#game .boardframe .bb-arena-toggle');
-      await toggle.waitFor({ state: 'visible', timeout: 10000 });
-      await toggle.click();
-      try {
-        await page.locator('#game .boardframe.bb-3d-arena-active').waitFor({ state: 'attached', timeout: 15000 });
-      } catch (error) {
-        if (webglAvailable) failures.push(target.name + ': WebGL reports support but 3D arena did not activate: ' + error.message);
-      }
-      await page.waitForTimeout(1200);
-      threeD = await page.evaluate(() => {
-        const board = document.querySelector('#game #board')?.getBoundingClientRect();
-        const canvas = document.querySelector('#game .bb-arena-canvas')?.getBoundingClientRect();
-        if (!board || !canvas) return null;
-        return {
-          board: { x: board.x, y: board.y, width: board.width, height: board.height },
-          canvas: { x: canvas.x, y: canvas.y, width: canvas.width, height: canvas.height },
-          delta: Math.max(
-            Math.abs(canvas.x - board.x),
-            Math.abs(canvas.y - board.y),
-            Math.abs(canvas.width - board.width),
-            Math.abs(canvas.height - board.height)
-          )
-        };
-      });
-      if (!threeD || threeD.delta > 3) {
-        failures.push(target.name + ': 3D overlay is missing or misaligned (' + JSON.stringify(threeD) + ')');
-      }
-      await page.screenshot({ path: outputDir + '/' + target.name + '-arena-3d.png', fullPage: false });
-      console.log('Captured 3D arena: ' + target.name);
+    const arenaModeState = await page.evaluate(() => ({
+      toggleCount: document.querySelectorAll('#game .boardframe .bb-arena-toggle').length,
+      overlayCanvasCount: document.querySelectorAll('#game .boardframe .bb-arena-canvas').length,
+      boardVisible: (() => { const board=document.querySelector('#game #board'); if(!board)return false; const style=getComputedStyle(board),rect=board.getBoundingClientRect(); return style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>0&&rect.width>0&&rect.height>0; })()
+    }));
+    if (arenaModeState.toggleCount !== 0 || arenaModeState.overlayCanvasCount !== 0 || !arenaModeState.boardVisible) {
+      failures.push(target.name + ': expected the single-renderer 2D arena with no 3D toggle or overlay (' + JSON.stringify(arenaModeState) + ')');
     }
+    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
+    console.log('Verified single-renderer 2D arena: ' + target.name);
 
-    report.push({ target: target.name, engine: target.engine, geometry, webglAvailable, threeD, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
+    report.push({ target: target.name, engine: target.engine, geometry, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
   }
