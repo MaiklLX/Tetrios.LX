@@ -13509,4 +13509,25 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style>
+/* KT-405.5: target the actual Block Run layout, including gameleftcol variants */
+@media (max-width:600px) and (orientation:portrait){
+  #game.block-run-mode>.playlayout,
+  #game.unified-game-layout>.playlayout,
+  #game.daily-chrono-layout>.playlayout{
+    grid-template-columns:minmax(0,1fr) minmax(124px,36%)!important;
+    column-gap:8px!important;
+  }
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game.block-run-mode>.playlayout,
+  #game.unified-game-layout>.playlayout,
+  #game.daily-chrono-layout>.playlayout{
+    grid-template-columns:minmax(0,1fr) minmax(118px,37%)!important;
+    column-gap:6px!important;
+  }
+}
+</style>
+
 </body></html>
