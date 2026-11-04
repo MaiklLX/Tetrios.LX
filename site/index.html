@@ -12763,5 +12763,25 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.controls,
   #game>.hint{transform:translateY(6px)!important}
 }
+
+
+<style id="bb-mobile-utility-rail-scroll-v1">
+/* Keep utility cards inside the arena column on short phones; allow touch scrolling instead of painting over objectives. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+    touch-action:pan-y!important;
+    box-sizing:border-box!important;
+  }
+  #game>.playlayout>.sidecol::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>.drop-card,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{flex-shrink:0!important}
+}
+</style>
 </style>
 </body></html>
