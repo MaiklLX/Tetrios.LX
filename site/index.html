@@ -7518,9 +7518,7 @@ function hardDrop(){
   if(mode==='campaign')bbCampaignRun.hardDrops++;
   let dist=0;
   while(!collides(piece,0,1)){piece.y++;dist++}
-  score+=dist*2;
-  bbHaptic(16);
-  lockPiece();
+  score+=dist*2;bbHaptic(16);lockPiece();
 }
 
 
