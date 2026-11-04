@@ -41,15 +41,10 @@ jobs:
           test -s site/audio/chills.mp3
           test "$(stat -c%s site/audio/chills.mp3)" -ge 1000000
 
-      - name: Prepare pinned local Three.js runtime
+      - name: Prepare lightweight 2D arena preview
         shell: bash
         run: |
           set -euo pipefail
-          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
-          mkdir -p "$RUNNER_TEMP/three-package" site/vendor
-          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
-          cp -a "$RUNNER_TEMP/three-package/package" site/vendor/three
-          node site/validate-3d-runtime.mjs
 
       - name: Install Playwright Chromium
         run: |
