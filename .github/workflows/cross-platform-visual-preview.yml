@@ -46,12 +46,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p site/audio
+          mkdir -p site/audio site/vendor
           curl --fail --location --retry 3 --retry-delay 2 \
             "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
             --output site/audio/chills.mp3
           test -s site/audio/chills.mp3
           test "$(stat -c%s site/audio/chills.mp3)" -ge 1000000
+          # Three.js remains required by the campaign universe atlas; only the arena renderer is 2D-only.
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          cp -a "$RUNNER_TEMP/three-package/package" site/vendor/three
+          node site/validate-3d-runtime.mjs
           node site/validate-gameplay-modes.mjs
 
       - name: Install Playwright Chromium and WebKit
