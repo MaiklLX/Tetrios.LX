@@ -12873,16 +12873,16 @@ body .app{background:transparent!important;background-color:transparent!importan
     position:relative!important;display:block!important;
     width:100%!important;height:12px!important;min-height:12px!important;
     margin:0!important;padding:0!important;
-    color:#9fb7cc!important;font-size:6px!important;font-weight:900!important;
+    color:transparent!important;font-size:0!important;font-weight:900!important;
     line-height:12px!important;letter-spacing:.06em!important;text-align:center!important;
     white-space:nowrap!important;
   }
   #game>.playlayout>.sidecol>.sidecard>label:after{display:none!important;content:none!important}
-  #game>.playlayout>.sidecol>.charge-card>label:before{content:"✦  "!important;color:#65e7dc!important}
-  #game>.playlayout>.sidecol>.sidecard:nth-child(2)>label:before{content:"NEXT  "!important;color:#8ddcff!important}
-  #game>.playlayout>.sidecol>.sidecard:nth-child(3)>label:before{content:"BOOST  "!important;color:#ffc66f!important}
-  #game>.playlayout>.sidecol>.chrono-card>label:before{content:"RIFT  "!important;color:#c5aaff!important}
-  #game>.playlayout>.sidecol>.sidecard:has(#timer)>label:before{content:"RUN  "!important;color:#8ddcff!important}
+  #game>.playlayout>.sidecol>.charge-card>label:before{content:"✦ CHARGE"!important;color:#65e7dc!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(2)>label:before{content:"▦ NEXT"!important;color:#8ddcff!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(3)>label:before{content:"⚡ BOOST"!important;color:#ffc66f!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.chrono-card>label:before{content:"⌛ RIFT"!important;color:#c5aaff!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.sidecard:has(#timer)>label:before{content:"◷ TIME"!important;color:#8ddcff!important;font-size:6px!important}
   #game>.playlayout>.sidecol .charge-ring,
   #game>.playlayout>.sidecol .chrono-ring{
     width:min(100%,43px)!important;max-width:43px!important;
@@ -12936,8 +12936,12 @@ body .app{background:transparent!important;background-color:transparent!importan
     margin:1px 0 0!important;padding:2px!important;
     border:1px solid rgba(143,196,225,.38)!important;border-radius:6px!important;
     background:linear-gradient(145deg,#253c56,#111e32)!important;
-    color:#d9efff!important;font-size:7px!important;font-weight:900!important;
+    color:transparent!important;font-size:0!important;font-weight:900!important;
     line-height:1!important;white-space:nowrap!important;
+  }
+  #game>.playlayout>.sidecol #holdBtn:after{
+    content:"⇄"!important;display:block!important;color:#d9efff!important;
+    font-size:17px!important;line-height:19px!important;
   }
   #game>.playlayout>.sidecol>#bbHeroSkillCard{
     flex-direction:row!important;justify-content:center!important;
