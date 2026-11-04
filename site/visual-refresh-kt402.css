@@ -237,3 +237,55 @@ body{background-color:#070b19}
     min-height:58px!important;
   }
 }
+
+
+/* KT-405 — 2D arena performance + coherent utility rail.
+   Static canvas chrome is cached in JS; these rules unify the live HUD modules. */
+#game>.playlayout>.sidecol>.sidecard,
+#game>.playlayout>.sidecol>#bbHeroSkillCard{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(119,157,213,.24)!important;
+  border-radius:12px!important;
+  background:linear-gradient(155deg,rgba(24,37,64,.98),rgba(11,19,37,.98))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.055),0 5px 13px rgba(0,0,0,.22)!important;
+}
+#game>.playlayout>.sidecol>.sidecard:before,
+#game>.playlayout>.sidecol>#bbHeroSkillCard:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.035),transparent 42%,rgba(100,244,237,.025));
+}
+#game>.playlayout>.sidecol>.sidecard>label{
+  position:relative;color:#91a6c8!important;font-size:7px!important;
+  font-weight:900;letter-spacing:.12em;line-height:1.25;
+}
+#game>.playlayout>.sidecol>.sidecard .nextcanvas{margin-top:4px}
+#game>.playlayout>.sidecol>.charge-card .charge-ring{
+  width:min(76px,100%);margin:8px auto 6px;
+  box-shadow:0 0 0 2px #0b1327,0 0 0 3px rgba(100,244,237,.35),0 0 15px rgba(100,244,237,.12);
+}
+#game>.playlayout>.sidecol>.charge-card .charge-caption{
+  color:#8fa9c9;font-size:7px;letter-spacing:.07em;line-height:1.25;
+}
+#game>.playlayout>.sidecol>#chronoCard{
+  border-color:rgba(76,164,255,.34)!important;
+  background:linear-gradient(155deg,rgba(18,43,76,.98),rgba(10,19,39,.98))!important;
+}
+#game>.playlayout>.sidecol>#chronoCard .chrono-ring{
+  box-shadow:0 0 0 2px #0b1327,0 0 0 3px color-mix(in srgb,var(--chrono-color) 52%,transparent),0 0 13px color-mix(in srgb,var(--chrono-color) 18%,transparent);
+}
+#game>.playlayout>.sidecol>.drop-card .side-drop{
+  border-radius:10px!important;min-height:52px;
+  box-shadow:inset 0 1px rgba(255,255,255,.28),0 4px 12px rgba(41,225,207,.16)!important;
+}
+@media(max-width:600px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{gap:7px!important}
+  #game>.playlayout>.sidecol>.sidecard{padding:8px 6px!important}
+  #game>.playlayout>.sidecol>.sidecard .boosticon{margin:5px 0 2px;font-size:19px}
+  #game>.playlayout>.sidecol>.sidecard .boostname{font-size:8px;line-height:1.25}
+  #game>.playlayout>.sidecol>.sidecard .boostnum{font-size:9px;margin-top:3px}
+}
+@media(prefers-reduced-motion:reduce){
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{transition:none!important;animation:none!important}
+}
