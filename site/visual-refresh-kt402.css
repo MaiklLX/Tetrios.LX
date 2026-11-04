@@ -289,3 +289,115 @@ body{background-color:#070b19}
   #game>.playlayout>.sidecol>.sidecard,
   #game>.playlayout>.sidecol>#bbHeroSkillCard{transition:none!important;animation:none!important}
 }
+
+
+/* KT-405.2 — micro-rail legibility on narrow iPhone widths.
+   The seven utility modules fit vertically, but fixed-size rings and timer
+   typography were clipping inside the 68–78px rail. Keep all key actions visible. */
+@media(max-width:390px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>.sidecard>label{
+    font-size:5.5px!important;
+    letter-spacing:.055em!important;
+    white-space:nowrap;
+  }
+  #game>.playlayout>.sidecol>.charge-card .charge-ring{
+    width:44px!important;
+    max-width:44px!important;
+    margin:5px auto 3px!important;
+  }
+  #game>.playlayout>.sidecol>.charge-card .charge-ring-inner strong{
+    font-size:13px!important;
+  }
+  #game>.playlayout>.sidecol>.charge-card .charge-caption{
+    font-size:5px!important;
+    letter-spacing:0!important;
+    white-space:normal;
+  }
+  #game>.playlayout>.sidecol>.sidecard .nextcanvas{
+    width:100%!important;
+    max-width:48px!important;
+    height:auto!important;
+    margin:2px auto 0!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard .boosticon{
+    font-size:15px!important;
+    margin:2px 0!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard .boostname{
+    font-size:6.5px!important;
+    line-height:1.15!important;
+    overflow-wrap:anywhere;
+  }
+  #game>.playlayout>.sidecol>.sidecard .boostnum{
+    font-size:5.5px!important;
+    line-height:1.1!important;
+    overflow-wrap:anywhere;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-ring{
+    width:46px!important;
+    max-width:46px!important;
+    margin:0 auto 2px!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-ring-inner strong{
+    font-size:14px!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-ring-inner small{
+    font-size:5px!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-caption{
+    font-size:5px!important;
+    line-height:1.1!important;
+    overflow-wrap:anywhere;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(#timer) #timer{
+    width:100%!important;
+    font-size:11px!important;
+    line-height:1!important;
+    letter-spacing:-.045em!important;
+    white-space:nowrap!important;
+    text-align:center!important;
+    margin:7px auto 4px!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(#timer) .smallbtn{
+    width:100%!important;
+    min-width:0!important;
+    padding:5px 1px!important;
+    font-size:6px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    min-height:64px!important;
+    padding:4px 3px!important;
+    gap:2px!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 19px!important;
+    width:19px!important;
+    height:19px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy{
+    width:100%!important;
+    min-width:0!important;
+    text-align:center!important;
+    gap:1px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy strong{
+    font-size:5.5px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy small{
+    display:none!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em{
+    font-size:5px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-pulse{
+    display:none!important;
+  }
+}
