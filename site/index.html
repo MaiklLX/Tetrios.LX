@@ -7510,14 +7510,13 @@ let bbHardDropInProgress=false;
 function hardDrop(){
   if(!started||paused||gameOver||!piece||bbHardDropInProgress)return;
   const now=performance.now();
-  // One physical input must affect only the current piece. Keep a longer
-  // cross-input cooldown so touch, synthetic click and the next touch cannot
-  // cascade into the piece spawned by lockPiece().
-  if(now-bbHardDropAcceptedAt<500)return;
+  // Brief cross-input guard filters duplicate events without making
+  // the controls feel unresponsive between deliberate drops.
+  if(now-bbHardDropAcceptedAt<160)return;
   bbHardDropAcceptedAt=now;
   bbHardDropInProgress=true;
   if(typeof touch!=='undefined')touch=null;
-  if(typeof lockTouchDrop==='function')lockTouchDrop(520);
+  if(typeof lockTouchDrop==='function')lockTouchDrop(140);
   if(mode==='campaign')bbCampaignRun.hardDrops++;
   let dist=0;
   while(!collides(piece,0,1)){piece.y++;dist++}
@@ -8199,7 +8198,7 @@ document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let 
 let touch = null;
 let touchDropLocked = false;
 let touchDropUnlockTimer = null;
-function lockTouchDrop(duration=520) {
+function lockTouchDrop(duration=140) {
   touchDropLocked = true;
   if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
   touchDropUnlockTimer = setTimeout(() => {
