@@ -119,10 +119,14 @@
     const resize=()=>{if(!renderer)return;const frameRect=frame.getBoundingClientRect(),boardRect=boardCanvas.getBoundingClientRect();const w=Math.max(1,boardRect.width),h=Math.max(1,boardRect.height),aspect=w/h;renderer.domElement.style.left=(boardRect.left-frameRect.left-frame.clientLeft)+'px';renderer.domElement.style.top=(boardRect.top-frameRect.top-frame.clientTop)+'px';renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';const arenaWidth=10.4,arenaHeight=23.2,viewHeight=Math.max(arenaHeight,arenaWidth/aspect)*1.006,viewWidth=viewHeight*aspect;renderer.setSize(w,h,false);camera.left=-viewWidth/2;camera.right=viewWidth/2;camera.top=viewHeight/2;camera.bottom=-viewHeight/2;camera.updateProjectionMatrix()};
     resizeObserver=new ResizeObserver(resize);resizeObserver.observe(frame);resizeObserver.observe(boardCanvas);window.addEventListener('resize',resize,{passive:true});resize();
   }
-  function blockInto(target,x,y,color,ghost=false){
+  function blockInto(target,x,y,color,ghost=false,aura=false){
     const cell=new THREE.Group();
     cell.position.set(x-4.5,11-y,ghost?.03:.24);
     cell.userData.pulsePhase=(x*7+y*13)%19;
+    if(aura&&!ghost){
+      const halo=new THREE.Mesh(new THREE.PlaneGeometry(1.02,1.02),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.18,depthWrite:false}));
+      halo.position.z=-.29;cell.add(halo);
+    }
     const geo=geometryFor('block',()=>{
       const shape=new THREE.Shape(),size=.78,r=.095,x=-size/2,y=-size/2;
       shape.moveTo(x+r,y);shape.lineTo(x+size-r,y);shape.quadraticCurveTo(x+size,y,x+size,y+r);
@@ -299,7 +303,7 @@
         }
       }
     }
-    const pieceSignature=JSON.stringify([state.piece,state.ghostY,state.colors]);
+    const pieceSignature=JSON.stringify([state.piece,state.ghostY,state.colors,state.pieceColor,state.aura]);
     if(pieceSignature!==lastPieceSignature){
       lastPieceSignature=pieceSignature;
       const oldPiece=previousState?.piece,newPiece=state.piece;
@@ -335,9 +339,9 @@
       disposeGroup(activeGroup);disposeGroup(ghostGroup);
       const colors=state.colors||[];
       if(newPiece){
-        const p=newPiece,color=colors[p.t]||'#69f4ff';
+        const p=newPiece,color=state.pieceColor||colors[p.t]||'#69f4ff';
         if(Number.isFinite(state.ghostY))p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&state.ghostY+dy>=0)blockInto(ghostGroup,p.x+dx,state.ghostY+dy,color,true)}));
-        p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color)}));
+        p.shape.forEach((row,dy)=>row.forEach((v,dx)=>{if(v&&p.y+dy>=0)blockInto(activeGroup,p.x+dx,p.y+dy,color,false,!!state.aura)}));
       }
       activeGroup.rotation.z=rotationAngle;
       activeGroup.position.set(pieceOffsetX+rotationPivotX*(1-Math.cos(rotationAngle))+rotationPivotY*Math.sin(rotationAngle),pieceOffsetY+rotationPivotY*(1-Math.cos(rotationAngle))-rotationPivotX*Math.sin(rotationAngle),0);
