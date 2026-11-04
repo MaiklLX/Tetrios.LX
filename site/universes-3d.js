@@ -341,7 +341,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
       }catch(error){
         console.warn(log,'immediate procedural model failed for '+id+'.',error);
       }
-      if(variant||!USE_REMOTE_GLB_SHOWCASES)return;
+      if(variant)return;
+      if(!USE_REMOTE_GLB_SHOWCASES)return;
 
       // Upgrade ordinary universe showcase slots to their detailed GLB model.
       loadModel(id).then(source=>{
