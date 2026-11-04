@@ -12547,6 +12547,22 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.hint{font-size:7px!important;line-height:1.25!important;margin:4px 0 0!important}
 }
 @media(max-width:520px) and (orientation:portrait){
+  /* The legacy mobile shell uses display:contents; place its children on the game grid explicitly. */
+  #game:not([hidden]){display:grid!important;grid-template-columns:clamp(48px,14vw,58px) minmax(0,1fr) clamp(62px,18vw,74px)!important;grid-template-rows:auto auto auto minmax(0,1fr) auto auto!important;align-content:stretch!important;align-items:stretch!important;gap:5px!important}
+  #game>.screenhead,#game>#dailyMissionGoal,#game>.gamehud-top{grid-column:1/-1!important}
+  #game>.playlayout{display:contents!important}
+  #game>.playlayout>.gameleftcol{grid-column:1!important;grid-row:4!important;position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;max-height:min(66dvh,570px)!important;align-self:stretch!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){grid-column:2!important;grid-row:4!important;width:100%!important;min-width:0!important;min-height:0!important;align-self:center!important;display:flex!important;align-items:stretch!important;justify-content:center!important}
+  #game>.playlayout>.sidecol{grid-column:3!important;grid-row:4!important;width:100%!important;max-width:none!important;max-height:min(66dvh,570px)!important;align-self:stretch!important}
+  #game>.controls{grid-column:1/-1!important;grid-row:5!important}
+  #game>.hint{grid-column:1/-1!important;grid-row:6!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:100%!important;height:auto!important;aspect-ratio:10/23!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    flex:0 1 auto!important;
+  }
+}
+@media(max-width:520px) and (orientation:portrait){
   #game>.playlayout:not(:has(>.gameleftcol)){grid-template-columns:minmax(0,1fr) minmax(62px,clamp(64px,18vw,76px))!important}
   #game>.playlayout:not(:has(>.gameleftcol))>div:not(.gameleftcol){grid-column:1!important}
   #game>.playlayout:not(:has(>.gameleftcol))>.sidecol{grid-column:2!important}
