@@ -163,3 +163,77 @@ body{background-color:#070b19}
     content:none!important;
   }
 }
+
+
+/* KT-404 — mobile side-rail finishing pass.
+   Screenshot-led spacing correction; desktop golden layout and game logic untouched. */
+@media(max-width:600px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>#chronoCard{
+    padding:8px 6px!important;
+    gap:0!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard>label{
+    display:block!important;
+    width:100%;
+    margin:0 0 7px!important;
+    line-height:1.2!important;
+    text-align:center;
+    position:relative;
+    z-index:1;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-ring{
+    width:68px!important;
+    max-width:68px!important;
+    margin:0 auto 3px!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-ring-inner strong{
+    font-size:19px!important;
+    line-height:1!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-caption{
+    display:block!important;
+    margin:2px 0 0!important;
+    font-size:6px!important;
+    line-height:1.15!important;
+    letter-spacing:.035em;
+    text-align:center;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    min-height:84px!important;
+    padding:7px 6px!important;
+    gap:5px!important;
+    align-items:center!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 31px!important;
+    width:31px!important;
+    height:31px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy{
+    flex:1 1 auto!important;
+    min-width:0!important;
+    text-align:left!important;
+    gap:3px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy strong{
+    font-size:7px!important;
+    line-height:1.2!important;
+    letter-spacing:.035em!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy small{
+    font-size:6.5px!important;
+    line-height:1.2!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em{
+    font-size:5.5px!important;
+    line-height:1.2!important;
+    letter-spacing:0!important;
+    overflow-wrap:anywhere;
+  }
+  #game>.playlayout>.sidecol>.drop-card{
+    padding:7px 6px!important;
+  }
+  #game>.playlayout>.sidecol>.drop-card .side-drop{
+    min-height:58px!important;
+  }
+}
