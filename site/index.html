@@ -8269,9 +8269,10 @@ cv.addEventListener('touchend',e=>{
   if(!touch.dropped&&!touch.suppressTap&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
     rotatePiece();
   }else if(verticalSwipe&&started&&!paused&&!gameOver){
-    // Only a genuinely quick flick performs the remaining hard drop. Slow
-    // swipes have already moved row-by-row in touchmove; touchend adds no jump.
-    if(fastDownSwipe){lockTouchDrop();hardDrop();}
+    // A soft-drop touchmove may already have reached the floor and called
+    // lockPiece(), which spawns the next piece. Never let this same gesture's
+    // touchend hard-drop that newly spawned piece.
+    if(fastDownSwipe&&!touch.dropped){lockTouchDrop();hardDrop();}
   }
   touch=null;
 },{passive:true});
