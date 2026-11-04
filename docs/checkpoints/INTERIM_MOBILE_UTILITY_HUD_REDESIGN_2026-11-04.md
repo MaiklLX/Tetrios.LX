@@ -50,3 +50,18 @@
 ## Continuation phrase
 
 **TETRIOS LX — MOBILE HUD / КТ-ПРОМЕЖУТОЧНАЯ.** Продолжаем в `MaiklLX/Tetrios.LX`, ветка `feature/gameplay-evolution-389-2026-11-03`, исходный HEAD `2aff9eaf861d73420f17a60179013b1a62e47d36`. Мобильный HUD-док уже реализован; Mobile Arena Visual Preview прошёл на 375×812 и 412×915. Не менять main, не сливать PR #50, не трогать Golden Desktop Baseline #372, не публиковать и не собирать APK. Сначала дождаться и проверить Cross-platform Visual Preview на 390×844, 430×932, 1440×900 и 1920×1080, проверить скриншоты, отсутствие прокрутки/обрезки карточек, overlap и ошибок. Затем исправить найденное и повторить QA. Финальный КТ-402 пока не закрывать.
+
+
+## Follow-up after screenshot review — 2026-11-04
+
+**Updated source HEAD:** `51d8894fe4ca9bbdca3b21944cbbddfb0cfbae45`
+
+- Inspected the full cross-platform artifact from run `41789568107` (artifact `13302788109`), including the 390×844 WebKit arena screenshot and 1440×900 desktop screenshot.
+- Confirmed the only geometry assertion failure was the 390×844 goals rail starting at y=662.02 while the 10:23 arena ended at y=664.03. The overlap was about 2 px. The mobile HUD itself had zero internal scroll and all seven cards plus Hold/Hard Drop were inside the rail.
+- Screenshot review found a separate visual issue: equal-height tiles were too tall and some boost/hero-skill copy was clipped despite cards fitting geometrically.
+- Corrected 390px lower-rail clearance by moving the goals/control row from 22px to 28px, without shrinking the arena.
+- Reworked HUD tile sizing to content-sized compact heights (charge 58px, next 60px, boost 54px, Chrono 58px, timer 64px, hero skill 56px, Hard Drop 52px); compacted preview/art/rings and kept Hard Drop's touch target at 44px.
+- New cross-platform run `41823750732` for HEAD `51d8894fe4ca9bbdca3b21944cbbddfb0cfbae45` was still in progress at this update; no pass is claimed yet.
+
+### Next
+Inspect run `41823750732` and its screenshots/report. Confirm the 390px overlap is gone, all utility labels remain legible, every card and both action buttons fit without scroll/clipping at 375/390/412/430, and desktop 1440/1920 remains unchanged. Continue only after those checks. Final KT-402 remains open.
