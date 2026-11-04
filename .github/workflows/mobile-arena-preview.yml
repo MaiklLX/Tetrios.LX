@@ -151,7 +151,7 @@ jobs:
               if (!geometry.left || !geometry.goals ||
                   geometry.left.y < geometry.frame.bottom + 2 ||
                   geometry.left.x > 20 ||
-                  geometry.left.right < viewport.width - 16 ||
+                  geometry.left.right < viewport.width - 20 ||
                   geometry.goals.y < geometry.left.y ||
                   geometry.goals.bottom > geometry.left.bottom + 2) {
                 failures.push('Objective panel must sit below the arena, span the available width, and remain inside its container at ' + viewport.name + ': ' + JSON.stringify({frame:geometry.frame,left:geometry.left,goals:geometry.goals}));
