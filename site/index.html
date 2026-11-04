@@ -13140,181 +13140,285 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 
-<style id="bb-home-dashboard-layout-kt399">
-/* KT-399: restore and prioritize the two core modes; compact secondary panels.
-   Kept in index.html so the same layout is used by Android WebView and browsers. */
-#menu.home-dashboard > .modes{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-  width:100%!important;
-  min-width:0!important;
-  gap:10px!important;
-  margin:0!important;
-  overflow:visible!important;
-}
-#menu.home-dashboard > .modes > .mode{
-  display:flex!important;
-  visibility:visible!important;
-  opacity:1!important;
-  position:relative!important;
-  box-sizing:border-box!important;
-  width:100%!important;
-  min-width:0!important;
-  min-height:104px!important;
-  height:auto!important;
-  align-items:center!important;
-  gap:12px!important;
-  padding:13px 14px!important;
-  margin:0!important;
-  overflow:hidden!important;
-  border-radius:18px!important;
-}
-#menu.home-dashboard > .modes > .mode .modeicon{
-  display:flex!important;
-  flex:0 0 44px!important;
-  width:44px!important;
-  height:44px!important;
-  align-items:center!important;
-  justify-content:center!important;
-}
-#menu.home-dashboard > .modes > .mode .modetext{
-  display:flex!important;
-  flex:1 1 auto!important;
-  min-width:0!important;
-  flex-direction:column!important;
-  align-items:flex-start!important;
-  gap:3px!important;
-}
-#menu.home-dashboard > .modes > .mode .modetitle{
-  font-size:16px!important;
-  line-height:1.15!important;
-}
-#menu.home-dashboard > .modes > .mode .modesub{
-  display:-webkit-box!important;
-  overflow:hidden!important;
-  -webkit-box-orient:vertical!important;
-  -webkit-line-clamp:2!important;
-  font-size:11px!important;
-  line-height:1.3!important;
-}
-#menu.home-dashboard > .modes > .mode .tag{
-  margin-top:3px!important;
-  font-size:8px!important;
-  line-height:1.2!important;
-}
-#menu.home-dashboard > .modes > .mode .modearrow{
-  flex:0 0 auto!important;
-  margin-left:auto!important;
-}
-#menu.home-dashboard > #dailyQuestsPanel{
-  box-sizing:border-box!important;
-  width:100%!important;
-  min-width:0!important;
-  margin:0!important;
-  padding:10px 12px!important;
-  border-radius:15px!important;
-}
-#menu.home-dashboard > #dailyQuestsPanel > div:first-child{
-  margin-bottom:6px!important;
-}
-#menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList{
-  display:grid!important;
-  gap:6px!important;
-}
-#menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div{
-  box-sizing:border-box!important;
-  min-width:0!important;
-  padding:8px 9px!important;
-  border-radius:11px!important;
-  box-shadow:none!important;
-}
-#menu.home-dashboard > .hero{margin:0!important}
-#menu.home-dashboard > .sectionlabel{margin:5px 2px 0!important}
-#menu.home-dashboard > #bbVisitStreak,
-#menu.home-dashboard > #openHeroes,
-#menu.home-dashboard > #rpgPanel,
-#menu.home-dashboard > .currency-panel,
-#menu.home-dashboard > .bottomstats,
-#menu.home-dashboard > #bbOpenCardLibrary,
-#menu.home-dashboard > .apk-download{
-  box-sizing:border-box!important;
-  min-width:0!important;
-  margin-top:0!important;
-  margin-bottom:0!important;
-}
-#menu.home-dashboard > .bottomstats{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:8px!important;
-}
-#menu.home-dashboard > .bottomstats .stat{
-  min-width:0!important;
-  padding:10px 5px!important;
-}
-#menu.home-dashboard > .home-reset{margin:4px 0 0!important}
-#menu.home-dashboard > .home-reset .action{min-height:44px!important}
-@media (min-width:600px) and (max-width:900px){
+<style id="bb-home-dashboard-layout-kt400">
+/* KT-400: mobile/tablet home rebuilt as a natural-flow dashboard.
+   The previous visual-overhaul grid kept a fixed viewport height and clipped
+   the core modes. Reset the old grid tracks/areas instead of stacking patches. */
+@media (max-width:900px){
   #menu.home-dashboard:not([hidden]){
     display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    grid-template-areas:
-      "hero hero"
-      "sectionlabel sectionlabel"
-      "modes modes"
-      "quests quests"
-      "streak streak"
-      "heroes profile"
-      "resources stats"
-      "library download"
-      "reset reset"!important;
-    align-items:stretch!important;
-    gap:14px!important;
+    box-sizing:border-box!important;
     width:100%!important;
-    max-width:760px!important;
-    margin-inline:auto!important;
-    padding:0 14px 24px!important;
+    max-width:620px!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:none!important;
+    grid-auto-rows:auto!important;
+    grid-template-areas:none!important;
+    align-content:start!important;
+    align-items:stretch!important;
+    gap:12px!important;
+    margin:0 auto!important;
+    padding:0 12px 26px!important;
   }
-  #menu.home-dashboard > .hero{grid-area:hero!important}
-  #menu.home-dashboard > .sectionlabel{grid-area:sectionlabel!important}
-  #menu.home-dashboard > .modes{grid-area:modes!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  #menu.home-dashboard > .modes > .mode{min-height:118px!important;padding:12px 10px!important}
-  #menu.home-dashboard > #dailyQuestsPanel{grid-area:quests!important}
-  #menu.home-dashboard > #bbVisitStreak{grid-area:streak!important}
-  #menu.home-dashboard > #openHeroes{grid-area:heroes!important;height:100%!important}
-  #menu.home-dashboard > #rpgPanel{grid-area:profile!important;height:100%!important}
-  #menu.home-dashboard > .currency-panel{grid-area:resources!important;height:100%!important}
-  #menu.home-dashboard > .bottomstats{grid-area:stats!important;height:100%!important}
-  #menu.home-dashboard > #bbOpenCardLibrary{grid-area:library!important;height:100%!important}
-  #menu.home-dashboard > .apk-download{grid-area:download!important;height:100%!important}
-  #menu.home-dashboard > .home-reset{grid-area:reset!important}
-}
-@media (max-width:599px){
-  #menu.home-dashboard:not([hidden]){
+  #menu.home-dashboard > *{
+    grid-area:auto!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+  }
+
+  /* Compact brand panel: keep the mark, wordmark and slogan without a tall hero. */
+  #menu.home-dashboard > .hero{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:8px!important;
+    width:100%!important;
+    padding:17px 12px 15px!important;
+    border-radius:20px!important;
+    text-align:center!important;
+    overflow:hidden!important;
+  }
+  #menu.home-dashboard > .hero .eyebrow{
+    position:static!important;
+    inset:auto!important;
+    margin:0!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+    letter-spacing:.13em!important;
+    text-align:center!important;
+  }
+  #menu.home-dashboard > .hero .hero-brand-lockup{
+    position:static!important;
+    inset:auto!important;
+    transform:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  #menu.home-dashboard > .hero .hero-app-mark{
+    position:relative!important;
+    flex:0 0 64px!important;
+    width:64px!important;
+    height:64px!important;
+    min-width:64px!important;
+    margin:0!important;
+  }
+  #menu.home-dashboard > .hero h1{
+    position:static!important;
+    display:flex!important;
+    justify-content:center!important;
+    align-items:center!important;
+    flex:0 1 auto!important;
+    width:100%!important;
+    margin:0!important;
+    font-size:clamp(32px,8vw,43px)!important;
+    line-height:1!important;
+    letter-spacing:-.045em!important;
+    white-space:nowrap!important;
+  }
+  #menu.home-dashboard > .hero p{
+    position:static!important;
+    inset:auto!important;
+    align-self:center!important;
+    max-width:100%!important;
+    margin:0!important;
+    font-size:11px!important;
+    line-height:1.35!important;
+    text-align:center!important;
+  }
+
+  /* Two core modes are always present, equal in size and first in the hierarchy. */
+  #menu.home-dashboard > .sectionlabel{
+    display:flex!important;
+    margin:1px 2px -3px!important;
+    font-size:10px!important;
+  }
+  #menu.home-dashboard > .modes{
     display:grid!important;
     grid-template-columns:minmax(0,1fr)!important;
-    grid-template-areas:
-      "hero" "sectionlabel" "modes" "quests" "streak"
-      "heroes" "profile" "resources" "stats" "library" "download" "reset"!important;
-    align-items:stretch!important;
-    gap:10px!important;
+    grid-template-rows:none!important;
+    grid-auto-rows:auto!important;
+    gap:9px!important;
     width:100%!important;
-    max-width:560px!important;
-    margin-inline:auto!important;
-    padding:0 10px 22px!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    align-content:start!important;
   }
-  #menu.home-dashboard > .hero{grid-area:hero!important;min-height:0!important}
-  #menu.home-dashboard > .sectionlabel{grid-area:sectionlabel!important}
-  #menu.home-dashboard > .modes{grid-area:modes!important}
-  #menu.home-dashboard > #dailyQuestsPanel{grid-area:quests!important}
-  #menu.home-dashboard > #bbVisitStreak{grid-area:streak!important;padding:11px!important}
-  #menu.home-dashboard > #openHeroes{grid-area:heroes!important;width:100%!important}
-  #menu.home-dashboard > #rpgPanel{grid-area:profile!important}
-  #menu.home-dashboard > .currency-panel{grid-area:resources!important}
-  #menu.home-dashboard > .bottomstats{grid-area:stats!important}
-  #menu.home-dashboard > #bbOpenCardLibrary{grid-area:library!important;width:100%!important}
-  #menu.home-dashboard > .apk-download{grid-area:download!important;width:100%!important}
-  #menu.home-dashboard > .home-reset{grid-area:reset!important}
-  #menu.home-dashboard > .modes > .mode{min-height:100px!important}
+  #menu.home-dashboard > .modes > .mode{
+    display:flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:relative!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:88px!important;
+    height:88px!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:12px 14px!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:13px!important;
+    border-radius:17px!important;
+    overflow:hidden!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modeicon{
+    display:grid!important;
+    place-items:center!important;
+    flex:0 0 46px!important;
+    width:46px!important;
+    height:46px!important;
+    font-size:24px!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modetext{
+    display:flex!important;
+    flex:1 1 auto!important;
+    min-width:0!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:3px!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modetitle{
+    display:block!important;
+    font-size:16px!important;
+    line-height:1.15!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modesub{
+    display:-webkit-box!important;
+    min-height:0!important;
+    margin:0!important;
+    overflow:hidden!important;
+    -webkit-box-orient:vertical!important;
+    -webkit-line-clamp:2!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+  #menu.home-dashboard > .modes > .mode .tag{
+    display:inline-block!important;
+    margin:2px 0 0!important;
+    padding:3px 6px!important;
+    font-size:7px!important;
+    line-height:1.15!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modearrow{
+    display:block!important;
+    flex:0 0 auto!important;
+    margin-left:auto!important;
+    font-size:23px!important;
+  }
+
+  /* Daily challenge is a smaller secondary action, not a third oversized mode. */
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"]{
+    min-height:68px!important;
+    height:68px!important;
+    padding:9px 12px!important;
+    border-color:rgba(255,200,107,.45)!important;
+    background:linear-gradient(110deg,rgba(57,46,30,.94),rgba(15,23,43,.98))!important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modeicon{
+    flex-basis:40px!important;width:40px!important;height:40px!important;
+    font-size:21px!important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modetitle{font-size:14px!important}
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modesub{
+    display:block!important;-webkit-line-clamp:1!important;font-size:9px!important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .tag{display:none!important}
+
+  /* Quests remain available, but compact and visually subordinate. */
+  #menu.home-dashboard > #dailyQuestsPanel{
+    display:block!important;
+    width:100%!important;
+    min-height:0!important;
+    padding:11px 12px!important;
+    border-radius:16px!important;
+    overflow:visible!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child{margin-bottom:5px!important}
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child strong{font-size:12px!important}
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child span{font-size:8px!important}
+  #menu.home-dashboard > #dailyQuestsPanel > div:nth-child(2){
+    display:block!important;
+    font-size:10px!important;
+    line-height:1.3!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:6px!important;
+    margin-top:8px!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div{
+    display:block!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:8px 9px!important;
+    border-radius:11px!important;
+    background:linear-gradient(145deg,#172943,#101d33)!important;
+    border:1px solid rgba(122,164,220,.24)!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:first-child{
+    font-size:10px!important;line-height:1.2!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(2){
+    font-size:9px!important;margin-top:3px!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3){
+    height:4px!important;margin-top:5px!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:last-child{
+    font-size:8px!important;margin-top:4px!important;
+  }
+
+  #menu.home-dashboard > #bbVisitStreak,
+  #menu.home-dashboard > #openHeroes,
+  #menu.home-dashboard > #rpgPanel,
+  #menu.home-dashboard > .currency-panel,
+  #menu.home-dashboard > .bottomstats,
+  #menu.home-dashboard > #bbOpenCardLibrary,
+  #menu.home-dashboard > .apk-download,
+  #menu.home-dashboard > .home-reset{
+    width:100%!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+  }
+  #menu.home-dashboard > .bottomstats{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+}
+@media (min-width:600px) and (max-width:900px){
+  #menu.home-dashboard{padding-left:16px!important;padding-right:16px!important;gap:14px!important}
+  #menu.home-dashboard > .modes{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"]{grid-column:1/-1!important}
+  #menu.home-dashboard > .hero{padding:20px!important}
+  #menu.home-dashboard > .hero .hero-brand-lockup{flex-direction:row!important;gap:14px!important}
+  #menu.home-dashboard > .hero .hero-app-mark{flex-basis:68px!important;width:68px!important;height:68px!important}
+  #menu.home-dashboard > .hero h1{font-size:clamp(36px,5vw,48px)!important}
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media (max-width:380px){
+  #menu.home-dashboard{padding-left:9px!important;padding-right:9px!important;gap:10px!important}
+  #menu.home-dashboard > .hero{padding:14px 8px!important}
+  #menu.home-dashboard > .modes > .mode{min-height:82px!important;height:82px!important;padding:10px!important;gap:9px!important}
+  #menu.home-dashboard > .modes > .mode .modeicon{flex-basis:40px!important;width:40px!important;height:40px!important}
+  #menu.home-dashboard > .modes > .mode .modetitle{font-size:14px!important}
 }
 </style>
 
