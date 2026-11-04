@@ -12579,5 +12579,31 @@ body .app{background:transparent!important;background-color:transparent!importan
 @media(prefers-reduced-motion:reduce){
   #game>.playlayout>.boardframe,#game>.playlayout>.gameleftcol,#game>.playlayout>.sidecol{scroll-behavior:auto!important;transition:none!important}
 }
+
+/* Geometry correction: keep both information rails vertically aligned to the actual 10:23 cabinet. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.playlayout>.sidecol{
+    height:min(66dvh,calc((100vw - 162px)*2.3),570px)!important;
+    max-height:min(66dvh,calc((100vw - 162px)*2.3),570px)!important;
+    min-height:0!important;align-self:center!important;box-sizing:border-box!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    flex:1 1 0!important;min-height:0!important;max-height:100%!important;
+    overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+    box-sizing:border-box!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div,
+  #game>.playlayout>.gameleftcol #campaignGoals>div{min-width:0!important;max-width:100%!important}
+  #game>.playlayout>.sidecol{overscroll-behavior:contain!important}
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>.drop-card{flex:0 0 auto!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game:not([hidden]){grid-template-columns:50px minmax(0,1fr) 64px!important}
+  #game>.playlayout>.gameleftcol,
+  #game>.playlayout>.sidecol{height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important;max-height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important}
+}
 </style>
 </body></html>
