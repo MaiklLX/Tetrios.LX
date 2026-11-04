@@ -7505,7 +7505,23 @@ function collides(p,dx=0,dy=0,shape=p.shape){for(let y=0;y<shape.length;y++)for(
 function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&bbGetActiveDailyRule().mod==='mirror')dx=-dx;if(!collides(piece,dx,dy)){piece.x+=dx;piece.y+=dy;render();if(dy)tone(170,.025,'sine',.009);return true}if(dy>0)lockPiece();return false}
 // Stable card extends horizontal wall-kicks by rank, only inside Block Run.
 function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;const rank=mode==='rogue'?bbGetRogueCardRank('stable'):0,maxKick=rank?Math.min(4,1+rank):1,kicks=[0,-1,1];for(let distance=2;distance<=maxKick;distance++)kicks.push(-distance,distance);for(const dx of kicks){if(!collides(piece,dx,0,s)){piece.x+=dx;piece.shape=s;rotated=true;break}}if(rotated){if(mode==='campaign')bbCampaignRun.rotations++;if(boosts.includes('shift')&&Math.random()<0.25){score+=25*bbGetUpgradeRank('shift');updateHud()}bbHaptic(9);chime();render();if(mode==='campaign')bbRenderGoals()}}
-function hardDrop(){if(!started||paused||gameOver)return;if(mode==='campaign')bbCampaignRun.hardDrops++;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;bbHaptic(16);lockPiece()}
+let bbHardDropAcceptedAt=0;
+function hardDrop(){
+  if(!started||paused||gameOver||!piece)return;
+  const now=performance.now();
+  // Ignore duplicate click/touch delivery from one physical gesture. A fresh
+  // hard drop is accepted after the short input cooldown.
+  if(now-bbHardDropAcceptedAt<360)return;
+  bbHardDropAcceptedAt=now;
+  if(typeof touch!=='undefined')touch=null;
+  if(typeof lockTouchDrop==='function')lockTouchDrop();
+  if(mode==='campaign')bbCampaignRun.hardDrops++;
+  let dist=0;
+  while(!collides(piece,0,1)){piece.y++;dist++}
+  score+=dist*2;
+  bbHaptic(16);
+  lockPiece();
+}
 
 
 
@@ -13110,6 +13126,12 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game #bbHeroSkillCard .bb-hero-skill-copy small,
   #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:5.6px!important}
 }
+</style>
+
+<style id="bb-hard-drop-single-gesture-v1">
+/* Bottom movement buttons are redundant on touch devices: swipe controls remain,
+   and the dedicated DROP action stays in the right utility rail. */
+#game>.controls{display:none!important}
 </style>
 
 </body></html>
