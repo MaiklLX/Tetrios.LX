@@ -148,14 +148,16 @@ jobs:
               if (geometry.documentWidth > viewport.width + 2) {
                 failures.push('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
               }
-              if (geometry.left && (
-                  geometry.left.right > geometry.frame.x - 2 ||
-                  geometry.left.y < geometry.frame.y - 3 ||
-                  geometry.left.bottom > geometry.frame.bottom + 3)) {
-                failures.push('Left objective rail is not aligned beside the arena at ' + viewport.name + ': ' + JSON.stringify({frame:geometry.frame,left:geometry.left}));
+              if (!geometry.left || !geometry.goals ||
+                  geometry.left.y < geometry.frame.bottom + 2 ||
+                  geometry.left.x > 20 ||
+                  geometry.left.right < viewport.width - 16 ||
+                  geometry.goals.y < geometry.left.y ||
+                  geometry.goals.bottom > geometry.left.bottom + 2) {
+                failures.push('Objective panel must sit below the arena, span the available width, and remain inside its container at ' + viewport.name + ': ' + JSON.stringify({frame:geometry.frame,left:geometry.left,goals:geometry.goals}));
               }
-              if (geometry.left && geometry.left.bottom > viewport.height + 2) {
-                failures.push('Left objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+              if (geometry.left && geometry.left.bottom > viewport.height - 42) {
+                failures.push('Objective panel collides with bottom controls or extends beyond the usable viewport at ' + viewport.name + ': ' + JSON.stringify(geometry.left));
               }
               if (geometry.side && (
                   geometry.side.x < geometry.frame.right + 2 ||
