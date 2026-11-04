@@ -148,11 +148,20 @@ jobs:
               if (geometry.documentWidth > viewport.width + 2) {
                 failures.push('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
               }
-              if (geometry.left && geometry.left.y < geometry.frame.bottom + 2) {
-                failures.push('Lower objective rail overlaps the arena at ' + viewport.name + ': ' + JSON.stringify({frameBottom:geometry.frame.bottom,railTop:geometry.left.y}));
+              if (geometry.left && (
+                  geometry.left.right > geometry.frame.x - 2 ||
+                  geometry.left.y < geometry.frame.y - 3 ||
+                  geometry.left.bottom > geometry.frame.bottom + 3)) {
+                failures.push('Left objective rail is not aligned beside the arena at ' + viewport.name + ': ' + JSON.stringify({frame:geometry.frame,left:geometry.left}));
               }
               if (geometry.left && geometry.left.bottom > viewport.height + 2) {
-                failures.push('Lower objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+                failures.push('Left objective rail extends beyond the viewport at ' + viewport.name + ': ' + geometry.left.bottom);
+              }
+              if (geometry.side && (
+                  geometry.side.x < geometry.frame.right + 2 ||
+                  geometry.side.y < geometry.frame.y - 3 ||
+                  geometry.side.bottom > geometry.frame.bottom + 3)) {
+                failures.push('Right utility rail is not aligned beside the arena at ' + viewport.name + ': ' + JSON.stringify({frame:geometry.frame,side:geometry.side}));
               }
               if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36 ||
                   geometry.drop.x < geometry.side.x - 1 || geometry.drop.right > geometry.side.right + 1 ||
