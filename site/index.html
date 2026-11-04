@@ -7506,19 +7506,24 @@ function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&b
 // Stable card extends horizontal wall-kicks by rank, only inside Block Run.
 function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;const rank=mode==='rogue'?bbGetRogueCardRank('stable'):0,maxKick=rank?Math.min(4,1+rank):1,kicks=[0,-1,1];for(let distance=2;distance<=maxKick;distance++)kicks.push(-distance,distance);for(const dx of kicks){if(!collides(piece,dx,0,s)){piece.x+=dx;piece.shape=s;rotated=true;break}}if(rotated){if(mode==='campaign')bbCampaignRun.rotations++;if(boosts.includes('shift')&&Math.random()<0.25){score+=25*bbGetUpgradeRank('shift');updateHud()}bbHaptic(9);chime();render();if(mode==='campaign')bbRenderGoals()}}
 let bbHardDropAcceptedAt=0;
+let bbHardDropInProgress=false;
 function hardDrop(){
-  if(!started||paused||gameOver||!piece)return;
+  if(!started||paused||gameOver||!piece||bbHardDropInProgress)return;
   const now=performance.now();
-  // Ignore duplicate click/touch delivery from one physical gesture. A fresh
-  // hard drop is accepted after the short input cooldown.
-  if(now-bbHardDropAcceptedAt<360)return;
+  // One physical input must affect only the current piece. Keep a longer
+  // cross-input cooldown so touch, synthetic click and the next touch cannot
+  // cascade into the piece spawned by lockPiece().
+  if(now-bbHardDropAcceptedAt<500)return;
   bbHardDropAcceptedAt=now;
+  bbHardDropInProgress=true;
   if(typeof touch!=='undefined')touch=null;
-  if(typeof lockTouchDrop==='function')lockTouchDrop();
+  if(typeof lockTouchDrop==='function')lockTouchDrop(520);
   if(mode==='campaign')bbCampaignRun.hardDrops++;
   let dist=0;
   while(!collides(piece,0,1)){piece.y++;dist++}
   score+=dist*2;bbHaptic(16);lockPiece();
+  // lockPiece() is synchronous; release the re-entry guard after its stack.
+  queueMicrotask(()=>{bbHardDropInProgress=false;});
 }
 
 
@@ -8194,13 +8199,13 @@ document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let 
 let touch = null;
 let touchDropLocked = false;
 let touchDropUnlockTimer = null;
-function lockTouchDrop() {
+function lockTouchDrop(duration=520) {
   touchDropLocked = true;
   if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
   touchDropUnlockTimer = setTimeout(() => {
     touchDropLocked = false;
     touchDropUnlockTimer = null;
-  }, 220);
+  }, duration);
 }
 const cv = $('game');
 
@@ -8231,7 +8236,7 @@ cv.addEventListener('touchstart', e => {
 },{passive:false});
 
 cv.addEventListener('touchmove',e=>{
-  if(!touch||touch.dropped||!started||paused||gameOver)return;
+  if(touchDropLocked||!touch||touch.dropped||!started||paused||gameOver)return;
   // The board owns this gesture; keep the WebView from scrolling under the finger.
   if(touch.boardGesture && e.cancelable) e.preventDefault();
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
@@ -8254,6 +8259,7 @@ cv.addEventListener('touchmove',e=>{
 
 cv.addEventListener('touchend',e=>{
   if(e.target.closest('button, input, select, textarea, [data-act]')){touch=null;return}
+  if(touchDropLocked){touch=null;return}
   if(!touch)return;
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
   const elapsed=Date.now()-touch.at;
@@ -8272,7 +8278,8 @@ cv.addEventListener('touchend',e=>{
 
 cv.addEventListener('touchcancel',()=>{
   touch=null;
-  touchDropLocked=false;
+  // Do not clear the post-drop lock on cancellation: the same physical
+  // gesture may be cancelled and re-delivered by the WebView.
 },{passive:true});
 
 
