@@ -140,7 +140,8 @@ if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('so
 if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
 
 const importMapPosition = index.indexOf('<script type="importmap">');
-for (const modulePath of ['./visual-3d.js', './arena-3d.js']) {
+// The 3D board renderer is intentionally no longer loaded; Three.js remains for hero previews and the universe atlas.
+for (const modulePath of ['./visual-3d.js']) {
   const modulePrefix = `src="${modulePath}`;
   const modulePosition = index.indexOf(modulePrefix);
   const moduleEnd = modulePosition >= 0 ? index.indexOf('"', modulePosition + modulePrefix.length) : -1;
