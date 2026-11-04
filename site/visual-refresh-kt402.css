@@ -73,3 +73,72 @@ body{background-color:#070b19}
  .mode,.shopbutton,.action,.control,.iconbtn{transition:none!important}
  .hero:after{animation:none!important}
 }
+
+
+/* KT-403 — gameplay identity layer: bespoke HUD marks, tighter quest cards, readable side rail. */
+#game .gamehud .hudbox{position:relative;min-width:0;overflow:hidden;padding:9px 8px 10px!important;border-radius:14px!important}
+#game .gamehud .hudbox:after{content:"";position:absolute;inset:auto 10px 0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--hud-accent,#64f4ed),transparent);opacity:.8}
+#game .gamehud .hudbox:nth-child(1){--hud-accent:#ffd36f}
+#game .gamehud .hudbox:nth-child(2){--hud-accent:#64f4ed}
+#game .gamehud .hudbox:nth-child(3){--hud-accent:#b69aff}
+#game .gamehud .hudbox:nth-child(4){--hud-accent:#ffd36f}
+#game .gamehud .hudbox span{display:flex;align-items:center;gap:5px;font-size:8px!important;letter-spacing:.1em!important;color:#aebfdf!important}
+#game .gamehud .hudbox span:before{content:"";display:inline-block;width:15px;height:15px;flex:0 0 15px;background:center/contain no-repeat;filter:drop-shadow(0 0 5px var(--hud-accent))}
+#game .gamehud .hudbox:nth-child(1) span:before{background-image:url("./assets/ui/score-star.svg")}
+#game .gamehud .hudbox:nth-child(2) span:before{background-image:url("./assets/ui/line-clear.svg")}
+#game .gamehud .hudbox:nth-child(3) span:before{background-image:url("./assets/ui/level-chevron.svg")}
+#game .gamehud .hudbox:nth-child(4) span:before{background-image:url("./assets/ui/coin-emblem.svg")}
+#game .gamehud .hudbox strong{font-size:clamp(17px,4.4vw,22px)!important;font-weight:950!important;letter-spacing:-.035em}
+#game #gameCoins{background:radial-gradient(circle at 15% 0,#ffce6b26,transparent 65%),linear-gradient(145deg,#3b3025,#1d2235 58%,#111a30)!important;border-color:#ffd36f66!important}
+#game .sidecol .sidecard{position:relative;overflow:hidden;border-radius:14px!important;padding:9px 7px!important}
+#game .sidecol .sidecard:after{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 4px 4px 0;background:var(--rail-accent,#64f4ed);box-shadow:0 0 12px var(--rail-accent)}
+#game .sidecol .charge-card{--rail-accent:#64f4ed}
+#game .sidecol .sidecard:nth-of-type(2){--rail-accent:#a98aff}
+#game .sidecol .sidecard:nth-of-type(3){--rail-accent:#ffd36f}
+#game .sidecol .chrono-card{--rail-accent:#61b7ff}
+#game .sidecol .sidecard:nth-of-type(5){--rail-accent:#64f4ed}
+#game .sidecol .sidecard label{font-size:7px!important;letter-spacing:.09em!important;color:#b9c9e9!important}
+#game .sidecol .sidecard:nth-of-type(2) label:before{content:"";display:inline-block;width:12px;height:12px;vertical-align:-2px;margin-right:4px;background:url("./assets/ui/next-piece.svg") center/contain no-repeat}
+#game .sidecol .sidecard:nth-of-type(3) .boosticon{width:38px;height:38px;margin:6px auto 4px;background:url("./assets/ui/boost-spark.svg") center/contain no-repeat;font-size:0!important;filter:drop-shadow(0 0 9px #b69aff66)}
+#game .sidecol .sidecard:nth-of-type(5) #timer{font-size:19px!important;font-weight:950;font-variant-numeric:tabular-nums;color:#effaff;text-shadow:0 0 12px #64f4ed44}
+#game .sidecol .sidecard:nth-of-type(5) #timer:before{content:"";display:block;width:20px;height:20px;margin:0 auto 3px;background:url("./assets/ui/timer-orbit.svg") center/contain no-repeat}
+#game .bb-hero-skill-slot{min-width:0;min-height:84px!important;padding:9px 7px!important;border-radius:14px!important;border:1px solid #64f4ed55!important;background:radial-gradient(circle at 100% 0,#64f4ed22,transparent 60%),linear-gradient(145deg,#143447,#101a31)!important;box-shadow:inset 0 1px #ffffff18,0 8px 18px #0003!important}
+#game .bb-hero-skill-copy{min-width:0!important}
+#game .bb-hero-skill-copy strong,#game .bb-hero-skill-copy small,#game .bb-hero-skill-copy em{display:block;white-space:normal!important;overflow-wrap:anywhere;line-height:1.25}
+#game .bb-hero-skill-copy strong{font-size:8px!important;letter-spacing:.05em}
+#game .bb-hero-skill-copy small{font-size:7px!important}
+#game .bb-hero-skill-copy em{font-size:7px!important}
+#game .drop-card{--rail-accent:#54f58c}
+#game .drop-card .side-drop{min-height:56px!important;border-radius:13px!important;font-size:0!important}
+#game .drop-card .side-drop:after{content:"";display:block;width:30px;height:30px;margin:auto;background:linear-gradient(#fff,#d8fff0);clip-path:polygon(35% 0,65% 0,65% 52%,100% 52%,50% 100%,0 52%,35% 52%);filter:drop-shadow(0 0 7px #fff)}
+#dailyQuestsPanel{border-color:#54dce966!important;background:radial-gradient(ellipse at 100% 0,#3a70a833,transparent 55%),linear-gradient(145deg,#132541,#0d182e)!important;box-shadow:inset 0 1px #ffffff12,0 12px 26px #0003!important}
+#dailyQuestsPanel>div:first-child strong{letter-spacing:.07em}
+#dailyQuestsList{display:grid;gap:7px}
+#dailyQuestsList>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;row-gap:5px;margin:0!important;padding:10px 12px!important;border:1px solid #7896c044!important;border-radius:13px!important;background:linear-gradient(110deg,#1b2d4b,#14233c)!important;box-shadow:inset 0 1px #ffffff0c!important}
+#dailyQuestsList>div>div:first-child{font-size:11px!important;color:#f1f6ff!important;letter-spacing:.01em}
+#dailyQuestsList>div>div:nth-child(2){grid-column:2;grid-row:1;font-size:10px!important;color:#b8c9e6!important;margin:0!important;text-align:right}
+#dailyQuestsList>div>div:nth-child(3){grid-column:1/-1;height:5px!important;margin:0!important;background:#0a1428!important}
+#dailyQuestsList>div>div:nth-child(3)>div{background:linear-gradient(90deg,#64f4ed,#7a9cff,#b58aff)!important;box-shadow:0 0 10px #64f4ed55}
+#dailyQuestsList>div>div:nth-child(4){grid-column:1/-1;text-align:right;font-size:9px!important;color:#ffd36f!important;margin:0!important}
+#menu .hero{padding-top:14px!important;padding-bottom:12px!important}
+#menu .hero .orb{height:96px!important;margin:8px auto 2px!important}
+#menu .hero .orb:before{width:84px!important;height:84px!important;border-radius:25px!important}
+#menu .hero .orb:after{width:112px!important;height:48px!important}
+#menu .hero .relic{font-size:46px!important}
+#menu .hero h1{font-size:clamp(38px,9.5vw,58px)!important;margin:8px 0 9px!important}
+#menu .hero p{font-size:12px!important}
+@media(max-width:600px){
+ #game .gamehud{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important}
+ #game .gamehud .hudbox{padding:7px 5px 9px!important}
+ #game .gamehud .hudbox span{font-size:7px!important;letter-spacing:.04em!important;gap:3px}
+ #game .gamehud .hudbox span:before{width:12px;height:12px;flex-basis:12px}
+ #game .gamehud .hudbox strong{font-size:17px!important}
+ #game .sidecol .sidecard{padding:7px 5px!important}
+ #game .bb-hero-skill-slot{min-height:78px!important}
+ #dailyQuestsPanel{padding:12px!important;margin-top:11px!important}
+ #dailyQuestsPanel>div:first-child strong{font-size:12px!important}
+ #dailyQuestsPanel>div:first-child span{font-size:8px!important}
+ #dailyQuestsPanel>div:nth-child(2){font-size:11px!important;line-height:1.4}
+ #dailyQuestsList>div{padding:9px 10px!important}
+}
+@media(prefers-reduced-motion:reduce){#game .sidecol .sidecard:after{box-shadow:none}}
