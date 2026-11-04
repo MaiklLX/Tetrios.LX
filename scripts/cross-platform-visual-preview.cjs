@@ -7,7 +7,9 @@ fs.mkdirSync(outputDir, { recursive: true });
 const targets = [
   { engine: 'chromium', name: 'desktop-1440x900', width: 1440, height: 900, mobile: false },
   { engine: 'chromium', name: 'desktop-1920x1080', width: 1920, height: 1080, mobile: false },
+  { engine: 'webkit', name: 'ios-webkit-375x812', width: 375, height: 812, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-390x844', width: 390, height: 844, mobile: true },
+  { engine: 'webkit', name: 'ios-webkit-412x915', width: 412, height: 915, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-430x932', width: 430, height: 932, mobile: true }
 ];
 
@@ -179,6 +181,20 @@ const targets = [
           clientHeight: side.clientHeight,
           maxScroll: Math.max(0, side.scrollHeight - side.clientHeight)
         } : null,
+        utilityCards: side ? Array.from(side.querySelectorAll('.sidecard, .bb-hero-skill-slot')).filter(node => {
+          const r = node.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        }).map(node => {
+          const r = node.getBoundingClientRect();
+          return { id: node.id || node.className, top: Math.round(r.top*100)/100, bottom: Math.round(r.bottom*100)/100, height: Math.round(r.height*100)/100 };
+        }) : [],
+        utilityCardsFit: side ? Array.from(side.querySelectorAll('.sidecard, .bb-hero-skill-slot')).filter(node => {
+          const r = node.getBoundingClientRect();
+          return r.width > 0 && r.height > 0;
+        }).every(node => {
+          const r = node.getBoundingClientRect(), sr = side.getBoundingClientRect();
+          return r.top >= sr.top - 1 && r.bottom <= sr.bottom + 1;
+        }) : false,
         drop: rect(drop),
         hold: rect(hold),
         goals: rect(goals),
@@ -208,30 +224,17 @@ const targets = [
       if (geometry.frame && geometry.goals && geometry.goals.y < geometry.frame.bottom + 3) {
         failures.push(target.name + ': goals overlap the 10:23 arena cabinet (' + geometry.goals.y + ' < ' + geometry.frame.bottom + ' + 3px)');
       }
-      if (geometry.sideScroll && geometry.sideScroll.overflowY !== 'auto') {
-        failures.push(target.name + ': utility rail must use vertical scrolling');
-      }
       if (geometry.sideScroll && geometry.sideScroll.maxScroll > 2) {
-        sideScrollCheck = await page.evaluate(async () => {
-          const side = document.querySelector('#game .sidecol');
-          if (!side) return { moved: false, maxScroll: 0 };
-          side.scrollTop = side.scrollHeight;
-          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-          const moved = side.scrollTop > 0;
-          const maxScroll = side.scrollTop;
-          const sideRect = side.getBoundingClientRect();
-          const cards = Array.from(side.querySelectorAll('.sidecard, .bb-hero-skill-slot')).filter(node => {
-            const r = node.getBoundingClientRect();
-            return r.width > 0 && r.height > 0;
-          });
-          const last = cards[cards.length - 1];
-          const lastRect = last?.getBoundingClientRect();
-          const lastCardVisible = !!lastRect && lastRect.bottom <= sideRect.bottom + 1 && lastRect.top >= sideRect.top - 1;
-          side.scrollTop = 0;
-          return { moved, maxScroll, lastCardVisible };
-        });
-        if (!sideScrollCheck.moved) failures.push(target.name + ': utility rail content cannot be scrolled to its final card');
-        if (!sideScrollCheck.lastCardVisible) failures.push(target.name + ': final utility card is not fully visible after scrolling');
+        failures.push(target.name + ': utility HUD requires scrolling (' + geometry.sideScroll.maxScroll + 'px overflow)');
+      }
+      if (!geometry.utilityCardsFit) {
+        failures.push(target.name + ': one or more utility HUD cards are clipped outside the rail');
+      }
+      if (geometry.drop && geometry.side && (geometry.drop.bottom > geometry.side.bottom + 1 || geometry.drop.top < geometry.side.top - 1)) {
+        failures.push(target.name + ': Hard Drop control is clipped by the utility rail');
+      }
+      if (geometry.hold && geometry.side && (geometry.hold.bottom > geometry.side.bottom + 1 || geometry.hold.top < geometry.side.top - 1)) {
+        failures.push(target.name + ': Hold control is clipped by the utility rail');
       }
       if (geometry.frame && geometry.frame.right > target.width + 2) {
         failures.push(target.name + ': arena extends beyond the right viewport edge');
