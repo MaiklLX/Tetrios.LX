@@ -169,6 +169,12 @@ const targets = [
         },
         frame: rect(frame),
         side: rect(side),
+        sideScroll: side ? {
+          overflowY: getComputedStyle(side).overflowY,
+          scrollHeight: side.scrollHeight,
+          clientHeight: side.clientHeight,
+          maxScroll: Math.max(0, side.scrollHeight - side.clientHeight)
+        } : null,
         drop: rect(drop),
         hold: rect(hold),
         goals: rect(goals),
@@ -193,6 +199,25 @@ const targets = [
       }
       if (geometry.goals && geometry.goals.bottom > target.height + 2) {
         failures.push(target.name + ': Block Run goals extend beyond the viewport');
+      }
+      if (geometry.frame && geometry.goals && geometry.goals.y < geometry.frame.bottom + 3) {
+        failures.push(target.name + ': goals overlap the 10:23 arena cabinet (' + geometry.goals.y + ' < ' + geometry.frame.bottom + ' + 3px)');
+      }
+      if (geometry.sideScroll && geometry.sideScroll.overflowY !== 'auto') {
+        failures.push(target.name + ': utility rail must use vertical scrolling');
+      }
+      if (geometry.sideScroll && geometry.sideScroll.maxScroll > 2) {
+        const scrollCheck = await page.evaluate(async () => {
+          const side = document.querySelector('#game .sidecol');
+          if (!side) return { moved: false, maxScroll: 0 };
+          side.scrollTop = side.scrollHeight;
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const moved = side.scrollTop > 0;
+          const maxScroll = side.scrollTop;
+          side.scrollTop = 0;
+          return { moved, maxScroll };
+        });
+        if (!scrollCheck.moved) failures.push(target.name + ': utility rail content cannot be scrolled to its final card');
       }
       if (geometry.frame && geometry.frame.right > target.width + 2) {
         failures.push(target.name + ': arena extends beyond the right viewport edge');
