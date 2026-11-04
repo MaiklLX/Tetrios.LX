@@ -126,7 +126,7 @@ jobs:
           # Keep every local dependency referenced by index.html beside it in
           # Android assets. Copying index.html alone silently disables the 3D
           # modules and the visual theme inside the WebView APK.
-          for asset in favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+          for asset in favicon.svg visual-overhaul.css visual-refresh-kt402.css visual-3d.js arena-3d.js; do
             SOURCE="$GITHUB_WORKSPACE/site/$asset"
             if [ ! -s "$SOURCE" ]; then
               echo "::error::Required web asset is missing: $SOURCE"
@@ -226,7 +226,7 @@ jobs:
           test -s "$ASSET_DIR/audio/chills.mp3"
           echo "Synced offline soundtrack into Android assets: $ASSET_DIR/audio/chills.mp3"
 
-          for asset in index.html favicon.svg visual-overhaul.css visual-3d.js arena-3d.js; do
+          for asset in index.html favicon.svg visual-overhaul.css visual-refresh-kt402.css visual-3d.js arena-3d.js; do
             if [ ! -s "$ASSET_DIR/$asset" ]; then
               echo "::error::Android WebView asset was not synced: $asset"
               exit 1
