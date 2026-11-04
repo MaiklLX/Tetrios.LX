@@ -12546,6 +12546,11 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.controls .control{height:38px!important;border-radius:9px!important}
   #game>.hint{font-size:7px!important;line-height:1.25!important;margin:4px 0 0!important}
 }
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout:not(:has(>.gameleftcol)){grid-template-columns:minmax(0,1fr) minmax(62px,clamp(64px,18vw,76px))!important}
+  #game>.playlayout:not(:has(>.gameleftcol))>div:not(.gameleftcol){grid-column:1!important}
+  #game>.playlayout:not(:has(>.gameleftcol))>.sidecol{grid-column:2!important}
+}
 @media(max-width:380px) and (orientation:portrait){
   #game>.playlayout{grid-template-columns:48px minmax(0,1fr) 62px!important;gap:4px!important;padding:4px!important}
   #game>.playlayout>div:not(.gameleftcol)>.boardframe{--bb-cabinet-height:min(64dvh,540px);padding:3px!important}
