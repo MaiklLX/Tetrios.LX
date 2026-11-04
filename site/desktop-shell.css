@@ -43,13 +43,14 @@
     display: grid !important;
     grid-template-columns: minmax(0, 1.62fr) minmax(330px, .92fr);
     grid-template-areas:
-      "hero download"
-      "modes streak"
-      "quests resources"
+      "hero hero"
+      "modes modes"
+      "quests streak"
       "heroes profile"
-      "stats stats"
+      "resources stats"
+      "library download"
       "reset reset";
-    grid-template-rows: auto auto auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto auto auto;
     align-items: stretch;
     gap: var(--bb-desktop-gap);
   }
@@ -210,6 +211,24 @@
     grid-row: auto;
     border-color: rgba(169,138,255,.42) !important;
     background: linear-gradient(145deg, rgba(55,42,91,.96), rgba(16,23,47,.98)) !important;
+  }
+
+  #menu.home-dashboard > #bbOpenCardLibrary {
+    grid-area: library;
+    width: 100% !important;
+    min-height: 86px;
+    margin: 0 !important;
+    padding: 14px 18px !important;
+    border-radius: 17px !important;
+  }
+  #menu.home-dashboard > #bbOpenCardLibrary .modeicon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+  }
+  #menu.home-dashboard > #bbOpenCardLibrary .modesub {
+    display: block;
+    font-size: 10px;
   }
 
   #menu.home-dashboard > #bbVisitStreak {
