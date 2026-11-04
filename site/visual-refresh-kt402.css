@@ -142,3 +142,24 @@ body{background-color:#070b19}
  #dailyQuestsList>div{padding:9px 10px!important}
 }
 @media(prefers-reduced-motion:reduce){#game .sidecol .sidecard:after{box-shadow:none}}
+
+
+/* KT-403.1 — mobile utility rail label/content separation.
+   Keep RIFT/TIME labels in their own top lane; remove the extra timer glyph
+   that was competing with the TIME label. No gameplay behavior changes. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>.chrono-card .chrono-ring{
+    margin:12px auto 0!important;
+  }
+  #game>.playlayout>.sidecol>#chronoCard .chrono-ring{
+    margin:12px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(#timer) #timer{
+    margin-top:12px!important;
+    line-height:1.05!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(#timer) #timer:before{
+    display:none!important;
+    content:none!important;
+  }
+}
