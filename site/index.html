@@ -12747,4 +12747,21 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+<style id="bb-mobile-rail-alignment-v2">
+@media(max-width:380px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    height:min(60dvh,calc((100vw - 142px)*2.3),570px)!important;
+    max-height:min(60dvh,calc((100vw - 142px)*2.3),570px)!important;
+  }
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:translateY(16px)!important}
+}
+@media(min-width:381px) and (max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:translateY(6px)!important}
+}
+</style>
 </body></html>
