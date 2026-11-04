@@ -219,8 +219,12 @@ const targets = [
           await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
           const moved = side.scrollTop > 0;
           const maxScroll = side.scrollTop;
-          const last = side.lastElementChild;
           const sideRect = side.getBoundingClientRect();
+          const cards = Array.from(side.querySelectorAll('.sidecard, .bb-hero-skill-slot')).filter(node => {
+            const r = node.getBoundingClientRect();
+            return r.width > 0 && r.height > 0;
+          });
+          const last = cards[cards.length - 1];
           const lastRect = last?.getBoundingClientRect();
           const lastCardVisible = !!lastRect && lastRect.bottom <= sideRect.bottom + 1 && lastRect.top >= sideRect.top - 1;
           side.scrollTop = 0;
