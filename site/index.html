@@ -13144,6 +13144,60 @@ body .app{background:transparent!important;background-color:transparent!importan
 /* KT-400: mobile/tablet home rebuilt as a natural-flow dashboard.
    The previous visual-overhaul grid kept a fixed viewport height and clipped
    the core modes. Reset the old grid tracks/areas instead of stacking patches. */
+/* KT-401: reset legacy named grid areas with higher specificity.
+   KT-400's broad child selector could not override the old #menu.home-dashboard>.hero/.modes
+   declarations. The old rogue span also created an implicit second column on phones. */
+#menu.home-dashboard.home-dashboard > *{
+  grid-area:auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+#menu.home-dashboard.home-dashboard > .modes{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+  grid-auto-flow:row!important;
+  grid-auto-columns:minmax(0,1fr)!important;
+  grid-template-columns:minmax(0,1fr)!important;
+}
+#menu.home-dashboard.home-dashboard > .modes > .mode{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  justify-self:stretch!important;
+  align-self:stretch!important;
+  min-width:0!important;
+  width:100%!important;
+}
+#menu.home-dashboard.home-dashboard > .hero{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+  position:relative!important;
+  min-height:180px!important;
+  height:auto!important;
+}
+#menu.home-dashboard.home-dashboard > .sectionlabel{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+}
+#menu.home-dashboard.home-dashboard > #dailyQuestsPanel,
+#menu.home-dashboard.home-dashboard > #bbVisitStreak,
+#menu.home-dashboard.home-dashboard > #openHeroes,
+#menu.home-dashboard.home-dashboard > #rpgPanel,
+#menu.home-dashboard.home-dashboard > .currency-panel,
+#menu.home-dashboard.home-dashboard > .bottomstats,
+#menu.home-dashboard.home-dashboard > #bbOpenCardLibrary,
+#menu.home-dashboard.home-dashboard > .apk-download,
+#menu.home-dashboard.home-dashboard > .home-reset{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+}
 @media (max-width:900px){
   #menu.home-dashboard:not([hidden]){
     display:grid!important;
