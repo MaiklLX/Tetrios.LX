@@ -13492,4 +13492,21 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style>
+/* KT-405.5 corrective: final mobile rail sizing must override legacy compact-grid rules */
+@media (max-width:600px) and (orientation:portrait){
+  #game>.playlayout:not(:has(>.gameleftcol)){
+    grid-template-columns:minmax(0,1fr) minmax(124px,36%)!important;
+    column-gap:8px!important;
+  }
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game>.playlayout:not(:has(>.gameleftcol)){
+    grid-template-columns:minmax(0,1fr) minmax(118px,37%)!important;
+    column-gap:6px!important;
+  }
+}
+</style>
+
 </body></html>
