@@ -7941,19 +7941,29 @@ function bbSchedulePrismAnimation(){
     if(boosts.includes('prism')&&started&&!paused&&!gameOver){render();bbSchedulePrismAnimation();}
   });
 }
-function render(){bbSyncDailyPreview();let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Precision arena grid: crisp cell boundaries and stronger five-cell guides */
-ctx.save();ctx.fillStyle='#0a1222';ctx.fillRect(0,0,cw,ch);
-for(let y=0;y<H;y++){if(y%2===1){ctx.fillStyle='#ffffff04';ctx.fillRect(0,y*cell,cw,cell);}}
-ctx.beginPath();
-for(let x=0;x<=W;x++){const px=Math.round(x*cell)+.5;ctx.moveTo(px,0);ctx.lineTo(px,ch);}
-for(let y=0;y<=H;y++){const py=Math.round(y*cell)+.5;ctx.moveTo(0,py);ctx.lineTo(cw,py);}
-ctx.strokeStyle='#38506f';ctx.globalAlpha=.78;ctx.lineWidth=1;ctx.stroke();
-ctx.beginPath();
-for(let x=5;x<W;x+=5){const px=Math.round(x*cell)+.5;ctx.moveTo(px,0);ctx.lineTo(px,ch);}
-for(let y=5;y<H;y+=5){const py=Math.round(y*cell)+.5;ctx.moveTo(0,py);ctx.lineTo(cw,py);}
-ctx.strokeStyle='#75a6c9';ctx.globalAlpha=.58;ctx.lineWidth=1.5;ctx.stroke();
-ctx.globalAlpha=.9;ctx.strokeStyle='#7bd8e8';ctx.lineWidth=1;ctx.strokeRect(.5,.5,cw-1,ch-1);ctx.restore();
-const glow=ctx.createRadialGradient(cw*.5,ch*.45,cell,cw*.5,ch*.45,cw*.72);glow.addColorStop(0,'#1c8bba0c');glow.addColorStop(1,'#050a1600');ctx.fillStyle=glow;ctx.fillRect(0,0,cw,ch);
+let bbArenaBackgroundCanvas=null,bbNextPreviewSignature='';
+function bbGetArenaBackground(width,height){
+  if(bbArenaBackgroundCanvas&&bbArenaBackgroundCanvas.width===width&&bbArenaBackgroundCanvas.height===height)return bbArenaBackgroundCanvas;
+  const layer=document.createElement('canvas');layer.width=width;layer.height=height;
+  const g=layer.getContext('2d');const cell=width/W;
+  const grad=g.createLinearGradient(0,0,width,height);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');
+  g.fillStyle=grad;g.fillRect(0,0,width,height);g.fillStyle='#0a1222';g.fillRect(0,0,width,height);
+  for(let y=0;y<H;y++)if(y%2===1){g.fillStyle='#ffffff04';g.fillRect(0,y*cell,width,cell);}
+  g.beginPath();
+  for(let x=0;x<=W;x++){const px=Math.round(x*cell)+.5;g.moveTo(px,0);g.lineTo(px,height);}
+  for(let y=0;y<=H;y++){const py=Math.round(y*cell)+.5;g.moveTo(0,py);g.lineTo(width,py);}
+  g.strokeStyle='#38506f';g.globalAlpha=.78;g.lineWidth=1;g.stroke();
+  g.beginPath();
+  for(let x=5;x<W;x+=5){const px=Math.round(x*cell)+.5;g.moveTo(px,0);g.lineTo(px,height);}
+  for(let y=5;y<H;y+=5){const py=Math.round(y*cell)+.5;g.moveTo(0,py);g.lineTo(width,py);}
+  g.strokeStyle='#75a6c9';g.globalAlpha=.58;g.lineWidth=1.5;g.stroke();
+  g.globalAlpha=.9;g.strokeStyle='#7bd8e8';g.lineWidth=1;g.strokeRect(.5,.5,width-1,height-1);
+  const glow=g.createRadialGradient(width*.5,height*.45,cell,width*.5,height*.45,width*.72);
+  glow.addColorStop(0,'#1c8bba0c');glow.addColorStop(1,'#050a1600');g.fillStyle=glow;g.fillRect(0,0,width,height);
+  bbArenaBackgroundCanvas=layer;return layer;
+}
+function render(){bbSyncDailyPreview();let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;
+ctx.clearRect(0,0,cw,ch);ctx.drawImage(bbGetArenaBackground(cw,ch),0,0);
 /* Red-zone warning remains a distinct gameplay overlay. */
 if(bbIsDailyMechanic('redZone')){
   ctx.fillStyle='#ff304022';
@@ -8050,9 +8060,14 @@ function drawCell(ctx,x,y,color,cell,ghost=false){
 }
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
 function drawNext(){
-  const c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
-  if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;
-  const s=shapes[nextType],color=bbPrismColor(nextType),cell=Math.min(20,78/Math.max(s[0].length,s.length));
+  const c=$('next'),ctx=c.getContext('2d');
+  const hidden=mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started;
+  const color=hidden?'':bbPrismColor(nextType);
+  const signature=[c.width,c.height,nextType,hidden?1:0,color].join(':');
+  if(signature===bbNextPreviewSignature)return;
+  bbNextPreviewSignature=signature;ctx.clearRect(0,0,c.width,c.height);
+  if(hidden)return;
+  const s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length));
   const ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;
   for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){
     const px=ox+x*cell+1,py=oy+y*cell+1;
