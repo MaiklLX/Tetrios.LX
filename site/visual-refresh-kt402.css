@@ -37,9 +37,9 @@ body{background-color:#070b19}
  box-shadow:inset 0 1px #fff2,0 12px 25px #0004!important}
 .currency-card.gems-card{border-color:#83aaff66!important;background:radial-gradient(circle at 18% 12%,#6e9dff35,transparent 42%),linear-gradient(145deg,#263653,#18213c 60%,#111a30)!important}
 .currency-icon{width:46px;height:46px;display:grid;place-items:center;background-position:center;background-repeat:no-repeat;background-size:contain;font-size:0!important;filter:drop-shadow(0 3px 7px #0008)!important}
-.coins-card .currency-icon{background-image:url("./assets/ui/coin-emblem.svg")}
-.gems-card .currency-icon{background-image:url("./assets/ui/gem-crystal.svg")}
-.hero:before{background:url("./assets/ui/panel-frame.svg") center/100% 100% no-repeat!important;opacity:.45}
+#menu .coins-card .currency-icon{background-image:url("./assets/ui/coin-emblem.svg")!important;background-color:transparent!important}
+#menu .gems-card .currency-icon{background-image:url("./assets/ui/gem-crystal.svg")!important;background-color:transparent!important}
+#menu .hero:before{background:url("./assets/ui/panel-frame.svg") center/100% 100% no-repeat!important;opacity:.45}
 .level-insignia,.level-badge-art{background:url("./assets/ui/level-insignia.svg") center/contain no-repeat!important}
 .currency-label{letter-spacing:.2em!important;color:#ffe0a0!important}
 .gems-card .currency-label{color:#b9d6ff!important}
