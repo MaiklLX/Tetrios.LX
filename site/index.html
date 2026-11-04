@@ -12606,4 +12606,134 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.sidecol{height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important;max-height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important}
 }
 </style>
+
+<style id="bb-mobile-goals-wide-rail-v2">
+/* KT-402 direction: give the 10:23 arena the former left-rail width.
+   Goals/progress move below the arena into a readable full-width strip;
+   the right utility rail remains beside the board. Desktop is untouched. */
+@media(max-width:520px) and (orientation:portrait){
+  #game:not([hidden]){
+    grid-template-columns:minmax(0,1fr) minmax(66px,clamp(68px,19vw,78px))!important;
+    grid-template-rows:auto auto auto minmax(0,1fr) auto auto auto!important;
+    align-content:start!important;
+    row-gap:5px!important;
+  }
+  #game>.playlayout>.gameleftcol{
+    grid-column:1/-1!important;
+    grid-row:5!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:5px!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:5px!important;
+    border:1px solid rgba(100,153,184,.28)!important;
+    border-radius:11px!important;
+    background:linear-gradient(145deg,rgba(9,16,31,.96),rgba(16,24,43,.94))!important;
+  }
+  #game>.playlayout>.gameleftcol .progresswrap{
+    width:100%!important;
+    margin:0!important;
+    padding:6px 8px!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    gap:5px!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:190px!important;
+    min-height:0!important;
+    flex:0 1 auto!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    margin:0!important;
+    padding:6px!important;
+    border:1px solid rgba(158,130,255,.38)!important;
+    border-radius:10px!important;
+    background:linear-gradient(155deg,#1b2340,#0c1426)!important;
+    font-size:9px!important;
+    line-height:1.3!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>strong,
+  #game>.playlayout>.gameleftcol #campaignGoals>strong{
+    grid-column:1/-1!important;
+    display:block!important;
+    margin:0!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:first-child{
+    grid-column:1/-1!important;
+    min-width:0!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child),
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child){
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:space-between!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:6px!important;
+    border:1px solid rgba(158,130,255,.25)!important;
+    border-radius:8px!important;
+    background:linear-gradient(145deg,#1a2037,#11182b)!important;
+    overflow-wrap:anywhere!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child)>span,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child)>span{
+    display:block!important;
+    float:none!important;
+    margin:3px 0 0!important;
+    font-size:8px!important;
+    line-height:1.2!important;
+    white-space:normal!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    grid-column:1!important;
+    grid-row:4!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    align-self:center!important;
+    justify-self:center!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(66dvh,calc((100vw - 142px)*2.3),570px)/2.3))!important;
+    height:auto!important;
+    aspect-ratio:10/23!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    margin-inline:auto!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:2!important;
+    grid-row:4!important;
+    width:100%!important;
+    max-width:none!important;
+    height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    min-height:0!important;
+    align-self:center!important;
+  }
+  #game>.controls{grid-column:1/-1!important;grid-row:6!important}
+  #game>.hint{grid-column:1/-1!important;grid-row:7!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game:not([hidden]){grid-template-columns:minmax(0,1fr) 66px!important}
+  #game>.playlayout>.sidecol{height:min(64dvh,calc((100vw - 132px)*2.3),540px)!important;max-height:min(64dvh,calc((100vw - 132px)*2.3),540px)!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(64dvh,calc((100vw - 132px)*2.3),540px)/2.3))!important;
+    max-height:min(64dvh,calc((100vw - 132px)*2.3),540px)!important;
+  }
+}
+</style>
 </body></html>
