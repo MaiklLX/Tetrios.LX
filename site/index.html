@@ -12811,7 +12811,7 @@ body .app{background:transparent!important;background-color:transparent!importan
 @media(min-width:381px) and (max-width:400px) and (orientation:portrait){
   #game>.playlayout>.gameleftcol,
   #game>.controls,
-  #game>.hint{transform:translateY(22px)!important}
+  #game>.hint{transform:translateY(28px)!important}
 }
 </style>
 
@@ -12989,6 +12989,31 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
   #game>.playlayout>.sidecol .side-drop:after{display:none!important;content:none!important}
   #game>.playlayout>.sidecol .sidecard:has(#timer)>label{font-size:6px!important}
+
+  /* Compact content-sized HUD tiles: keep every live value readable without seven oversized cards. */
+  #game>.playlayout>.sidecol{
+    grid-auto-rows:auto!important;
+    align-content:space-between!important;
+    gap:3px!important;
+  }
+  #game>.playlayout>.sidecol>.charge-card{height:58px!important;min-height:58px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(2){height:60px!important;min-height:60px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(3){height:54px!important;min-height:54px!important;flex:none!important}
+  #game>.playlayout>.sidecol>#chronoCard{height:58px!important;min-height:58px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.sidecard:has(#timer){height:64px!important;min-height:64px!important;flex:none!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{height:56px!important;min-height:56px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.drop-card{height:52px!important;min-height:52px!important;flex:none!important}
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{width:min(100%,35px)!important;max-width:35px!important}
+  #game>.playlayout>.sidecol .nextcanvas{max-height:34px!important}
+  #game>.playlayout>.sidecol .boosticon{min-height:19px!important;font-size:18px!important}
+  #game>.playlayout>.sidecol .boostname{font-size:6px!important;line-height:1.1!important}
+  #game>.playlayout>.sidecol #holdBtn{min-height:24px!important;height:24px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-art{flex-basis:26px!important;width:26px!important;height:26px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:5.5px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:4.8px!important}
+  #game>.playlayout>.sidecol .side-drop{min-height:44px!important;height:44px!important}
 }
 </style>
 
