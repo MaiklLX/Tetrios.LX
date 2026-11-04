@@ -161,6 +161,8 @@ const targets = [
       const hold = document.querySelector('#game #holdBtn');
       const goals = document.querySelector('#game #rogueGoals');
       const playlayout = document.querySelector('#game .playlayout');
+      const game = document.querySelector('#game');
+      const leftRail = document.querySelector('#game .gameleftcol');
       return {
         viewport: { width: innerWidth, height: innerHeight },
         document: {
@@ -168,7 +170,9 @@ const targets = [
           height: document.documentElement.scrollHeight
         },
         frame: rect(frame),
+        leftRail: rect(leftRail),
         side: rect(side),
+        gameGrid: game ? { gridTemplateRows: getComputedStyle(game).gridTemplateRows, gridTemplateColumns: getComputedStyle(game).gridTemplateColumns, rowGap: getComputedStyle(game).rowGap } : null,
         sideScroll: side ? {
           overflowY: getComputedStyle(side).overflowY,
           scrollHeight: side.scrollHeight,
@@ -190,6 +194,7 @@ const targets = [
     if (geometry.document.width > target.width + 2) {
       failures.push(target.name + ': horizontal document overflow (' + geometry.document.width + 'px)');
     }
+    let sideScrollCheck = null;
     if (target.mobile) {
       if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36) {
         failures.push(target.name + ': Hard Drop control is missing or too small');
@@ -207,17 +212,22 @@ const targets = [
         failures.push(target.name + ': utility rail must use vertical scrolling');
       }
       if (geometry.sideScroll && geometry.sideScroll.maxScroll > 2) {
-        const scrollCheck = await page.evaluate(async () => {
+        sideScrollCheck = await page.evaluate(async () => {
           const side = document.querySelector('#game .sidecol');
           if (!side) return { moved: false, maxScroll: 0 };
           side.scrollTop = side.scrollHeight;
           await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
           const moved = side.scrollTop > 0;
           const maxScroll = side.scrollTop;
+          const last = side.lastElementChild;
+          const sideRect = side.getBoundingClientRect();
+          const lastRect = last?.getBoundingClientRect();
+          const lastCardVisible = !!lastRect && lastRect.bottom <= sideRect.bottom + 1 && lastRect.top >= sideRect.top - 1;
           side.scrollTop = 0;
-          return { moved, maxScroll };
+          return { moved, maxScroll, lastCardVisible };
         });
-        if (!scrollCheck.moved) failures.push(target.name + ': utility rail content cannot be scrolled to its final card');
+        if (!sideScrollCheck.moved) failures.push(target.name + ': utility rail content cannot be scrolled to its final card');
+        if (!sideScrollCheck.lastCardVisible) failures.push(target.name + ': final utility card is not fully visible after scrolling');
       }
       if (geometry.frame && geometry.frame.right > target.width + 2) {
         failures.push(target.name + ': arena extends beyond the right viewport edge');
@@ -241,7 +251,7 @@ const targets = [
     await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
     console.log('Verified single-renderer 2D arena: ' + target.name);
 
-    report.push({ target: target.name, engine: target.engine, geometry, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
+    report.push({ target: target.name, engine: target.engine, geometry, sideScrollCheck, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
   }
