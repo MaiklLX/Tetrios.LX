@@ -12590,7 +12590,7 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
   #game>.playlayout>.gameleftcol #rogueGoals,
   #game>.playlayout>.gameleftcol #campaignGoals{
-    flex:1 1 0!important;min-height:0!important;max-height:100%!important;
+    flex:1 1 0!important;height:100%!important;min-height:0!important;max-height:100%!important;
     overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
     box-sizing:border-box!important;
   }
@@ -12601,7 +12601,7 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.sidecol>.drop-card{flex:0 0 auto!important}
 }
 @media(max-width:380px) and (orientation:portrait){
-  #game:not([hidden]){grid-template-columns:50px minmax(0,1fr) 64px!important}
+  #game:not([hidden]){grid-template-columns:50px minmax(0,1fr) 68px!important}
   #game>.playlayout>.gameleftcol,
   #game>.playlayout>.sidecol{height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important;max-height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important}
 }
