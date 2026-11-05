@@ -2,7 +2,7 @@ extends Node2D
 
 const CELL := 38.0
 const BOARD_W := 10
-const BOARD_H := 20
+const BOARD_H := 23
 const Model = preload("res://scripts/game_model.gd")
 
 var game: BlockBuddiesModel
@@ -24,7 +24,7 @@ func _ready() -> void:
 
 func _layout() -> void:
 	screen_size = get_viewport_rect().size
-	var cell := minf((screen_size.x - 72.0) / BOARD_W, (screen_size.y * 0.61) / BOARD_H)
+	var cell := minf((screen_size.x - 72.0) / BOARD_W, (screen_size.y * 0.58) / BOARD_H)
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
 	board_rect = Rect2((screen_size - board_size) * 0.5 + Vector2(0, 22), board_size)
 	var button_y := screen_size.y - minf(148.0, screen_size.y * 0.13)
