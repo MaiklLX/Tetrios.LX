@@ -8296,7 +8296,6 @@ cv.addEventListener('touchmove', e => {
     touch.consumed = true;
     return;
   }
-  const t=e.changedTouches[0];
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
   if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
     touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
