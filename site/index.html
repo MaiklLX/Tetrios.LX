@@ -14064,7 +14064,7 @@ body .app{background:transparent!important;background-color:transparent!importan
 
 <style id="bb-kt412-mobile-gesture-arena">
 /* KT-412: gesture-first mobile arena. Desktop keeps its keyboard layout. */
-@media (max-width:600px){
+@media (max-width:600px), (max-height:600px) and (pointer:coarse){
   /* Hide the complete bottom control deck regardless of its wrapper depth. */
   #game .controls{
     display:none!important;visibility:hidden!important;pointer-events:none!important;
@@ -14098,7 +14098,7 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout,#game.unified-game-layout>.playlayout{grid-template-columns:minmax(0,1fr) minmax(108px,34%)!important;gap:6px!important;padding:5px!important}
   #game>.playlayout>.sidecol{gap:5px!important}
 }
-@media (max-width:600px) and (orientation:landscape){
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
   #game>.playlayout,#game.unified-game-layout>.playlayout{grid-template-columns:minmax(0,1fr) minmax(112px,25%)!important;grid-template-rows:minmax(0,1fr) auto!important;align-items:center!important}
   #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
     width:auto!important;height:min(72dvh,calc(100dvh - 138px))!important;
