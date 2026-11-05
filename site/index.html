@@ -8311,22 +8311,16 @@ cv.addEventListener('touchmove', e => {
       if (piece!==touch.pieceRef) touch.consumed=true;
     }
   } else if(touch.axis==='y'&&ty>0){
-    // Soft-drop is incremental during touchmove; touchend never replays slow swipes.
+    // Soft-drop advances one visible row at a time during touchmove.
     while(t.clientY-touch.lastY>=28&&!touch.dropped){
       touch.lastY+=28;
-      touch.softSteps++;
-      if(!move(0,1)){
-        touch.dropped=true;
-        touch.consumed=true;
-        lockTouchDrop(300);
-        break;
-      }
-      if(piece!==touch.pieceRef){
-        touch.dropped=true;
-        touch.consumed=true;
-        lockTouchDrop(300);
-        break;
-      }
+      touch.softSteps=(touch.softSteps||0)+1;
+      if(!move(0,1)){touch.dropped=true;break;}
+    }
+    if(touch.dropped||piece!==touch.pieceRef){
+      touch.dropped=true;
+      touch.consumed=true;
+      lockTouchDrop(300);
     }
   }
 }, {passive:false});
