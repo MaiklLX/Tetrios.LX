@@ -61,3 +61,17 @@ Do not merge or publish until:
 ## Recovery phrase — KT-412.2
 
 `TETRIOS — KT-412.2. Continue PR #61 from HEAD 72727f3fd9dd392553cd182538052f1398839ec0. Fix wide mobile landscape layout: force compact game grid for coarse landscape touch devices wider than 600px, keep bottom controls absent, fit 10:23 board, goals and side rail including Hold/Hard Drop. Re-run Cross-platform Visual Preview; do not merge or deploy until all landscape and portrait tests pass.`
+
+
+## KT-412.3 — landscape viewport constraint follow-up (2026-11-05)
+
+- Cross-platform Visual Preview run #471 completed with failure on iOS WebKit landscape (844x390 and 915x412) and Android Chromium landscape (873x393).
+- The artifact confirms the root cause: the game screen had only a minimum height, so intrinsic desktop content expanded the third grid row beyond the physical viewport (up to 613px); the play layout and utility rail were displaced/clipped. The 844x390 WebKit document expanded to 690px.
+- Bottom controls remained hidden; gesture/runtime checks reported no page errors, console errors, or failed requests. However Hold/Hard Drop failed minimum target geometry and goals were outside/overlapping the arena.
+- Added a follow-up CSS viewport lock: constrain html/body, app, game screen, and playlayout to the landscape viewport; set grid children to min-height:0; retain a separate goals row; enforce minimum 24px Hold and 36px Hard Drop targets.
+- New commit: `5ca195691a1e70c428bda7fe8a8319b12480be1c`.
+- This is a new fix candidate only. It has not yet passed a fresh visual preview. Do not merge or publish until a rerun passes on all portrait/landscape targets.
+
+## Recovery phrase — KT-412.3
+
+`TETRIOS — KT-412.3. Continue PR #61 from HEAD 5ca195691a1e70c428bda7fe8a8319b12480be1c. Run cross-platform visual preview, confirm viewport-locked landscape layout on iOS WebKit 844x390 and 915x412 plus Android Chromium 873x393, keep mobile bottom controls hidden, ensure Hold >=24px, Hard Drop >=36px, goals below the 10:23 arena and no overflow. Do not merge or deploy until all checks pass.`
