@@ -11,6 +11,21 @@ func _run() -> void:
 	assert(model.grid.size() == 23, "Board must contain 23 rows")
 	assert(model.grid[0].size() == 10, "Board must contain 10 columns")
 	assert(model.active_cells.size() == 4, "Every piece must contain four cells")
+	assert(model._centered_spawn_x(Model.SHAPES[0]) == 3, "I piece spawn must be centered")
+	assert(model._centered_spawn_x(Model.SHAPES[4]) == 4, "O piece spawn must be centered")
+	assert(model._centered_spawn_x(Model.SHAPES[1]) == 3, "T piece spawn must be centered")
+
+	# The source uses a seven-bag and forbids repeats across bag boundaries.
+	var bag_sequence: Array[int] = [model.active_type]
+	for i in range(6):
+		bag_sequence.append(model._next_piece_type())
+	var unique_types: Dictionary = {}
+	for piece_type in bag_sequence:
+		unique_types[piece_type] = true
+	assert(unique_types.size() == 7, "A seven-bag must contain every tetromino exactly once")
+	var previous_type: int = bag_sequence[6]
+	var boundary_type: int = model._next_piece_type()
+	assert(boundary_type != previous_type, "Seven-bag boundary must not repeat the previous piece")
 
 	var start_x := model.origin.x
 	model.move_horizontal(-1)
