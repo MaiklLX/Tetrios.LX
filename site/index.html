@@ -13637,4 +13637,14 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 
+<style id="bb-mobile-hero-skill-final-override-kt40712">
+/* KT-407.12: final mobile override after legacy arena styles. The later legacy
+   #game #bbHeroSkillCard rules otherwise restore the three-line copy and 76px height. */
+@media (max-width:520px) and (orientation:portrait){
+  #game #bbHeroSkillCard{min-height:54px!important;height:54px!important;padding:5px!important;gap:0!important;justify-content:center!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy{display:none!important}
+  #game #bbHeroSkillCard .bb-hero-skill-art{display:grid!important;place-items:center!important;flex:0 0 36px!important;width:36px!important;height:36px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;right:5px!important;top:4px!important}
+}
+</style>
 </body></html>
