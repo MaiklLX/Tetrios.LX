@@ -10,7 +10,11 @@ const targets = [
   { engine: 'webkit', name: 'ios-webkit-375x812', width: 375, height: 812, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-390x844', width: 390, height: 844, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-412x915', width: 412, height: 915, mobile: true },
-  { engine: 'webkit', name: 'ios-webkit-430x932', width: 430, height: 932, mobile: true }
+  { engine: 'webkit', name: 'ios-webkit-430x932', width: 430, height: 932, mobile: true },
+  { engine: 'webkit', name: 'ios-webkit-landscape-844x390', width: 844, height: 390, mobile: true },
+  { engine: 'webkit', name: 'ios-webkit-landscape-915x412', width: 915, height: 412, mobile: true },
+  { engine: 'chromium', name: 'android-chromium-393x873', width: 393, height: 873, mobile: true },
+  { engine: 'chromium', name: 'android-chromium-landscape-873x393', width: 873, height: 393, mobile: true }
 ];
 
 (async () => {
