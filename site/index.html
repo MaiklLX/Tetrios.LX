@@ -13510,90 +13510,133 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 
-<style id="bb-mobile-arena-two-rail-fix-kt406">
-/* KT-406: the public phone DOM has no .gameleftcol: bbArrangeModeHud moves
-   the metrics above the playlayout, leaving only board + utility rail.
-   The legacy three-track shell reserved an empty left track and pushed both
-   live children one column to the right. Keep the three-track layout only
-   when a real goals rail exists; otherwise use two tracks on the game grid. */
+
+<style id="bb-mobile-arena-layout-kt407">
+/* KT-407: rebuild the phone arena as one local two-column grid.
+   The previous display:contents flattened the board wrapper into #game's
+   outer three-column grid, so the board landed in the unused first track. */
 @media (max-width:520px) and (orientation:portrait){
-  #game:not([hidden]):not(:has(.gameleftcol)){
-    grid-template-columns:minmax(0,1fr) minmax(68px,clamp(72px,22vw,88px))!important;
-  }
-  #game:not([hidden])>.playlayout{
-    display:contents!important;
-  }
-  #game:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol){
-    grid-column:1!important;
-    grid-row:4!important;
-    min-width:0!important;
-    width:100%!important;
-    justify-self:stretch!important;
-    align-self:center!important;
-  }
-  #game:not([hidden])>.playlayout>.sidecol{
-    grid-column:2!important;
-    grid-row:4!important;
+  #game>.playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(104px,30%)!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    grid-auto-flow:row!important;
+    align-items:stretch!important;
+    align-content:start!important;
+    justify-items:stretch!important;
+    gap:8px!important;
     width:100%!important;
     min-width:0!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-    height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
-    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    height:auto!important;
     min-height:0!important;
+    margin:0!important;
+    padding:6px!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    grid-column:1!important;
+    grid-row:1!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:2!important;
+    grid-row:1!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-rows:minmax(0,auto)!important;
+    align-content:start!important;
+    align-self:stretch!important;
+    justify-self:stretch!important;
+    width:100%!important;
+    min-width:0!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:min(66dvh,570px)!important;
+    margin:0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
     overflow-x:hidden!important;
     overflow-y:auto!important;
     overscroll-behavior-y:contain!important;
     -webkit-overflow-scrolling:touch!important;
     touch-action:pan-y!important;
-    align-self:center!important;
   }
-  #game:not([hidden]):not(:has(.gameleftcol))>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
-    width:min(100%,calc(min(66dvh,calc((100vw - 142px)*2.3),570px)/2.3))!important;
-    height:auto!important;
-    aspect-ratio:10/23!important;
-    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
-    margin-inline:auto!important;
-  }
-  #game:not([hidden])>.playlayout>.sidecol::-webkit-scrollbar{
-    display:none!important;width:0!important;height:0!important;
-  }
-}
-@media (max-width:380px) and (orientation:portrait){
-  #game:not([hidden]):not(:has(.gameleftcol)){
-    grid-template-columns:minmax(0,1fr) minmax(66px,22vw)!important;
-  }
-  #game:not([hidden])>.playlayout>.sidecol{
-    height:min(60dvh,calc((100vw - 132px)*2.3),520px)!important;
-    max-height:min(60dvh,calc((100vw - 132px)*2.3),520px)!important;
-  }
-  #game:not([hidden]):not(:has(.gameleftcol))>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
-    width:min(100%,calc(min(60dvh,calc((100vw - 132px)*2.3),520px)/2.3))!important;
-    max-height:min(60dvh,calc((100vw - 132px)*2.3),520px)!important;
-  }
-}
-</style>
-
-
-<style id="bb-mobile-arena-goals-rail-width-fix-kt406-1">
-/* KT-406.1: when the optional objectives rail is present, retain three tracks
-   but give the right utility dock enough real width for its live controls. */
-@media (max-width:520px) and (orientation:portrait){
-  #game:not([hidden]):has(.gameleftcol){
-    grid-template-columns:
-      minmax(48px,clamp(50px,14vw,62px))
-      minmax(0,1fr)
-      minmax(76px,clamp(76px,22vw,88px))!important;
-  }
-  #game:not([hidden]):has(.gameleftcol)>.playlayout>.sidecol{
-    grid-column:3!important;
-    min-width:0!important;
+  #game>.playlayout>.gameleftcol{
+    grid-column:1/-1!important;
+    grid-row:2!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
     width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:5px!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
   }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    display:block!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:100%!important;
+    max-height:min(66dvh,570px)!important;
+    aspect-ratio:10/23!important;
+    flex:0 0 auto!important;
+    margin:0 auto!important;
+    overflow:hidden!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>#board,
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>.bb-arena-canvas{
+    display:block!important;
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    max-height:none!important;
+    aspect-ratio:auto!important;
+  }
+  #game>.playlayout>.sidecol::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 }
 @media (max-width:380px) and (orientation:portrait){
-  #game:not([hidden]):has(.gameleftcol){
-    grid-template-columns:minmax(48px,50px) minmax(0,1fr) minmax(76px,22vw)!important;
+  #game>.playlayout{
+    grid-template-columns:minmax(0,1fr) minmax(100px,31%)!important;
+    gap:6px!important;
+    padding:5px!important;
+  }
+  #game>.playlayout>.sidecol{gap:5px!important}
+}
+@media (max-width:520px) and (orientation:landscape){
+  #game>.playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(88px,22vw)!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    gap:6px!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){grid-column:1!important;grid-row:1!important}
+  #game>.playlayout>.sidecol{grid-column:2!important;grid-row:1!important;height:100%!important;max-height:62dvh!important;overflow-y:auto!important}
+  #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:auto!important;height:min(62dvh,calc(100dvh - 150px))!important;
+    aspect-ratio:10/23!important;max-height:62dvh!important;
   }
 }
 </style>
