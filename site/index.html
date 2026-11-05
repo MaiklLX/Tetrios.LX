@@ -7551,11 +7551,11 @@ function hardDrop(){
   const now=performance.now();
   // Brief cross-input guard filters duplicate events without making
   // the controls feel unresponsive between deliberate drops.
-  if(now-bbHardDropAcceptedAt<160)return;
+  if(now-bbHardDropAcceptedAt<240)return;
   bbHardDropAcceptedAt=now;
   bbHardDropInProgress=true;
   if(typeof touch!=='undefined')touch=null;
-  if(typeof lockTouchDrop==='function')lockTouchDrop(140);
+  if(typeof lockTouchDrop==='function')lockTouchDrop(300);
   if(mode==='campaign')bbCampaignRun.hardDrops++;
   let dist=0;
   while(!collides(piece,0,1)){piece.y++;dist++}
@@ -8252,7 +8252,7 @@ document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let 
 let touch = null;
 let touchDropLocked = false;
 let touchDropUnlockTimer = null;
-function lockTouchDrop(duration=140) {
+function lockTouchDrop(duration=300) {
   touchDropLocked = true;
   if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
   touchDropUnlockTimer = setTimeout(() => {
@@ -8262,79 +8262,97 @@ function lockTouchDrop(duration=140) {
 }
 const cv = $('game');
 
-// Мягкий свайп ускоряет падение; быстрый длинный свайп в конце выполняет hard drop.
+// Mobile arena gestures are board-scoped. A gesture belongs to the piece
+// that existed at touchstart; if that piece locks and a new one spawns,
+// the remainder of the same physical gesture can never affect the new piece.
 cv.addEventListener('touchstart', e => {
-  // Игровые кнопки обрабатываются только своими click-обработчиками.
-  // Не оставляем жест поля активным, если палец коснулся DROP/поворота/движения.
   if (e.target.closest('button, input, select, textarea, [data-act]')) {
     touch = null;
     return;
   }
-  const t=e.changedTouches[0];
-  // Узкая защитная зона вокруг DROP подавляет только случайный тап
-  // (который иначе вращает фигуру), но не блокирует свайпы через эту область.
-  const dropButton = document.querySelector('#game [data-act="drop"]');
-  let suppressTap = false;
-  if (dropButton) {
-    const r = dropButton.getBoundingClientRect();
-    const safe = 18;
-    suppressTap = t.clientX >= r.left - safe && t.clientX <= r.right + safe &&
-      t.clientY >= r.top - safe && t.clientY <= r.bottom + safe;
+  if (e.touches.length !== 1 || !e.target.closest('#board')) {
+    touch = null;
+    return;
   }
-  if (!started || paused || gameOver || touchDropLocked) return;
-  const boardGesture=!!e.target.closest('#board');
-  if (boardGesture && e.cancelable) e.preventDefault();
-  touch={x:t.clientX,y:t.clientY,lastX:t.clientX,lastY:t.clientY,at:Date.now(),axis:null,dropped:false,softSteps:0,suppressTap,boardGesture};
+  if (!started || paused || gameOver || touchDropLocked || !piece) {
+    touch = null;
+    return;
+  }
+  const t = e.changedTouches[0];
+  if (e.cancelable) e.preventDefault();
+  touch = {
+    x:t.clientX, y:t.clientY, lastX:t.clientX, lastY:t.clientY,
+    at:performance.now(), axis:null, pieceRef:piece,
+    softSteps:0, consumed:false
+  };
   audioCtx();
-},{passive:false});
+}, {passive:false});
 
-cv.addEventListener('touchmove',e=>{
-  if(touchDropLocked||!touch||touch.dropped||!started||paused||gameOver)return;
-  // The board owns this gesture; keep the WebView from scrolling under the finger.
-  if(touch.boardGesture && e.cancelable) e.preventDefault();
-  const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
-  if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
-    touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
+cv.addEventListener('touchmove', e => {
+  if (!touch || touchDropLocked || touch.consumed ||
+      !started || paused || gameOver || !piece) return;
+  if (e.cancelable) e.preventDefault();
+  if (e.touches.length !== 1) {
+    touch.consumed = true;
+    return;
   }
-  if(touch.axis==='x'){
-    const dx=t.clientX-touch.lastX;
-    if(Math.abs(dx)>=26){move(dx>0?1:-1);touch.lastX=t.clientX;}
-  }else if(touch.axis==='y'&&ty>0){
-    // Soft-drop is incremental and visible while the finger moves: one grid row
-    // per 28 CSS pixels. A long slow drag never becomes a single end-of-gesture jump.
-    while(t.clientY-touch.lastY>=28&&!touch.dropped){
-      touch.lastY+=28;
-      touch.softSteps=(touch.softSteps||0)+1;
-      if(!move(0,1)){touch.dropped=true;break;}
+  const t=e.changedTouches[0];
+  const dx=t.clientX-touch.x, dy=t.clientY-touch.y;
+  if (!touch.axis && (Math.abs(dx)>=9 || Math.abs(dy)>=9)) {
+    if (Math.abs(dx)>Math.abs(dy)*1.18) touch.axis='x';
+    else if (Math.abs(dy)>Math.abs(dx)*1.18) touch.axis='y';
+  }
+  if (touch.axis==='x') {
+    let step=t.clientX-touch.lastX;
+    while (Math.abs(step)>=24 && !touch.consumed) {
+      move(step>0?1:-1);
+      touch.lastX += step>0?24:-24;
+      step=t.clientX-touch.lastX;
+      if (piece!==touch.pieceRef) touch.consumed=true;
+    }
+  } else if (touch.axis==='y' && dy>0) {
+    while (t.clientY-touch.lastY>=24 && !touch.consumed) {
+      touch.lastY+=24;
+      touch.softSteps++;
+      move(0,1);
+      if (piece!==touch.pieceRef) {
+        touch.consumed=true;
+        lockTouchDrop(300);
+      }
     }
   }
-},{passive:false});
+}, {passive:false});
 
-cv.addEventListener('touchend',e=>{
-  if(e.target.closest('button, input, select, textarea, [data-act]')){touch=null;return}
-  if(touchDropLocked){touch=null;return}
-  if(!touch)return;
-  const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
-  const elapsed=Date.now()-touch.at;
-  const verticalSwipe=touch.axis==='y'&&dy>=28&&dy>Math.abs(dx)*1.15;
-  const fastDownSwipe=verticalSwipe&&dy>=110&&elapsed<220&&dy>Math.abs(dx)*1.35;
+cv.addEventListener('touchend', e => {
+  if (!touch) return;
+  const gesture=touch;
+  touch=null;
+  if (touchDropLocked || gesture.consumed ||
+      !started || paused || gameOver || !piece ||
+      piece!==gesture.pieceRef) return;
+  const t=e.changedTouches[0];
+  const dx=t.clientX-gesture.x, dy=t.clientY-gesture.y;
+  const elapsed=performance.now()-gesture.at;
+  const vertical=Math.abs(dy)>Math.abs(dx)*1.18;
 
-  if(!touch.dropped&&!touch.suppressTap&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
+  // A short tap or an upward flick rotates once. Downward flicks are
+  // reserved for hard drop; slower downward drags remain incremental soft drop.
+  if (vertical && dy<=-38 && elapsed<650) {
     rotatePiece();
-  }else if(verticalSwipe&&started&&!paused&&!gameOver){
-    // A soft-drop touchmove may already have reached the floor and called
-    // lockPiece(), which spawns the next piece. Never let this same gesture's
-    // touchend hard-drop that newly spawned piece.
-    if(fastDownSwipe&&!touch.dropped){lockTouchDrop();hardDrop();}
+  } else if (Math.abs(dx)<13 && Math.abs(dy)<13 && elapsed<280) {
+    rotatePiece();
+  } else if (vertical && dy>=96 && elapsed<=460 && gesture.softSteps===0) {
+    // Lock before hardDrop: lockPiece spawns synchronously, but this gesture
+    // must not be allowed to drop that newly spawned piece as well.
+    lockTouchDrop(300);
+    hardDrop();
   }
-  touch=null;
-},{passive:true});
+}, {passive:true});
 
-cv.addEventListener('touchcancel',()=>{
+cv.addEventListener('touchcancel', () => {
   touch=null;
-  // Do not clear the post-drop lock on cancellation: the same physical
-  // gesture may be cancelled and re-delivered by the WebView.
-},{passive:true});
+  // Keep the post-drop guard alive across WebView touch cancellation.
+}, {passive:true});
 
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
@@ -14022,4 +14040,52 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-kt412-mobile-gesture-arena">
+/* KT-412: gesture-first mobile arena. Desktop keeps its keyboard layout. */
+@media (max-width:600px){
+  #game>.controls{
+    display:none!important;visibility:hidden!important;pointer-events:none!important;
+    height:0!important;min-height:0!important;margin:0!important;padding:0!important;
+    border:0!important;overflow:hidden!important;
+  }
+  #game>.hint{grid-row:auto!important;margin:7px 2px 2px!important}
+  #game>.playlayout{
+    grid-template-columns:minmax(0,1fr) minmax(112px,32%)!important;
+    grid-template-rows:auto auto!important;align-items:stretch!important;
+    gap:8px!important;padding:7px!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    min-width:0!important;display:flex!important;justify-content:center!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:100%!important;height:auto!important;min-height:0!important;
+    max-height:none!important;aspect-ratio:10/23!important;
+    display:block!important;padding:5px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>.board{
+    display:block!important;width:100%!important;height:100%!important;
+    max-width:100%!important;aspect-ratio:10/23!important;object-fit:fill!important;
+    touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;
+  }
+  #game>.playlayout>.sidecol{min-width:0!important;align-content:start!important;gap:6px!important}
+  #game>.playlayout>.sidecol>.sidecard{min-width:0!important}
+  #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important;top:0!important}
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game>.playlayout{grid-template-columns:minmax(0,1fr) minmax(108px,34%)!important;gap:6px!important;padding:5px!important}
+  #game>.playlayout>.sidecol{gap:5px!important}
+}
+@media (max-width:600px) and (orientation:landscape){
+  #game>.playlayout{grid-template-columns:minmax(0,1fr) minmax(112px,25%)!important;grid-template-rows:minmax(0,1fr) auto!important;align-items:center!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:auto!important;height:min(72dvh,calc(100dvh - 138px))!important;
+    max-height:72dvh!important;aspect-ratio:10/23!important;
+  }
+  #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important}
+}
+@media (min-width:601px){
+  #game>.controls{display:grid}
+}
+</style>
 </body></html>
