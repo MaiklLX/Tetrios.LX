@@ -39,3 +39,12 @@
 - Corrected by adding a final portrait-only KT-411 override setting those three elements to `transform:none`. Board ratio, gameplay, touch target sizing, and desktop layout remain unchanged.
 - Fix commit: `92b6388798077f1edd9a922fb1d95e4df2ac5ee7`.
 - Re-run both visual workflows and review all viewport screenshots before merge. No production deployment and no APK build/release.
+
+
+## Follow-up diagnosis — 2026-11-05
+
+- Cross-platform run `42062164773` completed with the same two short-WebKit failures (375×812 bottom 816px; 390×844 bottom 859.98px). Wider iOS captures and desktop geometry remained within bounds; page errors, console errors, and failed requests were empty.
+- The previous transform diagnosis was incomplete. The final KT-409 mobile rules later in the stylesheet override the earlier cabinet-height change. In WebKit, the board width remained the sizing constraint, so `max-height` alone did not reduce the board's intrinsic grid contribution.
+- Added a final, narrowly scoped short-portrait rule (max-height 860px) that caps board width to 51vw while preserving the 10:23 ratio; also removed the 20px relative top offset from the goal rail on those short screens.
+- Follow-up code commit: `469d1b9c28abb52eba61b33419359900411ff4be`.
+- This is a new candidate fix, not yet validated. Re-run both visual workflows and inspect 375×812, 390×844, 412×915, and 430×932 before considering merge or main publication.
