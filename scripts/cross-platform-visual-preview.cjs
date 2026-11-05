@@ -157,7 +157,7 @@ const targets = [
       });
       if (!dailyGoalState.visible) failures.push(target.name + ': daily challenge objective is not visible inside the arena');
       if (!dailyGoalState.text.includes('ЦЕЛЬ ИСПЫТАНИЯ')) failures.push(target.name + ': daily objective label is missing');
-      if (!dailyGoalState.text.match(/\\d+\\s*(?:линий|линии|линия|очков|секунд)/i)) failures.push(target.name + ': daily objective value is missing (' + dailyGoalState.text + ')');
+      if (!dailyGoalState.text.match(/\d+\s*(?:линий|линии|линия|очков|секунд)/i)) failures.push(target.name + ': daily objective value is missing (' + dailyGoalState.text + ')');
       if (!target.mobile && !dailyGoalState.parentClass.includes('game-heading-copy')) failures.push(target.name + ': desktop daily objective is not attached to the arena heading');
       if (target.mobile && dailyGoalState.parentId !== 'game') failures.push(target.name + ': mobile daily objective was moved out of its original layout');
       await dailyPage.screenshot({ path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
