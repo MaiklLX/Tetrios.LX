@@ -48,3 +48,16 @@ Do not merge or publish until:
 ## Recovery phrase
 
 `TETRIOS — KT-412.1. Continue fix/kt412-mobile-gesture-polish-2026-11-05 from PR #61. Verify mobile deck is fully removed, touch accumulator gestures work on Chromium/WebKit, test portrait/landscape and all modes, retain piece identity/post-drop guard, and do not deploy or build APK until QA passes.`
+
+## KT-412.2 — wide landscape follow-up (2026-11-05)
+
+- Visual Preview run #469 completed with failure on the latest KT-412.1 candidate.
+- Confirmed passing across all tested targets: mobile bottom deck hidden with zero layout footprint; gesture checks (left/right, rotate, soft drop); 10:23 board cabinet ratio; no console/page/request errors; Block Run and Void/Prism invariants.
+- Remaining failures were isolated to wide landscape touch layouts (iOS 844x390, iOS 915x412, Android 873x393): desktop grid rules leaked into landscape touch viewports wider than 600px, causing the side rail and goals to overflow and the Hard Drop action to become clipped.
+- Added a dedicated landscape-touch override after the existing layout rules. It explicitly restores a compact full-width game grid, keeps the bottom deck hidden, compresses the side rail, and reserves a goals row beneath the board.
+- New commit: `72727f3fd9dd392553cd182538052f1398839ec0`.
+- This is a fix candidate only; it is not yet verified by a new CI run. Do not merge or publish until the rerun passes.
+
+## Recovery phrase — KT-412.2
+
+`TETRIOS — KT-412.2. Continue PR #61 from HEAD 72727f3fd9dd392553cd182538052f1398839ec0. Fix wide mobile landscape layout: force compact game grid for coarse landscape touch devices wider than 600px, keep bottom controls absent, fit 10:23 board, goals and side rail including Hold/Hard Drop. Re-run Cross-platform Visual Preview; do not merge or deploy until all landscape and portrait tests pass.`
