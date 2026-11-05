@@ -2,19 +2,19 @@ class_name BlockBuddiesModel
 extends RefCounted
 
 const WIDTH := 10
-const HEIGHT := 20
+const HEIGHT := 23
 const SHAPES: Array = [
 	[Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)],
-	[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
 	[Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1)],
-	[Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1)],
-	[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)],
 	[Vector2i(0, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1)],
-	[Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1)]
+	[Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1)],
+	[Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)],
+	[Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1)],
+	[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)]
 ]
 const PALETTE: Array[Color] = [
-	Color("#45d9f5"), Color("#f6d65b"), Color("#a78bfa"),
-	Color("#59e39a"), Color("#f28b65"), Color("#5d91ff"), Color("#f078bd")
+	Color("#5cf5e8"), Color("#9d7cff"), Color("#ffc86b"),
+	Color("#ff6f9e"), Color("#6ca8ff"), Color("#b6f27c"), Color("#ff9868")
 ]
 
 var grid: Array = []
