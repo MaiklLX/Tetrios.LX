@@ -14240,4 +14240,65 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.gameleftcol{min-height:0!important}
 }
 </style>
+
+<style id="bb-kt412-landscape-touch-qa-fix">
+/* KT-412.5: keep wide landscape touch HUD/goals in the compact phone layout.
+   WebKit applies the >=901px desktop rail sizing at 915px even in landscape. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game .gamehud{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-auto-flow:column!important;grid-auto-rows:minmax(0,1fr)!important;
+    width:100%!important;height:40px!important;min-height:40px!important;
+    max-height:40px!important;overflow:hidden!important;gap:4px!important;
+  }
+  #game .gamehud>.hudbox{
+    box-sizing:border-box!important;width:auto!important;min-width:0!important;
+    min-height:0!important;height:38px!important;max-height:38px!important;
+    margin:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    height:min(56dvh,calc(100dvh - 154px))!important;
+    max-height:calc(100dvh - 154px)!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-template-rows:repeat(5,minmax(0,1fr)) 36px!important;
+  }
+  #game>.playlayout>.sidecol:has(#chronoCard){
+    grid-template-rows:repeat(6,minmax(0,1fr)) 36px!important;
+  }
+  #game>.playlayout>.sidecol>.drop-card{
+    box-sizing:border-box!important;min-height:36px!important;height:36px!important;
+    max-height:36px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.sidecol .side-drop{
+    box-sizing:border-box!important;display:block!important;width:100%!important;
+    min-height:36px!important;height:36px!important;max-height:36px!important;
+    margin:0!important;padding:2px!important;
+  }
+  #game>.playlayout>.gameleftcol{
+    box-sizing:border-box!important;display:block!important;
+    grid-column:1/-1!important;grid-row:2!important;
+    width:100%!important;min-width:0!important;max-width:none!important;
+    height:auto!important;min-height:0!important;max-height:62px!important;
+    margin:0!important;padding:0!important;position:relative!important;
+    top:0!important;overflow:hidden!important;align-self:start!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    box-sizing:border-box!important;display:flex!important;
+    flex-direction:row!important;flex-wrap:nowrap!important;
+    align-items:stretch!important;justify-content:space-between!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:auto!important;min-height:0!important;max-height:60px!important;
+    margin:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div,
+  #game>.playlayout>.gameleftcol #campaignGoals>div{
+    box-sizing:border-box!important;flex:1 1 0!important;
+    min-width:0!important;max-width:none!important;overflow:hidden!important;
+  }
+}
+</style>
+
 </body></html>
