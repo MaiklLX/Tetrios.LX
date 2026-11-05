@@ -206,6 +206,8 @@ const targets = [
       const playlayout = document.querySelector('#game .playlayout');
       const game = document.querySelector('#game');
       const leftRail = document.querySelector('#game .gameleftcol');
+      const controlRow = document.querySelector('#game>.controls');
+      const hint = document.querySelector('#game>.hint');
       return {
         viewport: { width: innerWidth, height: innerHeight },
         document: {
@@ -214,6 +216,9 @@ const targets = [
         },
         frame: rect(frame),
         leftRail: rect(leftRail),
+        controlRow: rect(controlRow),
+        controlVisibility: controlRow ? {display:getComputedStyle(controlRow).display,visibility:getComputedStyle(controlRow).visibility,pointerEvents:getComputedStyle(controlRow).pointerEvents,buttons:Array.from(controlRow.querySelectorAll('.control')).map(node=>rect(node))} : null,
+        hint: rect(hint),
         side: rect(side),
         gameGrid: game ? { gridTemplateRows: getComputedStyle(game).gridTemplateRows, gridTemplateColumns: getComputedStyle(game).gridTemplateColumns, rowGap: getComputedStyle(game).rowGap } : null,
         sideScroll: side ? {
@@ -275,6 +280,12 @@ const targets = [
     }
     let sideScrollCheck = null;
     if (target.mobile) {
+      if (!geometry.controlRow || !geometry.controlVisibility || geometry.controlVisibility.display === 'none' || geometry.controlVisibility.visibility === 'hidden' || geometry.controlVisibility.pointerEvents === 'none' || geometry.controlVisibility.buttons.length !== 3 || geometry.controlVisibility.buttons.some(button => !button || button.height < 48)) {
+        failures.push(target.name + ': primary mobile movement/rotation deck is hidden or has undersized touch targets');
+      }
+      if (!geometry.controlRow || !geometry.controlRow.height || geometry.controlRow.bottom > target.height + 2 || geometry.controlRow.bottom < target.height - 80) {
+        failures.push(target.name + ': mobile control deck is clipped or leaves excessive unused space at the bottom (' + JSON.stringify(geometry.controlRow) + ')');
+      }
       if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36) {
         failures.push(target.name + ': Hard Drop control is missing or too small');
       }
