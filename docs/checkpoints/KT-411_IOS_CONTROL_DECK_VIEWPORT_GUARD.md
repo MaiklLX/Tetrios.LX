@@ -48,3 +48,12 @@
 - Added a final, narrowly scoped short-portrait rule (max-height 860px) that caps board width to 51vw while preserving the 10:23 ratio; also removed the 20px relative top offset from the goal rail on those short screens.
 - Follow-up code commit: `469d1b9c28abb52eba61b33419359900411ff4be`.
 - This is a new candidate fix, not yet validated. Re-run both visual workflows and inspect 375×812, 390×844, 412×915, and 430×932 before considering merge or main publication.
+
+
+## Short control-row correction — 2026-11-05
+
+- Cross-platform run `42062164773` completed; capture step failed on the two short iOS WebKit sizes. Report confirms the 375×812 control row bottom at 816px and 390×844 at 859.98px. Wider iOS sizes (412×915 and 430×932) and desktop Chromium fit; no page errors, console errors, or failed requests.
+- Desktop daily-challenge screenshot confirms the active objective is visible in the arena header (example: `12 линий`).
+- Added a narrowly scoped `translateY(-20px)` to the mobile control row only, for portrait viewports up to 860px high. This does not alter desktop controls, board geometry, or gameplay.
+- Code commit: `433f7686b0d83a829c1dc4925017cce42bf1aac9`.
+- This is an unvalidated candidate. Wait for the next cross-platform and mobile preview workflows, then inspect the two short viewport measurements and screenshots before further changes. Keep PR #59 Draft; no merge, public deployment, or APK build/release.
