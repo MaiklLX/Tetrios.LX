@@ -124,6 +124,40 @@ const targets = [
     await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     await campaignPage.close();
 
+    // Daily challenge objective must remain visible after the player enters the arena.
+    const dailyPage = await context.newPage();
+    dailyPage.setDefaultTimeout(15000);
+    dailyPage.setDefaultNavigationTimeout(30000);
+    dailyPage.on('pageerror', error => pageErrors.push('daily: ' + (error.stack || String(error))));
+    dailyPage.on('console', message => { if (message.type() === 'error') consoleErrors.push('daily: '+message.text()); });
+    dailyPage.on('requestfailed', request => failedRequests.push({url:request.url(),failure:request.failure()?.errorText||'unknown',page:'daily'}));
+    await dailyPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await dailyPage.locator('button.mode[data-mode="daily"]').click();
+    await dailyPage.locator('#dailyStart:not([disabled])').click();
+    await dailyPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
+    await dailyPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
+    await dailyPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
+    await dailyPage.locator('#game #dailyMissionGoal:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
+    await dailyPage.waitForTimeout(500);
+    const dailyGoalState = await dailyPage.evaluate(() => {
+      const panel=document.querySelector('#game #dailyMissionGoal');
+      const rect=panel?.getBoundingClientRect();
+      return {
+        visible:!!panel&&getComputedStyle(panel).display!=='none'&&getComputedStyle(panel).visibility!=='hidden'&&rect.width>0&&rect.height>0,
+        text:panel?.innerText?.replace(/\\s+/g,' ').trim()||'',
+        parentId:panel?.parentElement?.id||'',
+        parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
+        rect:rect?{x:rect.x,y:rect.y,width:rect.width,height:rect.height}:null
+      };
+    });
+    if (!dailyGoalState.visible) failures.push(target.name + ': daily challenge objective is not visible inside the arena');
+    if (!dailyGoalState.text.includes('ЦЕЛЬ ИСПЫТАНИЯ')) failures.push(target.name + ': daily objective label is missing');
+    if (!dailyGoalState.text.match(/\\d+\\s*линий|\\d+\\s*очков|секунд/i)) failures.push(target.name + ': daily objective value is missing (' + dailyGoalState.text + ')');
+    if (!target.mobile && !dailyGoalState.parentClass.includes('game-heading-copy')) failures.push(target.name + ': desktop daily objective is not attached to the arena heading');
+    if (target.mobile && dailyGoalState.parentId !== 'game') failures.push(target.name + ': mobile daily objective was moved out of its original layout');
+    await dailyPage.screenshot({ path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
+    await dailyPage.close();
+
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#bbConfirmStartHero').evaluate(element => element.click());
