@@ -25,6 +25,8 @@ var score := 0
 var lines := 0
 var level := 1
 var game_over := false
+var piece_bag: Array[int] = []
+var last_random_type := -1
 
 func reset() -> void:
 	grid.clear()
@@ -37,12 +39,40 @@ func reset() -> void:
 	lines = 0
 	level = 1
 	game_over = false
+	piece_bag.clear()
+	last_random_type = -1
 	_spawn()
 
+func _next_piece_type() -> int:
+	if piece_bag.is_empty():
+		piece_bag.clear()
+		for piece_index in range(SHAPES.size()):
+			piece_bag.append(piece_index)
+		for i in range(piece_bag.size() - 1, 0, -1):
+			var j := randi_range(0, i)
+			var swap_value := piece_bag[i]
+			piece_bag[i] = piece_bag[j]
+			piece_bag[j] = swap_value
+		# Match the web source: no repeated piece at a seven-bag boundary.
+		if piece_bag.size() > 1 and piece_bag[0] == last_random_type:
+			var swap_index := randi_range(1, piece_bag.size() - 1)
+			var first_value := piece_bag[0]
+			piece_bag[0] = piece_bag[swap_index]
+			piece_bag[swap_index] = first_value
+	var next_type: int = piece_bag.pop_front()
+	last_random_type = next_type
+	return next_type
+
+func _centered_spawn_x(cells: Array) -> int:
+	var shape_width := 0
+	for cell in cells:
+		shape_width = maxi(shape_width, cell.x + 1)
+	return floori(float(WIDTH - shape_width) / 2.0)
+
 func _spawn() -> void:
-	active_type = randi() % SHAPES.size()
+	active_type = _next_piece_type()
 	active_cells = SHAPES[active_type].duplicate()
-	origin = Vector2i(3, 0)
+	origin = Vector2i(_centered_spawn_x(active_cells), 0)
 	if _collides(origin, active_cells):
 		game_over = true
 
@@ -75,7 +105,7 @@ func rotate_piece() -> void:
 		min_y = mini(min_y, cell.y)
 	for i in range(rotated.size()):
 		rotated[i] -= Vector2i(min_x, min_y)
-	for kick in [0, -1, 1, -2, 2]:
+	for kick in [0, -1, 1]:
 		var candidate := origin + Vector2i(kick, 0)
 		if not _collides(candidate, rotated):
 			origin = candidate
