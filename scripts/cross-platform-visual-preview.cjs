@@ -184,9 +184,16 @@ const targets = [
         const centerX=rect.left+rect.width*.5,centerY=rect.top+rect.height*.38;
         let identifier=71;
         const send=(type,x,y,active=true)=>{
-          const touch=new Touch({identifier, target:board, clientX:x, clientY:y, pageX:x, pageY:y, screenX:x, screenY:y});
-          const event=new TouchEvent(type,{bubbles:true,cancelable:true,
-            touches:active?[touch]:[],targetTouches:active?[touch]:[],changedTouches:[touch]});
+          // WebKit does not expose a constructible Touch/TouchEvent in every
+          // automation context. Use a bubbling Event with Touch-shaped objects
+          // so the game's production listeners receive the same read-only fields.
+          const touch={identifier,target:board,clientX:x,clientY:y,pageX:x,pageY:y,screenX:x,screenY:y};
+          const event=new Event(type,{bubbles:true,cancelable:true});
+          Object.defineProperties(event,{
+            touches:{value:active?[touch]:[]},
+            targetTouches:{value:active?[touch]:[]},
+            changedTouches:{value:[touch]}
+          });
           board.dispatchEvent(event);
         };
         const state=()=>qa.getPieceState().piece;
