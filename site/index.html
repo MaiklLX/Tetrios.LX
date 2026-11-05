@@ -14058,7 +14058,7 @@ body .app{background:transparent!important;background-color:transparent!importan
     border:0!important;overflow:hidden!important;
   }
   #game>.hint{grid-row:auto!important;margin:7px 2px 2px!important}
-  #game>.playlayout{
+  #game>.playlayout,#game.unified-game-layout>.playlayout{
     grid-template-columns:minmax(0,1fr) minmax(112px,32%)!important;
     grid-template-rows:auto auto!important;align-items:stretch!important;
     gap:8px!important;padding:7px!important;
@@ -14081,11 +14081,11 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important;top:0!important}
 }
 @media (max-width:380px) and (orientation:portrait){
-  #game>.playlayout{grid-template-columns:minmax(0,1fr) minmax(108px,34%)!important;gap:6px!important;padding:5px!important}
+  #game>.playlayout,#game.unified-game-layout>.playlayout{grid-template-columns:minmax(0,1fr) minmax(108px,34%)!important;gap:6px!important;padding:5px!important}
   #game>.playlayout>.sidecol{gap:5px!important}
 }
 @media (max-width:600px) and (orientation:landscape){
-  #game>.playlayout{grid-template-columns:minmax(0,1fr) minmax(112px,25%)!important;grid-template-rows:minmax(0,1fr) auto!important;align-items:center!important}
+  #game>.playlayout,#game.unified-game-layout>.playlayout{grid-template-columns:minmax(0,1fr) minmax(112px,25%)!important;grid-template-rows:minmax(0,1fr) auto!important;align-items:center!important}
   #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
     width:auto!important;height:min(72dvh,calc(100dvh - 138px))!important;
     max-height:72dvh!important;aspect-ratio:10/23!important;
