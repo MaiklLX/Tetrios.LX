@@ -31,7 +31,7 @@ concurrency:
 jobs:
   visual-preview:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Check out source without deploying
         uses: actions/checkout@v4
@@ -61,10 +61,14 @@ jobs:
           node site/validate-3d-runtime.mjs
           node site/validate-gameplay-modes.mjs
 
-      - name: Install Playwright Chromium and WebKit
+      - name: Install Playwright browsers
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install chromium webkit
+
+      - name: Install WebKit system dependencies
+        timeout-minutes: 8
+        run: npx playwright install-deps webkit
 
       - name: Start local preview server
         shell: bash
