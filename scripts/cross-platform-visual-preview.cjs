@@ -185,13 +185,15 @@ const targets = [
           const card=document.querySelector('#bbHeroSkillCard');
           const copy=card?.querySelector('.bb-hero-skill-copy');
           const art=card?.querySelector('.bb-hero-skill-art');
-          const style=document.querySelector('#bb-mobile-hero-skill-final-override-kt40713');
+          const style=document.querySelector('#bb-mobile-hero-skill-final-override-kt40715');
           const cr=card?.getBoundingClientRect();
           return {
             media520:matchMedia('(max-width:520px)').matches,
             mediaPortrait:matchMedia('(orientation:portrait)').matches,
             cardFound:!!card,
             gameAncestor:!!card?.closest('#game'),
+            parentChain:card?(()=>{const chain=[];let node=card;while(node&&chain.length<6){chain.push({tag:node.tagName,id:node.id||'',className:typeof node.className==='string'?node.className:''});node=node.parentElement;}return chain;})():[],
+            intendedSelectorMatches:!!card?.matches('html body #game #bbHeroSkillCard'),
             cardInline:card?.getAttribute('style')||null,
             cardComputed:card?{height:getComputedStyle(card).height,minHeight:getComputedStyle(card).minHeight,padding:getComputedStyle(card).padding,gap:getComputedStyle(card).gap,display:getComputedStyle(card).display}:null,
             copyDisplay:copy?getComputedStyle(copy).display:null,
