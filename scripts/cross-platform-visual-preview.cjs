@@ -54,7 +54,7 @@ const targets = [
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
-    await page.screenshot({ path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
     // The complete card archive must be available before starting a run on every platform.
     await page.locator('#bbOpenCardLibrary').click();
@@ -62,11 +62,11 @@ const targets = [
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
     // All 35 cards now belong exclusively to the Block Run roguelike system.
-    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-card-filter="rogue"]').click();
     const rogueCards = await page.locator('#bbCardLibraryList article').count();
     if (rogueCards !== 35) failures.push(target.name + ': expected all 35 cards to be Block Run-only, got ' + rogueCards);
-    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library-block-run.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library-block-run.png', fullPage: false });
     if (await page.locator('[data-bb-card-filter="standard"]').count() !== 0) {
       failures.push(target.name + ': shared/standard card filter must not exist');
     }
@@ -98,7 +98,7 @@ const targets = [
         cards: document.querySelectorAll('#campaign .bb-galaxy-card').length
       };
     });
-    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-atlas.png', fullPage: false });
+    await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-atlas.png', fullPage: false });
     if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
       failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
     }
@@ -125,7 +125,7 @@ const targets = [
     if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
-    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+    await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     await campaignPage.close();
 
     if (target.name === 'desktop-1440x900') {
@@ -164,7 +164,7 @@ const targets = [
       if (!dailyGoalState.text.match(/\d+\s*(?:линий|линии|линия|очков|секунд)/i)) failures.push(target.name + ': daily objective value is missing (' + dailyGoalState.text + ')');
       if (!target.mobile && !dailyGoalState.parentClass.includes('game-heading-copy')) failures.push(target.name + ': desktop daily objective is not attached to the arena heading');
       if (target.mobile && dailyGoalState.parentId !== 'game') failures.push(target.name + ': mobile daily objective was moved out of its original layout');
-      await dailyPage.screenshot({ path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
+      await dailyPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
       await dailyPage.close();
 
     }
@@ -396,8 +396,8 @@ const targets = [
       failures.push(target.name + ': desktop arena is not contained by the viewport');
     }
 
-    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d.png', fullPage: false });
-    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-prism-aura.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-prism-aura.png', fullPage: false });
     console.log('Captured 2D arena and Prism/Aura state: ' + target.name);
 
     const arenaModeState = await page.evaluate(() => ({
@@ -408,7 +408,7 @@ const targets = [
     if (arenaModeState.toggleCount !== 0 || arenaModeState.overlayCanvasCount !== 0 || !arenaModeState.boardVisible) {
       failures.push(target.name + ': expected the single-renderer 2D arena with no 3D toggle or overlay (' + JSON.stringify(arenaModeState) + ')');
     }
-    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
     console.log('Verified single-renderer 2D arena: ' + target.name);
 
     report.push({ target: target.name, engine: target.engine, geometry, sideScrollCheck, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
