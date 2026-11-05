@@ -30,3 +30,12 @@
 ## Recovery phrase
 
 `TETRIOS — КТ-411. Продолжаем fix/kt411-ios-control-deck-viewport-guard-2026-11-05 от a58497b3cfbd95e8c18e61f719dbab76f2827204. Проверить Cross-platform Visual Preview 375×812 и 390×844, Mobile Arena Visual Preview и скриншоты. APK не собирать/не выпускать. Не сливать и не публиковать до проверки.`
+
+
+## Regression diagnosis and correction — 2026-11-05
+
+- Cross-platform run `42060911718` completed with two failures: WebKit 375×812 control deck bottom at 816px; 390×844 at 859.98px.
+- Screenshot and geometry review identified the actual cause: legacy mobile CSS applied vertical transforms to `#game>.playlayout>.gameleftcol`, `#game>.controls`, and `#game>.hint` (+16px on narrow phones, +6px and +28px in overlapping viewport rules). These offsets overrode the intended compact layout and displaced the lower HUD/control deck.
+- Corrected by adding a final portrait-only KT-411 override setting those three elements to `transform:none`. Board ratio, gameplay, touch target sizing, and desktop layout remain unchanged.
+- Fix commit: `92b6388798077f1edd9a922fb1d95e4df2ac5ee7`.
+- Re-run both visual workflows and review all viewport screenshots before merge. No production deployment and no APK build/release.
