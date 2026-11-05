@@ -6929,13 +6929,21 @@ function bbGoalsRail(game) {
     const board = layout.querySelector(':scope > div:first-child');
     layout.insertBefore(rail, board || layout.firstChild);
   }
-  // Keep the live HUD in the same left rail as dynamic goals. The legacy
-  // desktop grid reserves this column; leaving the HUD outside the playlayout
-  // creates an empty rail and shifts the board/right tools out of balance.
+  // Desktop uses the left rail for the live HUD and goals. Mobile keeps
+  // its established HUD-above-board flow and its separate lower goal rail.
   const hud = game.querySelector(':scope > .gamehud');
-  if (hud && hud.parentElement !== rail) rail.prepend(hud);
+  if (window.matchMedia('(min-width: 901px)').matches) {
+    if (hud && hud.parentElement !== rail) rail.prepend(hud);
+  } else if (hud && hud.parentElement === rail) {
+    game.insertBefore(hud, layout);
+  }
   return rail;
 }
+
+window.addEventListener('resize', () => {
+  const game = $('game');
+  if (game && !game.hidden) bbGoalsRail(game);
+}, { passive: true });
 
 function bbRenderGoals() {
   const rogueOld = $('rogueGoals');
