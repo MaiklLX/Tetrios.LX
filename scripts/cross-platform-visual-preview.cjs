@@ -181,6 +181,26 @@ const targets = [
           clientHeight: side.clientHeight,
           maxScroll: Math.max(0, side.scrollHeight - side.clientHeight)
         } : null,
+        heroSkillDiagnostic: (() => {
+          const card=document.querySelector('#bbHeroSkillCard');
+          const copy=card?.querySelector('.bb-hero-skill-copy');
+          const art=card?.querySelector('.bb-hero-skill-art');
+          const style=document.querySelector('#bb-mobile-hero-skill-final-override-kt40713');
+          const cr=card?.getBoundingClientRect();
+          return {
+            media520:matchMedia('(max-width:520px)').matches,
+            mediaPortrait:matchMedia('(orientation:portrait)').matches,
+            cardFound:!!card,
+            gameAncestor:!!card?.closest('#game'),
+            cardInline:card?.getAttribute('style')||null,
+            cardComputed:card?{height:getComputedStyle(card).height,minHeight:getComputedStyle(card).minHeight,padding:getComputedStyle(card).padding,gap:getComputedStyle(card).gap,display:getComputedStyle(card).display}:null,
+            copyDisplay:copy?getComputedStyle(copy).display:null,
+            artDisplay:art?getComputedStyle(art).display:null,
+            overrideStyleFound:!!style,
+            overrideRuleCount:style?.sheet?.cssRules?.length??null,
+            rect:cr?{width:cr.width,height:cr.height}:null
+          };
+        })(),
         utilityCards: side ? Array.from(side.querySelectorAll('.sidecard, .bb-hero-skill-slot')).filter(node => {
           const r = node.getBoundingClientRect();
           return r.width > 0 && r.height > 0;
