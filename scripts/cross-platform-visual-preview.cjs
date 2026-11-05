@@ -280,11 +280,30 @@ const targets = [
     }
     let sideScrollCheck = null;
     if (target.mobile) {
-      if (!geometry.controlRow || !geometry.controlVisibility || geometry.controlVisibility.display === 'none' || geometry.controlVisibility.visibility === 'hidden' || geometry.controlVisibility.pointerEvents === 'none' || geometry.controlVisibility.buttons.length !== 3 || geometry.controlVisibility.buttons.some(button => !button || button.height < 48)) {
-        failures.push(target.name + ': primary mobile movement/rotation deck is hidden or has undersized touch targets');
+      // KT-412 intentionally replaces the bottom movement/rotation deck with
+      // board gestures. Assert the old deck is absent and the board is the
+      // active touch surface; do not fail because legacy buttons are hidden.
+      if (geometry.controlRow && geometry.controlVisibility &&
+          geometry.controlVisibility.display !== 'none' &&
+          geometry.controlVisibility.visibility !== 'hidden') {
+        failures.push(target.name + ': legacy bottom movement deck should be hidden in gesture-first mobile mode');
       }
-      if (!geometry.controlRow || !geometry.controlRow.height || geometry.controlRow.bottom > target.height + 2 || geometry.controlRow.bottom < target.height - 80) {
-        failures.push(target.name + ': mobile control deck is clipped or leaves excessive unused space at the bottom (' + JSON.stringify(geometry.controlRow) + ')');
+      const boardGestureState = await page.evaluate(() => {
+        const board = document.querySelector('#game #board');
+        const frame = document.querySelector('#game .boardframe');
+        const style = board ? getComputedStyle(board) : null;
+        const rect = board?.getBoundingClientRect();
+        return {
+          boardFound: !!board,
+          frameFound: !!frame,
+          boardVisible: !!rect && rect.width > 0 && rect.height > 0 &&
+            style.display !== 'none' && style.visibility !== 'hidden',
+          touchAction: style?.touchAction || '',
+          frameRatio: frame ? frame.getBoundingClientRect().width / frame.getBoundingClientRect().height : 0
+        };
+      });
+      if (!boardGestureState.boardFound || !boardGestureState.boardVisible || boardGestureState.touchAction !== 'none') {
+        failures.push(target.name + ': gesture-first board touch surface is missing or does not suppress browser gestures (' + JSON.stringify(boardGestureState) + ')');
       }
       if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36) {
         failures.push(target.name + ': Hard Drop control is missing or too small');
