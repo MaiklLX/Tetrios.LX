@@ -7387,6 +7387,20 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
+function bbSyncDailyGoalPlacement(){
+  const game=$('game');
+  const panel=$('dailyMissionGoal');
+  const headingCopy=game?.querySelector('.game-heading-copy');
+  const screenHead=game?.querySelector('.screenhead');
+  if(!game||!panel||!screenHead)return;
+  if(mode==='daily'&&!panel.hidden&&window.matchMedia('(min-width:901px)').matches&&headingCopy){
+    if(panel.parentElement!==headingCopy)headingCopy.appendChild(panel);
+  }else if(panel.parentElement!==game){
+    game.insertBefore(panel,screenHead.nextSibling);
+  }
+}
+window.addEventListener('resize',bbSyncDailyGoalPlacement,{passive:true});
+
 function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;bbVoidLastAppliedLevel=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(mode==='rogue'&&bbSelectedHero==='blip'&&upgrades.length){
@@ -7431,7 +7445,7 @@ if (mode === 'daily') {
     $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
   }
 }
-show('game');bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);bbRenderHeroSkillSlot();
+show('game');bbSyncDailyGoalPlacement();bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);bbRenderHeroSkillSlot();
 if(
   mode==='daily' &&
   bbIsDailyMechanic('chronoRift') &&
@@ -13683,6 +13697,39 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
   #game.unified-game-layout>.playlayout>.sidecol>.sidecard:has(#timer) #holdBtn{
     padding-inline:2px!important;white-space:nowrap!important;overflow:hidden!important;
+  }
+}
+</style>
+<style id="bb-desktop-daily-objective-hud-v1">
+/* Keep today's challenge target beside the arena title on desktop.
+   It remains visible for the entire run, without requiring the player to
+   remember the objective from the challenge-selection screen. */
+@media (min-width:901px){
+  #game .game-heading-copy{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto auto!important;
+    align-items:center!important;
+    column-gap:18px!important;
+    row-gap:1px!important;
+  }
+  #game .game-heading-copy h2{grid-column:1!important;grid-row:1!important;min-width:0}
+  #game .game-heading-copy p{grid-column:1!important;grid-row:2!important;min-width:0}
+  #game .game-heading-copy #dailyMissionGoal:not([hidden]){
+    grid-column:2!important;grid-row:1 / span 2!important;
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    gap:14px!important;width:auto!important;min-width:190px!important;max-width:340px!important;
+    min-height:34px!important;margin:0!important;padding:6px 12px!important;
+    border:1px solid rgba(255,200,107,.5)!important;border-left:3px solid #ffc86b!important;
+    border-radius:10px!important;background:linear-gradient(105deg,rgba(255,200,107,.16),rgba(17,26,48,.9))!important;
+    box-shadow:0 0 18px rgba(255,200,107,.08),inset 0 1px rgba(255,255,255,.06)!important;
+    color:#ffe1a3!important;white-space:nowrap!important;
+  }
+  #game .game-heading-copy #dailyMissionGoal .daily-mission-label{
+    color:#ffd98c!important;font-size:9px!important;font-weight:900!important;letter-spacing:.09em!important;
+  }
+  #game .game-heading-copy #dailyMissionGoalText{
+    color:#fff!important;font-size:14px!important;font-weight:900!important;
   }
 }
 </style>
