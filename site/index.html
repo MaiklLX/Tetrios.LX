@@ -13509,4 +13509,69 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-mobile-arena-two-rail-fix-kt406">
+/* KT-406: the public phone DOM has no .gameleftcol: bbArrangeModeHud moves
+   the metrics above the playlayout, leaving only board + utility rail.
+   The legacy three-track shell reserved an empty left track and pushed both
+   live children one column to the right. Keep the three-track layout only
+   when a real goals rail exists; otherwise use two tracks on the game grid. */
+@media (max-width:520px) and (orientation:portrait){
+  #game:not([hidden]):not(:has(.gameleftcol)){
+    grid-template-columns:minmax(0,1fr) minmax(68px,clamp(72px,22vw,88px))!important;
+  }
+  #game:not([hidden])>.playlayout{
+    display:contents!important;
+  }
+  #game:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    grid-column:1!important;
+    grid-row:4!important;
+    min-width:0!important;
+    width:100%!important;
+    justify-self:stretch!important;
+    align-self:center!important;
+  }
+  #game:not([hidden])>.playlayout>.sidecol{
+    grid-column:2!important;
+    grid-row:4!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    min-height:0!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
+    align-self:center!important;
+  }
+  #game:not([hidden]):not(:has(.gameleftcol))>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(66dvh,calc((100vw - 142px)*2.3),570px)/2.3))!important;
+    height:auto!important;
+    aspect-ratio:10/23!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    margin-inline:auto!important;
+  }
+  #game:not([hidden])>.playlayout>.sidecol::-webkit-scrollbar{
+    display:none!important;width:0!important;height:0!important;
+  }
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game:not([hidden]):not(:has(.gameleftcol)){
+    grid-template-columns:minmax(0,1fr) minmax(66px,22vw)!important;
+  }
+  #game:not([hidden])>.playlayout>.sidecol{
+    height:min(60dvh,calc((100vw - 132px)*2.3),520px)!important;
+    max-height:min(60dvh,calc((100vw - 132px)*2.3),520px)!important;
+  }
+  #game:not([hidden]):not(:has(.gameleftcol))>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(60dvh,calc((100vw - 132px)*2.3),520px)/2.3))!important;
+    max-height:min(60dvh,calc((100vw - 132px)*2.3),520px)!important;
+  }
+}
+</style>
+
 </body></html>
