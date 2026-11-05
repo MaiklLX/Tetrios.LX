@@ -5309,19 +5309,19 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 <link rel="stylesheet" href="././././desktop-shell.css?v=20261103-desktop-arena-v12">
 <link rel="stylesheet" href="./visual-refresh-kt402.css?v=20261104-kt402">
-<style id="bb-mobile-hero-skill-icon-only-kt4079">
-/* KT-407.9: keep hero skill copy out of the narrow mobile utility rail.
-   This rule is inside the document head/body cascade and follows legacy overrides. */
+<style id="bb-mobile-hero-skill-icon-only-kt40711">
+/* KT-407.11: target the unique skill-card ID directly; the card is not reliably
+   nested under #game in every runtime layout. */
 @media (max-width:520px) and (orientation:portrait){
-  #game #bbHeroSkillCard .bb-hero-skill-copy{display:none!important}
-  #game #bbHeroSkillCard{
+  #bbHeroSkillCard .bb-hero-skill-copy{display:none!important}
+  #bbHeroSkillCard{
     display:flex!important;align-items:center!important;justify-content:center!important;
     min-height:54px!important;height:54px!important;padding:5px!important;gap:0!important;
   }
-  #game #bbHeroSkillCard .bb-hero-skill-art{
-    display:block!important;flex:0 0 36px!important;width:36px!important;height:36px!important;
+  #bbHeroSkillCard .bb-hero-skill-art{
+    display:grid!important;place-items:center!important;flex:0 0 36px!important;width:36px!important;height:36px!important;
   }
-  #game #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;right:5px!important;top:4px!important}
+  #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;right:5px!important;top:4px!important}
 }
 </style>
 </head>
