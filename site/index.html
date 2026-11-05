@@ -8283,7 +8283,7 @@ cv.addEventListener('touchstart', e => {
   touch = {
     x:t.clientX, y:t.clientY, lastX:t.clientX, lastY:t.clientY,
     at:performance.now(), axis:null, pieceRef:piece,
-    softSteps:0, consumed:false
+    softSteps:0, dropped:false, consumed:false
   };
   audioCtx();
 }, {passive:false});
@@ -8310,12 +8310,14 @@ cv.addEventListener('touchmove', e => {
       step=t.clientX-touch.lastX;
       if (piece!==touch.pieceRef) touch.consumed=true;
     }
-  } else if (touch.axis==='y' && dy>0) {
-    while (t.clientY-touch.lastY>=24 && !touch.consumed) {
-      touch.lastY+=24;
+  } else if (touch.axis==='y'&&dy>0) {
+    // Soft-drop is incremental during touchmove; touchend never replays slow swipes.
+    while(t.clientY-touch.lastY>=28&&!touch.dropped&&!touch.consumed){
+      touch.lastY+=28;
       touch.softSteps++;
       move(0,1);
       if (piece!==touch.pieceRef) {
+        touch.dropped=true;
         touch.consumed=true;
         lockTouchDrop(300);
       }
