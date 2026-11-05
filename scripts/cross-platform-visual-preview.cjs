@@ -283,8 +283,8 @@ const targets = [
       if (!geometry.controlRow || !geometry.controlVisibility || geometry.controlVisibility.display === 'none' || geometry.controlVisibility.visibility === 'hidden' || geometry.controlVisibility.pointerEvents === 'none' || geometry.controlVisibility.buttons.length !== 3 || geometry.controlVisibility.buttons.some(button => !button || button.height < 48)) {
         failures.push(target.name + ': primary mobile movement/rotation deck is hidden or has undersized touch targets');
       }
-      if (!geometry.hint || geometry.hint.height < 28 || geometry.hint.bottom < target.height - 150) {
-        failures.push(target.name + ': mobile arena lower control deck does not use the available screen space');
+      if (!geometry.controlRow || !geometry.controlRow.height || geometry.controlRow.bottom > target.height + 2 || geometry.controlRow.bottom < target.height - 80) {
+        failures.push(target.name + ': mobile control deck is clipped or leaves excessive unused space at the bottom (' + JSON.stringify(geometry.controlRow) + ')');
       }
       if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36) {
         failures.push(target.name + ': Hard Drop control is missing or too small');
