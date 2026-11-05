@@ -1,0 +1,32 @@
+# KT-411 — Keep the mobile control deck inside short WebKit viewports
+
+- Date: 2026-11-05
+- Base: `0047948ae2d8591e5de503efd258832ad4a133e2`
+- Branch: `fix/kt411-ios-control-deck-viewport-guard-2026-11-05`
+- Scope: mobile board vertical sizing only; no gameplay logic, desktop CSS, or APK workflow changes.
+
+## Evidence
+
+- KT-410 Mobile Arena Visual Preview passed (run `42058431345`).
+- KT-410 Cross-platform Visual Preview failed only on the iOS-WebKit short portrait checks:
+  - 375×812: control deck bottom at 816px (4px beyond viewport).
+  - 390×844: control deck bottom at 859.98px (about 16px beyond viewport).
+- The 2D board retained its 10:23 aspect ratio and page errors were empty.
+- The failure was caused by the board consuming too much vertical space for the control deck and hint at shorter viewport heights.
+
+## Change
+
+- Tighten the mobile cabinet cap from `calc(100dvh - 325px)` to `calc(100dvh - 350px)`.
+- Keep the existing 63dvh cap, 10:23 board ratio, control sizes, and touch layout.
+- No APK build, signing, or release is part of this task.
+
+## Acceptance
+
+- Cross-platform Visual Preview must pass at 375×812 and 390×844 WebKit, plus the existing desktop Chromium and wider mobile WebKit captures.
+- Mobile Arena Visual Preview must remain green.
+- Review screenshots and geometry before merging. No production deployment until the user-approved merge.
+- A Playwright WebKit pass is not a substitute for a physical iPhone Safari check.
+
+## Recovery phrase
+
+`TETRIOS — КТ-411. Продолжаем fix/kt411-ios-control-deck-viewport-guard-2026-11-05 от a58497b3cfbd95e8c18e61f719dbab76f2827204. Проверить Cross-platform Visual Preview 375×812 и 390×844, Mobile Arena Visual Preview и скриншоты. APK не собирать/не выпускать. Не сливать и не публиковать до проверки.`
