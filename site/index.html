@@ -13607,4 +13607,18 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+<style id="bb-mobile-390-playlayout-explicit-row-kt4077">
+/* KT-407.7: iOS WebKit 390px auto-placed the arena into the short HUD track
+   (row 3) while the reserved 10:23 cabinet track is row 4. Pin only this
+   viewport band to the reserved arena row; 375/412 and desktop stay untouched. */
+@media (min-width:381px) and (max-width:400px) and (orientation:portrait){
+  #game>.playlayout{
+    grid-column:1/-1!important;
+    grid-row:4!important;
+    align-self:stretch!important;
+    min-height:0!important;
+  }
+}
+</style>
+
 </body></html>
