@@ -8297,10 +8297,10 @@ cv.addEventListener('touchmove', e => {
     return;
   }
   const t=e.changedTouches[0];
-  const dx=t.clientX-touch.x, dy=t.clientY-touch.y;
-  if (!touch.axis && (Math.abs(dx)>=9 || Math.abs(dy)>=9)) {
-    if (Math.abs(dx)>Math.abs(dy)*1.18) touch.axis='x';
-    else if (Math.abs(dy)>Math.abs(dx)*1.18) touch.axis='y';
+  const tx=t.clientX-touch.x,ty=t.clientY-touch.y;
+  if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
+    if(Math.abs(tx)>Math.abs(ty)*1.25) touch.axis='x';
+    else if(Math.abs(ty)>Math.abs(tx)*1.25) touch.axis='y';
   }
   if (touch.axis==='x') {
     let step=t.clientX-touch.lastX;
@@ -8310,7 +8310,7 @@ cv.addEventListener('touchmove', e => {
       step=t.clientX-touch.lastX;
       if (piece!==touch.pieceRef) touch.consumed=true;
     }
-  } else if (touch.axis==='y'&&dy>0) {
+  } else if(touch.axis==='y'&&ty>0){
     // Soft-drop is incremental during touchmove; touchend never replays slow swipes.
     while(t.clientY-touch.lastY>=28&&!touch.dropped&&!touch.consumed){
       touch.lastY+=28;
