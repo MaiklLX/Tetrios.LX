@@ -22,3 +22,16 @@
 
 ## Control phrase for a new chat
 `BLOCK BUDDIES GODOT — KT-GODOT-001.1. Продолжаем нативную Android-версию в ветке godot/android-native-foundation-2026-11-05. main не трогать, старую игру не ломать, APK пока не собирать. Сначала проверить Godot CI и детерминированные тесты, затем провести полный аудит исходных режимов и начать визуальную сцену с 3D Buddy.`
+
+
+## KT-GODOT-001.2 — Legacy board dimensions and tetromino identity
+- Date: 2026-11-05
+- Source baseline: `main@8fc2b889524d3dcaf87439efe57aa74dc68e1042`
+- Godot branch: `godot/android-native-foundation-2026-11-05`
+- Corrected the native board from 10×20 to the source game's 10×23.
+- Reordered the seven tetromino definitions to source order I/T/J/L/O/S/Z.
+- Matched the seven source piece colors.
+- Updated deterministic model fixture and board layout sizing.
+- Source parity audit started in `godot/docs/PARITY_MATRIX.md`; still in progress. Score, rotation, randomizer, timers, Hold, mode progression, rewards and persistence are not yet parity-approved.
+- No APK built. No change to `main`.
+
