@@ -64,7 +64,7 @@ jobs:
       - name: Install Playwright Chromium and WebKit
         run: |
           npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium webkit
+          npx playwright install chromium webkit
 
       - name: Start local preview server
         shell: bash
