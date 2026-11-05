@@ -9285,6 +9285,14 @@ if (resetProgressBtn) {
   // Explicitly gated visual QA hook; absent from normal gameplay sessions.
   if(new URLSearchParams(location.search).get('qaVisual')==='1'){
     window.__TETRIOS_QA__={
+      prepareGestureTest(){
+        board=Array.from({length:H},()=>Array(W).fill(0));
+        piece={t:0,shape:[[0,1,0],[1,1,1]],x:3,y:4};
+        started=true;paused=false;gameOver=false;touch=null;touchDropLocked=false;
+        bbHardDropAcceptedAt=0;bbHardDropInProgress=false;
+        render();
+        return {ready:!!piece,x:piece.x,y:piece.y};
+      },
       getPieceState(){
         return {piece:piece?JSON.parse(JSON.stringify(piece)):null,started,paused,gameOver};
       },
