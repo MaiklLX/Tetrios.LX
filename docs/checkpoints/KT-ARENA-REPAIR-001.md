@@ -11,7 +11,7 @@ The desktop stylesheet forced the gameplay area into a three-column grid and pla
 
 ## Repair
 
-- `bbGoalsRail(game)` now mounts the existing live `.gamehud` into the same left rail used by campaign/Block Run goals.
+- `bbGoalsRail(game)` mounts the existing live `.gamehud` into the left rail on desktop only; mobile retains its HUD-above-board layout and lower goal rail. A resize sync handles breakpoint changes.
 - Desktop grid explicitly reserves equal side rails around the centered 10×23 board.
 - Left HUD, goals, center board, and right-side tools receive explicit grid placement.
 - The narrower desktop breakpoint reduces both rails symmetrically.
@@ -21,7 +21,7 @@ The desktop stylesheet forced the gameplay area into a three-column grid and pla
 
 - Run the existing cross-platform visual preview and inspect desktop captures at 1440×900 and 1280×720.
 - Confirm the board is centered, all four HUD metrics are visible on the left, goals remain below them, and all right-side tools remain readable.
-- Confirm mobile screenshots and gameplay-mode validation remain green.
+- Confirm mobile screenshots and gameplay-mode validation remain green. A first mobile preview exposed the need to keep HUD relocation desktop-only; this was corrected before acceptance.
 - Do not deploy to `main` until the preview is reviewed and the user approves the release.
 
 ## Recovery phrase
