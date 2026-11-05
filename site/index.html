@@ -13574,4 +13574,28 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-mobile-arena-goals-rail-width-fix-kt406-1">
+/* KT-406.1: when the optional objectives rail is present, retain three tracks
+   but give the right utility dock enough real width for its live controls. */
+@media (max-width:520px) and (orientation:portrait){
+  #game:not([hidden]):has(.gameleftcol){
+    grid-template-columns:
+      minmax(48px,clamp(50px,14vw,62px))
+      minmax(0,1fr)
+      minmax(76px,clamp(76px,22vw,88px))!important;
+  }
+  #game:not([hidden]):has(.gameleftcol)>.playlayout>.sidecol{
+    grid-column:3!important;
+    min-width:0!important;
+    width:100%!important;
+  }
+}
+@media (max-width:380px) and (orientation:portrait){
+  #game:not([hidden]):has(.gameleftcol){
+    grid-template-columns:minmax(48px,50px) minmax(0,1fr) minmax(76px,22vw)!important;
+  }
+}
+</style>
+
 </body></html>
