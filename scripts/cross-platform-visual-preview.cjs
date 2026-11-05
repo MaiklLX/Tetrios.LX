@@ -178,6 +178,8 @@ const targets = [
         const board=document.querySelector('#game #board');
         const qa=window.__TETRIOS_QA__;
         if(!board||!qa?.getPieceState) return {supported:false,reason:'board or QA state hook missing'};
+        const prepared=qa.prepareGestureTest?.();
+        if(!prepared?.ready) return {supported:false,reason:'deterministic test piece could not be prepared'};
         const rect=board.getBoundingClientRect();
         const centerX=rect.left+rect.width*.5,centerY=rect.top+rect.height*.38;
         let identifier=71;
