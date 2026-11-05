@@ -13622,3 +13622,38 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 </body></html>
+
+<style id="bb-mobile-hero-skill-icon-only-kt4078">
+/* KT-407.8: the narrow phone utility rail is icon-first. A later layout
+   override had restored the three-line hero copy inside a 68–78px card,
+   causing visible text collisions. Keep the live hero emblem and accessible
+   aria-label; remove only the cramped visual copy on portrait phones. */
+@media (max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    box-sizing:border-box!important;
+    min-height:54px!important;
+    height:54px!important;
+    padding:5px!important;
+    gap:0!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy{
+    display:none!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 36px!important;
+    width:36px!important;
+    height:36px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-pulse{
+    position:absolute!important;
+    right:5px!important;
+    top:4px!important;
+    font-size:10px!important;
+  }
+}
+</style>
+
+</body></html>
