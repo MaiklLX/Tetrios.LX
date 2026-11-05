@@ -172,6 +172,51 @@ const targets = [
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
 
+    // Exercise real board touch listeners in WebKit/Chromium, not only screenshots.
+    if (target.mobile) {
+      const gestureResult = await page.evaluate(() => {
+        const board=document.querySelector('#game #board');
+        const qa=window.__TETRIOS_QA__;
+        if(!board||!qa?.getPieceState) return {supported:false,reason:'board or QA state hook missing'};
+        const rect=board.getBoundingClientRect();
+        const centerX=rect.left+rect.width*.5,centerY=rect.top+rect.height*.38;
+        let identifier=71;
+        const send=(type,x,y,active=true)=>{
+          const touch=new Touch({identifier, target:board, clientX:x, clientY:y, pageX:x, pageY:y, screenX:x, screenY:y});
+          const event=new TouchEvent(type,{bubbles:true,cancelable:true,
+            touches:active?[touch]:[],targetTouches:active?[touch]:[],changedTouches:[touch]});
+          board.dispatchEvent(event);
+        };
+        const state=()=>qa.getPieceState().piece;
+        const swipe=(dx,dy)=>{
+          const x=centerX,y=centerY;
+          send('touchstart',x,y,true);
+          send('touchmove',x+dx,y+dy,true);
+          send('touchend',x+dx,y+dy,false);
+        };
+        const before=state();
+        swipe(Math.max(40,rect.width*.28),0);
+        const afterRight=state();
+        swipe(-Math.max(40,rect.width*.28),0);
+        const afterLeft=state();
+        swipe(0,-Math.max(40,rect.height*.06));
+        const afterRotate=state();
+        swipe(0,Math.max(90,rect.height*.28));
+        const afterDown=state();
+        return {
+          supported:true,
+          before,afterRight,afterLeft,afterRotate,afterDown,
+          movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
+          movedLeft:!!afterRight&&!!afterLeft&&afterLeft.x<afterRight.x,
+          rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
+          softDropped:!!afterRotate&&!!afterDown&&afterDown.y>=afterRotate.y
+        };
+      });
+      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.softDropped) {
+        failures.push(target.name + ': mobile board gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
+      }
+    }
+
     const visualBoostState = await page.evaluate(() => window.__TETRIOS_QA__?.activatePrismAura?.() || null);
     if (!visualBoostState || !visualBoostState.activePiece || !visualBoostState.boosts.includes('prism') || !visualBoostState.auraOwned) {
       failures.push(target.name + ': Prism/Aura QA activation failed (' + JSON.stringify(visualBoostState) + ')');
@@ -206,7 +251,7 @@ const targets = [
       const playlayout = document.querySelector('#game .playlayout');
       const game = document.querySelector('#game');
       const leftRail = document.querySelector('#game .gameleftcol');
-      const controlRow = document.querySelector('#game>.controls');
+      const controlRow = document.querySelector('#game .controls');
       const hint = document.querySelector('#game>.hint');
       return {
         viewport: { width: innerWidth, height: innerHeight },
@@ -284,9 +329,11 @@ const targets = [
       // board gestures. Assert the old deck is absent and the board is the
       // active touch surface; do not fail because legacy buttons are hidden.
       if (geometry.controlRow && geometry.controlVisibility &&
-          geometry.controlVisibility.display !== 'none' &&
-          geometry.controlVisibility.visibility !== 'hidden') {
-        failures.push(target.name + ': legacy bottom movement deck should be hidden in gesture-first mobile mode');
+          (geometry.controlVisibility.display !== 'none' ||
+           geometry.controlVisibility.visibility === 'visible' ||
+           geometry.controlVisibility.pointerEvents !== 'none' ||
+           geometry.controlRow.width > 1 || geometry.controlRow.height > 1)) {
+        failures.push(target.name + ': complete bottom movement deck must be removed from mobile layout (' + JSON.stringify(geometry.controlVisibility) + ')');
       }
       const boardGestureState = await page.evaluate(() => {
         const board = document.querySelector('#game #board');
