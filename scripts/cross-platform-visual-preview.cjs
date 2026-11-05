@@ -214,7 +214,7 @@ const targets = [
         const afterLeft=state();
         swipe(0,-Math.max(40,rect.height*.06));
         const afterRotate=state();
-        swipe(0,Math.max(90,rect.height*.28));
+        swipe(0,Math.min(70,Math.max(20,rect.height*.10)));
         const afterDown=state();
         return {
           supported:true,
