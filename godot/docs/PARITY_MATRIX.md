@@ -23,7 +23,8 @@
 | Board height | 23 rows (`const W=10,H=23`; board canvas is 10×23). | Was 20 rows. | Corrected to 23 rows in this checkpoint. |
 | Piece set | Seven tetrominoes in source order: I, T, J, L, O, S, Z. | Seven tetrominoes, but initial order differed. | Reordered to source order. |
 | Piece colors | `#5cf5e8`, `#9d7cff`, `#ffc86b`, `#ff6f9e`, `#6ca8ff`, `#b6f27c`, `#ff9868`. | Initial palette differed. | Updated to source palette. |
-| Spawn / rotation / wall kicks | Source functions `newPiece()`, `collides()`, `rotate()` and their exact kick behavior still require a dedicated comparison. | Basic spawn, rotation and horizontal kick list. | Not yet parity-approved. |
+| Spawn / rotation / wall kicks | Spawn is centered from shape width at `y=0`; clockwise matrix rotation; default kick order `[0,-1,1]`. Block Run `stable` card extends horizontal kicks to `±2..±4` by rank. | Centered spawn now uses each piece's width; base kick order corrected to `[0,-1,1]`. Mode-specific Stable upgrade is not implemented. | Base spawn/rotation behavior aligned; upgrade parity pending. |
+| Randomizer | `randomType()` uses a shuffled seven-bag and prevents the first piece of a new bag from repeating the previous bag's last piece. | Seven-bag shuffle and cross-bag repeat guard implemented; deterministic tests added for bag completeness and boundary. | Core randomizer aligned; deterministic seed injection remains a future testability improvement. |
 | Gravity / soft drop / hard drop / hold | Source timing and scoring are mode- and upgrade-aware; exact behavior needs fixture capture. | Prototype gravity, soft drop and hard drop; no Hold implementation. | Not yet parity-approved. |
 | Line clear / score / level | Source `lockPiece()`, `levelUp()`, `updateProgress()`; mode-dependent threshold, upgrades and effects. | Simplified score table and level thresholds. | Not yet parity-approved. |
 
