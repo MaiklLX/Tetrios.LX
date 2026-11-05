@@ -8297,21 +8297,15 @@ cv.addEventListener('touchmove', e => {
     return;
   }
   const t=e.changedTouches[0];
-  const tx=t.clientX-touch.x,ty=t.clientY-touch.y;
+  const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
   if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
-    if(Math.abs(tx)>Math.abs(ty)*1.25) touch.axis='x';
-    else if(Math.abs(ty)>Math.abs(tx)*1.25) touch.axis='y';
+    touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
   }
-  if (touch.axis==='x') {
-    let step=t.clientX-touch.lastX;
-    while (Math.abs(step)>=24 && !touch.consumed) {
-      move(step>0?1:-1);
-      touch.lastX += step>0?24:-24;
-      step=t.clientX-touch.lastX;
-      if (piece!==touch.pieceRef) touch.consumed=true;
-    }
-  } else if(touch.axis==='y'&&ty>0){
-    // Soft-drop advances one visible row at a time during touchmove.
+  if(touch.axis==='x'){
+    const dx=t.clientX-touch.lastX;
+    if(Math.abs(dx)>=24){move(dx>0?1:-1);touch.lastX=t.clientX;}
+  }else if(touch.axis==='y'&&ty>0){
+    // Soft-drop is incremental and visible while the finger moves: one grid row per 28 CSS pixels.
     while(t.clientY-touch.lastY>=28&&!touch.dropped){
       touch.lastY+=28;
       touch.softSteps=(touch.softSteps||0)+1;
@@ -8325,31 +8319,26 @@ cv.addEventListener('touchmove', e => {
   }
 }, {passive:false});
 
-cv.addEventListener('touchend', e => {
-  if (!touch) return;
+cv.addEventListener('touchend',e=>{
+  if(!touch)return;
   const gesture=touch;
   touch=null;
-  if (touchDropLocked || gesture.consumed ||
-      !started || paused || gameOver || !piece ||
-      piece!==gesture.pieceRef) return;
-  const t=e.changedTouches[0];
-  const dx=t.clientX-gesture.x, dy=t.clientY-gesture.y;
+  if(touchDropLocked||gesture.consumed||!started||paused||gameOver||!piece||piece!==gesture.pieceRef)return;
+  const t=e.changedTouches[0],dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
   const elapsed=performance.now()-gesture.at;
-  const vertical=Math.abs(dy)>Math.abs(dx)*1.18;
+  const verticalSwipe=gesture.axis==='y'&&dy>=28&&dy>Math.abs(dx)*1.15;
+  const fastDownSwipe=verticalSwipe&&dy>=96&&elapsed<460&&dy>Math.abs(dx)*1.35;
+  const upwardSwipe=gesture.axis==='y'&&dy<=-38&&Math.abs(dy)>Math.abs(dx)*1.15;
 
-  // A short tap or an upward flick rotates once. Downward flicks are
-  // reserved for hard drop; slower downward drags remain incremental soft drop.
-  if (vertical && dy<=-38 && elapsed<650) {
+  if(!gesture.dropped&&!gesture.consumed&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<280){
     rotatePiece();
-  } else if (Math.abs(dx)<13 && Math.abs(dy)<13 && elapsed<280) {
+  }else if(upwardSwipe&&elapsed<650){
     rotatePiece();
-  } else if (vertical && dy>=96 && elapsed<=460 && gesture.softSteps===0) {
-    // Lock before hardDrop: lockPiece spawns synchronously, but this gesture
-    // must not be allowed to drop that newly spawned piece as well.
-    lockTouchDrop(300);
-    hardDrop();
+  }else if(verticalSwipe&&started&&!paused&&!gameOver){
+    // The current gesture cannot hard-drop a piece spawned by its own soft-drop.
+    if(fastDownSwipe&&!gesture.dropped){lockTouchDrop(300);hardDrop();}
   }
-}, {passive:true});
+},{passive:true});
 
 cv.addEventListener('touchcancel', () => {
   touch=null;
