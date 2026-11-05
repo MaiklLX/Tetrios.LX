@@ -30,5 +30,7 @@ jobs:
           use-dotnet: false
       - name: Import project
         run: godot --headless --editor --path godot --quit
-      - name: Run smoke test
+      - name: Run model tests
+        run: godot --headless --path godot --script res://tests/game_model_test.gd
+      - name: Run scene smoke test
         run: godot --headless --path godot --quit-after 3
