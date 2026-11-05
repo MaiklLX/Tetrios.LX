@@ -8252,7 +8252,7 @@ document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let 
 let touch = null;
 let touchDropLocked = false;
 let touchDropUnlockTimer = null;
-function lockTouchDrop(duration=300) {
+function lockTouchDrop(duration=320) {
   touchDropLocked = true;
   if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
   touchDropUnlockTimer = setTimeout(() => {
@@ -8262,9 +8262,8 @@ function lockTouchDrop(duration=300) {
 }
 const cv = $('game');
 
-// Mobile arena gestures are board-scoped. A gesture belongs to the piece
-// that existed at touchstart; if that piece locks and a new one spawns,
-// the remainder of the same physical gesture can never affect the new piece.
+// Gesture-first mobile input. The board is the whole control surface:
+// movement uses a per-cell accumulator so fast swipes never lose distance.
 cv.addEventListener('touchstart', e => {
   if (e.target.closest('button, input, select, textarea, [data-act]')) {
     touch = null;
@@ -8279,11 +8278,14 @@ cv.addEventListener('touchstart', e => {
     return;
   }
   const t = e.changedTouches[0];
+  const boardRect = $('board').getBoundingClientRect();
   if (e.cancelable) e.preventDefault();
   touch = {
     x:t.clientX, y:t.clientY, lastX:t.clientX, lastY:t.clientY,
     at:performance.now(), axis:null, pieceRef:piece,
-    softSteps:0, dropped:false, consumed:false
+    horizontalRemainder:0, verticalRemainder:0,
+    cellWidth:boardRect.width/W, cellHeight:boardRect.height/H,
+    dropped:false, consumed:false
   };
   audioCtx();
 }, {passive:false});
@@ -8297,23 +8299,44 @@ cv.addEventListener('touchmove', e => {
     return;
   }
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
-  if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
-    touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
+  if(!touch.axis&&(Math.abs(tx)>8||Math.abs(ty)>8)){
+    touch.axis=Math.abs(ty)>Math.abs(tx)*1.12?'y':Math.abs(tx)>Math.abs(ty)*1.12?'x':null;
   }
   if(touch.axis==='x'){
     const dx=t.clientX-touch.lastX;
-    if(Math.abs(dx)>=24){move(dx>0?1:-1);touch.lastX=t.clientX;}
-  }else if(touch.axis==='y'&&ty>0){
-    // Soft-drop is incremental and visible while the finger moves: one grid row per 28 CSS pixels.
-    while(t.clientY-touch.lastY>=28&&!touch.dropped){
-      touch.lastY+=28;
-      touch.softSteps=(touch.softSteps||0)+1;
-      if(!move(0,1)){touch.dropped=true;break;}
+    touch.horizontalRemainder+=dx;
+    touch.lastX=t.clientX;
+    const threshold=Math.max(9,touch.cellWidth*0.62);
+    let steps=0;
+    while(Math.abs(touch.horizontalRemainder)>=threshold&&steps< W){
+      const direction=touch.horizontalRemainder>0?1:-1;
+      if(!move(direction,0)){
+        // Keep the gesture live: sliding back from an edge must respond immediately.
+        touch.horizontalRemainder=0;
+        break;
+      }
+      touch.horizontalRemainder-=direction*threshold;
+      steps++;
     }
-    if(touch.dropped||piece!==touch.pieceRef){
-      touch.dropped=true;
-      touch.consumed=true;
-      lockTouchDrop(300);
+  }else if(touch.axis==='y'&&ty>0){
+    const dy=t.clientY-touch.lastY;
+    touch.verticalRemainder+=dy;
+    touch.lastY=t.clientY;
+    const threshold=Math.max(10,touch.cellHeight*0.72);
+    while(touch.verticalRemainder>=threshold&&!touch.dropped){
+      touch.verticalRemainder-=threshold;
+      if(!move(0,1)){
+        touch.dropped=true;
+        touch.consumed=true;
+        lockTouchDrop(320);
+        break;
+      }
+      if(piece!==touch.pieceRef){
+        touch.dropped=true;
+        touch.consumed=true;
+        lockTouchDrop(320);
+        break;
+      }
     }
   }
 }, {passive:false});
@@ -8325,24 +8348,21 @@ cv.addEventListener('touchend',e=>{
   if(touchDropLocked||gesture.consumed||!started||paused||gameOver||!piece||piece!==gesture.pieceRef)return;
   const t=e.changedTouches[0],dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
   const elapsed=performance.now()-gesture.at;
-  const verticalSwipe=gesture.axis==='y'&&dy>=28&&dy>Math.abs(dx)*1.15;
-  const fastDownSwipe=verticalSwipe&&dy>=96&&elapsed<460&&dy>Math.abs(dx)*1.35;
-  const upwardSwipe=gesture.axis==='y'&&dy<=-38&&Math.abs(dy)>Math.abs(dx)*1.15;
-
-  if(!gesture.dropped&&!gesture.consumed&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<280){
+  const tap=Math.abs(dx)<Math.max(12,gesture.cellWidth*.35)&&Math.abs(dy)<Math.max(12,gesture.cellHeight*.35)&&elapsed<300;
+  const upwardSwipe=gesture.axis==='y'&&dy<=-Math.max(24,gesture.cellHeight*1.35)&&Math.abs(dy)>Math.abs(dx)*1.12;
+  const downwardFlick=gesture.axis==='y'&&dy>=Math.max(90,gesture.cellHeight*4.8)&&elapsed<520&&dy>Math.abs(dx)*1.25;
+  if(tap||upwardSwipe){
     rotatePiece();
-  }else if(upwardSwipe&&elapsed<650){
-    rotatePiece();
-  }else if(verticalSwipe&&started&&!paused&&!gameOver){
-    // The current gesture cannot hard-drop a piece spawned by its own soft-drop.
-    if(fastDownSwipe&&!gesture.dropped){lockTouchDrop(300);hardDrop();}
+  }else if(downwardFlick){
+    lockTouchDrop(320);
+    hardDrop();
   }
 },{passive:true});
 
-cv.addEventListener('touchcancel', () => {
+cv.addEventListener('touchcancel',()=>{
   touch=null;
-  // Keep the post-drop guard alive across WebView touch cancellation.
-}, {passive:true});
+  // Preserve the post-drop lock across WebView cancellation/re-delivery.
+},{passive:true});
 
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
@@ -9265,6 +9285,9 @@ if (resetProgressBtn) {
   // Explicitly gated visual QA hook; absent from normal gameplay sessions.
   if(new URLSearchParams(location.search).get('qaVisual')==='1'){
     window.__TETRIOS_QA__={
+      getPieceState(){
+        return {piece:piece?JSON.parse(JSON.stringify(piece)):null,started,paused,gameOver};
+      },
       activatePrismAura(){
         boosts=['prism','aura'];
         if(typeof render==='function')render();
@@ -14034,10 +14057,11 @@ body .app{background:transparent!important;background-color:transparent!importan
 <style id="bb-kt412-mobile-gesture-arena">
 /* KT-412: gesture-first mobile arena. Desktop keeps its keyboard layout. */
 @media (max-width:600px){
-  #game>.controls{
+  /* Hide the complete bottom control deck regardless of its wrapper depth. */
+  #game .controls{
     display:none!important;visibility:hidden!important;pointer-events:none!important;
-    height:0!important;min-height:0!important;margin:0!important;padding:0!important;
-    border:0!important;overflow:hidden!important;
+    width:0!important;height:0!important;min-width:0!important;min-height:0!important;
+    margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;
   }
   #game>.hint{grid-row:auto!important;margin:7px 2px 2px!important}
   #game>.playlayout,#game.unified-game-layout>.playlayout{
