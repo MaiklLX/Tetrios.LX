@@ -139,7 +139,7 @@ const targets = [
       await dailyPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
       await dailyPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
       await dailyPage.locator('#game #dailyMissionGoal:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
-      await dailyPage.waitForTimeout(500);
+      await dailyPage.waitForTimeout(1200);
       const dailyGoalState = await dailyPage.evaluate(() => {
         const panel=document.querySelector('#game #dailyMissionGoal');
         const rect=panel?.getBoundingClientRect();
@@ -148,6 +148,10 @@ const targets = [
           text:panel?.innerText?.replace(/\\s+/g,' ').trim()||'',
           parentId:panel?.parentElement?.id||'',
           parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
+          gameOpacity:panel?getComputedStyle(panel.closest('#game')).opacity:null,
+          panelOpacity:panel?getComputedStyle(panel).opacity:null,
+          valueFontSize:panel?.querySelector('strong')?getComputedStyle(panel.querySelector('strong')).fontSize:null,
+          labelFontSize:panel?.querySelector('.daily-mission-label')?getComputedStyle(panel.querySelector('.daily-mission-label')).fontSize:null,
           rect:rect?{x:rect.x,y:rect.y,width:rect.width,height:rect.height}:null
         };
       });
