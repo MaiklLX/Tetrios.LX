@@ -13888,6 +13888,27 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.sidecol>.drop-card>label{font-size:7px!important;color:#9dffe1!important}
   #game>.playlayout>.sidecol .side-drop{display:block!important;width:100%!important;min-height:44px!important;height:44px!important;margin:4px 0 0!important;border-radius:10px!important;font-size:12px!important;letter-spacing:.06em!important}
   #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important;top:20px!important}
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    gap:3px!important;padding:4px!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:first-child{
+    min-height:42px!important;padding:4px 8px!important;line-height:1.15!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>strong,
+  #game>.playlayout>.gameleftcol #campaignGoals>strong{
+    margin:0!important;font-size:8px!important;line-height:1.1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child),
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child){
+    min-height:28px!important;padding:3px!important;gap:2px!important;
+    font-size:7.5px!important;line-height:1.1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child)>span,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child)>span{
+    font-size:7px!important;line-height:1.1!important;margin-top:1px!important;
+  }
   #game>.controls{
     grid-row:5!important;display:grid!important;visibility:visible!important;pointer-events:auto!important;
     grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;
