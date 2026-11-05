@@ -13637,14 +13637,27 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 
-<style id="bb-mobile-hero-skill-final-override-kt40713">
-/* KT-407.13: narrow viewport is the reliable mobile condition in embedded WebKit.
-   Do not gate this fix on orientation, which the preview harness reports inconsistently. */
+<style id="bb-mobile-hero-skill-final-override-kt40714">
+/* KT-407.14: override the legacy rail selectors at equal-or-higher specificity.
+   The previous two-ID selector lost to #game>.playlayout>.sidecol>#bbHeroSkillCard. */
 @media (max-width:520px){
-  #game #bbHeroSkillCard{min-height:54px!important;height:54px!important;padding:5px!important;gap:0!important;justify-content:center!important}
-  #game #bbHeroSkillCard .bb-hero-skill-copy{display:none!important}
-  #game #bbHeroSkillCard .bb-hero-skill-art{display:grid!important;place-items:center!important;flex:0 0 36px!important;width:36px!important;height:36px!important}
-  #game #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;right:5px!important;top:4px!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    box-sizing:border-box!important;display:flex!important;
+    width:100%!important;height:54px!important;min-height:54px!important;
+    max-height:54px!important;flex:0 0 54px!important;
+    flex-direction:row!important;align-items:center!important;
+    justify-content:center!important;gap:0!important;padding:5px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy{
+    display:none!important;visibility:hidden!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-art{
+    display:grid!important;place-items:center!important;
+    flex:0 0 36px!important;width:36px!important;height:36px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-pulse{
+    position:absolute!important;right:5px!important;top:4px!important;
+  }
 }
 </style>
 </body></html>
