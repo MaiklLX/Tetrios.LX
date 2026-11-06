@@ -14252,8 +14252,15 @@ body .app{background:transparent!important;background-color:transparent!importan
     width:100%!important;height:40px!important;min-height:40px!important;
     max-height:40px!important;overflow:hidden!important;gap:4px!important;
   }
-  #game .gamehud>.hudbox{
-    box-sizing:border-box!important;width:auto!important;min-width:0!important;
+  #game>.gamehud{
+    grid-column:1!important;grid-row:2!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:40px!important;grid-auto-flow:column!important;
+  }
+  #game>.gamehud>.hudbox{
+    box-sizing:border-box!important;display:block!important;
+    grid-column:auto!important;grid-row:1!important;
+    width:auto!important;min-width:0!important;max-width:none!important;
     min-height:0!important;height:38px!important;max-height:38px!important;
     margin:0!important;overflow:hidden!important;
   }
