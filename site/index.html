@@ -14363,5 +14363,32 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.gamehud.gamehud-top>#gameCoins>span{color:#d8b96e!important}
   #game>.gamehud.gamehud-top>#gameCoins>strong{color:#ffe0a0!important}
 }
+
+<style id="bb-kt412-landscape-encounter-compact">
+/* KT-412.13: keep the rogue encounter card fully visible in the short landscape rail. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child{
+    box-sizing:border-box!important;display:flex!important;align-items:center!important;
+    gap:6px!important;width:100%!important;height:42px!important;
+    min-height:42px!important;max-height:42px!important;
+    margin:2px 0 4px!important;padding:4px 7px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2){
+    min-width:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:first-child{
+    font-size:8px!important;line-height:1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(2){
+    height:3px!important;margin:3px 0 2px!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(3){
+    font-size:7px!important;line-height:1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(4){
+    display:none!important;
+  }
+}
+</style>
 </style>
 </body></html>
