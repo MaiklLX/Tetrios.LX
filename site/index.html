@@ -14356,4 +14356,42 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+<style id="bb-kt412-landscape-hud-descendant-guard">
+/* KT-412.11: at wide iPhone widths the legacy layout can nest the top HUD
+   deeper than .playlayout>.gameleftcol. Target the actual semantic pair
+   instead of depending on one exact wrapper depth. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game .gameleftcol .gamehud.gamehud-top{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:40px!important;grid-auto-flow:column!important;
+    grid-auto-rows:40px!important;align-items:stretch!important;
+    width:100%!important;height:40px!important;min-height:40px!important;
+    max-height:40px!important;gap:4px!important;margin:0!important;
+    padding:0!important;overflow:hidden!important;
+  }
+  #game .gameleftcol .gamehud.gamehud-top>.hudbox,
+  #game .gameleftcol .gamehud.gamehud-top>#gameCoins{
+    box-sizing:border-box!important;display:flex!important;
+    grid-column:auto!important;grid-row:1!important;
+    flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    width:auto!important;height:38px!important;min-width:0!important;max-width:none!important;
+    min-height:0!important;max-height:38px!important;margin:0!important;
+    padding:2px 3px!important;overflow:hidden!important;text-align:center!important;
+  }
+  #game .gameleftcol .gamehud.gamehud-top>.hudbox>span,
+  #game .gameleftcol .gamehud.gamehud-top>#gameCoins>span{
+    display:block!important;width:100%!important;min-width:0!important;
+    font-size:6px!important;line-height:1!important;letter-spacing:.04em!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  #game .gameleftcol .gamehud.gamehud-top>.hudbox>strong,
+  #game .gameleftcol .gamehud.gamehud-top>#gameCoins>strong{
+    display:block!important;width:100%!important;min-width:0!important;
+    margin:2px 0 0!important;font-size:13px!important;line-height:1!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+}
+</style>
 </body></html>
