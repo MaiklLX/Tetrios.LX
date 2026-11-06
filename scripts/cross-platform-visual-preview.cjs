@@ -241,10 +241,14 @@ const targets = [
         const touchDrop=qa.triggerTouchDrop?.();
         const postDropProbe=qa.preparePostDropGestureProbe?.();
         const afterTouchDrop=state();
+        const afterTouchDropX=afterTouchDrop?.x;
         swipe(horizontalStep,0);
         const afterDropMove=state();
+        const afterDropMoveX=afterDropMove?.x;
+        const afterDropMoveShape=afterDropMove?JSON.stringify(afterDropMove.shape):null;
         swipe(0,rotationSwipe);
         const afterDropRotate=state();
+        const afterDropRotateShape=afterDropRotate?JSON.stringify(afterDropRotate.shape):null;
         return {
           supported:true,
           before,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
@@ -255,8 +259,8 @@ const targets = [
           rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
           repeatedRotation:!!afterRotate&&!!afterRotateRepeat&&JSON.stringify(afterRotate)!==JSON.stringify(afterRotateRepeat),
           softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y,
-          movedImmediatelyAfterDrop:!!afterTouchDrop&&!!afterDropMove&&afterDropMove.x!==afterTouchDrop.x,
-          rotatedImmediatelyAfterDrop:!!afterDropMove&&!!afterDropRotate&&JSON.stringify(afterDropMove.shape)!==JSON.stringify(afterDropRotate.shape)
+          movedImmediatelyAfterDrop:Number.isFinite(afterTouchDropX)&&Number.isFinite(afterDropMoveX)&&afterDropMoveX!==afterTouchDropX,
+          rotatedImmediatelyAfterDrop:!!afterDropMoveShape&&!!afterDropRotateShape&&afterDropMoveShape!==afterDropRotateShape
         };
       });
       if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
