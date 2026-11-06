@@ -8273,7 +8273,7 @@ cv.addEventListener('touchstart', e => {
     touch = null;
     return;
   }
-  if (!started || paused || gameOver || touchDropLocked || !piece) {
+  if (!started || paused || gameOver || !piece) {
     touch = null;
     return;
   }
@@ -8291,7 +8291,7 @@ cv.addEventListener('touchstart', e => {
 }, {passive:false});
 
 cv.addEventListener('touchmove', e => {
-  if (!touch || touchDropLocked || touch.consumed ||
+  if (!touch || touch.consumed ||
       !started || paused || gameOver || !piece) return;
   if (e.cancelable) e.preventDefault();
   if (e.touches.length !== 1) {
@@ -8328,13 +8328,11 @@ cv.addEventListener('touchmove', e => {
       if(!move(0,1)){
         touch.dropped=true;
         touch.consumed=true;
-        lockTouchDrop(320);
         break;
       }
       if(piece!==touch.pieceRef){
         touch.dropped=true;
         touch.consumed=true;
-        lockTouchDrop(320);
         break;
       }
     }
@@ -8345,7 +8343,7 @@ cv.addEventListener('touchend',e=>{
   if(!touch)return;
   const gesture=touch;
   touch=null;
-  if(touchDropLocked||gesture.consumed||!started||paused||gameOver||!piece||piece!==gesture.pieceRef)return;
+  if(gesture.consumed||!started||paused||gameOver||!piece||piece!==gesture.pieceRef)return;
   const t=e.changedTouches[0],dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
   const elapsed=performance.now()-gesture.at;
   const tap=Math.abs(dx)<Math.max(12,gesture.cellWidth*.35)&&Math.abs(dy)<Math.max(12,gesture.cellHeight*.35)&&elapsed<300;
@@ -8353,7 +8351,7 @@ cv.addEventListener('touchend',e=>{
   const downwardFlick=gesture.axis==='y'&&dy>=Math.max(90,gesture.cellHeight*4.8)&&elapsed<520&&dy>Math.abs(dx)*1.25;
   if(tap||upwardSwipe){
     rotatePiece();
-  }else if(downwardFlick){
+  }else if(downwardFlick&&!touchDropLocked){
     lockTouchDrop(320);
     hardDrop();
   }
