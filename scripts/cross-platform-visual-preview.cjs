@@ -236,18 +236,34 @@ const targets = [
         const afterRotateRepeat=state();
         swipe(0,Math.min(70,Math.max(20,rect.height*.10)));
         const afterDown=state();
+        // A touch Hard Drop must not leave a shared cooldown that delays the next
+        // deliberate horizontal move or rotation.
+        const touchDrop=qa.triggerTouchDrop?.();
+        const postDropProbe=qa.preparePostDropGestureProbe?.();
+        const afterTouchDrop=state();
+        const afterTouchDropX=afterTouchDrop?.x;
+        swipe(horizontalStep,0);
+        const afterDropMove=state();
+        const afterDropMoveX=afterDropMove?.x;
+        const afterDropMoveShape=afterDropMove?JSON.stringify(afterDropMove.shape):null;
+        swipe(0,rotationSwipe);
+        const afterDropRotate=state();
+        const afterDropRotateShape=afterDropRotate?JSON.stringify(afterDropRotate.shape):null;
         return {
           supported:true,
           before,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
+          afterTouchDrop,afterDropMove,afterDropRotate,touchDrop,postDropProbe,
           movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
           repeatedRight:!!afterRight&&!!afterRightRepeat&&afterRightRepeat.x>afterRight.x,
           movedLeft:!!afterRightRepeat&&!!afterLeft&&afterLeft.x<afterRightRepeat.x,
           rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
           repeatedRotation:!!afterRotate&&!!afterRotateRepeat&&JSON.stringify(afterRotate)!==JSON.stringify(afterRotateRepeat),
-          softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y
+          softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y,
+          movedImmediatelyAfterDrop:Number.isFinite(afterTouchDropX)&&Number.isFinite(afterDropMoveX)&&afterDropMoveX!==afterTouchDropX,
+          rotatedImmediatelyAfterDrop:!!afterDropMoveShape&&!!afterDropRotateShape&&afterDropMoveShape!==afterDropRotateShape
         };
       });
-      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped) {
+      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
         failures.push(target.name + ': mobile full-screen gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
       }
     }
