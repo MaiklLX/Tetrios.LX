@@ -1,150 +1,112 @@
-/* KT-417 — mobile landscape arena prototype.
-   Isolated to short landscape phone/tablet viewports. Desktop and portrait are untouched. */
-@media (max-width: 900px) and (orientation: landscape) and (max-height: 600px) {
-  body { overflow-x: hidden; }
-  .app {
-    min-height: 100dvh !important;
-    padding: 4px 8px 6px !important;
+/* KT-417 — compact landscape arena, corrected against the live DOM and KT-412 viewport rules.
+   Portrait and desktop remain outside this media query. */
+@media (orientation:landscape) and (pointer:coarse) and (max-width:900px) and (max-height:600px) {
+  html, body { width:100%!important; height:100%!important; min-height:0!important; overflow:hidden!important; }
+  .app { box-sizing:border-box!important; width:100%!important; height:100dvh!important; min-height:0!important; max-height:100dvh!important; overflow:hidden!important; padding:3px 7px max(3px,env(safe-area-inset-bottom))!important; }
+
+  /* The live game is a three-row CSS grid; target its direct children. */
+  #game.unified-game-layout.screen:not([hidden]) {
+    box-sizing:border-box!important; width:100%!important; height:100%!important;
+    min-height:0!important; max-height:100%!important; overflow:hidden!important;
+    grid-template-rows:28px 34px minmax(0,1fr)!important;
+    row-gap:3px!important;
   }
-  #game .screenhead {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 8px !important;
-    margin: 0 0 4px !important;
-    min-height: 24px !important;
+  #game.unified-game-layout>.screenhead {
+    grid-row:1!important; min-height:28px!important; height:28px!important;
+    margin:0!important; padding:1px 5px!important; gap:6px!important;
+    align-items:center!important;
   }
-  #game .screenhead h2 {
-    margin: 0 !important;
-    font-size: 14px !important;
-    line-height: 1.1 !important;
+  #game.unified-game-layout>.screenhead h2 {
+    margin:0!important; font-size:13px!important; line-height:1!important;
   }
-  #game .screenhead p { display: none !important; }
-  #game > .gamehud,
-  #game .gamehud {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 4px !important;
-    margin: 0 0 5px !important;
+  #game.unified-game-layout>.screenhead p { display:none!important; }
+  #game.unified-game-layout>#pauseBtn { width:28px!important; height:28px!important; flex:0 0 28px!important; }
+
+  #game.unified-game-layout>.gamehud.gamehud-top {
+    grid-row:2!important; grid-column:1!important;
+    height:34px!important; min-height:34px!important; max-height:34px!important;
+    grid-template-rows:32px!important; grid-auto-rows:32px!important;
+    gap:3px!important; margin:0!important;
   }
-  #game .hudbox {
-    min-width: 0 !important;
-    padding: 3px 5px !important;
-    border-radius: 8px !important;
-    text-align: center !important;
+  #game.unified-game-layout>.gamehud.gamehud-top>.hudbox,
+  #game.unified-game-layout>.gamehud.gamehud-top>#gameCoins {
+    height:32px!important; min-height:0!important; max-height:32px!important; padding:1px 3px!important;
   }
-  #game .hudbox span { font-size: 7px !important; line-height: 1.1 !important; }
-  #game .hudbox strong { margin-top: 1px !important; font-size: 13px !important; line-height: 1.1 !important; }
-  #game .playlayout {
-    display: grid !important;
-    grid-template-columns: minmax(112px, 1fr) minmax(250px, 1.55fr) !important;
-    grid-template-rows: minmax(0, 1fr) !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    height: min(69dvh, 270px) !important;
-    min-height: 0 !important;
-    padding: 5px !important;
-    box-sizing: border-box !important;
+  #game.unified-game-layout>.gamehud.gamehud-top>.hudbox>span,
+  #game.unified-game-layout>.gamehud.gamehud-top>#gameCoins>span { font-size:6px!important; line-height:1!important; }
+  #game.unified-game-layout>.gamehud.gamehud-top>.hudbox>strong,
+  #game.unified-game-layout>.gamehud.gamehud-top>#gameCoins>strong { font-size:12px!important; line-height:1!important; margin-top:1px!important; }
+
+  #game.unified-game-layout>.playlayout {
+    grid-row:3!important; grid-column:1!important; box-sizing:border-box!important;
+    display:grid!important; grid-template-columns:minmax(0,1fr) minmax(170px,26%)!important;
+    grid-template-rows:minmax(0,1fr) 52px!important; align-items:stretch!important;
+    width:100%!important; height:100%!important; min-height:0!important; max-height:100%!important;
+    margin:0!important; padding:3px!important; gap:4px!important; overflow:hidden!important;
   }
-  #game .playlayout > div:first-child {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
+  #game.unified-game-layout>.playlayout>div:not(.gameleftcol):not(.sidecol) {
+    grid-column:1!important; grid-row:1!important; display:flex!important;
+    align-items:center!important; justify-content:center!important;
+    width:100%!important; height:100%!important; min-width:0!important; min-height:0!important;
+    margin:0!important; padding:0!important; overflow:hidden!important;
   }
-  #game .boardframe {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: auto !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    aspect-ratio: 10 / 23 !important;
-    padding: 3px !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
+  #game.unified-game-layout>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe {
+    box-sizing:border-box!important; width:auto!important;
+    height:min(62dvh,calc(100dvh - 145px))!important;
+    max-height:100%!important; min-height:0!important; aspect-ratio:10/23!important;
+    flex:0 0 auto!important; margin:0 auto!important; padding:3px!important;
   }
-  #game canvas#board.board {
-    position: relative !important;
-    inset: auto !important;
-    display: block !important;
-    width: auto !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    aspect-ratio: 10 / 23 !important;
-    flex: 0 1 auto !important;
-    margin: 0 !important;
+  #game.unified-game-layout>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>canvas#board {
+    display:block!important; width:auto!important; height:100%!important;
+    max-width:100%!important; max-height:100%!important; aspect-ratio:10/23!important;
   }
-  #game .sidecol {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    grid-auto-rows: minmax(0, 1fr) !important;
-    align-content: center !important;
-    align-items: stretch !important;
-    gap: 5px !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
+  #game.unified-game-layout>.playlayout>.sidecol {
+    grid-column:2!important; grid-row:1!important;
+    display:grid!important; grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:repeat(6,minmax(0,1fr)) 36px!important;
+    grid-auto-rows:minmax(0,1fr)!important; gap:2px!important;
+    width:100%!important; height:100%!important; min-width:0!important; min-height:0!important;
+    max-height:100%!important; margin:0!important; padding:0!important; overflow:hidden!important;
   }
-  #game .sidecol > .sidecard {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    max-height: 100% !important;
-    margin: 0 !important;
-    padding: 3px 4px !important;
-    overflow: hidden !important;
-    border-radius: 9px !important;
+  #game.unified-game-layout>.playlayout>.sidecol>.sidecard,
+  #game.unified-game-layout>.playlayout>.sidecol>#bbHeroSkillCard {
+    display:flex!important; flex-direction:row!important; align-items:center!important; justify-content:center!important;
+    min-width:0!important; min-height:0!important; height:auto!important; max-height:none!important;
+    margin:0!important; padding:2px 4px!important; overflow:hidden!important; border-radius:7px!important;
+    gap:4px!important;
   }
-  #game .sidecol > .sidecard label {
-    font-size: 7px !important;
-    line-height: 1.1 !important;
-    text-align: center !important;
+  #game.unified-game-layout>.playlayout>.sidecol>.sidecard label { font-size:6px!important; line-height:1!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .charge-ring,
+  #game.unified-game-layout>.playlayout>.sidecol .chrono-ring { width:min(32px,8dvh)!important; margin:0 auto!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .charge-ring-inner strong,
+  #game.unified-game-layout>.playlayout>.sidecol .chrono-ring-inner strong { font-size:10px!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .charge-caption,
+  #game.unified-game-layout>.playlayout>.sidecol .chrono-caption,
+  #game.unified-game-layout>.playlayout>.sidecol .boostname,
+  #game.unified-game-layout>.playlayout>.sidecol .boostnum { font-size:6px!important; line-height:1!important; margin:0!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .nextcanvas { width:auto!important; height:min(25px,7dvh)!important; max-width:42%!important; margin:0 auto!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .boosticon { font-size:14px!important; margin:0!important; }
+  #game.unified-game-layout>.playlayout>.sidecol #timer { font-size:11px!important; margin:0!important; }
+  #game.unified-game-layout>.playlayout>.sidecol #holdBtn { min-height:20px!important; height:20px!important; margin:0!important; padding:1px 3px!important; font-size:6px!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .drop-card { grid-row:7!important; min-height:36px!important; height:36px!important; max-height:36px!important; }
+  #game.unified-game-layout>.playlayout>.sidecol .side-drop { min-height:34px!important; height:34px!important; max-height:34px!important; margin:0!important; padding:1px!important; font-size:8px!important; }
+
+  #game.unified-game-layout>.playlayout>.gameleftcol {
+    grid-column:1/-1!important; grid-row:2!important; position:relative!important; top:0!important;
+    width:100%!important; min-width:0!important; height:52px!important; min-height:0!important; max-height:52px!important;
+    margin:0!important; padding:0!important; overflow:hidden!important; align-self:start!important;
   }
-  #game .sidecol .charge-ring { width: min(40px, 7dvh) !important; margin: 2px auto !important; }
-  #game .sidecol .charge-ring-inner strong { font-size: 12px !important; }
-  #game .sidecol .charge-caption,
-  #game .sidecol .chrono-caption,
-  #game .sidecol .boostname,
-  #game .sidecol .boostnum { font-size: 7px !important; line-height: 1.1 !important; }
-  #game .sidecol .nextcanvas { width: auto !important; height: min(38px, 10dvh) !important; max-width: 100% !important; margin: 2px auto 0 !important; }
-  #game .sidecol .boosticon { margin: 1px 0 !important; font-size: 18px !important; }
-  #game .sidecol .smallbtn,
-  #game .sidecol .side-drop { min-height: 30px !important; height: 30px !important; margin: 2px 0 0 !important; padding: 2px 4px !important; font-size: 9px !important; }
-  #game .sidecol .side-drop { grid-column: 1 / -1 !important; }
-  #game .progresswrap { margin: 2px 0 !important; padding: 4px 6px !important; }
-  #game #campaignGoals,
-  #game #rogueGoals,
-  #game .campaign-goals,
-  #game .rogue-goals {
-    margin: 4px 0 0 !important;
-    padding: 5px 7px !important;
-    max-height: 54px !important;
-    overflow: auto !important;
-    font-size: 8px !important;
+  #game.unified-game-layout>.playlayout>.gameleftcol #rogueGoals,
+  #game.unified-game-layout>.playlayout>.gameleftcol #campaignGoals {
+    display:flex!important; flex-direction:row!important; flex-wrap:nowrap!important; align-items:center!important;
+    width:100%!important; height:50px!important; min-height:0!important; max-height:50px!important;
+    margin:0!important; padding:1px 2px!important; gap:3px!important; overflow:hidden!important;
   }
-  #game .controls { margin-top: 4px !important; gap: 4px !important; }
-  #game .control { height: 34px !important; min-height: 34px !important; }
-  #game .hint { display: none !important; }
+  #game.unified-game-layout>.playlayout>.gameleftcol #rogueGoals>div,
+  #game.unified-game-layout>.playlayout>.gameleftcol #campaignGoals>div {
+    flex:1 1 0!important; min-width:0!important; max-width:none!important; max-height:46px!important;
+    margin:0!important; padding:2px 3px!important; overflow:hidden!important; font-size:6px!important; line-height:1.1!important;
+  }
+  #game.unified-game-layout>.controls,
+  #game.unified-game-layout>.hint { display:none!important; visibility:hidden!important; pointer-events:none!important; }
 }
