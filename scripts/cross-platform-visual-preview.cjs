@@ -22,6 +22,11 @@ const targets = [
   const failures = [];
 
   for (const target of targets) {
+    console.log('[target:start] ' + target.name + ' (' + target.engine + ', ' + target.width + 'x' + target.height + ')');
+    const targetWatchdog = setTimeout(() => {
+      console.error('[target:timeout] ' + target.name + ' exceeded 150000ms; stopping preview process');
+      process.exit(1);
+    }, 150000);
     const browserType = target.engine === 'webkit' ? webkit : chromium;
     const launchOptions = { headless: true };
     if (target.engine === 'chromium') {
@@ -33,7 +38,7 @@ const targets = [
       ];
     }
 
-    const browser = await browserType.launch(launchOptions);
+    const browser = await browserType.launch({ ...launchOptions, timeout: 30000 });
     const context = await browser.newContext({
       viewport: { width: target.width, height: target.height },
       deviceScaleFactor: target.mobile ? 3 : 1,
@@ -50,12 +55,13 @@ const targets = [
     page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
     page.on('requestfailed', request => failedRequests.push({url:request.url(),failure:request.failure()?.errorText||'unknown'}));
 
-    console.log('Starting visual capture: ' + target.name + ' (' + target.engine + ')');
+    console.log('[stage:menu] ' + target.name);
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
+    console.log('[stage:card-library] ' + target.name);
     // The complete card archive must be available before starting a run on every platform.
     await page.locator('#bbOpenCardLibrary').click();
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
@@ -72,6 +78,7 @@ const targets = [
     }
     await page.locator('#bbCloseCardLibrary').click();
 
+    console.log('[stage:campaign-atlas] ' + target.name);
     // Campaign is a standard ruleset: show its own mission objectives, never card picks.
     // Use a separate page so WebKit reload quirks cannot interrupt the Rogue preview.
     const campaignPage = await context.newPage();
@@ -126,9 +133,11 @@ const targets = [
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+    console.log('[stage:campaign-missions] ' + target.name);
     await campaignPage.close();
 
     if (target.name === 'desktop-1440x900') {
+      console.log('[stage:daily-challenge] ' + target.name);
       // Daily challenge objective must remain visible after the player enters the arena.
       const dailyPage = await context.newPage();
       dailyPage.setDefaultTimeout(15000);
@@ -169,6 +178,7 @@ const targets = [
 
     }
 
+    console.log('[stage:block-run-start] ' + target.name);
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#bbConfirmStartHero').evaluate(element => element.click());
@@ -176,6 +186,7 @@ const targets = [
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
 
+    console.log('[stage:gameplay-ready] ' + target.name);
     // Exercise real board touch listeners in WebKit/Chromium, not only screenshots.
     if (target.mobile) {
       const gestureResult = await page.evaluate(() => {
@@ -409,11 +420,13 @@ const targets = [
       failures.push(target.name + ': expected the single-renderer 2D arena with no 3D toggle or overlay (' + JSON.stringify(arenaModeState) + ')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
-    console.log('Verified single-renderer 2D arena: ' + target.name);
+    console.log('[stage:final-arena-verified] ' + target.name);
 
     report.push({ target: target.name, engine: target.engine, geometry, sideScrollCheck, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
+    clearTimeout(targetWatchdog);
+    console.log('[target:complete] ' + target.name);
   }
 
   fs.writeFileSync(outputDir + '/report.json', JSON.stringify({ report, failures }, null, 2));
