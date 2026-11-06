@@ -236,18 +236,29 @@ const targets = [
         const afterRotateRepeat=state();
         swipe(0,Math.min(70,Math.max(20,rect.height*.10)));
         const afterDown=state();
+        // A touch Hard Drop must not leave a shared cooldown that delays the next
+        // deliberate horizontal move or rotation.
+        const touchDrop=qa.triggerTouchDrop?.();
+        const afterTouchDrop=state();
+        swipe(horizontalStep,0);
+        const afterDropMove=state();
+        swipe(0,rotationSwipe);
+        const afterDropRotate=state();
         return {
           supported:true,
           before,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
+          afterTouchDrop,afterDropMove,afterDropRotate,touchDrop,
           movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
           repeatedRight:!!afterRight&&!!afterRightRepeat&&afterRightRepeat.x>afterRight.x,
           movedLeft:!!afterRightRepeat&&!!afterLeft&&afterLeft.x<afterRightRepeat.x,
           rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
           repeatedRotation:!!afterRotate&&!!afterRotateRepeat&&JSON.stringify(afterRotate)!==JSON.stringify(afterRotateRepeat),
-          softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y
+          softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y,
+          movedImmediatelyAfterDrop:!!afterTouchDrop?.piece&&!!afterDropMove&&afterDropMove.x!==afterTouchDrop.piece.x,
+          rotatedImmediatelyAfterDrop:!!afterDropMove&&!!afterDropRotate&&JSON.stringify(afterDropMove)!==JSON.stringify(afterDropRotate)
         };
       });
-      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped) {
+      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
         failures.push(target.name + ': mobile full-screen gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
       }
     }
