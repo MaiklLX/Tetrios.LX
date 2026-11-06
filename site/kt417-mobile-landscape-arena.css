@@ -1,0 +1,150 @@
+/* KT-417 — mobile landscape arena prototype.
+   Isolated to short landscape phone/tablet viewports. Desktop and portrait are untouched. */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 600px) {
+  body { overflow-x: hidden; }
+  .app {
+    min-height: 100dvh !important;
+    padding: 4px 8px 6px !important;
+  }
+  #game .screenhead {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin: 0 0 4px !important;
+    min-height: 24px !important;
+  }
+  #game .screenhead h2 {
+    margin: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.1 !important;
+  }
+  #game .screenhead p { display: none !important; }
+  #game > .gamehud,
+  #game .gamehud {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    margin: 0 0 5px !important;
+  }
+  #game .hudbox {
+    min-width: 0 !important;
+    padding: 3px 5px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+  }
+  #game .hudbox span { font-size: 7px !important; line-height: 1.1 !important; }
+  #game .hudbox strong { margin-top: 1px !important; font-size: 13px !important; line-height: 1.1 !important; }
+  #game .playlayout {
+    display: grid !important;
+    grid-template-columns: minmax(112px, 1fr) minmax(250px, 1.55fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: min(69dvh, 270px) !important;
+    min-height: 0 !important;
+    padding: 5px !important;
+    box-sizing: border-box !important;
+  }
+  #game .playlayout > div:first-child {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  #game .boardframe {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    aspect-ratio: 10 / 23 !important;
+    padding: 3px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  #game canvas#board.board {
+    position: relative !important;
+    inset: auto !important;
+    display: block !important;
+    width: auto !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: 10 / 23 !important;
+    flex: 0 1 auto !important;
+    margin: 0 !important;
+  }
+  #game .sidecol {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    align-content: center !important;
+    align-items: stretch !important;
+    gap: 5px !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  #game .sidecol > .sidecard {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding: 3px 4px !important;
+    overflow: hidden !important;
+    border-radius: 9px !important;
+  }
+  #game .sidecol > .sidecard label {
+    font-size: 7px !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+  }
+  #game .sidecol .charge-ring { width: min(40px, 7dvh) !important; margin: 2px auto !important; }
+  #game .sidecol .charge-ring-inner strong { font-size: 12px !important; }
+  #game .sidecol .charge-caption,
+  #game .sidecol .chrono-caption,
+  #game .sidecol .boostname,
+  #game .sidecol .boostnum { font-size: 7px !important; line-height: 1.1 !important; }
+  #game .sidecol .nextcanvas { width: auto !important; height: min(38px, 10dvh) !important; max-width: 100% !important; margin: 2px auto 0 !important; }
+  #game .sidecol .boosticon { margin: 1px 0 !important; font-size: 18px !important; }
+  #game .sidecol .smallbtn,
+  #game .sidecol .side-drop { min-height: 30px !important; height: 30px !important; margin: 2px 0 0 !important; padding: 2px 4px !important; font-size: 9px !important; }
+  #game .sidecol .side-drop { grid-column: 1 / -1 !important; }
+  #game .progresswrap { margin: 2px 0 !important; padding: 4px 6px !important; }
+  #game #campaignGoals,
+  #game #rogueGoals,
+  #game .campaign-goals,
+  #game .rogue-goals {
+    margin: 4px 0 0 !important;
+    padding: 5px 7px !important;
+    max-height: 54px !important;
+    overflow: auto !important;
+    font-size: 8px !important;
+  }
+  #game .controls { margin-top: 4px !important; gap: 4px !important; }
+  #game .control { height: 34px !important; min-height: 34px !important; }
+  #game .hint { display: none !important; }
+}
