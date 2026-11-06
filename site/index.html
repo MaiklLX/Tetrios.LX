@@ -9292,6 +9292,13 @@ if (resetProgressBtn) {
         if(canAcceptTouchDrop()){lastTouchDropAt=performance.now();hardDrop();}
         return {piece:piece?JSON.parse(JSON.stringify(piece)):null,dropGuardAt:bbHardDropAcceptedAt,touchDropGuardAt:lastTouchDropAt};
       },
+      preparePostDropGestureProbe(){
+        // Preserve lastTouchDropAt: only replace the random spawned piece with a
+        // deterministic T piece so movement and rotation can be measured reliably.
+        piece={t:0,shape:[[0,1,0],[1,1,1]],x:3,y:0};
+        render();
+        return {piece:JSON.parse(JSON.stringify(piece)),touchDropGuardAt:lastTouchDropAt};
+      },
       activatePrismAura(){
         boosts=['prism','aura'];
         if(typeof render==='function')render();
