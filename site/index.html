@@ -14438,4 +14438,17 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+
+<style id="bb-kt413-portrait-goals-clearance">
+/* KT-413: reclaim the unused gap above the mobile objective rail.
+   The touch control deck is intentionally hidden, so keep a clean 18px+ bottom
+   breathing area without shrinking the arena or hiding objective content. */
+@media (orientation:portrait) and (pointer:coarse) and (max-width:600px){
+  #game>.playlayout>.gameleftcol{
+    margin-top:-14px!important;
+  }
+}
+</style>
+
 </body></html>
