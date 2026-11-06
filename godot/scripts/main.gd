@@ -31,8 +31,8 @@ func _layout() -> void:
 	var button_h := 76.0
 	var gap := 12.0
 	var widths := [92.0, 92.0, 92.0, 112.0]
-	var total := widths[0] + widths[1] + widths[2] + widths[3] + gap * 3.0
-	var x := (screen_size.x - total) * 0.5
+	var total: float = widths[0] + widths[1] + widths[2] + widths[3] + gap * 3.0
+	var x: float = (screen_size.x - total) * 0.5
 	controls = {
 		"left": Rect2(x, button_y, widths[0], button_h),
 		"right": Rect2(x + widths[0] + gap, button_y, widths[1], button_h),
@@ -158,7 +158,7 @@ func _draw_controls() -> void:
 		var accent := Color("#45d9f5") if key == "drop" else Color("#28435d")
 		draw_rect(rect, Color(0.055, 0.10, 0.17, 0.96))
 		draw_rect(rect, accent, false, 2.0)
-		var label := {"left": "◀", "right": "▶", "rotate": "ROTATE", "drop": "DROP"}[key]
+		var label: String = str({"left": "◀", "right": "▶", "rotate": "ROTATE", "drop": "DROP"}[key])
 		var size := 18 if key == "rotate" else 25
 		var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 		draw_string(font, rect.get_center() + Vector2(-width * 0.5, size * 0.34), label, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#f3f8ff"))
