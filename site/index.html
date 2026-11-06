@@ -8262,14 +8262,14 @@ function lockTouchDrop(duration=320) {
 }
 const cv = $('game');
 
-// Gesture-first mobile input. The board is the whole control surface:
-// movement uses a per-cell accumulator so fast swipes never lose distance.
+// Gesture-first mobile input. The entire active game screen is the control surface.
+// Interactive UI elements remain tappable; every other area can steer the active piece.
 cv.addEventListener('touchstart', e => {
-  if (e.target.closest('button, input, select, textarea, [data-act]')) {
+  if (e.target.closest('button, input, select, textarea, a, [role="button"], [contenteditable="true"], [data-act], .overlay, .modal')) {
     touch = null;
     return;
   }
-  if (e.touches.length !== 1 || !e.target.closest('#board')) {
+  if (e.touches.length !== 1) {
     touch = null;
     return;
   }
@@ -14438,4 +14438,17 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+
+<style id="bb-kt413-portrait-goals-clearance">
+/* KT-413: reclaim the unused gap above the mobile objective rail.
+   The touch control deck is intentionally hidden, so keep a clean 18px+ bottom
+   breathing area without shrinking the arena or hiding objective content. */
+@media (orientation:portrait) and (pointer:coarse) and (max-width:600px){
+  #game>.playlayout>.gameleftcol{
+    margin-top:-14px!important;
+  }
+}
+</style>
+
 </body></html>

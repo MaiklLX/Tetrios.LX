@@ -191,25 +191,26 @@ const targets = [
     if (target.mobile) {
       const gestureResult = await page.evaluate(() => {
         const board=document.querySelector('#game #board');
+        const surface=document.querySelector('#game .gamehud');
         const qa=window.__TETRIOS_QA__;
-        if(!board||!qa?.getPieceState) return {supported:false,reason:'board or QA state hook missing'};
+        if(!board||!surface||!qa?.getPieceState) return {supported:false,reason:'board, non-board gesture surface, or QA state hook missing'};
         const prepared=qa.prepareGestureTest?.();
         if(!prepared?.ready) return {supported:false,reason:'deterministic test piece could not be prepared'};
         const rect=board.getBoundingClientRect();
-        const centerX=rect.left+rect.width*.5,centerY=rect.top+rect.height*.38;
+        const surfaceRect=surface.getBoundingClientRect();
+        const centerX=surfaceRect.left+surfaceRect.width*.5,centerY=surfaceRect.top+surfaceRect.height*.5;
         let identifier=71;
         const send=(type,x,y,active=true)=>{
-          // WebKit does not expose a constructible Touch/TouchEvent in every
-          // automation context. Use a bubbling Event with Touch-shaped objects
-          // so the game's production listeners receive the same read-only fields.
-          const touch={identifier,target:board,clientX:x,clientY:y,pageX:x,pageY:y,screenX:x,screenY:y};
+          // Dispatch from the HUD, deliberately outside #board, to verify that
+          // the entire game screen receives gestures rather than only the arena.
+          const touch={identifier,target:surface,clientX:x,clientY:y,pageX:x,pageY:y,screenX:x,screenY:y};
           const event=new Event(type,{bubbles:true,cancelable:true});
           Object.defineProperties(event,{
             touches:{value:active?[touch]:[]},
             targetTouches:{value:active?[touch]:[]},
             changedTouches:{value:[touch]}
           });
-          board.dispatchEvent(event);
+          surface.dispatchEvent(event);
         };
         const state=()=>qa.getPieceState().piece;
         const swipe=(dx,dy)=>{
@@ -237,7 +238,7 @@ const targets = [
         };
       });
       if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.softDropped) {
-        failures.push(target.name + ': mobile board gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
+        failures.push(target.name + ': mobile full-screen gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
       }
     }
 
