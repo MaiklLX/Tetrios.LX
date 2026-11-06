@@ -71,7 +71,7 @@ func _centered_spawn_x(cells: Array) -> int:
 
 func _spawn() -> void:
 	active_type = _next_piece_type()
-	active_cells = SHAPES[active_type].duplicate()
+	active_cells.assign(SHAPES[active_type])
 	origin = Vector2i(_centered_spawn_x(active_cells), 0)
 	if _collides(origin, active_cells):
 		game_over = true
