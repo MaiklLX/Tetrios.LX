@@ -29,4 +29,4 @@ The first commit uses a small playable 2D vertical slice to validate project boo
 - Do not build a release APK until the user explicitly resumes packaging after visual approval.
 
 ## First vertical slice
-A portrait game scene with a 10×20 board, falling pieces, rotation, left/right movement, soft drop, hard drop, line clears, score, level, restart, and large touch controls. It is intentionally a mechanics and layout proof, not the final art pass.
+A portrait game scene with a 10×23 board, falling pieces, rotation, left/right movement, soft drop, hard drop, line clears, score, level, restart, and large touch controls. It is intentionally a mechanics and layout proof, not the final art pass.
