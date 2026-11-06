@@ -220,24 +220,34 @@ const targets = [
           send('touchend',x+dx,y+dy,false);
         };
         const before=state();
-        swipe(Math.max(40,rect.width*.28),0);
+        const horizontalStep=Math.max(40,rect.width*.28);
+        swipe(horizontalStep,0);
         const afterRight=state();
-        swipe(-Math.max(40,rect.width*.28),0);
+        // Repeat immediately, without waiting for a cooldown timer.
+        swipe(horizontalStep,0);
+        const afterRightRepeat=state();
+        swipe(-horizontalStep,0);
         const afterLeft=state();
-        swipe(0,-Math.max(40,rect.height*.06));
+        const rotationSwipe=-Math.max(40,rect.height*.06);
+        swipe(0,rotationSwipe);
         const afterRotate=state();
+        // A second fast rotation must not be throttled by the hard-drop guard.
+        swipe(0,rotationSwipe);
+        const afterRotateRepeat=state();
         swipe(0,Math.min(70,Math.max(20,rect.height*.10)));
         const afterDown=state();
         return {
           supported:true,
-          before,afterRight,afterLeft,afterRotate,afterDown,
+          before,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
           movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
-          movedLeft:!!afterRight&&!!afterLeft&&afterLeft.x<afterRight.x,
+          repeatedRight:!!afterRight&&!!afterRightRepeat&&afterRightRepeat.x>afterRight.x,
+          movedLeft:!!afterRightRepeat&&!!afterLeft&&afterLeft.x<afterRightRepeat.x,
           rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
-          softDropped:!!afterRotate&&!!afterDown&&afterDown.y>=afterRotate.y
+          repeatedRotation:!!afterRotate&&!!afterRotateRepeat&&JSON.stringify(afterRotate)!==JSON.stringify(afterRotateRepeat),
+          softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y
         };
       });
-      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.softDropped) {
+      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped) {
         failures.push(target.name + ': mobile full-screen gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
       }
     }
