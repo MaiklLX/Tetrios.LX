@@ -8252,7 +8252,7 @@ document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let 
 let touch = null;
 let touchDropLocked = false;
 let touchDropUnlockTimer = null;
-function lockTouchDrop(duration=300) {
+function lockTouchDrop(duration=320) {
   touchDropLocked = true;
   if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
   touchDropUnlockTimer = setTimeout(() => {
@@ -8262,9 +8262,8 @@ function lockTouchDrop(duration=300) {
 }
 const cv = $('game');
 
-// Mobile arena gestures are board-scoped. A gesture belongs to the piece
-// that existed at touchstart; if that piece locks and a new one spawns,
-// the remainder of the same physical gesture can never affect the new piece.
+// Gesture-first mobile input. The board is the whole control surface:
+// movement uses a per-cell accumulator so fast swipes never lose distance.
 cv.addEventListener('touchstart', e => {
   if (e.target.closest('button, input, select, textarea, [data-act]')) {
     touch = null;
@@ -8279,11 +8278,14 @@ cv.addEventListener('touchstart', e => {
     return;
   }
   const t = e.changedTouches[0];
+  const boardRect = $('board').getBoundingClientRect();
   if (e.cancelable) e.preventDefault();
   touch = {
     x:t.clientX, y:t.clientY, lastX:t.clientX, lastY:t.clientY,
     at:performance.now(), axis:null, pieceRef:piece,
-    softSteps:0, dropped:false, consumed:false
+    horizontalRemainder:0, verticalRemainder:0,
+    cellWidth:boardRect.width/W, cellHeight:boardRect.height/H,
+    dropped:false, consumed:false
   };
   audioCtx();
 }, {passive:false});
@@ -8297,23 +8299,44 @@ cv.addEventListener('touchmove', e => {
     return;
   }
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
-  if(!touch.axis&&(Math.abs(tx)>12||Math.abs(ty)>12)){
-    touch.axis=Math.abs(ty)>Math.abs(tx)*1.25?'y':Math.abs(tx)>Math.abs(ty)*1.25?'x':null;
+  if(!touch.axis&&(Math.abs(tx)>8||Math.abs(ty)>8)){
+    touch.axis=Math.abs(ty)>Math.abs(tx)*1.12?'y':Math.abs(tx)>Math.abs(ty)*1.12?'x':null;
   }
   if(touch.axis==='x'){
     const dx=t.clientX-touch.lastX;
-    if(Math.abs(dx)>=24){move(dx>0?1:-1);touch.lastX=t.clientX;}
-  }else if(touch.axis==='y'&&ty>0){
-    // Soft-drop is incremental and visible while the finger moves: one grid row per 28 CSS pixels.
-    while(t.clientY-touch.lastY>=28&&!touch.dropped){
-      touch.lastY+=28;
-      touch.softSteps=(touch.softSteps||0)+1;
-      if(!move(0,1)){touch.dropped=true;break;}
+    touch.horizontalRemainder+=dx;
+    touch.lastX=t.clientX;
+    const threshold=Math.max(9,touch.cellWidth*0.62);
+    let steps=0;
+    while(Math.abs(touch.horizontalRemainder)>=threshold&&steps< W){
+      const direction=touch.horizontalRemainder>0?1:-1;
+      if(!move(direction,0)){
+        // Keep the gesture live: sliding back from an edge must respond immediately.
+        touch.horizontalRemainder=0;
+        break;
+      }
+      touch.horizontalRemainder-=direction*threshold;
+      steps++;
     }
-    if(touch.dropped||piece!==touch.pieceRef){
-      touch.dropped=true;
-      touch.consumed=true;
-      lockTouchDrop(300);
+  }else if(touch.axis==='y'&&ty>0){
+    const dy=t.clientY-touch.lastY;
+    touch.verticalRemainder+=dy;
+    touch.lastY=t.clientY;
+    const threshold=Math.max(10,touch.cellHeight*0.72);
+    while(touch.verticalRemainder>=threshold&&!touch.dropped){
+      touch.verticalRemainder-=threshold;
+      if(!move(0,1)){
+        touch.dropped=true;
+        touch.consumed=true;
+        lockTouchDrop(320);
+        break;
+      }
+      if(piece!==touch.pieceRef){
+        touch.dropped=true;
+        touch.consumed=true;
+        lockTouchDrop(320);
+        break;
+      }
     }
   }
 }, {passive:false});
@@ -8325,24 +8348,21 @@ cv.addEventListener('touchend',e=>{
   if(touchDropLocked||gesture.consumed||!started||paused||gameOver||!piece||piece!==gesture.pieceRef)return;
   const t=e.changedTouches[0],dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
   const elapsed=performance.now()-gesture.at;
-  const verticalSwipe=gesture.axis==='y'&&dy>=28&&dy>Math.abs(dx)*1.15;
-  const fastDownSwipe=verticalSwipe&&dy>=96&&elapsed<460&&dy>Math.abs(dx)*1.35;
-  const upwardSwipe=gesture.axis==='y'&&dy<=-38&&Math.abs(dy)>Math.abs(dx)*1.15;
-
-  if(!gesture.dropped&&!gesture.consumed&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<280){
+  const tap=Math.abs(dx)<Math.max(12,gesture.cellWidth*.35)&&Math.abs(dy)<Math.max(12,gesture.cellHeight*.35)&&elapsed<300;
+  const upwardSwipe=gesture.axis==='y'&&dy<=-Math.max(24,gesture.cellHeight*1.35)&&Math.abs(dy)>Math.abs(dx)*1.12;
+  const downwardFlick=gesture.axis==='y'&&dy>=Math.max(90,gesture.cellHeight*4.8)&&elapsed<520&&dy>Math.abs(dx)*1.25;
+  if(tap||upwardSwipe){
     rotatePiece();
-  }else if(upwardSwipe&&elapsed<650){
-    rotatePiece();
-  }else if(verticalSwipe&&started&&!paused&&!gameOver){
-    // The current gesture cannot hard-drop a piece spawned by its own soft-drop.
-    if(fastDownSwipe&&!gesture.dropped){lockTouchDrop(300);hardDrop();}
+  }else if(downwardFlick){
+    lockTouchDrop(320);
+    hardDrop();
   }
 },{passive:true});
 
-cv.addEventListener('touchcancel', () => {
+cv.addEventListener('touchcancel',()=>{
   touch=null;
-  // Keep the post-drop guard alive across WebView touch cancellation.
-}, {passive:true});
+  // Preserve the post-drop lock across WebView cancellation/re-delivery.
+},{passive:true});
 
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
@@ -9265,6 +9285,17 @@ if (resetProgressBtn) {
   // Explicitly gated visual QA hook; absent from normal gameplay sessions.
   if(new URLSearchParams(location.search).get('qaVisual')==='1'){
     window.__TETRIOS_QA__={
+      prepareGestureTest(){
+        board=Array.from({length:H},()=>Array(W).fill(0));
+        piece={t:0,shape:[[0,1,0],[1,1,1]],x:3,y:4};
+        started=true;paused=false;gameOver=false;touch=null;touchDropLocked=false;
+        bbHardDropAcceptedAt=0;bbHardDropInProgress=false;
+        render();
+        return {ready:!!piece,x:piece.x,y:piece.y};
+      },
+      getPieceState(){
+        return {piece:piece?JSON.parse(JSON.stringify(piece)):null,started,paused,gameOver};
+      },
       activatePrismAura(){
         boosts=['prism','aura'];
         if(typeof render==='function')render();
@@ -14033,11 +14064,12 @@ body .app{background:transparent!important;background-color:transparent!importan
 
 <style id="bb-kt412-mobile-gesture-arena">
 /* KT-412: gesture-first mobile arena. Desktop keeps its keyboard layout. */
-@media (max-width:600px){
-  #game>.controls{
+@media (max-width:600px), (max-height:600px) and (pointer:coarse){
+  /* Hide the complete bottom control deck regardless of its wrapper depth. */
+  #game .controls{
     display:none!important;visibility:hidden!important;pointer-events:none!important;
-    height:0!important;min-height:0!important;margin:0!important;padding:0!important;
-    border:0!important;overflow:hidden!important;
+    width:0!important;height:0!important;min-width:0!important;min-height:0!important;
+    margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;
   }
   #game>.hint{grid-row:auto!important;margin:7px 2px 2px!important}
   #game>.playlayout,#game.unified-game-layout>.playlayout{
@@ -14066,7 +14098,7 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout,#game.unified-game-layout>.playlayout{grid-template-columns:minmax(0,1fr) minmax(108px,34%)!important;gap:6px!important;padding:5px!important}
   #game>.playlayout>.sidecol{gap:5px!important}
 }
-@media (max-width:600px) and (orientation:landscape){
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
   #game>.playlayout,#game.unified-game-layout>.playlayout{grid-template-columns:minmax(0,1fr) minmax(112px,25%)!important;grid-template-rows:minmax(0,1fr) auto!important;align-items:center!important}
   #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
     width:auto!important;height:min(72dvh,calc(100dvh - 138px))!important;
@@ -14076,6 +14108,334 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 @media (min-width:601px){
   #game>.controls{display:grid}
+}
+</style>
+
+<style id="bb-kt412-landscape-touch-layout">
+/* KT-412.2: compact landscape touch layout for wide phones and tablets.
+   Keep the same two-column arena used on narrow phones; desktop grid rules
+   must not leak into landscape touch viewports wider than 600px. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  .app{min-height:100dvh!important;padding:4px 8px max(4px,env(safe-area-inset-bottom))!important}
+  #game.screen:not([hidden]){
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:36px 40px minmax(0,1fr)!important;
+    align-content:stretch!important;gap:4px!important;
+    width:100%!important;max-width:none!important;min-height:100dvh!important;
+    margin:0!important;padding:0!important;
+  }
+  #game .screenhead{grid-row:1!important;min-height:36px!important;height:36px!important;margin:0 1px!important;padding:3px 7px!important}
+  #game .screenhead h2{font-size:14px!important}
+  #game .screenhead p{font-size:8px!important;line-height:1.1!important}
+  #game #pauseBtn{width:32px!important;height:32px!important;flex:0 0 32px!important}
+  #game .gamehud{grid-row:2!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;margin:0!important}
+  #game .hudbox{min-height:38px!important;height:38px!important;padding:3px!important;border-radius:8px!important}
+  #game .hudbox span{font-size:6px!important}
+  #game .hudbox strong{font-size:13px!important;margin-top:1px!important}
+  #game>.playlayout,#game.unified-game-layout>.playlayout{
+    grid-row:3!important;grid-column:1!important;display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(112px,27%)!important;
+    grid-template-rows:minmax(0,1fr) auto!important;align-items:stretch!important;
+    gap:5px!important;width:100%!important;height:100%!important;min-height:0!important;
+    margin:0!important;padding:4px!important;box-sizing:border-box!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    grid-column:1!important;grid-row:1!important;display:flex!important;
+    align-items:center!important;justify-content:center!important;min-width:0!important;
+    min-height:0!important;height:100%!important;margin:0!important;padding:0!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:auto!important;height:min(58dvh,calc(100dvh - 150px))!important;
+    max-height:calc(100dvh - 150px)!important;min-height:0!important;
+    aspect-ratio:10/23!important;flex:0 0 auto!important;margin:0 auto!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:2!important;grid-row:1!important;display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;grid-auto-rows:minmax(0,1fr)!important;
+    align-content:stretch!important;align-items:stretch!important;justify-items:stretch!important;
+    gap:3px!important;width:100%!important;height:100%!important;min-height:0!important;
+    max-height:100%!important;overflow:hidden!important;margin:0!important;padding:0!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    min-width:0!important;min-height:0!important;height:auto!important;max-height:none!important;
+    padding:3px!important;margin:0!important;overflow:hidden!important;border-radius:8px!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard label{font-size:6px!important;line-height:1!important}
+  #game>.playlayout>.sidecol .charge-ring{width:min(42px,48%)!important;margin:2px auto!important}
+  #game>.playlayout>.sidecol .charge-ring-inner strong{font-size:12px!important}
+  #game>.playlayout>.sidecol .charge-ring-inner small{font-size:5px!important}
+  #game>.playlayout>.sidecol .charge-symbol{font-size:10px!important}
+  #game>.playlayout>.sidecol .charge-caption{font-size:5px!important;margin:0!important}
+  #game>.playlayout>.sidecol .nextcanvas{max-height:30px!important;margin:0 auto!important}
+  #game>.playlayout>.sidecol .boosticon{font-size:17px!important;line-height:1!important;margin:1px 0!important}
+  #game>.playlayout>.sidecol .boostname,
+  #game>.playlayout>.sidecol .boostnum{font-size:6px!important;line-height:1!important;margin:0!important}
+  #game>.playlayout>.sidecol .chrono-ring{width:min(38px,44%)!important;margin:1px auto!important}
+  #game>.playlayout>.sidecol .chrono-ring-inner strong{font-size:12px!important}
+  #game>.playlayout>.sidecol .chrono-caption{font-size:5px!important;margin:0!important}
+  #game>.playlayout>.sidecol .chrono-track{height:3px!important}
+  #game>.playlayout>.sidecol .sidecard:has(#timer){min-height:0!important}
+  #game>.playlayout>.sidecol #timer{font-size:11px!important;margin:1px!important}
+  #game.unified-game-layout>.playlayout>.sidecol #holdBtn{min-height:22px!important;height:22px!important;margin:1px 0 0!important;padding:1px!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:3px!important}
+  #game.unified-game-layout>.playlayout>.sidecol>#bbHeroSkillCard{height:auto!important;min-height:0!important;max-height:none!important;flex:initial!important;padding:3px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-art{flex:0 0 22px!important;width:22px!important;height:22px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-art svg{width:20px!important;height:20px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:6px!important;line-height:1!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:5px!important;line-height:1!important}
+  #game>.playlayout>.sidecol>.drop-card{min-height:0!important}
+  #game>.playlayout>.sidecol>.drop-card>label{display:none!important}
+  #game>.playlayout>.sidecol .side-drop{display:block!important;width:100%!important;min-height:28px!important;height:28px!important;margin:1px 0 0!important;padding:2px!important;font-size:8px!important}
+  #game>.playlayout>.gameleftcol{grid-column:1/-1!important;grid-row:2!important;position:relative!important;top:0!important;align-self:start!important;min-width:0!important}
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{display:flex!important;gap:3px!important;padding:2px!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:first-child{min-height:30px!important;padding:2px 5px!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child),
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child){min-height:24px!important;padding:2px!important;font-size:6px!important}
+  #game>.controls{display:none!important;visibility:hidden!important;pointer-events:none!important;width:0!important;height:0!important;margin:0!important;padding:0!important}
+  #game>.hint{display:none!important}
+}
+</style>
+
+
+<style id="bb-kt412-landscape-viewport-lock">
+/* KT-412.3: constrain the app and game grid to the actual landscape viewport.
+   A min-height alone lets intrinsic desktop content expand the grid past the screen. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  html,body{width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important}
+  .app{
+    box-sizing:border-box!important;width:100%!important;
+    height:100dvh!important;min-height:0!important;max-height:100dvh!important;
+    overflow:hidden!important;padding:4px 8px max(4px,env(safe-area-inset-bottom))!important;
+  }
+  #game.screen:not([hidden]){
+    box-sizing:border-box!important;width:100%!important;
+    height:100%!important;min-height:0!important;max-height:100%!important;
+    overflow:hidden!important;align-self:stretch!important;
+    grid-template-rows:36px 40px minmax(0,1fr)!important;
+  }
+  #game>.playlayout,#game.unified-game-layout>.playlayout{
+    box-sizing:border-box!important;width:100%!important;height:100%!important;
+    min-height:0!important;max-height:100%!important;overflow:hidden!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+  }
+  #game>.playlayout>.sidecol{
+    min-height:0!important;height:100%!important;max-height:100%!important;
+    grid-auto-rows:minmax(0,1fr)!important;gap:2px!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    min-height:0!important;min-width:0!important;padding:2px!important;
+  }
+  #game.unified-game-layout>.playlayout>.sidecol #holdBtn{
+    box-sizing:border-box!important;min-height:24px!important;height:24px!important;
+    margin:0!important;padding:1px 2px!important;
+  }
+  #game>.playlayout>.sidecol .side-drop{
+    box-sizing:border-box!important;min-height:36px!important;height:36px!important;
+    margin:0!important;padding:2px!important;
+  }
+  #game>.playlayout>.gameleftcol{min-height:0!important}
+}
+</style>
+
+<style id="bb-kt412-landscape-touch-qa-fix">
+/* KT-412.5: keep wide landscape touch HUD/goals in the compact phone layout.
+   WebKit applies the >=901px desktop rail sizing at 915px even in landscape. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game .gamehud{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-auto-flow:column!important;grid-auto-rows:minmax(0,1fr)!important;
+    width:100%!important;height:40px!important;min-height:40px!important;
+    max-height:40px!important;overflow:hidden!important;gap:4px!important;
+  }
+  #game>.gamehud{
+    grid-column:1!important;grid-row:2!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:40px!important;grid-auto-flow:column!important;
+  }
+  #game>.gamehud>.hudbox{
+    box-sizing:border-box!important;display:block!important;
+    grid-column:auto!important;grid-row:1!important;
+    width:auto!important;min-width:0!important;max-width:none!important;
+    min-height:0!important;height:38px!important;max-height:38px!important;
+    margin:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    height:min(56dvh,calc(100dvh - 154px))!important;
+    max-height:calc(100dvh - 154px)!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-template-rows:repeat(5,minmax(0,1fr)) 36px!important;
+  }
+  #game>.playlayout>.sidecol:has(#chronoCard){
+    grid-template-rows:repeat(6,minmax(0,1fr)) 36px!important;
+  }
+  #game>.playlayout>.sidecol>.drop-card{
+    box-sizing:border-box!important;min-height:36px!important;height:36px!important;
+    max-height:36px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.sidecol .side-drop{
+    box-sizing:border-box!important;display:block!important;width:100%!important;
+    min-height:36px!important;height:36px!important;max-height:36px!important;
+    margin:0!important;padding:2px!important;
+  }
+  #game>.playlayout>.gameleftcol{
+    box-sizing:border-box!important;display:block!important;
+    grid-column:1/-1!important;grid-row:2!important;
+    width:100%!important;min-width:0!important;max-width:none!important;
+    height:auto!important;min-height:0!important;max-height:62px!important;
+    margin:0!important;padding:0!important;position:relative!important;
+    top:0!important;overflow:hidden!important;align-self:start!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    box-sizing:border-box!important;display:flex!important;
+    flex-direction:row!important;flex-wrap:nowrap!important;
+    align-items:stretch!important;justify-content:space-between!important;
+    width:100%!important;min-width:0!important;max-width:100%!important;
+    height:auto!important;min-height:0!important;max-height:60px!important;
+    margin:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div,
+  #game>.playlayout>.gameleftcol #campaignGoals>div{
+    box-sizing:border-box!important;flex:1 1 0!important;
+    min-width:0!important;max-width:none!important;overflow:hidden!important;
+  }
+}
+</style>
+
+
+<style id="bb-kt412-landscape-direct-hud-fix">
+/* KT-412.12: the shared HUD is moved to be a direct child of #game.
+   At 901px+ WebKit enters desktop left-rail rules, which force each metric
+   into its own row. Override that exact live DOM placement for touch landscape. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game>.gamehud.gamehud-top{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:40px!important;grid-auto-flow:column!important;
+    grid-auto-columns:minmax(0,1fr)!important;grid-auto-rows:40px!important;
+    grid-column:1!important;grid-row:2!important;
+    align-content:stretch!important;align-items:stretch!important;justify-items:stretch!important;
+    width:100%!important;min-width:0!important;height:40px!important;
+    min-height:40px!important;max-height:40px!important;
+    gap:4px!important;margin:0!important;padding:0!important;overflow:hidden!important;
+    border:1px solid #304766!important;border-radius:9px!important;
+    background:linear-gradient(100deg,#111e32,#0b1425 55%,#151b2b)!important;
+    box-shadow:inset 0 1px #ffffff0a,0 4px 12px #0003!important;
+  }
+  #game>.gamehud.gamehud-top>.hudbox,
+  #game>.gamehud.gamehud-top>#gameCoins{
+    box-sizing:border-box!important;position:relative!important;display:flex!important;
+    grid-column:auto!important;grid-row:1!important;float:none!important;clear:none!important;
+    flex:initial!important;flex-direction:column!important;
+    align-items:center!important;justify-content:center!important;
+    width:auto!important;min-width:0!important;max-width:none!important;
+    height:38px!important;min-height:0!important;max-height:38px!important;
+    margin:0!important;padding:2px 3px!important;overflow:hidden!important;
+    border:0!important;border-right:1px solid #ffffff18!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;text-align:center!important;
+  }
+  #game>.gamehud.gamehud-top>.hudbox:last-child,
+  #game>.gamehud.gamehud-top>#gameCoins{border-right:0!important}
+  #game>.gamehud.gamehud-top>.hudbox>span,
+  #game>.gamehud.gamehud-top>#gameCoins>span{
+    box-sizing:border-box!important;display:block!important;position:static!important;
+    flex:0 1 auto!important;width:100%!important;min-width:0!important;max-width:100%!important;
+    margin:0!important;padding:0!important;text-align:center!important;
+    color:#9eb3d2!important;font-size:6px!important;line-height:1!important;
+    letter-spacing:.035em!important;white-space:nowrap!important;overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+  #game>.gamehud.gamehud-top>.hudbox>strong,
+  #game>.gamehud.gamehud-top>#gameCoins>strong{
+    box-sizing:border-box!important;display:block!important;position:static!important;
+    flex:0 1 auto!important;width:100%!important;min-width:0!important;max-width:100%!important;
+    margin:2px 0 0!important;padding:0!important;text-align:center!important;
+    color:#f0f5ff!important;font-size:13px!important;font-weight:900!important;line-height:1!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  #game>.gamehud.gamehud-top>#gameCoins>span{color:#d8b96e!important}
+  #game>.gamehud.gamehud-top>#gameCoins>strong{color:#ffe0a0!important}
+}
+</style>
+
+
+
+<style id="bb-kt412-landscape-encounter-compact">
+/* KT-412.13: keep the rogue encounter card fully visible in the short landscape rail. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child{
+    box-sizing:border-box!important;display:flex!important;align-items:center!important;
+    gap:6px!important;width:100%!important;height:50px!important;
+    min-height:50px!important;max-height:50px!important;
+    margin:0!important;padding:4px 7px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:first-child{
+    flex:0 0 18px!important;width:18px!important;font-size:16px!important;line-height:1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2){
+    flex:1 1 auto!important;min-width:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:first-child{
+    font-size:8px!important;line-height:1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(2){
+    height:3px!important;margin:3px 0 2px!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(3){
+    font-size:7px!important;line-height:1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(4){
+    display:none!important;
+  }
+}
+</style>
+
+<style id="bb-kt412-landscape-encounter-rail-final">
+/* KT-412.15: fit the encounter card and goals inside the 60px landscape rail. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game>.playlayout>.gameleftcol #rogueGoals{
+    box-sizing:border-box!important;display:flex!important;flex-direction:row!important;
+    align-items:center!important;gap:4px!important;
+    height:60px!important;min-height:60px!important;max-height:60px!important;
+    padding:0 2px!important;margin:0!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>strong{display:none!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child{
+    box-sizing:border-box!important;flex:1.35 1 0!important;min-width:0!important;
+    display:flex!important;align-items:center!important;gap:5px!important;
+    height:54px!important;min-height:54px!important;max-height:54px!important;
+    margin:0!important;padding:4px 6px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:first-child{
+    flex:0 0 18px!important;width:18px!important;font-size:16px!important;line-height:1!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2){
+    display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+    justify-content:center!important;gap:2px!important;min-width:0!important;
+    max-height:44px!important;overflow:hidden!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:first-child{
+    font-size:8px!important;line-height:1.15!important;white-space:nowrap!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(2){
+    height:3px!important;min-height:3px!important;margin:0!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(3){
+    font-size:7px!important;line-height:1.1!important;white-space:nowrap!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child>div:nth-child(2)>div:nth-child(4){display:none!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child){
+    box-sizing:border-box!important;flex:1 1 0!important;min-width:0!important;
+    max-height:44px!important;overflow:hidden!important;font-size:7px!important;line-height:1.2!important;
+    margin:0!important;padding:2px!important;
+  }
 }
 </style>
 </body></html>

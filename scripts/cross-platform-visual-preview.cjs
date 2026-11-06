@@ -10,7 +10,11 @@ const targets = [
   { engine: 'webkit', name: 'ios-webkit-375x812', width: 375, height: 812, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-390x844', width: 390, height: 844, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-412x915', width: 412, height: 915, mobile: true },
-  { engine: 'webkit', name: 'ios-webkit-430x932', width: 430, height: 932, mobile: true }
+  { engine: 'webkit', name: 'ios-webkit-430x932', width: 430, height: 932, mobile: true },
+  { engine: 'webkit', name: 'ios-webkit-landscape-844x390', width: 844, height: 390, mobile: true },
+  { engine: 'webkit', name: 'ios-webkit-landscape-915x412', width: 915, height: 412, mobile: true },
+  { engine: 'chromium', name: 'android-chromium-393x873', width: 393, height: 873, mobile: true },
+  { engine: 'chromium', name: 'android-chromium-landscape-873x393', width: 873, height: 393, mobile: true }
 ];
 
 (async () => {
@@ -18,6 +22,11 @@ const targets = [
   const failures = [];
 
   for (const target of targets) {
+    console.log('[target:start] ' + target.name + ' (' + target.engine + ', ' + target.width + 'x' + target.height + ')');
+    const targetWatchdog = setTimeout(() => {
+      console.error('[target:timeout] ' + target.name + ' exceeded 150000ms; stopping preview process');
+      process.exit(1);
+    }, 150000);
     const browserType = target.engine === 'webkit' ? webkit : chromium;
     const launchOptions = { headless: true };
     if (target.engine === 'chromium') {
@@ -29,7 +38,7 @@ const targets = [
       ];
     }
 
-    const browser = await browserType.launch(launchOptions);
+    const browser = await browserType.launch({ ...launchOptions, timeout: 30000 });
     const context = await browser.newContext({
       viewport: { width: target.width, height: target.height },
       deviceScaleFactor: target.mobile ? 3 : 1,
@@ -46,28 +55,30 @@ const targets = [
     page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
     page.on('requestfailed', request => failedRequests.push({url:request.url(),failure:request.failure()?.errorText||'unknown'}));
 
-    console.log('Starting visual capture: ' + target.name + ' (' + target.engine + ')');
+    console.log('[stage:menu] ' + target.name);
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
-    await page.screenshot({ path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
+    console.log('[stage:card-library] ' + target.name);
     // The complete card archive must be available before starting a run on every platform.
     await page.locator('#bbOpenCardLibrary').click();
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
     // All 35 cards now belong exclusively to the Block Run roguelike system.
-    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-card-filter="rogue"]').click();
     const rogueCards = await page.locator('#bbCardLibraryList article').count();
     if (rogueCards !== 35) failures.push(target.name + ': expected all 35 cards to be Block Run-only, got ' + rogueCards);
-    await page.screenshot({ path: outputDir + '/' + target.name + '-card-library-block-run.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library-block-run.png', fullPage: false });
     if (await page.locator('[data-bb-card-filter="standard"]').count() !== 0) {
       failures.push(target.name + ': shared/standard card filter must not exist');
     }
     await page.locator('#bbCloseCardLibrary').click();
 
+    console.log('[stage:campaign-atlas] ' + target.name);
     // Campaign is a standard ruleset: show its own mission objectives, never card picks.
     // Use a separate page so WebKit reload quirks cannot interrupt the Rogue preview.
     const campaignPage = await context.newPage();
@@ -94,7 +105,7 @@ const targets = [
         cards: document.querySelectorAll('#campaign .bb-galaxy-card').length
       };
     });
-    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-atlas.png', fullPage: false });
+    await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-atlas.png', fullPage: false });
     if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
       failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
     }
@@ -121,10 +132,12 @@ const targets = [
     if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
-    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+    await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+    console.log('[stage:campaign-missions] ' + target.name);
     await campaignPage.close();
 
     if (target.name === 'desktop-1440x900') {
+      console.log('[stage:daily-challenge] ' + target.name);
       // Daily challenge objective must remain visible after the player enters the arena.
       const dailyPage = await context.newPage();
       dailyPage.setDefaultTimeout(15000);
@@ -160,17 +173,73 @@ const targets = [
       if (!dailyGoalState.text.match(/\d+\s*(?:линий|линии|линия|очков|секунд)/i)) failures.push(target.name + ': daily objective value is missing (' + dailyGoalState.text + ')');
       if (!target.mobile && !dailyGoalState.parentClass.includes('game-heading-copy')) failures.push(target.name + ': desktop daily objective is not attached to the arena heading');
       if (target.mobile && dailyGoalState.parentId !== 'game') failures.push(target.name + ': mobile daily objective was moved out of its original layout');
-      await dailyPage.screenshot({ path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
+      await dailyPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
       await dailyPage.close();
 
     }
 
+    console.log('[stage:block-run-start] ' + target.name);
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#bbConfirmStartHero').evaluate(element => element.click());
     await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
+
+    console.log('[stage:gameplay-ready] ' + target.name);
+    // Exercise real board touch listeners in WebKit/Chromium, not only screenshots.
+    if (target.mobile) {
+      const gestureResult = await page.evaluate(() => {
+        const board=document.querySelector('#game #board');
+        const qa=window.__TETRIOS_QA__;
+        if(!board||!qa?.getPieceState) return {supported:false,reason:'board or QA state hook missing'};
+        const prepared=qa.prepareGestureTest?.();
+        if(!prepared?.ready) return {supported:false,reason:'deterministic test piece could not be prepared'};
+        const rect=board.getBoundingClientRect();
+        const centerX=rect.left+rect.width*.5,centerY=rect.top+rect.height*.38;
+        let identifier=71;
+        const send=(type,x,y,active=true)=>{
+          // WebKit does not expose a constructible Touch/TouchEvent in every
+          // automation context. Use a bubbling Event with Touch-shaped objects
+          // so the game's production listeners receive the same read-only fields.
+          const touch={identifier,target:board,clientX:x,clientY:y,pageX:x,pageY:y,screenX:x,screenY:y};
+          const event=new Event(type,{bubbles:true,cancelable:true});
+          Object.defineProperties(event,{
+            touches:{value:active?[touch]:[]},
+            targetTouches:{value:active?[touch]:[]},
+            changedTouches:{value:[touch]}
+          });
+          board.dispatchEvent(event);
+        };
+        const state=()=>qa.getPieceState().piece;
+        const swipe=(dx,dy)=>{
+          const x=centerX,y=centerY;
+          send('touchstart',x,y,true);
+          send('touchmove',x+dx,y+dy,true);
+          send('touchend',x+dx,y+dy,false);
+        };
+        const before=state();
+        swipe(Math.max(40,rect.width*.28),0);
+        const afterRight=state();
+        swipe(-Math.max(40,rect.width*.28),0);
+        const afterLeft=state();
+        swipe(0,-Math.max(40,rect.height*.06));
+        const afterRotate=state();
+        swipe(0,Math.min(70,Math.max(20,rect.height*.10)));
+        const afterDown=state();
+        return {
+          supported:true,
+          before,afterRight,afterLeft,afterRotate,afterDown,
+          movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
+          movedLeft:!!afterRight&&!!afterLeft&&afterLeft.x<afterRight.x,
+          rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
+          softDropped:!!afterRotate&&!!afterDown&&afterDown.y>=afterRotate.y
+        };
+      });
+      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.softDropped) {
+        failures.push(target.name + ': mobile board gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
+      }
+    }
 
     const visualBoostState = await page.evaluate(() => window.__TETRIOS_QA__?.activatePrismAura?.() || null);
     if (!visualBoostState || !visualBoostState.activePiece || !visualBoostState.boosts.includes('prism') || !visualBoostState.auraOwned) {
@@ -206,7 +275,7 @@ const targets = [
       const playlayout = document.querySelector('#game .playlayout');
       const game = document.querySelector('#game');
       const leftRail = document.querySelector('#game .gameleftcol');
-      const controlRow = document.querySelector('#game>.controls');
+      const controlRow = document.querySelector('#game .controls');
       const hint = document.querySelector('#game>.hint');
       return {
         viewport: { width: innerWidth, height: innerHeight },
@@ -284,9 +353,11 @@ const targets = [
       // board gestures. Assert the old deck is absent and the board is the
       // active touch surface; do not fail because legacy buttons are hidden.
       if (geometry.controlRow && geometry.controlVisibility &&
-          geometry.controlVisibility.display !== 'none' &&
-          geometry.controlVisibility.visibility !== 'hidden') {
-        failures.push(target.name + ': legacy bottom movement deck should be hidden in gesture-first mobile mode');
+          (geometry.controlVisibility.display !== 'none' ||
+           geometry.controlVisibility.visibility === 'visible' ||
+           geometry.controlVisibility.pointerEvents !== 'none' ||
+           geometry.controlRow.width > 1 || geometry.controlRow.height > 1)) {
+        failures.push(target.name + ': complete bottom movement deck must be removed from mobile layout (' + JSON.stringify(geometry.controlVisibility) + ')');
       }
       const boardGestureState = await page.evaluate(() => {
         const board = document.querySelector('#game #board');
@@ -336,8 +407,8 @@ const targets = [
       failures.push(target.name + ': desktop arena is not contained by the viewport');
     }
 
-    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d.png', fullPage: false });
-    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-prism-aura.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d.png', fullPage: false });
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-prism-aura.png', fullPage: false });
     console.log('Captured 2D arena and Prism/Aura state: ' + target.name);
 
     const arenaModeState = await page.evaluate(() => ({
@@ -348,12 +419,14 @@ const targets = [
     if (arenaModeState.toggleCount !== 0 || arenaModeState.overlayCanvasCount !== 0 || !arenaModeState.boardVisible) {
       failures.push(target.name + ': expected the single-renderer 2D arena with no 3D toggle or overlay (' + JSON.stringify(arenaModeState) + ')');
     }
-    await page.screenshot({ path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
-    console.log('Verified single-renderer 2D arena: ' + target.name);
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
+    console.log('[stage:final-arena-verified] ' + target.name);
 
     report.push({ target: target.name, engine: target.engine, geometry, sideScrollCheck, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
     await context.close();
     await browser.close();
+    clearTimeout(targetWatchdog);
+    console.log('[target:complete] ' + target.name);
   }
 
   fs.writeFileSync(outputDir + '/report.json', JSON.stringify({ report, failures }, null, 2));
