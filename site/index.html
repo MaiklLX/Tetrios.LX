@@ -14308,4 +14308,52 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+<style id="bb-kt412-landscape-nested-hud-fix">
+/* KT-412.10: the runtime moves .gamehud into .gameleftcol.
+   The earlier direct-child override therefore missed the live HUD in WebKit.
+   Pin the relocated HUD to one compact four-column row before the goals. */
+@media (orientation:landscape) and (pointer:coarse) and (max-height:600px){
+  #game.unified-game-layout>.playlayout>.gameleftcol{
+    display:flex!important;flex-direction:column!important;
+    align-items:stretch!important;justify-content:flex-start!important;
+    gap:4px!important;width:100%!important;min-width:0!important;
+    height:auto!important;min-height:0!important;max-height:108px!important;
+    overflow:hidden!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.gamehud{
+    box-sizing:border-box!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:40px!important;grid-auto-flow:column!important;
+    grid-auto-rows:40px!important;align-items:stretch!important;
+    width:100%!important;height:40px!important;min-height:40px!important;
+    max-height:40px!important;gap:4px!important;margin:0!important;
+    padding:0!important;overflow:hidden!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.gamehud>.hudbox{
+    box-sizing:border-box!important;display:flex!important;
+    grid-column:auto!important;grid-row:1!important;
+    flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    width:auto!important;height:38px!important;min-width:0!important;max-width:none!important;
+    min-height:0!important;max-height:38px!important;margin:0!important;
+    padding:2px 3px!important;overflow:hidden!important;text-align:center!important;
+    border-radius:8px!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.gamehud>.hudbox>span{
+    display:block!important;width:100%!important;min-width:0!important;
+    font-size:6px!important;line-height:1!important;letter-spacing:.04em!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.gamehud>.hudbox>strong{
+    display:block!important;width:100%!important;min-width:0!important;
+    margin:2px 0 0!important;font-size:13px!important;line-height:1!important;
+    white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>#rogueGoals,
+  #game.unified-game-layout>.playlayout>.gameleftcol>#campaignGoals{
+    flex:0 0 auto!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;max-height:60px!important;overflow:hidden!important;
+  }
+}
+</style>
 </body></html>
