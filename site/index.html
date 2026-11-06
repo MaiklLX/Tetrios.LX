@@ -7555,7 +7555,6 @@ function hardDrop(){
   bbHardDropAcceptedAt=now;
   bbHardDropInProgress=true;
   if(typeof touch!=='undefined')touch=null;
-  if(typeof lockTouchDrop==='function')lockTouchDrop(300);
   if(mode==='campaign')bbCampaignRun.hardDrops++;
   let dist=0;
   while(!collides(piece,0,1)){piece.y++;dist++}
@@ -8250,15 +8249,10 @@ if(menuButton){
 document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let a=b.dataset.act;if(a==='left')move(-1);if(a==='right')move(1);if(a==='rotate')rotatePiece();if(a==='drop')hardDrop()};b.addEventListener('click',act);});
 
 let touch = null;
-let touchDropLocked = false;
-let touchDropUnlockTimer = null;
-function lockTouchDrop(duration=320) {
-  touchDropLocked = true;
-  if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
-  touchDropUnlockTimer = setTimeout(() => {
-    touchDropLocked = false;
-    touchDropUnlockTimer = null;
-  }, duration);
+let lastTouchDropAt = -Infinity;
+const TOUCH_DROP_REPEAT_GUARD_MS = 320;
+function canAcceptTouchDrop(now=performance.now()) {
+  return now - lastTouchDropAt >= TOUCH_DROP_REPEAT_GUARD_MS;
 }
 const cv = $('game');
 
@@ -8351,8 +8345,8 @@ cv.addEventListener('touchend',e=>{
   const downwardFlick=gesture.axis==='y'&&dy>=Math.max(90,gesture.cellHeight*4.8)&&elapsed<520&&dy>Math.abs(dx)*1.25;
   if(tap||upwardSwipe){
     rotatePiece();
-  }else if(downwardFlick&&!touchDropLocked){
-    lockTouchDrop(320);
+  }else if(downwardFlick&&canAcceptTouchDrop()){
+    lastTouchDropAt=performance.now();
     hardDrop();
   }
 },{passive:true});
@@ -9286,13 +9280,17 @@ if (resetProgressBtn) {
       prepareGestureTest(){
         board=Array.from({length:H},()=>Array(W).fill(0));
         piece={t:0,shape:[[0,1,0],[1,1,1]],x:3,y:4};
-        started=true;paused=false;gameOver=false;touch=null;touchDropLocked=false;
+        started=true;paused=false;gameOver=false;touch=null;lastTouchDropAt=-Infinity;
         bbHardDropAcceptedAt=0;bbHardDropInProgress=false;
         render();
         return {ready:!!piece,x:piece.x,y:piece.y};
       },
       getPieceState(){
         return {piece:piece?JSON.parse(JSON.stringify(piece)):null,started,paused,gameOver};
+      },
+      triggerHardDrop(){
+        hardDrop();
+        return {piece:piece?JSON.parse(JSON.stringify(piece)):null,dropGuardAt:bbHardDropAcceptedAt,touchDropGuardAt:lastTouchDropAt};
       },
       activatePrismAura(){
         boosts=['prism','aura'];
