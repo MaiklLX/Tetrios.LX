@@ -9288,8 +9288,8 @@ if (resetProgressBtn) {
       getPieceState(){
         return {piece:piece?JSON.parse(JSON.stringify(piece)):null,started,paused,gameOver};
       },
-      triggerHardDrop(){
-        hardDrop();
+      triggerTouchDrop(){
+        if(canAcceptTouchDrop()){lastTouchDropAt=performance.now();hardDrop();}
         return {piece:piece?JSON.parse(JSON.stringify(piece)):null,dropGuardAt:bbHardDropAcceptedAt,touchDropGuardAt:lastTouchDropAt};
       },
       activatePrismAura(){
