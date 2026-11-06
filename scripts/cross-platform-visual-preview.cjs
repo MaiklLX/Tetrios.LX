@@ -239,6 +239,7 @@ const targets = [
         // A touch Hard Drop must not leave a shared cooldown that delays the next
         // deliberate horizontal move or rotation.
         const touchDrop=qa.triggerTouchDrop?.();
+        const postDropProbe=qa.preparePostDropGestureProbe?.();
         const afterTouchDrop=state();
         swipe(horizontalStep,0);
         const afterDropMove=state();
@@ -247,15 +248,15 @@ const targets = [
         return {
           supported:true,
           before,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
-          afterTouchDrop,afterDropMove,afterDropRotate,touchDrop,
+          afterTouchDrop,afterDropMove,afterDropRotate,touchDrop,postDropProbe,
           movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
           repeatedRight:!!afterRight&&!!afterRightRepeat&&afterRightRepeat.x>afterRight.x,
           movedLeft:!!afterRightRepeat&&!!afterLeft&&afterLeft.x<afterRightRepeat.x,
           rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
           repeatedRotation:!!afterRotate&&!!afterRotateRepeat&&JSON.stringify(afterRotate)!==JSON.stringify(afterRotateRepeat),
           softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y,
-          movedImmediatelyAfterDrop:!!afterTouchDrop?.piece&&!!afterDropMove&&afterDropMove.x!==afterTouchDrop.piece.x,
-          rotatedImmediatelyAfterDrop:!!afterDropMove&&!!afterDropRotate&&JSON.stringify(afterDropMove)!==JSON.stringify(afterDropRotate)
+          movedImmediatelyAfterDrop:!!afterTouchDrop?.piece&&!!afterDropMove?.piece&&afterDropMove.piece.x!==afterTouchDrop.piece.x,
+          rotatedImmediatelyAfterDrop:!!afterDropMove?.piece&&!!afterDropRotate?.piece&&JSON.stringify(afterDropMove.piece.shape)!==JSON.stringify(afterDropRotate.piece.shape)
         };
       });
       if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
