@@ -220,7 +220,7 @@ const targets = [
           send('touchend',x+dx,y+dy,false);
         };
         const before=state();
-        const horizontalStep=Math.max(40,rect.width*.28);
+        const horizontalStep=Math.max(28,rect.width*.14);
         swipe(horizontalStep,0);
         const afterRight=state();
         // Repeat immediately, without waiting for a cooldown timer.
