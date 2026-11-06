@@ -5324,6 +5324,15 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;right:5px!important;top:4px!important}
 }
 </style>
+
+<style id="bb-kt411-viewport-offset-reset">
+/* KT-411: remove legacy vertical nudges that pushed the mobile HUD and controls below short viewports. */
+@media (max-width:600px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:none!important}
+}
+</style>
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -13799,7 +13808,7 @@ body .app{background:transparent!important;background-color:transparent!importan
     width:100%!important;min-width:0!important;height:auto!important;margin:0!important;padding:0!important;
   }
   #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
-    --bb-phone-cabinet-max-height:min(63dvh,calc(100dvh - 325px),650px);
+    --bb-phone-cabinet-max-height:min(63dvh,calc(100dvh - 350px),650px);
     position:relative!important;display:block!important;flex:0 0 auto!important;
     width:100%!important;height:auto!important;max-width:100%!important;max-height:var(--bb-phone-cabinet-max-height)!important;
     min-width:0!important;min-height:0!important;aspect-ratio:10/23!important;
@@ -13959,6 +13968,57 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.controls{grid-row:4!important;display:grid!important;visibility:visible!important;pointer-events:auto!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;margin-top:5px!important}
   #game>.controls>.control{height:44px!important;min-height:44px!important}
   #game>.hint{grid-row:5!important;margin-top:4px!important}
+}
+</style>
+
+<style id="bb-kt411-short-viewport-board-fit">
+/* KT-411 follow-up: cap the board by width on short portrait screens.
+   A max-height alone did not shrink the width-driven 10:23 board in WebKit,
+   so the playlayout kept its full intrinsic height and pushed controls below view. */
+@media (max-width:600px) and (max-height:860px) and (orientation:portrait){
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,51vw)!important;
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:10/23!important;
+  }
+  #game>.playlayout>.gameleftcol{top:0!important}
+}
+</style>
+
+
+
+<style id="bb-kt411-short-viewport-control-deck">
+/* KT-411: lift only the bottom touch-control row above the iOS safe viewport edge.
+   The short-WebKit captures showed the row itself still ending 4–16px below view. */
+@media (max-width:600px) and (max-height:860px) and (orientation:portrait){
+  #game>.controls{transform:translateY(-20px)!important}
+}
+</style>
+
+
+<style id="bb-kt411-readable-arena">
+/* KT-411: readable arena copy; rechecked in the full cross-platform preview. */
+@media (max-width:600px) and (orientation:portrait){
+  #game #dailyMissionGoal .daily-mission-label{font-size:9px!important;line-height:1.2!important}
+  #game #dailyMissionGoalText{font-size:14px!important;line-height:1.2!important}
+  #game .hudbox span{font-size:8px!important;letter-spacing:.06em!important}
+  #game>.playlayout>.sidecol>.sidecard label{font-size:8.5px!important;line-height:1.25!important;letter-spacing:.045em!important}
+  #game>.playlayout>.sidecol .boostname{font-size:9px!important;line-height:1.25!important}
+  #game>.playlayout>.sidecol .boostnum{font-size:9px!important;line-height:1.2!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:8.5px!important;line-height:1.2!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:7.5px!important;line-height:1.2!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>strong,
+  #game>.playlayout>.gameleftcol #campaignGoals>strong{font-size:9px!important;line-height:1.2!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child),
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child){font-size:8.5px!important;line-height:1.2!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child)>span,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child)>span{font-size:8px!important;line-height:1.2!important}
+  #game>.hint{font-size:10px!important;line-height:1.4!important}
+}
+@media (min-width:901px){
+  #game .game-heading-copy #dailyMissionGoal .daily-mission-label{font-size:10px!important;line-height:1.2!important}
+  #game .game-heading-copy #dailyMissionGoalText{font-size:15px!important;line-height:1.2!important}
 }
 </style>
 
