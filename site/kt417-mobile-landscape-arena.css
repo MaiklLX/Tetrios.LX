@@ -120,3 +120,11 @@
   #game.unified-game-layout>.controls,
   #game.unified-game-layout>.hint { display:none!important; visibility:hidden!important; pointer-events:none!important; }
 }
+
+/* Keep runtime-hidden utility cards out of the compact landscape rail.
+   Component display rules use !important, so the native [hidden] rule loses. */
+@media (max-width: 1100px) and (orientation: landscape) {
+  #game.unified-game-layout > .playlayout > .sidecol > [hidden] {
+    display: none !important;
+  }
+}
