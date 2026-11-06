@@ -255,8 +255,8 @@ const targets = [
           rotated:!!afterLeft&&!!afterRotate&&JSON.stringify(afterLeft)!==JSON.stringify(afterRotate),
           repeatedRotation:!!afterRotate&&!!afterRotateRepeat&&JSON.stringify(afterRotate)!==JSON.stringify(afterRotateRepeat),
           softDropped:!!afterRotateRepeat&&!!afterDown&&afterDown.y>=afterRotateRepeat.y,
-          movedImmediatelyAfterDrop:!!afterTouchDrop?.piece&&!!afterDropMove?.piece&&afterDropMove.piece.x!==afterTouchDrop.piece.x,
-          rotatedImmediatelyAfterDrop:!!afterDropMove?.piece&&!!afterDropRotate?.piece&&JSON.stringify(afterDropMove.piece.shape)!==JSON.stringify(afterDropRotate.piece.shape)
+          movedImmediatelyAfterDrop:!!afterTouchDrop&&!!afterDropMove&&afterDropMove.x!==afterTouchDrop.x,
+          rotatedImmediatelyAfterDrop:!!afterDropMove&&!!afterDropRotate&&JSON.stringify(afterDropMove.shape)!==JSON.stringify(afterDropRotate.shape)
         };
       });
       if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
