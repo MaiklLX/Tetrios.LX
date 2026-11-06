@@ -27,6 +27,7 @@ At 375×812 mobile viewport, the current geometry report records:
 - A separate bottom panel occupies about 144 px and contains Block Run room/HP/monster status and three goals.
 - The board itself is prominent and readable, but the screen carries several simultaneous information groups: top title/HUD, tall board, side rail, and a dense bottom mission panel.
 - In the 393×873 cross-platform capture, the same hierarchy remains: the board dominates the center-left, while the right rail and bottom room/goal panel compete for attention.
+- In the 873×393 landscape capture, the board extends beyond the available viewport height and the right-side modules are compressed into shallow strips. This is a clear layout defect/opportunity: landscape needs its own height-bounded arena composition, not a scaled portrait arrangement.
 
 Existing main menu baseline:
 - Strong, recognizable Tetrios branding and large mode cards.
@@ -51,7 +52,7 @@ Existing main menu baseline:
 ### Phase A — Arena research and layout specification (first)
 - Inspect all current mobile arena modes: Campaign, Block Run and Daily, including pause, game-over, level-up, skill/boost states.
 - Compare current 375×812, 393×873, 412×915, 430×932 and short-device viewports.
-- Establish a compact mobile HUD, board sizing rules, side-module priority, bottom-panel behavior, touch target map, safe-area rules and landscape fallback.
+- Establish a compact mobile HUD, board sizing rules, side-module priority, bottom-panel behavior, touch target map, safe-area rules and landscape fallback. Landscape acceptance must include the entire board and controls within the visible height without clipping.
 - Define explicit acceptance criteria for no clipping, no overlap, readable cells, reachable controls and minimal scrolling during active play.
 
 ### Phase B — Mobile arena prototype
