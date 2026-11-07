@@ -14790,5 +14790,18 @@ body .app{background:transparent!important;background-color:transparent!importan
  #menu.home-dashboard.home-dashboard > .hero h1{font-size:clamp(20px,6vw,25px)!important}
  #menu.home-dashboard.home-dashboard > .hero p{font-size:8px!important}
 }
+
+/* KT-427.2 — keep the utility rail inside the board frame on narrow portrait phones */
+@media (min-width: 361px) and (max-width: 390px) and (orientation: portrait) {
+  #game .sidecol {
+    gap: 4px !important;
+  }
+
+  #game .sidecol > .sidecard,
+  #game .sidecol > .bb-hero-skill-slot {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+  }
+}
 </style>
 </body></html>
