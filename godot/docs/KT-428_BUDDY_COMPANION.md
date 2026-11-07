@@ -6,7 +6,7 @@ Date: 2026-11-07
 - Keep the existing 10×23 board and game model unchanged.
 - Add an original, code-drawn pixel Buddy companion in saturated blue/cyan.
 - Keep the asset self-contained: no image generation, external downloads, or imported proprietary art.
-- Place the companion in the safe left gutter beside the portrait playfield; hide it automatically when the viewport has no room.
+- Place the companion in the left gutter beside the portrait playfield; scale it to fit the available gutter on phone screens and hide it only when the gutter is too narrow.
 - Connect the character to gameplay events:
   - idle during normal play;
   - happy after a line clear;
@@ -20,11 +20,14 @@ Date: 2026-11-07
 
 ## Verification status
 - Source changes committed on `godot/kt428-buddy-companion-2026-11-07`.
-- Godot 4.4.1 headless import, parser, model tests, and scene smoke test must pass in CI before this is considered validated.
+- Godot 4.4.1 headless import, main-script parse, model tests, and scene smoke test passed on KT-428 and again after the KT-430 / KT-431 layout commits.
+- KT-430 moves the minimum safe-gutter visibility threshold to 126px to prevent overlap at wider viewports.
+- KT-431 scales Buddy to the actual left-gutter width, anchors it at an 8px inset, and keeps an 8px gap before the playfield; this makes the companion available on common phone portrait widths rather than only tablets.
+- Runtime geometry is still not covered by a dedicated Godot viewport test; physical Android rendering remains unverified.
 - No APK was built or released.
 - No change to `main` or the public web deployment.
 
 ## Follow-up
-- Review the CI result and rendered in-engine proportions.
+- Review the rendered in-engine proportions on physical Android devices, especially narrow portrait screens.
 - Add a small animation atlas or frame-based sprite only if profiling shows the procedural drawing is not sufficient.
 - Later, wire the remaining Buddy personalities and gameplay reactions without changing core mechanics.
