@@ -40,7 +40,7 @@ func _layout() -> void:
 	var x: float = (screen_size.x - total) * 0.5
 	if is_instance_valid(buddy):
 		buddy.position = Vector2(maxf(24.0, board_rect.position.x - 112.0), board_rect.position.y + 18.0)
-		buddy.visible = board_rect.position.x >= 118.0
+		buddy.visible = board_rect.position.x >= 126.0
 	controls = {
 		"left": Rect2(x, button_y, widths[0], button_h),
 		"right": Rect2(x + widths[0] + gap, button_y, widths[1], button_h),
