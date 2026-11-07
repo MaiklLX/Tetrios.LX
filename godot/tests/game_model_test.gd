@@ -33,6 +33,20 @@ func _run() -> void:
 	var wide_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(220.0)
 	if not _check(wide_gutter.visible and is_equal_approx(wide_gutter.scale, 1.0), "Buddy must use full size when the gutter is wide"):
 		return
+	layout_probe.game = Model.new()
+	layout_probe.game.reset()
+	layout_probe.pause_rect = Rect2(10.0, 10.0, 50.0, 50.0)
+	layout_probe.resume_rect = Rect2(100.0, 100.0, 100.0, 50.0)
+	layout_probe._handle_tap(Vector2(20.0, 20.0))
+	if not _check(layout_probe.paused, "Pause button tap must freeze the run"):
+		return
+	layout_probe._handle_tap(Vector2(150.0, 120.0))
+	if not _check(not layout_probe.paused, "Resume button tap must unfreeze the run"):
+		return
+	layout_probe.game.game_over = true
+	layout_probe._toggle_pause()
+	if not _check(not layout_probe.paused, "Pause must not activate after game over"):
+		return
 	layout_probe.free()
 	var model: BlockBuddiesModel = Model.new()
 	model.reset()
