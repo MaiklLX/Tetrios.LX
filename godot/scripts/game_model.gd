@@ -25,6 +25,8 @@ var score := 0
 var lines := 0
 var level := 1
 var game_over := false
+var held_type := -1
+var hold_used := false
 var piece_bag: Array[int] = []
 var last_random_type := -1
 
@@ -39,6 +41,8 @@ func reset() -> void:
 	lines = 0
 	level = 1
 	game_over = false
+	held_type = -1
+	hold_used = false
 	piece_bag.clear()
 	last_random_type = -1
 	_spawn()
@@ -73,6 +77,23 @@ func _spawn() -> void:
 	active_type = _next_piece_type()
 	active_cells.assign(SHAPES[active_type])
 	origin = Vector2i(_centered_spawn_x(active_cells), 0)
+	if _collides(origin, active_cells):
+		game_over = true
+
+func hold_piece() -> void:
+	if game_over or hold_used:
+		return
+	var outgoing_type := active_type
+	if held_type == -1:
+		held_type = outgoing_type
+		hold_used = true
+		_spawn()
+		return
+	active_type = held_type
+	held_type = outgoing_type
+	active_cells.assign(SHAPES[active_type])
+	origin = Vector2i(_centered_spawn_x(active_cells), 0)
+	hold_used = true
 	if _collides(origin, active_cells):
 		game_over = true
 
@@ -164,6 +185,7 @@ func _lock_piece() -> void:
 		var rewards := [0, 100, 300, 500, 800]
 		score += rewards[mini(cleared, 4)] * level
 		level = 1 + int(lines / 10)
+	hold_used = false
 	_spawn()
 
 func ghost_origin() -> Vector2i:
