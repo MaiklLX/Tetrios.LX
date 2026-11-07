@@ -34,6 +34,17 @@ func _run() -> void:
 	if not _check(wide_gutter.visible and is_equal_approx(wide_gutter.scale, 1.0), "Buddy must use full size when the gutter is wide"):
 		return
 
+	# Gravity accelerates with level but never exceeds the safe minimum speed.
+	var level_one_interval: float = layout_probe._gravity_interval_for_level(1)
+	var level_five_interval: float = layout_probe._gravity_interval_for_level(5)
+	var level_twenty_interval: float = layout_probe._gravity_interval_for_level(20)
+	if not _check(is_equal_approx(level_one_interval, 0.78), "Level one must use the baseline gravity interval"):
+		return
+	if not _check(level_five_interval < level_one_interval, "Gravity must accelerate as the level increases"):
+		return
+	if not _check(is_equal_approx(level_twenty_interval, 0.08), "Gravity must respect the minimum interval floor"):
+		return
+
 	# Phone-safe layout: controls stay inside the viewport and the board
 	# remains between the stats/previews region and the control row.
 	for viewport_size in [Vector2(360.0, 800.0), Vector2(375.0, 812.0), Vector2(412.0, 915.0), Vector2(450.0, 800.0), Vector2(720.0, 1280.0)]:
