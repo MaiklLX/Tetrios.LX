@@ -39,8 +39,12 @@ func _layout() -> void:
 	var total: float = widths[0] + widths[1] + widths[2] + widths[3] + gap * 3.0
 	var x: float = (screen_size.x - total) * 0.5
 	if is_instance_valid(buddy):
-		buddy.position = Vector2(maxf(24.0, board_rect.position.x - 112.0), board_rect.position.y + 18.0)
-		buddy.visible = board_rect.position.x >= 126.0
+		# Fit Buddy into the actual left gutter on phones instead of hiding it
+		# until tablet widths. Keep a small clear gap before the playfield.
+		var buddy_scale := clampf((board_rect.position.x - 16.0) / 98.0, 0.55, 1.0)
+		buddy.scale = Vector2.ONE * buddy_scale
+		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
+		buddy.visible = board_rect.position.x >= 70.0
 	controls = {
 		"left": Rect2(x, button_y, widths[0], button_h),
 		"right": Rect2(x + widths[0] + gap, button_y, widths[1], button_h),
