@@ -15,6 +15,9 @@ var controls: Dictionary = {}
 var screen_size := Vector2(720, 1280)
 var buddy: Node2D
 var buddy_last_lines := 0
+var paused := false
+var pause_rect := Rect2()
+var resume_rect := Rect2()
 
 func _ready() -> void:
 	randomize()
@@ -32,6 +35,8 @@ func _layout() -> void:
 	var cell := minf((screen_size.x - 72.0) / BOARD_W, (screen_size.y * 0.58) / BOARD_H)
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
 	board_rect = Rect2((screen_size - board_size) * 0.5 + Vector2(0, 22), board_size)
+	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
+	resume_rect = Rect2(screen_size.x * 0.5 - 110.0, screen_size.y * 0.5 + 22.0, 220.0, 62.0)
 	var button_y := screen_size.y - minf(148.0, screen_size.y * 0.13)
 	var button_h := 76.0
 	var gap := 12.0
@@ -63,7 +68,7 @@ func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
 func _process(delta: float) -> void:
 	if game == null:
 		return
-	if not game.game_over:
+	if not game.game_over and not paused:
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
 			gravity_clock = 0.0
@@ -73,6 +78,11 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_ESCAPE or event.keycode == KEY_P:
+			_toggle_pause()
+			return
+		if paused and event.keycode != KEY_R:
+			return
 		match event.keycode:
 			KEY_LEFT, KEY_A: game.move_horizontal(-1)
 			KEY_RIGHT, KEY_D: game.move_horizontal(1)
@@ -82,6 +92,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_C: game.hold_piece()
 			KEY_R:
 				game.reset()
+				paused = false
 				gravity_clock = 0.0
 				buddy_last_lines = 0
 				buddy.set_state("idle", 0.0)
@@ -92,27 +103,40 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_handle_tap(event.position)
 
+func _toggle_pause() -> void:
+	if game == null or game.game_over:
+		return
+	paused = not paused
+	queue_redraw()
+
 func _handle_tap(point: Vector2) -> void:
 	if game.game_over:
 		game.reset()
+		paused = false
 		gravity_clock = 0.0
 		buddy_last_lines = 0
 		buddy.set_state("idle", 0.0)
-	elif controls.left.has_point(point):
-		game.move_horizontal(-1)
-	elif controls.right.has_point(point):
-		game.move_horizontal(1)
-	elif controls.rotate.has_point(point):
-		game.rotate_piece()
-	elif controls.hold.has_point(point):
-		game.hold_piece()
-	elif controls.drop.has_point(point):
-		game.hard_drop()
-	elif board_rect.has_point(point):
-		if point.x < board_rect.get_center().x:
+	elif pause_rect.has_point(point):
+		_toggle_pause()
+	elif paused:
+		if resume_rect.has_point(point):
+			paused = false
+	else:
+		if controls.left.has_point(point):
 			game.move_horizontal(-1)
-		else:
+		elif controls.right.has_point(point):
 			game.move_horizontal(1)
+		elif controls.rotate.has_point(point):
+			game.rotate_piece()
+		elif controls.hold.has_point(point):
+			game.hold_piece()
+		elif controls.drop.has_point(point):
+			game.hard_drop()
+		elif board_rect.has_point(point):
+			if point.x < board_rect.get_center().x:
+				game.move_horizontal(-1)
+			else:
+				game.move_horizontal(1)
 	_sync_buddy_state()
 	queue_redraw()
 
@@ -137,6 +161,8 @@ func _draw() -> void:
 	_draw_controls()
 	if game.game_over:
 		_draw_game_over()
+	elif paused:
+		_draw_pause_overlay()
 
 func _draw_backdrop() -> void:
 	for i in range(7):
@@ -148,6 +174,7 @@ func _draw_header() -> void:
 	_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
 	_center_text("ARCADE • CLASSIC MODE", 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
+	_draw_pause_button()
 
 func _draw_stats() -> void:
 	var top := 154.0
@@ -204,7 +231,31 @@ func _draw_controls() -> void:
 		var size := 16 if key == "rotate" or key == "hold" else 25
 		var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 		draw_string(font, rect.get_center() + Vector2(-width * 0.5, size * 0.34), label, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#f3f8ff"))
-	_center_text("MOVE  •  ROTATE  •  HOLD (C)  •  DROP", screen_size.y - 34, 11, Color("#66839e"))
+	_center_text("MOVE  •  ROTATE  •  HOLD (C)  •  DROP  •  P PAUSE", screen_size.y - 34, 10, Color("#66839e"))
+
+func _draw_pause_button() -> void:
+	draw_rect(pause_rect, Color("#10243a"))
+	draw_rect(pause_rect, Color("#45d9f5"), false, 2.0)
+	var center := pause_rect.get_center()
+	if paused:
+		var triangle := PackedVector2Array([
+			center + Vector2(-5, -10),
+			center + Vector2(9, 0),
+			center + Vector2(-5, 10)
+		])
+		draw_colored_polygon(triangle, Color("#f4f8ff"))
+	else:
+		draw_rect(Rect2(center + Vector2(-8, -10), Vector2(5, 20)), Color("#f4f8ff"))
+		draw_rect(Rect2(center + Vector2(3, -10), Vector2(5, 20)), Color("#f4f8ff"))
+
+func _draw_pause_overlay() -> void:
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
+	_center_text("PAUSED", screen_size.y * 0.47, 38, Color("#ffffff"))
+	draw_rect(resume_rect, Color("#10243a"))
+	draw_rect(resume_rect, Color("#45d9f5"), false, 2.0)
+	var label := "RESUME"
+	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x
+	draw_string(font, resume_rect.get_center() + Vector2(-width * 0.5, 7), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#f4f8ff"))
 
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2(0, 0), screen_size), Color(0.01, 0.02, 0.04, 0.78))
