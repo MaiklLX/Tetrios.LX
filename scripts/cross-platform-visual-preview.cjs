@@ -334,6 +334,42 @@ const targets = [
       }
     }
 
+    // KT-429: exercise the visible pause, resume, Hold and Drop controls on every playable viewport.
+    const controlState = await page.evaluate(() => {
+      const qa = window.__TETRIOS_QA__;
+      const prepared = qa?.prepareGestureTest?.();
+      const before = qa?.getPieceState?.();
+      if (!prepared?.ready || !before?.piece) return { supported:false, reason:'deterministic piece unavailable' };
+      const hold = document.querySelector('#holdBtn');
+      const pause = document.querySelector('#pauseBtn');
+      const drop = document.querySelector('#game .side-drop');
+      if (!hold || !pause || !drop) return { supported:false, reason:'one or more visible controls missing' };
+      hold.click();
+      const afterHold = qa.getPieceState();
+      pause.click();
+      const afterPause = qa.getPieceState();
+      const resume = document.querySelector('#resume');
+      const resumeVisible = !!resume && getComputedStyle(resume).display !== 'none';
+      resume?.click();
+      const afterResume = qa.getPieceState();
+      drop.click();
+      const afterDrop = qa.getPieceState();
+      return {
+        supported:true,
+        held:!!afterHold?.piece && JSON.stringify(afterHold.piece.shape)!==JSON.stringify(before.piece.shape),
+        paused:!!afterPause?.paused && !!afterPause?.started,
+        resumeVisible,
+        resumed:!!afterResume?.started && !afterResume?.paused && !afterResume?.gameOver,
+        dropAccepted:!!afterDrop?.started && !afterDrop?.paused && !afterDrop?.gameOver,
+        holdRect:(()=>{const r=hold.getBoundingClientRect();return {width:r.width,height:r.height}})(),
+        dropRect:(()=>{const r=drop.getBoundingClientRect();return {width:r.width,height:r.height}})()
+      };
+    });
+    if (!controlState.supported || !controlState.held || !controlState.paused ||
+        !controlState.resumeVisible || !controlState.resumed || !controlState.dropAccepted) {
+      failures.push(target.name + ': visible arena control interaction failed (' + JSON.stringify(controlState) + ')');
+    }
+
     const visualBoostState = await page.evaluate(() => window.__TETRIOS_QA__?.activatePrismAura?.() || null);
     if (!visualBoostState || !visualBoostState.activePiece || !visualBoostState.boosts.includes('prism') || !visualBoostState.auraOwned) {
       failures.push(target.name + ': Prism/Aura QA activation failed (' + JSON.stringify(visualBoostState) + ')');
