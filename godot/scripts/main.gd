@@ -101,10 +101,15 @@ func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
 		"visible": gutter_width >= 70.0
 	}
 
+func _gravity_interval_for_level(current_level: int) -> float:
+	# A steady arcade ramp with a safe floor keeps late-game input readable.
+	return maxf(0.08, 0.78 * pow(0.85, maxi(1, current_level) - 1))
+
 func _process(delta: float) -> void:
 	if game == null:
 		return
 	if not game.game_over and not paused:
+		gravity_interval = _gravity_interval_for_level(game.level)
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
 			gravity_clock = 0.0
