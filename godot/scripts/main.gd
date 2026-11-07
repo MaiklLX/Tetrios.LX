@@ -12,6 +12,7 @@ var gravity_interval := 0.78
 var font: Font
 var board_rect := Rect2()
 var controls: Dictionary = {}
+var control_scale := 1.0
 var screen_size := Vector2(720, 1280)
 var buddy: Node2D
 var buddy_last_lines := 0
@@ -34,32 +35,65 @@ func _ready() -> void:
 
 func _layout() -> void:
 	screen_size = get_viewport_rect().size
-	var cell := minf((screen_size.x - 72.0) / BOARD_W, (screen_size.y * 0.58) / BOARD_H)
-	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
-	board_rect = Rect2((screen_size - board_size) * 0.5 + Vector2(0, 22), board_size)
+	var control_metrics := _control_metrics(screen_size.x, screen_size.y)
+	control_scale = float(control_metrics.scale)
+	var button_y: float = control_metrics.button_y
+	var button_h: float = control_metrics.button_h
+	var widths: Array = control_metrics.widths
+	var gap: float = control_metrics.gap
+	var board_metrics := _board_metrics(screen_size, button_y)
+	board_rect = board_metrics.board_rect
 	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - 110.0, screen_size.y * 0.5 + 22.0, 220.0, 62.0)
-	var button_y := screen_size.y - minf(148.0, screen_size.y * 0.13)
-	var button_h := 76.0
-	var gap := 12.0
-	var widths := [76.0, 76.0, 92.0, 76.0, 112.0]
-	var total: float = widths[0] + widths[1] + widths[2] + widths[3] + widths[4] + gap * 4.0
-	var x: float = (screen_size.x - total) * 0.5
 	if is_instance_valid(buddy):
-		# Fit Buddy into the actual left gutter on phones instead of hiding it
-		# until tablet widths. Keep a small clear gap before the playfield.
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
 		buddy.visible = buddy_layout.visible
 	controls.clear()
 	var control_order := ["left", "right", "rotate", "hold", "drop"]
-	var control_x := x
+	var control_x: float = float(control_metrics.start_x)
 	for index in range(control_order.size()):
 		var key: String = control_order[index]
 		controls[key] = Rect2(control_x, button_y, widths[index], button_h)
 		control_x += widths[index] + gap
 	queue_redraw()
+
+func _control_metrics(viewport_width: float, viewport_height: float) -> Dictionary:
+	var base_widths: Array[float] = [76.0, 76.0, 92.0, 76.0, 112.0]
+	var base_gap := 12.0
+	var base_total := 480.0
+	var scale_factor := clampf((viewport_width - 24.0) / base_total, 0.55, 1.0)
+	var widths: Array[float] = []
+	var total := 0.0
+	for base_width in base_widths:
+		var scaled_width: float = base_width * scale_factor
+		widths.append(scaled_width)
+		total += scaled_width
+	var gap := base_gap * scale_factor
+	total += gap * 4.0
+	var button_h := 76.0 * scale_factor
+	var bottom_margin := minf(148.0 * scale_factor, viewport_height * 0.13)
+	return {
+		"scale": scale_factor,
+		"widths": widths,
+		"gap": gap,
+		"total": total,
+		"start_x": (viewport_width - total) * 0.5,
+		"button_h": button_h,
+		"button_y": viewport_height - bottom_margin
+	}
+
+func _board_metrics(viewport: Vector2, button_y: float) -> Dictionary:
+	var board_top_min := 292.0
+	var available_height := maxf(230.0, button_y - board_top_min - 18.0)
+	var cell := minf((viewport.x - 72.0) / BOARD_W, minf((viewport.y * 0.58) / BOARD_H, available_height / BOARD_H))
+	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
+	var board_position := Vector2((viewport.x - board_size.x) * 0.5, maxf((viewport.y - board_size.y) * 0.5 + 22.0, board_top_min))
+	return {
+		"cell": cell,
+		"board_rect": Rect2(board_position, board_size)
+	}
 
 func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
 	return {
@@ -222,7 +256,7 @@ func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> voi
 	draw_string(font, rect.position + Vector2(14, 54), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("#f4f8ff"))
 
 func _draw_piece_previews() -> void:
-	var card_width := 164.0
+	var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
 	var card_height := 46.0
 	var gap := 12.0
 	var total_width := card_width * 2.0 + gap
@@ -248,9 +282,9 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		min_y = mini(min_y, cell_pos.y)
 		max_x = maxi(max_x, cell_pos.x)
 		max_y = maxi(max_y, cell_pos.y)
-	var mini_cell := 9.0
+	var mini_cell := minf(9.0, (rect.size.x - 56.0) / 4.0)
 	var piece_size := Vector2((max_x - min_x + 1) * mini_cell, (max_y - min_y + 1) * mini_cell)
-	var piece_origin := Vector2(rect.position.x + 128.0, rect.get_center().y) - piece_size * 0.5
+	var piece_origin := Vector2(rect.position.x + rect.size.x - 34.0, rect.get_center().y) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
 		draw_rect(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
@@ -295,7 +329,7 @@ func _draw_controls() -> void:
 		draw_rect(rect, Color(0.055, 0.10, 0.17, 0.96))
 		draw_rect(rect, accent, false, 2.0)
 		var label: String = str({"left": "◀", "right": "▶", "rotate": "ROTATE", "hold": "HOLD", "drop": "DROP"}[key])
-		var size := 16 if key == "rotate" or key == "hold" else 25
+		var size := maxi(11, roundi((16 if key == "rotate" or key == "hold" else 25) * control_scale))
 		var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 		draw_string(font, rect.get_center() + Vector2(-width * 0.5, size * 0.34), label, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#f3f8ff"))
 	_center_text("MOVE  •  ROTATE  •  HOLD (C)  •  DROP  •  P PAUSE", screen_size.y - 34, 10, Color("#66839e"))
