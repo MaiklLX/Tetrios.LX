@@ -14743,4 +14743,52 @@ body .app{background:transparent!important;background-color:transparent!importan
  menu.dataset.kt422Navigation='ready';
 })();
 </script>
+
+<style id="bb-kt424-compact-mobile-brand-hero">
+/* KT-424: the older duplicated home-dashboard selectors outranked KT-422's
+   compact hero rules. Match their specificity so the mobile brand panel really
+   becomes a compact header and gives the game modes earlier screen priority. */
+@media (max-width:900px){
+ #menu.home-dashboard.home-dashboard > .hero{
+   display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;
+   align-items:center!important;justify-content:center!important;
+   column-gap:12px!important;row-gap:4px!important;
+   min-height:0!important;height:auto!important;max-height:none!important;
+   padding:10px 12px!important;border-radius:16px!important;
+   text-align:left!important;
+ }
+ #menu.home-dashboard.home-dashboard > .hero .eyebrow{
+   flex:0 0 100%!important;width:100%!important;
+   font-size:8px!important;line-height:1.15!important;
+   margin:0!important;text-align:center!important;
+ }
+ #menu.home-dashboard.home-dashboard > .hero .hero-brand-lockup{
+   display:flex!important;flex:0 1 auto!important;
+   flex-direction:row!important;align-items:center!important;
+   justify-content:center!important;gap:8px!important;
+   width:auto!important;max-width:100%!important;margin:0!important;
+ }
+ #menu.home-dashboard.home-dashboard > .hero .hero-app-mark{
+   flex:0 0 38px!important;width:38px!important;height:38px!important;
+   min-width:38px!important;margin:0!important;
+ }
+ #menu.home-dashboard.home-dashboard > .hero h1{
+   display:flex!important;flex:0 1 auto!important;width:auto!important;
+   margin:0!important;font-size:clamp(22px,6.4vw,30px)!important;
+   line-height:1!important;white-space:nowrap!important;
+ }
+ #menu.home-dashboard.home-dashboard > .hero p{
+   flex:0 1 100%!important;width:100%!important;
+   max-width:100%!important;margin:0!important;
+   font-size:9px!important;line-height:1.2!important;
+   text-align:center!important;
+ }
+}
+@media (max-width:380px){
+ #menu.home-dashboard.home-dashboard > .hero{padding:8px 9px!important;column-gap:8px!important}
+ #menu.home-dashboard.home-dashboard > .hero .hero-app-mark{flex-basis:34px!important;width:34px!important;height:34px!important;min-width:34px!important}
+ #menu.home-dashboard.home-dashboard > .hero h1{font-size:clamp(20px,6vw,25px)!important}
+ #menu.home-dashboard.home-dashboard > .hero p{font-size:8px!important}
+}
+</style>
 </body></html>
