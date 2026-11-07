@@ -47,6 +47,28 @@ func _run() -> void:
 	layout_probe._toggle_pause()
 	if not _check(not layout_probe.paused, "Pause must not activate after game over"):
 		return
+	layout_probe.game = Model.new()
+	layout_probe.game.reset()
+	layout_probe.board_rect = Rect2(0.0, 0.0, 380.0, 874.0)
+	var swipe_start_x := layout_probe.game.origin.x
+	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(176.0, 100.0)), "Horizontal board swipe should be handled"):
+		return
+	if not _check(layout_probe.game.origin.x == swipe_start_x + 2, "Horizontal swipe distance should map to bounded cell movement"):
+		return
+	var swipe_start_y := layout_probe.game.origin.y
+	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 172.0)), "Downward board swipe should be handled"):
+		return
+	if not _check(layout_probe.game.origin.y == swipe_start_y + 2, "Downward swipe should soft-drop by the corresponding number of cells"):
+		return
+	layout_probe.game.active_type = 1
+	layout_probe.game.active_cells.assign(Model.SHAPES[1])
+	var cells_before_swipe_rotate: Array = layout_probe.game.active_cells.duplicate()
+	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 40.0)), "Upward board swipe should be handled"):
+		return
+	if not _check(layout_probe.game.active_cells != cells_before_swipe_rotate, "Upward swipe should rotate the active piece"):
+		return
+	if not _check(not layout_probe._handle_swipe(Vector2(500.0, 100.0), Vector2(420.0, 100.0)), "Swipes beginning outside the board must not steal button taps"):
+		return
 	layout_probe.free()
 	var model: BlockBuddiesModel = Model.new()
 	model.reset()
