@@ -8143,6 +8143,41 @@ function restartDrop(){
   };
   schedule();
 }
+
+function bbPhoneLandscapeMode(){
+  return window.matchMedia('(orientation: landscape) and (pointer: coarse) and (max-width: 960px) and (max-height: 650px)').matches;
+}
+let bbPhoneOrientationAutoPaused=false;
+const bbPhoneLandscapeGuard=document.createElement('div');
+bbPhoneLandscapeGuard.id='bbPhoneLandscapeGuard';
+bbPhoneLandscapeGuard.setAttribute('role','status');
+bbPhoneLandscapeGuard.setAttribute('aria-live','polite');
+bbPhoneLandscapeGuard.innerHTML='<div class="bb-orientation-card"><div class="bb-orientation-icon" aria-hidden="true">↻</div><h2>Поверни телефон</h2><p>Block Buddies удобнее играть в <strong>портретном режиме</strong>.<br>Поверни устройство вертикально — партия продолжится автоматически.</p></div>';
+document.body.appendChild(bbPhoneLandscapeGuard);
+function bbSyncPhoneOrientation(){
+  const landscape=bbPhoneLandscapeMode();
+  const activeGame=started&&!gameOver&&$('game')&&!$('game').hidden;
+  bbPhoneLandscapeGuard.style.display=landscape?'flex':'none';
+  if(landscape&&activeGame&&!paused){
+    bbPhoneOrientationAutoPaused=true;
+    pauseGame();
+    const overlayEl=$('overlay');
+    if(overlayEl)overlayEl.classList.remove('show');
+    bbSyncMusic();
+  }else if(!landscape&&bbPhoneOrientationAutoPaused){
+    bbPhoneOrientationAutoPaused=false;
+    closeOverlay();
+    if(started&&!gameOver){paused=false;restartDrop();}
+    bbSyncMusic();
+  }
+}
+window.addEventListener('orientationchange',bbSyncPhoneOrientation,{passive:true});
+window.addEventListener('resize',bbSyncPhoneOrientation,{passive:true});
+if(window.matchMedia){
+  const bbPhoneOrientationQuery=window.matchMedia('(orientation: landscape)');
+  bbPhoneOrientationQuery.addEventListener?.('change',bbSyncPhoneOrientation);
+}
+
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><div class="eyebrow">ПЕРЕДЫШКА</div><h3>Пауза</h3><p>Партия на паузе. Можно спокойно проверить баланс и вернуться в игру.</p></div><div class="bb-pause-wallet"><span>🪙 <small>ТВОИ МОНЕТЫ</small></span><strong>${bbCoins.toLocaleString('ru-RU')}</strong><em>Баланс аккаунта</em></div><button class="action" id="resume">▶ ПРОДОЛЖИТЬ ИГРУ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
 /* Просмотр активных бустов с паузой */
@@ -14452,6 +14487,28 @@ body .app{background:transparent!important;background-color:transparent!importan
   #game>.playlayout>.gameleftcol{
     margin-top:-14px!important;
   }
+}
+</style>
+
+
+<style id="bb-kt418-phone-portrait-only">
+/* KT-418: phones play in portrait; tablets and desktop remain unrestricted. */
+#bbPhoneLandscapeGuard{display:none}
+@media (orientation:landscape) and (pointer:coarse) and (max-width:960px) and (max-height:650px){
+  #bbPhoneLandscapeGuard{
+    position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+    padding:24px max(24px,env(safe-area-inset-left)) 24px max(24px,env(safe-area-inset-right));
+    background:radial-gradient(ellipse at 50% 0%,#26345d 0%,#0b1021 62%,#070a15 100%);
+    color:#f4f5ff;text-align:center;
+  }
+  #bbPhoneLandscapeGuard .bb-orientation-card{
+    width:min(100%,390px);padding:30px 24px;border:1px solid #3a5274;border-radius:24px;
+    background:linear-gradient(145deg,#17233d,#0d1426);box-shadow:0 24px 70px #0009;
+  }
+  #bbPhoneLandscapeGuard .bb-orientation-icon{font-size:52px;line-height:1.2;filter:drop-shadow(0 0 16px #5cf5e866)}
+  #bbPhoneLandscapeGuard h2{margin:14px 0 8px;font-size:23px;letter-spacing:-.03em}
+  #bbPhoneLandscapeGuard p{margin:0;color:#aab8d5;font-size:14px;line-height:1.6}
+  #bbPhoneLandscapeGuard strong{color:#5cf5e8}
 }
 </style>
 
