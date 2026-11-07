@@ -14517,6 +14517,9 @@ body .app{background:transparent!important;background-color:transparent!importan
 /* KT-420: EA Tetris 2011-inspired utility hierarchy.
    Keep the playfield dominant; expose only the immediate Hold/Next/Drop actions.
    Progression and hero systems remain available in one secondary drawer. */
+/* Explicitly hide drawer content while closed. Global .sidecard display rules
+   can otherwise override the browser's native <details> closed-state styling. */
+#game .sidecol .bb-arena-utilities:not([open])>:not(summary){display:none!important}
 #game .sidecol .bb-arena-utilities{
   display:flex!important;flex-direction:column!important;gap:5px!important;
   min-width:0!important;margin:2px 0 0!important;padding:5px 4px!important;
