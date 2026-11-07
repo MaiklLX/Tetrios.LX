@@ -67,12 +67,12 @@ func _run() -> void:
 	layout_probe.game = Model.new()
 	layout_probe.game.reset()
 	layout_probe.board_rect = Rect2(0.0, 0.0, 380.0, 874.0)
-	var swipe_start_x := layout_probe.game.origin.x
+	var swipe_start_x: int = layout_probe.game.origin.x
 	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(176.0, 100.0)), "Horizontal board swipe should be handled"):
 		return
 	if not _check(layout_probe.game.origin.x == swipe_start_x + 2, "Horizontal swipe distance should map to bounded cell movement"):
 		return
-	var swipe_start_y := layout_probe.game.origin.y
+	var swipe_start_y: int = layout_probe.game.origin.y
 	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 172.0)), "Downward board swipe should be handled"):
 		return
 	if not _check(layout_probe.game.origin.y == swipe_start_y + 2, "Downward swipe should soft-drop by the corresponding number of cells"):
