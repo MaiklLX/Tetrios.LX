@@ -4,6 +4,7 @@ const CELL := 38.0
 const BOARD_W := 10
 const BOARD_H := 23
 const Model = preload("res://scripts/game_model.gd")
+const Buddy = preload("res://scripts/buddy_companion.gd")
 
 var game: BlockBuddiesModel
 var gravity_clock := 0.0
@@ -12,12 +13,16 @@ var font: Font
 var board_rect := Rect2()
 var controls: Dictionary = {}
 var screen_size := Vector2(720, 1280)
+var buddy: Node2D
+var buddy_last_lines := 0
 
 func _ready() -> void:
 	randomize()
 	font = ThemeDB.fallback_font
 	game = Model.new()
 	game.reset()
+	buddy = Buddy.new()
+	add_child(buddy)
 	get_viewport().size_changed.connect(_layout)
 	_layout()
 	set_process(true)
@@ -33,6 +38,9 @@ func _layout() -> void:
 	var widths := [92.0, 92.0, 92.0, 112.0]
 	var total: float = widths[0] + widths[1] + widths[2] + widths[3] + gap * 3.0
 	var x: float = (screen_size.x - total) * 0.5
+	if is_instance_valid(buddy):
+		buddy.position = Vector2(maxf(24.0, board_rect.position.x - 112.0), board_rect.position.y + 18.0)
+		buddy.visible = board_rect.position.x >= 118.0
 	controls = {
 		"left": Rect2(x, button_y, widths[0], button_h),
 		"right": Rect2(x + widths[0] + gap, button_y, widths[1], button_h),
@@ -42,13 +50,15 @@ func _layout() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	if game == null or game.game_over:
+	if game == null:
 		return
-	gravity_clock += delta
-	if gravity_clock >= gravity_interval:
-		gravity_clock = 0.0
-		game.tick()
-		queue_redraw()
+	if not game.game_over:
+		gravity_clock += delta
+		if gravity_clock >= gravity_interval:
+			gravity_clock = 0.0
+			game.tick()
+			queue_redraw()
+	_sync_buddy_state()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -61,6 +71,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_R:
 				game.reset()
 				gravity_clock = 0.0
+				buddy_last_lines = 0
+				buddy.set_state("idle", 0.0)
+		_sync_buddy_state()
 		queue_redraw()
 	elif event is InputEventScreenTouch and event.pressed:
 		_handle_tap(event.position)
@@ -71,6 +84,8 @@ func _handle_tap(point: Vector2) -> void:
 	if game.game_over:
 		game.reset()
 		gravity_clock = 0.0
+		buddy_last_lines = 0
+		buddy.set_state("idle", 0.0)
 	elif controls.left.has_point(point):
 		game.move_horizontal(-1)
 	elif controls.right.has_point(point):
@@ -84,7 +99,20 @@ func _handle_tap(point: Vector2) -> void:
 			game.move_horizontal(-1)
 		else:
 			game.move_horizontal(1)
+	_sync_buddy_state()
 	queue_redraw()
+
+func _sync_buddy_state() -> void:
+	if not is_instance_valid(buddy) or game == null:
+		return
+	if game.game_over:
+		if buddy.state != "surprised":
+			buddy.set_state("surprised", 0.0)
+		return
+	if game.lines > buddy_last_lines:
+		var cleared := game.lines - buddy_last_lines
+		buddy.set_state("victory" if cleared >= 4 else "happy", 1.5)
+		buddy_last_lines = game.lines
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color("#070d1c"))
