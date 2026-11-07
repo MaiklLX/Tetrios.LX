@@ -56,6 +56,18 @@ func _run() -> void:
 		return
 	if not _check(model.active_cells.size() == 4, "Spawned piece must contain four cells"):
 		return
+
+	# Preview must report the real next piece without consuming it.
+	var preview_model: BlockBuddiesModel = Model.new()
+	preview_model.reset()
+	var preview_type := preview_model.peek_next_piece_type()
+	var preview_bag_size := preview_model.piece_bag.size()
+	if not _check(preview_type == preview_model.peek_next_piece_type(), "Next-piece preview must remain stable until spawn"):
+		return
+	if not _check(preview_model.piece_bag.size() == preview_bag_size, "Reading the preview must not consume the piece bag"):
+		return
+	if not _check(preview_model._next_piece_type() == preview_type, "The spawned piece must match the displayed Next preview"):
+		return
 	for piece_index in range(Model.SHAPES.size()):
 		if not _check(Model.SHAPES[piece_index].size() == 4, "Every tetromino definition must contain four cells"):
 			return
