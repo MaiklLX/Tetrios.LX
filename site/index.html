@@ -14791,20 +14791,35 @@ body .app{background:transparent!important;background-color:transparent!importan
  #menu.home-dashboard.home-dashboard > .hero p{font-size:8px!important}
 }
 
-/* KT-427.2 — align the absolute utility rail with the centered board frame.
-   The rail is positioned against .playlayout, while the frame is vertically
-   centered inside its flex child; compensate for that 12px offset at 375x812. */
-@media (min-width: 361px) and (max-width: 390px) and (orientation: portrait) {
-  #game .sidecol {
-    top: 18px !important;
-    bottom: 37px !important;
-    gap: 4px !important;
+/* KT-427.3 — fit the utility rail to the 10:23 board height at 375px.
+   Both columns already share the same vertical center; the rail was 24px taller.
+   Compact card minimums, but preserve the 50px Drop hit target. */
+@media (min-width: 361px) and (max-width: 380px) and (orientation: portrait) {
+  #game>.playlayout>.sidecol {
+    top: auto !important;
+    bottom: auto !important;
+    gap: 3px !important;
+    overflow: visible !important;
   }
-
-  #game .sidecol > .sidecard,
-  #game .sidecol > .bb-hero-skill-slot {
-    padding-top: 3px !important;
-    padding-bottom: 3px !important;
+  #game>.playlayout>.sidecol>.sidecard {
+    min-height: 44px !important;
+    padding: 3px 2px !important;
+  }
+  #game>.playlayout>.sidecol>.sidecard:has(#timer) {
+    min-height: 58px !important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard,
+  #game>.playlayout>.sidecol>.bb-hero-skill-slot {
+    min-height: 48px !important;
+    padding: 3px 2px !important;
+  }
+  #game>.playlayout>.sidecol>.drop-card {
+    min-height: 66px !important;
+    padding: 4px !important;
+  }
+  #game>.playlayout>.sidecol .side-drop {
+    min-height: 50px !important;
+    height: 50px !important;
   }
 }
 </style>
