@@ -30,6 +30,8 @@ Date: 2026-11-07
 - KT-436 adds an always-visible pause control, a pause overlay with Resume, and keyboard shortcuts P / Escape; automated tests cover pause, resume, and the game-over guard.
 - KT-437 adds compact HOLD and NEXT preview cards above the playfield; previews use the same seven-bag queue as gameplay, and the NEXT read does not consume or alter the queue.
 - KT-437 automated tests verify preview stability, non-consumption, and that the next spawned piece matches the displayed preview; CI workflow run 42423152004 passed on the current PR head.
+- KT-438 adds mobile board swipes: horizontal movement (distance-limited to 1–3 cells), downward soft drop (1–4 cells), and upward rotation. Touches beginning outside the board are left for the existing button/tap controls.
+- KT-438 tests cover horizontal distance mapping, downward soft drop, upward rotation, and protecting taps outside the board; CI workflow run 42423231284 passed (Godot import, script parse, model tests, scene smoke test).
 - KT-436 CI passed: workflow run 42422966003.
 - A full rendered Godot viewport geometry test is still outstanding; physical Android rendering remains unverified.
 - No APK was built or released.
