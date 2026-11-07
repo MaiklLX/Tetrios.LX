@@ -24,6 +24,8 @@ Date: 2026-11-07
 - KT-430 moves the minimum safe-gutter visibility threshold to 126px to prevent overlap at wider viewports.
 - KT-431 scales Buddy to the actual left-gutter width, anchors it at an 8px inset, and keeps an 8px gap before the playfield; this makes the companion available on common phone portrait widths rather than only tablets.
 - KT-432 adds automated helper coverage for a common phone gutter (85px), a too-narrow gutter (60px), and a wide gutter (220px).
+- KT-433 strengthens the tests across 70px, 85px, 120px, and 220px gutters, asserting the Buddy never crosses the 8px playfield clearance and never shrinks as space increases.
+- KT-433 CI passed: workflow run 42422744181.
 - A full rendered Godot viewport geometry test is still outstanding; physical Android rendering remains unverified.
 - No APK was built or released.
 - No change to `main` or the public web deployment.
