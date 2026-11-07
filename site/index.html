@@ -14560,13 +14560,21 @@ body .app{background:transparent!important;background-color:transparent!importan
 (()=>{
  const side=document.querySelector('#game .sidecol');
  if(!side||side.dataset.kt423VisibleControls==='ready')return;
+ // KT-420 grouped secondary HUD cards inside a closed details drawer.
+ // Move the original nodes back into the live rail before removing the drawer,
+ // preserving their event handlers and state.
+ const drawer=side.querySelector(':scope>.bb-arena-utilities');
+ if(drawer){
+   [...drawer.children].filter(el=>el.tagName!=='SUMMARY').forEach(el=>side.appendChild(el));
+   drawer.remove();
+ }
  const find=(selector)=>side.querySelector(selector);
  const next=find(':scope>.sidecard:has(#next)');
  const hold=find(':scope>.sidecard:has(#holdBtn)');
  const charge=find(':scope>.charge-card');
  const boost=[...side.querySelectorAll(':scope>.sidecard')].find(el=>el.querySelector('#boostIcon'));
- const chrono=find('#chronoCard');
- const hero=find('#bbHeroSkillCard')||find('.bb-hero-skill-slot');
+ const chrono=find(':scope>#chronoCard');
+ const hero=find(':scope>#bbHeroSkillCard')||find(':scope>.bb-hero-skill-slot');
  const drop=find(':scope>.drop-card');
  [next,hold,charge,boost,chrono,hero,drop].forEach(el=>{if(el)side.appendChild(el)});
  side.dataset.kt423VisibleControls='ready';
