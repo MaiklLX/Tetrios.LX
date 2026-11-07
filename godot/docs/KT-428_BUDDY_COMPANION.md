@@ -32,6 +32,8 @@ Date: 2026-11-07
 - KT-437 automated tests verify preview stability, non-consumption, and that the next spawned piece matches the displayed preview; CI workflow run 42423152004 passed on the current PR head.
 - KT-438 adds mobile board swipes: horizontal movement (distance-limited to 1–3 cells), downward soft drop (1–4 cells), and upward rotation. Touches beginning outside the board are left for the existing button/tap controls.
 - KT-438 tests cover horizontal distance mapping, downward soft drop, upward rotation, and protecting taps outside the board; CI workflow run 42423231284 passed (Godot import, script parse, model tests, scene smoke test).
+- KT-439 makes the native arena responsive across 360–720px viewport widths and 800–1280px heights: control buttons scale to stay within safe horizontal margins, the playfield is kept below the stats/preview area and above the control row, and preview cards adapt to narrower widths.
+- KT-439 geometry tests cover 360×800, 375×812, 412×915, 450×800, and 720×1280 viewports; latest CI workflow run 42423569643 passed all steps (import, parse, model tests, scene smoke test).
 - KT-436 CI passed: workflow run 42422966003.
 - A full rendered Godot viewport geometry test is still outstanding; physical Android rendering remains unverified.
 - No APK was built or released.
