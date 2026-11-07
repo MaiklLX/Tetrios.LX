@@ -33,7 +33,6 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var bob := 0.0 if state == "victory" else sin(elapsed * 3.2) * 2.0
 	var origin := Vector2(0, bob)
-	# Pixel shadow and little orange feet.
 	draw_rect(Rect2(origin + Vector2(PIXEL * 2, PIXEL * 11), Vector2(PIXEL * 8, PIXEL)), Color(0.0, 0.0, 0.0, 0.22))
 	_draw_row("..DDDDDDDD..", origin, 0)
 	_draw_row(".DBBBBBBBBD.", origin, 1)
@@ -46,7 +45,7 @@ func _draw() -> void:
 			_draw_row("DBFSSMMMMFBD", origin, 6)
 		"surprised":
 			_draw_row("DBFSESSSEFBD", origin, 5)
-			_draw_row("DBFSSSMMSSFBD", origin, 6)
+			_draw_row("DBFSSMMSSFBD", origin, 6)
 		"victory":
 			_draw_row("DBFCECCECFBD", origin, 5)
 			_draw_row("DBFSSMMMMFBD", origin, 6)
