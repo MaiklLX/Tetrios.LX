@@ -28,6 +28,8 @@ Date: 2026-11-07
 - KT-433 CI passed: workflow run 42422744181.
 - KT-434 adds Hold storage/swap rules with a once-per-piece limit and a visible arena control; model tests cover first store, blocked repeat, re-enable after lock, and swap.
 - KT-436 adds an always-visible pause control, a pause overlay with Resume, and keyboard shortcuts P / Escape; automated tests cover pause, resume, and the game-over guard.
+- KT-437 adds compact HOLD and NEXT preview cards above the playfield; previews use the same seven-bag queue as gameplay, and the NEXT read does not consume or alter the queue.
+- KT-437 automated tests verify preview stability, non-consumption, and that the next spawned piece matches the displayed preview; CI workflow run 42423152004 passed on the current PR head.
 - KT-436 CI passed: workflow run 42422966003.
 - A full rendered Godot viewport geometry test is still outstanding; physical Android rendering remains unverified.
 - No APK was built or released.
