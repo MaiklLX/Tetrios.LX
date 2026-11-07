@@ -35,8 +35,8 @@ func _layout() -> void:
 	var button_y := screen_size.y - minf(148.0, screen_size.y * 0.13)
 	var button_h := 76.0
 	var gap := 12.0
-	var widths := [92.0, 92.0, 92.0, 112.0]
-	var total: float = widths[0] + widths[1] + widths[2] + widths[3] + gap * 3.0
+	var widths := [76.0, 76.0, 92.0, 76.0, 112.0]
+	var total: float = widths[0] + widths[1] + widths[2] + widths[3] + widths[4] + gap * 4.0
 	var x: float = (screen_size.x - total) * 0.5
 	if is_instance_valid(buddy):
 		# Fit Buddy into the actual left gutter on phones instead of hiding it
@@ -45,12 +45,13 @@ func _layout() -> void:
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
 		buddy.visible = buddy_layout.visible
-	controls = {
-		"left": Rect2(x, button_y, widths[0], button_h),
-		"right": Rect2(x + widths[0] + gap, button_y, widths[1], button_h),
-		"rotate": Rect2(x + (widths[0] + gap) * 2.0, button_y, widths[2], button_h),
-		"drop": Rect2(x + (widths[0] + gap) * 3.0, button_y, widths[3], button_h)
-	}
+	controls.clear()
+	var control_order := ["left", "right", "rotate", "hold", "drop"]
+	var control_x := x
+	for index in range(control_order.size()):
+		var key: String = control_order[index]
+		controls[key] = Rect2(control_x, button_y, widths[index], button_h)
+		control_x += widths[index] + gap
 	queue_redraw()
 
 func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
@@ -78,6 +79,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_DOWN, KEY_S: game.soft_drop()
 			KEY_UP, KEY_W, KEY_X, KEY_SPACE: game.rotate_piece()
 			KEY_ENTER: game.hard_drop()
+			KEY_C: game.hold_piece()
 			KEY_R:
 				game.reset()
 				gravity_clock = 0.0
@@ -102,6 +104,8 @@ func _handle_tap(point: Vector2) -> void:
 		game.move_horizontal(1)
 	elif controls.rotate.has_point(point):
 		game.rotate_piece()
+	elif controls.hold.has_point(point):
+		game.hold_piece()
 	elif controls.drop.has_point(point):
 		game.hard_drop()
 	elif board_rect.has_point(point):
@@ -193,14 +197,14 @@ func _draw_block(rect: Rect2, color: Color) -> void:
 func _draw_controls() -> void:
 	for key in controls:
 		var rect: Rect2 = controls[key]
-		var accent := Color("#45d9f5") if key == "drop" else Color("#28435d")
+		var accent := Color("#45d9f5") if key == "drop" else (Color("#3985d8") if key == "hold" else Color("#28435d"))
 		draw_rect(rect, Color(0.055, 0.10, 0.17, 0.96))
 		draw_rect(rect, accent, false, 2.0)
-		var label: String = str({"left": "◀", "right": "▶", "rotate": "ROTATE", "drop": "DROP"}[key])
-		var size := 18 if key == "rotate" else 25
+		var label: String = str({"left": "◀", "right": "▶", "rotate": "ROTATE", "hold": "HOLD", "drop": "DROP"}[key])
+		var size := 16 if key == "rotate" or key == "hold" else 25
 		var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 		draw_string(font, rect.get_center() + Vector2(-width * 0.5, size * 0.34), label, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#f3f8ff"))
-	_center_text("TAP SIDES TO MOVE  •  TAP ROTATE  •  DROP TO LOCK", screen_size.y - 34, 11, Color("#66839e"))
+	_center_text("MOVE  •  ROTATE  •  HOLD (C)  •  DROP", screen_size.y - 34, 11, Color("#66839e"))
 
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2(0, 0), screen_size), Color(0.01, 0.02, 0.04, 0.78))
