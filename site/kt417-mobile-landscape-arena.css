@@ -63,7 +63,7 @@
   #game.unified-game-layout>.playlayout>.sidecol {
     grid-column:2!important; grid-row:1!important;
     display:grid!important; grid-template-columns:minmax(0,1fr)!important;
-    grid-template-rows:repeat(5,minmax(0,1fr)) 40px!important;
+    grid-template-rows:repeat(6,minmax(0,1fr)) 40px!important;
     grid-auto-rows:minmax(0,1fr)!important; gap:2px!important;
     width:100%!important; height:100%!important; min-width:0!important; min-height:0!important;
     max-height:100%!important; margin:0!important; padding:0!important; overflow:hidden!important;
@@ -71,7 +71,7 @@
   #game.unified-game-layout>.playlayout>.sidecol>.sidecard,
   #game.unified-game-layout>.playlayout>.sidecol>#bbHeroSkillCard {
     display:flex!important; flex-direction:row!important; align-items:center!important; justify-content:center!important;
-    min-width:0!important; min-height:0!important; height:auto!important; max-height:none!important;
+    min-width:0!important; min-height:0!important; height:36px!important; max-height:36px!important;
     margin:0!important; padding:2px 4px!important; overflow:hidden!important; border-radius:7px!important;
     gap:4px!important;
   }
