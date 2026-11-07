@@ -14791,9 +14791,13 @@ body .app{background:transparent!important;background-color:transparent!importan
  #menu.home-dashboard.home-dashboard > .hero p{font-size:8px!important}
 }
 
-/* KT-427.2 — keep the utility rail inside the board frame on narrow portrait phones */
+/* KT-427.2 — align the absolute utility rail with the centered board frame.
+   The rail is positioned against .playlayout, while the frame is vertically
+   centered inside its flex child; compensate for that 12px offset at 375x812. */
 @media (min-width: 361px) and (max-width: 390px) and (orientation: portrait) {
   #game .sidecol {
+    top: 18px !important;
+    bottom: 37px !important;
     gap: 4px !important;
   }
 
