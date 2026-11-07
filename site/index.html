@@ -14666,4 +14666,77 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+
+<style id="bb-kt422-home-navigation">
+/* KT-422: keep play destinations first; fold secondary progression into clear drawers. */
+#menu .bb-home-drawer{
+  margin:10px 0!important;
+  border:1px solid #526b8d88!important;
+  border-radius:13px!important;
+  overflow:hidden!important;
+  background:linear-gradient(135deg,#101a2c,#121d32)!important;
+  box-shadow:inset 0 1px #ffffff08!important;
+}
+#menu .bb-home-drawer>summary{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  min-height:46px;padding:0 13px;cursor:pointer;list-style:none;
+  color:#d9e6fa;font-size:10px;font-weight:950;letter-spacing:.1em;
+  user-select:none;
+}
+#menu .bb-home-drawer>summary::-webkit-details-marker{display:none}
+#menu .bb-home-drawer>summary:after{content:"＋";color:#5cf5e8;font-size:16px}
+#menu .bb-home-drawer[open]>summary:after{content:"−"}
+#menu .bb-home-drawer>.bb-home-drawer-content{
+  padding:0 11px 11px;border-top:1px solid #ffffff12;
+}
+#menu .bb-home-drawer #dailyQuestsPanel,
+#menu .bb-home-drawer #bbVisitStreak{
+  margin:9px 0 0!important;
+}
+#menu .bb-home-drawer #dailyQuestsPanel{padding:11px!important}
+#menu .bb-home-drawer #dailyQuestsPanel>div:first-child strong{font-size:11px!important}
+#menu .bb-home-drawer #dailyQuestsPanel>div:nth-child(2){font-size:11px!important}
+#menu .bb-home-drawer #bbVisitStreak{padding:11px!important}
+#menu #openHeroes{min-height:76px!important;margin-top:10px!important}
+#menu #bbOpenCardLibrary{min-height:68px!important;margin-top:10px!important}
+#menu .shopbuttons{margin-top:10px!important}
+@media(min-width:701px){
+  #menu .bb-home-drawer{max-width:100%}
+}
+</style>
+<script id="bb-kt422-home-navigation-structure">
+(()=>{
+ const menu=document.getElementById('menu');
+ if(!menu||menu.dataset.kt422Navigation==='ready')return;
+ const modes=menu.querySelector('.modes');
+ const daily=menu.querySelector('#dailyQuestsPanel');
+ const streak=menu.querySelector('#bbVisitStreak');
+ if(!modes||!daily||!streak)return;
+ const makeDrawer=(title,label)=>{
+   const details=document.createElement('details');
+   details.className='bb-home-drawer';
+   details.setAttribute('aria-label',label);
+   const summary=document.createElement('summary');
+   summary.textContent=title;
+   const content=document.createElement('div');
+   content.className='bb-home-drawer-content';
+   details.append(summary,content);
+   return {details,content};
+ };
+ const dailyDrawer=makeDrawer('ЗАДАНИЯ И СЕРИЯ','Ежедневные задания и серия посещений');
+ modes.insertAdjacentElement('afterend',dailyDrawer.details);
+ dailyDrawer.content.append(daily,streak);
+ const heroButton=menu.querySelector('#openHeroes');
+ const rpg=menu.querySelector('#rpgPanel');
+ const currency=menu.querySelector('.currency-panel');
+ const stats=menu.querySelector('.bottomstats');
+ if(heroButton&&rpg&&currency&&stats){
+   const progressDrawer=makeDrawer('ПРОГРЕСС И РЕСУРСЫ','Развитие героя, ресурсы и статистика');
+   heroButton.insertAdjacentElement('afterend',progressDrawer.details);
+   progressDrawer.content.append(rpg,currency,stats);
+ }
+ menu.dataset.kt422Navigation='ready';
+})();
+</script>
 </body></html>
