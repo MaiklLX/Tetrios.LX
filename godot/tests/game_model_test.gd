@@ -33,6 +33,23 @@ func _run() -> void:
 	var wide_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(220.0)
 	if not _check(wide_gutter.visible and is_equal_approx(wide_gutter.scale, 1.0), "Buddy must use full size when the gutter is wide"):
 		return
+
+	# Phone-safe layout: controls stay inside the viewport and the board
+	# remains between the stats/previews region and the control row.
+	for viewport_size in [Vector2(360.0, 800.0), Vector2(375.0, 812.0), Vector2(412.0, 915.0), Vector2(450.0, 800.0), Vector2(720.0, 1280.0)]:
+		var control_metrics: Dictionary = layout_probe._control_metrics(viewport_size.x, viewport_size.y)
+		if not _check(float(control_metrics.start_x) >= 11.9, "Control row must keep a safe left margin on phone widths"):
+			return
+		if not _check(float(control_metrics.start_x) + float(control_metrics.total) <= viewport_size.x - 11.9, "Control row must not overflow the right edge"):
+			return
+		var board_metrics: Dictionary = layout_probe._board_metrics(viewport_size, float(control_metrics.button_y))
+		var responsive_board: Rect2 = board_metrics.board_rect
+		if not _check(responsive_board.position.y >= 292.0, "Board must stay below the stats and preview region"):
+			return
+		if not _check(responsive_board.end.y <= float(control_metrics.button_y) - 17.9, "Board must keep clearance above the control row"):
+			return
+		if not _check(responsive_board.position.x >= 35.9 and responsive_board.end.x <= viewport_size.x - 35.9, "Board must remain horizontally centered with side gutters"):
+			return
 	layout_probe.game = Model.new()
 	layout_probe.game.reset()
 	layout_probe.pause_rect = Rect2(10.0, 10.0, 50.0, 50.0)
