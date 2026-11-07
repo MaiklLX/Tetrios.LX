@@ -16,12 +16,20 @@ func _check(condition: bool, message: String) -> bool:
 func _run() -> void:
 	seed(20261105)
 	var layout_probe = Main.new()
-	var phone_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(85.0)
-	if not _check(phone_gutter.visible and phone_gutter.scale > 0.65 and phone_gutter.scale < 0.75, "Buddy must scale into a common phone portrait gutter"):
-		return
 	var narrow_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(60.0)
 	if not _check(not narrow_gutter.visible, "Buddy must hide when the left gutter is too narrow"):
 		return
+	var previous_scale := 0.0
+	for gutter_width in [70.0, 85.0, 120.0, 220.0]:
+		var layout: Dictionary = layout_probe._buddy_layout_for_gutter(gutter_width)
+		if not _check(layout.visible, "Buddy should remain visible when the gutter meets its minimum width"):
+			return
+		var buddy_right := 8.0 + 98.0 * float(layout.scale)
+		if not _check(buddy_right <= gutter_width - 8.0 + 0.01, "Buddy must preserve an 8px gap before the playfield"):
+			return
+		if not _check(float(layout.scale) >= previous_scale, "Buddy scale must not shrink as the gutter gets wider"):
+			return
+		previous_scale = float(layout.scale)
 	var wide_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(220.0)
 	if not _check(wide_gutter.visible and is_equal_approx(wide_gutter.scale, 1.0), "Buddy must use full size when the gutter is wide"):
 		return
