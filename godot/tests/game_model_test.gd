@@ -66,6 +66,22 @@ func _run() -> void:
 	if not _check(boundary_type != previous_type, "Seven-bag boundary must not repeat the previous piece"):
 		return
 
+	var first_held_type := model.active_type
+	model.hold_piece()
+	if not _check(model.held_type == first_held_type and model.hold_used, "First Hold must store the active piece"):
+		return
+	var piece_after_hold := model.active_type
+	var stored_type := model.held_type
+	model.hold_piece()
+	if not _check(model.active_type == piece_after_hold and model.held_type == stored_type, "Hold must be limited to once per falling piece"):
+		return
+	model.hard_drop()
+	if not _check(not model.hold_used, "Locking a piece must re-enable Hold for the next piece"):
+		return
+	model.hold_piece()
+	if not _check(model.active_type == first_held_type and model.held_type == piece_after_hold, "Second Hold must swap the stored and active pieces"):
+		return
+
 	var start_x := model.origin.x
 	model.move_horizontal(-1)
 	if not _check(model.origin.x == start_x - 1, "Horizontal movement should move one cell"):
