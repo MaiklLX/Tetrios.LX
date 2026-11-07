@@ -26,6 +26,9 @@ Date: 2026-11-07
 - KT-432 adds automated helper coverage for a common phone gutter (85px), a too-narrow gutter (60px), and a wide gutter (220px).
 - KT-433 strengthens the tests across 70px, 85px, 120px, and 220px gutters, asserting the Buddy never crosses the 8px playfield clearance and never shrinks as space increases.
 - KT-433 CI passed: workflow run 42422744181.
+- KT-434 adds Hold storage/swap rules with a once-per-piece limit and a visible arena control; model tests cover first store, blocked repeat, re-enable after lock, and swap.
+- KT-436 adds an always-visible pause control, a pause overlay with Resume, and keyboard shortcuts P / Escape; automated tests cover pause, resume, and the game-over guard.
+- KT-436 CI passed: workflow run 42422966003.
 - A full rendered Godot viewport geometry test is still outstanding; physical Android rendering remains unverified.
 - No APK was built or released.
 - No change to `main` or the public web deployment.
