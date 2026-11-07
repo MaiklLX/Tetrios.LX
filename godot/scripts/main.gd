@@ -157,6 +157,7 @@ func _draw() -> void:
 	_draw_backdrop()
 	_draw_header()
 	_draw_stats()
+	_draw_piece_previews()
 	_draw_board()
 	_draw_controls()
 	if game.game_over:
@@ -187,6 +188,40 @@ func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> voi
 	draw_rect(rect, Color(0.28, 0.46, 0.62, 0.35), false, 1.0)
 	draw_string(font, rect.position + Vector2(14, 24), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#83a3bd"))
 	draw_string(font, rect.position + Vector2(14, 54), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("#f4f8ff"))
+
+func _draw_piece_previews() -> void:
+	var card_width := 164.0
+	var card_height := 46.0
+	var gap := 12.0
+	var total_width := card_width * 2.0 + gap
+	var start_x := (screen_size.x - total_width) * 0.5
+	var top := board_rect.position.y - card_height - 10.0
+	_draw_preview_card(Rect2(start_x, top, card_width, card_height), "HOLD", game.held_type)
+	_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "NEXT", game.peek_next_piece_type())
+
+func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
+	draw_rect(rect, Color(0.045, 0.085, 0.14, 0.96))
+	draw_rect(rect, Color(0.20, 0.48, 0.68, 0.55), false, 1.0)
+	draw_string(font, rect.position + Vector2(10, 28), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#83a3bd"))
+	if piece_type < 0:
+		draw_string(font, rect.position + Vector2(112, 29), "—", HORIZONTAL_ALIGNMENT_CENTER, 30, 18, Color("#66839e"))
+		return
+	var cells: Array = BlockBuddiesModel.SHAPES[piece_type]
+	var min_x := 999
+	var min_y := 999
+	var max_x := -999
+	var max_y := -999
+	for cell_pos in cells:
+		min_x = mini(min_x, cell_pos.x)
+		min_y = mini(min_y, cell_pos.y)
+		max_x = maxi(max_x, cell_pos.x)
+		max_y = maxi(max_y, cell_pos.y)
+	var mini_cell := 9.0
+	var piece_size := Vector2((max_x - min_x + 1) * mini_cell, (max_y - min_y + 1) * mini_cell)
+	var piece_origin := Vector2(rect.position.x + 128.0, rect.get_center().y) - piece_size * 0.5
+	for cell_pos in cells:
+		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
+		draw_rect(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
 
 func _draw_board() -> void:
 	var frame := board_rect.grow(10)
