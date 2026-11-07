@@ -356,7 +356,7 @@ const targets = [
       const afterDrop = qa.getPieceState();
       return {
         supported:true,
-        held:!!afterHold?.piece && JSON.stringify(afterHold.piece.shape)!==JSON.stringify(before.piece.shape),
+        held:!!afterHold?.piece && JSON.stringify(afterHold.piece)!==JSON.stringify(before.piece),
         paused:!!afterPause?.paused && !!afterPause?.started,
         resumeVisible,
         resumed:!!afterResume?.started && !afterResume?.paused && !afterResume?.gameOver,
