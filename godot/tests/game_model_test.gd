@@ -78,8 +78,9 @@ func _run() -> void:
 	model.hard_drop()
 	if not _check(not model.hold_used, "Locking a piece must re-enable Hold for the next piece"):
 		return
+	var next_spawned_type := model.active_type
 	model.hold_piece()
-	if not _check(model.active_type == first_held_type and model.held_type == piece_after_hold, "Second Hold must swap the stored and active pieces"):
+	if not _check(model.active_type == first_held_type and model.held_type == next_spawned_type, "Second Hold must swap the stored and active pieces"):
 		return
 
 	var start_x := model.origin.x
