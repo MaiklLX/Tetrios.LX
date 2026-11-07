@@ -14513,67 +14513,71 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 
-<style id="bb-kt420-tetris2011-arena-first">
-/* KT-420: EA Tetris 2011-inspired utility hierarchy.
-   Keep the playfield dominant; expose only the immediate Hold/Next/Drop actions.
-   Progression and hero systems remain available in one secondary drawer. */
-/* Explicitly hide drawer content while closed. Global .sidecard display rules
-   can otherwise override the browser's native <details> closed-state styling. */
-#game .sidecol .bb-arena-utilities:not([open])>:not(summary){display:none!important}
-#game .sidecol .bb-arena-utilities{
-  display:flex!important;flex-direction:column!important;gap:5px!important;
-  min-width:0!important;margin:2px 0 0!important;padding:5px 4px!important;
-  border:1px solid #54738d88!important;border-radius:10px!important;
-  background:linear-gradient(145deg,#14253bdb,#0b1425e8)!important;
-  box-shadow:inset 0 1px #ffffff0b,0 5px 14px #0004!important;
-}
-#game .sidecol .bb-arena-utilities>summary{
-  display:flex;align-items:center;justify-content:center;gap:5px;
-  min-height:30px;list-style:none;cursor:pointer;user-select:none;
-  color:#b9d4e9;font-size:8px;font-weight:900;letter-spacing:.06em;
-}
-#game .sidecol .bb-arena-utilities>summary::-webkit-details-marker{display:none}
-#game .sidecol .bb-arena-utilities>summary::before{content:"✦";color:#8fdcff;font-size:12px}
-#game .sidecol .bb-arena-utilities>summary::after{content:"＋";color:#5cf5e8;font-size:13px}
-#game .sidecol .bb-arena-utilities[open]>summary::after{content:"−"}
-#game .sidecol .bb-arena-utilities>.sidecard,
-#game .sidecol .bb-arena-utilities>.bb-hero-skill-slot{
-  width:100%!important;box-sizing:border-box!important;
-}
-#game .sidecol .bb-arena-utilities>.sidecard{padding:6px 3px!important}
-#game .sidecol .bb-arena-utilities .charge-ring{width:min(100%,58px)!important;margin:3px auto!important}
-#game .sidecol .bb-arena-utilities .boosticon{font-size:18px!important;margin:2px 0!important}
-#game .sidecol .bb-arena-utilities .bb-hero-skill-slot{min-height:48px!important}
+<style id="bb-kt423-visible-arena-controls">
+/* KT-423: no active-play utility is hidden behind a drawer.
+   Keep the right rail complete and make Drop the large, bottom-most thumb target. */
 #game .sidecol>.sidecard:has(#next){order:1}
 #game .sidecol>.sidecard:has(#holdBtn){order:2}
-#game .sidecol>.drop-card{order:3}
-#game .sidecol>.bb-arena-utilities{order:4}
-@media(max-width:900px) and (orientation:portrait){
-  #game .sidecol .bb-arena-utilities{padding:3px 2px!important;gap:3px!important}
-  #game .sidecol .bb-arena-utilities>summary{min-height:28px;font-size:7px;letter-spacing:.025em}
-  #game .sidecol .bb-arena-utilities>.sidecard{padding:5px 2px!important}
-  #game .sidecol .bb-arena-utilities .charge-ring{width:min(100%,48px)!important}
+#game .sidecol>.charge-card{order:3}
+#game .sidecol>.sidecard:has(#boostIcon){order:4}
+#game .sidecol>#chronoCard{order:5}
+#game .sidecol>#bbHeroSkillCard,
+#game .sidecol>.bb-hero-skill-slot{order:6}
+#game .sidecol>.drop-card{order:7!important}
+#game .sidecol>.drop-card{
+  box-sizing:border-box!important;min-height:70px!important;
+  padding:6px!important;border:1px solid #398e75!important;
+  border-radius:12px!important;
+  background:linear-gradient(145deg,#123f3a,#10252d)!important;
+  box-shadow:0 5px 16px #0005,inset 0 1px #ffffff12!important;
+}
+#game .sidecol>.drop-card>label{
+  display:block!important;margin:0 0 4px!important;
+  color:#9dffe1!important;font-size:8px!important;font-weight:900!important;
+  letter-spacing:.08em!important;text-align:center!important;
+}
+#game .sidecol .side-drop{
+  display:block!important;box-sizing:border-box!important;width:100%!important;
+  min-height:52px!important;height:52px!important;margin:0!important;
+  border-radius:10px!important;font-size:13px!important;font-weight:1000!important;
+  letter-spacing:.04em!important;touch-action:manipulation!important;
+  box-shadow:0 3px 0 #071d1a,0 0 14px #45e7b455!important;
+}
+#game .sidecol .bb-arena-utilities{display:contents!important}
+@media(max-width:900px) and (orientation:portrait) and (pointer:coarse){
+  #game .sidecol{gap:4px!important;align-content:stretch!important}
+  #game .sidecol>.sidecard,
+  #game .sidecol>#bbHeroSkillCard,
+  #game .sidecol>.bb-hero-skill-slot{min-height:0!important;padding:3px!important}
+  #game .sidecol>.drop-card{min-height:66px!important;padding:4px!important}
+  #game .sidecol .side-drop{min-height:50px!important;height:50px!important}
 }
 @media(prefers-reduced-motion:reduce){
-  #game .sidecol .bb-arena-utilities{transition:none!important}
+  #game .sidecol .side-drop{transition:none!important}
 }
 </style>
-<script id="bb-kt420-arena-utility-hierarchy">
+<script id="bb-kt423-visible-arena-controls">
 (()=>{
  const side=document.querySelector('#game .sidecol');
- if(!side||side.querySelector('.bb-arena-utilities'))return;
- const charge=side.querySelector('.charge-card');
+ if(!side||side.dataset.kt423VisibleControls==='ready')return;
+ // KT-420 grouped secondary HUD cards inside a closed details drawer.
+ // Move the original nodes back into the live rail before removing the drawer,
+ // preserving their event handlers and state.
+ const drawer=side.querySelector(':scope>.bb-arena-utilities');
+ if(drawer){
+   [...drawer.children].filter(el=>el.tagName!=='SUMMARY').forEach(el=>side.appendChild(el));
+   drawer.remove();
+ }
+ const find=(selector)=>side.querySelector(selector);
+ const next=find(':scope>.sidecard:has(#next)');
+ const hold=find(':scope>.sidecard:has(#holdBtn)');
+ const charge=find(':scope>.charge-card');
  const boost=[...side.querySelectorAll(':scope>.sidecard')].find(el=>el.querySelector('#boostIcon'));
- const chrono=side.querySelector('#chronoCard');
- const hero=side.querySelector('#bbHeroSkillCard');
- const next=[...side.querySelectorAll(':scope>.sidecard')].find(el=>el.querySelector('#next'));
- const hold=[...side.querySelectorAll(':scope>.sidecard')].find(el=>el.querySelector('#holdBtn'));
- const drop=side.querySelector('.drop-card');
- const drawer=document.createElement('details');
- drawer.className='bb-arena-utilities';
- drawer.innerHTML='<summary>ЕЩЁ</summary>';
- [charge,boost,chrono,hero].forEach(el=>{if(el)drawer.appendChild(el)});
- [next,hold,drop,drawer].forEach(el=>{if(el)side.appendChild(el)});
+ const chrono=find(':scope>#chronoCard');
+ const hero=find(':scope>#bbHeroSkillCard')||find(':scope>.bb-hero-skill-slot');
+ const drop=find(':scope>.drop-card');
+ [next,hold,charge,boost,chrono,hero,drop].forEach(el=>{if(el)side.appendChild(el)});
+ side.dataset.kt423VisibleControls='ready';
 })();
 </script>
 
