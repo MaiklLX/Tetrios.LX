@@ -14791,17 +14791,17 @@ body .app{background:transparent!important;background-color:transparent!importan
  #menu.home-dashboard.home-dashboard > .hero p{font-size:8px!important}
 }
 
-/* KT-427.4 — exact visual fit for the 375x812 portrait rail.
-   Playwright measured the rail 510.984px vs a 494.75px board frame.
-   Their centers already match; a centered 0.9682 Y scale removes the 16.234px
-   excess without moving controls or changing the underlying game layout. */
+/* KT-427.5 — final measured fit for the 375x812 portrait rail.
+   KT-427.4 produced a 502.481px rendered rail against a 494.75px board frame.
+   Keep the shared center and apply the measured correction (0.9533 total scale)
+   without changing card order, spacing, or the Drop control's layout box. */
 @media (min-width: 361px) and (max-width: 380px) and (orientation: portrait) {
   #game>.playlayout>.sidecol {
     top: auto !important;
     bottom: auto !important;
     gap: 3px !important;
     overflow: visible !important;
-    transform: scaleY(.9682) !important;
+    transform: scaleY(.9533) !important;
     transform-origin: center center !important;
   }
 }
