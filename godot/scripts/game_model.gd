@@ -47,22 +47,30 @@ func reset() -> void:
 	last_random_type = -1
 	_spawn()
 
+func _refill_piece_bag() -> void:
+	piece_bag.clear()
+	for piece_index in range(SHAPES.size()):
+		piece_bag.append(piece_index)
+	for i in range(piece_bag.size() - 1, 0, -1):
+		var j := randi_range(0, i)
+		var swap_value := piece_bag[i]
+		piece_bag[i] = piece_bag[j]
+		piece_bag[j] = swap_value
+	# Match the web source: no repeated piece at a seven-bag boundary.
+	if piece_bag.size() > 1 and piece_bag[0] == last_random_type:
+		var swap_index := randi_range(1, piece_bag.size() - 1)
+		var first_value := piece_bag[0]
+		piece_bag[0] = piece_bag[swap_index]
+		piece_bag[swap_index] = first_value
+
+func peek_next_piece_type() -> int:
+	if piece_bag.is_empty():
+		_refill_piece_bag()
+	return piece_bag[0]
+
 func _next_piece_type() -> int:
 	if piece_bag.is_empty():
-		piece_bag.clear()
-		for piece_index in range(SHAPES.size()):
-			piece_bag.append(piece_index)
-		for i in range(piece_bag.size() - 1, 0, -1):
-			var j := randi_range(0, i)
-			var swap_value := piece_bag[i]
-			piece_bag[i] = piece_bag[j]
-			piece_bag[j] = swap_value
-		# Match the web source: no repeated piece at a seven-bag boundary.
-		if piece_bag.size() > 1 and piece_bag[0] == last_random_type:
-			var swap_index := randi_range(1, piece_bag.size() - 1)
-			var first_value := piece_bag[0]
-			piece_bag[0] = piece_bag[swap_index]
-			piece_bag[swap_index] = first_value
+		_refill_piece_bag()
 	var next_type: int = piece_bag.pop_front()
 	last_random_type = next_type
 	return next_type
