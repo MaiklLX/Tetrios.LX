@@ -23,7 +23,8 @@ Date: 2026-11-07
 - Godot 4.4.1 headless import, main-script parse, model tests, and scene smoke test passed on KT-428 and again after the KT-430 / KT-431 layout commits.
 - KT-430 moves the minimum safe-gutter visibility threshold to 126px to prevent overlap at wider viewports.
 - KT-431 scales Buddy to the actual left-gutter width, anchors it at an 8px inset, and keeps an 8px gap before the playfield; this makes the companion available on common phone portrait widths rather than only tablets.
-- Runtime geometry is still not covered by a dedicated Godot viewport test; physical Android rendering remains unverified.
+- KT-432 adds automated helper coverage for a common phone gutter (85px), a too-narrow gutter (60px), and a wide gutter (220px).
+- A full rendered Godot viewport geometry test is still outstanding; physical Android rendering remains unverified.
 - No APK was built or released.
 - No change to `main` or the public web deployment.
 
