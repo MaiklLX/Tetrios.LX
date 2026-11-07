@@ -1,0 +1,13 @@
+/* KT-427 — BLOCK BUDDIES identity */
+.brand{gap:9px}
+.brandmark{width:42px;height:42px;padding:3px;border-radius:11px;background:#0b1c3e;border:2px solid #238cff;box-shadow:0 0 20px #168cff55;transform:none;overflow:hidden}
+.brandmark img{display:block;width:100%;height:100%;image-rendering:pixelated}
+.brandname{font-size:14px;letter-spacing:.12em;font-weight:1000;color:#eaf7ff;text-shadow:0 0 12px #168cff55}
+.edition{color:#52caff;letter-spacing:.14em}
+.hero-brand-lockup{display:flex;justify-content:center;align-items:center;width:100%;margin:8px auto 12px}
+.hero-brand-lockup .bb-title-logo{display:block;width:min(100%,520px);height:auto;max-height:250px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 10px 22px #006bff35)}
+.hero .hero-brand-lockup h1{display:none}
+@media(max-width:600px){
+ .hero-brand-lockup .bb-title-logo{width:min(100%,430px);max-height:205px}
+ .hero{padding-top:12px}
+}
