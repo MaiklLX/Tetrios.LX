@@ -41,10 +41,10 @@ func _layout() -> void:
 	if is_instance_valid(buddy):
 		# Fit Buddy into the actual left gutter on phones instead of hiding it
 		# until tablet widths. Keep a small clear gap before the playfield.
-		var buddy_scale := clampf((board_rect.position.x - 16.0) / 98.0, 0.55, 1.0)
-		buddy.scale = Vector2.ONE * buddy_scale
+		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
+		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
-		buddy.visible = board_rect.position.x >= 70.0
+		buddy.visible = buddy_layout.visible
 	controls = {
 		"left": Rect2(x, button_y, widths[0], button_h),
 		"right": Rect2(x + widths[0] + gap, button_y, widths[1], button_h),
@@ -52,6 +52,12 @@ func _layout() -> void:
 		"drop": Rect2(x + (widths[0] + gap) * 3.0, button_y, widths[3], button_h)
 	}
 	queue_redraw()
+
+func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
+	return {
+		"scale": clampf((gutter_width - 16.0) / 98.0, 0.55, 1.0),
+		"visible": gutter_width >= 70.0
+	}
 
 func _process(delta: float) -> void:
 	if game == null:
