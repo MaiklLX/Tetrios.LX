@@ -18,6 +18,8 @@ var buddy_last_lines := 0
 var paused := false
 var pause_rect := Rect2()
 var resume_rect := Rect2()
+var touch_start := Vector2.ZERO
+var touch_active := false
 
 func _ready() -> void:
 	randomize()
@@ -98,10 +100,40 @@ func _unhandled_input(event: InputEvent) -> void:
 				buddy.set_state("idle", 0.0)
 		_sync_buddy_state()
 		queue_redraw()
-	elif event is InputEventScreenTouch and event.pressed:
-		_handle_tap(event.position)
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			touch_start = event.position
+			touch_active = true
+		elif touch_active:
+			touch_active = false
+			if not _handle_swipe(touch_start, event.position):
+				_handle_tap(event.position)
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_handle_tap(event.position)
+
+func _handle_swipe(start: Vector2, finish: Vector2) -> bool:
+	if game == null or game.game_over or paused or not board_rect.has_point(start):
+		return false
+	var delta := finish - start
+	var threshold := 36.0
+	if maxf(absf(delta.x), absf(delta.y)) < threshold:
+		return false
+	if absf(delta.x) > absf(delta.y):
+		var steps := clampi(roundi(absf(delta.x) / maxf(board_rect.size.x / BOARD_W, 1.0)), 1, 3)
+		var direction := 1 if delta.x > 0.0 else -1
+		for i in range(steps):
+			game.move_horizontal(direction)
+	elif delta.y > 0.0:
+		var drops := clampi(roundi(delta.y / threshold), 1, 4)
+		for i in range(drops):
+			game.soft_drop()
+			if game.game_over:
+				break
+	else:
+		game.rotate_piece()
+	_sync_buddy_state()
+	queue_redraw()
+	return true
 
 func _toggle_pause() -> void:
 	if game == null or game.game_over:
