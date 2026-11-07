@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc" shape-rendering="crispEdges">
+<title id="title">BLOCK BUDDIES</title><desc id="desc">Pixel-art Buddy mascot above the BLOCK BUDDIES wordmark in electric blue.</desc>
+<defs>
+ <linearGradient id="blue" x2="0" y2="1"><stop stop-color="#54d9ff"/><stop offset=".48" stop-color="#168cff"/><stop offset="1" stop-color="#0750c9"/></linearGradient>
+ <linearGradient id="white" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c9eaff"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<!-- mascot silhouette -->
+<g stroke="#061638" stroke-width="18" stroke-linejoin="miter">
+ <path fill="url(#blue)" d="M365 48h70V24h120v24h70v34h35v70h-35v35h-35v18H400v-18h-35v-35h-35v-70h35z"/>
+ <path fill="#f2f8ff" d="M390 93h210v18h18v86h-18v18H390v-18h-18v-86h18z"/>
+ <path fill="#061638" d="M411 119h168v70H411z" stroke="none"/>
+ <path fill="#35dfff" d="M438 145h22v22h-22zm72 0h22v22h-22z" stroke="none"/>
+ <path fill="none" stroke="#35dfff" stroke-width="10" d="M438 181h22m50 0h22"/>
+ <path fill="url(#blue)" d="M330 120h34v74h-34v-20h-20v-34h20zm296 0h34v20h20v34h-20v20h-34z"/>
+ <path fill="#f2f8ff" d="M425 225h110v30H425z"/>
+</g>
+<g fill="#2daaff" filter="url(#glow)"><path d="M260 110h22v22h-22zm420-35h22v22h-22zM710 160h18v18h-18zM232 190h18v18h-18z"/></g>
+<!-- small companion blocks -->
+<g stroke="#061638" stroke-width="10"><path fill="#168cff" d="M184 220h55v55h-55z"/><path fill="#39dfff" d="M239 220h55v55h-55z"/><path fill="#ffb53d" d="M666 218h55v55h-55z"/><path fill="#ff7848" d="M721 218h55v55h-55z"/></g>
+<!-- custom pixel wordmark -->
+<g text-anchor="middle" font-family="monospace" font-weight="1000" letter-spacing="3">
+ <text x="480" y="344" font-size="112" fill="#03112f" stroke="#03112f" stroke-width="28" paint-order="stroke">BLOCK</text>
+ <text x="480" y="344" font-size="112" fill="url(#white)" stroke="#0878ef" stroke-width="8" paint-order="stroke">BLOCK</text>
+ <text x="480" y="424" font-size="78" fill="#03112f" stroke="#03112f" stroke-width="24" paint-order="stroke">BUDDIES</text>
+ <text x="480" y="424" font-size="78" fill="url(#blue)" stroke="#63dfff" stroke-width="6" paint-order="stroke">BUDDIES</text>
+</g></svg>
