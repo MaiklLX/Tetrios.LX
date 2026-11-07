@@ -61,6 +61,37 @@ const targets = [
     await page.waitForTimeout(250);
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
+    // KT-418: landscape phone view is intentionally blocked before the menu
+    // can be used. Verify the orientation guard here instead of trying to
+    // interact with controls underneath the full-screen guard.
+    const phoneLandscape = target.mobile && target.width > target.height &&
+      target.width <= 960 && target.height <= 650;
+    if (phoneLandscape) {
+      const guardState = await page.evaluate(() => {
+        const guard = document.querySelector('#bbPhoneLandscapeGuard');
+        const style = guard ? getComputedStyle(guard) : null;
+        const rect = guard?.getBoundingClientRect();
+        return {
+          found: !!guard,
+          visible: !!guard && style.display !== 'none' &&
+            style.visibility !== 'hidden' && Number(style.opacity) > 0 &&
+            !!rect && rect.width >= innerWidth - 2 && rect.height >= innerHeight - 2,
+          text: guard?.innerText?.replace(/\\s+/g, ' ').trim() || ''
+        };
+      });
+      if (!guardState.visible || !guardState.text.includes('Поверни телефон') ||
+          !guardState.text.includes('портретном режиме')) {
+        failures.push(target.name + ': phone landscape orientation guard is missing or not visible (' + JSON.stringify(guardState) + ')');
+      }
+      await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-orientation-guard.png', fullPage: false });
+      report.push({ target: target.name, engine: target.engine, orientationGuard: guardState, pageErrors, consoleErrors, failedRequests });
+      await context.close();
+      await browser.close();
+      clearTimeout(targetWatchdog);
+      console.log('[target:orientation-guard-verified] ' + target.name);
+      continue;
+    }
+
     console.log('[stage:card-library] ' + target.name);
     // The complete card archive must be available before starting a run on every platform.
     await page.locator('#bbOpenCardLibrary').click();
@@ -187,6 +218,41 @@ const targets = [
     await page.waitForTimeout(900);
 
     console.log('[stage:gameplay-ready] ' + target.name);
+
+    // Exercise KT-418 during a live run: rotate to phone landscape, confirm
+    // the game pauses and the guard covers the viewport, then return to
+    // portrait and confirm the same run resumes automatically.
+    if (target.name === 'ios-webkit-390x844') {
+      await page.setViewportSize({ width: 844, height: 390 });
+      await page.waitForTimeout(180);
+      const landscapeState = await page.evaluate(() => {
+        const guard = document.querySelector('#bbPhoneLandscapeGuard');
+        const piece = window.__TETRIOS_QA__?.getPieceState?.();
+        return {
+          guardVisible: !!guard && getComputedStyle(guard).display !== 'none',
+          paused: !!piece?.paused,
+          started: !!piece?.started,
+          gameOver: !!piece?.gameOver
+        };
+      });
+      if (!landscapeState.guardVisible || !landscapeState.paused ||
+          !landscapeState.started || landscapeState.gameOver) {
+        failures.push('KT-418: live phone landscape did not show the guard and pause the active run (' + JSON.stringify(landscapeState) + ')');
+      }
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.waitForTimeout(180);
+      const portraitState = await page.evaluate(() => {
+        const guard = document.querySelector('#bbPhoneLandscapeGuard');
+        const piece = window.__TETRIOS_QA__?.getPieceState?.();
+        return {
+          guardHidden: !!guard && getComputedStyle(guard).display === 'none',
+          resumed: !!piece?.started && !piece?.paused && !piece?.gameOver
+        };
+      });
+      if (!portraitState.guardHidden || !portraitState.resumed) {
+        failures.push('KT-418: returning to portrait did not hide the guard and resume the same run (' + JSON.stringify(portraitState) + ')');
+      }
+    }
     // Exercise real board touch listeners in WebKit/Chromium, not only screenshots.
     if (target.mobile) {
       const gestureResult = await page.evaluate(() => {
