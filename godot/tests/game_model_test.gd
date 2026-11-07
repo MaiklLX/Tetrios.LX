@@ -1,6 +1,7 @@
 extends SceneTree
 
 const Model = preload("res://scripts/game_model.gd")
+const Main = preload("res://scripts/main.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -14,6 +15,17 @@ func _check(condition: bool, message: String) -> bool:
 
 func _run() -> void:
 	seed(20261105)
+	var layout_probe = Main.new()
+	var phone_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(85.0)
+	if not _check(phone_gutter.visible and phone_gutter.scale > 0.65 and phone_gutter.scale < 0.75, "Buddy must scale into a common phone portrait gutter"):
+		return
+	var narrow_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(60.0)
+	if not _check(not narrow_gutter.visible, "Buddy must hide when the left gutter is too narrow"):
+		return
+	var wide_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(220.0)
+	if not _check(wide_gutter.visible and is_equal_approx(wide_gutter.scale, 1.0), "Buddy must use full size when the gutter is wide"):
+		return
+	layout_probe.free()
 	var model: BlockBuddiesModel = Model.new()
 	model.reset()
 	if not _check(model.grid.size() == 23, "Board must contain 23 rows"):
