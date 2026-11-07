@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Buddy idle" shape-rendering="crispEdges">
+<defs><linearGradient id="g" x2="0" y2="1"><stop stop-color="#62e4ff"/><stop offset="1" stop-color="#0871e9"/></linearGradient></defs>
+<path fill="#061638" d="M86 50h46V30h56v20h46v30h24v142h-24v30h-46v20h-56v-20H86v-30H62V80h24z"/>
+<path fill="url(#g)" stroke="#39cfff" stroke-width="7" d="M90 56h42V36h56v20h42v30h24v126h-24v30h-42v20h-56v-20H90v-30H66V86h24z"/>
+<path fill="#f3faff" d="M108 100h104v20h18v80h-18v20H108v-20H90v-80h18z"/>
+<path fill="#06132f" d="M145 166h62v52h-62z"/><path fill="#4de5ff" d="M154 176h16v16h-16zm28 0h16v16h-16z"/><path fill="none" stroke="#4de5ff" stroke-width="7" d="M154 207h44"/>
+<path fill="#ffb43d" stroke="#061638" stroke-width="7" d="M132 252h56v22h-56z"/>
+</svg>
