@@ -153,7 +153,8 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 				_add_error(result, "Malformed daily reward marker: " + key_text)
 	daily["reward_claimed_dates"] = reward_dates
 	_validate_equipped_cosmetics(cosmetics["equipped_by_hero"], result)
-	_validate_daily_quests(daily.get("quests_current", {}), result)
+	if daily.has("quests_current"):
+		_validate_daily_quests(daily["quests_current"], result)
 	_validate_date_dictionary(daily.get("challenge_assignments", {}), "bbDailyChallengeAssignments", result)
 	_validate_date_dictionary(daily.get("challenge_history", {}), "bbDailyChallengeHistory", result)
 	if typeof(daily.get("challenge_history", {})) == TYPE_DICTIONARY:
