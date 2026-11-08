@@ -114,6 +114,9 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_copy_json_container(raw, "bb_chestCosmetics", cosmetics, "owned", TYPE_ARRAY, result)
 	_copy_json_container(raw, "bb_equippedChestCosmetics", cosmetics, "equipped_by_hero", TYPE_DICTIONARY, result)
 	_read_non_negative_json_int(raw, "bb_collectionFragments", cosmetics, "fragments", result, 0)
+	_validate_consumables(inventory["consumables"], result)
+	_validate_permanent_perks(inventory["permanent_perks"], result)
+	_validate_campaign_perks(campaign["hero_perks"], result)
 
 	if cosmetics["equipped_by_hero"].is_empty() and raw.has("bb_equippedChestCosmetic"):
 		var legacy_cosmetic: Variant = _read_value(raw, "bb_equippedChestCosmetic", false)
@@ -149,6 +152,15 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 			else:
 				_add_error(result, "Malformed daily reward marker: " + key_text)
 	daily["reward_claimed_dates"] = reward_dates
+	_validate_equipped_cosmetics(cosmetics["equipped_by_hero"], result)
+	_validate_daily_quests(daily.get("quests_current", {}), result)
+	_validate_date_dictionary(daily.get("challenge_assignments", {}), "bbDailyChallengeAssignments", result)
+	_validate_date_dictionary(daily.get("challenge_history", {}), "bbDailyChallengeHistory", result)
+	if typeof(daily.get("challenge_history", {})) == TYPE_DICTIONARY:
+		for reward_date in reward_dates:
+			if not daily.get("challenge_history", {}).has(reward_date):
+				result["requires_review"] = true
+				result["warnings"].append("Daily reward marker has no matching challenge-history entry: " + reward_date)
 
 	for key in raw.keys():
 		var key_text := str(key)
@@ -158,6 +170,68 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 		result["warnings"].append("Unknown source keys were preserved in source_backup and were not imported")
 
 	return result
+
+static func _validate_consumables(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for item_id in value.keys():
+		if not ["quick", "shield", "magnet"].has(str(item_id)):
+			_add_error(result, "Unknown consumable id: " + str(item_id))
+		elif not _is_non_negative_int(value[item_id]):
+			_add_error(result, "Consumable count must be a non-negative integer: " + str(item_id))
+
+static func _validate_permanent_perks(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_ARRAY:
+		return
+	for perk_id in value:
+		if typeof(perk_id) != TYPE_STRING or not ["heart", "rainbow", "lucky"].has(str(perk_id)):
+			_add_error(result, "Unknown permanent perk id: " + str(perk_id))
+
+static func _validate_campaign_perks(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for hero_id in value.keys():
+		if not HERO_IDS.has(str(hero_id)) or typeof(value[hero_id]) != TYPE_DICTIONARY:
+			_add_error(result, "Invalid hero campaign-perk map: " + str(hero_id))
+			continue
+		for perk_id in value[hero_id].keys():
+			if not ["guardian", "tactician", "scout"].has(str(perk_id)):
+				_add_error(result, "Unknown campaign perk id: " + str(perk_id))
+			elif not _is_non_negative_int(value[hero_id][perk_id]):
+				_add_error(result, "Campaign perk rank must be a non-negative integer: " + str(perk_id))
+
+static func _validate_equipped_cosmetics(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for hero_id in value.keys():
+		if not HERO_IDS.has(str(hero_id)) or typeof(value[hero_id]) != TYPE_STRING or str(value[hero_id]).is_empty():
+			_add_error(result, "Invalid equipped cosmetic mapping for hero: " + str(hero_id))
+
+static func _validate_daily_quests(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	if not value.has("date") or typeof(value["date"]) != TYPE_STRING or not _looks_like_date(value["date"]):
+		_add_error(result, "bbDailyQuests must contain a valid date")
+	if not value.has("quests") or typeof(value["quests"]) != TYPE_ARRAY:
+		_add_error(result, "bbDailyQuests must contain a quests array")
+		return
+	for quest in value["quests"]:
+		if typeof(quest) != TYPE_DICTIONARY:
+			_add_error(result, "Daily quest entry must be an object")
+			continue
+		if typeof(quest.get("id")) != TYPE_STRING or typeof(quest.get("title")) != TYPE_STRING:
+			_add_error(result, "Daily quest must contain string id and title")
+		if not _is_positive_int(quest.get("target")) or not _is_non_negative_int(quest.get("progress")):
+			_add_error(result, "Daily quest target/progress must be valid non-negative integers")
+		if not _is_non_negative_int(quest.get("reward")) or typeof(quest.get("claimed")) != TYPE_BOOL:
+			_add_error(result, "Daily quest reward/claimed fields are malformed")
+
+static func _validate_date_dictionary(value: Variant, source_key: String, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for date_key in value.keys():
+		if not _looks_like_date(str(date_key)) or typeof(value[date_key]) != TYPE_DICTIONARY:
+			_add_error(result, source_key + " contains an invalid date record")
 
 static func _read_value(raw: Dictionary, key: String, json_encoded: bool) -> Variant:
 	if not raw.has(key):
@@ -229,9 +303,16 @@ static func _copy_raw_string(raw: Dictionary, key: String, target: Dictionary, f
 		_add_error(result, key + " must be a string")
 
 static func _looks_like_date(value: String) -> bool:
-	if value.length() != 10:
+	if value.length() != 10 or value.substr(4, 1) != "-" or value.substr(7, 1) != "-":
 		return false
-	return value.substr(4, 1) == "-" and value.substr(7, 1) == "-"
+	var year_text := value.substr(0, 4)
+	var month_text := value.substr(5, 2)
+	var day_text := value.substr(8, 2)
+	if not year_text.is_valid_int() or not month_text.is_valid_int() or not day_text.is_valid_int():
+		return false
+	var month := int(month_text)
+	var day := int(day_text)
+	return int(year_text) >= 2000 and month >= 1 and month <= 12 and day >= 1 and day <= 31
 
 static func _is_known_key(key: String) -> bool:
 	if KNOWN_DIRECT_KEYS.has(key):
