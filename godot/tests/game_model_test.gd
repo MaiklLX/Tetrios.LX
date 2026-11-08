@@ -224,7 +224,7 @@ func _run() -> void:
 			return
 		if not _check(multi_model.score == expected_rewards[clear_count] + 38, "Two-, three-, and four-line clears must award the correct base reward plus hard-drop points"):
 			return
-		var surviving_piece_cells := 4 - clear_count
+		var surviving_piece_cells: int = 4 - clear_count
 		for row_offset in range(clear_count):
 			var row_y: int = Model.HEIGHT - 1 - row_offset
 			for x in range(Model.WIDTH):
