@@ -140,5 +140,41 @@ func _run() -> void:
 	if not _check(cooldown_elapsed.accepted and spark_run.hero_skill_cooldown_seconds == 44, "Hero cooldown must decrease in real run seconds"):
 		return
 
+
+	print("KT473 TEST: Shield and Nova rescue mutations")
+	var shield_rescue_run = Session.new()
+	shield_rescue_run.start()
+	if not _check(shield_rescue_run.choose_card("shield"), "Shield card must draft before rescue"):
+		return
+	var shield_before := shield_rescue_run.shield_charges
+	var shield_rescue := shield_rescue_run.on_spawn_collision()
+	if not _check(shield_rescue.rescued and shield_rescue.rescue_type == "shield" and shield_rescue.shield_charges_remaining == shield_before - 1, "Shield must consume exactly one charge and rescue the spawn collision"):
+		return
+	var shield_changed := false
+	for y in range(20, 23):
+		for x in range(10):
+			if shield_rescue_run.board[y][x] == 7:
+				shield_changed = true
+	if not _check(shield_changed, "Shield rescue must mutate its source-defined bottom three-row zone"):
+		return
+	var fortress_run = Session.new()
+	fortress_run.start()
+	if not _check(fortress_run.choose_card("shield") and fortress_run.choose_card("armor"), "Shield and Armor must draft for Iron Fortress"):
+		return
+	var fortress_rescue := fortress_run.on_spawn_collision()
+	if not _check(fortress_rescue.rescued and fortress_rescue.iron_fortress and fortress_run.shield_charges == 1, "Iron Fortress must use five randomized rows and consume one of the combined charges"):
+		return
+	var nova_run = Session.new()
+	nova_run.start()
+	if not _check(nova_run.choose_card("nova"), "Nova card must draft before emergency rescue"):
+		return
+	nova_run.board[22].fill(7)
+	var nova_rescue := nova_run.on_spawn_collision()
+	if not _check(nova_rescue.rescued and nova_rescue.rescue_type == "nova" and nova_rescue.rows_cleared == 1 and nova_run.board[22].count(7) == 0 and nova_run.nova_used, "Nova must clear its ranked number of bottom rows exactly once"):
+		return
+	var nova_again := nova_run.on_spawn_collision()
+	if not _check(not nova_again.rescued and not nova_again.nova_used == false, "Nova must not rescue a second spawn collision"):
+		return
+
 	print("Block Run session integration tests passed: three live goals, replacement, rewards, timer/score/line progress, combat, attacks and failure.")
 	quit(0)
