@@ -127,3 +127,12 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Dedicated fixtures cover representative progression, currency separation, legacy hero/cosmetic fallback, malformed JSON and daily reward idempotency markers.
 - CI run `42450365090` on `55e0a8701b97c5b3e45dbcf7576d8d8417504b1c` passed all five stages including the new migration tests.
 - Persistent storage and migration execution remain intentionally disabled.
+
+
+## 12. KT-448 — adversarial migration validation
+
+- Parser now checks observed consumable/perk IDs, hero-scoped campaign perk maps, equipped-cosmetic owner IDs, current daily quest record fields, date-keyed challenge records and date ranges.
+- Orphan reward markers are preserved and flagged for review instead of being treated as a new reward.
+- Added adversarial fixtures for unknown inventory/perk/hero IDs, incomplete daily quests and reward/history disagreement.
+- CI run `42450599486` on `31b0545a9a7447b3b42c86ee1c1238327009cc16` passed import, parse, gameplay tests, migration tests and scene smoke test.
+- These checks validate candidate data only; persistent storage and migration execution remain disabled.
