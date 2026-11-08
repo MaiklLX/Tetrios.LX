@@ -126,5 +126,23 @@ func _run() -> void:
 		push_error("Block Run result restart did not initialize a fresh playable session.")
 		quit(1)
 		return
+	# Capture a narrow portrait viewport as well as the desktop-sized reference.
+	viewport.size = Vector2i(360, 800)
+	scene.call("_layout")
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "08-mobile-360-arena"):
+		quit(1)
+		return
+	block_run_session = scene.get("block_run_session")
+	block_run_session.status = "failed"
+	scene.get("game").game_over = true
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "09-mobile-360-results"):
+		quit(1)
+		return
 	print("Visual smoke captures completed.")
 	quit(0)
