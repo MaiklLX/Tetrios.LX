@@ -276,5 +276,56 @@ func _run() -> void:
 			if not _check(game_over_model.grid[y][x] == -1, "Restart after game over must clear the entire board"):
 				return
 
+	# Collision boundaries: horizontal I must not cross either side wall.
+	var boundary_model: BlockBuddiesModel = Model.new()
+	boundary_model.reset()
+	boundary_model.active_type = 0
+	boundary_model.active_cells.assign(Model.SHAPES[0])
+	boundary_model.origin = Vector2i(0, 0)
+	boundary_model.move_horizontal(-1)
+	if not _check(boundary_model.origin.x == 0, "Active piece must not move beyond the left wall"):
+		return
+	boundary_model.origin = Vector2i(Model.WIDTH - 4, 0)
+	boundary_model.move_horizontal(1)
+	if not _check(boundary_model.origin.x == Model.WIDTH - 4, "Active piece must not move beyond the right wall"):
+		return
+
+	# A piece resting on the floor must lock on the next downward step.
+	var lock_model: BlockBuddiesModel = Model.new()
+	lock_model.reset()
+	lock_model.active_type = 4
+	lock_model.active_cells.assign(Model.SHAPES[4])
+	lock_model.origin = Vector2i(4, Model.HEIGHT - 2)
+	if not _check(lock_model._collides(lock_model.origin + Vector2i(0, 1), lock_model.active_cells), "A piece at the floor must detect the bottom boundary"):
+		return
+	var locked_type: int = lock_model.active_type
+	lock_model.tick()
+	if not _check(lock_model.grid[Model.HEIGHT - 2][4] == locked_type and lock_model.grid[Model.HEIGHT - 1][5] == locked_type, "Tick at the floor must lock all four cells into the board"):
+		return
+	if not _check(not lock_model.game_over and lock_model.active_cells.size() == 4, "Successful lock must spawn the next active piece"):
+		return
+
+	# Long deterministic run: 50 lock/spawn/line-clear cycles must preserve
+	# board dimensions, avoid game over, and keep progression synchronized.
+	var long_run_model: BlockBuddiesModel = Model.new()
+	long_run_model.reset()
+	for cycle in range(50):
+		for x in range(Model.WIDTH):
+			long_run_model.grid[Model.HEIGHT - 1][x] = 1 if x < 3 or x > 6 else -1
+		long_run_model.active_type = 0
+		long_run_model.active_cells.assign(Model.SHAPES[0])
+		long_run_model.origin = Vector2i(3, 0)
+		long_run_model.hard_drop()
+		if not _check(not long_run_model.game_over, "Repeated lock and clear cycles must not cause a false game over"):
+			return
+		if not _check(long_run_model.grid.size() == Model.HEIGHT and long_run_model.grid[Model.HEIGHT - 1].size() == Model.WIDTH, "Board dimensions must remain stable throughout a long run"):
+			return
+		if not _check(long_run_model.lines == cycle + 1, "Line progression must remain synchronized after every repeated clear"):
+			return
+	if not _check(long_run_model.level == 6, "Fifty cleared lines must advance progression to level six"):
+		return
+	if not _check(long_run_model.grid[Model.HEIGHT - 1].count(-1) == Model.WIDTH, "The bottom row must be empty after each successful clear"):
+		return
+
 	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
 	quit(0)
