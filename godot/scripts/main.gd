@@ -591,21 +591,27 @@ func _draw_block_run_goals() -> void:
 		draw_string(font, rect.position + Vector2(6.0, 23.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
 
 func _draw_piece_previews() -> void:
-	var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
 	var card_height := 46.0
-	var gap := 12.0
-	var total_width := card_width * 2.0 + gap
-	var start_x := (screen_size.x - total_width) * 0.5
 	var top := board_rect.position.y - card_height - 42.0
-	var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
-	var slot_gap := 8.0
-	var total_width := slot_width * 3.0 + slot_gap * 2.0
-	var start_x := (screen_size.x - total_width) * 0.5
-	hold_rect = Rect2(start_x, top, slot_width, card_height)
-	block_run_skill_rect = Rect2(start_x + (slot_width + slot_gap) * 2.0, top, slot_width, card_height)
-	_draw_preview_card(hold_rect, "HOLD", game.held_type)
-	_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "NEXT", game.peek_next_piece_type())
-	_draw_block_run_skill_card(block_run_skill_rect)
+	if block_run_active:
+		var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
+		var slot_gap := 8.0
+		var total_width := slot_width * 3.0 + slot_gap * 2.0
+		var start_x := (screen_size.x - total_width) * 0.5
+		hold_rect = Rect2(start_x, top, slot_width, card_height)
+		block_run_skill_rect = Rect2(start_x + (slot_width + slot_gap) * 2.0, top, slot_width, card_height)
+		_draw_preview_card(hold_rect, "HOLD", game.held_type)
+		_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "NEXT", game.peek_next_piece_type())
+		_draw_block_run_skill_card(block_run_skill_rect)
+	else:
+		var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
+		var gap := 12.0
+		var total_width := card_width * 2.0 + gap
+		var start_x := (screen_size.x - total_width) * 0.5
+		hold_rect = Rect2(start_x, top, card_width, card_height)
+		block_run_skill_rect = Rect2()
+		_draw_preview_card(hold_rect, "HOLD", game.held_type)
+		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "NEXT", game.peek_next_piece_type())
 
 func _draw_block_run_skill_card(rect: Rect2) -> void:
 	if not block_run_active or block_run_session == null:
