@@ -387,6 +387,10 @@ func _run() -> void:
 	var typical_raw: Dictionary = fixtures["typical"]["local_storage"]
 	var typical_before: Dictionary = typical_raw.duplicate(true)
 	var typical_import: Dictionary = WebMigration.parse_local_storage(typical_raw)
+	if not typical_import.ok or typical_import.requires_review:
+		print("Typical migration errors: ", typical_import.errors)
+		print("Typical migration warnings: ", typical_import.warnings)
+		print("Typical migration conflicts: ", typical_import.conflicts)
 	if not _check(typical_import.ok and not typical_import.requires_review, "Typical Web profile with matching aliases must validate"):
 		return
 	if not _check(typical_import.profile.economy.coins == 125 and typical_import.profile.economy.relics == 7, "Coin and relic balances must remain separate"):
