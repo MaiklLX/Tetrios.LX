@@ -3,6 +3,7 @@ extends SceneTree
 const Model = preload("res://scripts/game_model.gd")
 const Main = preload("res://scripts/main.gd")
 const WebMigration = preload("res://scripts/web_save_migration.gd")
+const Buddy = preload("res://scripts/buddy_companion.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -16,6 +17,18 @@ func _check(condition: bool, message: String) -> bool:
 
 func _run() -> void:
 	seed(20261105)
+	# Buddy reactions are stateful, bounded, and return to idle cleanly.
+	var buddy_probe = Buddy.new()
+	buddy_probe.set_state("happy", 0.1)
+	if not _check(buddy_probe.state == "happy", "Buddy should accept a supported reaction state"):
+		return
+	buddy_probe._process(0.11)
+	if not _check(buddy_probe.state == "idle", "Timed Buddy reactions should return to idle"):
+		return
+	buddy_probe.set_state("not-a-state", 1.0)
+	if not _check(buddy_probe.state == "idle", "Buddy should ignore unsupported reaction states"):
+		return
+
 	var layout_probe = Main.new()
 	var narrow_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(60.0)
 	if not _check(not narrow_gutter.visible, "Buddy must hide when the left gutter is too narrow"):
