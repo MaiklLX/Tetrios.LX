@@ -339,3 +339,13 @@
 - Recommended a dedicated campaign-owned runtime/model boundary with explicit campaign launch selection, special-piece identity and snapshot data, authored level opt-in, and no special IDs in the standard seven-piece range.
 - Defined geometry, board, lifecycle, Hold, persistence, visual and mode-isolation test gates; staged KT-537–KT-540 implementation plan.
 - **No gameplay code or silhouette changed.** The Cargo Hook remains pending the user's visual approval. Classic, Sprint/Marathon and Block Run remain on the original seven-piece model. No main merge, deployment or APK release.
+
+## KT-537 — Isolated campaign special-piece runtime
+- User approved the Cargo Hook silhouette; the authored five-cell shape remains unchanged.
+- Added `godot/scripts/campaign_piece_runtime.gd`, a campaign-owned 10×23 runtime that is separate from `game_model.gd`. It supports standard tetrominoes plus explicit authored Cargo Hook spawns, movement, rotation/wall kicks, soft/hard drop, locking, row clearing and game-over collision checks.
+- Added bidirectional Hold handling (special→standard and standard→special), with one Hold per falling piece and reset on lock.
+- Added versioned campaign snapshots with strict validation of board dimensions, piece IDs, rotation geometry, active placement, Hold state and standard-only seven-bag. Invalid/unknown snapshots are rejected before any live state mutation.
+- Added `godot/tests/campaign_piece_runtime_test.gd` covering independent board, explicit special spawn, five-cell rotation, blocked-rotation atomicity, Hold in both directions, lock/line clear, save/restore, malformed snapshots and shared-model isolation.
+- Registered the new test in `.github/workflows/godot-native-check.yml`.
+- **No live gameplay integration:** no scene imports the runtime, no campaign planet uses it yet, and no change was made to the shared model, Classic, Sprint/Marathon, Block Run, standard saves, main, public deployment or APK release. PR #81 remains Draft/unmerged.
+- Validation: CI run for this checkpoint is pending/not yet visible; do not treat this checkpoint as passed until the workflow reports success.
