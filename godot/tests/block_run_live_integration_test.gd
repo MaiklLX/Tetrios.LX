@@ -198,8 +198,20 @@ func _run() -> void:
 		return
 	var receipt_session = receipt_probe.block_run_session
 	receipt_session.goals[0] = {"id":700,"type":"lines","label":"ТЕСТ ЛИНИЙ","target":1,"reward":17,"claimed":false}
+	# Build a real one-row clear: the horizontal I piece fills the four-cell gap
+	# in the bottom row, so the model itself must increment the line counter.
+	receipt_probe.game.active_type = 0
+	receipt_probe.game.active_cells.assign(Model.SHAPES[0])
+	receipt_probe.game.origin = Vector2i(3, 0)
+	for column in range(Model.WIDTH):
+		if column < 3 or column > 6:
+			receipt_probe.game.grid[Model.HEIGHT - 1][column] = 2
+	var receipt_lock_before: int = receipt_probe.game.lock_serial
 	receipt_probe.game.hard_drop()
-	receipt_probe.game.lines = 1
+	if not _check(receipt_probe.game.lines == 1 and receipt_probe.game.last_lock_cleared == 1, "A real horizontal-I lock must clear the prepared bottom row in the gameplay model"):
+		return
+	if not _check(receipt_probe.game.lock_serial == receipt_lock_before + 1, "The real line-clear fixture must produce exactly one piece-lock event"):
+		return
 	receipt_probe._process_block_run_events()
 	if not _check(receipt_session.total_lines == 1 and receipt_session.goal_reward_receipts.has("block-run-goal:700"), "A real live line-clear event must complete the active goal and issue its reward receipt"):
 		return
