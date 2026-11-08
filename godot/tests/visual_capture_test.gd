@@ -174,6 +174,15 @@ func _run() -> void:
 	viewport.size = Vector2i(360, 800)
 	await process_frame
 	scene.call("_layout")
+	var mobile_stat_card := Rect2(18.0, 56.0, (360.0 - 36.0 - 10.0) * 0.5, 52.0)
+	if int(scene.call("_stat_label_font_size", mobile_stat_card, "ОЧКИ • СИНЕРГИИ 2")) < 9:
+		push_error("Score HUD label is unnecessarily reduced below 9px at 360x800.")
+		quit(1)
+		return
+	if int(scene.call("_stat_label_font_size", mobile_stat_card, "КОМНАТА 1 • УДАР 17С")) < 9:
+		push_error("Block Run HUD label is unnecessarily reduced below 9px at 360x800.")
+		quit(1)
+		return
 	var mobile_board_rect: Rect2 = scene.get("board_rect")
 	var mobile_drop_rect: Rect2 = scene.get("drop_rect")
 	var mobile_mode_button: Rect2 = scene.get("mode_button_rect")
