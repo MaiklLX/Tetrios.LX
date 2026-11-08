@@ -97,7 +97,7 @@ func _layout() -> void:
 		# Anchor the companion flush to the left gutter; never let its sprite intrude into the board frame.
 		buddy.position = Vector2(0.0, board_rect.position.y + 18.0)
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
+		buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and not mode_select_visible and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
 
 
@@ -107,14 +107,15 @@ func _home_layout(viewport: Vector2) -> Dictionary:
 	var top := maxf(118.0, viewport.y * 0.15)
 	var card_height := clampf(viewport.y * 0.145, 108.0, 132.0)
 	var gap := 14.0
-	var half := (width - gap) * 0.5
+	var tab_gap := 8.0
+	var tab_width := (width - tab_gap * 2.0) / 3.0
 	return {
 		"campaign": Rect2(left, top + 96.0, width, card_height),
 		"block_run": Rect2(left, top + 96.0 + card_height + gap, width, card_height),
 		"tasks": Rect2(left, top + 96.0 + (card_height + gap) * 2.0, width, 82.0),
-		"heroes": Rect2(left, viewport.y - 92.0, half, 58.0),
-		"shop": Rect2(left + half + gap * 0.5, viewport.y - 92.0, half, 58.0),
-		"upgrades": Rect2(left, viewport.y - 24.0, width, 1.0)
+		"heroes": Rect2(left, viewport.y - 92.0, tab_width, 58.0),
+		"shop": Rect2(left + tab_width + tab_gap, viewport.y - 92.0, tab_width, 58.0),
+		"upgrades": Rect2(left + (tab_width + tab_gap) * 2.0, viewport.y - 92.0, tab_width, 58.0)
 	}
 
 func _mode_select_layout(viewport: Vector2) -> Dictionary:
@@ -413,6 +414,8 @@ func _handle_tap(point: Vector2) -> void:
 			_open_secondary_screen("heroes")
 		elif home_shop_rect.has_point(point):
 			_open_secondary_screen("shop")
+		elif home_upgrades_rect.has_point(point):
+			_open_secondary_screen("upgrades")
 		elif home_tasks_rect.has_point(point):
 			_open_secondary_screen("daily")
 		queue_redraw()
@@ -488,7 +491,7 @@ func _select_mode(requested_mode_id: String) -> void:
 
 
 func _open_secondary_screen(screen_id: String) -> void:
-	if not ["heroes", "shop", "daily"].has(screen_id):
+	if not ["heroes", "shop", "upgrades", "daily"].has(screen_id):
 		return
 	secondary_screen = screen_id
 	home_visible = false
@@ -515,7 +518,7 @@ func _sync_buddy_state() -> void:
 		return
 	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 	var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
+	buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and not mode_select_visible and not _block_run_draft_is_open() and not result_overlay_visible
 	if game.game_over:
 		if buddy.state != "surprised":
 			buddy.set_state("surprised", 0.0)
@@ -639,16 +642,18 @@ func _draw_home_hub() -> void:
 	draw_string(font, home_tasks_rect.position + Vector2(14.0, 53.0), "ВЫПОЛНИ 3 ЦЕЛИ И ЗАБЕРИ НАГРАДУ", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#c9f8ef"))
 	_draw_soft_panel(home_heroes_rect, Color("#155c9c"), Color("#7bdfff"), 16, 7)
 	_draw_soft_panel(home_shop_rect, Color("#8b541e"), Color("#ffd16c"), 16, 7)
-	_center_text_in_rect("ГЕРОИ", home_heroes_rect, 13, Color("#ffffff"))
-	_center_text_in_rect("МАГАЗИН", home_shop_rect, 13, Color("#ffffff"))
+	_draw_soft_panel(home_upgrades_rect, Color("#6c4a9c"), Color("#d2aaff"), 16, 7)
+	_center_text_in_rect("ГЕРОИ", home_heroes_rect, 11, Color("#ffffff"))
+	_center_text_in_rect("МАГАЗИН", home_shop_rect, 11, Color("#ffffff"))
+	_center_text_in_rect("УЛУЧШЕНИЯ", home_upgrades_rect, 10, Color("#ffffff"))
 	_center_text("ВЫБЕРИ СВОЁ ПРИКЛЮЧЕНИЕ", screen_size.y - 112.0, 10, Color("#b9eaff"))
 
 func _draw_secondary_screen() -> void:
 	_draw_soft_panel(secondary_back_rect, Color("#155c9c"), Color("#7bdfff"), 14, 6)
 	draw_string(font, secondary_back_rect.position + Vector2(12.0, 27.0), "‹  ДОМОЙ", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
-	var heading := "ГЕРОИ" if secondary_screen == "heroes" else ("МАГАЗИН" if secondary_screen == "shop" else "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ")
+		var heading := "ГЕРОИ" if secondary_screen == "heroes" else ("МАГАЗИН" if secondary_screen == "shop" else ("УЛУЧШЕНИЯ" if secondary_screen == "upgrades" else "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ"))
 	_center_text(heading, screen_size.y * 0.32, 27, Color("#fff0b9"))
-	var subtitle := "СКОРО: КОЛЛЕКЦИЯ BUDDY И ИХ СПОСОБНОСТИ" if secondary_screen == "heroes" else ("СКОРО: КОСМЕТИКА И ПОЛЕЗНЫЕ ПРЕДМЕТЫ" if secondary_screen == "shop" else "ТВОИ ЦЕЛИ ОБНОВЛЯЮТСЯ КАЖДЫЙ ДЕНЬ")
+	var subtitle := "СКОРО: КОЛЛЕКЦИЯ BUDDY И ИХ СПОСОБНОСТИ" if secondary_screen == "heroes" else ("СКОРО: КОСМЕТИКА И ПОЛЕЗНЫЕ ПРЕДМЕТЫ" if secondary_screen == "shop" else ("СКОРО: ПРОКАЧКА ГЕРОЕВ И ИХ УМЕНИЙ" if secondary_screen == "upgrades" else "ТВОИ ЦЕЛИ ОБНОВЛЯЮТСЯ КАЖДЫЙ ДЕНЬ"))
 	_center_text(subtitle, screen_size.y * 0.32 + 38.0, 11, Color("#c4edff"))
 	var panel := Rect2(22.0, screen_size.y * 0.43, screen_size.x - 44.0, 150.0)
 	_draw_soft_panel(panel, Color("#174d89"), Color("#64d9f2"), 20, 10)
