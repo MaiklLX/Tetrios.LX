@@ -20,3 +20,13 @@ The menu title and compact topbar brand now display BLOCK BUDDIES. Existing game
 
 ## Validation
 Visual review on narrow portrait screens and desktop is still required. This is a draft branch and must not be merged or published without approval.
+
+## 2026-11-08 — preview interaction verification
+
+- Verified branch HEAD: `d6cbd7814b72f4192c1baf6abb205b4c8fc9111c` (PR #76 remains open and draft).
+- Mobile Arena Visual Preview run [42479122052](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42479122052): **SUCCESS**. Artifact [tetrios-mobile-arena-preview](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42479122052/artifacts/13616667808) was downloaded and inspected; the 375×812 and 412×915 captures and geometry JSON are present.
+- Cross-platform Visual Preview run [42479122170](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42479122170): **SUCCESS**. Artifact [tetrios-cross-platform-visual-preview](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42479122170/artifacts/13616644338) was downloaded and inspected. The report contains no failed assertions across 10 desktop/iOS-WebKit/Android-Chromium viewport targets and no page or console errors.
+- The cross-platform script explicitly exercises visible Hold, Pause, Resume and Drop actions, including Hold swap, pause/resume state, and hard-drop lock; it also checks full-screen mobile swipe movement, repeated movement/rotation, soft drop, and immediate movement/rotation after a touch hard drop. All assertions passed on this HEAD.
+- The 375×812 geometry report shows the board frame and utility rail aligned to within 0.01px vertically; 412×915 retains the designed inset utility rail. Both reports preserve the 10:23 board ratio and stay inside the viewport.
+- iOS WebKit reported a cancelled local soundtrack request during page teardown; this did not produce a page/console error or fail any preview assertion.
+- These are browser-engine previews only. They do not confirm physical iPhone/Android touch behavior or orientation handling on a real device. No deployment, merge, APK build or release.
