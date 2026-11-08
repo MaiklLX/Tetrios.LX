@@ -212,7 +212,7 @@ func on_line_clear(cleared: int, combo_after_clear: int, level: int) -> Dictiona
 		"flash":bool(result.flash),
 		"reset_drop":bool(result.reset_drop),
 		"goal_events":goal_events,
-		"level":level,
+		"level":self.level,
 		"level_charge":level_charge,
 		"need_lines":need_lines,
 		"draft_cards":draft_cards
