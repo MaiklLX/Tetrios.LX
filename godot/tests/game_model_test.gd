@@ -666,6 +666,7 @@ func _run() -> void:
 	hub_probe.home_tasks_rect = Rect2(0.0, 160.0, 140.0, 70.0)
 	hub_probe.home_heroes_rect = Rect2(160.0, 0.0, 100.0, 70.0)
 	hub_probe.home_shop_rect = Rect2(270.0, 0.0, 100.0, 70.0)
+	hub_probe.home_upgrades_rect = Rect2(380.0, 0.0, 100.0, 70.0)
 	hub_probe._handle_tap(Vector2(40.0, 30.0))
 	if not _check(not hub_probe.home_visible and hub_probe.mode_select_visible, "Campaign card should open the mode selector from Home"):
 		return
@@ -685,6 +686,10 @@ func _run() -> void:
 	hub_probe._handle_tap(Vector2(40.0, 30.0))
 	hub_probe._handle_tap(Vector2(300.0, 30.0))
 	if not _check(hub_probe.secondary_screen == "shop", "Shop navigation should open the Shop section"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	hub_probe._handle_tap(Vector2(400.0, 30.0))
+	if not _check(hub_probe.secondary_screen == "upgrades", "Upgrades navigation should open the Upgrades section"):
 		return
 	hub_probe.free()
 
