@@ -53,6 +53,16 @@ func _run() -> void:
 	sprint_session.update(0.0, 39, false)
 	if not _check(sprint_session.status == ModeSession.STATUS_RUNNING and sprint_session.remaining_lines(39) == 1, "Sprint should remain active with one line remaining"):
 		return
+	var sprint_loss_session = ModeSession.new()
+	sprint_loss_session.start("sprint")
+	sprint_loss_session.update(0.0, 39, true)
+	if not _check(sprint_loss_session.status == ModeSession.STATUS_FAILED, "Game over before the 40-line target must fail Sprint"):
+		return
+	var simultaneous_finish_session = ModeSession.new()
+	simultaneous_finish_session.start("sprint")
+	simultaneous_finish_session.update(0.0, 40, true)
+	if not _check(simultaneous_finish_session.status == ModeSession.STATUS_COMPLETED, "Reaching 40 lines must take precedence over a simultaneous game-over flag"):
+		return
 	sprint_session.update(0.0, 40, false)
 	if not _check(sprint_session.status == ModeSession.STATUS_COMPLETED, "Sprint should complete exactly at its forty-line target"):
 		return
@@ -71,10 +81,21 @@ func _run() -> void:
 	mode_main.mode_session.start("sprint")
 	mode_main.mode_select_visible = false
 	mode_main.buddy = Buddy.new()
+	mode_main.game.lines = 39
+	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 0.975), "Sprint HUD progress must show 97.5 percent at 39 of 40 lines"):
+		return
 	mode_main.game.lines = 40
 	mode_main._sync_buddy_state()
 	if not _check(mode_main.mode_session.status == ModeSession.STATUS_COMPLETED, "Main scene should register Sprint completion as soon as the target is reached"):
 		return
+	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 1.0), "Sprint HUD progress must clamp at 100 percent after completion"):
+		return
+	mode_main.mode_session.start("classic")
+	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 0.0), "Classic HUD must not expose Sprint progress"):
+		return
+	mode_main.mode_session.start("sprint")
+	mode_main.game.lines = 40
+	mode_main._sync_buddy_state()
 	var completed_origin: Vector2i = mode_main.game.origin
 	mode_main._process(3.0)
 	if not _check(mode_main.game.origin == completed_origin, "Gravity must stop after Sprint completion"):
