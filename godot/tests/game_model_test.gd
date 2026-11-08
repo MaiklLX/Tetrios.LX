@@ -224,9 +224,12 @@ func _run() -> void:
 			return
 		if not _check(multi_model.score == expected_rewards[clear_count] + 38, "Two-, three-, and four-line clears must award the correct base reward plus hard-drop points"):
 			return
-		for row_y in range(Model.HEIGHT - clear_count, Model.HEIGHT):
+		var surviving_piece_cells := 4 - clear_count
+		for row_offset in range(clear_count):
+			var row_y: int = Model.HEIGHT - 1 - row_offset
 			for x in range(Model.WIDTH):
-				if not _check(multi_model.grid[row_y][x] == -1, "Every cleared row must be replaced by an empty row"):
+				var expected_cell: int = 0 if row_offset < surviving_piece_cells and x == 3 else -1
+				if not _check(multi_model.grid[row_y][x] == expected_cell, "Rows must compact correctly after a multi-line clear"):
 					return
 
 	# Four-line clear at level two must apply the level multiplier.
