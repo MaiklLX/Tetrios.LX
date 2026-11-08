@@ -700,9 +700,11 @@ func _draw_block_run_skill_card(rect: Rect2) -> void:
 
 func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	_draw_soft_panel(rect, Color("#17488a"), Color("#71cfff"), 15, 6)
-	draw_string(font, rect.position + Vector2(10, 28), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#d9f4ff"))
+	# Keep the label in a dedicated upper-left lane; center the tetromino in the
+	# lower-right lane so labels and piece cells never collide on 360px screens.
+	draw_string(font, rect.position + Vector2(9, 19), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d9f4ff"))
 	if piece_type < 0:
-		draw_string(font, rect.position + Vector2(rect.size.x - 28.0, 29), "—", HORIZONTAL_ALIGNMENT_CENTER, 30, 18, Color("#b7dfff"))
+		draw_string(font, rect.position + Vector2(rect.size.x - 28.0, 43), "—", HORIZONTAL_ALIGNMENT_CENTER, 30, 18, Color("#b7dfff"))
 		return
 	var cells: Array = BlockBuddiesModel.SHAPES[piece_type]
 	var min_x := 999
@@ -716,7 +718,7 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		max_y = maxi(max_y, cell_pos.y)
 	var mini_cell := minf(13.0, (rect.size.x - 64.0) / 4.0)
 	var piece_size := Vector2((max_x - min_x + 1) * mini_cell, (max_y - min_y + 1) * mini_cell)
-	var piece_origin := Vector2(rect.position.x + rect.size.x - 42.0, rect.get_center().y) - piece_size * 0.5
+	var piece_origin := Vector2(rect.position.x + rect.size.x - 24.0, rect.position.y + 41.0) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
 		_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
