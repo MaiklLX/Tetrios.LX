@@ -29,6 +29,10 @@ func update(delta_seconds: float, total_lines: int, game_over: bool, total_score
 	elapsed_seconds += maxf(delta_seconds, 0.0)
 	var target_lines := int(rules.get("target_lines", 0))
 	var target_score := int(rules.get("target_score", 0))
+	var target_survive := float(rules.get("target_survive_seconds", 0))
+	if target_survive > 0.0 and elapsed_seconds >= target_survive:
+		status = STATUS_COMPLETED
+		return status
 	var lines_complete := target_lines <= 0 or total_lines >= target_lines
 	var score_complete := target_score <= 0 or total_score >= target_score
 	if (target_lines > 0 or target_score > 0) and lines_complete and score_complete:
