@@ -28,6 +28,9 @@ var nova_used := false
 var goals: Array[Dictionary] = []
 var next_goal_id := 0
 var goal_rewards_earned := 0
+var goal_reward_receipts: Dictionary = {}
+var goal_reward_claimed_ids: Dictionary = {}
+var goal_rewards_claimed := 0
 var hero_skill_cooldown_seconds := 0
 
 func start() -> void:
@@ -51,6 +54,9 @@ func start() -> void:
 	goals.clear()
 	next_goal_id = 0
 	goal_rewards_earned = 0
+	goal_reward_receipts.clear()
+	goal_reward_claimed_ids.clear()
+	goal_rewards_claimed = 0
 	hero_skill_cooldown_seconds = 0
 	for goal_index in range(3):
 		goals.append(_create_goal())
@@ -100,15 +106,47 @@ func _settle_completed_goals() -> Array[Dictionary]:
 		var completed := goal.duplicate(true)
 		completed["claimed"] = true
 		var reward := int(completed.get("reward", 0))
+		var receipt_id := "block-run-goal:%d" % int(completed.get("id", -1))
+		if goal_reward_receipts.has(receipt_id):
+			continue
+		var receipt := {
+			"id":receipt_id,
+			"goal_id":int(completed.get("id", -1)),
+			"reward":reward,
+			"claimed":false
+		}
+		goal_reward_receipts[receipt_id] = receipt
 		goal_rewards_earned += reward
 		var replacement := _create_goal()
 		goals[index] = replacement
 		events.append({
-			"completed": completed,
-			"reward": reward,
-			"replacement": replacement.duplicate(true)
+			"receipt_id":receipt_id,
+			"completed":completed,
+			"reward":reward,
+			"replacement":replacement.duplicate(true)
 		})
 	return events
+
+
+func claim_goal_reward(receipt_id: String) -> Dictionary:
+	if not goal_reward_receipts.has(receipt_id):
+		return {"accepted":false,"reason":"unknown_receipt","reward":0}
+	if goal_reward_claimed_ids.has(receipt_id):
+		return {"accepted":false,"reason":"already_claimed","reward":0}
+	var receipt: Dictionary = goal_reward_receipts[receipt_id]
+	var reward := maxi(0, int(receipt.get("reward", 0)))
+	receipt["claimed"] = true
+	goal_reward_receipts[receipt_id] = receipt
+	goal_reward_claimed_ids[receipt_id] = true
+	goal_rewards_claimed += reward
+	return {"accepted":true,"receipt_id":receipt_id,"reward":reward,"claimed_total":goal_rewards_claimed}
+
+func pending_goal_reward_total() -> int:
+	var total := 0
+	for receipt_id in goal_reward_receipts.keys():
+		if not goal_reward_claimed_ids.has(str(receipt_id)):
+			total += maxi(0, int(goal_reward_receipts[receipt_id].get("reward", 0)))
+	return total
 
 func goal_states() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
