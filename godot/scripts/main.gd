@@ -619,14 +619,23 @@ func _draw_piece_previews() -> void:
 		_draw_preview_card(hold_rect, "ЗАПАС", game.held_type)
 		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
 
+func _hero_display_name(hero_id: String) -> String:
+	match hero_id:
+		"plush": return "ПЛЮШ"
+		"prism": return "ПРИЗМА"
+		"blip": return "БЛИП"
+		"pixel": return "ПИКСЕЛЬ"
+		"spark": return "ИСКРА"
+		_: return "ГЕРОЙ"
+
 func _draw_block_run_skill_card(rect: Rect2) -> void:
 	if not block_run_active or block_run_session == null:
 		block_run_skill_rect = Rect2()
 		return
 	var ready := block_run_hero_level >= 5 and block_run_session.hero_skill_cooldown_seconds <= 0 and block_run_session.status == BlockRunSession.STATUS_RUNNING and not paused and not _block_run_draft_is_open()
 	var remaining := block_run_session.hero_skill_cooldown_seconds
-	var hero_label := block_run_hero_id.to_upper()
-	var state := "ЗАКРЫТО · УР. 5" if block_run_hero_level < 5 else ("ГОТОВО · Q" if ready else "ОТКАТ · %d С" % remaining)
+	var hero_label := _hero_display_name(block_run_hero_id)
+	var state := "ЗАКРЫТО · УР. 5" if block_run_hero_level < 5 else ("ГОТОВО" if ready else "ОТКАТ · %d С" % remaining)
 	var accent := Color("#45d9f5") if ready else Color("#66839e")
 	draw_rect(rect, Color("#0b1d31"))
 	draw_rect(rect, accent, false, 1.5)
