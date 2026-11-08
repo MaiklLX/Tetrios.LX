@@ -84,6 +84,11 @@ func _run() -> void:
 	if not await _capture(viewport, "03-block-run-card-draft"):
 		quit(1)
 		return
+	var capture_card_id := str(block_run_session.pending_card_draft[0].get("id", ""))
+	if not block_run_session.choose_card(capture_card_id):
+		push_error("Could not close the draft before hero skill visual capture.")
+		quit(1)
+		return
 	if not bool(scene.call("configure_block_run_hero", "prism", 5)):
 		push_error("Could not configure a level-five hero for skill HUD capture.")
 		quit(1)
