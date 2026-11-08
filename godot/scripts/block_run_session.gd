@@ -281,14 +281,18 @@ func on_spawn_collision() -> Dictionary:
 		var row_count := int(rescue.shield_randomized_rows)
 		var fill_probability := float(rescue.shield_fill_probability)
 		var seed_value := room_seed()
-		for row_index in range(start_row, mini(Board.HEIGHT, start_row + row_count)):
+		# Match the audited Web behavior: the shield rebuilds the entire
+		# board, leaving only a sparse randomized bottom zone. This clears
+		# the blocked spawn area and is what makes the rescue functional.
+		for row_index in range(Board.HEIGHT):
 			var row: Array[int] = []
 			row.resize(Board.WIDTH)
 			row.fill(Board.EMPTY)
-			for x in range(Board.WIDTH):
-				var roll := float((seed_value + row_index * 37 + x * 17) % 1000) / 1000.0
-				if roll < fill_probability:
-					row[x] = Board.GARBAGE
+			if row_index >= start_row:
+				for x in range(Board.WIDTH):
+					var roll := float((seed_value + row_index * 37 + x * 17) % 1000) / 1000.0
+					if roll < fill_probability:
+						row[x] = Board.GARBAGE
 			board[row_index] = row
 	elif str(rescue.rescue_type) == "nova":
 		rows_cleared = int(Board.clear_bottom_rows(board, int(rescue.bottom_rows_to_clear)).cleared)
