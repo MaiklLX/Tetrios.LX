@@ -93,9 +93,6 @@ func _run() -> void:
 		return
 	# Fast long downward swipe is the sole touch hard-drop gesture.
 	layout_probe.game.reset()
-	var occupied_before_drop := 0
-	for row in layout_probe.game.grid:
-		occupied_before_drop += row.count(-1) == 0
 	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 400.0)), "Long downward swipe should be handled"):
 		return
 	var occupied_after_drop := 0
