@@ -405,5 +405,48 @@ func _run() -> void:
 			gallery.queue_redraw()
 			await process_frame
 			await process_frame
+
+	# KT-535: isolated Cargo Hook campaign-piece preview. This is a review-only
+	# scene; it is never attached to the live game or a standard mode.
+	gallery.queue_free()
+	await process_frame
+	var preview_packed := load("res://scenes/campaign_special_piece_preview.tscn") as PackedScene
+	if preview_packed == null:
+		push_error("Cargo Hook campaign preview scene could not be loaded.")
+		quit(1)
+		return
+	var preview := preview_packed.instantiate()
+	if preview.get_script() == null or not preview.has_method("preview_card_rect") or not preview.has_method("preview_rotation_cells"):
+		push_error("Cargo Hook preview did not expose its review layout.")
+		quit(1)
+		return
+	viewport.add_child(preview)
+	var rotation_signatures: Dictionary = {}
+	for rotation in range(4):
+		var card: Rect2 = preview.call("preview_card_rect", rotation)
+		var cells: Array = preview.call("preview_rotation_cells", rotation)
+		if card.size.x <= 0.0 or card.position.x < 0.0 or card.end.x > 720.0 or card.position.y < 0.0 or card.end.y > 1280.0:
+			push_error("Cargo Hook rotation card %d leaves the portrait viewport." % rotation)
+			quit(1)
+			return
+		if cells.size() != 5:
+			push_error("Cargo Hook rotation %d must preserve five visible cells." % rotation)
+			quit(1)
+			return
+		var signature_parts: Array[String] = []
+		for cell in cells:
+			signature_parts.append("%d:%d" % [cell.x, cell.y])
+		rotation_signatures[",".join(signature_parts)] = true
+	if rotation_signatures.size() != 4:
+		push_error("Cargo Hook visual gallery must show four distinct rotations.")
+		quit(1)
+		return
+	preview.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "27-campaign-cargo-hook-preview"):
+		quit(1)
+		return
+	print("Campaign Cargo Hook visual preview completed with four distinct five-cell rotations.")
 	print("Gameplay and secondary-screen concept captures completed.")
 	quit(0)
