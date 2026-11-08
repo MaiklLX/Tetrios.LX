@@ -110,5 +110,20 @@ func _run() -> void:
 	if not await _capture(viewport, "06-block-run-hero-skill-cooldown"):
 		quit(1)
 		return
+	block_run_session.goal_rewards_earned = 47
+	block_run_session.goal_reward_receipts["capture-goal-1"] = {"id":"capture-goal-1","goal_id":1,"reward":25,"claimed":true}
+	block_run_session.status = BlockRunSession.STATUS_FAILED
+	scene.get("game").game_over = true
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "07-block-run-results"):
+		quit(1)
+		return
+	scene.call("_restart_current_run")
+	if bool(scene.get("game").game_over) or scene.get("block_run_session").status != "running":
+		push_error("Block Run result restart did not initialize a fresh playable session.")
+		quit(1)
+		return
 	print("Visual smoke captures completed.")
 	quit(0)
