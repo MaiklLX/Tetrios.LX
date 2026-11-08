@@ -247,19 +247,34 @@ func _active_grid() -> Array:
 	return campaign_piece_runtime.grid if _campaign_runtime_active() else game.grid
 
 func _move_piece_horizontal(direction: int) -> bool:
-	return campaign_piece_runtime.move_horizontal(direction) if _campaign_runtime_active() else game.move_horizontal(direction)
+	if _campaign_runtime_active():
+		return campaign_piece_runtime.move_horizontal(direction)
+	game.move_horizontal(direction)
+	return true
 
 func _rotate_active_piece() -> bool:
-	return campaign_piece_runtime.rotate_piece() if _campaign_runtime_active() else game.rotate_piece()
+	if _campaign_runtime_active():
+		return campaign_piece_runtime.rotate_piece()
+	game.rotate_piece()
+	return true
 
 func _soft_drop_active_piece() -> bool:
-	return campaign_piece_runtime.soft_drop() if _campaign_runtime_active() else game.soft_drop()
+	if _campaign_runtime_active():
+		return campaign_piece_runtime.soft_drop()
+	game.soft_drop()
+	return true
 
 func _hard_drop_active_piece() -> int:
-	return campaign_piece_runtime.hard_drop() if _campaign_runtime_active() else game.hard_drop()
+	if _campaign_runtime_active():
+		return campaign_piece_runtime.hard_drop()
+	game.hard_drop()
+	return 0
 
 func _hold_active_piece() -> bool:
-	return campaign_piece_runtime.hold_piece() if _campaign_runtime_active() else game.hold_piece()
+	if _campaign_runtime_active():
+		return campaign_piece_runtime.hold_piece()
+	game.hold_piece()
+	return true
 
 func _reset_campaign_piece_runtime() -> bool:
 	campaign_piece_runtime = CampaignRuntime.new()
