@@ -60,3 +60,15 @@
 - KT-445 remains an in-memory run snapshot only. No Godot disk persistence, autosave, Web import, cloud sync or Android device test is included in this checkpoint.
 - Status: **source audit + proposed contract complete; implementation pending**. Next safe step is pure migration fixtures and a read-only parser/validator. Atomic disk writes remain gated until conflict and recovery tests pass.
 - No writes to `main`, no deployment, no merge, no APK build, no user-data reset or modification.
+
+
+## KT-447 — Read-only Web save parser and regression fixtures
+- Date: 2026-11-08
+- Added `godot/scripts/web_save_migration.gd`: pure read-only parser for a supplied localStorage snapshot. It returns a candidate profile, validation errors/warnings, coin alias conflicts, unknown keys and a deep raw source backup. It does not access localStorage, files, `user://`, or grant rewards.
+- Added representative fixtures in `godot/tests/fixtures/web_save_profiles.json` and isolated regression suite `godot/tests/web_save_migration_test.gd`; CI now runs it as a distinct step.
+- Covered empty profile, full representative profile, matching and conflicting coin aliases, conflict without primary wallet, malformed JSON, legacy Plush XP/level, legacy single-slot cosmetic fallback, unknown-key retention, daily reward marker retention/malformed marker, and input immutability.
+- Parser accepts finite whole-number JSON numeric values (Godot may decode integer JSON numbers as floats) and normalizes them to integers. Fractional values remain invalid. Fixed legacy cosmetic fallback so it is used when the default per-hero equip map is empty.
+- Validation: workflow run `42450365090`, commit `55e0a8701b97c5b3e45dbcf7576d8d8417504b1c` — Godot import, main script parse, gameplay model tests, Web migration fixture tests and scene smoke test all **SUCCESS**.
+- Earlier test attempts caught real issues: strict JSON integer typing, test-suite indentation, and a legacy cosmetic fallback condition. Those were corrected before the successful run. No production save data was accessed or changed.
+- Still not implemented: persistent storage, atomic writes, backup rotation, actual Web import, reward settlement, cloud sync or physical Android verification. Continue adversarial fixtures and conflict-review design before any storage integration.
+- No edits to `main`, no merge, deployment, APK build or release.
