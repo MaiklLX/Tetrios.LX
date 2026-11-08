@@ -202,8 +202,9 @@ func _run() -> void:
 		{"id":"upgrades","file":"13-concept-upgrades"},
 		{"id":"block_run","file":"14-concept-block-run-hub"},
 		{"id":"campaign","file":"15-concept-cosmic-atlas"},
-		{"id":"planet_detail","file":"16-concept-planet-detail"},
-		{"id":"daily","file":"17-concept-daily-calendar"}
+		{"id":"universe_route","file":"16-concept-universe-route"},
+		{"id":"planet_detail","file":"17-concept-planet-detail"},
+		{"id":"daily","file":"18-concept-daily-calendar"}
 	]:
 		gallery.set("screen_id", screen.id)
 		gallery.queue_redraw()
@@ -217,7 +218,7 @@ func _run() -> void:
 			gallery.queue_redraw()
 			await process_frame
 			await process_frame
-			if not await _capture(viewport, "18-concept-home-360x800"):
+			if not await _capture(viewport, "19-concept-home-360x800"):
 				quit(1)
 				return
 			viewport.size = Vector2i(720, 1280)
