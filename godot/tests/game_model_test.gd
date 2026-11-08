@@ -205,5 +205,49 @@ func _run() -> void:
 	if not _check(progression_model.lines == 0 and progression_model.level == 1 and progression_model.score == 0, "Restart must reset run score, lines, and level"):
 		return
 
-	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, line clear, scoring, level progression, and reset.")
+	# Multi-line clear fixtures: vertical I completes two, three, or four rows.
+	for clear_count in [2, 3, 4]:
+		var multi_model: BlockBuddiesModel = Model.new()
+		multi_model.reset()
+		for row_offset in range(clear_count):
+			var row_y: int = Model.HEIGHT - 1 - row_offset
+			for x in range(Model.WIDTH):
+				if x != 3:
+					multi_model.grid[row_y][x] = 1
+		multi_model.active_type = 0
+		multi_model.active_cells.assign(Model.SHAPES[0])
+		multi_model.origin = Vector2i(3, 0)
+		multi_model.rotate_piece()
+		multi_model.hard_drop()
+		var expected_rewards := [0, 100, 300, 500, 800]
+		if not _check(multi_model.lines == clear_count, "Multi-line fixture must clear the requested number of rows"):
+			return
+		if not _check(multi_model.score == expected_rewards[clear_count] + 38, "Two-, three-, and four-line clears must award the correct base reward plus hard-drop points"):
+			return
+		for row_y in range(Model.HEIGHT - clear_count, Model.HEIGHT):
+			for x in range(Model.WIDTH):
+				if not _check(multi_model.grid[row_y][x] == -1, "Every cleared row must be replaced by an empty row"):
+					return
+
+	# Four-line clear at level two must apply the level multiplier.
+	var level_two_model: BlockBuddiesModel = Model.new()
+	level_two_model.reset()
+	level_two_model.lines = 10
+	level_two_model.level = 2
+	for row_offset in range(4):
+		var row_y: int = Model.HEIGHT - 1 - row_offset
+		for x in range(Model.WIDTH):
+			if x != 3:
+				level_two_model.grid[row_y][x] = 1
+	level_two_model.active_type = 0
+	level_two_model.active_cells.assign(Model.SHAPES[0])
+	level_two_model.origin = Vector2i(3, 0)
+	level_two_model.rotate_piece()
+	level_two_model.hard_drop()
+	if not _check(level_two_model.lines == 14 and level_two_model.level == 2, "Four-line clear at level two must preserve cumulative progression"):
+		return
+	if not _check(level_two_model.score == 1638, "Four-line clear at level two must award 800 points multiplied by two, plus hard-drop points"):
+		return
+
+	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, and reset.")
 	quit(0)
