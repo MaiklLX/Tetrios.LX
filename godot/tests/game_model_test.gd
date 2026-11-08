@@ -668,11 +668,11 @@ func _run() -> void:
 	hub_probe.home_shop_rect = Rect2(270.0, 0.0, 100.0, 70.0)
 	hub_probe.home_upgrades_rect = Rect2(380.0, 0.0, 100.0, 70.0)
 	hub_probe._handle_tap(Vector2(40.0, 30.0))
-	if not _check(not hub_probe.home_visible and hub_probe.mode_select_visible, "Campaign card should open the mode selector from Home"):
+	if not _check(not hub_probe.home_visible and hub_probe.campaign_screen == "atlas" and not hub_probe.mode_select_visible, "Campaign card should open the live Cosmic Atlas from Home"):
 		return
-	hub_probe.secondary_back_rect = Rect2(0.0, 0.0, 100.0, 60.0)
+	hub_probe.campaign_back_rect = Rect2(0.0, 0.0, 100.0, 60.0)
 	hub_probe._handle_tap(Vector2(40.0, 30.0))
-	if not _check(hub_probe.home_visible and not hub_probe.mode_select_visible, "Mode selector back target should return to Home"):
+	if not _check(hub_probe.home_visible and hub_probe.campaign_screen.is_empty(), "Cosmic Atlas back target should return to Home"):
 		return
 	hub_probe._handle_tap(Vector2(40.0, 190.0))
 	if not _check(hub_probe.secondary_screen == "daily" and not hub_probe.home_visible, "Daily task card should open its own screen"):
