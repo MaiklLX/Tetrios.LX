@@ -23,7 +23,7 @@
       "bb_equippedChestCosmetics": "{\"plush\":\"blue_cap\",\"prism\":\"star_trail\"}",
       "bb_collectionFragments": "5",
       "bbDailyQuests": "{\"date\":\"2026-11-08\",\"quests\":[{\"id\":\"clear_3\",\"title\":\"Clear three lines\",\"target\":3,\"progress\":2,\"reward\":25,\"claimed\":false}]}",
-      "bbDailyArchive": "{\"2026-11-07\":{\"completed\":true}}",
+      "bbDailyArchive": "{\"2026-11-07\":{\"date\":\"2026-11-07\",\"quests\":[{\"id\":\"clear_2\",\"title\":\"Clear two lines\",\"target\":2,\"progress\":2,\"reward\":20,\"claimed\":true}]}}",
       "bbDailyChallengeCatalogSignature": "catalog-v4",
       "bbDailyChallengeAssignments": "{\"2026-11-08\":{\"id\":\"daily_08\"}}",
       "bbDailyChallengeHistory": "{\"2026-11-07\":{\"status\":\"completed\"}}",
