@@ -42,7 +42,8 @@ func _run() -> void:
 	print("KT471 TEST: initial combat passed")
 	var line_goal_run = Session.new()
 	line_goal_run.start()
-	line_goal_run.goals = [line_goal_run.encounter.create_goal("lines", 0, 0, 0, 1, 0, 5, 900)]
+	line_goal_run.goals.clear()
+	line_goal_run.goals.append(line_goal_run.encounter.create_goal("lines", 0, 0, 0, 1, 0, 5, 900))
 	var line_goal_event := line_goal_run.on_line_clear(3, 0, 1)
 	if not _check(line_goal_event.goal_events.size() == 1 and line_goal_event.goal_events[0].reward == 15, "Completing a line goal must award its exact generated reward"):
 		return
@@ -52,7 +53,8 @@ func _run() -> void:
 	print("KT471 TEST: line goal passed")
 	var survive_goal_run = Session.new()
 	survive_goal_run.start()
-	survive_goal_run.goals = [survive_goal_run.encounter.create_goal("survive", 0, 0, 0, 1, 0, 7, 901)]
+	survive_goal_run.goals.clear()
+	survive_goal_run.goals.append(survive_goal_run.encounter.create_goal("survive", 0, 0, 0, 1, 0, 7, 901))
 	var survive_event: Dictionary = {}
 	for second in range(15):
 		survive_event = survive_goal_run.advance_second()
@@ -62,7 +64,8 @@ func _run() -> void:
 	print("KT471 TEST: survive goal passed")
 	var score_goal_run = Session.new()
 	score_goal_run.start()
-	score_goal_run.goals = [score_goal_run.encounter.create_goal("score", 0, 0, 0, 1, 0, 9, 902)]
+	score_goal_run.goals.clear()
+	score_goal_run.goals.append(score_goal_run.encounter.create_goal("score", 0, 0, 0, 1, 0, 9, 902))
 	var score_event := score_goal_run.on_line_clear(4, 0, 1)
 	if not _check(score_event.goal_events.size() == 1 and score_goal_run.score > 0, "Line-clear score must update score goals"):
 		return
