@@ -34,11 +34,11 @@ static func hold_limit(ranks: Dictionary, hero_id: String = "", hero_level: int 
 		return mini(4, 2 + floori(float(maxi(1, hero_level) - 1) / 5.0))
 	return 1 + _rank(ranks, "hold")
 
-static func on_piece_locked(ranks: Dictionary, placement_count: int) -> Dictionary:
+static func on_piece_locked(ranks: Dictionary, placement_count: int, hero_id: String = "", hero_level: int = 1) -> Dictionary:
 	var gear_bonus := 0
 	if _rank(ranks, "gear") > 0 and placement_count > 0 and placement_count % 5 == 0:
 		gear_bonus = 25 * _rank(ranks, "gear")
-	return {"score_bonus":gear_bonus,"hold_limit":hold_limit(ranks)}
+	return {"score_bonus":gear_bonus,"hold_limit":hold_limit(ranks, hero_id, hero_level)}
 
 static func on_line_clear(ranks: Dictionary, cleared: int, total_lines_after_clear: int, combo_after_clear: int, level: int, run_seconds: int, need_lines: int) -> Dictionary:
 	var count := clampi(cleared, 0, 4)
