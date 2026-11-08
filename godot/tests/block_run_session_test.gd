@@ -96,6 +96,28 @@ func _run() -> void:
 	if not _check(not stopped["accepted"], "A failed run must reject later timer events"):
 		return
 
+	print("KT478 TEST: level-up draft lifecycle")
+	var draft_run = Session.new()
+	draft_run.start()
+	var draft_result: Dictionary = draft_run.on_line_clear(5, 0, 1)
+	if not _check(draft_result.level == 2 and draft_run.level == 2 and draft_run.level_charge == 0, "Five cleared lines must advance the first Block Run level and consume its threshold"):
+		return
+	if not _check(draft_result.draft_cards.size() == 3 and draft_run.pending_card_draft.size() == 3, "A level-up must pause progression with exactly three card choices"):
+		return
+	var draft_ids: Array[String] = draft_run.draft_card_ids()
+	if not _check(draft_ids.size() == 3 and draft_ids[0] != draft_ids[1] and draft_ids[0] != draft_ids[2] and draft_ids[1] != draft_ids[2], "A draft must contain three distinct card IDs"):
+		return
+	if not _check(not draft_run.choose_card("not-a-card") and draft_run.pending_card_draft.size() == 3, "A card outside the visible draft must not bypass the selection"):
+		return
+	var selected_card := draft_ids[0]
+	if not _check(draft_run.choose_card(selected_card) and draft_run.encounter.get_card_rank(selected_card) == 1 and draft_run.pending_card_draft.is_empty(), "Selecting one offered card must apply exactly one rank and close the draft"):
+		return
+	if not _check(draft_run.level == 2 and draft_run.need_lines >= 3 and draft_run.drop_interval_ms < 780, "Level-up must update the next threshold and gravity interval"):
+		return
+	var no_duplicate_draft: Dictionary = draft_run.on_line_clear(1, 0, 2)
+	if not _check(no_duplicate_draft.draft_cards.is_empty() and draft_run.pending_card_draft.is_empty(), "A partial next-level charge must not open a second draft"):
+		return
+
 	print("KT472 TEST: source-matched hero abilities")
 	var locked_skill_run = Session.new()
 	locked_skill_run.start()
