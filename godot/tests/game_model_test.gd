@@ -674,6 +674,7 @@ func _run() -> void:
 	hub_probe._handle_tap(Vector2(40.0, 30.0))
 	if not _check(hub_probe.home_visible and hub_probe.campaign_screen.is_empty(), "Cosmic Atlas back target should return to Home"):
 		return
+	hub_probe.secondary_back_rect = Rect2(0.0, 0.0, 100.0, 60.0)
 	hub_probe._handle_tap(Vector2(40.0, 190.0))
 	if not _check(hub_probe.secondary_screen == "daily" and not hub_probe.home_visible, "Daily task card should open its own screen"):
 		return
