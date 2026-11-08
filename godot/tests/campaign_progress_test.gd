@@ -34,25 +34,29 @@ func _run() -> void:
 		return
 	if not _check(final_planet.universe_index == 11 and final_planet.planet_in_universe == 30 and final_planet.reward_marks == 15, "Planet 360 must be the final campaign milestone"):
 		return
-	if not _check(speed_boss.boss_type == "speed" and speed_boss.time_limit_seconds == 150 and speed_boss.target_score > 0, "Planet 010 must be a timed speed boss with a higher score target"):
+	if not _check(speed_boss.boss_type == "guardian" and speed_boss.time_limit_seconds == 0 and speed_boss.target_score > 0, "Planet 010 must be a bounded guardian boss without a speed timer"):
 		return
-	if not _check(score_boss.boss_type == "score" and score_boss.target_score > 0 and score_boss.time_limit_seconds == 0, "Planet 020 must require both lines and score"):
+	if not _check(score_boss.boss_type == "champion" and score_boss.target_lines > 0 and score_boss.target_score > 0 and score_boss.time_limit_seconds == 0, "Planet 020 must require a bounded combination of lines and score"):
 		return
-	if not _check(final_boss.boss_type == "final" and final_boss.target_score > 0 and final_boss.time_limit_seconds > 0, "Planet 030 must combine lines, score and time"):
+	if not _check(final_boss.boss_type == "final" and final_boss.target_score > 0 and final_boss.target_lines > 0 and final_boss.time_limit_seconds == 0, "Planet 030 must combine lines and score without an artificial timer"):
 		return
-	var previous_score := 0
-	var previous_lines := 0
-	for node_id in range(1, Campaign.TOTAL_PLANETS + 1):
-		var definition: Dictionary = progress.get_planet_definition(node_id)
-		if not _check(int(definition.target_score) > previous_score, "Every planet must increase the score objective, including universe transitions"):
+	var score_planet := progress.get_planet_definition(5)
+	if not _check(score_planet.objective_type == "score" and score_planet.target_lines == 0 and score_planet.target_score > 0, "Planet 005 must be a score-only mission, not a combined grind"):
+		return
+	if not _check(first.objective_type == "lines" and first.target_score == 0, "Ordinary planets must use a focused line objective"):
+		return
+	var previous_universe_max := 0
+	for universe_index in range(Campaign.UNIVERSE_COUNT):
+		var universe_start := universe_index * Campaign.PLANETS_PER_UNIVERSE + 1
+		var universe_end := universe_start + Campaign.PLANETS_PER_UNIVERSE - 1
+		var easy: Dictionary = progress.get_planet_definition(universe_start)
+		var hard: Dictionary = progress.get_planet_definition(universe_end)
+		if not _check(int(hard.target_lines) <= 17 and int(hard.target_score) <= 1400, "Campaign objective values must remain inside a fair difficulty ceiling"):
 			return
-		if not _check(int(definition.target_lines) >= previous_lines, "Line objectives must never decrease across the campaign"):
+		if not _check(int(easy.target_lines) >= previous_universe_max - 2, "A new universe must not feel like a complete difficulty reset"):
 			return
-		previous_score = int(definition.target_score)
-		previous_lines = int(definition.target_lines)
-	if not _check(int(progress.get_planet_definition(31).target_score) > int(progress.get_planet_definition(30).target_score), "New universe must continue beyond the previous universe boss"):
-		return
-	if not _check(int(progress.get_planet_definition(10).target_score) > int(progress.get_planet_definition(9).target_score) + 100, "Boss planet must have a substantial difficulty spike"):
+		previous_universe_max = int(hard.target_lines)
+	if not _check(int(progress.get_planet_definition(10).target_lines) > int(progress.get_planet_definition(9).target_lines) and progress.get_planet_definition(10).objective_type == "boss_combo", "Boss planets must add a meaningful but bounded combined challenge"):
 		return
 	if not _check(progress.is_unlocked(1) and not progress.is_unlocked(2) and progress.get_planet_status(2) == "locked", "Only the current planet is initially available"):
 		return
@@ -64,18 +68,18 @@ func _run() -> void:
 	var boss_success: Dictionary = boss_progress.complete_planet(20, int(score_boss.target_lines), int(score_boss.target_score), 10.0)
 	if not _check(boss_success.accepted, "Score boss must complete when both line and score objectives are met"):
 		return
-	var speed_progress = Campaign.new()
-	speed_progress.import_legacy_progress(10, 0)
-	var speed_timeout: Dictionary = speed_progress.complete_planet(10, int(speed_boss.target_lines), int(speed_boss.target_score), float(speed_boss.time_limit_seconds) + 1.0)
-	if not _check(not speed_timeout.accepted and speed_timeout.reason == "time_limit_exceeded", "Speed boss must reject a run beyond its time limit"):
+	var guardian_progress = Campaign.new()
+	guardian_progress.import_legacy_progress(10, 0)
+	var guardian_success: Dictionary = guardian_progress.complete_planet(10, int(speed_boss.target_lines), int(speed_boss.target_score), 9999.0)
+	if not _check(guardian_success.accepted, "Guardian boss must be completable without a time limit when its objectives are met"):
 		return
 	var too_early: Dictionary = progress.complete_planet(2, 999)
 	if not _check(not too_early.accepted and too_early.reason == "planet_not_current", "Future planets cannot be completed out of order"):
 		return
-	var insufficient: Dictionary = progress.complete_planet(1, 7)
+	var insufficient: Dictionary = progress.complete_planet(1, 6)
 	if not _check(not insufficient.accepted and insufficient.reason == "objective_not_met" and progress.unlocked_node == 1, "Incomplete objectives must not unlock the next planet"):
 		return
-	var completion: Dictionary = progress.complete_planet(1, 8, int(first.target_score))
+	var completion: Dictionary = progress.complete_planet(1, 8, 0)
 	if not _check(completion.accepted and completion.reward_marks == 1 and progress.unlocked_node == 2, "First planet completion must award marks and unlock planet 002"):
 		return
 	if not _check(progress.get_planet_status(1) == "completed" and progress.get_planet_status(2) == "current", "Planet states must update after completion"):
@@ -115,5 +119,5 @@ func _run() -> void:
 	if not _check(disk_result.ok and disk_result.found and disk_restored.to_save_data() == progress.to_save_data(), "Campaign store must restore a persisted snapshot"):
 		return
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_path))
-	print("Campaign progress tests passed: 360-node catalog, milestones, sequential unlocks, objective gates, idempotent rewards, atomic save/load, profile persistence and legacy import.")
+	print("Campaign progress tests passed: 360-node catalog, bounded difficulty, varied missions, boss objectives, sequential unlocks, rewards, persistence and legacy import.")
 	quit(0)
