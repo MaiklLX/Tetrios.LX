@@ -102,7 +102,9 @@ func _run() -> void:
 		return
 	var large_archive: Dictionary = {}
 	for day_index in range(91):
-		var date_text := "2026-01-%02d" % (day_index + 1)
+		var month := int(day_index / 28) + 1
+		var day := day_index % 28 + 1
+		var date_text := "2026-%02d-%02d" % [month, day]
 		large_archive[date_text] = {"date": date_text, "quests": []}
 	var large_archive_raw := {"bb_coins": "20", "bbDailyArchive": JSON.stringify(large_archive)}
 	var large_archive_import: Dictionary = WebMigration.parse_local_storage(large_archive_raw)
