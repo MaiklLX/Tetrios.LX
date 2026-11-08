@@ -104,23 +104,111 @@ func _buddy(center: Vector2, scale := 1.0, expression := "happy") -> void:
 	draw_circle(center + Vector2(48, -48) * s, 9 * s, GOLD)
 
 func _draw_home() -> void:
-	_center("ПРИВЕТ, ИГРОК!", 156, 28, Color("#fff0b4"))
-	_center("ТВОЙ МИР БЛОКОВ И ПРИКЛЮЧЕНИЙ", 190, 14, PALE)
-	_buddy(Vector2(viewport_size.x * 0.5, 355), 1.35)
-	_center("ПОИГРАЕМ?", 478, 30, WHITE)
-	_button(Rect2(74, 520, viewport_size.x - 148, 82), "ИГРАТЬ", Color("#0878d6"), Color("#a9f3ff"), 28)
-	var labels := ["МАГАЗИН", "ГЕРОИ", "УЛУЧШЕНИЯ"]
-	var fills := [Color("#8a4bb3"), Color("#116da7"), Color("#a15b19")]
-	var accents := [PINK, CYAN, GOLD]
+	# Compact command center: all primary destinations and daily loops fit in one
+	# portrait viewport. Detailed content lives on the destination screens.
+	var w := viewport_size.x
+	var margin := 30.0
+	var gap := 10.0
+	# Brand / Buddy hero strip
+	_panel(Rect2(margin, 108, w - margin * 2, 126), Color("#102f68"), Color("#53dfff"), 22)
+	_buddy(Vector2(104, 171), 0.48)
+	_text("BLOCK BUDDIES", Vector2(160, 157), 27, WHITE)
+	_text("СОБИРАЙ ФИГУРЫ • ОТКРЫВАЙ МИРЫ", Vector2(160, 187), 13, PALE)
+	_text("✦  8 031", Vector2(w - 160, 145), 17, GOLD)
+	_text("◈  3", Vector2(w - 160, 174), 15, CYAN)
+	# Three large, instantly recognizable game modes
+	var mode_y := 246.0
+	var mode_h := 88.0
+	var mode_names := ["КАМПАНИЯ", "БЛОК-РАН", "ЕЖЕДНЕВНЫЙ ВЫЗОВ"]
+	var mode_subs := ["Планеты и путешествия", "Рогалик • герои • боссы", "Испытание дня и награды"]
+	var mode_fills := [Color("#124e80"), Color("#343078"), Color("#51401e")]
+	var mode_accents := [CYAN, VIOLET, GOLD]
 	for i in range(3):
-		var x := 34.0 + i * (viewport_size.x - 68.0) / 3.0
-		var width := (viewport_size.x - 92.0) / 3.0
-		_button(Rect2(x, 636, width, 94), labels[i], fills[i], accents[i], 15)
-	_panel(Rect2(36, 770, viewport_size.x - 72, 176), Color("#164b98"), Color("#78dfff"), 24)
-	_text("ЕЖЕДНЕВНОЕ ПРИКЛЮЧЕНИЕ", Vector2(60, 812), 17, GOLD)
-	_text("Выполни 3 задания и забери награду", Vector2(60, 850), 14, PALE)
-	_button(Rect2(60, 875, 210, 48), "ОТКРЫТЬ", Color("#7950ad"), PINK, 15)
+		var y := mode_y + i * (mode_h + gap)
+		var rect := Rect2(margin, y, w - margin * 2, mode_h)
+		_panel(rect, mode_fills[i], mode_accents[i], 20)
+		_draw_mode_icon(Vector2(86, y + mode_h * 0.5), i, 0.72)
+		_text(mode_names[i], Vector2(150, y + 38), 20, WHITE)
+		_text(mode_subs[i], Vector2(150, y + 63), 13, PALE)
+		draw_string(font, Vector2(w - 70, y + 54), "›", HORIZONTAL_ALIGNMENT_LEFT, -1, 34, mode_accents[i])
+	# Daily missions: three thin progress rows in one shared surface
+	var tasks_y := 540.0
+	_panel(Rect2(margin, tasks_y, w - margin * 2, 218), Color("#102b59"), Color("#4e9bc8"), 20)
+	_text("ЕЖЕДНЕВНЫЕ ЗАДАНИЯ", Vector2(52, tasks_y + 31), 17, CYAN)
+	_text("3 цели • награды за прогресс", Vector2(w - 255, tasks_y + 30), 11, PALE)
+	var task_names := ["Очистить 8 линий", "Набрать 2 000 очков", "Сыграть 4 партии"]
+	var task_progress := ["6 / 8", "0 / 2 000", "0 / 4"]
+	for i in range(3):
+		var y := tasks_y + 48 + i * 54
+		if i > 0:
+			draw_line(Vector2(50, y - 5), Vector2(w - 50, y - 5), Color("#41628d"), 1)
+		_text(task_names[i], Vector2(54, y + 17), 14, WHITE)
+		_text(task_progress[i], Vector2(w - 145, y + 17), 12, PALE)
+		var bar := Rect2(54, y + 27, w - 108, 5)
+		draw_rect(bar, Color("#2a4266"))
+		draw_rect(Rect2(bar.position, Vector2(bar.size.x * [0.75, 0.0, 0.0][i], bar.size.y)), [CYAN, VIOLET, GOLD][i])
+	# Streak strip: a concise retention hook, not another large card
+	var streak_y := 770.0
+	_panel(Rect2(margin, streak_y, w - margin * 2, 68), Color("#28285c"), Color("#a77bff"), 18)
+	_draw_flame(Vector2(76, streak_y + 34), 0.62)
+	_text("11 ДНЕЙ ПОДРЯД", Vector2(126, streak_y + 29), 18, GOLD)
+	_text("Зайди завтра, чтобы усилить серию", Vector2(126, streak_y + 51), 12, PALE)
+	# Secondary destinations as three compact icon tiles
+	var utility_y := 850.0
+	var utility_gap := 10.0
+	var utility_w := (w - margin * 2 - utility_gap * 2) / 3.0
+	var utility_names := ["ГЕРОИ", "МАГАЗИН", "УСИЛЕНИЯ"]
+	var utility_fills := [Color("#164c83"), Color("#175e76"), Color("#49377d")]
+	for i in range(3):
+		var x := margin + i * (utility_w + utility_gap)
+		_panel(Rect2(x, utility_y, utility_w, 104), utility_fills[i], [CYAN, Color("#8ef4d3"), VIOLET][i], 17)
+		_draw_utility_icon(Vector2(x + utility_w * 0.5, utility_y + 36), i)
+		_center_card_text(utility_names[i], Rect2(x, utility_y, utility_w, 80), utility_y + 83, 12, WHITE)
+	# Wallet and lifetime stats share one compact footer row
+	var footer_y := 966.0
+	_panel(Rect2(margin, footer_y, w - margin * 2, 66), Color("#102b55"), Color("#397cae"), 17)
+	_text("ЗОЛОТО  8 031", Vector2(54, footer_y + 27), 15, GOLD)
+	_text("КРИСТАЛЛЫ  3", Vector2(w * 0.49, footer_y + 27), 15, CYAN)
+	_text("РЕКОРД 28 872", Vector2(54, footer_y + 51), 11, PALE)
+	_text("19 ЗАПУСКОВ  •  6 ДОСТИЖЕНИЙ", Vector2(w * 0.49, footer_y + 51), 11, PALE)
 	_draw_bottom_nav("ГЛАВНАЯ")
+
+func _draw_mode_icon(center: Vector2, mode: int, scale := 1.0) -> void:
+	var s := scale
+	match mode:
+		0:
+			draw_circle(center, 27*s, Color("#0c2c58"))
+			draw_arc(center, 23*s, 0, TAU, 48, CYAN, 3*s, true)
+			for i in range(3):
+				var a := TAU * float(i) / 3.0 - PI/2
+				draw_circle(center + Vector2(cos(a),sin(a))*15*s, 6*s, [CYAN,GOLD,PINK][i])
+		1:
+			for cell in [Vector2(-12,-12),Vector2(5,-12),Vector2(5,5),Vector2(22,5)]:
+				var r := Rect2(center + cell*s, Vector2(15,15)*s)
+				draw_rect(r, VIOLET)
+				draw_rect(r, Color("#e5d7ff"), false, 2*s)
+		2:
+			_draw_flame(center, 0.48*s)
+			draw_arc(center, 27*s, 0, TAU, 48, GOLD, 2*s, true)
+
+func _draw_flame(center: Vector2, scale := 1.0) -> void:
+	var s := scale
+	var flame := PackedVector2Array([center+Vector2(0,-27)*s,center+Vector2(17,-7)*s,center+Vector2(14,16)*s,center+Vector2(0,25)*s,center+Vector2(-15,14)*s,center+Vector2(-13,-3)*s,center+Vector2(-5,-15)*s,center+Vector2(-4,2)*s])
+	draw_colored_polygon(flame, Color("#ff8a36"))
+	draw_circle(center + Vector2(1,10)*s, 7*s, GOLD)
+
+func _draw_utility_icon(center: Vector2, kind: int) -> void:
+	match kind:
+		0:
+			_hero_portrait(center, 0, 0.34)
+		1:
+			draw_rect(Rect2(center+Vector2(-21,-17),Vector2(42,34)), Color("#25b7a8"))
+			draw_rect(Rect2(center+Vector2(-12,-23),Vector2(24,10)), Color("#8ef4d3"), false, 3)
+			draw_circle(center+Vector2(10,1),7,GOLD)
+		2:
+			for i in range(3):
+				draw_circle(center+Vector2(-17+i*17,0),8,[CYAN,VIOLET,GOLD][i])
+			draw_arc(center,25,0,TAU,40,Color("#c6b4ff"),3,true)
 
 func _draw_shop() -> void:
 	_center("МАГАЗИН", 156, 32, GOLD)
