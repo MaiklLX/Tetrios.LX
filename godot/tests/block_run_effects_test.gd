@@ -64,10 +64,10 @@ func _run() -> void:
 	var spawn := Effects.on_piece_spawn({"mirror":1,"prism":1,"aura":1}, 14, true)
 	if not _check(spawn["mirror_next_piece"] and spawn["prism_visual"] and spawn["aura_visual"], "Mirror, Prism and Aura must expose the correct spawn/render effects"):
 		return
-	if not _check(Effects.hold_limit({"hold":3}) == 4, "Hold rank must increase the per-piece hold limit"):
+	if not _check(Effects.hold_limit({"hold":3}) == 4 and Effects.hold_limit({"hold":3}, "pixel", 10) == 3 and Effects.hold_limit({"hold":3}, "pixel", 15) == 4, "Hold rank must increase the per-piece hold limit"):
 		return
 	var shield := Effects.on_spawn_collision({"shield":2,"armor":1}, 3, false)
-	if not _check(shield["rescued"] and shield["shield_charges_remaining"] == 2 and shield["iron_fortress"] and shield["shield_clear_rows"] == 6, "Shield + Armor must use the Iron Fortress rescue pattern"):
+	if not _check(shield["rescued"] and shield["shield_charges_remaining"] == 2 and shield["iron_fortress"] and shield["shield_randomized_rows"] == 5 and shield["shield_start_row"] == 18, "Shield + Armor must use the Iron Fortress rescue pattern"):
 		return
 	var nova := Effects.on_spawn_collision({"nova":2}, 0, false)
 	if not _check(nova["rescued"] and nova["rescue_type"] == "nova" and nova["bottom_rows_to_clear"] == 2, "Nova must rescue once and clear rows according to rank"):
