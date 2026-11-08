@@ -63,6 +63,28 @@ func _run() -> void:
 	if not _check(not invalid_session.start("missing") and invalid_session.status == ModeSession.STATUS_IDLE, "Unknown mode must not create a running session"):
 		return
 
+	# Main scene respects terminal mode state: Sprint freezes at its goal and restarts cleanly.
+	var mode_main = Main.new()
+	mode_main.game = Model.new()
+	mode_main.game.reset()
+	mode_main.mode_session = ModeSession.new()
+	mode_main.mode_session.start("sprint")
+	mode_main.buddy = Buddy.new()
+	mode_main.game.lines = 40
+	mode_main._sync_buddy_state()
+	if not _check(mode_main.mode_session.status == ModeSession.STATUS_COMPLETED, "Main scene should register Sprint completion as soon as the target is reached"):
+		return
+	var completed_origin: Vector2i = mode_main.game.origin
+	mode_main._process(3.0)
+	if not _check(mode_main.game.origin == completed_origin, "Gravity must stop after Sprint completion"):
+		return
+	if not _check(not mode_main._handle_swipe(Vector2(10.0, 10.0), Vector2(10.0, 100.0)), "Gameplay swipes must be ignored after Sprint completion"):
+		return
+	mode_main._handle_tap(Vector2.ZERO)
+	if not _check(mode_main.mode_session.status == ModeSession.STATUS_RUNNING and mode_main.game.lines == 0, "Tap after Sprint completion should restart the same mode cleanly"):
+		return
+	mode_main.free()
+
 	# Buddy reactions are stateful, bounded, and return to idle cleanly.
 	var buddy_probe = Buddy.new()
 	buddy_probe.set_state("happy", 0.1)
