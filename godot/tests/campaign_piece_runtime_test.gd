@@ -31,9 +31,9 @@ func _run() -> void:
 		return
 	if not _check(runtime.rotate_piece() and runtime.rotation_index == 1 and runtime.active_cells.size() == 5, "Special rotation must retain all five cells"):
 		return
-	var previous_origin := runtime.origin
-	var previous_rotation := runtime.rotation_index
-	var previous_cells := runtime.active_cells.duplicate()
+	var previous_origin: Vector2i = runtime.origin
+	var previous_rotation: int = runtime.rotation_index
+	var previous_cells: Array[Vector2i] = runtime.active_cells.duplicate()
 	for y in range(Runtime.HEIGHT):
 		for x in range(Runtime.WIDTH):
 			runtime.grid[y][x] = 0
@@ -46,10 +46,10 @@ func _run() -> void:
 	runtime.reset(false)
 	if not _check(runtime.spawn_authored_special(), "Special piece must spawn from an explicitly empty authored spawn slot"):
 		return
-	var special_id := runtime.active_piece_id
+	var special_id: int = runtime.active_piece_id
 	if not _check(runtime.hold_piece() and runtime.held_piece_id == special_id and runtime.active_piece_id < 7 and runtime.active_cells.size() == 4, "Hold must safely move special→standard"):
 		return
-	var standard_id := runtime.active_piece_id
+	var standard_id: int = runtime.active_piece_id
 	if not _check(not runtime.hold_piece(), "Hold must be limited to once per active piece"):
 		return
 	# Complete the current standard piece, then swap standard→special.
