@@ -86,7 +86,11 @@ func _start_room() -> void:
 	next_attack_seconds = 20 if boss else maxi(23, 34 - floor * 2)
 
 func current_attack_profile() -> Dictionary:
-	var cycle: Array[String] = ["siege", "crossfire"] if boss else ["breach", "crossfire"]
+	var cycle: Array[String] = []
+	if boss:
+		cycle.assign(["siege", "crossfire"])
+	else:
+		cycle.assign(["breach", "crossfire"])
 	var cycle_index := attack_index % cycle.size()
 	if cycle_index < 0:
 		cycle_index += cycle.size()
