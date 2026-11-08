@@ -399,6 +399,8 @@ func _draw() -> void:
 	_draw_header()
 	_draw_stats()
 	_draw_piece_previews()
+	if block_run_active and block_run_session != null:
+		_draw_block_run_goals()
 	_draw_board()
 	if _block_run_draft_is_open():
 		_draw_block_run_draft()
@@ -479,16 +481,18 @@ func _format_elapsed_time(total_seconds: float) -> String:
 	return "%02d:%02d" % [minutes, seconds]
 
 func _draw_stats() -> void:
-	var top := 154.0
+	var top := 140.0
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
 	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(score_value), Color("#45d9f5"))
-	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 70)
+	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 58)
 	if block_run_active and block_run_session != null:
 		var encounter = block_run_session.encounter
 		var room_label := "BOSS" if encounter.boss else "ROOM"
-		_stat_card(progress_rect, "%s %d  •  FLOOR %d" % [room_label, encounter.room, encounter.floor], "HP %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
+		var attack_label := "ATK IN %ds" % encounter.next_attack_seconds
+		var encounter_label := "%s %d  •  F%d  •  %s" % [room_label, encounter.room, encounter.floor, attack_label]
+		_stat_card(progress_rect, encounter_label, "HP %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
 		var hp_ratio := clampf(float(encounter.enemy_hp) / float(maxi(1, encounter.enemy_max_hp)), 0.0, 1.0)
-		var hp_track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
+		var hp_track := Rect2(progress_rect.position + Vector2(14.0, 51.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(hp_track, Color(0.12, 0.19, 0.27, 1.0))
 		if hp_ratio > 0.0:
 			draw_rect(Rect2(hp_track.position, Vector2(hp_track.size.x * hp_ratio, hp_track.size.y)), Color("#ff9b57"))
@@ -497,7 +501,7 @@ func _draw_stats() -> void:
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
 		var mode_label := str(mode_session.rules.get("name", "MODE")).to_upper()
 		_stat_card(progress_rect, mode_label + "  •  " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
-		var track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
+		var track := Rect2(progress_rect.position + Vector2(14.0, 51.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
 		if _objective_progress_ratio() > 0.0:
 			draw_rect(Rect2(track.position, Vector2(track.size.x * _objective_progress_ratio(), track.size.y)), Color("#45d9f5"))
@@ -508,8 +512,47 @@ func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> voi
 	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.94))
 	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 3)), accent)
 	draw_rect(rect, Color(0.28, 0.46, 0.62, 0.35), false, 1.0)
-	draw_string(font, rect.position + Vector2(14, 24), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#83a3bd"))
-	draw_string(font, rect.position + Vector2(14, 54), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("#f4f8ff"))
+	var label_size := 9 if label.length() > 17 else 11
+	draw_string(font, rect.position + Vector2(14, 21), label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#83a3bd"))
+	draw_string(font, rect.position + Vector2(14, 46), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#f4f8ff"))
+
+func _block_run_goal_ratio(goal: Dictionary) -> float:
+	var target := maxi(1, int(goal.get("target", 1)))
+	return clampf(float(goal.get("value", 0)) / float(target), 0.0, 1.0)
+
+func _block_run_goal_short_label(goal: Dictionary) -> String:
+	match str(goal.get("type", "")):
+		"lines": return "ЛИНИИ"
+		"score": return "ОЧКИ"
+		"survive": return "ВРЕМЯ"
+		"level": return "УРОВЕНЬ"
+	return "ЦЕЛЬ"
+
+func _draw_block_run_goals() -> void:
+	var states := block_run_session.goal_states()
+	if states.is_empty():
+		return
+	var top := board_rect.position.y - 38.0
+	var gap := 5.0
+	var outer := 18.0
+	var width := (screen_size.x - outer * 2.0 - gap * 2.0) / 3.0
+	for index in range(mini(3, states.size())):
+		var goal: Dictionary = states[index]
+		var rect := Rect2(outer + index * (width + gap), top, width, 34.0)
+		var ratio := _block_run_goal_ratio(goal)
+		draw_rect(rect, Color("#0a1b2d"))
+		draw_rect(rect, Color(0.20, 0.50, 0.68, 0.5), false, 1.0)
+		var label := _block_run_goal_short_label(goal)
+		var progress := "%d/%d" % [int(goal.get("value", 0)), int(goal.get("target", 1))]
+		var reward := "+%d" % int(goal.get("reward", 0))
+		draw_string(font, rect.position + Vector2(6.0, 12.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#83a3bd"))
+		var progress_width := font.get_string_size(progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
+		draw_string(font, rect.position + Vector2(rect.size.x - progress_width - 5.0, 12.0), progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#f4f8ff"))
+		var track := Rect2(rect.position + Vector2(6.0, 19.0), Vector2(rect.size.x - 12.0, 3.0))
+		draw_rect(track, Color("#1b3045"))
+		if ratio > 0.0:
+			draw_rect(Rect2(track.position, Vector2(track.size.x * ratio, track.size.y)), Color("#45d9f5"))
+		draw_string(font, rect.position + Vector2(6.0, 31.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
 
 func _draw_piece_previews() -> void:
 	var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
@@ -517,7 +560,7 @@ func _draw_piece_previews() -> void:
 	var gap := 12.0
 	var total_width := card_width * 2.0 + gap
 	var start_x := (screen_size.x - total_width) * 0.5
-	var top := board_rect.position.y - card_height - 10.0
+	var top := board_rect.position.y - card_height - 42.0
 	hold_rect = Rect2(start_x, top, card_width, card_height)
 	_draw_preview_card(hold_rect, "HOLD", game.held_type)
 	_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "NEXT", game.peek_next_piece_type())
