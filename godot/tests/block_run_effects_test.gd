@@ -46,6 +46,15 @@ func _run() -> void:
 		return
 	if not _check(level_up["void_compression_attempt"] and level_up["comet_requires_source_review"] and level_up["comet_score_bonus"] == 0, "Void must request compression and Comet must remain gated for source-bug review"):
 		return
+	var loop_draft := Effects.on_card_drafted({"loop":1}, "loop", 6, 760, 0)
+	var slow_draft := Effects.on_card_drafted({"slow":1}, "slow", 6, 760, 0)
+	var shield_draft := Effects.on_card_drafted({"shield":1,"armor":2}, "armor", 6, 760, 0)
+	var reserve_draft := Effects.on_card_drafted({"reserve":2}, "reserve", 6, 760, 0)
+	var hold_draft := Effects.on_card_drafted({"hold":1}, "hold", 6, 760, 2)
+	if not _check(loop_draft["need_lines"] == 5 and slow_draft["drop_ms"] == 730, "Loop and Slow must apply their immediate draft-time adjustments"):
+		return
+	if not _check(shield_draft["shield_charges"] == 3 and reserve_draft["reserve_charges"] == 2 and hold_draft["hold_used"] == 0, "Shield, Reserve and Hold must initialize their run-local draft state"):
+		return
 	var rotation := Effects.on_rotation({"stable":3,"shift":2}, 0.1)
 	if not _check(rotation["max_kick_distance"] == 4 and rotation["score_bonus"] == 50, "Stable and Shift must use bounded kicks and deterministic 25-percent trigger"):
 		return
