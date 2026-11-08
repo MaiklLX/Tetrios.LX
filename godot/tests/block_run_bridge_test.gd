@@ -38,5 +38,15 @@ func _run() -> void:
 		return
 	if not _check(model.grid == before, "Rejected synchronization must not partially mutate the live model"):
 		return
+	model.grid = Model.new().grid
+	model.reset()
+	model.game_over = true
+	if not _check(model.resume_after_board_rescue() and not model.game_over, "A clear live spawn must resume after a valid rescue"):
+		return
+	model.game_over = true
+	var blocked_cell: Vector2i = model.origin + model.active_cells[0]
+	model.grid[blocked_cell.y][blocked_cell.x] = 1
+	if not _check(not model.resume_after_board_rescue() and model.game_over, "A still-blocked spawn must remain terminal after rescue validation"):
+		return
 	print("Block Run live-board bridge tests passed.")
 	quit(0)
