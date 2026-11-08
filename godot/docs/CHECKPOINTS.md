@@ -300,3 +300,12 @@
 - Log comparison: the previous run emitted CanvasItem/ObjectDB/resource-leak warnings after the gameplay model test; these are absent in KT-484. Remaining V-Sync and ALSA dummy-audio messages occur only during headless visual capture and did not fail the job.
 - Visual artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782/artifacts/13616556489) was uploaded. Physical Android rendering and orientation behavior remain unverified.
 - No main merge, deployment, APK build/release, persistent profile write, or user-data mutation.
+
+
+## KT-531 — Campaign mechanics registry foundation
+- Added a data-only registry for all 12 universe mechanics and six Daily-Challenge-style modifier candidates.
+- Ordinary planets are capped at one modifier; bosses may combine only an explicitly compatible pair. Assignments are deterministic and expose preview metadata.
+- Candidate modifiers are not treated as verified legacy Daily Challenge rules; source audit is KT-532.
+- Registry is not wired to live gameplay: no gravity, board, input, piece or hero behavior changes in this checkpoint.
+- Dedicated tests cover universe catalog, modifier limits/compatibility, deterministic assignment, preview metadata and the inactive-runtime boundary.
+- Full CI result pending for the KT-531 commit.
