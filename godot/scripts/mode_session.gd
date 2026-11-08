@@ -23,12 +23,15 @@ func start(requested_mode_id: String) -> bool:
 	status = STATUS_RUNNING
 	return true
 
-func update(delta_seconds: float, total_lines: int, game_over: bool) -> String:
+func update(delta_seconds: float, total_lines: int, game_over: bool, total_score: int = 0) -> String:
 	if status != STATUS_RUNNING:
 		return status
 	elapsed_seconds += maxf(delta_seconds, 0.0)
 	var target_lines := int(rules.get("target_lines", 0))
-	if target_lines > 0 and total_lines >= target_lines:
+	var target_score := int(rules.get("target_score", 0))
+	var lines_complete := target_lines <= 0 or total_lines >= target_lines
+	var score_complete := target_score <= 0 or total_score >= target_score
+	if lines_complete and score_complete:
 		status = STATUS_COMPLETED
 		return status
 	var time_limit := float(rules.get("time_limit_seconds", 0))
