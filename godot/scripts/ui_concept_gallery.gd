@@ -2,7 +2,7 @@ extends Node2D
 
 # Static, code-drawn UI exploration. This is deliberately separate from the
 # live game scene: it previews the visual language without wiring economy or saves.
-@export_enum("home", "shop", "heroes", "upgrades", "block_run") var screen_id := "home"
+@export_enum("home", "shop", "heroes", "upgrades", "block_run", "campaign", "daily") var screen_id := "home"
 var viewport_size := Vector2(720.0, 1280.0)
 var font: Font = ThemeDB.fallback_font
 
@@ -28,6 +28,8 @@ func _draw() -> void:
 		"heroes": _draw_heroes()
 		"upgrades": _draw_upgrades()
 		"block_run": _draw_block_run()
+		"campaign": _draw_campaign()
+		"daily": _draw_daily()
 		_: _draw_home()
 
 func _draw_backdrop() -> void:
@@ -150,7 +152,7 @@ func _draw_heroes() -> void:
 		var y := 236.0 + row * 202.0
 		var rect := Rect2(x, y, (viewport_size.x - 102.0) * 0.5, 174)
 		_panel(rect, colors[i], accents[i], 22)
-		_buddy(rect.position + Vector2(rect.size.x * 0.5, 66), 0.54, "happy" if i % 2 == 0 else "calm")
+		_hero_portrait(rect.position + Vector2(rect.size.x * 0.5, 66), i, 0.62)
 		_center_card_text(names[i], rect, y + 143, 18, WHITE)
 		_center_card_text("УРОВЕНЬ  %d" % (i + 1), rect, y + 164, 10, PALE)
 	_button(Rect2(90, 880, viewport_size.x - 180, 62), "ВЫБРАТЬ ГЕРОЯ", Color("#0878d6"), CYAN, 19)
@@ -207,3 +209,95 @@ func _draw_bottom_nav(active: String) -> void:
 		var x := rect.position.x + 18.0 + i * (rect.size.x - 36.0) / 4.0
 		var color := GOLD if items[i] == active else PALE
 		_text(items[i], Vector2(x, rect.position.y + 43), 12, color)
+
+func _hero_portrait(center: Vector2, hero: int, scale := 1.0) -> void:
+	var s := scale
+	var colors := [Color("#1686df"), Color("#8c62dc"), Color("#27b9a5"), Color("#d28b35"), Color("#e45d91")]
+	var accents := [CYAN, Color("#e4c7ff"), Color("#a4ffe2"), GOLD, PINK]
+	var body := Rect2(center - Vector2(43, 42) * s, Vector2(86, 84) * s)
+	match hero:
+		0:
+			draw_circle(center + Vector2(-31, -37) * s, 15 * s, accents[hero])
+			draw_circle(center + Vector2(31, -37) * s, 15 * s, accents[hero])
+			var box := StyleBoxFlat.new()
+			box.bg_color = colors[hero]
+			box.set_corner_radius_all(int(25 * s))
+			draw_style_box(box, body)
+		1:
+			var points := PackedVector2Array([center + Vector2(0,-54)*s, center + Vector2(48,-8)*s, center + Vector2(30,43)*s, center + Vector2(-30,43)*s, center + Vector2(-48,-8)*s])
+			draw_colored_polygon(points, colors[hero])
+			draw_polyline(PackedVector2Array([points[0], points[2], points[4], points[0]]), accents[hero], 3.0 * s, true)
+		2:
+			draw_line(center + Vector2(0,-39)*s, center + Vector2(0,-58)*s, accents[hero], 4.0*s)
+			draw_circle(center + Vector2(0,-61)*s, 8*s, accents[hero])
+			var box2 := StyleBoxFlat.new()
+			box2.bg_color = colors[hero]
+			box2.set_corner_radius_all(int(13*s))
+			draw_style_box(box2, body)
+		3:
+			var points3 := PackedVector2Array([center+Vector2(-30,-48)*s,center+Vector2(20,-48)*s,center+Vector2(20,-28)*s,center+Vector2(43,-28)*s,center+Vector2(43,30)*s,center+Vector2(22,30)*s,center+Vector2(22,48)*s,center+Vector2(-30,48)*s,center+Vector2(-30,25)*s,center+Vector2(-45,25)*s,center+Vector2(-45,-28)*s,center+Vector2(-30,-28)*s])
+			draw_colored_polygon(points3, colors[hero])
+		4:
+			var star := PackedVector2Array()
+			for j in range(10):
+				var a := -PI/2.0 + TAU * float(j) / 10.0
+				var radius := (51.0 if j % 2 == 0 else 39.0) * s
+				star.append(center + Vector2(cos(a), sin(a)) * radius)
+			draw_colored_polygon(star, colors[hero])
+	for eye_x in [-13.0, 13.0]:
+		draw_circle(center + Vector2(eye_x, -2) * s, 4.5*s, Color("#092b61"))
+		draw_circle(center + Vector2(eye_x-1,-4)*s, 1.5*s, WHITE)
+	draw_arc(center + Vector2(0, 9)*s, 10*s, 0.25, 2.9, 18, Color("#092b61"), 2.5*s, true)
+
+func _draw_campaign() -> void:
+	_center("КОСМИЧЕСКИЙ АТЛАС", 150, 30, GOLD)
+	_center("Исследуй вселенные и открывай новые миры", 183, 14, PALE)
+	var titles := ["ТУМАННОСТЬ ИСКР", "КРИСТАЛЬНАЯ ВСЕЛЕННАЯ", "ТЕНЕВОЙ РУБЕЖ"]
+	var subtitles := ["Зелёные луны • 3 планеты", "Мир сияющих осколков", "Неизведанный сектор"]
+	var colors := [Color("#1c78a9"), Color("#624b9f"), Color("#773e75")]
+	var accents := [CYAN, VIOLET, PINK]
+	for i in range(3):
+		var y := 225.0 + i * 260.0
+		_panel(Rect2(30, y, viewport_size.x - 60, 224), colors[i], accents[i], 26)
+		draw_circle(Vector2(130, y+92), 66, Color(0.3,0.8,1,0.16))
+		draw_circle(Vector2(130, y+92), 43, Color(0.7,0.5,1,0.22))
+		draw_circle(Vector2(130, y+92), 23, accents[i])
+		for p in range(3):
+			var a := TAU * float(p) / 3.0 + 0.6
+			var planet := Vector2(130, y+92) + Vector2(cos(a),sin(a))*78
+			draw_circle(planet, 10 + p*2, [CYAN,GOLD,PINK][p])
+		_text(titles[i], Vector2(225, y+70), 17, WHITE)
+		_text(subtitles[i], Vector2(225, y+99), 12, PALE)
+		_text("ПРОГРЕСС  %d / 3 ПЛАНЕТЫ" % (i+1), Vector2(225, y+132), 11, GOLD)
+		_button(Rect2(225, y+150, 190, 43), "ОТКРЫТЬ ВСЕЛЕННУЮ", Color("#0878d6"), accents[i], 12)
+	_draw_bottom_nav("ИГРАТЬ")
+
+func _draw_daily() -> void:
+	_center("ЕЖЕДНЕВНЫЙ ВЫЗОВ", 150, 30, GOLD)
+	_center("Новая миссия каждый день • серия наград", 183, 14, PALE)
+	_panel(Rect2(34, 218, viewport_size.x-68, 174), Color("#174d98"), CYAN, 24)
+	_text("ЗАДАНИЕ СЕГОДНЯ", Vector2(58, 260), 18, GOLD)
+	_text("Очисти 12 линий за один забег", Vector2(58, 300), 16, WHITE)
+	_text("Награда: 75 ✦  •  сложность: средняя", Vector2(58, 334), 13, PALE)
+	_button(Rect2(58, 350, 190, 32), "НАЧАТЬ", Color("#0878d6"), CYAN, 13)
+	_panel(Rect2(34, 420, viewport_size.x-68, 590), Color("#123e82"), Color("#8deaff"), 24)
+	_center("НОЯБРЬ 2026", 466, 22, WHITE)
+	var days := ["ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"]
+	for col in range(7):
+		_center_card_text(days[col], Rect2(38+col*92, 0, 90, 20), 505, 11, PALE)
+	for day in range(30):
+		var col := day % 7
+		var row := day / 7
+		var x := 48.0 + col * 91.0
+		var y := 530.0 + row * 91.0
+		var active := day == 7
+		var complete := day < 7
+		var fill := Color("#9a6b22") if active else (Color("#176b83") if complete else Color("#17376b"))
+		_panel(Rect2(x, y, 76, 70), fill, GOLD if active else (CYAN if complete else Color("#496c9d")), 12)
+		_center_card_text(str(day+1), Rect2(x, y, 76, 50), y+29, 18, WHITE)
+		if complete:
+			draw_circle(Vector2(x+58,y+53), 5, Color("#8ef4d3"))
+		elif active:
+			draw_circle(Vector2(x+58,y+53), 5, GOLD)
+	_text("● Выполнено     ● Сегодня     ○ Впереди", Vector2(58, 975), 12, PALE)
+	_draw_bottom_nav("ИГРАТЬ")
