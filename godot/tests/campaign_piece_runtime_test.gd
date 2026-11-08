@@ -59,7 +59,9 @@ func _run() -> void:
 	runtime.hard_drop()
 	if not _check(not runtime.game_over and runtime.hold_used == false, "Locking must reset Hold eligibility and spawn a standard piece"):
 		return
-	if not _check(runtime.hold_piece() and runtime.active_piece_id == special_id and runtime.held_piece_id == standard_id and runtime.active_cells.size() == 5, "Hold must safely move standard→special"):
+	var hold_swap_result: bool = runtime.hold_piece()
+	print("KT-537 Hold swap diagnostic: accepted=", hold_swap_result, " active=", runtime.active_piece_id, " held=", runtime.held_piece_id, " expected_active=", special_id, " expected_held=", standard_id, " cells=", runtime.active_cells.size(), " hold_used=", runtime.hold_used, " game_over=", runtime.game_over)
+	if not _check(hold_swap_result and runtime.active_piece_id == special_id and runtime.held_piece_id == standard_id and runtime.active_cells.size() == 5, "Hold must safely move standard→special"):
 		return
 	print("KT-537 runtime: snapshot validation")
 	var snap := runtime.snapshot()
