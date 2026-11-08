@@ -64,7 +64,7 @@ func _run() -> void:
 		return
 	var universe_one: Dictionary = legacy.get_universe_progress(0)
 	var universe_two: Dictionary = legacy.get_universe_progress(1)
-	if not _check(universe_one.completed_count == 11 and universe_one.current and universe_two.locked == false and universe_two.current == false, "Universe summaries must reflect legacy sequential progress"):
+	if not _check(universe_one.completed_count == 11 and universe_one.current and not universe_two.unlocked and not universe_two.current, "Universe summaries must reflect legacy sequential progress"):
 		return
 	print("Campaign progress tests passed: 360-node catalog, milestones, sequential unlocks, objective gates, idempotent rewards, atomic save/load and legacy import.")
 	quit(0)
