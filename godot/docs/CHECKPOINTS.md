@@ -326,3 +326,9 @@
 - Added tests for five-cell preservation, four unique rotations, normalized bounds, rotation wraparound, centered spawn on the 10-column board, wall/floor/occupied-cell rejection, successful rotation, right-wall kick, and safe rejection when all candidate poses are blocked.
 - The module is not imported by `game_model.gd`, does not enter the seven-bag, does not alter saves, and is not wired into live gameplay. It is a campaign-only geometry prototype; Classic and Block Run remain untouched.
 - Next: review visual readability and play-feel in a dedicated campaign preview, then decide whether/how to integrate behind a campaign-only feature gate. No main merge, public deployment, or APK release.
+
+## KT-535 — Campaign Cargo Hook visual preview
+- Added a standalone portrait review scene, campaign_special_piece_preview.tscn, with a large default-orientation render and a 2×2 gallery of all four distinct rotations.
+- Styled the five-cell piece with a consistent cyan/teal body, gold fasteners, dimensional highlights, and a dark cosmic campaign backdrop. The screen labels it as campaign-only and explicitly separates it from Classic and Block Run.
+- Extended the CI visual capture to load the isolated preview, verify all four card bounds fit within 720×1280, verify each rotation retains five cells and all four shapes are distinct, and save 27-campaign-cargo-hook-preview.png.
+- The preview scene is not referenced by the main scene, gameplay model, seven-bag, or save system. No gameplay integration, main merge, deployment, or APK release.
