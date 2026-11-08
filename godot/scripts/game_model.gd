@@ -174,7 +174,8 @@ func _lock_piece() -> void:
 		if p.y >= 0 and p.y < HEIGHT:
 			grid[p.y][p.x] = active_type
 	var cleared := 0
-	for y in range(HEIGHT - 1, -1, -1):
+	var y: int = HEIGHT - 1
+	while y >= 0:
 		var full := true
 		for x in range(WIDTH):
 			if grid[y][x] == -1:
@@ -187,7 +188,9 @@ func _lock_piece() -> void:
 				new_row.append(-1)
 			grid.push_front(new_row)
 			cleared += 1
-			y += 1
+			# Re-check this index: the row above has shifted into it.
+		else:
+			y -= 1
 	if cleared > 0:
 		lines += cleared
 		var rewards := [0, 100, 300, 500, 800]
