@@ -51,6 +51,22 @@ func _run() -> void:
 	if not await _capture(viewport, "02-classic-arena"):
 		quit(1)
 		return
+	var classic_board_rect: Rect2 = scene.get("board_rect")
+	var classic_drop_rect: Rect2 = scene.get("drop_rect")
+	if classic_drop_rect.size.x < 42.0 or classic_drop_rect.size.y < 44.0 or classic_drop_rect.position.x < classic_board_rect.end.x + 5.0 or classic_drop_rect.end.x > float(viewport.size.x) - 7.0 or classic_drop_rect.intersects(classic_board_rect):
+		push_error("Visible Drop control is missing, undersized, or overlaps the 10x23 board at 720x1280.")
+		quit(1)
+		return
+	var classic_model = scene.get("game")
+	var lock_serial_before: int = classic_model.lock_serial
+	scene.call("_handle_tap", classic_drop_rect.get_center())
+	if int(classic_model.lock_serial) != lock_serial_before + 1:
+		push_error("Tapping the visible Drop control did not hard-drop and lock the active piece.")
+		quit(1)
+		return
+	scene.call("_select_mode", "classic")
+	await process_frame
+	await process_frame
 	if not bool(scene.call("start_block_run_session")):
 		push_error("Block Run session did not initialize for visual capture.")
 		quit(1)
@@ -130,6 +146,12 @@ func _run() -> void:
 	# Capture a narrow portrait viewport as well as the desktop-sized reference.
 	viewport.size = Vector2i(360, 800)
 	scene.call("_layout")
+	var mobile_board_rect: Rect2 = scene.get("board_rect")
+	var mobile_drop_rect: Rect2 = scene.get("drop_rect")
+	if mobile_drop_rect.size.x < 42.0 or mobile_drop_rect.size.y < 44.0 or mobile_drop_rect.position.x < mobile_board_rect.end.x + 5.0 or mobile_drop_rect.end.x > float(viewport.size.x) - 7.0 or mobile_drop_rect.intersects(mobile_board_rect):
+		push_error("Visible Drop control is missing, undersized, or overlaps the 10x23 board at 360x800.")
+		quit(1)
+		return
 	scene.queue_redraw()
 	await process_frame
 	await process_frame
