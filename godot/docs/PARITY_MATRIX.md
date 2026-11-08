@@ -136,3 +136,11 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Added adversarial fixtures for unknown inventory/perk/hero IDs, incomplete daily quests and reward/history disagreement.
 - CI run `42450599486` on `31b0545a9a7447b3b42c86ee1c1238327009cc16` passed import, parse, gameplay tests, migration tests and scene smoke test.
 - These checks validate candidate data only; persistent storage and migration execution remain disabled.
+
+
+## KT-449 — Daily history migration safeguards
+
+- Web quest archive entries are `{date, quests}` records keyed by the same date; quest records require id/title/target/progress/reward/claimed.
+- Web trims the archive to 90 sorted date keys only on a subsequent save. Native migration preserves every imported archive entry, including entries beyond 90, and warns rather than truncating.
+- Calendar validation follows Gregorian month lengths and leap years.
+- Daily challenge catalog signature is retained as an opaque exact source value. A changed catalog in Web clears assignments only; it does not clear history or reward markers. Native migration must not regenerate historical assignments or settle rewards.
