@@ -68,8 +68,8 @@ func _run() -> void:
 
 	var comet := Effects.new()
 	comet.start("comet")
-	comet.advance_active_time(1.99)
 	comet.on_piece_dropped()
+	comet.advance_active_time(1.99)
 	if not _check(comet.on_line_clear(1, 100).score_bonus == 200, "Comet grants 200 bonus points inside the two-second window"):
 		return
 	comet.advance_active_time(0.01)
