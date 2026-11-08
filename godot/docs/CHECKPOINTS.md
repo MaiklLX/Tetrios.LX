@@ -315,3 +315,12 @@
 - Audited the exact 17-rule `dailyRules` catalog in the development branch's `site/index.html`, including goals, triggers and timing.
 - Classified low-risk tempo/score effects, visual-only effects, preview-only effects and high-risk board/input effects. The source has seven standard tetrominoes only; new campaign pieces will be original designs.
 - No live campaign integration in KT-532. KT-533 will adapt low-risk effects behind isolated session rules; KT-534 will introduce the first original special piece.
+
+
+## KT-533 — Isolated campaign tempo and score adapters
+- Added `campaign_effect_session.gd`, a reversible session adapter for six source-audited low-risk Daily rules: gravity, gravityFlip, artifactHunt, echoCombo, comet and pulse.
+- Ported the source-defined thresholds and outcomes: gravity −55 ms every 25 active seconds (150 ms floor); gravityFlip −30 ms per cleared line with accumulated penalty restored every 30 active seconds (150 ms floor); artifact +50% for eight seconds after each four cleared lines; echo +0.25 per cleared line up to ×2.5 and resets on a lock without a clear; comet +200 points inside its two-second window; pulse ×1.5 line-clear score and −25 ms every five active seconds (180 ms floor).
+- The adapter accepts active-time deltas only, exposes deterministic result dictionaries and a snapshot, rejects unsupported high-risk modifiers, and does not mutate the live board or global modes.
+- Added deterministic tests for thresholds, multi-interval time steps, expiry, score math, caps, resets and unsupported modifiers; added the suite to GitHub Actions.
+- Deliberate boundary: no live campaign scene integration in KT-533. Next is to wire the adapter only into campaign sessions behind an explicit feature gate, verify real piece/line events, and keep Classic/Block Run unchanged. KT-534 remains the first original special-piece prototype.
+- No main merge, public deployment, APK build/release, or save-data changes.
