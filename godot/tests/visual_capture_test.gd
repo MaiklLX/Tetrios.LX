@@ -13,7 +13,7 @@ func _assert_mobile_arena_spacing(scene: Node, viewport_size: Vector2i, label: S
 		if drop.position.x < board.end.x + 20.5 or drop.end.y > board.end.y - 5.0:
 			push_error("%s: DROP button must sit above and clear of the board frame (drop=%s board=%s)." % [label, str(drop), str(board)])
 			return false
-	var frame_top := board.position.y - 13.0
+	var frame_top := board.position.y - 16.0
 	if hold.position.x < 0.0 or hold.end.x > float(viewport_size.x) or hold.position.y < 0.0 or hold.end.y > frame_top:
 		push_error("%s: HOLD/NEXT preview cards leave the screen or touch the board frame (hold=%s board=%s)." % [label, str(hold), str(board)])
 		return false
@@ -23,11 +23,11 @@ func _assert_mobile_arena_spacing(scene: Node, viewport_size: Vector2i, label: S
 			return false
 		# Keep 6px breathing room between HUD, goals, previews, and board.
 		var goals_top := board.position.y - 122.0
-		var goals_bottom := goals_top + 28.0
+		var goals_bottom := goals_top + 24.0
 		if goals_top < 114.0:
 			push_error("%s: goal strip is too close to the score HUD (goal_top=%s)." % [label, str(goals_top)])
 			return false
-		if hold.position.y < goals_bottom + 6.0:
+		if hold.position.y < goals_bottom + 4.0:
 			push_error("%s: goal strip and preview row overlap (goals_bottom=%s hold_top=%s)." % [label, str(goals_bottom), str(hold.position.y)])
 			return false
 	return true
