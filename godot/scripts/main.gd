@@ -567,12 +567,12 @@ func _draw_stats() -> void:
 	var card_height := 52.0
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
 	var synergy_count := block_run_session.encounter.active_synergies().size() if block_run_active and block_run_session != null else 0
-	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ • СИНЕРГИИ %d" % synergy_count
+	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ • СИН. %d" % synergy_count
 	_stat_card(Rect2(outer, top, card_width, card_height), score_label, str(score_value), Color("#45d9f5"))
 	var progress_rect := Rect2(outer + card_width + gap, top, card_width, card_height)
 	if block_run_active and block_run_session != null:
 		var encounter = block_run_session.encounter
-		var attack_label := "УДАР %dС" % encounter.next_attack_seconds
+		var attack_label := "%dС" % encounter.next_attack_seconds
 		var encounter_label := "БОСС • %s" % attack_label if encounter.boss else "К%d • Э%d • %s" % [encounter.room, encounter.floor, attack_label]
 		_stat_card(progress_rect, encounter_label, "ВР %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
 		var hp_ratio := clampf(float(encounter.enemy_hp) / float(maxi(1, encounter.enemy_max_hp)), 0.0, 1.0)
