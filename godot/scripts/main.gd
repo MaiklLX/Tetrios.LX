@@ -651,7 +651,7 @@ func _draw_home_hub() -> void:
 func _draw_secondary_screen() -> void:
 	_draw_soft_panel(secondary_back_rect, Color("#155c9c"), Color("#7bdfff"), 14, 6)
 	draw_string(font, secondary_back_rect.position + Vector2(12.0, 27.0), "‹  ДОМОЙ", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
-		var heading := "ГЕРОИ" if secondary_screen == "heroes" else ("МАГАЗИН" if secondary_screen == "shop" else ("УЛУЧШЕНИЯ" if secondary_screen == "upgrades" else "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ"))
+	var heading := "ГЕРОИ" if secondary_screen == "heroes" else ("МАГАЗИН" if secondary_screen == "shop" else ("УЛУЧШЕНИЯ" if secondary_screen == "upgrades" else "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ"))
 	_center_text(heading, screen_size.y * 0.32, 27, Color("#fff0b9"))
 	var subtitle := "СКОРО: КОЛЛЕКЦИЯ BUDDY И ИХ СПОСОБНОСТИ" if secondary_screen == "heroes" else ("СКОРО: КОСМЕТИКА И ПОЛЕЗНЫЕ ПРЕДМЕТЫ" if secondary_screen == "shop" else ("СКОРО: ПРОКАЧКА ГЕРОЕВ И ИХ УМЕНИЙ" if secondary_screen == "upgrades" else "ТВОИ ЦЕЛИ ОБНОВЛЯЮТСЯ КАЖДЫЙ ДЕНЬ"))
 	_center_text(subtitle, screen_size.y * 0.32 + 38.0, 11, Color("#c4edff"))
