@@ -125,18 +125,18 @@ func _draw_home() -> void:
 func _draw_shop() -> void:
 	_center("МАГАЗИН", 156, 32, GOLD)
 	_center("Новые образы и приятные бонусы", 188, 14, PALE)
-	var names := ["НЕОНОВЫЙ БАДДИ", "ЗВЁЗДНЫЙ НАБОР", "МЯГКИЙ СЛЕД"]
-	var prices := ["250 ✦", "490 ✦", "180 ✦"]
-	var fills := [Color("#145eaf"), Color("#71439c"), Color("#a15c1b")]
-	var accents := [CYAN, PINK, GOLD]
-	for i in range(3):
-		var y := 238.0 + i * 190.0
-		var rect := Rect2(34, y, viewport_size.x - 68, 160)
-		_panel(rect, fills[i], accents[i], 24)
-		_buddy(Vector2(112, y + 77), 0.55)
-		_text(names[i], Vector2(180, y + 54), 18, WHITE)
-		_text("Косметический предмет", Vector2(180, y + 82), 13, PALE)
-		_button(Rect2(180, y + 101, 172, 43), prices[i], Color("#8d5a17"), GOLD, 16)
+	var names := ["НЕОНОВЫЙ БАДДИ", "ЗВЁЗДНЫЙ НАБОР", "МЯГКИЙ СЛЕД", "КОСМИЧЕСКИЙ ШЛЕМ", "ОРБИТАЛЬНЫЙ СЛЕД", "ЗОЛОТОЙ КОНТУР"]
+	var prices := ["250 ✦", "490 ✦", "180 ✦", "320 ✦", "210 ✦", "600 ✦"]
+	var fills := [Color("#145eaf"), Color("#71439c"), Color("#a15c1b"), Color("#176d78"), Color("#58469b"), Color("#94651d")]
+	var accents := [CYAN, PINK, GOLD, Color("#8ef4d3"), VIOLET, GOLD]
+	for i in range(6):
+		var y := 220.0 + i * 145.0
+		var rect := Rect2(34, y, viewport_size.x - 68, 126)
+		_panel(rect, fills[i], accents[i], 22)
+		_buddy(Vector2(108, y + 62), 0.43)
+		_text(names[i], Vector2(170, y + 43), 16, WHITE)
+		_text("Облик и косметика", Vector2(170, y + 68), 12, PALE)
+		_button(Rect2(170, y + 79, 152, 36), prices[i], Color("#8d5a17"), GOLD, 14)
 	_draw_bottom_nav("МАГАЗИН")
 
 func _draw_heroes() -> void:
