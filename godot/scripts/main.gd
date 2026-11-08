@@ -14,6 +14,8 @@ var board_rect := Rect2()
 var screen_size := Vector2(720, 1280)
 var buddy: Node2D
 var buddy_last_lines := 0
+var clear_flash_time := 0.0
+var clear_flash_count := 0
 var ambient_time := 0.0
 var paused := false
 var pause_rect := Rect2()
@@ -73,6 +75,9 @@ func _gravity_interval_for_level(current_level: int) -> float:
 
 func _process(delta: float) -> void:
 	ambient_time = fmod(ambient_time + delta, 1000.0)
+	if clear_flash_time > 0.0:
+		clear_flash_time = maxf(0.0, clear_flash_time - delta)
+		queue_redraw()
 	if game == null:
 		return
 	if not game.game_over and not paused:
@@ -103,6 +108,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				paused = false
 				gravity_clock = 0.0
 				buddy_last_lines = 0
+				clear_flash_time = 0.0
+				clear_flash_count = 0
 				buddy.set_state("idle", 0.0)
 		_sync_buddy_state()
 		queue_redraw()
@@ -161,6 +168,8 @@ func _handle_tap(point: Vector2) -> void:
 		paused = false
 		gravity_clock = 0.0
 		buddy_last_lines = 0
+		clear_flash_time = 0.0
+		clear_flash_count = 0
 		buddy.set_state("idle", 0.0)
 	elif pause_rect.has_point(point):
 		_toggle_pause()
@@ -185,6 +194,8 @@ func _sync_buddy_state() -> void:
 		return
 	if game.lines > buddy_last_lines:
 		var cleared := game.lines - buddy_last_lines
+		clear_flash_count = cleared
+		clear_flash_time = 0.72 if cleared < 4 else 1.05
 		buddy.set_state("victory" if cleared >= 4 else "happy", 1.5)
 		buddy_last_lines = game.lines
 
@@ -304,6 +315,22 @@ func _draw_board() -> void:
 		if p.y >= 0:
 			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-1.5)
 			_draw_block(rect, BlockBuddiesModel.PALETTE[game.active_type])
+	_draw_line_clear_feedback()
+
+func _draw_line_clear_feedback() -> void:
+	if clear_flash_time <= 0.0:
+		return
+	var strength := clampf(clear_flash_time / 0.72, 0.0, 1.0)
+	var accent := Color("#ffcf65") if clear_flash_count >= 4 else Color("#62f2ff")
+	var frame := board_rect.grow(13.0)
+	draw_rect(frame.grow(2.0), Color(accent.r, accent.g, accent.b, 0.035 + strength * 0.12), false, 2.0)
+	var label := "%d LINE%s!" % [clear_flash_count, "" if clear_flash_count == 1 else "S"]
+	if clear_flash_count >= 4:
+		label = "BUDDY BONUS!"
+	var label_size := 17 if clear_flash_count >= 4 else 14
+	var label_width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size).x
+	var label_position := Vector2((screen_size.x - label_width) * 0.5, board_rect.position.y - 18.0)
+	draw_string(font, label_position, label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color(accent.r, accent.g, accent.b, strength))
 
 func _draw_block(rect: Rect2, color: Color) -> void:
 	draw_rect(rect, color.darkened(0.28))
