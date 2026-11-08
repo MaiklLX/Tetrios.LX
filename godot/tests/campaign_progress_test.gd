@@ -23,6 +23,9 @@ func _run() -> void:
 	var boss := progress.get_planet_definition(30)
 	var next_universe := progress.get_planet_definition(31)
 	var final_planet := progress.get_planet_definition(360)
+	var speed_boss := progress.get_planet_definition(10)
+	var score_boss := progress.get_planet_definition(20)
+	var final_boss := progress.get_planet_definition(30)
 	if not _check(first.universe_index == 0 and first.planet_in_universe == 1 and first.target_lines == 8, "First planet definition must be stable"):
 		return
 	if not _check(boss.is_boss and boss.planet_in_universe == 30 and boss.reward_marks == 5, "Every tenth planet must be a boss milestone"):
@@ -30,6 +33,12 @@ func _run() -> void:
 	if not _check(next_universe.universe_index == 1 and next_universe.planet_in_universe == 1, "Planet 031 must start Universe 02"):
 		return
 	if not _check(final_planet.universe_index == 11 and final_planet.planet_in_universe == 30 and final_planet.reward_marks == 15, "Planet 360 must be the final campaign milestone"):
+		return
+	if not _check(speed_boss.boss_type == "speed" and speed_boss.time_limit_seconds == 150 and speed_boss.target_score == 0, "Planet 010 must be a timed speed boss"):
+		return
+	if not _check(score_boss.boss_type == "score" and score_boss.target_score > 0 and score_boss.time_limit_seconds == 0, "Planet 020 must require both lines and score"):
+		return
+	if not _check(final_boss.boss_type == "final" and final_boss.target_score > 0 and final_boss.time_limit_seconds > 0, "Planet 030 must combine lines, score and time"):
 		return
 	if not _check(progress.is_unlocked(1) and not progress.is_unlocked(2) and progress.get_planet_status(2) == "locked", "Only the current planet is initially available"):
 		return
@@ -43,6 +52,9 @@ func _run() -> void:
 	if not _check(completion.accepted and completion.reward_marks == 1 and progress.unlocked_node == 2, "First planet completion must award marks and unlock planet 002"):
 		return
 	if not _check(progress.get_planet_status(1) == "completed" and progress.get_planet_status(2) == "current", "Planet states must update after completion"):
+		return
+	var boss_not_enough_score := progress.complete_planet(1, 8, 0, 0.0)
+	if not _check(boss_not_enough_score.accepted, "Ordinary planets must not require a score quota"):
 		return
 	var duplicate: Dictionary = progress.complete_planet(1, 999)
 	if not _check(not duplicate.accepted and duplicate.reason == "already_completed" and progress.campaign_marks == 1, "Rewards must not be claimable twice"):
