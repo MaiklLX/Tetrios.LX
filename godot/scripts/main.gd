@@ -324,13 +324,10 @@ func _draw_line_clear_feedback() -> void:
 	var accent := Color("#ffcf65") if clear_flash_count >= 4 else Color("#62f2ff")
 	var frame := board_rect.grow(13.0)
 	draw_rect(frame.grow(2.0), Color(accent.r, accent.g, accent.b, 0.035 + strength * 0.12), false, 2.0)
-	var label := "%d LINE%s!" % [clear_flash_count, "" if clear_flash_count == 1 else "S"]
-	if clear_flash_count >= 4:
-		label = "BUDDY BONUS!"
-	var label_size := 17 if clear_flash_count >= 4 else 14
-	var label_width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size).x
-	var label_position := Vector2((screen_size.x - label_width) * 0.5, board_rect.position.y - 18.0)
-	draw_string(font, label_position, label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color(accent.r, accent.g, accent.b, strength))
+	# Keep the celebration on the cabinet frame so it never covers the
+	# preview cards, active piece, or touch targets.
+	var edge_y := frame.position.y + 2.0
+	draw_line(Vector2(frame.position.x + 8.0, edge_y), Vector2(frame.end.x - 8.0, edge_y), Color(accent.r, accent.g, accent.b, strength * 0.72), 2.0)
 
 func _draw_block(rect: Rect2, color: Color) -> void:
 	draw_rect(rect, color.darkened(0.28))
