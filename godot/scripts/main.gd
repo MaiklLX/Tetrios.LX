@@ -72,7 +72,8 @@ func _layout() -> void:
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
-		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open()
+		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
+	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
 
 func _mode_select_layout(viewport: Vector2) -> Dictionary:
@@ -466,7 +467,8 @@ func _draw_backdrop() -> void:
 	draw_circle(glow_center, 3.0 + pulse * 1.5, Color(0.25, 0.82, 1.0, 0.16 + pulse * 0.12))
 
 func _draw_header() -> void:
-	_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
+	var title_size := 22 if screen_size.x < 420.0 else 36
+	_center_text("BLOCK BUDDIES", 62.0, title_size, Color("#f5f8ff"))
 	var mode_name := "БЛОК-РАН" if block_run_active else _mode_display_name("classic" if mode_session == null else mode_session.mode_id)
 	_center_text("АРКАДА • %s" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
