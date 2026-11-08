@@ -151,3 +151,16 @@
 - CI run `42463408749` (#143) on HEAD `6b8bd27f280ef2eabaf4ef0e90457535557af18a`: **SUCCESS** — import, parse, gameplay, migration, Block Run model/effects/board/session tests and scene smoke test all passed.
 - Session coordinator is not yet connected to `main.gd`; Block Run remains hidden and is not yet playable. Shield/Nova rescue, three live goals/rewards, hero abilities, draft/encounter HUD and run-end UI remain.
 - PR #77 remains Draft/open/unmerged. No main merge, deployment, APK build/release, persistence or physical-device test.
+
+
+## KT-471 — Three live Block Run goals and reward replacement
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Extended `block_run_session.gd` to create exactly three active goals at run start, using the four source goal families: lines, score, survive time and level.
+- Goal targets and rewards use the source formulas from `bbCreateRogueGoal()`: +3–6 lines, +400–1000 score, +15–35 seconds, +1–2 levels, and 10–25 coins.
+- Added live goal-state snapshots and completion events. A completed goal emits a single reward event and is immediately replaced in the same slot with a new goal based on current run progress.
+- Goal checks are routed after piece-lock score, line-clear score/progress and one-second timer updates. Reward totals remain run-local events; no persistent wallet or save storage is changed yet. The eventual scene/profile integration must consume each event once and credit the existing coin system exactly once.
+- Regression coverage: exactly three initial goals, unique active IDs, reward/target ranges, line-goal completion/replacement, survive-goal timer completion, score-goal completion, and existing combat/attack/Reserve/top-out behavior.
+- CI run `42467057040` on code HEAD `d4c230d3695c785bbc0c32d0298bf9d615535bdd`: **SUCCESS** — gameplay, migration, Block Run model/effects/board/session tests, real rendered screenshot capture, artifact upload and scene smoke test.
+- Real screenshot artifact: `block-buddies-visual-checks` (selector + Classic arena, 720×1280); available from GitHub Actions run `42467057040`.
+- Remaining: connect session to `main.gd` and the real board/piece lifecycle; wire exact Shield/Nova rescue mutations; then add hero skills, card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable until these are complete.
+- No main merge, deployment, APK build/release, persistence work or physical-device test.
