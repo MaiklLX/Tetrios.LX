@@ -193,8 +193,10 @@ func _run() -> void:
 		return
 	buddy_probe.free()
 
-	if not _check(mode_layout_probe._hero_display_name("plush") == "ПЛЮШ" and mode_layout_probe._hero_display_name("prism") == "ПРИЗМА" and mode_layout_probe._hero_display_name("blip") == "БЛИП" and mode_layout_probe._hero_display_name("pixel") == "ПИКСЕЛЬ" and mode_layout_probe._hero_display_name("spark") == "ИСКРА", "Block Run skill cards must use Russian hero names"):
+	var hero_label_probe = Main.new()
+	if not _check(hero_label_probe._hero_display_name("plush") == "ПЛЮШ" and hero_label_probe._hero_display_name("prism") == "ПРИЗМА" and hero_label_probe._hero_display_name("blip") == "БЛИП" and hero_label_probe._hero_display_name("pixel") == "ПИКСЕЛЬ" and hero_label_probe._hero_display_name("spark") == "ИСКРА", "Block Run skill cards must use Russian hero names"):
 		return
+	hero_label_probe.free()
 	var feedback_probe = Main.new()
 	feedback_probe.game = Model.new()
 	feedback_probe.game.reset()
