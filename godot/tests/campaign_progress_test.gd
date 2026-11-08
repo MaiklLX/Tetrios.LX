@@ -95,7 +95,7 @@ func _run() -> void:
 	var insufficient: Dictionary = progress.complete_planet(1, 6)
 	if not _check(not insufficient.accepted and insufficient.reason == "objective_not_met" and progress.unlocked_node == 1, "Incomplete objectives must not unlock the next planet"):
 		return
-	var completion: Dictionary = progress.complete_planet(1, 8, 0)
+	var completion: Dictionary = progress.complete_planet(1, 10, 0)
 	if not _check(completion.accepted and completion.reward_marks == 1 and progress.unlocked_node == 2, "First planet completion must award marks and unlock planet 002"):
 		return
 	if not _check(progress.get_planet_status(1) == "completed" and progress.get_planet_status(2) == "current", "Planet states must update after completion"):
