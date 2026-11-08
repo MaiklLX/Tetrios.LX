@@ -14,6 +14,7 @@ var mode_select_visible := true
 var mode_button_rect := Rect2()
 var classic_mode_rect := Rect2()
 var sprint_mode_rect := Rect2()
+var marathon_mode_rect := Rect2()
 var gravity_clock := 0.0
 var gravity_interval := 0.78
 var font: Font
@@ -54,7 +55,9 @@ func _layout() -> void:
 	mode_button_rect = Rect2(24.0, 42.0, 82.0, 42.0)
 	var mode_card_width := minf(300.0, screen_size.x - 48.0)
 	classic_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 92.0, mode_card_width, 92.0)
-	sprint_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 + 20.0, mode_card_width, 92.0)
+	sprint_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 36.0, mode_card_width, 82.0)
+	classic_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 128.0, mode_card_width, 82.0)
+	marathon_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 + 56.0, mode_card_width, 82.0)
 	if is_instance_valid(buddy):
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
@@ -112,6 +115,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				_select_mode("classic")
 			elif event.keycode == KEY_2:
 				_select_mode("sprint")
+			elif event.keycode == KEY_3:
+				_select_mode("marathon")
 			return
 		if event.keycode == KEY_M:
 			_open_mode_select()
@@ -195,6 +200,8 @@ func _handle_tap(point: Vector2) -> void:
 			_select_mode("classic")
 		elif sprint_mode_rect.has_point(point):
 			_select_mode("sprint")
+		elif marathon_mode_rect.has_point(point):
+			_select_mode("marathon")
 		queue_redraw()
 		return
 	if mode_button_rect.has_point(point):
@@ -324,7 +331,8 @@ func _draw_mode_select() -> void:
 	_center_text("PICK A RUN STYLE", screen_size.y * 0.5 - 120.0, 12, Color("#83a3bd"))
 	_draw_mode_card(classic_mode_rect, "1  •  CLASSIC", "Endless play. No line or time limit.", Color("#45d9f5"))
 	_draw_mode_card(sprint_mode_rect, "2  •  SPRINT", "Race to clear 40 lines.", Color("#f6d65b"))
-	_center_text("TAP A CARD  •  M TO CHANGE MODE", screen_size.y * 0.5 + 150.0, 12, Color("#72a6c8"))
+	_draw_mode_card(marathon_mode_rect, "3  •  MARATHON", "Long run. Clear 100 lines.", Color("#ff9b57"))
+	_center_text("TAP A CARD  •  1 / 2 / 3 TO SELECT", screen_size.y * 0.5 + 178.0, 12, Color("#72a6c8"))
 
 func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Color) -> void:
 	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.97))
@@ -333,8 +341,11 @@ func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Co
 	draw_string(font, rect.position + Vector2(18.0, 38.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#f4f8ff"))
 	draw_string(font, rect.position + Vector2(18.0, 66.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#9bb6ca"))
 
+func _is_line_objective_mode() -> bool:
+	return mode_session != null and int(mode_session.rules.get("target_lines", 0)) > 0
+
 func _sprint_progress_ratio() -> float:
-	if mode_session == null or mode_session.mode_id != "sprint":
+	if not _is_line_objective_mode():
 		return 0.0
 	var target := int(mode_session.rules.get("target_lines", 0))
 	if target <= 0:
@@ -351,10 +362,11 @@ func _draw_stats() -> void:
 	var top := 154.0
 	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(game.score), Color("#45d9f5"))
 	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 70)
-	if mode_session != null and mode_session.mode_id == "sprint":
+	if _is_line_objective_mode():
 		var target := int(mode_session.rules.get("target_lines", 40))
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
-		_stat_card(progress_rect, "SPRINT  •  " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
+		var mode_label := str(mode_session.rules.get("name", "MODE")).to_upper()
+		_stat_card(progress_rect, mode_label + "  •  " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
 		if _sprint_progress_ratio() > 0.0:
@@ -498,29 +510,31 @@ func _draw_mode_complete() -> void:
 	panel.position.x = maxf(20.0, panel.position.x)
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#f6d65b"))
-	_center_text("SPRINT COMPLETE", screen_size.y * 0.5 - 56.0, 27, Color("#f4f8ff"))
-	_center_text("40 LINES CLEARED", screen_size.y * 0.5 - 22.0, 16, Color("#45d9f5"))
+	var mode_name := str(mode_session.rules.get("name", "MODE")).to_upper()
+	var target := int(mode_session.rules.get("target_lines", game.lines))
+	_center_text(mode_name + " COMPLETE", screen_size.y * 0.5 - 56.0, 27, Color("#f4f8ff"))
+	_center_text("%d LINES CLEARED" % target, screen_size.y * 0.5 - 22.0, 16, Color("#45d9f5"))
 	_center_text("TIME  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
 	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
 	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
 func _game_over_title() -> String:
-	return "SPRINT FAILED" if mode_session != null and mode_session.mode_id == "sprint" else "RUN OVER"
+	return str(mode_session.rules.get("name", "MODE")).to_upper() + " FAILED" if _is_line_objective_mode() else "RUN OVER"
 
 func _game_over_progress_label() -> String:
-	if mode_session != null and mode_session.mode_id == "sprint":
+	if _is_line_objective_mode():
 		var target := int(mode_session.rules.get("target_lines", 40))
 		return "LINES  •  %d / %d" % [mini(game.lines, target), target]
 	return "LINES CLEARED  •  %d" % game.lines
 
 func _game_over_time_label() -> String:
-	if mode_session != null and mode_session.mode_id == "sprint":
+	if _is_line_objective_mode():
 		return "TIME  •  " + _format_elapsed_time(mode_session.elapsed_seconds)
 	return ""
 
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
-	var is_sprint := mode_session != null and mode_session.mode_id == "sprint"
+	var is_sprint := _is_line_objective_mode()
 	var panel_height := 320.0 if is_sprint else 284.0
 	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, panel_height * 0.5), Vector2(320.0, panel_height))
 	panel.position.x = maxf(20.0, panel.position.x)
