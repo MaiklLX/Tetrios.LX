@@ -251,3 +251,15 @@
 - Added a fourth graphical Godot capture `04-block-run-goals-hud.png` at 720×1280. The rendered screenshot was inspected: three goal meters, active synergy count, room/floor, enemy HP and attack countdown are visible together.
 - CI run [42475838582](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42475838582) on code HEAD `2fbde4a924003e6945959065ff570a23e0df8822`: **SUCCESS** — import, parse, Classic/migration, Block Run model/effects/board/session/bridge/live integration, graphical screenshot capture and scene smoke all passed.
 - Remaining before Block Run exposure: hero skill input/cooldown UI, exactly-once wallet reward settlement, run-end/results screen and full-run end-to-end QA. Mode remains hidden. Persistence stays deferred; no main merge, deployment, APK or physical-device test.
+
+
+## KT-480 — Block Run hero skill input and live cooldown HUD
+- Connected the existing five-hero skill model to the live Block Run scene through the validated board bridge. Activation synchronizes the live 10×23 board into the run session, applies the selected hero effect, syncs mutations back, and revalidates the falling piece; unsafe mutations fail closed.
+- Added a compact third preview slot for the active hero skill in Block Run only. It shows hero ID, locked state below level 5, ready state, or remaining cooldown; tap the slot or press Q to activate. Classic retains its original two preview cards and no new gameplay controls are added.
+- Added explicit configure_block_run_hero(hero_id, hero_level) input for the native profile layer. Current Godot prototype defaults to source-compatible Plush level 1 because native profile loading is not yet wired; no fake profile import or persistence change was introduced. Save/profile migration remains deferred.
+- Cooldown uses the existing 45-active-second session timer. Paused runs and open card drafts reject activation; cooldown advances only through active encounter seconds.
+- Added live integration coverage for all five heroes, level-4 lockout, activation, cooldown and expiry, repeated-use rejection, pause/draft guards, and preservation of the live 10×23 board.
+- Added graphical 720×1280 captures 05-block-run-hero-skill-ready.png and 06-block-run-hero-skill-cooldown.png. Both were inspected; the skill slot shows ready and 45-second cooldown states in the rendered scene.
+- CI run [42476376720](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476376720) on HEAD 9249867d82501355191ca5832c5ff176346e7979: **SUCCESS** — import, main parse, Classic/migration, all Block Run model/effect/board/session/bridge/live integration suites, graphical screenshot capture/upload and scene smoke test.
+- Remaining: bind hero configuration to the eventual native profile/selection flow, settle goal coin rewards exactly once into the existing wallet, add the run-end/results screen, and complete full-run end-to-end QA. Block Run remains internal/hidden.
+- No main merge, deployment, APK build/release, persistent storage change, user-data mutation or physical Android test. Save-system work remains deferred.
