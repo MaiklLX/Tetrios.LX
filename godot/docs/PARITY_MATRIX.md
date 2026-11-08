@@ -104,3 +104,17 @@ This is an inventory of observed keys, not a finalized native save schema. Befor
 ## Recovery phrase
 
 `BLOCK BUDDIES GODOT — KT-GODOT-002 initial audit. Legacy source baseline main@8fc2b889; board is 10×23; tetromino order I/T/J/L/O/S/Z; five Buddy IDs plush/prism/blip/pixel/spark. Continue source parity audit, preserve campaign/Block Run/daily boundaries, do not invent rules, do not touch main, do not build APK. Godot branch: godot/android-native-foundation-2026-11-05.`
+
+
+## 10. Detailed save audit addendum — KT-446
+
+The full key inventory, sampled data shapes, actual helper-expanded key names, alias/conflict hazards, reset-flow warning, proposed native profile/run split, migration precedence, atomic-write requirements and required migration fixtures are documented in [SAVE_MIGRATION_CONTRACT.md](SAVE_MIGRATION_CONTRACT.md).
+
+Important corrections/clarifications from the deeper source pass:
+- `bbGet('coins')` / `bbPut('coins', ...)` operate on actual key `bb_coins`; `coins` and `bbCoins` are separate raw aliases/mirrors and are not consistently synchronized by every reward path.
+- Per-hero campaign perks are stored under actual keys `bb_bbCampaignPerks_<heroId>` because the helper adds its own `bb_` prefix.
+- Campaign marks (`bbCampaignMarks`) and Block Run relics (`nrRelics`) are separate currencies.
+- Current daily quests, quest archive, challenge assignment/history/completion/replay markers and visit streak are separate records; importing them must never issue rewards.
+- KT-445 currently serializes an in-memory gameplay run only. It does not implement disk persistence or the durable profile described in the new contract.
+
+Status: **KT-446 source audit and proposed contract complete; implementation and migration fixtures pending.** No Web source, main branch, deployment, APK or user data was changed.
