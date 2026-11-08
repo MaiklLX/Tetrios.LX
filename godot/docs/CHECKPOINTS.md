@@ -218,3 +218,15 @@
 - Added regression coverage where Hold attempts a replacement spawn into a blocked top row; the collision reaches the encounter rescue/failure path even though no lock event occurred.
 - CI run [42473308354](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473308354) on code SHA `e941a3688c454fd5ddc2c5706b8c449012f47693`: **SUCCESS** — all Godot import/parse, Classic/migration/Block Run model, effect, board, session, bridge and live-loop tests, screenshot capture/upload and scene smoke test.
 - This closes the Hold event-order gap but does not yet prove a successful Shield/Nova rescue on a live top-out board. Block Run remains hidden and unplayable until full card/hero/goal UI and end-to-end rescue validation are complete.
+
+
+## KT-477 — source-matched Shield and live Nova rescue validation
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open/unmerged.
+- Re-audited the original Web top-out branch in `site/index.html`. Found a parity defect in the native Shield implementation: Web rebuilds the **entire** board after a Shield rescue, leaving only a sparse randomized bottom 3 rows (or 5 with Shield+Armor). Native code had only randomized the bottom zone and left the blocking top stack intact.
+- Fixed `block_run_session.gd` to clear the complete board first, then generate the source-defined randomized lower zone. This allows the active piece to resume after a genuine spawn collision and consumes the shield charge once.
+- Extended live gameplay integration tests through `main.gd` + bridge: a blocked spawn is rescued by Shield and by rank-1 Nova under a valid horizontal-I spawn geometry; both cases verify the live model resumes, the obstruction is removed and the corresponding rescue resource is consumed. Existing tests continue to cover Hold-triggered failure when no rescue is available, and attack overflow.
+- An initial Nova integration test used a multi-row random piece with a rank-1 one-row Nova clear and correctly failed the strict collision revalidation. The fixture was corrected to a horizontal I piece, matching the source-defined one-row clear geometry; the runtime rule was not weakened.
+- CI run [42473876259](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473876259) on code HEAD `5d19c2ff9f240578bfab1e588a5f5d7c0c77070f`: **SUCCESS** — import, main parse, Classic and migration tests, all Block Run model/effects/board/session/bridge/live integration suites, rendered screenshot capture/upload and scene smoke test.
+- Screenshot artifact `block-buddies-visual-checks` (720×1280) contains existing mode selector + Classic arena. It confirms existing scenes still render; it is not a Block Run screenshot. Physical Android remains untested.
+- Block Run is still internal/hidden. Remaining: full hero skill input/UI wiring, card draft UI, encounter + three-goal HUD, one-time reward settlement to the existing wallet, run-end/result screen, and end-to-end playtesting of the full run loop. Persistent saves remain deferred by priority.
+- No main merge, deployment, APK build/release or user-data mutation.
