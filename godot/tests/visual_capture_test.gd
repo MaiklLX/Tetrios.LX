@@ -16,8 +16,8 @@ func _assert_mobile_arena_spacing(scene: Node, viewport_size: Vector2i, label: S
 		if skill.size.x <= 0.0 or skill.position.x < 0.0 or skill.end.x > float(viewport_size.x) or skill.position.y < 0.0 or skill.end.y > frame_top:
 			push_error("%s: hero skill card leaves the screen or touches the board frame (skill=%s)." % [label, str(skill)])
 			return false
-		# Keep this assertion aligned with the 28px goal strip and 72px preview row.
-		var goals_bottom := board.position.y - 120.0 + 28.0
+		# Keep this assertion aligned with the 28px goal strip and the shifted 72px preview row.
+		var goals_bottom := board.position.y - 116.0 + 28.0
 		if hold.position.y < goals_bottom + 3.0:
 			push_error("%s: goal strip and preview row overlap (goals_bottom=%s hold_top=%s)." % [label, str(goals_bottom), str(hold.position.y)])
 			return false
