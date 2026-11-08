@@ -4,6 +4,7 @@ extends RefCounted
 const Encounter = preload("res://scripts/block_run_model.gd")
 const Effects = preload("res://scripts/block_run_effects.gd")
 const Board = preload("res://scripts/block_run_board.gd")
+const GOAL_TYPES: Array[String] = ["lines", "score", "survive", "level"]
 
 const STATUS_RUNNING := "running"
 const STATUS_FAILED := "failed"
@@ -22,6 +23,9 @@ var placement_count := 0
 var hold_used := 0
 var shield_charges := 0
 var nova_used := false
+var goals: Array[Dictionary] = []
+var next_goal_id := 0
+var goal_rewards_earned := 0
 
 func start() -> void:
 	encounter = Encounter.new()
@@ -39,6 +43,11 @@ func start() -> void:
 	hold_used = 0
 	shield_charges = 0
 	nova_used = false
+	goals.clear()
+	next_goal_id = 0
+	goal_rewards_earned = 0
+	for goal_index in range(3):
+		goals.append(_create_goal())
 
 func _empty_board() -> Array:
 	var result: Array = []
@@ -47,6 +56,61 @@ func _empty_board() -> Array:
 		row.resize(Board.WIDTH)
 		row.fill(Board.EMPTY)
 		result.append(row)
+	return result
+
+func _create_goal() -> Dictionary:
+	var goal_type := GOAL_TYPES[randi_range(0, GOAL_TYPES.size() - 1)]
+	var goal := encounter.create_goal(
+		goal_type,
+		total_lines,
+		score,
+		run_seconds,
+		1 + int(level_charge / maxi(1, need_lines)),
+		randi_range(0, 600),
+		randi_range(0, 1000),
+		next_goal_id
+	)
+	next_goal_id += 1
+	return goal
+
+func _goal_value(goal: Dictionary) -> int:
+	match str(goal.get("type", "")):
+		"lines":
+			return total_lines
+		"score":
+			return score
+		"survive":
+			return run_seconds
+		"level":
+			return 1 + int(level_charge / maxi(1, need_lines))
+	return 0
+
+func _settle_completed_goals() -> Array[Dictionary]:
+	var events: Array[Dictionary] = []
+	for index in range(goals.size()):
+		var goal := goals[index]
+		if bool(goal.get("claimed", false)) or _goal_value(goal) < int(goal.get("target", 0)):
+			continue
+		var completed := goal.duplicate(true)
+		completed["claimed"] = true
+		var reward := int(completed.get("reward", 0))
+		goal_rewards_earned += reward
+		var replacement := _create_goal()
+		goals[index] = replacement
+		events.append({
+			"completed": completed,
+			"reward": reward,
+			"replacement": replacement.duplicate(true)
+		})
+	return events
+
+func goal_states() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for goal in goals:
+		var state := goal.duplicate(true)
+		state["value"] = _goal_value(goal)
+		state["complete"] = _goal_value(goal) >= int(goal.get("target", 0))
+		result.append(state)
 	return result
 
 func choose_card(card_id: String) -> bool:
@@ -62,15 +126,21 @@ func choose_card(card_id: String) -> bool:
 
 func on_piece_locked() -> Dictionary:
 	if status != STATUS_RUNNING:
-		return {"accepted":false,"score_bonus":0}
+		return {"accepted":false,"score_bonus":0,"goal_events":[]}
 	placement_count += 1
 	var result := Effects.on_piece_locked(encounter.card_ranks, placement_count)
 	score += int(result.score_bonus)
-	return {"accepted":true,"score_bonus":int(result.score_bonus),"hold_limit":int(result.hold_limit)}
+	var goal_events := _settle_completed_goals()
+	return {
+		"accepted":true,
+		"score_bonus":int(result.score_bonus),
+		"hold_limit":int(result.hold_limit),
+		"goal_events":goal_events
+	}
 
 func on_line_clear(cleared: int, combo_after_clear: int, level: int) -> Dictionary:
 	if status != STATUS_RUNNING or cleared <= 0:
-		return {"accepted":false,"defeated":false,"score":0,"monster_damage":0}
+		return {"accepted":false,"defeated":false,"score":0,"monster_damage":0,"goal_events":[]}
 	var next_total := total_lines + cleared
 	var result := Effects.on_line_clear(
 		encounter.card_ranks,
@@ -91,6 +161,7 @@ func on_line_clear(cleared: int, combo_after_clear: int, level: int) -> Dictiona
 		var rift_rows := int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear)
 		var clear_result := Board.clear_bottom_rows(board, rift_rows)
 		rows_cleared = int(clear_result.cleared)
+	var goal_events := _settle_completed_goals()
 	return {
 		"accepted":true,
 		"score":int(result.score),
@@ -104,19 +175,27 @@ func on_line_clear(cleared: int, combo_after_clear: int, level: int) -> Dictiona
 		"level_charge":int(result.level_charge),
 		"relics_added":int(result.relics_added),
 		"flash":bool(result.flash),
-		"reset_drop":bool(result.reset_drop)
+		"reset_drop":bool(result.reset_drop),
+		"goal_events":goal_events
 	}
 
 func advance_second() -> Dictionary:
 	if status != STATUS_RUNNING:
-		return {"accepted":false,"attack":false,"failed":status == STATUS_FAILED}
+		return {"accepted":false,"attack":false,"failed":status == STATUS_FAILED,"goal_events":[]}
 	run_seconds += 1
 	var timer_effect := Effects.on_timer_second(encounter.card_ranks, run_seconds)
 	score += int(timer_effect.score_bonus)
 	level_charge += int(timer_effect.level_charge)
+	var goal_events := _settle_completed_goals()
 	encounter.next_attack_seconds -= 1
 	if encounter.next_attack_seconds > 0:
-		return {"accepted":true,"attack":false,"score_bonus":int(timer_effect.score_bonus),"level_charge":int(timer_effect.level_charge)}
+		return {
+			"accepted":true,
+			"attack":false,
+			"score_bonus":int(timer_effect.score_bonus),
+			"level_charge":int(timer_effect.level_charge),
+			"goal_events":goal_events
+		}
 	var attack := encounter.resolve_enemy_attack()
 	var insertion := {"valid":true,"overflow":false,"inserted":0}
 	if not bool(attack.absorbed):
@@ -132,7 +211,8 @@ func advance_second() -> Dictionary:
 		"overflow":bool(insertion.overflow),
 		"failed":status == STATUS_FAILED,
 		"score_bonus":int(timer_effect.score_bonus),
-		"level_charge":int(timer_effect.level_charge)
+		"level_charge":int(timer_effect.level_charge),
+		"goal_events":goal_events
 	}
 
 func add_relics(amount: int) -> void:
