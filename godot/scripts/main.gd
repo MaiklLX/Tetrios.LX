@@ -341,13 +341,20 @@ func _sprint_progress_ratio() -> float:
 		return 0.0
 	return clampf(float(game.lines) / float(target), 0.0, 1.0)
 
+func _format_elapsed_time(total_seconds: float) -> String:
+	var safe_seconds := maxi(0, floori(total_seconds))
+	var minutes := safe_seconds / 60
+	var seconds := safe_seconds % 60
+	return "%02d:%02d" % [minutes, seconds]
+
 func _draw_stats() -> void:
 	var top := 154.0
 	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(game.score), Color("#45d9f5"))
 	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 70)
 	if mode_session != null and mode_session.mode_id == "sprint":
 		var target := int(mode_session.rules.get("target_lines", 40))
-		_stat_card(progress_rect, "SPRINT  •  LINES", "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
+		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
+		_stat_card(progress_rect, "SPRINT  •  " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
 		if _sprint_progress_ratio() > 0.0:
@@ -492,8 +499,9 @@ func _draw_mode_complete() -> void:
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#f6d65b"))
 	_center_text("SPRINT COMPLETE", screen_size.y * 0.5 - 56.0, 27, Color("#f4f8ff"))
-	_center_text("40 LINES CLEARED", screen_size.y * 0.5 - 12.0, 16, Color("#45d9f5"))
-	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 28.0, 17, Color("#c0d3e2"))
+	_center_text("40 LINES CLEARED", screen_size.y * 0.5 - 22.0, 16, Color("#45d9f5"))
+	_center_text("TIME  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
+	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
 	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
 func _draw_game_over() -> void:
