@@ -70,7 +70,7 @@ func _layout() -> void:
 	marathon_mode_rect = mode_layout.marathon
 	if is_instance_valid(buddy):
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
-		buddy.scale = Vector2.ONE * buddy_layout.scale
+		buddy.scale = Vector2.ONE * buddy_layout.scale * 1.28
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
 		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
@@ -689,23 +689,28 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
 func _draw_board() -> void:
 	var frame := board_rect.grow(13)
-	_draw_soft_panel(frame.grow(3), Color("#103d83"), Color("#7ddfff"), 24, 16)
-	_draw_soft_panel(board_rect.grow(3), Color("#08275a"), Color("#4eaaff"), 15, 7)
+	_draw_soft_panel(frame.grow(3), Color("#103d83"), Color("#9aeaff"), 24, 18)
+	_draw_soft_panel(board_rect.grow(3), Color("#071b45"), Color("#4eaaff"), 15, 8)
 	var cell := board_rect.size.x / BOARD_W
 	for y in range(BOARD_H):
 		for x in range(BOARD_W):
-			var rect := Rect2(board_rect.position + Vector2(x, y) * cell, Vector2.ONE * cell).grow(-1.4)
-			_draw_soft_panel(rect, Color("#0d3470"), Color("#2c69a5"), 5, 0)
+			var rect := Rect2(board_rect.position + Vector2(x, y) * cell, Vector2.ONE * cell).grow(-1.0)
+			var empty_style := StyleBoxFlat.new()
+			empty_style.bg_color = Color("#081b40")
+			empty_style.set_corner_radius_all(4)
+			empty_style.set_border_width_all(1)
+			empty_style.border_color = Color("#174276")
+			draw_style_box(empty_style, rect)
 			var tile: int = game.grid[y][x]
 			if tile >= 0:
 				var tile_color: Color = Color("#aebbd1") if tile == 7 else BlockBuddiesModel.PALETTE[tile]
-				_draw_block(rect.grow(-0.3), tile_color)
+				_draw_block(rect.grow(-0.5), tile_color)
 	var ghost := game.ghost_origin()
 	for cell_pos in game.active_cells:
 		var p: Vector2i = ghost + cell_pos
 		if p.y >= 0:
 			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-2.0)
-			_draw_soft_panel(rect, Color(0.55, 0.83, 1.0, 0.13), Color(0.65, 0.91, 1.0, 0.38), 6, 0)
+			_draw_soft_panel(rect, Color(0.55, 0.83, 1.0, 0.10), Color(0.65, 0.91, 1.0, 0.24), 6, 0)
 	for cell_pos in game.active_cells:
 		var p: Vector2i = game.origin + cell_pos
 		if p.y >= 0:
@@ -759,46 +764,46 @@ func _draw_block_run_draft() -> void:
 	var panel_width := minf(620.0, screen_size.x - 28.0)
 	var panel_height := minf(620.0, screen_size.y - 36.0)
 	var panel := Rect2(Vector2((screen_size.x - panel_width) * 0.5, (screen_size.y - panel_height) * 0.5), Vector2(panel_width, panel_height))
-	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.005, 0.012, 0.025, 0.88))
-	_draw_overlay_panel(panel, Color("#45d9f5"))
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.02, 0.08, 0.22, 0.78))
+	_draw_overlay_panel(panel, Color("#ffd05a"))
 	var title_y := panel.position.y + 52.0
-	var title := "ЭВОЛЮЦИЯ КАРТ"
+	var title := "ВЫБЕРИ УСИЛЕНИЕ!"
 	var title_width := font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, 24).x
-	draw_string(font, Vector2(panel.get_center().x - title_width * 0.5, title_y), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("#f4f8ff"))
-	var subtitle := "УРОВЕНЬ %d  •  ВЫБЕРИ ОДНО УСИЛЕНИЕ" % block_run_session.level
+	draw_string(font, Vector2(panel.get_center().x - title_width * 0.5, title_y), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("#fff2bd"))
+	var subtitle := "УРОВЕНЬ %d  •  ОДНА КАРТА ДЛЯ ТВОЕГО ЗАБЕГА" % block_run_session.level
 	var subtitle_width := font.get_string_size(subtitle, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x
-	draw_string(font, Vector2(panel.get_center().x - subtitle_width * 0.5, title_y + 25.0), subtitle, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#83a3bd"))
+	draw_string(font, Vector2(panel.get_center().x - subtitle_width * 0.5, title_y + 25.0), subtitle, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#d5eeff"))
 	block_run_draft_rects.clear()
 	var gap := 10.0
 	var card_top := title_y + 48.0
 	var bottom_margin := 28.0
 	var card_height := minf(132.0, (panel.end.y - bottom_margin - card_top - gap * 2.0) / 3.0)
+	var accents := [Color("#44d9ff"), Color("#ffca52"), Color("#ff8ab5")]
+	var fills := [Color("#1455a6"), Color("#885019"), Color("#773f9c")]
 	for index in range(mini(3, cards.size())):
 		var card: Dictionary = cards[index]
 		var rect := Rect2(panel.position.x + 14.0, card_top + index * (card_height + gap), panel_width - 28.0, card_height)
 		block_run_draft_rects.append(rect)
-		draw_rect(rect, Color("#0b1d31"))
-		draw_rect(Rect2(rect.position, Vector2(4.0, rect.size.y)), Color("#45d9f5"))
-		draw_rect(rect, Color(0.24, 0.55, 0.72, 0.72), false, 1.0)
+		_draw_soft_panel(rect, fills[index], accents[index], 19, 9)
+		draw_circle(rect.position + Vector2(30.0, 34.0), 19.0, Color(1, 1, 1, 0.14))
 		var icon_text := str(card.get("icon", "✦"))
-		draw_string(font, rect.position + Vector2(16.0, 36.0), icon_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 25, Color("#70e9ff"))
+		draw_string(font, rect.position + Vector2(16.0, 42.0), icon_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color("#fff3c5"))
 		var card_id := str(card.get("id", ""))
 		var current_rank := block_run_session.encounter.get_card_rank(card_id)
 		var next_rank := mini(5, current_rank + 1)
 		var card_title := str(card.get("name", card_id))
 		var title_size := 16 if panel_width > 400.0 else 13
-		draw_string(font, rect.position + Vector2(58.0, 29.0), card_title, HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#f4f8ff"))
+		draw_string(font, rect.position + Vector2(58.0, 29.0), card_title, HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#ffffff"))
 		var description := block_run_session.encounter.get_card_effect_description(card_id, next_rank)
 		if description.is_empty():
 			description = str(card.get("description", "Усиление карты"))
-		draw_string(font, rect.position + Vector2(58.0, 54.0), description.left(58), HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#a9c3d8"))
+		draw_string(font, rect.position + Vector2(58.0, 54.0), description.left(58), HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#f0f5ff"))
 		var rank_label := "НОВАЯ КАРТА" if current_rank == 0 else "РАНГ %d  →  %d ★" % [current_rank, next_rank]
-		draw_string(font, rect.position + Vector2(58.0, 78.0), rank_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f6d65b"))
-		draw_string(font, rect.end - Vector2(28.0, 18.0), str(index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#45d9f5"))
+		draw_string(font, rect.position + Vector2(58.0, 78.0), rank_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#fff0a8"))
+		draw_string(font, rect.end - Vector2(28.0, 18.0), str(index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#ffffff"))
 	var hint := "НАЖМИ НА КАРТУ  •  КЛАВИШИ 1 / 2 / 3"
 	var hint_width := font.get_string_size(hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x
-	draw_string(font, Vector2(panel.get_center().x - hint_width * 0.5, panel.end.y - 10.0), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#83a3bd"))
-
+	draw_string(font, Vector2(panel.get_center().x - hint_width * 0.5, panel.end.y - 10.0), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d5eeff"))
 func _draw_pause_overlay() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
 	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, 128.0), Vector2(320.0, 256.0))
