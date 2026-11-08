@@ -170,6 +170,7 @@ func _run() -> void:
 	menu_probe._handle_tap(Vector2(60.0, 140.0))
 	# Replace the test hitbox with the Marathon card to verify the third route.
 	menu_probe.marathon_mode_rect = Rect2(0.0, 200.0, 120.0, 80.0)
+	menu_probe.mode_select_visible = true
 	menu_probe._handle_tap(Vector2(60.0, 240.0))
 	if not _check(not menu_probe.mode_select_visible and menu_probe.mode_session.mode_id == "marathon" and menu_probe.mode_session.is_running(), "Marathon card tap should launch a Marathon session"):
 		return
