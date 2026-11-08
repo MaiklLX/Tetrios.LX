@@ -69,6 +69,7 @@ func _run() -> void:
 	mode_main.game.reset()
 	mode_main.mode_session = ModeSession.new()
 	mode_main.mode_session.start("sprint")
+	mode_main.mode_select_visible = false
 	mode_main.buddy = Buddy.new()
 	mode_main.game.lines = 40
 	mode_main._sync_buddy_state()
@@ -84,6 +85,22 @@ func _run() -> void:
 	if not _check(mode_main.mode_session.status == ModeSession.STATUS_RUNNING and mode_main.game.lines == 0, "Tap after Sprint completion should restart the same mode cleanly"):
 		return
 	mode_main.free()
+
+	# Mode selection screen starts the selected ruleset through a real tap target.
+	var menu_probe = Main.new()
+	menu_probe.game = Model.new()
+	menu_probe.game.reset()
+	menu_probe.mode_session = ModeSession.new()
+	menu_probe.mode_select_visible = true
+	menu_probe.classic_mode_rect = Rect2(0.0, 0.0, 120.0, 80.0)
+	menu_probe.sprint_mode_rect = Rect2(0.0, 100.0, 120.0, 80.0)
+	menu_probe._handle_tap(Vector2(60.0, 140.0))
+	if not _check(not menu_probe.mode_select_visible and menu_probe.mode_session.mode_id == "sprint" and menu_probe.mode_session.is_running(), "Sprint card tap should launch a Sprint session"):
+		return
+	menu_probe._open_mode_select()
+	if not _check(menu_probe.mode_select_visible and not menu_probe.mode_session.is_running(), "Opening mode selection should pause the active session without advancing it"):
+		return
+	menu_probe.free()
 
 	# Buddy reactions are stateful, bounded, and return to idle cleanly.
 	var buddy_probe = Buddy.new()
