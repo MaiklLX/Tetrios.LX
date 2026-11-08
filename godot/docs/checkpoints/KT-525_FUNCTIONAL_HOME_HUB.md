@@ -4,7 +4,9 @@ Status: implementation committed to the existing Godot development branch. Draft
 
 ## Delivered
 - App startup now opens a dedicated Block Buddies home hub instead of dropping directly into the three-mode selector.
-- Home hub includes distinct hit targets for Cosmic Campaign, Block Run, Daily Tasks, Heroes and Shop.
+- Home hub includes distinct hit targets for Cosmic Campaign, Block Run, Daily Tasks, Heroes, Shop and Upgrades.
+- The Buddy companion is hidden on menu/section screens so it cannot overlap home-card labels.
+- Gameplay gravity, mode timers and Block Run clock are suspended while Home or a secondary section is visible.
 - Campaign and Block Run routes enter the existing Classic / Sprint / Marathon selector.
 - The mode selector now has an explicit return-to-home target.
 - Heroes, Shop and Daily Tasks open separate in-app section screens with a clear Home return target. These are intentional staged section shells, not fake purchase or progression flows.
@@ -13,7 +15,7 @@ Status: implementation committed to the existing Godot development branch. Draft
 ## Validation added
 - Integration coverage for Home → mode selector → Home.
 - Integration coverage for Home → Daily Tasks → Home.
-- Integration coverage for Heroes and Shop navigation.
+- Integration coverage for Heroes, Shop and Upgrades navigation.
 - Existing gameplay/model and visual capture suites remain the required CI gate.
 
 ## Scope / safety
