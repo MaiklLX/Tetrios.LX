@@ -257,6 +257,13 @@ func _run() -> void:
 			return
 		if not _check(responsive_board.position.x >= 31.9 and responsive_board.end.x <= viewport_size.x - 31.9, "Board must remain horizontally centered with side gutters"):
 			return
+		var responsive_drop: Rect2 = layout_probe._drop_button_layout(viewport_size, responsive_board)
+		if not _check(responsive_drop.size.x >= 42.0 and responsive_drop.size.y >= 52.0, "Drop control must remain a usable touch target on every portrait viewport"):
+			return
+		if not _check(responsive_drop.position.x >= responsive_board.end.x + 5.0 and responsive_drop.end.x <= viewport_size.x - 7.0 and not responsive_drop.intersects(responsive_board), "Drop control must stay in the right gutter without covering the board"):
+			return
+		if not _check(responsive_drop.position.y >= responsive_board.position.y and responsive_drop.end.y <= responsive_board.end.y - 5.0, "Drop control must stay within the board's vertical span and safe margins"):
+			return
 	layout_probe.game = Model.new()
 	layout_probe.game.reset()
 	layout_probe.pause_rect = Rect2(10.0, 10.0, 50.0, 50.0)
