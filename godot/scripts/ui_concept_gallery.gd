@@ -423,25 +423,54 @@ func _hero_portrait(center: Vector2, hero: int, scale := 1.0) -> void:
 
 func _draw_campaign() -> void:
 	_center("КОСМИЧЕСКИЙ АТЛАС", 150, 30, GOLD)
-	_center("Исследуй вселенные и открывай новые миры", 183, 14, PALE)
+	_center("Три вселенные • новые миры ждут открытия", 183, 14, PALE)
+	# Atlas route overview: each universe is a chapter with a distinct identity.
 	var titles := ["ТУМАННОСТЬ ИСКР", "КРИСТАЛЬНАЯ ВСЕЛЕННАЯ", "ТЕНЕВОЙ РУБЕЖ"]
-	var subtitles := ["Зелёные луны • 3 планеты", "Мир сияющих осколков", "Неизведанный сектор"]
-	var colors := [Color("#1c78a9"), Color("#624b9f"), Color("#773e75")]
+	var subtitles := ["Домашний сектор • первые открытия", "Мир сияющих осколков", "Неизведанная граница галактики"]
+	var colors := [Color("#145b8d"), Color("#58418f"), Color("#65385f")]
 	var accents := [CYAN, VIOLET, PINK]
+	var planet_colors := [[Color("#65d9ff"),Color("#91e6ad"),Color("#e6c56b")],[Color("#c7a2ff"),Color("#71dfff"),Color("#ff9ec9")],[Color("#ff8fbd"),Color("#9b9cff"),Color("#a7c2db")]]
 	for i in range(3):
-		var y := 225.0 + i * 260.0
-		_panel(Rect2(30, y, viewport_size.x - 60, 224), colors[i], accents[i], 26)
-		draw_circle(Vector2(130, y+92), 66, Color(0.3,0.8,1,0.16))
-		draw_circle(Vector2(130, y+92), 43, Color(0.7,0.5,1,0.22))
-		draw_circle(Vector2(130, y+92), 23, accents[i])
-		for p in range(3):
-			var a := TAU * float(p) / 3.0 + 0.6
-			var planet := Vector2(130, y+92) + Vector2(cos(a),sin(a))*78
-			draw_circle(planet, 10 + p*2, [CYAN,GOLD,PINK][p])
-		_text(titles[i], Vector2(225, y+70), 17, WHITE)
-		_text(subtitles[i], Vector2(225, y+99), 12, PALE)
-		_text("ПРОГРЕСС  %d / 3 ПЛАНЕТЫ" % (i+1), Vector2(225, y+132), 11, GOLD)
-		_button(Rect2(225, y+150, 190, 43), "ОТКРЫТЬ ВСЕЛЕННУЮ", Color("#0878d6"), accents[i], 12)
+		var y := 218.0 + i * 278.0
+		var rect := Rect2(30, y, viewport_size.x - 60, 246)
+		_panel(rect, colors[i], accents[i], 24)
+		# Planetary system illustration with orbit rings and a central world.
+		var origin := Vector2(145, y + 108)
+		draw_circle(origin, 72, Color(0.35,0.78,1.0,0.10))
+		draw_arc(origin, 60, -0.25, TAU-0.25, 64, Color(0.75,0.9,1.0,0.48), 2, true)
+		draw_arc(origin, 43, 0.8, TAU+0.8, 64, Color(1,1,1,0.22), 1.5, true)
+		draw_circle(origin, 30, planet_colors[i][0])
+		draw_circle(origin + Vector2(-9,-8), 9, Color(1,1,1,0.25))
+		draw_arc(origin + Vector2(0,2), 29, 0.2, 2.6, 32, Color(0.05,0.2,0.48,0.45), 4, true)
+		for planet in range(3):
+			var angle := -PI/2 + float(planet) * TAU/3.0 + float(i)*0.24
+			var orbit_pos := origin + Vector2(cos(angle), sin(angle)) * (58.0 if planet != 1 else 75.0)
+			draw_circle(orbit_pos, 10 + planet*2, planet_colors[i][planet])
+			draw_circle(orbit_pos + Vector2(-3,-3), 3, Color(1,1,1,0.55))
+		_text(titles[i], Vector2(245, y+58), 17, WHITE)
+		_text(subtitles[i], Vector2(245, y+83), 11, PALE)
+		var discovered := 3 if i == 0 else (1 if i == 1 else 0)
+		_text("ОТКРЫТО  %d / 3 ПЛАНЕТЫ" % discovered, Vector2(245, y+119), 12, GOLD)
+		var bar := Rect2(245, y+132, viewport_size.x-315, 7)
+		draw_rect(bar, Color("#18355f"))
+		draw_rect(Rect2(bar.position, Vector2(bar.size.x*float(discovered)/3.0,bar.size.y)), accents[i])
+		# Three planet stops show the route and locked/unlocked state.
+		for planet in range(3):
+			var px := 265.0 + planet * 112.0
+			var py := y + 184
+			if planet > 0:
+				draw_line(Vector2(px-28,py),Vector2(px-8,py),Color("#8bbce5"),3)
+			var unlocked := planet < discovered
+			draw_circle(Vector2(px,py), 13, planet_colors[i][planet] if unlocked else Color("#31466b"))
+			draw_arc(Vector2(px,py), 14, 0, TAU, 32, accents[i] if unlocked else Color("#7184a6"), 2, true)
+			if unlocked:
+				draw_circle(Vector2(px,py), 4, WHITE)
+			else:
+				draw_rect(Rect2(px-4,py-1,8,7), Color("#9aacc7"))
+				draw_arc(Vector2(px,py-4), 5, PI, TAU, 16, Color("#9aacc7"), 2, true)
+		_text("МИР %d" % (planet+1), Vector2(px-17, y+222), 9, PALE)
+		if i == 0:
+			_text("ТЕКУЩАЯ ВСЕЛЕННАЯ", Vector2(viewport_size.x-235, y+32), 10, GOLD)
 	_draw_bottom_nav("ИГРАТЬ")
 
 func _draw_daily() -> void:
