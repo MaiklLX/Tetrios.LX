@@ -334,7 +334,6 @@ func _run() -> void:
 		return
 	if not _check(layout_probe._game_over_progress_label() == "ЛИНИИ  •  37 / 40", "Sprint failure must show achieved lines against the target"):
 		return
-	print("KT486_SPRINT_TIME_LABEL=", layout_probe._game_over_time_label(), " elapsed=", layout_probe.mode_session.elapsed_seconds, " formatted=", layout_probe._format_elapsed_time(layout_probe.mode_session.elapsed_seconds))
 	if not _check(layout_probe._game_over_time_label() == "ВРЕМЯ  •  01:23", "Sprint failure must show the elapsed run time"):
 		return
 	layout_probe.mode_session.start("marathon")
