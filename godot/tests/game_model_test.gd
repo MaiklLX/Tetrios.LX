@@ -199,7 +199,7 @@ func _run() -> void:
 		return
 	if not _check(progression_model.level == 2, "Every ten cleared lines must advance the level"):
 		return
-	if not _check(progression_model.score == 1000, "Single-line scoring must remain consistent through the level transition"):
+	if not _check(progression_model.score == 1440, "Line-clear and hard-drop scoring must remain consistent through the level transition"):
 		return
 	progression_model.reset()
 	if not _check(progression_model.lines == 0 and progression_model.level == 1 and progression_model.score == 0, "Restart must reset run score, lines, and level"):
