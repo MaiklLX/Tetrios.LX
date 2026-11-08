@@ -530,9 +530,9 @@ func _draw_stats() -> void:
 	if block_run_active and block_run_session != null:
 		var encounter = block_run_session.encounter
 		var room_label := "БОСС" if encounter.boss else "КОМНАТА"
-		var attack_label := "ATK IN %ds" % encounter.next_attack_seconds
-		var encounter_label := "%s %d  •  F%d  •  %s" % [room_label, encounter.room, encounter.floor, attack_label]
-		_stat_card(progress_rect, encounter_label, "HP %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
+		var attack_label := "УДАР %dС" % encounter.next_attack_seconds
+		var encounter_label := "К%d • Э%d • %s" % [encounter.room, encounter.floor, attack_label]
+		_stat_card(progress_rect, encounter_label, "ВР %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
 		var hp_ratio := clampf(float(encounter.enemy_hp) / float(maxi(1, encounter.enemy_max_hp)), 0.0, 1.0)
 		var hp_track := Rect2(progress_rect.position + Vector2(14.0, 51.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(hp_track, Color(0.12, 0.19, 0.27, 1.0))
@@ -541,7 +541,7 @@ func _draw_stats() -> void:
 	elif _is_line_objective_mode():
 		var target := int(mode_session.rules.get("target_lines", 40))
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
-		var mode_label := str(mode_session.rules.get("name", "MODE")).to_upper()
+		var mode_label := _mode_display_name(mode_session.mode_id)
 		_stat_card(progress_rect, mode_label + "  •  " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(14.0, 51.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
@@ -808,12 +808,12 @@ func _draw_mode_complete() -> void:
 	panel.position.x = maxf(20.0, panel.position.x)
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#f6d65b"))
-	var mode_name := str(mode_session.rules.get("name", "MODE")).to_upper()
+	var mode_name := _mode_display_name(mode_session.mode_id)
 	var target := int(mode_session.rules.get("target_lines", game.lines))
-	_center_text(mode_name + " COMPLETE", screen_size.y * 0.5 - 56.0, 27, Color("#f4f8ff"))
-	_center_text("%d LINES CLEARED" % target, screen_size.y * 0.5 - 22.0, 16, Color("#45d9f5"))
+	_center_text(mode_name + " • ВЫПОЛНЕНО", screen_size.y * 0.5 - 56.0, 23, Color("#f4f8ff"))
+	_center_text("ОЧИЩЕНО ЛИНИЙ • %d" % target, screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
 	_center_text("ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
-	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
+	_center_text("ОЧКИ  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
 	_center_text("НАЖМИ, ЧТОБЫ СЫГРАТЬ ЕЩЁ", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
 func _game_over_title() -> String:
@@ -822,12 +822,12 @@ func _game_over_title() -> String:
 func _game_over_progress_label() -> String:
 	if _is_line_objective_mode():
 		var target := int(mode_session.rules.get("target_lines", 40))
-		return "LINES  •  %d / %d" % [mini(game.lines, target), target]
-	return "LINES CLEARED  •  %d" % game.lines
+		return "ЛИНИИ  •  %d / %d" % [mini(game.lines, target), target]
+	return "ОЧИЩЕНО ЛИНИЙ  •  %d" % game.lines
 
 func _game_over_time_label() -> String:
 	if _is_line_objective_mode():
-		return "TIME  •  " + _format_elapsed_time(mode_session.elapsed_seconds)
+		return "ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds)
 	return ""
 
 func _draw_game_over() -> void:
@@ -845,8 +845,8 @@ func _draw_game_over() -> void:
 		_center_text(_game_over_title(), screen_size.y * 0.5 - 88.0, 29, Color("#f4f8ff"))
 		_center_text(_game_over_progress_label(), screen_size.y * 0.5 - 44.0, 16, Color("#c0d3e2"))
 		_center_text(_game_over_time_label(), screen_size.y * 0.5 - 8.0, 16, Color("#f6d65b"))
-		_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 30.0, 20, Color("#45d9f5"))
-		_center_text("ONE MORE RUN?", screen_size.y * 0.5 + 91.0, 13, Color("#ffb477"))
+		_center_text("ОЧКИ  •  %d" % game.score, screen_size.y * 0.5 + 30.0, 20, Color("#45d9f5"))
+		_center_text("ЕЩЁ ОДИН ЗАБЕГ?", screen_size.y * 0.5 + 91.0, 13, Color("#ffb477"))
 	else:
 		_center_text(_game_over_title(), screen_size.y * 0.5 - 70.0, 34, Color("#f4f8ff"))
 		_center_text("ОЧКИ", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
@@ -861,7 +861,7 @@ func _draw_block_run_results() -> void:
 	var panel := Rect2(Vector2((screen_size.x - panel_width) * 0.5, (screen_size.y - panel_height) * 0.5), Vector2(panel_width, panel_height))
 	_draw_overlay_panel(panel, Color("#ff9b57"))
 	var session := block_run_session
-	var room_text := "ROOM %d  •  FLOOR %d" % [session.encounter.room, session.encounter.floor]
+	var room_text := "КОМНАТА %d  •  ЭТАЖ %d" % [session.encounter.room, session.encounter.floor]
 	var elapsed := _format_elapsed_time(session.run_seconds)
 	_center_text("ЗАБЕГ ЗАВЕРШЁН", panel.position.y + 48.0, 27, Color("#f4f8ff"))
 	_center_text(room_text, panel.position.y + 82.0, 13, Color("#83a3bd"))
