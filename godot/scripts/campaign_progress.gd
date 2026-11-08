@@ -31,6 +31,11 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	var planet_in_universe := ((node_id - 1) % PLANETS_PER_UNIVERSE) + 1
 	var boss := planet_in_universe % 10 == 0
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
+	var boss_type := "none"
+	if boss:
+		boss_type = "speed" if planet_in_universe == 10 else ("score" if planet_in_universe == 20 else "final")
+	var target_score := target_lines * (110 + universe_index * 15) if boss_type in ["score", "final"] else 0
+	var time_limit := 150 if boss_type == "speed" else (180 if boss_type == "final" else 0)
 	return {
 		"node_id": node_id,
 		"universe_index": universe_index,
@@ -39,7 +44,10 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		"planet_in_universe": planet_in_universe,
 		"planet_name": "ПЛАНЕТА %03d" % node_id,
 		"is_boss": boss,
+		"boss_type": boss_type,
 		"target_lines": 8 + universe_index * 2 + (planet_in_universe - 1) * 2,
+		"target_score": target_score,
+		"time_limit_seconds": time_limit,
 		"reward_marks": reward
 	}
 
@@ -77,7 +85,7 @@ func get_universe_progress(universe_index: int) -> Dictionary:
 		"total": PLANETS_PER_UNIVERSE
 	}
 
-func complete_planet(node_id: int, cleared_lines: int) -> Dictionary:
+func complete_planet(node_id: int, cleared_lines: int, score: int = 0, elapsed_seconds: float = 0.0) -> Dictionary:
 	if node_id < 1 or node_id > TOTAL_PLANETS:
 		return {"accepted": false, "reason": "invalid_planet"}
 	if completed_nodes.has(node_id) or reward_receipts.has(str(node_id)):
@@ -88,6 +96,12 @@ func complete_planet(node_id: int, cleared_lines: int) -> Dictionary:
 	var target_lines := int(definition.target_lines)
 	if cleared_lines < target_lines:
 		return {"accepted": false, "reason": "objective_not_met", "remaining_lines": target_lines - cleared_lines}
+	var target_score := int(definition.get("target_score", 0))
+	if score < target_score:
+		return {"accepted": false, "reason": "score_objective_not_met", "remaining_score": target_score - score}
+	var time_limit := float(definition.get("time_limit_seconds", 0))
+	if time_limit > 0.0 and elapsed_seconds > time_limit:
+		return {"accepted": false, "reason": "time_limit_exceeded"}
 	var reward := int(definition.reward_marks)
 	completed_nodes.append(node_id)
 	campaign_marks += reward
