@@ -17,6 +17,9 @@ var block_run_active := false
 var block_run_last_lock_serial := 0
 var block_run_last_lines := 0
 var block_run_clock := 0.0
+var block_run_hero_id := "plush"
+var block_run_hero_level := 1
+var block_run_skill_rect := Rect2()
 var block_run_draft_rects: Array[Rect2] = []
 var mode_select_visible := true
 var mode_button_rect := Rect2()
@@ -133,6 +136,32 @@ func _process(delta: float) -> void:
 			queue_redraw()
 	_sync_buddy_state()
 
+func configure_block_run_hero(hero_id: String, hero_level: int) -> bool:
+	if not ["plush", "prism", "blip", "pixel", "spark"].has(hero_id) or hero_level < 1:
+		return false
+	block_run_hero_id = hero_id
+	block_run_hero_level = hero_level
+	queue_redraw()
+	return true
+
+func activate_block_run_hero_skill() -> Dictionary:
+	if not block_run_active or block_run_session == null or paused or game.game_over or _block_run_draft_is_open() or block_run_session.status != BlockRunSession.STATUS_RUNNING:
+		return {"accepted":false,"reason":"run_not_active"}
+	if not BlockRunBridge.sync_model_to_session(game, block_run_session):
+		block_run_session.status = BlockRunSession.STATUS_FAILED
+		game.game_over = true
+		return {"accepted":false,"reason":"sync_failed"}
+	var result: Dictionary = block_run_session.use_hero_skill(block_run_hero_id, block_run_hero_level)
+	if not bool(result.get("accepted", false)):
+		return result
+	if not BlockRunBridge.sync_session_to_model(block_run_session, game) or not game.validate_active_piece_after_board_mutation():
+		block_run_session.status = BlockRunSession.STATUS_FAILED
+		game.game_over = true
+		result["accepted"] = false
+		result["reason"] = "live_board_validation_failed"
+	queue_redraw()
+	return result
+
 func start_block_run_session() -> bool:
 	if game == null:
 		return false
@@ -225,6 +254,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				_select_block_run_draft(1)
 			elif event.keycode == KEY_3:
 				_select_block_run_draft(2)
+			return
+		if event.keycode == KEY_Q and block_run_active:
+			activate_block_run_hero_skill()
 			return
 		if event.keycode == KEY_M:
 			_open_mode_select()
@@ -337,7 +369,9 @@ func _handle_tap(point: Vector2) -> void:
 		if resume_rect.has_point(point):
 			paused = false
 	else:
-		if hold_rect.has_point(point):
+		if block_run_active and block_run_skill_rect.has_point(point):
+			activate_block_run_hero_skill()
+		elif hold_rect.has_point(point):
 			game.hold_piece()
 		elif board_rect.has_point(point):
 			# A single unambiguous tap always rotates; hard drop is swipe-only.
@@ -563,9 +597,29 @@ func _draw_piece_previews() -> void:
 	var total_width := card_width * 2.0 + gap
 	var start_x := (screen_size.x - total_width) * 0.5
 	var top := board_rect.position.y - card_height - 42.0
-	hold_rect = Rect2(start_x, top, card_width, card_height)
+	var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
+	var slot_gap := 8.0
+	var total_width := slot_width * 3.0 + slot_gap * 2.0
+	var start_x := (screen_size.x - total_width) * 0.5
+	hold_rect = Rect2(start_x, top, slot_width, card_height)
+	block_run_skill_rect = Rect2(start_x + (slot_width + slot_gap) * 2.0, top, slot_width, card_height)
 	_draw_preview_card(hold_rect, "HOLD", game.held_type)
-	_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "NEXT", game.peek_next_piece_type())
+	_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "NEXT", game.peek_next_piece_type())
+	_draw_block_run_skill_card(block_run_skill_rect)
+
+func _draw_block_run_skill_card(rect: Rect2) -> void:
+	if not block_run_active or block_run_session == null:
+		block_run_skill_rect = Rect2()
+		return
+	var ready := block_run_hero_level >= 5 and block_run_session.hero_skill_cooldown_seconds <= 0 and block_run_session.status == BlockRunSession.STATUS_RUNNING and not paused and not _block_run_draft_is_open()
+	var remaining := block_run_session.hero_skill_cooldown_seconds
+	var hero_label := block_run_hero_id.to_upper()
+	var state := "ЗАКРЫТО · УР. 5" if block_run_hero_level < 5 else ("ГОТОВО · Q" if ready else "ОТКАТ · %d С" % remaining)
+	var accent := Color("#45d9f5") if ready else Color("#66839e")
+	draw_rect(rect, Color("#0b1d31"))
+	draw_rect(rect, accent, false, 1.5)
+	draw_string(font, rect.position + Vector2(8.0, 17.0), "✦ " + hero_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f4f8ff"))
+	draw_string(font, rect.position + Vector2(8.0, 34.0), state, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, accent)
 
 func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	draw_rect(rect, Color(0.045, 0.085, 0.14, 0.96))
