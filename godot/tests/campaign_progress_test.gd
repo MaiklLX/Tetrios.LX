@@ -42,6 +42,19 @@ func _run() -> void:
 		return
 	if not _check(progress.is_unlocked(1) and not progress.is_unlocked(2) and progress.get_planet_status(2) == "locked", "Only the current planet is initially available"):
 		return
+	var boss_progress = Campaign.new()
+	boss_progress.import_legacy_progress(20, 0)
+	var boss_score_gate: Dictionary = boss_progress.complete_planet(20, int(score_boss.target_lines), 0, 10.0)
+	if not _check(not boss_score_gate.accepted and boss_score_gate.reason == "score_objective_not_met", "Score boss must reject a clear without the score quota"):
+		return
+	var boss_success: Dictionary = boss_progress.complete_planet(20, int(score_boss.target_lines), int(score_boss.target_score), 10.0)
+	if not _check(boss_success.accepted, "Score boss must complete when both line and score objectives are met"):
+		return
+	var speed_progress = Campaign.new()
+	speed_progress.import_legacy_progress(10, 0)
+	var speed_timeout: Dictionary = speed_progress.complete_planet(10, int(speed_boss.target_lines), 0, float(speed_boss.time_limit_seconds) + 1.0)
+	if not _check(not speed_timeout.accepted and speed_timeout.reason == "time_limit_exceeded", "Speed boss must reject a run beyond its time limit"):
+		return
 	var too_early: Dictionary = progress.complete_planet(2, 999)
 	if not _check(not too_early.accepted and too_early.reason == "planet_not_current", "Future planets cannot be completed out of order"):
 		return
@@ -52,9 +65,6 @@ func _run() -> void:
 	if not _check(completion.accepted and completion.reward_marks == 1 and progress.unlocked_node == 2, "First planet completion must award marks and unlock planet 002"):
 		return
 	if not _check(progress.get_planet_status(1) == "completed" and progress.get_planet_status(2) == "current", "Planet states must update after completion"):
-		return
-	var boss_not_enough_score := progress.complete_planet(1, 8, 0, 0.0)
-	if not _check(boss_not_enough_score.accepted, "Ordinary planets must not require a score quota"):
 		return
 	var duplicate: Dictionary = progress.complete_planet(1, 999)
 	if not _check(not duplicate.accepted and duplicate.reason == "already_completed" and progress.campaign_marks == 1, "Rewards must not be claimable twice"):
