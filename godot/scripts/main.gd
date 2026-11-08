@@ -1010,7 +1010,7 @@ func _draw_campaign_planet() -> void:
 	var planet_status := campaign_progress.get_planet_status(node_id) if campaign_progress != null else ("current" if node_id == 1 else "locked")
 	var unlocked := planet_status == "current"
 	var completed := planet_status == "completed"
-	_center_text("ПЛАНЕТА %03d" % campaign_planet, 112.0, 24, Color("#fff0b9"))
+	_center_text("ПЛАНЕТА %03d" % node_id, 112.0, 24, Color("#fff0b9"))
 	_center_text(_campaign_universe_name(campaign_universe), 137.0, 10, Color("#c4edff"))
 	var center := Vector2(screen_size.x * 0.5, screen_size.y * 0.34)
 	draw_circle(center, 88.0, Color(0.25,0.72,1.0,0.08))
