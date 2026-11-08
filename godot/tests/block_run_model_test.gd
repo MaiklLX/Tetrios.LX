@@ -37,7 +37,7 @@ func _run() -> void:
 	if not _check(run.current_attack_profile().id == "siege" and run.current_attack_profile().rows == 2 and run.current_attack_profile().holes == 1, "Boss attack zero must use Siege"):
 		return
 	var siege: Dictionary = run.resolve_enemy_attack()
-	if not _check(siege.rows.size() == 2 and siege.rows[0].count(0) == 1 and run.next_attack_seconds == 17, "Boss attack resolution must create two one-hole rows and reset timer"):
+	if not _check(siege.rows.size() == 2 and siege.rows[0].count(0) == 1 and run.next_attack_seconds == 20, "Boss attack resolution must create two one-hole rows and reset timer"):
 		return
 	run.attack_index = 1
 	if not _check(run.current_attack_profile().id == "crossfire", "Second boss attack must be Crossfire"):
