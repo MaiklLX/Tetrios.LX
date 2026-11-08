@@ -468,8 +468,13 @@ func _draw_backdrop() -> void:
 	draw_circle(glow_center, 3.0 + pulse * 1.5, Color(0.25, 0.82, 1.0, 0.16 + pulse * 0.12))
 
 func _draw_header() -> void:
-	var title_size := 22 if screen_size.x < 420.0 else 36
-	_center_text("BLOCK BUDDIES", 62.0, title_size, Color("#f5f8ff"))
+	if screen_size.x < 420.0:
+		var title_size := 22
+		var title_width := font.get_string_size("BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size).x
+		var title_center_x := (mode_button_rect.end.x + pause_rect.position.x) * 0.5
+		draw_string(font, Vector2(title_center_x - title_width * 0.5, 62.0), "BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#f5f8ff"))
+	else:
+		_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
 	var mode_name := "БЛОК-РАН" if block_run_active else _mode_display_name("classic" if mode_session == null else mode_session.mode_id)
 	_center_text("АРКАДА • %s" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
