@@ -263,3 +263,12 @@
 - CI run [42476376720](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476376720) on HEAD 9249867d82501355191ca5832c5ff176346e7979: **SUCCESS** — import, main parse, Classic/migration, all Block Run model/effect/board/session/bridge/live integration suites, graphical screenshot capture/upload and scene smoke test.
 - Remaining: bind hero configuration to the eventual native profile/selection flow, settle goal coin rewards exactly once into the existing wallet, add the run-end/results screen, and complete full-run end-to-end QA. Block Run remains internal/hidden.
 - No main merge, deployment, APK build/release, persistent storage change, user-data mutation or physical Android test. Save-system work remains deferred.
+
+
+## KT-481 — exactly-once Block Run goal reward receipts
+- Completed goals now create unique receipts keyed by their stable goal ID. The session stores reward amount and claim state; first claim succeeds, duplicate claims and unknown receipt IDs are rejected without changing the claimed total.
+- Added tests for pending total, exact first claim, duplicate claim rejection, unknown receipt rejection and zero pending balance after claim.
+- CI run [42476726527](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476726527) on HEAD d4ac61fe195ca2e6108540c32ed65dbcad189711: **SUCCESS** — import, main parse, Classic/migration, all Block Run model/effect/board/session/bridge/live integration suites, graphical screenshot capture/upload and scene smoke test.
+- Important integration boundary: this Godot branch does not yet load a native profile or expose a persistent coin wallet. The Web version has its own browser coin balance, and the migration parser can read its legacy keys, but no live profile bridge exists in the Godot scene. KT-481 therefore establishes an idempotent claim ledger, not a spendable wallet credit. Do not present claimed rewards as already added to the user's persistent balance.
+- Persistent profile/wallet wiring remains deferred with the save-system work, consistent with the agreed priority. Next: Block Run end/results screen showing earned goal rewards and clear run outcome; later connect receipts to the native wallet once profile integration is scheduled.
+- No main merge, deployment, APK build/release, persistent storage change, user-data mutation or physical Android test.
