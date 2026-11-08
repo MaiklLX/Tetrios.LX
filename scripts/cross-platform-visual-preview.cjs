@@ -361,12 +361,13 @@ const targets = [
         resumeVisible,
         resumed:!!afterResume?.started && !afterResume?.paused && !afterResume?.gameOver,
         dropAccepted:!!afterDrop?.started && !afterDrop?.paused && !afterDrop?.gameOver,
+        dropPerformed:!!afterDrop?.piece && JSON.stringify(afterDrop.piece)!==JSON.stringify(afterResume?.piece),
         holdRect:(()=>{const r=hold.getBoundingClientRect();return {width:r.width,height:r.height}})(),
         dropRect:(()=>{const r=drop.getBoundingClientRect();return {width:r.width,height:r.height}})()
       };
     });
     if (!controlState.supported || !controlState.held || !controlState.paused ||
-        !controlState.resumeVisible || !controlState.resumed || !controlState.dropAccepted) {
+        !controlState.resumeVisible || !controlState.resumed || !controlState.dropAccepted || !controlState.dropPerformed) {
       failures.push(target.name + ': visible arena control interaction failed (' + JSON.stringify(controlState) + ')');
     }
 
