@@ -230,3 +230,14 @@
 - Screenshot artifact `block-buddies-visual-checks` (720×1280) contains existing mode selector + Classic arena. It confirms existing scenes still render; it is not a Block Run screenshot. Physical Android remains untested.
 - Block Run is still internal/hidden. Remaining: full hero skill input/UI wiring, card draft UI, encounter + three-goal HUD, one-time reward settlement to the existing wallet, run-end/result screen, and end-to-end playtesting of the full run loop. Persistent saves remain deferred by priority.
 - No main merge, deployment, APK build/release or user-data mutation.
+
+
+## KT-478 — Block Run level-up card draft and native selection UI
+- Audited the Web source: `levelUp()` pauses the run and calls `showUpgrade()`; Block Run offers three distinct cards, repeat picks raise card rank to five stars, and selecting one closes the modal/resumes play.
+- Native session now counts cleared lines toward the level threshold, applies the source-matched threshold/gravity ramp, opens a three-card draft, rejects cards not in the visible offer, and applies exactly one selected rank. Timer-based charge and Pixel skill charge use the same level-up gate. Goal level tracking now reads the actual session level.
+- Main scene renders a touch-first three-card modal with keyboard `1 / 2 / 3` selection. Gameplay gravity, encounter clock and event dispatch remain frozen until a valid choice is made. The Block Run HUD now identifies the mode and displays room/floor plus enemy HP; Buddy is hidden behind the modal for a clean selection surface.
+- Added session tests for threshold transition, three unique options, invalid-choice rejection, one-time rank application and no duplicate draft. Added live-scene tap-selection integration coverage.
+- Extended the graphical Godot screenshot pipeline with `03-block-run-card-draft.png` (720×1280), captured from the real rendered scene. The screenshot was visually inspected; it shows the Block Run header, room/enemy HP and three selectable cards without Buddy overlap.
+- CI run [42474850074](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42474850074) on code HEAD `66e379fd75a225e7b9c1f84f9c9f9238f3c62b66`: **SUCCESS** — import, main parse, Classic/migration suites, Block Run model/effects/board/session/bridge/live integration, rendered screenshots and scene smoke test.
+- Remaining: full encounter/three-goal HUD, hero ability input/cooldown UI, exactly-once settlement of goal rewards to the existing wallet, run-end/results screen, and full-run end-to-end QA. Block Run remains internal/hidden; no public mode exposure.
+- No main merge, deployment, APK build/release, persistence changes, user-data mutation or physical Android test. Save-system work remains deferred.
