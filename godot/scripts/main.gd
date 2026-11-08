@@ -237,6 +237,21 @@ func _advance_block_run_clock(delta: float) -> void:
 			break
 	queue_redraw()
 
+
+func _restart_current_run() -> void:
+	game.reset()
+	if block_run_active:
+		start_block_run_session()
+	elif mode_session != null:
+		mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
+	paused = false
+	gravity_clock = 0.0
+	buddy_last_lines = 0
+	clear_flash_time = 0.0
+	clear_flash_count = 0
+	buddy.set_state("idle", 0.0)
+	queue_redraw()
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if mode_select_visible:
@@ -274,15 +289,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_ENTER: game.hard_drop()
 			KEY_C: game.hold_piece()
 			KEY_R:
-				game.reset()
-				if mode_session != null:
-					mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
-				paused = false
-				gravity_clock = 0.0
-				buddy_last_lines = 0
-				clear_flash_time = 0.0
-				clear_flash_count = 0
-				buddy.set_state("idle", 0.0)
+				_restart_current_run()
 		_sync_buddy_state()
 		queue_redraw()
 	elif event is InputEventScreenTouch:
@@ -354,15 +361,7 @@ func _handle_tap(point: Vector2) -> void:
 		_open_mode_select()
 		return
 	if game.game_over or _mode_finished():
-		game.reset()
-		if mode_session != null:
-			mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
-		paused = false
-		gravity_clock = 0.0
-		buddy_last_lines = 0
-		clear_flash_time = 0.0
-		clear_flash_count = 0
-		buddy.set_state("idle", 0.0)
+		_restart_current_run()
 	elif pause_rect.has_point(point):
 		_toggle_pause()
 	elif paused:
@@ -826,6 +825,9 @@ func _game_over_time_label() -> String:
 
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
+	if block_run_active and block_run_session != null:
+		_draw_block_run_results()
+		return
 	var has_objective := _is_line_objective_mode()
 	var panel_height := 320.0 if has_objective else 284.0
 	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, panel_height * 0.5), Vector2(320.0, panel_height))
@@ -844,6 +846,26 @@ func _draw_game_over() -> void:
 		_center_text(str(game.score), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
 		_center_text(_game_over_progress_label(), screen_size.y * 0.5 + 36.0, 13, Color("#c0d3e2"))
 		_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
+
+
+func _draw_block_run_results() -> void:
+	var panel_width := minf(360.0, screen_size.x - 36.0)
+	var panel_height := 386.0
+	var panel := Rect2(Vector2((screen_size.x - panel_width) * 0.5, (screen_size.y - panel_height) * 0.5), Vector2(panel_width, panel_height))
+	_draw_overlay_panel(panel, Color("#ff9b57"))
+	var session := block_run_session
+	var room_text := "ROOM %d  •  FLOOR %d" % [session.encounter.room, session.encounter.floor]
+	var elapsed := _format_elapsed_time(session.run_seconds)
+	_center_text("BLOCK RUN OVER", panel.position.y + 48.0, 27, Color("#f4f8ff"))
+	_center_text(room_text, panel.position.y + 82.0, 13, Color("#83a3bd"))
+	_center_text("SCORE", panel.position.y + 126.0, 11, Color("#83a3bd"))
+	_center_text(str(session.score), panel.position.y + 160.0, 29, Color("#45d9f5"))
+	_center_text("ЛИНИИ  •  %d     ВРЕМЯ  •  %s" % [session.total_lines, elapsed], panel.position.y + 198.0, 13, Color("#c0d3e2"))
+	draw_line(Vector2(panel.position.x + 28.0, panel.position.y + 222.0), Vector2(panel.end.x - 28.0, panel.position.y + 222.0), Color(0.25, 0.52, 0.7, 0.5), 1.0)
+	_center_text("НАГРАДЫ ЗА ВЫПОЛНЕННЫЕ ЦЕЛИ", panel.position.y + 254.0, 11, Color("#83a3bd"))
+	_center_text("+%d 🪙" % session.goal_rewards_earned, panel.position.y + 289.0, 24, Color("#f6d65b"))
+	_center_text("ЦЕЛЕЙ ВЫПОЛНЕНО  •  %d" % session.goal_reward_receipts.size(), panel.position.y + 316.0, 11, Color("#c0d3e2"))
+	_center_text("НАЖМИ, ЧТОБЫ НАЧАТЬ НОВЫЙ ЗАБЕГ", panel.position.y + 360.0, 11, Color("#ffb477"))
 
 func _center_text(value: String, y: float, size: int, color: Color) -> void:
 	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
