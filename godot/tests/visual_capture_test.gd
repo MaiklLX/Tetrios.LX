@@ -50,5 +50,21 @@ func _run() -> void:
 	if not await _capture(viewport, "02-classic-arena"):
 		quit(1)
 		return
+	if not bool(scene.call("start_block_run_session")):
+		push_error("Block Run session did not initialize for visual capture.")
+		quit(1)
+		return
+	var block_run_session = scene.get("block_run_session")
+	var draft_event: Dictionary = block_run_session.on_line_clear(5, 0, 1)
+	if draft_event.draft_cards.size() != 3:
+		push_error("Block Run card draft did not open for visual capture.")
+		quit(1)
+		return
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "03-block-run-card-draft"):
+		quit(1)
+		return
 	print("Visual smoke captures completed.")
 	quit(0)
