@@ -70,6 +70,8 @@ func _run() -> void:
 	viewport.add_child(scene)
 	await process_frame
 	await process_frame
+	# Keep the visual regression deterministic even if the runner has a prior user:// profile.
+	scene.get("campaign_progress").reset()
 	if not await _capture(viewport, "01-mode-selector"):
 		quit(1)
 		return
