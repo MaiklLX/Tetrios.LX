@@ -38,7 +38,7 @@ func _run() -> void:
 	var line_goal_run = Session.new()
 	line_goal_run.start()
 	line_goal_run.goals = [line_goal_run.encounter.create_goal("lines", 0, 0, 0, 1, 0, 5, 900)]
-	var line_goal_event := line_goal_run.on_line_clear(1, 0, 1)
+	var line_goal_event := line_goal_run.on_line_clear(3, 0, 1)
 	if not _check(line_goal_event.goal_events.size() == 1 and line_goal_event.goal_events[0].reward == 15, "Completing a line goal must award its exact generated reward"):
 		return
 	if not _check(line_goal_run.goals.size() == 1 and line_goal_run.goals[0].id != 900 and line_goal_run.goal_rewards_earned == 15, "A completed goal must be replaced immediately and rewards counted once"):
@@ -54,7 +54,7 @@ func _run() -> void:
 	var score_goal_run = Session.new()
 	score_goal_run.start()
 	score_goal_run.goals = [score_goal_run.encounter.create_goal("score", 0, 0, 0, 1, 0, 9, 902)]
-	var score_event := score_goal_run.on_line_clear(1, 0, 1)
+	var score_event := score_goal_run.on_line_clear(4, 0, 1)
 	if not _check(score_event.goal_events.size() == 1 and score_goal_run.score > 0, "Line-clear score must update score goals"):
 		return
 
