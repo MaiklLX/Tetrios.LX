@@ -16,7 +16,6 @@ const PALE := Color("#d8efff")
 const DEEP := Color("#0b2e72")
 
 func _ready() -> void:
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT) if self is Control else null
 	queue_redraw()
 
 func _draw() -> void:
