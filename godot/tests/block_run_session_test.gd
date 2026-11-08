@@ -215,5 +215,24 @@ func _run() -> void:
 	if not _check(not nova_again.rescued and nova_run.nova_used, "Nova must not rescue a second spawn collision"):
 		return
 
-	print("Block Run session integration tests passed: three live goals, replacement, rewards, timer/score/line progress, combat, attacks and failure.")
+	print("KT483 TEST: encounter room progression and Rift cleanup")
+	var progression_run = Session.new()
+	progression_run.start()
+	if not _check(progression_run.choose_card("rift"), "Rift must be drafted before the encounter progression test"):
+		return
+	progression_run.board[22].fill(7)
+	var first_room: int = progression_run.encounter.room
+	var first_floor: int = progression_run.encounter.floor
+	progression_run.encounter.enemy_hp = 1
+	var finishing_clear: Dictionary = progression_run.on_line_clear(1, 0, progression_run.level)
+	if not _check(finishing_clear.accepted and finishing_clear.enemy_defeated, "A live line clear must be able to defeat the current encounter enemy"):
+		return
+	if not _check(progression_run.encounter.room == first_room + 1 and progression_run.encounter.enemy_hp == progression_run.encounter.enemy_max_hp, "Defeating an enemy must advance to the next room and initialize its health"):
+		return
+	if not _check(finishing_clear.rift_rows_cleared == 1 and progression_run.board[22].count(7) == 0, "Rift must clear one bottom row after the enemy is defeated"):
+		return
+	if not _check(progression_run.encounter.floor >= first_floor and progression_run.status == Session.STATUS_RUNNING, "Room progression must preserve the active run and never move the floor backwards"):
+		return
+
+	print("Block Run session integration tests passed: three live goals, replacement, rewards, timer/score/line progress, combat, room progression, Rift cleanup, attacks and failure.")
 	quit(0)
