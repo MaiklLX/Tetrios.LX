@@ -17,6 +17,7 @@ var block_run_active := false
 var block_run_last_lock_serial := 0
 var block_run_last_lines := 0
 var block_run_clock := 0.0
+var block_run_draft_rects: Array[Rect2] = []
 var mode_select_visible := true
 var mode_button_rect := Rect2()
 var classic_mode_rect := Rect2()
@@ -119,8 +120,8 @@ func _process(delta: float) -> void:
 		_advance_block_run_clock(delta if not paused and not mode_select_visible else 0.0)
 	if mode_session != null and not mode_select_visible and not block_run_active:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
-	if not mode_select_visible and not game.game_over and not paused and (mode_session == null or mode_session.is_running()):
-		gravity_interval = _gravity_interval_for_level(game.level)
+	if not mode_select_visible and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
+		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(game.level)
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
 			gravity_clock = 0.0
@@ -144,7 +145,7 @@ func start_block_run_session() -> bool:
 	return BlockRunBridge.sync_model_to_session(game, block_run_session)
 
 func _process_block_run_events() -> void:
-	if not block_run_active or block_run_session == null or block_run_session.status != BlockRunSession.STATUS_RUNNING:
+	if not block_run_active or block_run_session == null or block_run_session.status != BlockRunSession.STATUS_RUNNING or _block_run_draft_is_open():
 		return
 	# Hold can trigger a replacement-piece spawn collision without locking a
 	# piece, so rescue/failure must be evaluated independently of lock_serial.
@@ -185,7 +186,7 @@ func _process_block_run_events() -> void:
 	queue_redraw()
 
 func _advance_block_run_clock(delta: float) -> void:
-	if not block_run_active or block_run_session == null or delta <= 0.0 or block_run_session.status != BlockRunSession.STATUS_RUNNING:
+	if not block_run_active or block_run_session == null or delta <= 0.0 or block_run_session.status != BlockRunSession.STATUS_RUNNING or _block_run_draft_is_open():
 		return
 	block_run_clock += delta
 	while block_run_clock >= 1.0 and block_run_session.status == BlockRunSession.STATUS_RUNNING:
@@ -216,6 +217,14 @@ func _unhandled_input(event: InputEvent) -> void:
 				_select_mode("sprint")
 			elif event.keycode == KEY_3:
 				_select_mode("marathon")
+			return
+		if _block_run_draft_is_open():
+			if event.keycode == KEY_1:
+				_select_block_run_draft(0)
+			elif event.keycode == KEY_2:
+				_select_block_run_draft(1)
+			elif event.keycode == KEY_3:
+				_select_block_run_draft(2)
 			return
 		if event.keycode == KEY_M:
 			_open_mode_select()
@@ -258,7 +267,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
-	if mode_select_visible or game == null or game.game_over or paused or _mode_finished() or not board_rect.has_point(start):
+	if mode_select_visible or game == null or game.game_over or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
@@ -302,6 +311,12 @@ func _handle_tap(point: Vector2) -> void:
 		elif marathon_mode_rect.has_point(point):
 			_select_mode("marathon")
 		queue_redraw()
+		return
+	if _block_run_draft_is_open():
+		for index in range(block_run_draft_rects.size()):
+			if block_run_draft_rects[index].has_point(point):
+				_select_block_run_draft(index)
+				break
 		return
 	if mode_button_rect.has_point(point):
 		_open_mode_select()
@@ -383,6 +398,9 @@ func _draw() -> void:
 	_draw_stats()
 	_draw_piece_previews()
 	_draw_board()
+	if _block_run_draft_is_open():
+		_draw_block_run_draft()
+		return
 	if mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED:
 		_draw_mode_complete()
 	elif game.game_over:
@@ -590,6 +608,62 @@ func _draw_overlay_panel(rect: Rect2, accent: Color) -> void:
 	draw_rect(rect, Color(0.20, 0.52, 0.72, 0.72), false, 1.5)
 	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 4.0)), accent)
 	draw_line(rect.position + Vector2(16.0, 14.0), Vector2(rect.end.x - 16.0, rect.position.y + 14.0), Color(0.58, 0.82, 0.96, 0.12), 1.0)
+
+func _block_run_draft_is_open() -> bool:
+	return block_run_active and block_run_session != null and not block_run_session.pending_card_draft.is_empty()
+
+func _select_block_run_draft(index: int) -> void:
+	if not _block_run_draft_is_open() or index < 0 or index >= block_run_session.pending_card_draft.size():
+		return
+	var card_id := str(block_run_session.pending_card_draft[index].get("id", ""))
+	if block_run_session.choose_card(card_id):
+		gravity_clock = 0.0
+		queue_redraw()
+
+func _draw_block_run_draft() -> void:
+	var cards := block_run_session.pending_card_draft
+	var panel_width := minf(620.0, screen_size.x - 28.0)
+	var panel_height := minf(620.0, screen_size.y - 36.0)
+	var panel := Rect2(Vector2((screen_size.x - panel_width) * 0.5, (screen_size.y - panel_height) * 0.5), Vector2(panel_width, panel_height))
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.005, 0.012, 0.025, 0.88))
+	_draw_overlay_panel(panel, Color("#45d9f5"))
+	var title_y := panel.position.y + 52.0
+	var title := "ЭВОЛЮЦИЯ КАРТ"
+	var title_width := font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, 24).x
+	draw_string(font, Vector2(panel.get_center().x - title_width * 0.5, title_y), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, Color("#f4f8ff"))
+	var subtitle := "УРОВЕНЬ %d  •  ВЫБЕРИ ОДНО УСИЛЕНИЕ" % block_run_session.level
+	var subtitle_width := font.get_string_size(subtitle, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x
+	draw_string(font, Vector2(panel.get_center().x - subtitle_width * 0.5, title_y + 25.0), subtitle, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#83a3bd"))
+	block_run_draft_rects.clear()
+	var gap := 10.0
+	var card_top := title_y + 48.0
+	var bottom_margin := 28.0
+	var card_height := minf(132.0, (panel.end.y - bottom_margin - card_top - gap * 2.0) / 3.0)
+	for index in range(mini(3, cards.size())):
+		var card: Dictionary = cards[index]
+		var rect := Rect2(panel.position.x + 14.0, card_top + index * (card_height + gap), panel_width - 28.0, card_height)
+		block_run_draft_rects.append(rect)
+		draw_rect(rect, Color("#0b1d31"))
+		draw_rect(Rect2(rect.position, Vector2(4.0, rect.size.y)), Color("#45d9f5"))
+		draw_rect(rect, Color(0.24, 0.55, 0.72, 0.72), false, 1.0)
+		var icon_text := str(card.get("icon", "✦"))
+		draw_string(font, rect.position + Vector2(16.0, 36.0), icon_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 25, Color("#70e9ff"))
+		var card_id := str(card.get("id", ""))
+		var current_rank := block_run_session.encounter.get_card_rank(card_id)
+		var next_rank := mini(5, current_rank + 1)
+		var card_title := str(card.get("name", card_id))
+		var title_size := 16 if panel_width > 400.0 else 13
+		draw_string(font, rect.position + Vector2(58.0, 29.0), card_title, HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#f4f8ff"))
+		var description := block_run_session.encounter.get_card_effect_description(card_id, next_rank)
+		if description.is_empty():
+			description = str(card.get("description", "Усиление карты"))
+		draw_string(font, rect.position + Vector2(58.0, 54.0), description.left(58), HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#a9c3d8"))
+		var rank_label := "НОВАЯ КАРТА" if current_rank == 0 else "РАНГ %d  →  %d ★" % [current_rank, next_rank]
+		draw_string(font, rect.position + Vector2(58.0, 78.0), rank_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f6d65b"))
+		draw_string(font, rect.end - Vector2(28.0, 18.0), str(index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color("#45d9f5"))
+	var hint := "НАЖМИ НА КАРТУ  •  КЛАВИШИ 1 / 2 / 3"
+	var hint_width := font.get_string_size(hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 10).x
+	draw_string(font, Vector2(panel.get_center().x - hint_width * 0.5, panel.end.y - 10.0), hint, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#83a3bd"))
 
 func _draw_pause_overlay() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
