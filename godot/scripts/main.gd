@@ -21,7 +21,16 @@ var block_run_hero_id := "plush"
 var block_run_hero_level := 1
 var block_run_skill_rect := Rect2()
 var block_run_draft_rects: Array[Rect2] = []
-var mode_select_visible := true
+var mode_select_visible := false
+var home_visible := false
+var secondary_screen := ""
+var home_campaign_rect := Rect2()
+var home_block_run_rect := Rect2()
+var home_tasks_rect := Rect2()
+var home_heroes_rect := Rect2()
+var home_shop_rect := Rect2()
+var home_upgrades_rect := Rect2()
+var secondary_back_rect := Rect2()
 var mode_button_rect := Rect2()
 var classic_mode_rect := Rect2()
 var sprint_mode_rect := Rect2()
@@ -50,6 +59,8 @@ func _ready() -> void:
 	font = ThemeDB.fallback_font
 	game = Model.new()
 	game.reset()
+	home_visible = true
+	mode_select_visible = false
 	mode_session = ModeSession.new()
 	buddy = Buddy.new()
 	add_child(buddy)
@@ -69,6 +80,14 @@ func _layout() -> void:
 	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
 	mode_button_rect = Rect2(24.0, 12.0, 82.0, 36.0)
 	var mode_layout := _mode_select_layout(screen_size)
+	var home_layout := _home_layout(screen_size)
+	home_campaign_rect = home_layout.campaign
+	home_block_run_rect = home_layout.block_run
+	home_tasks_rect = home_layout.tasks
+	home_heroes_rect = home_layout.heroes
+	home_shop_rect = home_layout.shop
+	home_upgrades_rect = home_layout.upgrades
+	secondary_back_rect = Rect2(18.0, 16.0, 94.0, 42.0)
 	classic_mode_rect = mode_layout.classic
 	sprint_mode_rect = mode_layout.sprint
 	marathon_mode_rect = mode_layout.marathon
@@ -80,6 +99,23 @@ func _layout() -> void:
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
 		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
+
+
+func _home_layout(viewport: Vector2) -> Dictionary:
+	var width := viewport.x - 36.0
+	var left := 18.0
+	var top := maxf(118.0, viewport.y * 0.15)
+	var card_height := clampf(viewport.y * 0.145, 108.0, 132.0)
+	var gap := 14.0
+	var half := (width - gap) * 0.5
+	return {
+		"campaign": Rect2(left, top + 96.0, width, card_height),
+		"block_run": Rect2(left, top + 96.0 + card_height + gap, width, card_height),
+		"tasks": Rect2(left, top + 96.0 + (card_height + gap) * 2.0, width, 82.0),
+		"heroes": Rect2(left, viewport.y - 92.0, half, 58.0),
+		"shop": Rect2(left + half + gap * 0.5, viewport.y - 92.0, half, 58.0),
+		"upgrades": Rect2(left, viewport.y - 24.0, width, 1.0)
+	}
 
 func _mode_select_layout(viewport: Vector2) -> Dictionary:
 	var card_width := minf(300.0, viewport.x - 48.0)
@@ -363,6 +399,24 @@ func _toggle_pause() -> void:
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
+	if home_visible:
+		if home_campaign_rect.has_point(point) or home_block_run_rect.has_point(point):
+			home_visible = false
+			mode_select_visible = true
+		elif home_heroes_rect.has_point(point):
+			_open_secondary_screen("heroes")
+		elif home_shop_rect.has_point(point):
+			_open_secondary_screen("shop")
+		elif home_tasks_rect.has_point(point):
+			_open_secondary_screen("daily")
+		queue_redraw()
+		return
+	if not secondary_screen.is_empty():
+		if secondary_back_rect.has_point(point):
+			secondary_screen = ""
+			home_visible = true
+		queue_redraw()
+		return
 	if mode_select_visible:
 		if classic_mode_rect.has_point(point):
 			_select_mode("classic")
@@ -410,6 +464,8 @@ func _select_mode(requested_mode_id: String) -> void:
 		mode_session = ModeSession.new()
 	mode_session.start(requested_mode_id)
 	mode_select_visible = false
+	home_visible = false
+	secondary_screen = ""
 	paused = false
 	gravity_clock = 0.0
 	buddy_last_lines = 0
@@ -419,8 +475,20 @@ func _select_mode(requested_mode_id: String) -> void:
 		buddy.set_state("idle", 0.0)
 	queue_redraw()
 
+
+func _open_secondary_screen(screen_id: String) -> void:
+	if not ["heroes", "shop", "daily"].has(screen_id):
+		return
+	secondary_screen = screen_id
+	home_visible = false
+	mode_select_visible = false
+	paused = false
+	queue_redraw()
+
 func _open_mode_select() -> void:
 	mode_select_visible = true
+	home_visible = false
+	secondary_screen = ""
 	paused = false
 	queue_redraw()
 
@@ -451,6 +519,12 @@ func _sync_buddy_state() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color("#070d1c"))
 	_draw_backdrop()
+	if home_visible:
+		_draw_home_hub()
+		return
+	if not secondary_screen.is_empty():
+		_draw_secondary_screen()
+		return
 	if mode_select_visible:
 		_draw_mode_select()
 		return
@@ -531,6 +605,49 @@ func _mode_display_name(mode_id: String) -> String:
 		"sprint": return "СПРИНТ"
 		"marathon": return "МАРАФОН"
 		_: return "РЕЖИМ"
+
+
+func _draw_home_hub() -> void:
+	var layout := _home_layout(screen_size)
+	_center_text("BLOCK BUDDIES", 54.0, 29, Color("#fff0b9"))
+	_center_text("ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ", 78.0, 10, Color("#c4edff"))
+	var profile := Rect2(18.0, 104.0, screen_size.x - 36.0, 54.0)
+	_draw_soft_panel(profile, Color("#174d9b"), Color("#76dcff"), 17, 8)
+	draw_string(font, profile.position + Vector2(16.0, 23.0), "BUDDY  •  УРОВЕНЬ 1", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
+	draw_string(font, profile.position + Vector2(16.0, 42.0), "✦  120 МОНЕТ", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffe18a"))
+	_draw_soft_panel(home_campaign_rect, Color("#1268b5"), Color("#64e2ff"), 22, 12)
+	draw_string(font, home_campaign_rect.position + Vector2(18.0, 37.0), "КОСМИЧЕСКАЯ КАМПАНИЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, Color("#ffffff"))
+	draw_string(font, home_campaign_rect.position + Vector2(18.0, 64.0), "12 ВСЕЛЕННЫХ  •  360 ПЛАНЕТ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#d7f5ff"))
+	draw_string(font, home_campaign_rect.end - Vector2(34.0, 22.0), "›", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#fff0a8"))
+	_draw_soft_panel(home_block_run_rect, Color("#74469d"), Color("#ffca68"), 22, 12)
+	draw_string(font, home_block_run_rect.position + Vector2(18.0, 37.0), "BLOCK RUN", HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#ffffff"))
+	draw_string(font, home_block_run_rect.position + Vector2(18.0, 64.0), "СОБИРАЙ УСИЛЕНИЯ И ПОБЕЖДАЙ", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f5e6ff"))
+	draw_string(font, home_block_run_rect.end - Vector2(34.0, 22.0), "›", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#fff0a8"))
+	_draw_soft_panel(home_tasks_rect, Color("#14548d"), Color("#79e5db"), 18, 8)
+	draw_string(font, home_tasks_rect.position + Vector2(14.0, 29.0), "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#ffffff"))
+	draw_string(font, home_tasks_rect.position + Vector2(14.0, 53.0), "ВЫПОЛНИ 3 ЦЕЛИ И ЗАБЕРИ НАГРАДУ", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#c9f8ef"))
+	_draw_soft_panel(home_heroes_rect, Color("#155c9c"), Color("#7bdfff"), 16, 7)
+	_draw_soft_panel(home_shop_rect, Color("#8b541e"), Color("#ffd16c"), 16, 7)
+	_center_text_in_rect("ГЕРОИ", home_heroes_rect, 13, Color("#ffffff"))
+	_center_text_in_rect("МАГАЗИН", home_shop_rect, 13, Color("#ffffff"))
+	_center_text("ВЫБЕРИ СВОЁ ПРИКЛЮЧЕНИЕ", screen_size.y - 112.0, 10, Color("#b9eaff"))
+
+func _draw_secondary_screen() -> void:
+	_draw_soft_panel(secondary_back_rect, Color("#155c9c"), Color("#7bdfff"), 14, 6)
+	draw_string(font, secondary_back_rect.position + Vector2(12.0, 27.0), "‹  ДОМОЙ", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
+	var heading := "ГЕРОИ" if secondary_screen == "heroes" else ("МАГАЗИН" if secondary_screen == "shop" else "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ")
+	_center_text(heading, screen_size.y * 0.32, 27, Color("#fff0b9"))
+	var subtitle := "СКОРО: КОЛЛЕКЦИЯ BUDDY И ИХ СПОСОБНОСТИ" if secondary_screen == "heroes" else ("СКОРО: КОСМЕТИКА И ПОЛЕЗНЫЕ ПРЕДМЕТЫ" if secondary_screen == "shop" else "ТВОИ ЦЕЛИ ОБНОВЛЯЮТСЯ КАЖДЫЙ ДЕНЬ")
+	_center_text(subtitle, screen_size.y * 0.32 + 38.0, 11, Color("#c4edff"))
+	var panel := Rect2(22.0, screen_size.y * 0.43, screen_size.x - 44.0, 150.0)
+	_draw_soft_panel(panel, Color("#174d89"), Color("#64d9f2"), 20, 10)
+	_center_text("РАЗДЕЛ ПОДГОТАВЛИВАЕТСЯ", panel.position.y + 62.0, 16, Color("#ffffff"))
+	_center_text("МЫ СОХРАНИЛИ МЕСТО ДЛЯ ПОЛНОЦЕННОГО", panel.position.y + 91.0, 10, Color("#d4efff"))
+	_center_text("ИНТЕРФЕЙСА — БЕЗ ПУСТЫХ КНОПОК", panel.position.y + 110.0, 10, Color("#d4efff"))
+
+func _center_text_in_rect(value: String, rect: Rect2, size: int, color: Color) -> void:
+	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	draw_string(font, Vector2(rect.get_center().x - width * 0.5, rect.get_center().y + size * 0.35), value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 func _draw_mode_select() -> void:
 	var layout := _mode_select_layout(screen_size)
