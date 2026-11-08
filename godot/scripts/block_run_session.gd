@@ -71,7 +71,7 @@ func _create_goal() -> Dictionary:
 		total_lines,
 		score,
 		run_seconds,
-		1 + int(level_charge / maxi(1, need_lines)),
+		level,
 		randi_range(0, 600),
 		randi_range(0, 1000),
 		next_goal_id
@@ -88,7 +88,7 @@ func _goal_value(goal: Dictionary) -> int:
 		"survive":
 			return run_seconds
 		"level":
-			return 1 + int(level_charge / maxi(1, need_lines))
+			return level
 	return 0
 
 func _settle_completed_goals() -> Array[Dictionary]:
