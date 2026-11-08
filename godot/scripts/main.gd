@@ -90,8 +90,8 @@ func _mode_select_layout(viewport: Vector2) -> Dictionary:
 	}
 
 func _board_metrics(viewport: Vector2) -> Dictionary:
-	# With touch-first input there is no permanent control strip: give that
-	# space back to the playfield while preserving room for HUD and previews.
+	# With touch-first input there is no permanent control strip or large title banner.
+	# Reserve compact HUD + enlarged HOLD/NEXT cards, then reclaim the remaining height.
 	var board_top_min := 224.0
 	var available_height := maxf(230.0, viewport.y - board_top_min - 36.0)
 	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.68) / BOARD_H, available_height / BOARD_H))
