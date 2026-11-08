@@ -12,7 +12,12 @@ Status: implementation committed on the existing Godot development branch. Draft
 - Campaign menus suspend gravity and Block Run elapsed-time advancement; Buddy is hidden so it cannot overlap navigation content.
 - Layout adapts to narrow portrait screens and larger portrait viewports.
 
-## Validation added
+## Validation results
+- Godot Native Project Check **#346 passed** on code/test commit `d7779b3f8abf9e051bb152bd346902d6b54660f6`.
+- Passed: Godot import, main script parse, gameplay/model suites, save migration, Block Run suites, live gameplay integration, visual screenshot capture, and scene smoke test.
+- Real screenshots are included in the workflow artifact `block-buddies-visual-checks` (artifact ID `13628593322`): `21-live-campaign-atlas.png`, `22-live-campaign-universe-route.png`, `23-live-campaign-planet-detail.png`.
+
+## Validation coverage
 - Visual capture coverage for the live Atlas, Universe Route and Planet Detail screens.
 - Integration assertions for all 12 universe hit targets and 30 route-node hit targets.
 - Navigation assertions for opening the first planet, returning from mode selection, and backing out to Home.
