@@ -31,7 +31,7 @@ func update(delta_seconds: float, total_lines: int, game_over: bool, total_score
 	var target_score := int(rules.get("target_score", 0))
 	var lines_complete := target_lines <= 0 or total_lines >= target_lines
 	var score_complete := target_score <= 0 or total_score >= target_score
-	if lines_complete and score_complete:
+	if (target_lines > 0 or target_score > 0) and lines_complete and score_complete:
 		status = STATUS_COMPLETED
 		return status
 	var time_limit := float(rules.get("time_limit_seconds", 0))
