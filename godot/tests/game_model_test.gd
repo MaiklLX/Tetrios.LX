@@ -380,10 +380,12 @@ func _run() -> void:
 	if not _check(fixtures is Dictionary, "Web migration fixture catalog must be valid JSON"):
 		return
 
+	print("Migration fixture checks: start")
 	var empty_import: Dictionary = WebMigration.parse_local_storage(fixtures["empty"]["local_storage"])
 	if not _check(empty_import.ok and empty_import.profile.economy.coins == 0, "Empty Web profile must produce safe defaults"):
 		return
 
+	print("Migration fixture checks: empty profile passed")
 	var typical_raw: Dictionary = fixtures["typical"]["local_storage"]
 	var typical_before: Dictionary = typical_raw.duplicate(true)
 	var typical_import: Dictionary = WebMigration.parse_local_storage(typical_raw)
@@ -404,6 +406,7 @@ func _run() -> void:
 	if not _check(typical_import.source_backup == typical_before and typical_raw == typical_before, "Parser must preserve source backup and never mutate input"):
 		return
 
+	print("Migration fixture checks: typical profile passed")
 	var coin_conflict: Dictionary = WebMigration.parse_local_storage(fixtures["coin_conflict"]["local_storage"])
 	if not _check(coin_conflict.ok and coin_conflict.requires_review and coin_conflict.profile.economy.coins == 125 and coin_conflict.conflicts.size() == 1, "Primary Web wallet must win but divergent aliases must be reported for review"):
 		return
@@ -411,20 +414,25 @@ func _run() -> void:
 	if not _check(not unresolved_coins.ok, "Conflicting legacy coin aliases without primary wallet must block migration"):
 		return
 
+	print("Migration fixture checks: coin conflict profiles passed")
 	var malformed: Dictionary = WebMigration.parse_local_storage(fixtures["malformed_json"]["local_storage"])
 	if not _check(not malformed.ok and malformed.source_backup.bb_inventory == "{broken", "Malformed JSON must block import and preserve raw source"):
 		return
+	print("Migration fixture checks: malformed JSON passed")
 	var legacy: Dictionary = WebMigration.parse_local_storage(fixtures["legacy_fallbacks"]["local_storage"])
 	if not _check(legacy.ok and legacy.profile.heroes.progress.plush.xp == 30, "Legacy Plush XP aliases must remain supported as fallback"):
 		return
 	if not _check(legacy.profile.cosmetics.equipped_by_hero.plush == "old_hat", "Legacy single-slot cosmetic must map to selected hero"):
 		return
+	print("Migration fixture checks: legacy fallbacks passed")
 	var unknown: Dictionary = WebMigration.parse_local_storage(fixtures["unknown_key"]["local_storage"])
 	if not _check(unknown.ok and unknown.unknown_keys.has("custom_mod_data") and unknown.source_backup.has("custom_mod_data"), "Unknown keys must be reported and retained in source backup"):
 		return
+	print("Migration fixture checks: unknown key preservation passed")
 	var bad_marker: Dictionary = WebMigration.parse_local_storage(fixtures["malformed_reward_marker"]["local_storage"])
 	if not _check(not bad_marker.ok, "Malformed daily reward marker must block migration rather than silently dropping it"):
 		return
 
+	print("Migration fixture checks: malformed reward marker passed")
 	print("Godot tests passed: gameplay model, save/load validation, read-only Web migration parser, profile fixtures, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
 	quit(0)
