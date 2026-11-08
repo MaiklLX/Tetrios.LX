@@ -251,7 +251,7 @@ func _run() -> void:
 	for viewport_size in [Vector2(360.0, 800.0), Vector2(375.0, 812.0), Vector2(412.0, 915.0), Vector2(450.0, 800.0), Vector2(720.0, 1280.0)]:
 		var board_metrics: Dictionary = layout_probe._board_metrics(viewport_size)
 		var responsive_board: Rect2 = board_metrics.board_rect
-		if not _check(responsive_board.position.y >= 292.0, "Board must stay below the stats and preview region"):
+		if not _check(responsive_board.position.y >= 224.0, "Board must stay below the compact HUD and enlarged preview region"):
 			return
 		if not _check(responsive_board.end.y <= viewport_size.y - 35.9, "Board must preserve a bottom safe margin"):
 			return
