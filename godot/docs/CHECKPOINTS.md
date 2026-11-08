@@ -188,3 +188,15 @@
 - Real rendered screenshot artifact: `block-buddies-visual-checks`, 720×1280; current Classic arena screenshot is also available in the run artifacts. It confirms existing Classic rendering only; it is not a Block Run screen.
 - Status boundary: rescue logic is implemented and tested inside the Block Run session. It is not yet called from the live game model or main scene. Block Run remains hidden/unplayable until the live board/piece lifecycle, draft/HUD and run-end flow are integrated.
 - No main merge, deployment, APK build/release, persistent storage changes or physical Android test.
+
+
+## KT-474 — validated live-board bridge foundation
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Added `godot/scripts/block_run_bridge.gd` as the explicit 10×23 boundary between the live gameplay model and Block Run encounter session. Both copy directions validate the complete grid before mutation; malformed input is rejected atomically.
+- Added live spawn-rescue revalidation in `game_model.gd`: after a rescue mutation, the active piece is checked against the resulting board. A blocked spawn remains terminal; the bridge marks the encounter failed rather than falsely resuming play.
+- Added safe rendering for the Block Run garbage tile ID in the existing board renderer, avoiding an out-of-range palette lookup when a garbage row is eventually synchronized.
+- Added `godot/tests/block_run_bridge_test.gd` and CI step covering board copy in both directions, coordinate preservation, malformed-board rejection without partial mutation, and spawn revalidation.
+- CI run [42472885866](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42472885866) on code HEAD `24a54c90939f188296d4f30118c9988cc9a00c95`: **SUCCESS** — project import, main parse, Classic model tests, Web migration tests, Block Run model/effect/board/session/bridge tests, real rendered screenshot capture/upload and scene smoke test.
+- Screenshot artifact `block-buddies-visual-checks` (720×1280) contains the current mode selector and Classic arena. It confirms existing scenes still render; it is **not** a Block Run screenshot.
+- Important boundary: this is the tested synchronization/rescue boundary, not yet the complete live gameplay hookup. Main still does not route every lock, line-clear, timer, attack, hero-skill or draft event through the bridge. Block Run remains hidden and unplayable. Next: connect event lifecycle with exactly-once dispatch, then test actual attack/rescue behavior on the live board before exposing the mode.
+- No main merge, deployment, APK build/release, persistence work or physical Android test.
