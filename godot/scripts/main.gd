@@ -1005,7 +1005,7 @@ func _draw_campaign_planet() -> void:
 	draw_arc(center + Vector2(0,5), 51.0, 0.2, 2.7, 64, Color("#165b9b"), 7.0, true)
 	for island in [Vector2(-22,-5),Vector2(16,13),Vector2(-4,30)]:
 		draw_circle(center + island, 9.0, Color("#8de5b5"))
-	var info := Rect2(20.0, screen_size.y * 0.52, screen_size.x - 40.0, 104.0)
+	var info := Rect2(20.0, screen_size.y * 0.52, screen_size.x - 40.0, 128.0)
 	_draw_soft_panel(info, Color("#102f68"), Color("#55ddff"), 17, 7)
 	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
 	var boss_type := str(definition.get("boss_type", "none"))
@@ -1024,6 +1024,8 @@ func _draw_campaign_planet() -> void:
 	if requirement.is_empty():
 		requirement = "ВЫПОЛНИ ЗАДАНИЕ"
 	draw_string(font, info.position + Vector2(14,75), requirement + "  •  +" + str(definition.get("reward_marks", 1)) + " МЕТОК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
+	if node_id == CARGO_HOOK_PLANET_ID:
+		draw_string(font, info.position + Vector2(14,101), "ОСОБАЯ ФИГУРА  •  ГРУЗОВОЙ КРЮК", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#ffd05a"))
 	campaign_start_rect = Rect2(26.0, screen_size.y * 0.72, screen_size.x - 52.0, 58.0)
 	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
 	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else ("УРОВЕНЬ ПРОЙДЕН" if completed else "УРОВЕНЬ ЗАКРЫТ"), campaign_start_rect, 12, Color("#ffffff"))
