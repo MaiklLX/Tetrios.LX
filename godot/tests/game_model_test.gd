@@ -5,6 +5,7 @@ const Main = preload("res://scripts/main.gd")
 const WebMigration = preload("res://scripts/web_save_migration.gd")
 const Buddy = preload("res://scripts/buddy_companion.gd")
 const ModeCatalog = preload("res://scripts/mode_catalog.gd")
+const ModeSession = preload("res://scripts/mode_session.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -34,6 +35,32 @@ func _run() -> void:
 		return
 	classic_rules["target_lines"] = 999
 	if not _check(ModeCatalog.get_mode("classic").get("target_lines", -1) == 0, "Callers must not be able to mutate catalog definitions"):
+		return
+
+	# Mode session owns objective completion without changing the classic board model.
+	var classic_session = ModeSession.new()
+	if not _check(classic_session.start(ModeCatalog.DEFAULT_MODE_ID), "Classic session should start from the catalog default"):
+		return
+	classic_session.update(1.0, 40, false)
+	if not _check(classic_session.status == ModeSession.STATUS_RUNNING, "Classic must remain active after forty lines"):
+		return
+	classic_session.update(0.0, 40, true)
+	if not _check(classic_session.status == ModeSession.STATUS_FAILED, "Classic should fail only when the board model reports game over"):
+		return
+	var sprint_session = ModeSession.new()
+	if not _check(sprint_session.start("sprint"), "Sprint session should start"):
+		return
+	sprint_session.update(0.0, 39, false)
+	if not _check(sprint_session.status == ModeSession.STATUS_RUNNING and sprint_session.remaining_lines(39) == 1, "Sprint should remain active with one line remaining"):
+		return
+	sprint_session.update(0.0, 40, false)
+	if not _check(sprint_session.status == ModeSession.STATUS_COMPLETED, "Sprint should complete exactly at its forty-line target"):
+		return
+	sprint_session.update(0.0, 45, true)
+	if not _check(sprint_session.status == ModeSession.STATUS_COMPLETED, "A completed Sprint result must remain terminal"):
+		return
+	var invalid_session = ModeSession.new()
+	if not _check(not invalid_session.start("missing") and invalid_session.status == ModeSession.STATUS_IDLE, "Unknown mode must not create a running session"):
 		return
 
 	# Buddy reactions are stateful, bounded, and return to idle cleanly.
