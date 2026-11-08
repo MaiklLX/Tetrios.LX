@@ -198,7 +198,7 @@ func _process(delta: float) -> void:
 		_process_block_run_events()
 		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() else 0.0)
 	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not block_run_active:
-		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
+		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over, game.score)
 		_process_campaign_completion()
 	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
 		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(game.level)
@@ -207,7 +207,7 @@ func _process(delta: float) -> void:
 			gravity_clock = 0.0
 			game.tick()
 			if mode_session != null and not block_run_active:
-				mode_session.update(0.0, game.lines, game.game_over)
+				mode_session.update(0.0, game.lines, game.game_over, game.score)
 			if block_run_active:
 				_process_block_run_events()
 			queue_redraw()
@@ -756,6 +756,8 @@ func _start_campaign_planet() -> void:
 	if not mode_session.start("campaign"):
 		return
 	mode_session.rules["target_lines"] = int(definition.target_lines)
+	mode_session.rules["target_score"] = int(definition.get("target_score", 0))
+	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
 	campaign_run_active = true
 	campaign_run_planet_id = node_id
 	campaign_completion_processed = false
@@ -777,7 +779,7 @@ func _start_campaign_planet() -> void:
 func _process_campaign_completion() -> void:
 	if not campaign_run_active or campaign_completion_processed or mode_session == null or mode_session.status != ModeSession.STATUS_COMPLETED:
 		return
-	var result: Dictionary = campaign_progress.complete_planet(campaign_run_planet_id, game.lines)
+	var result: Dictionary = campaign_progress.complete_planet(campaign_run_planet_id, game.lines, game.score, mode_session.elapsed_seconds)
 	if bool(result.get("accepted", false)):
 		campaign_last_reward_marks = int(result.get("reward_marks", 0))
 		if not CampaignStore.save_progress(campaign_progress):
@@ -931,8 +933,15 @@ func _draw_campaign_planet() -> void:
 	var info := Rect2(20.0, screen_size.y * 0.52, screen_size.x - 40.0, 104.0)
 	_draw_soft_panel(info, Color("#102f68"), Color("#55ddff"), 17, 7)
 	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
-	draw_string(font, info.position + Vector2(14,51), "ОЧИСТИ %d ЛИНИЙ" % int(definition.get("target_lines", 8)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
-	draw_string(font, info.position + Vector2(14,75), "НАГРАДА  •  %d МЕТОК" % int(definition.get("reward_marks", 1)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffd05a"))
+	var boss_type := str(definition.get("boss_type", "none"))
+	var objective_label := "БОСС • СКОРОСТНОЙ ЗАБЕГ" if boss_type == "speed" else ("БОСС • НАБЕРИ ОЧКИ" if boss_type == "score" else ("ФИНАЛЬНЫЙ БОСС" if boss_type == "final" else "ОЧИСТИ %d ЛИНИЙ" % int(definition.get("target_lines", 8))))
+	draw_string(font, info.position + Vector2(14,51), objective_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if boss_type != "none" else 10, Color("#ffb4d2") if boss_type != "none" else Color("#ffffff"))
+	var requirement := "ЛИНИИ %d" % int(definition.get("target_lines", 8))
+	if int(definition.get("target_score", 0)) > 0:
+		requirement += "  •  ОЧКИ %d" % int(definition.target_score)
+	if int(definition.get("time_limit_seconds", 0)) > 0:
+		requirement += "  •  %d СЕК" % int(definition.time_limit_seconds)
+	draw_string(font, info.position + Vector2(14,75), requirement + "  •  +" + str(definition.get("reward_marks", 1)) + " МЕТОК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
 	campaign_start_rect = Rect2(26.0, screen_size.y * 0.72, screen_size.x - 52.0, 58.0)
 	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
 	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else ("УРОВЕНЬ ПРОЙДЕН" if completed else "УРОВЕНЬ ЗАКРЫТ"), campaign_start_rect, 12, Color("#ffffff"))
