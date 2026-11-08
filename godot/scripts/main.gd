@@ -467,8 +467,8 @@ func _draw_backdrop() -> void:
 
 func _draw_header() -> void:
 	_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
-	var mode_name := "BLOCK RUN" if block_run_active else ("Classic" if mode_session == null else str(mode_session.rules.get("name", "Classic")))
-	_center_text("ARCADE • %s MODE" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
+	var mode_name := "БЛОК-РАН" if block_run_active else _mode_display_name("classic" if mode_session == null else mode_session.mode_id)
+	_center_text("АРКАДА • %s" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
 	_draw_mode_button()
 	_draw_pause_button()
@@ -476,18 +476,25 @@ func _draw_header() -> void:
 func _draw_mode_button() -> void:
 	draw_rect(mode_button_rect, Color(0.055, 0.09, 0.15, 0.94))
 	draw_rect(mode_button_rect, Color("#45d9f5"), false, 1.5)
-	var label := "MODE"
+	var label := "РЕЖИМ"
 	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
 	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 5.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#eaf7ff"))
 
+func _mode_display_name(mode_id: String) -> String:
+	match mode_id:
+		"classic": return "КЛАССИКА"
+		"sprint": return "СПРИНТ"
+		"marathon": return "МАРАФОН"
+		_: return "РЕЖИМ"
+
 func _draw_mode_select() -> void:
 	var layout := _mode_select_layout(screen_size)
-	_center_text("CHOOSE YOUR MODE", layout.title_y, 26, Color("#f4f8ff"))
-	_center_text("PICK A RUN STYLE", layout.subtitle_y, 12, Color("#83a3bd"))
-	_draw_mode_card(classic_mode_rect, "1  •  CLASSIC", "Endless play. No line or time limit.", Color("#45d9f5"))
-	_draw_mode_card(sprint_mode_rect, "2  •  SPRINT", "Race to clear 40 lines.", Color("#f6d65b"))
-	_draw_mode_card(marathon_mode_rect, "3  •  MARATHON", "Long run. Clear 100 lines.", Color("#ff9b57"))
-	_center_text("TAP A CARD  •  1 / 2 / 3 TO SELECT", layout.instruction_y, 12, Color("#72a6c8"))
+	_center_text("ВЫБЕРИ РЕЖИМ", layout.title_y, 26, Color("#f4f8ff"))
+	_center_text("ВЫБЕРИ СТИЛЬ ИГРЫ", layout.subtitle_y, 12, Color("#83a3bd"))
+	_draw_mode_card(classic_mode_rect, "1  •  КЛАССИКА", "Без ограничений по времени и линиям.", Color("#45d9f5"))
+	_draw_mode_card(sprint_mode_rect, "2  •  СПРИНТ", "Очисти 40 линий как можно быстрее.", Color("#f6d65b"))
+	_draw_mode_card(marathon_mode_rect, "3  •  МАРАФОН", "Длинный забег на 100 линий.", Color("#ff9b57"))
+	_center_text("НАЖМИ НА КАРТОЧКУ  •  1 / 2 / 3", layout.instruction_y, 12, Color("#72a6c8"))
 
 func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Color) -> void:
 	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.97))
@@ -517,12 +524,12 @@ func _draw_stats() -> void:
 	var top := 140.0
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
 	var synergy_count := block_run_session.encounter.active_synergies().size() if block_run_active and block_run_session != null else 0
-	var score_label := "SCORE" if synergy_count == 0 else "SCORE  •  %d SYNERGIES" % synergy_count
+	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ  •  СИНЕРГИИ %d" % synergy_count
 	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 58), score_label, str(score_value), Color("#45d9f5"))
 	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 58)
 	if block_run_active and block_run_session != null:
 		var encounter = block_run_session.encounter
-		var room_label := "BOSS" if encounter.boss else "ROOM"
+		var room_label := "БОСС" if encounter.boss else "КОМНАТА"
 		var attack_label := "ATK IN %ds" % encounter.next_attack_seconds
 		var encounter_label := "%s %d  •  F%d  •  %s" % [room_label, encounter.room, encounter.floor, attack_label]
 		_stat_card(progress_rect, encounter_label, "HP %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
@@ -541,7 +548,7 @@ func _draw_stats() -> void:
 		if _objective_progress_ratio() > 0.0:
 			draw_rect(Rect2(track.position, Vector2(track.size.x * _objective_progress_ratio(), track.size.y)), Color("#45d9f5"))
 	else:
-		_stat_card(progress_rect, "LEVEL  /  LINES", "%d  /  %d" % [game.level, game.lines], Color("#f6d65b"))
+		_stat_card(progress_rect, "УРОВЕНЬ  /  ЛИНИИ", "%d  /  %d" % [game.level, game.lines], Color("#f6d65b"))
 
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
 	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.94))
@@ -599,8 +606,8 @@ func _draw_piece_previews() -> void:
 		var start_x := (screen_size.x - total_width) * 0.5
 		hold_rect = Rect2(start_x, top, slot_width, card_height)
 		block_run_skill_rect = Rect2(start_x + (slot_width + slot_gap) * 2.0, top, slot_width, card_height)
-		_draw_preview_card(hold_rect, "HOLD", game.held_type)
-		_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "NEXT", game.peek_next_piece_type())
+		_draw_preview_card(hold_rect, "ЗАПАС", game.held_type)
+		_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
 		_draw_block_run_skill_card(block_run_skill_rect)
 	else:
 		var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
@@ -609,8 +616,8 @@ func _draw_piece_previews() -> void:
 		var start_x := (screen_size.x - total_width) * 0.5
 		hold_rect = Rect2(start_x, top, card_width, card_height)
 		block_run_skill_rect = Rect2()
-		_draw_preview_card(hold_rect, "HOLD", game.held_type)
-		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "NEXT", game.peek_next_piece_type())
+		_draw_preview_card(hold_rect, "ЗАПАС", game.held_type)
+		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
 
 func _draw_block_run_skill_card(rect: Rect2) -> void:
 	if not block_run_active or block_run_session == null:
@@ -787,11 +794,11 @@ func _draw_pause_overlay() -> void:
 	panel.position.x = maxf(20.0, panel.position.x)
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#45d9f5"))
-	_center_text("PAUSED", screen_size.y * 0.5 - 38.0, 34, Color("#f4f8ff"))
-	_center_text("YOUR RUN IS ON HOLD", screen_size.y * 0.5 - 8.0, 13, Color("#83a3bd"))
+	_center_text("ПАУЗА", screen_size.y * 0.5 - 38.0, 34, Color("#f4f8ff"))
+	_center_text("ЗАБЕГ ПРИОСТАНОВЛЕН", screen_size.y * 0.5 - 8.0, 13, Color("#83a3bd"))
 	draw_rect(resume_rect, Color("#102c45"))
 	draw_rect(resume_rect, Color("#45d9f5"), false, 2.0)
-	var label := "RESUME"
+	var label := "ПРОДОЛЖИТЬ"
 	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x
 	draw_string(font, resume_rect.get_center() + Vector2(-width * 0.5, 6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#f4f8ff"))
 
@@ -805,12 +812,12 @@ func _draw_mode_complete() -> void:
 	var target := int(mode_session.rules.get("target_lines", game.lines))
 	_center_text(mode_name + " COMPLETE", screen_size.y * 0.5 - 56.0, 27, Color("#f4f8ff"))
 	_center_text("%d LINES CLEARED" % target, screen_size.y * 0.5 - 22.0, 16, Color("#45d9f5"))
-	_center_text("TIME  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
+	_center_text("ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
 	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
-	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
+	_center_text("НАЖМИ, ЧТОБЫ СЫГРАТЬ ЕЩЁ", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
 func _game_over_title() -> String:
-	return str(mode_session.rules.get("name", "MODE")).to_upper() + " FAILED" if _is_line_objective_mode() else "RUN OVER"
+	return _mode_display_name(mode_session.mode_id) + " — НЕ ВЫПОЛНЕН" if _is_line_objective_mode() else "ИГРА ОКОНЧЕНА"
 
 func _game_over_progress_label() -> String:
 	if _is_line_objective_mode():
@@ -842,10 +849,10 @@ func _draw_game_over() -> void:
 		_center_text("ONE MORE RUN?", screen_size.y * 0.5 + 91.0, 13, Color("#ffb477"))
 	else:
 		_center_text(_game_over_title(), screen_size.y * 0.5 - 70.0, 34, Color("#f4f8ff"))
-		_center_text("SCORE", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
+		_center_text("ОЧКИ", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
 		_center_text(str(game.score), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
 		_center_text(_game_over_progress_label(), screen_size.y * 0.5 + 36.0, 13, Color("#c0d3e2"))
-		_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
+		_center_text("НАЖМИ, ЧТОБЫ НАЧАТЬ ЗАНОВО", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
 
 
 func _draw_block_run_results() -> void:
@@ -856,9 +863,9 @@ func _draw_block_run_results() -> void:
 	var session := block_run_session
 	var room_text := "ROOM %d  •  FLOOR %d" % [session.encounter.room, session.encounter.floor]
 	var elapsed := _format_elapsed_time(session.run_seconds)
-	_center_text("BLOCK RUN OVER", panel.position.y + 48.0, 27, Color("#f4f8ff"))
+	_center_text("ЗАБЕГ ЗАВЕРШЁН", panel.position.y + 48.0, 27, Color("#f4f8ff"))
 	_center_text(room_text, panel.position.y + 82.0, 13, Color("#83a3bd"))
-	_center_text("SCORE", panel.position.y + 126.0, 11, Color("#83a3bd"))
+	_center_text("ОЧКИ", panel.position.y + 126.0, 11, Color("#83a3bd"))
 	_center_text(str(session.score), panel.position.y + 160.0, 29, Color("#45d9f5"))
 	_center_text("ЛИНИИ  •  %d     ВРЕМЯ  •  %s" % [session.total_lines, elapsed], panel.position.y + 198.0, 13, Color("#c0d3e2"))
 	draw_line(Vector2(panel.position.x + 28.0, panel.position.y + 222.0), Vector2(panel.end.x - 28.0, panel.position.y + 222.0), Color(0.25, 0.52, 0.7, 0.5), 1.0)
