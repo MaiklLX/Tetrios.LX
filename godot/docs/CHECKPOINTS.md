@@ -177,7 +177,6 @@
 - Remaining: connect session to the live piece/board lifecycle; integrate Shield/Nova rescue mutations; build card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable.
 - No main merge, deployment, APK build/release, persistence work or physical-device test.
 
-
 ## KT-473 — Block Run Shield / Iron Fortress / Nova rescue mutations
 - Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open.
 - Added session-level `on_spawn_collision()` that applies the existing source effect decision and mutates the isolated 10×23 Block Run board.
@@ -332,3 +331,11 @@
 - Styled the five-cell piece with a consistent cyan/teal body, gold fasteners, dimensional highlights, and a dark cosmic campaign backdrop. The screen labels it as campaign-only and explicitly separates it from Classic and Block Run.
 - Extended the CI visual capture to load the isolated preview, verify all four card bounds fit within 720×1280, verify each rotation retains five cells and all four shapes are distinct, and save 27-campaign-cargo-hook-preview.png.
 - The preview scene is not referenced by the main scene, gameplay model, seven-bag, or save system. No gameplay integration, main merge, deployment, or APK release.
+
+## KT-536 — Campaign special-piece integration contract
+- Date: 2026-11-08; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Added `godot/docs/KT-536_CAMPAIGN_SPECIAL_PIECE_INTEGRATION_CONTRACT.md` as a design-only gate before gameplay integration.
+- Audited the current boundary: the shared `game_model.gd` seven-bag and save validator assume seven four-cell tetrominoes, while the Cargo Hook is a five-cell campaign-only prototype. A direct insertion would risk changing shared mode behavior and standard save compatibility.
+- Recommended a dedicated campaign-owned runtime/model boundary with explicit campaign launch selection, special-piece identity and snapshot data, authored level opt-in, and no special IDs in the standard seven-piece range.
+- Defined geometry, board, lifecycle, Hold, persistence, visual and mode-isolation test gates; staged KT-537–KT-540 implementation plan.
+- **No gameplay code or silhouette changed.** The Cargo Hook remains pending the user's visual approval. Classic, Sprint/Marathon and Block Run remain on the original seven-piece model. No main merge, deployment or APK release.
