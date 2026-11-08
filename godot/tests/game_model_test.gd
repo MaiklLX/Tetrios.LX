@@ -334,7 +334,7 @@ func _run() -> void:
 		return
 	if not _check(layout_probe._game_over_progress_label() == "ЛИНИИ  •  37 / 40", "Sprint failure must show achieved lines against the target"):
 		return
-	if not _check(layout_probe._game_over_time_label() == "TIME  •  01:23", "Sprint failure must show the elapsed run time"):
+	if not _check(layout_probe._game_over_time_label() == "ВРЕМЯ  •  01:23", "Sprint failure must show the elapsed run time"):
 		return
 	layout_probe.mode_session.start("marathon")
 	layout_probe.game.lines = 99
@@ -343,7 +343,7 @@ func _run() -> void:
 		return
 	if not _check(layout_probe._game_over_progress_label() == "ЛИНИИ  •  99 / 100", "Marathon failure must retain progress against the 100-line target"):
 		return
-	if not _check(layout_probe._game_over_time_label() == "TIME  •  62:03", "Marathon failure must retain elapsed time without a countdown"):
+	if not _check(layout_probe._game_over_time_label() == "ВРЕМЯ  •  62:03", "Marathon failure must retain elapsed time without a countdown"):
 		return
 	layout_probe.mode_session.start("classic")
 	if not _check(layout_probe._game_over_title() == "ИГРА ОКОНЧЕНА" and layout_probe._game_over_time_label().is_empty(), "Classic game over must retain its original presentation"):
