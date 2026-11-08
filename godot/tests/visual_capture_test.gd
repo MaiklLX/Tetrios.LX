@@ -250,6 +250,74 @@ func _run() -> void:
 	if not await _capture(viewport, "09-mobile-360-results"):
 		quit(1)
 		return
+	# Live campaign navigation: atlas → universe route → planet detail.
+	scene.set("home_visible", false)
+	scene.set("mode_select_visible", false)
+	scene.set("secondary_screen", "")
+	scene.set("campaign_screen", "atlas")
+	scene.set("campaign_universe", 0)
+	scene.set("campaign_planet", 1)
+	scene.set("gravity_clock", 0.25)
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "21-live-campaign-atlas"):
+		quit(1)
+		return
+	if scene.get("campaign_atlas_rects").size() != 12:
+		push_error("Live campaign atlas must expose all 12 universe hit targets.")
+		quit(1)
+		return
+	var frozen_campaign_clock: float = scene.get("gravity_clock")
+	scene.call("_handle_tap", scene.get("campaign_atlas_rects")[0].get_center())
+	await process_frame
+	await process_frame
+	if str(scene.get("campaign_screen")) != "route" or scene.get("campaign_node_rects").size() != 30:
+		push_error("Selecting a universe must open its 30-node route.")
+		quit(1)
+		return
+	if not await _capture(viewport, "22-live-campaign-universe-route"):
+		quit(1)
+		return
+	scene.call("_handle_tap", scene.get("campaign_node_rects")[0].get_center())
+	await process_frame
+	await process_frame
+	if str(scene.get("campaign_screen")) != "planet" or int(scene.get("campaign_planet")) != 1:
+		push_error("Selecting the open first planet must open its detail screen.")
+		quit(1)
+		return
+	if not await _capture(viewport, "23-live-campaign-planet-detail"):
+		quit(1)
+		return
+	if absf(float(scene.get("gravity_clock")) - frozen_campaign_clock) > 0.0001:
+		push_error("Gameplay gravity clock advanced while navigating the campaign.")
+		quit(1)
+		return
+	scene.call("_handle_tap", scene.get("campaign_start_rect").get_center())
+	if not bool(scene.get("mode_select_visible")) or not bool(scene.get("campaign_launch_pending")):
+		push_error("Starting the unlocked planet must enter mode selection with campaign context.")
+		quit(1)
+		return
+	scene.call("_handle_tap", scene.get("secondary_back_rect").get_center())
+	await process_frame
+	await process_frame
+	if str(scene.get("campaign_screen")) != "planet":
+		push_error("Returning from mode selection must restore the selected planet detail.")
+		quit(1)
+		return
+	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
+	await process_frame
+	await process_frame
+	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
+	await process_frame
+	await process_frame
+	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
+	await process_frame
+	await process_frame
+	if not bool(scene.get("home_visible")) or not str(scene.get("campaign_screen")).is_empty():
+		push_error("Campaign back navigation must return cleanly to the Home hub.")
+		quit(1)
+		return
 	# The following five screens are a static art-direction gallery, not live
 	# commerce/profile UI. It lets the user review the complete visual language
 	# before we connect navigation, inventory, currencies or persistent data.
