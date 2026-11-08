@@ -46,12 +46,12 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	var settings: Dictionary = profile["settings"]
 
 	# Coins: the Web runtime loads bb_coins. Other keys are legacy mirrors.
-	var primary_coins := _read_value(raw, "bb_coins", true)
-	var alias_coins := _read_value(raw, "coins", false)
-	var mirror_coins := _read_value(raw, "bbCoins", false)
-	var primary_valid := _is_non_negative_int(primary_coins)
-	var alias_valid := _is_non_negative_int(alias_coins)
-	var mirror_valid := _is_non_negative_int(mirror_coins)
+	var primary_coins: Variant = _read_value(raw, "bb_coins", true)
+	var alias_coins: Variant = _read_value(raw, "coins", false)
+	var mirror_coins: Variant = _read_value(raw, "bbCoins", false)
+	var primary_valid: bool = _is_non_negative_int(primary_coins)
+	var alias_valid: bool = _is_non_negative_int(alias_coins)
+	var mirror_valid: bool = _is_non_negative_int(mirror_coins)
 	if raw.has("bb_coins") and not primary_valid:
 		_add_error(result, "bb_coins is present but is not a valid non-negative integer")
 	elif primary_valid:
@@ -79,7 +79,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_read_non_negative_raw_int(raw, "nrBest", stats, "best_score", result, 0)
 	_read_non_negative_raw_int(raw, "nrRuns", stats, "runs", result, 0)
 
-	var selected := _read_value(raw, "bbSelectedHero", false)
+	var selected: Variant = _read_value(raw, "bbSelectedHero", false)
 	if raw.has("bbSelectedHero"):
 		if typeof(selected) == TYPE_STRING and HERO_IDS.has(selected):
 			heroes["selected_id"] = selected
@@ -87,10 +87,10 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 			_add_error(result, "bbSelectedHero contains an unknown hero id")
 
 	for hero_id in HERO_IDS:
-		var xp_key := "bb_xp_" + hero_id
-		var level_key := "bb_heroLevel_" + hero_id
-		var xp := _read_value(raw, xp_key, true)
-		var hero_level := _read_value(raw, level_key, true)
+		var xp_key: String = "bb_xp_" + hero_id
+		var level_key: String = "bb_heroLevel_" + hero_id
+		var xp: Variant = _read_value(raw, xp_key, true)
+		var hero_level: Variant = _read_value(raw, level_key, true)
 		if hero_id == "plush":
 			if not raw.has(xp_key):
 				xp = _read_value(raw, "bb_xp", true)
@@ -101,7 +101,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 				_add_error(result, "Invalid XP/level pair for hero " + hero_id)
 			else:
 				hero_progress[hero_id] = {"xp": int(xp), "level": int(hero_level)}
-		var perk_key := "bb_bbCampaignPerks_" + hero_id
+		var perk_key: String = "bb_bbCampaignPerks_" + hero_id
 		if raw.has(perk_key):
 			var perks: Variant = _read_value(raw, perk_key, true)
 			if typeof(perks) != TYPE_DICTIONARY:
@@ -116,7 +116,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_read_non_negative_json_int(raw, "bb_collectionFragments", cosmetics, "fragments", result, 0)
 
 	if not cosmetics.has("equipped_by_hero") and raw.has("bb_equippedChestCosmetic"):
-		var legacy_cosmetic := _read_value(raw, "bb_equippedChestCosmetic", false)
+		var legacy_cosmetic: Variant = _read_value(raw, "bb_equippedChestCosmetic", false)
 		if typeof(legacy_cosmetic) == TYPE_STRING and not legacy_cosmetic.is_empty():
 			cosmetics["equipped_by_hero"] = {str(heroes["selected_id"]): legacy_cosmetic}
 			result["warnings"].append("Legacy single-slot cosmetic equip mapped to the selected hero; source key preserved")
@@ -130,7 +130,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_copy_raw_string(raw, "bbDailyChallengeCatalogSignature", daily, "challenge_catalog_signature", result)
 	_copy_raw_string(raw, "bbDailyChallengeCompletedDate", daily, "last_completed_date", result)
 	_copy_raw_string(raw, "nrDailyDone", stats, "last_daily_run_date", result)
-	var haptics := _read_value(raw, "bb_haptics", false)
+	var haptics: Variant = _read_value(raw, "bb_haptics", false)
 	if raw.has("bb_haptics"):
 		if haptics == "0":
 			settings["haptics"] = false
@@ -179,7 +179,7 @@ static func _is_positive_int(value: Variant) -> bool:
 static func _read_non_negative_json_int(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary, fallback: int) -> void:
 	if not raw.has(key):
 		return
-	var value := _read_value(raw, key, true)
+	var value: Variant = _read_value(raw, key, true)
 	if _is_non_negative_int(value):
 		target[field] = int(value)
 	else:
@@ -188,7 +188,7 @@ static func _read_non_negative_json_int(raw: Dictionary, key: String, target: Di
 static func _read_non_negative_raw_int(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary, fallback: int) -> void:
 	if not raw.has(key):
 		return
-	var value := _read_value(raw, key, false)
+	var value: Variant = _read_value(raw, key, false)
 	if typeof(value) == TYPE_STRING and value.is_valid_int():
 		value = int(value)
 	if _is_non_negative_int(value):
@@ -204,7 +204,7 @@ static func _read_positive_raw_int(raw: Dictionary, key: String, target: Diction
 static func _copy_json_container(raw: Dictionary, key: String, target: Dictionary, field: String, expected_type: int, result: Dictionary) -> void:
 	if not raw.has(key):
 		return
-	var value := _read_value(raw, key, true)
+	var value: Variant = _read_value(raw, key, true)
 	if typeof(value) != expected_type:
 		_add_error(result, key + " contains malformed JSON or an unexpected data type")
 	else:
@@ -213,7 +213,7 @@ static func _copy_json_container(raw: Dictionary, key: String, target: Dictionar
 static func _copy_raw_string(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary) -> void:
 	if not raw.has(key):
 		return
-	var value := _read_value(raw, key, false)
+	var value: Variant = _read_value(raw, key, false)
 	if typeof(value) == TYPE_STRING:
 		target[field] = value
 	else:
