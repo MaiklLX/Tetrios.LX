@@ -200,3 +200,12 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Initial Nova test fixture used a multi-row piece for a one-row rescue and failed strict collision validation; corrected the test geometry rather than weakening runtime validation.
 - CI run 42473876259 on code SHA 5d19c2ff9f240578bfab1e588a5f5d7c0c77070f passed all tests, visual capture and scene smoke test.
 - Block Run remains hidden until card/hero/goal/result UI and reward settlement are complete.
+
+
+## 19. KT-478 — Block Run level-up card draft
+- Source trigger verified in Web `levelUp()`: pause the run, show three upgrade choices, apply one choice, then resume. Repeated cards increase rank up to five.
+- Native session now advances its own level from cleared-line charge, applies the source threshold/gravity progression, creates three unique offers, and accepts only an offered card while a draft is open. The visible choice increments exactly one rank and closes the draft.
+- Native scene provides touch cards and keyboard 1/2/3. The run clock and falling-piece gravity stop while the draft is open. Block Run HUD shows room/floor and enemy HP; Buddy is hidden behind the modal.
+- CI run 42474850074 on code HEAD `66e379fd75a225e7b9c1f84f9c9f9238f3c62b66`: **SUCCESS** — all import/parse, Classic, migration, Block Run model/effect/board/session/bridge/live tests, graphical capture and scene smoke checks passed.
+- New real rendered artifact includes `03-block-run-card-draft.png` at 720×1280. This verifies the modal render only; the complete Block Run mode remains internal and is not exposed in the selector.
+- Still pending: encounter and three-goal HUD, hero skill input/cooldown display, exactly-once wallet reward settlement, run-end/results UX, and full-run playtesting. Persistence remains deferred. No main merge, deployment, APK or physical Android test.
