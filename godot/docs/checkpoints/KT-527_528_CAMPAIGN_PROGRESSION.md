@@ -29,9 +29,20 @@ Status: implemented on the Godot development branch. Draft PR #81 remains the re
   - `25-live-campaign-level-complete.png`
   - `26-live-campaign-progress.png`
 
+## KT-529 — Continuous difficulty curve and boss gates
+- Every planet now has both a line target and a score target; score requirements rise on every single planet from 001 through 360.
+- Line targets rise in measured steps and never reset at a universe boundary.
+- Difficulty tiers add a persistent score-target jump every ten planets, so the 10/20/30 milestones feel materially harder and the following planets do not become easier.
+- Planet 010 uses a 150-second speed limit plus its increased line/score objectives.
+- Planet 020 requires its increased line and score targets.
+- Planet 030 combines the increased line/score targets with a 180-second limit.
+- Campaign restarts preserve all three objective values.
+- Automated tests cover all 360 planets for strictly increasing score targets, non-decreasing line targets, universe transitions, boss spikes, score gates and time failures.
+
 ## Staged limitations
 - Fresh profiles begin at Planet 001; the rest of the 360-node route unlocks sequentially.
-- Current planet objectives are clear-line targets, with difficulty scaling by universe and planet number. Unique per-planet mechanics, bosses and authored level modifiers are future work.
+- The objective curve is now continuous, but individual non-boss planets do not yet have unique mechanics or authored modifiers.
+- Bosses currently use stronger objective gates and time pressure; dedicated boss intro, HUD treatment, victory/failure presentation and visual capture coverage remain the next presentation pass.
 - Legacy profile mapping is implemented at the campaign-store boundary; automatic Web localStorage-to-Godot profile migration remains a separate integration step.
 - Physical-device verification remains required before release.
 
