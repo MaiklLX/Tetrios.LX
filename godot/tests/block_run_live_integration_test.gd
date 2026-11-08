@@ -176,6 +176,43 @@ func _run() -> void:
 		return
 	paused_skill_probe.free()
 
-	print("Block Run live gameplay integration tests passed.")
+	var progression_probe = _main_probe()
+	if not _check(progression_probe.start_block_run_session(), "Live encounter progression probe must initialize"):
+		return
+	if not _check(progression_probe.configure_block_run_hero("prism", 5), "Prism must configure for the live encounter progression probe"):
+		return
+	var progression_session = progression_probe.block_run_session
+	var starting_room: int = progression_session.encounter.room
+	progression_session.encounter.enemy_hp = 1
+	var prism_finish: Dictionary = progression_probe.activate_block_run_hero_skill()
+	if not _check(bool(prism_finish.get("accepted", false)) and bool(prism_finish.get("enemy_defeated", false)), "Live Prism activation must defeat a one-HP encounter enemy"):
+		return
+	if not _check(progression_session.encounter.room == starting_room + 1 and progression_session.encounter.enemy_hp == progression_session.encounter.enemy_max_hp, "Live hero victory must advance the encounter and initialize the next enemy"):
+		return
+	if not _check(progression_session.hero_skill_cooldown_seconds == 45, "Encounter progression must preserve the activated hero cooldown"):
+		return
+	progression_probe.free()
+
+	var receipt_probe = _main_probe()
+	if not _check(receipt_probe.start_block_run_session(), "Live reward receipt probe must initialize"):
+		return
+	var receipt_session = receipt_probe.block_run_session
+	receipt_session.goals[0] = {"id":700,"type":"lines","label":"ТЕСТ ЛИНИЙ","target":1,"reward":17,"claimed":false}
+	receipt_probe.game.hard_drop()
+	receipt_probe.game.lines = 1
+	receipt_probe._process_block_run_events()
+	if not _check(receipt_session.total_lines == 1 and receipt_session.goal_reward_receipts.has("block-run-goal:700"), "A real live line-clear event must complete the active goal and issue its reward receipt"):
+		return
+	if not _check(receipt_session.goal_rewards_earned == 17 and receipt_session.pending_goal_reward_total() == 17, "Live goal completion must record the exact pending reward once"):
+		return
+	var live_receipt: Dictionary = receipt_session.claim_goal_reward("block-run-goal:700")
+	if not _check(bool(live_receipt.get("accepted", false)) and int(live_receipt.get("reward", 0)) == 17, "The live goal receipt must be claimable exactly once"):
+		return
+	var duplicate_live_receipt: Dictionary = receipt_session.claim_goal_reward("block-run-goal:700")
+	if not _check(not bool(duplicate_live_receipt.get("accepted", false)) and receipt_session.goal_rewards_claimed == 17 and receipt_session.pending_goal_reward_total() == 0, "Repeated live receipt claims must not duplicate the reward"):
+		return
+	receipt_probe.free()
+
+	print("Block Run live gameplay integration tests passed: live hero progression and exactly-once goal receipts.")
 
 	quit(0)
