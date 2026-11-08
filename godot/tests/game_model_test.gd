@@ -21,7 +21,7 @@ func _run() -> void:
 	seed(20261105)
 	# Mode catalog keeps mode definitions isolated from the classic model.
 	var available_modes: Array[Dictionary] = ModeCatalog.list_modes()
-	if not _check(available_modes.size() == 2, "The initial catalog should expose Classic and Sprint only"):
+	if not _check(available_modes.size() == 3, "The catalog should expose Classic, Sprint, and Marathon"):
 		return
 	var classic_rules: Dictionary = ModeCatalog.get_mode("classic")
 	if not _check(classic_rules.get("target_lines", -1) == 0 and classic_rules.get("time_limit_seconds", -1) == 0, "Classic must remain an unlimited default mode"):
@@ -31,12 +31,24 @@ func _run() -> void:
 	var sprint_rules: Dictionary = ModeCatalog.get_mode("sprint")
 	if not _check(sprint_rules.get("target_lines", 0) == 40 and sprint_rules.get("time_limit_seconds", -1) == 0, "Sprint must use a clear 40-line objective without an unapproved timer"):
 		return
+	var marathon_rules: Dictionary = ModeCatalog.get_mode("marathon")
+	if not _check(marathon_rules.get("target_lines", 0) == 100 and marathon_rules.get("time_limit_seconds", -1) == 0, "Marathon must use a 100-line objective without a time limit"):
+		return
 	if not _check(ModeCatalog.get_mode("unknown").is_empty(), "Unknown mode IDs must not silently map to another mode"):
 		return
 	classic_rules["target_lines"] = 999
 	if not _check(ModeCatalog.get_mode("classic").get("target_lines", -1) == 0, "Callers must not be able to mutate catalog definitions"):
 		return
 
+	var marathon_session = ModeSession.new()
+	if not _check(marathon_session.start("marathon"), "Marathon session should start"):
+		return
+	marathon_session.update(125.0, 99, false)
+	if not _check(marathon_session.status == ModeSession.STATUS_RUNNING and marathon_session.remaining_lines(99) == 1, "Marathon must remain active with one line remaining"):
+		return
+	marathon_session.update(1.0, 100, false)
+	if not _check(marathon_session.status == ModeSession.STATUS_COMPLETED and is_equal_approx(marathon_session.elapsed_seconds, 126.0), "Marathon must complete at exactly 100 lines and retain elapsed time"):
+		return
 	# Mode session owns objective completion without changing the classic board model.
 	var classic_session = ModeSession.new()
 	if not _check(classic_session.start(ModeCatalog.DEFAULT_MODE_ID), "Classic session should start from the catalog default"):
