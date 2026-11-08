@@ -4,6 +4,24 @@ extends SceneTree
 func _initialize() -> void:
 	call_deferred("_run")
 
+func _assert_mobile_arena_spacing(scene: Node, viewport_size: Vector2i, label: String) -> bool:
+	var board: Rect2 = scene.get("board_rect")
+	var hold: Rect2 = scene.get("hold_rect")
+	var skill: Rect2 = scene.get("block_run_skill_rect")
+	var frame_top := board.position.y - 13.0
+	if hold.position.x < 0.0 or hold.end.x > float(viewport_size.x) or hold.position.y < 0.0 or hold.end.y > frame_top:
+		push_error("%s: HOLD/NEXT preview cards leave the screen or touch the board frame (hold=%s board=%s)." % [label, str(hold), str(board)])
+		return false
+	if bool(scene.get("block_run_active")):
+		if skill.size.x <= 0.0 or skill.position.x < 0.0 or skill.end.x > float(viewport_size.x) or skill.position.y < 0.0 or skill.end.y > frame_top:
+			push_error("%s: hero skill card leaves the screen or touches the board frame (skill=%s)." % [label, str(skill)])
+			return false
+		var goals_top := board.position.y - 108.0
+		if hold.position.y < goals_top + 32.0 or hold.position.y - (goals_top + 32.0) < -0.5:
+			push_error("%s: goal strip and preview row overlap." % label)
+			return false
+	return true
+
 func _capture(viewport: SubViewport, scene_name: String) -> bool:
 	await RenderingServer.frame_post_draw
 	var texture := viewport.get_texture()
@@ -169,6 +187,9 @@ func _run() -> void:
 		push_error("Visible Drop control is missing, undersized, clipped, or overlaps the 10x23 board at 360x800.")
 		quit(1)
 		return
+	if not _assert_mobile_arena_spacing(scene, Vector2i(360, 800), "360x800 Block Run"):
+		quit(1)
+		return
 	var mobile_model = scene.get("game")
 	var mobile_lock_serial_before: int = mobile_model.lock_serial
 	scene.call("_handle_tap", mobile_drop_rect.get_center())
@@ -185,6 +206,22 @@ func _run() -> void:
 	if not await _capture(viewport, "08-mobile-360-arena"):
 		quit(1)
 		return
+	# Check a second common phone size to catch scaling and edge-clipping regressions.
+	viewport.size = Vector2i(412, 915)
+	await process_frame
+	scene.call("_layout")
+	if not _assert_mobile_arena_spacing(scene, Vector2i(412, 915), "412x915 Block Run"):
+		quit(1)
+		return
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "20-mobile-412-block-run-arena"):
+		quit(1)
+		return
+	viewport.size = Vector2i(360, 800)
+	await process_frame
+	scene.call("_layout")
 	block_run_session = scene.get("block_run_session")
 	block_run_session.status = "failed"
 	scene.get("game").game_over = true
