@@ -424,5 +424,3 @@ func _run() -> void:
 
 	print("Godot tests passed: gameplay model, save/load validation, read-only Web migration parser, profile fixtures, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
 	quit(0)
- 10x23 board, versioned save/load validation, collision boundaries, lock behavior, 50-cycle progression, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
-	quit(0)
