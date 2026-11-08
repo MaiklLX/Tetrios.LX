@@ -219,7 +219,9 @@ func get_card_effect_description(card_id: String, requested_rank: int) -> String
 		"loop": return "Порог уровня −%d линию(и)" % rank
 		"comet": return "Быстрый уровень приносит +%d очков" % (300 * rank)
 		"gear": return "Каждая 5-я установленная фигура: +%d очков" % (25 * rank)
-		"plasma": return "Сбрасывает задержку следующего падения"
+		"plasma": return "Сбрасывает задержку следующего падения при очистке линии"
+		"stable": return "Точность поворота: до %d клеток бокового смещения" % (1 + rank)
+		"reactor": return "Бонус уровня усиливается ×%d" % rank
 		_: return ""
 
 func card_catalog() -> Array[Dictionary]:
