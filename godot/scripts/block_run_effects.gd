@@ -29,7 +29,9 @@ static func on_card_drafted(ranks: Dictionary, card_id: String, current_need_lin
 		"reserve_charges":next_reserve_charges
 	}
 
-static func hold_limit(ranks: Dictionary) -> int:
+static func hold_limit(ranks: Dictionary, hero_id: String = "", hero_level: int = 1) -> int:
+	if hero_id == "pixel":
+		return mini(4, 2 + floori(float(maxi(1, hero_level) - 1) / 5.0))
 	return 1 + _rank(ranks, "hold")
 
 static func on_piece_locked(ranks: Dictionary, placement_count: int) -> Dictionary:
@@ -136,7 +138,8 @@ static func on_spawn_collision(ranks: Dictionary, shield_charges: int, nova_used
 			"bottom_rows_to_clear":0,
 			"iron_fortress":shield_rank > 0 and armor_rank > 0,
 			"shield_fill_probability":0.10 if shield_rank > 0 and armor_rank > 0 else 0.22,
-			"shield_clear_rows":6 if shield_rank > 0 and armor_rank > 0 else 4
+			"shield_randomized_rows":5 if shield_rank > 0 and armor_rank > 0 else 3,
+			"shield_start_row":18 if shield_rank > 0 and armor_rank > 0 else 20
 		}
 	var nova_rank := _rank(ranks, "nova")
 	if nova_rank > 0 and not nova_used:
@@ -147,9 +150,10 @@ static func on_spawn_collision(ranks: Dictionary, shield_charges: int, nova_used
 			"bottom_rows_to_clear":maxi(1, nova_rank),
 			"iron_fortress":false,
 			"shield_fill_probability":0.0,
-			"shield_clear_rows":0
+			"shield_randomized_rows":0,
+			"shield_start_row":23
 		}
-	return {"rescued":false,"rescue_type":"","shield_charges_remaining":shield_charges,"bottom_rows_to_clear":0,"iron_fortress":false,"shield_fill_probability":0.0,"shield_clear_rows":0}
+	return {"rescued":false,"rescue_type":"","shield_charges_remaining":shield_charges,"bottom_rows_to_clear":0,"iron_fortress":false,"shield_fill_probability":0.0,"shield_randomized_rows":0,"shield_start_row":23}
 
 static func on_monster_defeated(ranks: Dictionary) -> Dictionary:
 	return {"bottom_rows_to_clear":mini(3, _rank(ranks, "rift"))}
