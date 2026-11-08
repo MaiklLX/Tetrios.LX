@@ -80,15 +80,13 @@ func _draw_top_bar() -> void:
 	if screen_id != "home":
 		_top_bar()
 		return
-	# Home gets a quiet app chrome; the Buddy identity and wallet already live
-	# in the hero strip below, so do not duplicate the title or currency here.
+	# The home top bar is now utility/profile chrome, not a second logo.
+	# BLOCK BUDDIES appears exactly once in the hero brand panel below.
 	var rect := Rect2(24, 22, viewport_size.x - 48, 68)
 	_panel(rect, Color("#123d82"), Color("#6bdfff"), 20)
-	draw_circle(Vector2(58, 56), 19, Color("#1a8ed1"))
-	draw_circle(Vector2(58, 56), 12, Color("#7de8ff"))
-	draw_rect(Rect2(51,49,14,14), Color("#e8faff"), false, 2)
-	_text("TETRIOS.LX", Vector2(88, 52), 16, WHITE)
-	_text("BLOCK BUDDIES", Vector2(88, 70), 9, PALE)
+	_hero_portrait(Vector2(59, 56), 0, 0.34)
+	_text("ПРОФИЛЬ", Vector2(91, 52), 14, WHITE)
+	_text("МОЙ НАПАРНИК", Vector2(91, 70), 9, PALE)
 	for i in range(2):
 		var x := viewport_size.x - 116 + i * 48
 		_panel(Rect2(x, 35, 40, 42), Color("#102e62"), Color("#4e9bc8"), 13)
@@ -447,55 +445,56 @@ func _hero_portrait(center: Vector2, hero: int, scale := 1.0) -> void:
 			draw_arc(center + Vector2(0, 8)*s, 12*s, 0.25, 2.9, 18, Color("#092b61"), 3*s, true)
 
 func _draw_campaign() -> void:
-	_center("КОСМИЧЕСКИЙ АТЛАС", 150, 30, GOLD)
-	_center("Три вселенные • новые миры ждут открытия", 183, 14, PALE)
-	# Atlas route overview: each universe is a chapter with a distinct identity.
-	var titles := ["ТУМАННОСТЬ ИСКР", "КРИСТАЛЬНАЯ ВСЕЛЕННАЯ", "ТЕНЕВОЙ РУБЕЖ"]
-	var subtitles := ["Домашний сектор • первые открытия", "Мир сияющих осколков", "Неизведанная граница галактики"]
-	var colors := [Color("#145b8d"), Color("#58418f"), Color("#65385f")]
-	var accents := [CYAN, VIOLET, PINK]
-	var planet_colors := [[Color("#65d9ff"),Color("#91e6ad"),Color("#e6c56b")],[Color("#c7a2ff"),Color("#71dfff"),Color("#ff9ec9")],[Color("#ff8fbd"),Color("#9b9cff"),Color("#a7c2db")]]
-	for i in range(3):
-		var y := 218.0 + i * 278.0
-		var rect := Rect2(30, y, viewport_size.x - 60, 246)
-		_panel(rect, colors[i], accents[i], 24)
-		# Planetary system illustration with orbit rings and a central world.
-		var origin := Vector2(145, y + 108)
-		draw_circle(origin, 72, Color(0.35,0.78,1.0,0.10))
-		draw_arc(origin, 60, -0.25, TAU-0.25, 64, Color(0.75,0.9,1.0,0.48), 2, true)
-		draw_arc(origin, 43, 0.8, TAU+0.8, 64, Color(1,1,1,0.22), 1.5, true)
-		draw_circle(origin, 30, planet_colors[i][0])
-		draw_circle(origin + Vector2(-9,-8), 9, Color(1,1,1,0.25))
-		draw_arc(origin + Vector2(0,2), 29, 0.2, 2.6, 32, Color(0.05,0.2,0.48,0.45), 4, true)
-		for planet in range(3):
-			var angle := -PI/2 + float(planet) * TAU/3.0 + float(i)*0.24
-			var orbit_pos := origin + Vector2(cos(angle), sin(angle)) * (58.0 if planet != 1 else 75.0)
-			draw_circle(orbit_pos, 10 + planet*2, planet_colors[i][planet])
-			draw_circle(orbit_pos + Vector2(-3,-3), 3, Color(1,1,1,0.55))
-		_text(titles[i], Vector2(245, y+58), 17, WHITE)
-		_text(subtitles[i], Vector2(245, y+83), 11, PALE)
-		var discovered := 3 if i == 0 else (1 if i == 1 else 0)
-		_text("ОТКРЫТО  %d / 3 ПЛАНЕТЫ" % discovered, Vector2(245, y+119), 12, GOLD)
-		var bar := Rect2(245, y+132, viewport_size.x-315, 7)
+	_center("КОСМИЧЕСКИЙ АТЛАС", 142, 30, GOLD)
+	_center("12 ВСЕЛЕННЫХ  •  360 УНИКАЛЬНЫХ ПЛАНЕТ", 174, 14, PALE)
+	_center("Выбери галактику и продолжи путь первооткрывателя", 198, 11, PALE)
+	var names := ["ЗЕЛЁНЫЕ РАВНИНЫ","КАРАВАН ЗВЁЗД","ОГНЕННЫЕ ЗЕМЛИ","ЛЕДЯНАЯ КОРОНА","ЛУННАЯ КОЛОНИЯ","КРЫЛЬЯ ЭКСПЕДИЦИИ","ПЕСКИ ВРЕМЕНИ","ВРАТА МЕЖДУМИРЬЯ","НЕБЕСНЫЙ АРХИПЕЛАГ","СТАНЦИЯ ДРОНОВ","КОСМИЧЕСКИЙ РАЗЛОМ","ДАЛЬНИЙ РУБЕЖ"]
+	var descriptions := ["Живые континенты и сияющие долины","Торговые трассы и дальние перелёты","Лавовые моря и раскалённые разломы","Ледяные кольца и сияющие полюса","Купольные города и исследовательские базы","Эскадрильи и воздушные манёвры","Золотые дюны и песчаные бури","Порталы и нестабильные врата","Кольца и гигантские облака","Дроны и автономные станции","Разрывы пространства и спиральные рукава","Экспедиции к новым рубежам"]
+	var colors := [Color("#286e69"),Color("#246d83"),Color("#a44f35"),Color("#356b9e"),Color("#88704a"),Color("#3b62a0"),Color("#8a6740"),Color("#67519a"),Color("#397f8c"),Color("#53647d"),Color("#5c4c98"),Color("#87527e")]
+	var accents := [Color("#83edbf"),CYAN,Color("#ff9a68"),Color("#a8e5ff"),GOLD,Color("#8ebcff"),Color("#e4c18c"),VIOLET,Color("#8af0e8"),Color("#b6c9df"),Color("#c1a5ff"),PINK]
+	var models := ["planet","jupiter","lava-world","neptune","moon-base-dome","space-fighter","mars","portal-gate","saturn","drone-bot","spiral-galaxy","sci-fi-spaceship"]
+	var icons := ["◉","✦","♨","❄","⌂","➤","☼","◎","◌","⌘","✧","➤"]
+	var card_w := (viewport_size.x - 84.0) / 3.0
+	var card_h := 218.0
+	for i in range(12):
+		var col := i % 3
+		var row := i / 3
+		var x := 24.0 + col * (card_w + 6.0)
+		var y := 218.0 + row * 224.0
+		var rect := Rect2(x, y, card_w, card_h)
+		_panel(rect, colors[i], accents[i], 18)
+		# Every universe gets its own planetary/space silhouette and palette.
+		var c := Vector2(x + card_w*0.5, y + 58)
+		draw_circle(c, 42, Color(0.35,0.78,1.0,0.10))
+		draw_arc(c, 35, 0.0, TAU, 48, Color(0.85,0.94,1.0,0.55), 1.7, true)
+		match i:
+			1,5,9,11:
+				draw_colored_polygon(PackedVector2Array([c+Vector2(-34,0),c+Vector2(0,-9),c+Vector2(35,0),c+Vector2(0,10)]), accents[i])
+				draw_circle(c, 8, WHITE)
+			2:
+				draw_circle(c, 24, Color("#e66b3d"))
+				draw_arc(c, 29, 0.2, 2.6, 32, GOLD, 5, true)
+			3,8:
+				draw_circle(c, 25, accents[i])
+				draw_arc(c, 37, -0.2, 2.9, 40, WHITE, 4, true)
+			7,10:
+				draw_circle(c, 23, Color("#111a42"))
+				draw_arc(c, 29, 0, TAU, 40, accents[i], 7, true)
+				draw_circle(c, 6, WHITE)
+			_:
+				draw_circle(c, 27, accents[i])
+				draw_circle(c+Vector2(-8,-9), 8, Color(1,1,1,0.30))
+				draw_arc(c+Vector2(0,3), 26, 0.2, 2.8, 32, Color(0.05,0.2,0.48,0.5), 3, true)
+		_text("ВСЕЛЕННАЯ %02d" % (i+1), Vector2(x+12,y+116), 9, accents[i])
+		_center_card_text(names[i], Rect2(x+5,y+119,card_w-10,24), y+151, 11, WHITE)
+		_center_card_text("ПЛАНЕТЫ %03d–%03d" % [i*30+1,(i+1)*30], Rect2(x+5,y+154,card_w-10,20), y+174, 9, PALE)
+		var progress := 1.0 if i == 0 else (0.0 if i > 1 else 0.17)
+		var bar := Rect2(x+12,y+184,card_w-24,5)
 		draw_rect(bar, Color("#18355f"))
-		draw_rect(Rect2(bar.position, Vector2(bar.size.x*float(discovered)/3.0,bar.size.y)), accents[i])
-		# Three planet stops show the route and locked/unlocked state.
-		for planet in range(3):
-			var px := 265.0 + planet * 112.0
-			var py := y + 184
-			if planet > 0:
-				draw_line(Vector2(px-28,py),Vector2(px-8,py),Color("#8bbce5"),3)
-			var unlocked := planet < discovered
-			draw_circle(Vector2(px,py), 13, planet_colors[i][planet] if unlocked else Color("#31466b"))
-			draw_arc(Vector2(px,py), 14, 0, TAU, 32, accents[i] if unlocked else Color("#7184a6"), 2, true)
-			if unlocked:
-				draw_circle(Vector2(px,py), 4, WHITE)
-			else:
-				draw_rect(Rect2(px-4,py-1,8,7), Color("#9aacc7"))
-				draw_arc(Vector2(px,py-4), 5, PI, TAU, 16, Color("#9aacc7"), 2, true)
-			_text("МИР %d" % (planet+1), Vector2(px-17, y+222), 9, PALE)
-		if i == 0:
-			_text("ТЕКУЩАЯ ВСЕЛЕННАЯ", Vector2(viewport_size.x-235, y+32), 10, GOLD)
+		draw_rect(Rect2(bar.position,Vector2(bar.size.x*progress,bar.size.y)),accents[i])
+		var status := "ТЕКУЩАЯ" if i == 0 else ("ОТКРЫТА" if i == 1 else "ЗАКРЫТА")
+		_center_card_text(status, Rect2(x+5,y+190,card_w-10,18), y+207, 9, GOLD if i == 0 else PALE)
+	_center("12 ГАЛАКТИК  •  30 МИРОВ В КАЖДОЙ", 1138, 12, GOLD)
 	_draw_bottom_nav("ИГРАТЬ")
 
 
@@ -537,37 +536,48 @@ func _draw_planet_detail() -> void:
 	_draw_bottom_nav("ИГРАТЬ")
 
 func _draw_daily() -> void:
-	_center("ЕЖЕДНЕВНЫЙ ВЫЗОВ", 150, 30, GOLD)
-	_center("Новая миссия каждый день • серия наград", 183, 14, PALE)
-	_panel(Rect2(34, 218, viewport_size.x-68, 174), Color("#174d98"), CYAN, 24)
-	_text("ЗАДАНИЕ СЕГОДНЯ", Vector2(58, 260), 18, GOLD)
-	_text("Очисти 12 линий за один забег", Vector2(58, 300), 16, WHITE)
-	_text("Награда: 75 ✦  •  сложность: средняя", Vector2(58, 334), 13, PALE)
-	_button(Rect2(58, 350, 190, 32), "НАЧАТЬ", Color("#0878d6"), CYAN, 13)
-	_panel(Rect2(34, 420, viewport_size.x-68, 590), Color("#123e82"), Color("#8deaff"), 24)
-	_center("НОЯБРЬ 2026", 466, 22, WHITE)
+	_center("ЕЖЕДНЕВНЫЙ ВЫЗОВ", 142, 30, GOLD)
+	_center("Каждый день — новое правило и особая тактика", 174, 14, PALE)
+	_panel(Rect2(34, 204, viewport_size.x-68, 150), Color("#174d98"), CYAN, 22)
+	_text("ИСПЫТАНИЕ ДНЯ", Vector2(58, 245), 17, GOLD)
+	_text("Солнечный резонанс", Vector2(58, 278), 19, WHITE)
+	_text("Очисти 12 линий • каждая 4-я даёт заряд", Vector2(58, 306), 12, PALE)
+	_text("НАГРАДА  75 ✦", Vector2(58, 334), 12, GOLD)
+	_panel(Rect2(34, 372, viewport_size.x-68, 650), Color("#123e82"), Color("#8deaff"), 22)
+	_center("НОЯБРЬ 2026", 414, 22, WHITE)
 	var days := ["ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"]
 	for col in range(7):
-		_center_card_text(days[col], Rect2(38+col*92, 0, 90, 20), 505, 11, PALE)
-	# November 2026 starts on Sunday; offset the first date into the final column.
-	# The highlighted current date is the 8th; earlier dates show completed stamps.
-	var first_weekday_offset := 6
-	for slot in range(36):
-		var day := slot - first_weekday_offset
-		if day < 0 or day >= 30:
+		_center_card_text(days[col], Rect2(38+col*92,0,90,20), 450, 11, PALE)
+	# Daily challenge modifiers use the original 17-rule catalogue.
+	var symbols := ["☼","◉","⟲","⌁","✦","●","⟡","⌛","✧","☄","◇","⚡","⬡","◐","✧","⛨","⚛"]
+	var labels := ["ЗАРЯД","ГРАВ","ПЕРЕВ","ГЛИТЧ","АРТЕФ","РИСК","КОМБО","ВРЕМЯ","ЦВЕТ","КОМЕТА","ЗЕРК","ИМП","ТИШ","ВСЛЕП","ПРИЗМ","ЩИТ","СИНГ"]
+	var colors := [GOLD,CYAN,VIOLET,PINK,GOLD,Color("#ff765e"),Color("#9ce7cb"),VIOLET,CYAN,GOLD,PINK,CYAN,PALE,Color("#a9b8d2"),VIOLET,Color("#82e4d0"),PINK]
+	for col in range(7):
+		var key_y := 470.0
+		_center_card_text(days[col], Rect2(40+col*91,0,76,20), key_y, 9, PALE)
+	# November 1, 2026 is Sunday; all 30 dates receive a named daily modifier.
+	for slot in range(42):
+		var day := slot - 6
+		if day < 1 or day > 30:
 			continue
 		var col := slot % 7
 		var row := slot / 7
 		var x := 48.0 + col * 91.0
-		var y := 530.0 + row * 78.0
-		var active := day == 7
-		var complete := day < 7
+		var y := 488.0 + row * 72.0
+		var active := day == 8
+		var complete := day < 8
+		var rule_index := (day - 1) % symbols.size()
 		var fill := Color("#9a6b22") if active else (Color("#176b83") if complete else Color("#17376b"))
-		_panel(Rect2(x, y, 76, 66), fill, GOLD if active else (CYAN if complete else Color("#496c9d")), 12)
-		_center_card_text(str(day+1), Rect2(x, y, 76, 48), y+28, 18, WHITE)
+		_panel(Rect2(x,y,76,62),fill,GOLD if active else (CYAN if complete else Color("#496c9d")),11)
+		_text(str(day),Vector2(x+7,y+17),12,WHITE)
+		draw_circle(Vector2(x+58,y+15),9,colors[rule_index])
+		_center_card_text(symbols[rule_index],Rect2(x+42,y+5,32,20),y+19,11,Color("#10274d"))
+		_center_card_text(labels[rule_index],Rect2(x+2,y+29,72,20),y+47,8,WHITE)
 		if complete:
-			draw_circle(Vector2(x+58,y+51), 5, Color("#8ef4d3"))
+			draw_circle(Vector2(x+65,y+54),3,Color("#8ef4d3"))
 		elif active:
-			draw_circle(Vector2(x+58,y+51), 5, GOLD)
-	_text("● Выполнено     ● Сегодня     ○ Впереди", Vector2(58, 975), 12, PALE)
+			draw_circle(Vector2(x+65,y+54),3,GOLD)
+	_text("МАРКЕР ДНЯ = ОСОБОЕ ПРАВИЛО ИСПЫТАНИЯ", Vector2(58, 944), 11, GOLD)
+	_text("17 модификаторов • цикл без повторов подряд", Vector2(58, 966), 10, PALE)
 	_draw_bottom_nav("ИГРАТЬ")
+
