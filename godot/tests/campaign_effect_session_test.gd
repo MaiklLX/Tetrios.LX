@@ -88,11 +88,11 @@ func _run() -> void:
 	var fifth_piece := pulse.on_piece_dropped()
 	if not _check(fifth_piece.pulse_triggered and pulse.drop_interval_ms == 755, "Pulse accelerates by 25 ms on every fifth dropped piece"):
 		return
-	for piece_index in range(100):
+	for piece_index in range(115):
 		pulse.on_piece_dropped()
 	if not _check(pulse.drop_interval_ms == 180, "Pulse gravity respects the source minimum of 180 ms after repeated fifth-piece triggers"):
 		return
-	if not _check(pulse.snapshot().dropped_piece_count == 105, "Pulse snapshot retains the deterministic dropped-piece count"):
+	if not _check(pulse.snapshot().dropped_piece_count == 120, "Pulse snapshot retains the deterministic dropped-piece count"):
 		return
 
 	print("Campaign isolated effect session tests passed.")
