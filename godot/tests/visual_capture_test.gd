@@ -324,9 +324,10 @@ func _run() -> void:
 	if not await _capture(viewport, "24-live-campaign-level"):
 		quit(1)
 		return
-	scene.get("game").lines = 10
-	scene.get("game").score = int(scene.get("campaign_progress").get_planet_definition(1).target_score)
-	campaign_session.update(0.0, 10, false, int(scene.get("game").score))
+	var campaign_runtime = scene.get("campaign_piece_runtime")
+	campaign_runtime.lines = 10
+	campaign_runtime.score = int(scene.get("campaign_progress").get_planet_definition(1).target_score)
+	campaign_session.update(0.0, int(campaign_runtime.lines), false, int(campaign_runtime.score))
 	scene.call("_process_campaign_completion")
 	if int(scene.get("campaign_progress").unlocked_node) != 2 or int(scene.get("campaign_progress").campaign_marks) != 1:
 		push_error("Completing planet 001 must grant one mark and unlock planet 002.")
@@ -346,6 +347,30 @@ func _run() -> void:
 		quit(1)
 		return
 	if not await _capture(viewport, "26-live-campaign-progress"):
+		quit(1)
+		return
+	# KT-538: show the authored special-piece planet and its actual live campaign arena.
+	var campaign_progress = scene.get("campaign_progress")
+	campaign_progress.import_legacy_progress(31, 0)
+	scene.set("campaign_universe", 1)
+	scene.set("campaign_planet", 1)
+	scene.set("campaign_screen", "planet")
+	scene.set("home_visible", false)
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "28-campaign-cargo-hook-planet-detail"):
+		quit(1)
+		return
+	scene.call("_start_campaign_planet")
+	var cargo_runtime = scene.get("campaign_piece_runtime")
+	if not bool(scene.get("campaign_run_active")) or cargo_runtime == null or int(cargo_runtime.active_piece_id) != 7 or cargo_runtime.active_cells.size() != 5:
+		push_error("Planet 031 must launch directly with the authored five-cell Cargo Hook.")
+		quit(1)
+		return
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "29-campaign-cargo-hook-live-arena"):
 		quit(1)
 		return
 	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
