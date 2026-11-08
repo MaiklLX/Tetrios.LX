@@ -69,7 +69,7 @@ func _layout() -> void:
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
-		buddy.visible = buddy_layout.visible
+		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open()
 	queue_redraw()
 
 func _mode_select_layout(viewport: Vector2) -> Dictionary:
@@ -430,7 +430,7 @@ func _draw_backdrop() -> void:
 
 func _draw_header() -> void:
 	_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
-	var mode_name := "Classic" if mode_session == null else str(mode_session.rules.get("name", "Classic"))
+	var mode_name := "BLOCK RUN" if block_run_active else ("Classic" if mode_session == null else str(mode_session.rules.get("name", "Classic")))
 	_center_text("ARCADE • %s MODE" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
 	_draw_mode_button()
@@ -478,9 +478,19 @@ func _format_elapsed_time(total_seconds: float) -> String:
 
 func _draw_stats() -> void:
 	var top := 154.0
-	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(game.score), Color("#45d9f5"))
+	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
+	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(score_value), Color("#45d9f5"))
 	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 70)
-	if _is_line_objective_mode():
+	if block_run_active and block_run_session != null:
+		var encounter = block_run_session.encounter
+		var room_label := "BOSS" if encounter.boss else "ROOM"
+		_stat_card(progress_rect, "%s %d  •  FLOOR %d" % [room_label, encounter.room, encounter.floor], "HP %d / %d" % [encounter.enemy_hp, encounter.enemy_max_hp], Color("#ff9b57"))
+		var hp_ratio := clampf(float(encounter.enemy_hp) / float(maxi(1, encounter.enemy_max_hp)), 0.0, 1.0)
+		var hp_track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
+		draw_rect(hp_track, Color(0.12, 0.19, 0.27, 1.0))
+		if hp_ratio > 0.0:
+			draw_rect(Rect2(hp_track.position, Vector2(hp_track.size.x * hp_ratio, hp_track.size.y)), Color("#ff9b57"))
+	elif _is_line_objective_mode():
 		var target := int(mode_session.rules.get("target_lines", 40))
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
 		var mode_label := str(mode_session.rules.get("name", "MODE")).to_upper()
