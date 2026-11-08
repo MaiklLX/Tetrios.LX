@@ -595,10 +595,10 @@ func _draw_stats() -> void:
 func _stat_label_font_size(rect: Rect2, label: String) -> int:
 	# Choose the largest readable label size that fits before the accent marker.
 	var available_width := maxf(24.0, rect.size.x - 38.0)
-	for candidate in [10, 9, 8]:
+	for candidate in [12, 11, 10]:
 		if font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, candidate).x <= available_width:
 			return candidate
-	return 8
+	return 10
 
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
 	_draw_soft_panel(rect, Color("#124b99"), accent.lightened(0.18), 15, 7)
@@ -622,28 +622,28 @@ func _draw_block_run_goals() -> void:
 	var states := block_run_session.goal_states()
 	if states.is_empty():
 		return
-	# Compact 24px goal strip sits above the 72px preview row, including on 360x800 phones.
-	var top := board_rect.position.y - 116.0
+	# Compact 28px goal strip sits above the 72px preview row, including on 360x800 phones.
+	var top := board_rect.position.y - 120.0
 	var gap := 6.0
 	var outer := 18.0
 	var width := (screen_size.x - outer * 2.0 - gap * 2.0) / 3.0
 	for index in range(mini(3, states.size())):
 		var goal: Dictionary = states[index]
-		var rect := Rect2(outer + index * (width + gap), top, width, 24.0)
+		var rect := Rect2(outer + index * (width + gap), top, width, 28.0)
 		var ratio := _block_run_goal_ratio(goal)
 		_draw_soft_panel(rect, Color("#0b2850"), Color("#3d82b5"), 8, 2)
 		var label := _block_run_goal_short_label(goal)
 		var progress := "%d/%d" % [int(goal.get("value", 0)), int(goal.get("target", 1))]
 		var reward := "+%d" % int(goal.get("reward", 0))
-		draw_string(font, rect.position + Vector2(6.0, 10.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#a9d8f2"))
+		draw_string(font, rect.position + Vector2(6.0, 11.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#a9d8f2"))
 		var progress_width := font.get_string_size(progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
-		draw_string(font, rect.position + Vector2(rect.size.x - progress_width - 5.0, 10.0), progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#ffffff"))
+		draw_string(font, rect.position + Vector2(rect.size.x - progress_width - 5.0, 10.0), progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
 		var track_width := maxf(18.0, rect.size.x - 48.0)
-		var track := Rect2(rect.position + Vector2(6.0, 14.0), Vector2(track_width, 3.0))
+		var track := Rect2(rect.position + Vector2(6.0, 17.0), Vector2(track_width, 3.0))
 		draw_rect(track, Color("#1b3b60"))
 		if ratio > 0.0:
 			draw_rect(Rect2(track.position, Vector2(track.size.x * ratio, track.size.y)), Color("#45d9f5"))
-		draw_string(font, rect.position + Vector2(rect.size.x - 34.0, 22.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
+		draw_string(font, rect.position + Vector2(rect.size.x - 34.0, 27.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
 
 func _draw_piece_previews() -> void:
 	var card_height := 72.0
