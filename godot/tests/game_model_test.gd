@@ -337,12 +337,25 @@ func _run() -> void:
 	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
 	if not _check(layout_probe.game.held_type == held_piece_before_tap and layout_probe.game.hold_used, "Tapping the HOLD preview card must store the active piece"):
 		return
-	if not _check(layout_probe.game.active_type != held_piece_before_tap and layout_probe.game.origin == Vector2i(3, 0), "HOLD tap must spawn the next piece without rotating or moving it"):
+	var expected_hold_spawn := Vector2i(layout_probe.game._centered_spawn_x(layout_probe.game.active_cells), 0)
+	if not _check(layout_probe.game.active_type != held_piece_before_tap and layout_probe.game.origin == expected_hold_spawn, "HOLD tap must spawn the next piece at its shape-centered spawn position"):
 		return
 	var held_piece_after_first_tap: int = layout_probe.game.active_type
 	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
 	if not _check(layout_probe.game.active_type == held_piece_after_first_tap and layout_probe.game.held_type == held_piece_before_tap, "A second HOLD tap before locking must not swap pieces again"):
 		return
+	# Paused gameplay must reject gameplay-card taps rather than consuming a piece.
+	layout_probe.game = Model.new()
+	layout_probe.game.reset()
+	layout_probe.paused = true
+	layout_probe.hold_rect = Rect2(400.0, 0.0, 80.0, 50.0)
+	layout_probe.drop_rect = Rect2(500.0, 0.0, 60.0, 70.0)
+	var paused_piece_type: int = layout_probe.game.active_type
+	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
+	layout_probe._handle_tap(layout_probe.drop_rect.get_center())
+	if not _check(layout_probe.game.active_type == paused_piece_type and layout_probe.game.held_type == -1 and not layout_probe.game.game_over, "HOLD and DROP taps must not mutate gameplay while paused"):
+		return
+	layout_probe.paused = false
 	if not _check(not layout_probe._handle_swipe(Vector2(500.0, 100.0), Vector2(420.0, 100.0)), "Swipes beginning outside the board must not steal button taps"):
 		return
 	# Sprint failure feedback must be distinct and retain progress, time, and score context.
