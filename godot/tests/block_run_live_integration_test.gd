@@ -154,6 +154,7 @@ func _run() -> void:
 		var repeated_result: Dictionary = skill_probe.activate_block_run_hero_skill()
 		if not _check(not bool(repeated_result.get("accepted", false)) and str(repeated_result.get("reason", "")) == "cooldown", "Repeated activation must be rejected during cooldown for " + hero_id):
 			return
+		skill_probe.block_run_session.encounter.next_attack_seconds = 1000
 		for second in range(45):
 			skill_probe.block_run_session.advance_second()
 		if not _check(skill_probe.block_run_session.hero_skill_cooldown_seconds == 0, "Cooldown must expire after 45 active run seconds for " + hero_id):
