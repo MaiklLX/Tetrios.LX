@@ -291,3 +291,12 @@
 - Reviewed latest artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478102381/artifacts/13615864955): the 720×1280 Classic capture shows the procedural Buddy in the left gutter beside the unchanged 2D 10×23 board, with Russian UI labels. The artifact contains mode selector and Block Run captures; no physical Android screenshot is present.
 - CI still emits non-failing headless teardown diagnostics (CanvasItem/ObjectDB/resource leak warnings) after the Classic gameplay model test, plus expected headless audio/V-Sync warnings during screenshot capture. The job exits successfully; these diagnostics remain separate cleanup work and are not represented as a warning-free run.
 - No persistent profile/wallet integration, user-data mutation, main merge, deployment, APK build/release, or physical Android test.
+
+## KT-484 — Buddy game-over reaction and test-node cleanup
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open/unmerged.
+- Added a direct regression assertion that a game-over state routes Buddy to the `surprised` expression, complementing the existing idle, happy, four-line victory, and timed-return-to-idle checks.
+- Corrected test ownership for Node2D probes: Buddy nodes are now attached to their probe parents, and the standalone Buddy probe is explicitly freed. This removes the unowned test nodes that were producing headless CanvasItem/ObjectDB/resource leak diagnostics.
+- CI run [42478691782](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782) on HEAD `22f85adc1f9915b3c4adfb1385e6c115f6850e02`: **SUCCESS** — import, main parse, gameplay/model, migration, Block Run model/effects/board/session/bridge/live integration, screenshot capture/upload, and scene smoke test all passed.
+- Log comparison: the previous run emitted CanvasItem/ObjectDB/resource-leak warnings after the gameplay model test; these are absent in KT-484. Remaining V-Sync and ALSA dummy-audio messages occur only during headless visual capture and did not fail the job.
+- Visual artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782/artifacts/13616556489) was uploaded. Physical Android rendering and orientation behavior remain unverified.
+- No main merge, deployment, APK build/release, persistent profile write, or user-data mutation.
