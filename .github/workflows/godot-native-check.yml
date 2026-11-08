@@ -53,6 +53,9 @@ jobs:
       - name: Run Block Run live-board bridge tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/block_run_bridge_test.gd
+      - name: Run Block Run live gameplay integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_live_integration_test.gd
       - name: Run visual screenshot capture
         timeout-minutes: 2
         run: xvfb-run -a godot --path godot --rendering-method gl_compatibility --script res://tests/visual_capture_test.gd
