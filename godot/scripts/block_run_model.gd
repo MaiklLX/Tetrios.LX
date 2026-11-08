@@ -87,7 +87,10 @@ func _start_room() -> void:
 
 func current_attack_profile() -> Dictionary:
 	var cycle: Array[String] = ["siege", "crossfire"] if boss else ["breach", "crossfire"]
-	var attack_id := cycle[posmod(attack_index, cycle.size())]
+	var cycle_index := attack_index % cycle.size()
+	if cycle_index < 0:
+		cycle_index += cycle.size()
+	var attack_id := cycle[cycle_index]
 	var profiles := {
 		"breach":{"id":"breach","label":"БРЕШЬ · 1 РЯД","description":"Один мусорный ряд · один проход","rows":1,"holes":1},
 		"crossfire":{"id":"crossfire","label":"ПЕРЕКРЁСТНЫЙ ЗАЛП · 2 РЯДА","description":"Два ряда · по два смещённых прохода","rows":2,"holes":2},
@@ -178,19 +181,19 @@ func create_goal(goal_type: String, lines: int, score: int, run_seconds: int, le
 	match goal_type:
 		GOAL_LINES:
 			label = "Очистить линии"
-			target = lines + 3 + posmod(target_roll, 4)
+			target = lines + 3 + (absi(target_roll) % 4)
 		GOAL_SCORE:
 			label = "Набрать очки"
-			target = score + 400 + posmod(target_roll, 601)
+			target = score + 400 + (absi(target_roll) % 601)
 		GOAL_SURVIVE:
 			label = "Продержаться, секунд"
-			target = run_seconds + 15 + posmod(target_roll, 21)
+			target = run_seconds + 15 + (absi(target_roll) % 21)
 		GOAL_LEVEL:
 			label = "Достичь уровня"
-			target = level + 1 + posmod(target_roll, 2)
+			target = level + 1 + (absi(target_roll) % 2)
 		_:
 			return {}
-	return {"id":goal_id,"type":goal_type,"label":label,"target":target,"reward":10 + posmod(reward_roll, 16),"claimed":false}
+	return {"id":goal_id,"type":goal_type,"label":label,"target":target,"reward":10 + (absi(reward_roll) % 16),"claimed":false}
 
 func get_card_effect_description(card_id: String, requested_rank: int) -> String:
 	var rank := clampi(requested_rank, 1, MAX_CARD_RANK)
