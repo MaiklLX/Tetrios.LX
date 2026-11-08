@@ -19,4 +19,6 @@ Date: 2026-11-08
 ## Validation
 - KT-523 commit: `467ce9ced07e47640865b96bf681aa2e58899d94`
 - KT-523 CI: passed (run #324).
-- KT-524 test hardening commit: pending CI.
+- KT-524 test hardening commit: `334be349ef221fc1e99842368b7ae9f5e5be2fa1`
+- KT-524 CI: passed (run #326, all Godot, gameplay, Block Run, visual capture, and scene smoke checks successful).
+- Latest visual artifact: `block-buddies-visual-checks` from run #326.
