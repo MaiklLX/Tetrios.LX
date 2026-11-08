@@ -475,8 +475,11 @@ func _handle_tap(point: Vector2) -> void:
 	if mode_select_visible:
 		if secondary_back_rect.has_point(point):
 			mode_select_visible = false
-			home_visible = true
-			campaign_launch_pending = false
+			if campaign_launch_pending:
+				campaign_screen = "planet"
+				home_visible = false
+			else:
+				home_visible = true
 			queue_redraw()
 			return
 		if classic_mode_rect.has_point(point):
