@@ -279,6 +279,22 @@ func _run() -> void:
 	if not await _capture(viewport, "22-live-campaign-universe-route"):
 		quit(1)
 		return
+	# Locked nodes can be inspected, but cannot launch a campaign run.
+	scene.call("_handle_tap", scene.get("campaign_node_rects")[1].get_center())
+	await process_frame
+	await process_frame
+	if str(scene.get("campaign_screen")) != "planet" or int(scene.get("campaign_planet")) != 2:
+		push_error("Locked planet nodes should still open their detail screen.")
+		quit(1)
+		return
+	scene.call("_handle_tap", scene.get("campaign_start_rect").get_center())
+	if bool(scene.get("mode_select_visible")):
+		push_error("A locked campaign planet must not enter mode selection.")
+		quit(1)
+		return
+	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
+	await process_frame
+	await process_frame
 	scene.call("_handle_tap", scene.get("campaign_node_rects")[0].get_center())
 	await process_frame
 	await process_frame
