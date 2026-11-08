@@ -7,9 +7,16 @@ const Model = preload("res://scripts/game_model.gd")
 const Buddy = preload("res://scripts/buddy_companion.gd")
 const ModeSession = preload("res://scripts/mode_session.gd")
 const ModeCatalog = preload("res://scripts/mode_catalog.gd")
+const BlockRunSession = preload("res://scripts/block_run_session.gd")
+const BlockRunBridge = preload("res://scripts/block_run_bridge.gd")
 
 var game: BlockBuddiesModel
 var mode_session: BlockBuddiesModeSession
+var block_run_session: BlockBuddiesBlockRunSession
+var block_run_active := false
+var block_run_last_lock_serial := 0
+var block_run_last_lines := 0
+var block_run_clock := 0.0
 var mode_select_visible := true
 var mode_button_rect := Rect2()
 var classic_mode_rect := Rect2()
@@ -107,7 +114,10 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if game == null:
 		return
-	if mode_session != null and not mode_select_visible:
+	if block_run_active:
+		_process_block_run_events()
+		_advance_block_run_clock(delta if not paused and not mode_select_visible else 0.0)
+	if mode_session != null and not mode_select_visible and not block_run_active:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
 	if not mode_select_visible and not game.game_over and not paused and (mode_session == null or mode_session.is_running()):
 		gravity_interval = _gravity_interval_for_level(game.level)
@@ -115,10 +125,75 @@ func _process(delta: float) -> void:
 		if gravity_clock >= gravity_interval:
 			gravity_clock = 0.0
 			game.tick()
-			if mode_session != null:
+			if mode_session != null and not block_run_active:
 				mode_session.update(0.0, game.lines, game.game_over)
+			if block_run_active:
+				_process_block_run_events()
 			queue_redraw()
 	_sync_buddy_state()
+
+func start_block_run_session() -> bool:
+	if game == null:
+		return false
+	block_run_session = BlockRunSession.new()
+	block_run_session.start()
+	block_run_active = true
+	block_run_last_lock_serial = game.lock_serial
+	block_run_last_lines = game.lines
+	block_run_clock = 0.0
+	return BlockRunBridge.sync_model_to_session(game, block_run_session)
+
+func _process_block_run_events() -> void:
+	if not block_run_active or block_run_session == null or block_run_session.status != BlockRunSession.STATUS_RUNNING:
+		return
+	if game.lock_serial == block_run_last_lock_serial:
+		return
+	# A model action can lock at most one piece. Refuse to guess if an event
+	# cursor ever jumps, because silently dropping encounter events is unsafe.
+	if game.lock_serial != block_run_last_lock_serial + 1:
+		block_run_session.status = BlockRunSession.STATUS_FAILED
+		game.game_over = true
+		return
+	if not BlockRunBridge.sync_model_to_session(game, block_run_session):
+		block_run_session.status = BlockRunSession.STATUS_FAILED
+		game.game_over = true
+		return
+	block_run_session.on_piece_locked()
+	var cleared := maxi(0, game.lines - block_run_last_lines)
+	block_run_last_lock_serial = game.lock_serial
+	block_run_last_lines = game.lines
+	if cleared > 0:
+		block_run_session.on_line_clear(cleared, 0, game.level)
+		if not BlockRunBridge.sync_session_to_model(block_run_session, game):
+			block_run_session.status = BlockRunSession.STATUS_FAILED
+			game.game_over = true
+			return
+	if game.game_over:
+		var rescue: Dictionary = BlockRunBridge.rescue_spawn_collision(game, block_run_session)
+		if not bool(rescue.get("rescued", false)) or not bool(rescue.get("live_resumed", false)):
+			block_run_session.status = BlockRunSession.STATUS_FAILED
+			game.game_over = true
+	queue_redraw()
+
+func _advance_block_run_clock(delta: float) -> void:
+	if not block_run_active or block_run_session == null or delta <= 0.0 or block_run_session.status != BlockRunSession.STATUS_RUNNING:
+		return
+	block_run_clock += delta
+	while block_run_clock >= 1.0 and block_run_session.status == BlockRunSession.STATUS_RUNNING:
+		block_run_clock -= 1.0
+		if not BlockRunBridge.sync_model_to_session(game, block_run_session):
+			block_run_session.status = BlockRunSession.STATUS_FAILED
+			game.game_over = true
+			break
+		var event: Dictionary = block_run_session.advance_second()
+		if bool(event.get("failed", false)) or block_run_session.status != BlockRunSession.STATUS_RUNNING:
+			game.game_over = true
+			break
+		if not BlockRunBridge.sync_session_to_model(block_run_session, game):
+			block_run_session.status = BlockRunSession.STATUS_FAILED
+			game.game_over = true
+			break
+	queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
