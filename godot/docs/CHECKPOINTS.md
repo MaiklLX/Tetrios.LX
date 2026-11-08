@@ -164,3 +164,15 @@
 - Real screenshot artifact: `block-buddies-visual-checks` (selector + Classic arena, 720×1280); available from GitHub Actions run `42467057040`.
 - Remaining: connect session to `main.gd` and the real board/piece lifecycle; wire exact Shield/Nova rescue mutations; then add hero skills, card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable until these are complete.
 - No main merge, deployment, APK build/release, persistence work or physical-device test.
+
+
+## KT-472 — Five source-matched Block Run hero abilities
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Added `use_hero_skill(hero_id, hero_level)` to the isolated Block Run session. All five legacy hero branches are represented: Captain Plush clears the top `2 + tier` rows; Prism deals `8 + tier × 5` enemy damage; Blip delays the next attack by `12 + tier × 4` seconds; Pixel clears `tier` bottom rows and adds the same level charge; Spark deals `12 + tier × 5` enemy damage.
+- Hero ability tier follows the source formula `1 + floor((level - 5) / 5)`; skills are locked below level 5 and share a 45-second run-time cooldown. Cooldown advances only with active run seconds.
+- Prism/Spark enemy defeat applies the already implemented Rift effect when drafted. Ability mutations remain run-local; no persistent XP, wallet, or save data is touched.
+- Regression coverage includes all five heroes, level-4 lockout, level-10 tier scaling, attack delay, board mutations, enemy damage, and cooldown rejection/countdown.
+- CI run [42467652778](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42467652778) on code HEAD `0ce7ed5fba9a30bebeef406375612283317a7598`: **SUCCESS** — import, main parse, gameplay, migration, Block Run model/effect/board/session tests, rendered screenshot capture/upload and scene smoke test.
+- Real rendered screenshot artifact: `block-buddies-visual-checks`, 720×1280 selector and Classic arena. These screenshots confirm existing scenes render; they do not depict Block Run, which is still not connected to the main scene.
+- Remaining: connect session to the live piece/board lifecycle; integrate Shield/Nova rescue mutations; build card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable.
+- No main merge, deployment, APK build/release, persistence work or physical-device test.
