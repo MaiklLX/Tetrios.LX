@@ -93,3 +93,15 @@
 - Catalog signature is preserved byte-for-byte as an opaque source string. It is not recalculated and does not trigger assignment/history deletion in the native migration parser.
 - Added malformed archive/date fixtures and a 91-entry no-trim regression test.
 - Parser remains pure/read-only. No storage writes, rewards, cloud sync, main edits, merge, deployment or APK build.
+
+
+## KT-465 — Three-mode selector layout and Marathon regression QA
+- Date: 2026-11-08
+- Branch: `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open.
+- Corrected the three-card mode selector vertical spacing: title and subtitle now clear the first card; card hitboxes remain distinct; instructions clear the Marathon card.
+- Extracted responsive mode-card geometry into `_mode_select_layout(viewport)` and added geometry assertions at 360×800, 375×812, 412×915 and 720×1280.
+- Generalized the objective progress helper name so it no longer implies Sprint-only behavior.
+- Added Marathon failure-path checks: game over at 99/100 lines, correct `MARATHON FAILED` title, 99/100 progress and elapsed-time display; added card-tap launch coverage.
+- Validation: Godot Native Project Check run `42461758390` on code HEAD `ede9fdcb1124dfa6d75e0316e0bc477aa7ac3bbe` — import, main script parse, gameplay/model tests, Web migration tests and scene smoke test all **SUCCESS**.
+- The prior intermediate CI attempts exposed a type annotation omission, a stale local variable name and a test setup issue; each was corrected before the successful run above.
+- No changes to `main` or the Web game; no merge, deployment, APK build/release, persistence integration or user-data modification. Physical Android runtime remains unverified.
