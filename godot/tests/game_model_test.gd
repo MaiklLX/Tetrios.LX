@@ -91,16 +91,27 @@ func _run() -> void:
 		return
 	if not _check(layout_probe.game.active_cells != cells_before_swipe_rotate, "Upward swipe should rotate the active piece"):
 		return
-	# Fast long downward swipe is the sole touch hard-drop gesture.
+	# A fast long downward swipe is the sole touch hard-drop gesture.
 	layout_probe.game.reset()
-	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 400.0)), "Long downward swipe should be handled"):
+	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 400.0), 220), "Fast long downward swipe should be handled"):
 		return
 	var occupied_after_drop := 0
 	for row in layout_probe.game.grid:
 		for cell in row:
 			if cell >= 0:
 				occupied_after_drop += 1
-	if not _check(occupied_after_drop >= 4, "Long downward swipe must lock the piece with a hard drop"):
+	if not _check(occupied_after_drop >= 4, "Fast long downward swipe must lock the piece with a hard drop"):
+		return
+	# A slow drag over the same distance must remain soft drop.
+	layout_probe.game.reset()
+	if not _check(layout_probe._handle_swipe(Vector2(100.0, 100.0), Vector2(100.0, 400.0), 700), "Slow downward drag should be handled"):
+		return
+	var slow_drop_locked_cells := 0
+	for row in layout_probe.game.grid:
+		for cell in row:
+			if cell >= 0:
+				slow_drop_locked_cells += 1
+	if not _check(slow_drop_locked_cells == 0, "Slow downward drag must not hard-drop or lock the piece"):
 		return
 	# A single board tap rotates only; it must never trigger hard drop.
 	layout_probe.game.reset()
