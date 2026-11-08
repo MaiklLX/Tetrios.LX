@@ -46,3 +46,17 @@
 - Source parity audit started in `godot/docs/PARITY_MATRIX.md`; still in progress. Score, rotation, randomizer, timers, Hold, mode progression, rewards and persistence are not yet parity-approved.
 - No APK built. No change to `main`.
 
+
+
+## KT-446 — Web save audit and migration contract
+- Date: 2026-11-08
+- Branch: `godot/kt428-buddy-companion-2026-11-07`
+- Read-only Web source baseline: `main@38c61b606187b88ce8a48a1c6b71d264aecf4258` (`site/index.html`).
+- Added `godot/docs/SAVE_MIGRATION_CONTRACT.md` with the actual localStorage key inventory, helper-expanded key names, sampled record shapes, legacy aliases, daily reward markers, transient-vs-durable state split, reset-flow warning, proposed versioned native profile/run documents, migration precedence and 12 required regression fixtures.
+- Extended `godot/docs/PARITY_MATRIX.md` with the detailed audit reference and important corrections.
+- Key finding: the live Web wallet is loaded from helper key `bb_coins`; direct aliases `coins` and `bbCoins` are not consistently synchronized. Migration must detect conflicts and must never add these values together.
+- Campaign marks (`bbCampaignMarks`) and Block Run relics (`nrRelics`) are separate currencies. Hero XP/levels and campaign perks are per hero. Daily challenge assignments, history, completion, replay, quest archive, reward markers and visit streak are distinct records.
+- The actual campaign-perk helper key is `bb_bbCampaignPerks_<heroId>`, since `bbPut()` adds the `bb_` prefix.
+- KT-445 remains an in-memory run snapshot only. No Godot disk persistence, autosave, Web import, cloud sync or Android device test is included in this checkpoint.
+- Status: **source audit + proposed contract complete; implementation pending**. Next safe step is pure migration fixtures and a read-only parser/validator. Atomic disk writes remain gated until conflict and recovery tests pass.
+- No writes to `main`, no deployment, no merge, no APK build, no user-data reset or modification.
