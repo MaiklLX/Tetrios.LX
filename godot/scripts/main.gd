@@ -447,47 +447,67 @@ func _draw() -> void:
 	elif paused:
 		_draw_pause_overlay()
 
-func _draw_backdrop() -> void:
-	# Layered arcade atmosphere: restrained radial light, pixel stars and slow
-	# drifting signal particles. All geometry is procedural; no external art.
-	var pulse := 0.5 + 0.5 * sin(ambient_time * 0.7)
-	var glow_center := Vector2(screen_size.x * 0.5, screen_size.y * 0.43)
-	draw_circle(glow_center, screen_size.x * 0.44, Color(0.025, 0.12, 0.23, 0.12 + pulse * 0.025))
-	for i in range(8):
-		var radius := 90.0 + i * 48.0
-		var alpha := 0.025 + pulse * 0.008 if i < 3 else 0.018
-		draw_arc(glow_center, radius, 0, TAU, 96, Color(0.16, 0.55, 0.86, alpha), 1.0)
-	for i in range(34):
-		var seed_x := float((i * 73 + 19) % 997) / 997.0
-		var seed_y := float((i * 139 + 47) % 991) / 991.0
-		var drift := fmod(ambient_time * (5.0 + float(i % 4) * 2.0) + float(i * 17), screen_size.y + 24.0)
-		var point := Vector2(seed_x * screen_size.x, fmod(seed_y * screen_size.y + drift, screen_size.y))
-		var twinkle := 0.25 + 0.45 * (0.5 + 0.5 * sin(ambient_time * 1.4 + float(i)))
-		var pixel_size := 1.0 if i % 3 else 2.0
-		draw_rect(Rect2(point, Vector2.ONE * pixel_size), Color(0.31, 0.76, 1.0, twinkle * 0.42))
-	draw_circle(glow_center, 3.0 + pulse * 1.5, Color(0.25, 0.82, 1.0, 0.16 + pulse * 0.12))
 
+func _draw_soft_panel(rect: Rect2, fill: Color, edge: Color = Color("#7dcfff"), radius: int = 18, shadow_size: int = 10) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill
+	style.set_corner_radius_all(radius)
+	style.set_border_width_all(2)
+	style.border_color = edge
+	style.shadow_color = Color(0.015, 0.035, 0.12, 0.42)
+	style.shadow_size = shadow_size
+	style.shadow_offset = Vector2(0, 5)
+	draw_style_box(style, rect)
+
+func _draw_pill(rect: Rect2, fill: Color, edge: Color, radius: int = 16) -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill
+	style.set_corner_radius_all(radius)
+	style.set_border_width_all(2)
+	style.border_color = edge
+	style.shadow_color = Color(0.01, 0.025, 0.08, 0.35)
+	style.shadow_size = 7
+	style.shadow_offset = Vector2(0, 4)
+	draw_style_box(style, rect)
+
+func _draw_backdrop() -> void:
+	var top := Color("#123e91")
+	var bottom := Color("#071b58")
+	for band in range(28):
+		var t := float(band) / 27.0
+		draw_rect(Rect2(0, screen_size.y * t, screen_size.x, screen_size.y / 27.0 + 2.0), top.lerp(bottom, t))
+	var pulse := 0.5 + 0.5 * sin(ambient_time * 0.65)
+	draw_circle(Vector2(screen_size.x * 0.18, screen_size.y * 0.29), screen_size.x * 0.34, Color(0.12, 0.50, 1.0, 0.19))
+	draw_circle(Vector2(screen_size.x * 0.82, screen_size.y * 0.56), screen_size.x * 0.37, Color(0.62, 0.16, 0.92, 0.15))
+	draw_circle(Vector2(screen_size.x * 0.50, screen_size.y * 0.91), screen_size.x * 0.46, Color(0.02, 0.75, 0.94, 0.13))
+	for i in range(54):
+		var sx := float((i * 73 + 19) % 997) / 997.0
+		var sy := float((i * 139 + 47) % 991) / 991.0
+		var drift := fmod(ambient_time * (3.0 + float(i % 4) * 1.5) + float(i * 17), screen_size.y + 24.0)
+		var point := Vector2(sx * screen_size.x, fmod(sy * screen_size.y + drift, screen_size.y))
+		var twinkle := 0.35 + 0.55 * (0.5 + 0.5 * sin(ambient_time * 1.6 + float(i)))
+		draw_circle(point, 1.4 if i % 4 else 2.5, Color(0.72, 0.91, 1.0, twinkle * 0.72))
+	var hills := PackedVector2Array([Vector2(0, screen_size.y * 0.88), Vector2(screen_size.x * 0.18, screen_size.y * 0.82), Vector2(screen_size.x * 0.38, screen_size.y * 0.91), Vector2(screen_size.x * 0.62, screen_size.y * 0.84), Vector2(screen_size.x, screen_size.y * 0.90), Vector2(screen_size.x, screen_size.y), Vector2(0, screen_size.y)])
+	draw_colored_polygon(hills, Color("#102d72"))
+	draw_circle(Vector2(screen_size.x * 0.12, screen_size.y * 0.9), 42.0, Color(0.08, 0.72, 0.82, 0.28 + pulse * 0.08))
+	draw_circle(Vector2(screen_size.x * 0.88, screen_size.y * 0.88), 58.0, Color(0.48, 0.23, 0.87, 0.24))
 func _draw_header() -> void:
 	if screen_size.x < 420.0:
-		var title_size := 22
+		var title_size := 21
 		var title_width := font.get_string_size("BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size).x
 		var title_center_x := (mode_button_rect.end.x + pause_rect.position.x) * 0.5
-		draw_string(font, Vector2(title_center_x - title_width * 0.5, 62.0), "BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#f5f8ff"))
+		draw_string(font, Vector2(title_center_x - title_width * 0.5, 62.0), "BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#fff4c7"))
 	else:
-		_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
+		_center_text("BLOCK BUDDIES", 62.0, 36, Color("#fff2c0"))
 	var mode_name := "БЛОК-РАН" if block_run_active else _mode_display_name("classic" if mode_session == null else mode_session.mode_id)
-	_center_text("АРКАДА • %s" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
-	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
+	_center_text("✨  %s  ✨" % mode_name.to_upper(), 105.0, 15, Color("#a8edff"))
 	_draw_mode_button()
 	_draw_pause_button()
-
 func _draw_mode_button() -> void:
-	draw_rect(mode_button_rect, Color(0.055, 0.09, 0.15, 0.94))
-	draw_rect(mode_button_rect, Color("#45d9f5"), false, 1.5)
+	_draw_pill(mode_button_rect, Color("#1767c8"), Color("#8beaff"), 14)
 	var label := "РЕЖИМ"
-	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
-	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 5.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#eaf7ff"))
-
+	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
+	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 5.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
 func _mode_display_name(mode_id: String) -> String:
 	match mode_id:
 		"classic": return "КЛАССИКА"
@@ -497,20 +517,18 @@ func _mode_display_name(mode_id: String) -> String:
 
 func _draw_mode_select() -> void:
 	var layout := _mode_select_layout(screen_size)
-	_center_text("ВЫБЕРИ РЕЖИМ", layout.title_y, 26, Color("#f4f8ff"))
-	_center_text("ВЫБЕРИ СТИЛЬ ИГРЫ", layout.subtitle_y, 12, Color("#83a3bd"))
-	_draw_mode_card(classic_mode_rect, "1  •  КЛАССИКА", "Без ограничений по времени и линиям.", Color("#45d9f5"))
-	_draw_mode_card(sprint_mode_rect, "2  •  СПРИНТ", "Очисти 40 линий как можно быстрее.", Color("#f6d65b"))
-	_draw_mode_card(marathon_mode_rect, "3  •  МАРАФОН", "Длинный забег на 100 линий.", Color("#ff9b57"))
-	_center_text("НАЖМИ НА КАРТОЧКУ  •  1 / 2 / 3", layout.instruction_y, 12, Color("#72a6c8"))
-
+	_center_text("ВЫБЕРИ РЕЖИМ", layout.title_y, 29, Color("#fff0b9"))
+	_center_text("СОБЕРИ КОМБО И ПОЗНАКОМЬСЯ С BUDDY!", layout.subtitle_y, 11, Color("#c4edff"))
+	_draw_mode_card(classic_mode_rect, "1  •  КЛАССИКА", "Играй в своём ритме и набирай очки.", Color("#42d9ff"))
+	_draw_mode_card(sprint_mode_rect, "2  •  СПРИНТ", "Очисти 40 линий на скорость.", Color("#ffca52"))
+	_draw_mode_card(marathon_mode_rect, "3  •  МАРАФОН", "Большое испытание на 100 линий.", Color("#ff8b79"))
+	_center_text("НАЖМИ НА КАРТОЧКУ  •  1 / 2 / 3", layout.instruction_y, 12, Color("#b7eaff"))
 func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Color) -> void:
-	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.97))
-	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 4.0)), accent)
-	draw_rect(rect, Color(0.28, 0.46, 0.62, 0.55), false, 1.0)
-	draw_string(font, rect.position + Vector2(18.0, 38.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#f4f8ff"))
-	draw_string(font, rect.position + Vector2(18.0, 66.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#9bb6ca"))
-
+	var fill := Color("#1355a8") if accent == Color("#42d9ff") else (Color("#7347a8") if accent == Color("#ff8b79") else Color("#9a5b19"))
+	_draw_soft_panel(rect, fill, accent.lightened(0.25), 22, 12)
+	draw_circle(rect.position + Vector2(rect.size.x - 26.0, 23.0), 8.0, Color(accent.r, accent.g, accent.b, 0.22))
+	draw_string(font, rect.position + Vector2(18.0, 36.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#ffffff"))
+	draw_string(font, rect.position + Vector2(18.0, 64.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#f0f5ff"))
 func _is_line_objective_mode() -> bool:
 	return mode_session != null and int(mode_session.rules.get("target_lines", 0)) > 0
 
@@ -559,13 +577,10 @@ func _draw_stats() -> void:
 		_stat_card(progress_rect, "УРОВЕНЬ  /  ЛИНИИ", "%d  /  %d" % [game.level, game.lines], Color("#f6d65b"))
 
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
-	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.94))
-	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 3)), accent)
-	draw_rect(rect, Color(0.28, 0.46, 0.62, 0.35), false, 1.0)
-	var label_size := 9 if label.length() > 17 else 11
-	draw_string(font, rect.position + Vector2(14, 21), label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#83a3bd"))
-	draw_string(font, rect.position + Vector2(14, 46), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#f4f8ff"))
-
+	_draw_soft_panel(rect, Color("#124b99"), accent.lightened(0.18), 15, 7)
+	draw_string(font, rect.position + Vector2(13, 20), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if label.length() > 17 else 10, Color("#c9eaff"))
+	draw_string(font, rect.position + Vector2(13, 45), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#ffffff"))
+	draw_circle(rect.position + Vector2(rect.size.x - 16.0, 16.0), 5.0, accent)
 func _block_run_goal_ratio(goal: Dictionary) -> float:
 	var target := maxi(1, int(goal.get("target", 1)))
 	return clampf(float(goal.get("value", 0)) / float(target), 0.0, 1.0)
@@ -651,11 +666,10 @@ func _draw_block_run_skill_card(rect: Rect2) -> void:
 	draw_string(font, rect.position + Vector2(8.0, 34.0), state, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, accent)
 
 func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
-	draw_rect(rect, Color(0.045, 0.085, 0.14, 0.96))
-	draw_rect(rect, Color(0.20, 0.48, 0.68, 0.55), false, 1.0)
-	draw_string(font, rect.position + Vector2(10, 28), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#83a3bd"))
+	_draw_soft_panel(rect, Color("#17488a"), Color("#71cfff"), 15, 6)
+	draw_string(font, rect.position + Vector2(10, 28), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#d9f4ff"))
 	if piece_type < 0:
-		draw_string(font, rect.position + Vector2(112, 29), "—", HORIZONTAL_ALIGNMENT_CENTER, 30, 18, Color("#66839e"))
+		draw_string(font, rect.position + Vector2(rect.size.x - 28.0, 29), "—", HORIZONTAL_ALIGNMENT_CENTER, 30, 18, Color("#b7dfff"))
 		return
 	var cells: Array = BlockBuddiesModel.SHAPES[piece_type]
 	var min_x := 999
@@ -672,42 +686,32 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	var piece_origin := Vector2(rect.position.x + rect.size.x - 34.0, rect.get_center().y) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
-		draw_rect(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
-
+		_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
 func _draw_board() -> void:
 	var frame := board_rect.grow(13)
-	# A layered cabinet frame gives the playfield a distinct arcade-machine
-	# silhouette without reducing the 10x23 playable area.
-	draw_rect(frame.grow(5), Color(0.04, 0.30, 0.52, 0.045))
-	draw_rect(frame, Color(0.018, 0.035, 0.068, 0.99))
-	draw_rect(frame, Color(0.16, 0.42, 0.64, 0.72), false, 1.0)
-	draw_rect(board_rect.grow(3), Color(0.025, 0.055, 0.09, 0.98))
-	draw_rect(board_rect.grow(3), Color(0.22, 0.66, 0.88, 0.38), false, 1.0)
-	draw_line(frame.position + Vector2(8, 5), Vector2(frame.end.x - 8, frame.position.y + 5), Color(0.35, 0.78, 1.0, 0.24), 1.0)
+	_draw_soft_panel(frame.grow(3), Color("#103d83"), Color("#7ddfff"), 24, 16)
+	_draw_soft_panel(board_rect.grow(3), Color("#08275a"), Color("#4eaaff"), 15, 7)
 	var cell := board_rect.size.x / BOARD_W
 	for y in range(BOARD_H):
 		for x in range(BOARD_W):
-			var rect := Rect2(board_rect.position + Vector2(x, y) * cell, Vector2.ONE * cell).grow(-1.5)
-			draw_rect(rect, Color(0.035, 0.065, 0.105, 0.94))
-			draw_rect(rect, Color(0.18, 0.32, 0.43, 0.25), false, 1.0)
+			var rect := Rect2(board_rect.position + Vector2(x, y) * cell, Vector2.ONE * cell).grow(-1.4)
+			_draw_soft_panel(rect, Color("#0d3470"), Color("#2c69a5"), 5, 0)
 			var tile: int = game.grid[y][x]
 			if tile >= 0:
-				var tile_color: Color = Color("#9aa8b8") if tile == 7 else BlockBuddiesModel.PALETTE[tile]
-				_draw_block(rect, tile_color)
+				var tile_color: Color = Color("#aebbd1") if tile == 7 else BlockBuddiesModel.PALETTE[tile]
+				_draw_block(rect.grow(-0.3), tile_color)
 	var ghost := game.ghost_origin()
 	for cell_pos in game.active_cells:
 		var p: Vector2i = ghost + cell_pos
 		if p.y >= 0:
 			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-2.0)
-			draw_rect(rect, Color(0.45, 0.75, 0.9, 0.12))
-			draw_rect(rect, Color(0.5, 0.82, 1.0, 0.32), false, 1.0)
+			_draw_soft_panel(rect, Color(0.55, 0.83, 1.0, 0.13), Color(0.65, 0.91, 1.0, 0.38), 6, 0)
 	for cell_pos in game.active_cells:
 		var p: Vector2i = game.origin + cell_pos
 		if p.y >= 0:
-			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-1.5)
+			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-1.3)
 			_draw_block(rect, BlockBuddiesModel.PALETTE[game.active_type])
 	_draw_line_clear_feedback()
-
 func _draw_line_clear_feedback() -> void:
 	if clear_flash_time <= 0.0:
 		return
@@ -721,34 +725,24 @@ func _draw_line_clear_feedback() -> void:
 	draw_line(Vector2(frame.position.x + 8.0, edge_y), Vector2(frame.end.x - 8.0, edge_y), Color(accent.r, accent.g, accent.b, strength * 0.72), 2.0)
 
 func _draw_block(rect: Rect2, color: Color) -> void:
-	draw_rect(rect, color.darkened(0.28))
-	draw_rect(Rect2(rect.position + Vector2(2, 2), rect.size - Vector2(4, 4)), color)
-	draw_line(rect.position + Vector2(3, 3), Vector2(rect.end.x - 3, rect.position.y + 3), color.lightened(0.45), 2.0)
-	draw_line(rect.position + Vector2(3, 3), Vector2(rect.position.x + 3, rect.end.y - 3), color.lightened(0.24), 2.0)
-	draw_line(Vector2(rect.position.x + 3, rect.end.y - 3), rect.end - Vector2(3, 3), color.darkened(0.32), 2.0)
-
+	_draw_soft_panel(rect, color.darkened(0.08), color.lightened(0.52), 6, 5)
+	var shine := StyleBoxFlat.new()
+	shine.bg_color = Color(1, 1, 1, 0.22)
+	shine.set_corner_radius_all(4)
+	draw_style_box(shine, Rect2(rect.position + Vector2(3, 2), Vector2(rect.size.x - 6, maxf(3.0, rect.size.y * 0.18))))
+	draw_circle(rect.position + Vector2(rect.size.x - 6, 6), 1.5, Color(1, 1, 1, 0.45))
 func _draw_pause_button() -> void:
-	draw_rect(pause_rect, Color("#10243a"))
-	draw_rect(pause_rect, Color("#45d9f5"), false, 2.0)
+	_draw_pill(pause_rect, Color("#1467bd"), Color("#a4eaff"), 14)
 	var center := pause_rect.get_center()
 	if paused:
-		var triangle := PackedVector2Array([
-			center + Vector2(-5, -10),
-			center + Vector2(9, 0),
-			center + Vector2(-5, 10)
-		])
-		draw_colored_polygon(triangle, Color("#f4f8ff"))
+		var triangle := PackedVector2Array([center + Vector2(-5, -10), center + Vector2(9, 0), center + Vector2(-5, 10)])
+		draw_colored_polygon(triangle, Color("#ffffff"))
 	else:
-		draw_rect(Rect2(center + Vector2(-8, -10), Vector2(5, 20)), Color("#f4f8ff"))
-		draw_rect(Rect2(center + Vector2(3, -10), Vector2(5, 20)), Color("#f4f8ff"))
-
+		_draw_pill(Rect2(center + Vector2(-9, -10), Vector2(6, 20)), Color("#ffffff"), Color("#d4f5ff"), 3)
+		_draw_pill(Rect2(center + Vector2(3, -10), Vector2(6, 20)), Color("#ffffff"), Color("#d4f5ff"), 3)
 func _draw_overlay_panel(rect: Rect2, accent: Color) -> void:
-	draw_rect(rect.grow(9.0), Color(accent.r, accent.g, accent.b, 0.07))
-	draw_rect(rect, Color("#081525"))
-	draw_rect(rect, Color(0.20, 0.52, 0.72, 0.72), false, 1.5)
-	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 4.0)), accent)
-	draw_line(rect.position + Vector2(16.0, 14.0), Vector2(rect.end.x - 16.0, rect.position.y + 14.0), Color(0.58, 0.82, 0.96, 0.12), 1.0)
-
+	_draw_soft_panel(rect.grow(2.0), Color("#154b91"), accent.lightened(0.2), 25, 18)
+	draw_rect(Rect2(rect.position + Vector2(12, 10), Vector2(rect.size.x - 24, 5)), Color(1, 1, 1, 0.15))
 func _block_run_draft_is_open() -> bool:
 	return block_run_active and block_run_session != null and not block_run_session.pending_card_draft.is_empty()
 
