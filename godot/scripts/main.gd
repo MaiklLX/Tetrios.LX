@@ -175,10 +175,10 @@ func _process(delta: float) -> void:
 		return
 	if block_run_active:
 		_process_block_run_events()
-		_advance_block_run_clock(delta if not paused and not mode_select_visible else 0.0)
-	if mode_session != null and not mode_select_visible and not block_run_active:
+		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() else 0.0)
+	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and not block_run_active:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
-	if not mode_select_visible and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
+	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
 		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(game.level)
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
@@ -312,12 +312,18 @@ func _restart_current_run() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if mode_select_visible:
-			if event.keycode == KEY_1:
+			if event.keycode == KEY_ESCAPE:
+				mode_select_visible = false
+				home_visible = true
+				queue_redraw()
+			elif event.keycode == KEY_1:
 				_select_mode("classic")
 			elif event.keycode == KEY_2:
 				_select_mode("sprint")
 			elif event.keycode == KEY_3:
 				_select_mode("marathon")
+			return
+		if home_visible or not secondary_screen.is_empty():
 			return
 		if _block_run_draft_is_open():
 			if event.keycode == KEY_1:
@@ -363,7 +369,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
-	if mode_select_visible or game == null or game.game_over or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
+	if mode_select_visible or home_visible or not secondary_screen.is_empty() or game == null or game.game_over or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
@@ -393,7 +399,7 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 	return true
 
 func _toggle_pause() -> void:
-	if game == null or game.game_over or _mode_finished() or mode_select_visible:
+	if game == null or game.game_over or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty():
 		return
 	paused = not paused
 	queue_redraw()
