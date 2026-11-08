@@ -379,14 +379,15 @@ func _handle_tap(point: Vector2) -> void:
 		if resume_rect.has_point(point):
 			paused = false
 	else:
-		if block_run_active and block_run_skill_rect.has_point(point):
+		# The dedicated DROP target wins hit-testing on narrow portrait layouts.
+		# It is separate from the board gesture area, so a normal board tap still rotates.
+		if drop_rect.has_point(point):
+			game.hard_drop()
+		elif block_run_active and block_run_skill_rect.has_point(point):
 			activate_block_run_hero_skill()
 		elif hold_rect.has_point(point):
 			game.hold_piece()
-		elif drop_rect.has_point(point):
-			game.hard_drop()
 		elif board_rect.has_point(point):
-			# A single unambiguous tap always rotates; hard drop is swipe-only.
 			game.rotate_piece()
 	_sync_buddy_state()
 	queue_redraw()
