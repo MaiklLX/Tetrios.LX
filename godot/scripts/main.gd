@@ -9,6 +9,8 @@ const ModeSession = preload("res://scripts/mode_session.gd")
 const ModeCatalog = preload("res://scripts/mode_catalog.gd")
 const CampaignProgress = preload("res://scripts/campaign_progress.gd")
 const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
+const CampaignRuntime = preload("res://scripts/campaign_piece_runtime.gd")
+const CampaignSpecialPiece = preload("res://scripts/campaign_special_piece.gd")
 const BlockRunSession = preload("res://scripts/block_run_session.gd")
 const BlockRunBridge = preload("res://scripts/block_run_bridge.gd")
 
@@ -18,6 +20,8 @@ var campaign_run_active := false
 var campaign_run_planet_id := 0
 var campaign_completion_processed := false
 var campaign_last_reward_marks := 0
+var campaign_piece_runtime: BlockBuddiesCampaignPieceRuntime
+const CARGO_HOOK_PLANET_ID := 31
 var mode_session: BlockBuddiesModeSession
 var block_run_session: BlockBuddiesBlockRunSession
 var block_run_active := false
@@ -116,7 +120,7 @@ func _layout() -> void:
 		buddy.scale = Vector2.ONE * buddy_layout.scale * 1.28
 		# Anchor the companion flush to the left gutter; never let its sprite intrude into the board frame.
 		buddy.position = Vector2(0.0, board_rect.position.y + 18.0)
-		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
+		var result_overlay_visible := paused or _active_game_over() or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
 		buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not mode_select_visible and campaign_screen.is_empty() and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
 
@@ -198,20 +202,77 @@ func _process(delta: float) -> void:
 		_process_block_run_events()
 		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() else 0.0)
 	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not block_run_active:
-		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over, game.score)
+		mode_session.update(delta if not paused else 0.0, _active_lines(), _active_game_over(), _active_score())
 		_process_campaign_completion()
-	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
-		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(game.level)
+	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not _active_game_over() and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
+		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(_active_level())
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
 			gravity_clock = 0.0
-			game.tick()
+			if _campaign_runtime_active():
+				campaign_piece_runtime.tick()
+			else:
+				game.tick()
 			if mode_session != null and not block_run_active:
-				mode_session.update(0.0, game.lines, game.game_over, game.score)
+				mode_session.update(0.0, _active_lines(), _active_game_over(), _active_score())
 			if block_run_active:
 				_process_block_run_events()
 			queue_redraw()
 	_sync_buddy_state()
+
+func _campaign_runtime_active() -> bool:
+	return campaign_run_active and campaign_piece_runtime != null
+
+func _active_game_over() -> bool:
+	return campaign_piece_runtime.game_over if _campaign_runtime_active() else game.game_over
+
+func _active_lines() -> int:
+	return campaign_piece_runtime.lines if _campaign_runtime_active() else game.lines
+
+func _active_score() -> int:
+	return campaign_piece_runtime.score if _campaign_runtime_active() else game.score
+
+func _active_level() -> int:
+	return 1 if _campaign_runtime_active() else game.level
+
+func _active_held_piece_id() -> int:
+	return campaign_piece_runtime.held_piece_id if _campaign_runtime_active() else game.held_type
+
+func _active_next_piece_id() -> int:
+	if _campaign_runtime_active():
+		return int(campaign_piece_runtime.piece_bag[0]) if not campaign_piece_runtime.piece_bag.is_empty() else -1
+	return game.peek_next_piece_type()
+
+func _active_grid() -> Array:
+	return campaign_piece_runtime.grid if _campaign_runtime_active() else game.grid
+
+func _move_piece_horizontal(direction: int) -> bool:
+	return campaign_piece_runtime.move_horizontal(direction) if _campaign_runtime_active() else game.move_horizontal(direction)
+
+func _rotate_active_piece() -> bool:
+	return campaign_piece_runtime.rotate_piece() if _campaign_runtime_active() else game.rotate_piece()
+
+func _soft_drop_active_piece() -> bool:
+	return campaign_piece_runtime.soft_drop() if _campaign_runtime_active() else game.soft_drop()
+
+func _hard_drop_active_piece() -> int:
+	return campaign_piece_runtime.hard_drop() if _campaign_runtime_active() else game.hard_drop()
+
+func _hold_active_piece() -> bool:
+	return campaign_piece_runtime.hold_piece() if _campaign_runtime_active() else game.hold_piece()
+
+func _reset_campaign_piece_runtime() -> bool:
+	campaign_piece_runtime = CampaignRuntime.new()
+	campaign_piece_runtime.reset(false)
+	if campaign_run_planet_id == CARGO_HOOK_PLANET_ID:
+		return campaign_piece_runtime.spawn_authored_special()
+	return campaign_piece_runtime.spawn_next_standard()
+
+func _campaign_ghost_origin() -> Vector2i:
+	var ghost: Vector2i = campaign_piece_runtime.origin
+	while not campaign_piece_runtime._collides(ghost + Vector2i(0, 1), campaign_piece_runtime.active_cells):
+		ghost.y += 1
+	return ghost
 
 func configure_block_run_hero(hero_id: String, hero_level: int) -> bool:
 	if not ["plush", "prism", "blip", "pixel", "spark"].has(hero_id) or hero_level < 1:
@@ -317,6 +378,8 @@ func _advance_block_run_clock(delta: float) -> void:
 
 func _restart_current_run() -> void:
 	game.reset()
+	# Campaign owns a separate board and piece lifecycle; the shared model stays untouched.
+	# Retry replays the authored opening piece only on its designated campaign planet.
 	# The mode lifecycle must also return to running when restarting Block Run;
 	# otherwise its completed status blocks the first touch on the new run.
 	if mode_session != null:
@@ -328,6 +391,8 @@ func _restart_current_run() -> void:
 			mode_session.rules["target_survive_seconds"] = float(campaign_definition.get("target_survive_seconds", 0))
 			mode_session.rules["time_limit_seconds"] = float(campaign_definition.get("time_limit_seconds", 0))
 			campaign_completion_processed = false
+			if not _reset_campaign_piece_runtime():
+				push_error("Campaign piece runtime could not restart the authored planet.")
 	if block_run_active:
 		start_block_run_session()
 	paused = false
@@ -378,12 +443,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if (paused or _mode_finished()) and event.keycode != KEY_R:
 			return
 		match event.keycode:
-			KEY_LEFT, KEY_A: game.move_horizontal(-1)
-			KEY_RIGHT, KEY_D: game.move_horizontal(1)
-			KEY_DOWN, KEY_S: game.soft_drop()
-			KEY_UP, KEY_W, KEY_X, KEY_SPACE: game.rotate_piece()
-			KEY_ENTER: game.hard_drop()
-			KEY_C: game.hold_piece()
+			KEY_LEFT, KEY_A: _move_piece_horizontal(-1)
+			KEY_RIGHT, KEY_D: _move_piece_horizontal(1)
+			KEY_DOWN, KEY_S: _soft_drop_active_piece()
+			KEY_UP, KEY_W, KEY_X, KEY_SPACE: _rotate_active_piece()
+			KEY_ENTER: _hard_drop_active_piece()
+			KEY_C: _hold_active_piece()
 			KEY_R:
 				_restart_current_run()
 		_sync_buddy_state()
@@ -402,7 +467,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
-	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or game.game_over or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
+	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or _active_game_over() or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
@@ -412,27 +477,27 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 		var steps := clampi(roundi(absf(delta.x) / maxf(board_rect.size.x / BOARD_W, 1.0)), 1, 3)
 		var direction := 1 if delta.x > 0.0 else -1
 		for i in range(steps):
-			game.move_horizontal(direction)
+			_move_piece_horizontal(direction)
 	elif delta.y > 0.0:
 		# Hard drop requires both a decisive travel distance and a quick
 		# gesture. Slow downward drags remain soft-drop input.
 		var is_quick_drop := delta.y >= board_rect.size.y * 0.22 and duration_msec <= 350
 		if is_quick_drop:
-			game.hard_drop()
+			_hard_drop_active_piece()
 		else:
 			var drops := clampi(roundi(delta.y / threshold), 1, 4)
 			for i in range(drops):
-				game.soft_drop()
-				if game.game_over:
+				_soft_drop_active_piece()
+				if _active_game_over():
 					break
 	else:
-		game.rotate_piece()
+		_rotate_active_piece()
 	_sync_buddy_state()
 	queue_redraw()
 	return true
 
 func _toggle_pause() -> void:
-	if game == null or game.game_over or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty():
+	if game == null or _active_game_over() or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty():
 		return
 	paused = not paused
 	queue_redraw()
@@ -515,7 +580,7 @@ func _handle_tap(point: Vector2) -> void:
 	if mode_button_rect.has_point(point):
 		_open_mode_select()
 		return
-	if game.game_over or _mode_finished():
+	if _active_game_over() or _mode_finished():
 		if campaign_run_active and mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED:
 			_return_to_campaign_route()
 		else:
@@ -529,13 +594,13 @@ func _handle_tap(point: Vector2) -> void:
 		# The dedicated DROP target wins hit-testing on narrow portrait layouts.
 		# It is separate from the board gesture area, so a normal board tap still rotates.
 		if drop_rect.has_point(point):
-			game.hard_drop()
+			_hard_drop_active_piece()
 		elif block_run_active and block_run_skill_rect.has_point(point):
 			activate_block_run_hero_skill()
 		elif hold_rect.has_point(point):
-			game.hold_piece()
+			_hold_active_piece()
 		elif board_rect.has_point(point):
-			game.rotate_piece()
+			_rotate_active_piece()
 	_sync_buddy_state()
 	queue_redraw()
 
@@ -552,6 +617,7 @@ func _select_mode(requested_mode_id: String) -> void:
 	campaign_screen = ""
 	campaign_launch_pending = false
 	campaign_run_active = false
+	campaign_piece_runtime = null
 	campaign_run_planet_id = 0
 	campaign_completion_processed = false
 	paused = false
@@ -587,23 +653,23 @@ func _sync_buddy_state() -> void:
 	if game == null:
 		return
 	if mode_session != null and not mode_select_visible:
-		mode_session.update(0.0, game.lines, game.game_over)
+		mode_session.update(0.0, _active_lines(), _active_game_over())
 		_process_campaign_completion()
 	if not is_instance_valid(buddy):
 		return
 	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
-	var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
+	var result_overlay_visible := paused or _active_game_over() or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
 	buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not mode_select_visible and not _block_run_draft_is_open() and not result_overlay_visible
-	if game.game_over:
+	if _active_game_over():
 		if buddy.state != "surprised":
 			buddy.set_state("surprised", 0.0)
 		return
-	if game.lines > buddy_last_lines:
-		var cleared := game.lines - buddy_last_lines
+	if _active_lines() > buddy_last_lines:
+		var cleared := _active_lines() - buddy_last_lines
 		clear_flash_count = cleared
 		clear_flash_time = 0.72 if cleared < 4 else 1.05
 		buddy.set_state("victory" if cleared >= 4 else "happy", 1.5)
-		buddy_last_lines = game.lines
+		buddy_last_lines = _active_lines()
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color("#070d1c"))
@@ -632,7 +698,7 @@ func _draw() -> void:
 		return
 	if mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED:
 		_draw_mode_complete()
-	elif game.game_over:
+	elif _active_game_over():
 		_draw_game_over()
 	elif paused:
 		_draw_pause_overlay()
@@ -762,8 +828,12 @@ func _start_campaign_planet() -> void:
 	mode_session.rules["target_score"] = int(definition.get("target_score", 0))
 	mode_session.rules["target_survive_seconds"] = float(definition.get("target_survive_seconds", 0))
 	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
-	campaign_run_active = true
 	campaign_run_planet_id = node_id
+	if not _reset_campaign_piece_runtime():
+		push_error("Campaign piece runtime could not spawn the authored planet piece.")
+		campaign_piece_runtime = null
+		return
+	campaign_run_active = true
 	campaign_completion_processed = false
 	campaign_last_reward_marks = 0
 	block_run_active = false
@@ -783,7 +853,7 @@ func _start_campaign_planet() -> void:
 func _process_campaign_completion() -> void:
 	if not campaign_run_active or campaign_completion_processed or mode_session == null or mode_session.status != ModeSession.STATUS_COMPLETED:
 		return
-	var result: Dictionary = campaign_progress.complete_planet(campaign_run_planet_id, game.lines, game.score, mode_session.elapsed_seconds)
+	var result: Dictionary = campaign_progress.complete_planet(campaign_run_planet_id, _active_lines(), _active_score(), mode_session.elapsed_seconds)
 	if bool(result.get("accepted", false)):
 		campaign_last_reward_marks = int(result.get("reward_marks", 0))
 		if not CampaignStore.save_progress(campaign_progress):
@@ -798,6 +868,7 @@ func _return_to_campaign_route() -> void:
 	campaign_planet = ((campaign_run_planet_id - 1) % CampaignProgress.PLANETS_PER_UNIVERSE) + 1
 	campaign_screen = "route"
 	campaign_run_active = false
+	campaign_piece_runtime = null
 	campaign_completion_processed = false
 	mode_select_visible = false
 	home_visible = false
@@ -986,8 +1057,8 @@ func _objective_progress_ratio() -> float:
 		return clampf(mode_session.elapsed_seconds / target_survive, 0.0, 1.0)
 	var target_lines := int(mode_session.rules.get("target_lines", 0))
 	var target_score := int(mode_session.rules.get("target_score", 0))
-	var line_ratio := 1.0 if target_lines <= 0 else clampf(float(game.lines) / float(target_lines), 0.0, 1.0)
-	var score_ratio := 1.0 if target_score <= 0 else clampf(float(game.score) / float(target_score), 0.0, 1.0)
+	var line_ratio := 1.0 if target_lines <= 0 else clampf(float(_active_lines()) / float(target_lines), 0.0, 1.0)
+	var score_ratio := 1.0 if target_score <= 0 else clampf(float(_active_score()) / float(target_score), 0.0, 1.0)
 	return minf(line_ratio, score_ratio)
 
 func _format_elapsed_time(total_seconds: float) -> String:
@@ -1003,7 +1074,7 @@ func _draw_stats() -> void:
 	var gap := 14.0
 	var card_width := (screen_size.x - outer * 2.0 - gap) * 0.5
 	var card_height := 52.0
-	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
+	var score_value := block_run_session.score if block_run_active and block_run_session != null else _active_score()
 	var synergy_count := block_run_session.encounter.active_synergies().size() if block_run_active and block_run_session != null else 0
 	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ • СИН. %d" % synergy_count
 	var score_display := str(score_value)
@@ -1037,14 +1108,14 @@ func _draw_stats() -> void:
 		var survive_target := float(mode_session.rules.get("target_survive_seconds", 0))
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
 		var mode_label := _mode_display_name(mode_session.mode_id)
-		var objective_value := "%d / %d" % [mini(game.lines, target), target] if target > 0 else ("%d / %d СЕК" % [mini(floori(mode_session.elapsed_seconds), int(survive_target)), int(survive_target)] if survive_target > 0.0 else "%d / %d" % [mini(game.score, score_target), score_target])
+		var objective_value := "%d / %d" % [mini(_active_lines(), target), target] if target > 0 else ("%d / %d СЕК" % [mini(floori(mode_session.elapsed_seconds), int(survive_target)), int(survive_target)] if survive_target > 0.0 else "%d / %d" % [mini(_active_score(), score_target), score_target])
 		_stat_card(progress_rect, mode_label + " • " + elapsed_label, objective_value, Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(12.0, 46.0), Vector2(progress_rect.size.x - 24.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
 		if _objective_progress_ratio() > 0.0:
 			draw_rect(Rect2(track.position, Vector2(track.size.x * _objective_progress_ratio(), track.size.y)), Color("#45d9f5"))
 	else:
-		_stat_card(progress_rect, "УРОВЕНЬ / ЛИНИИ", "%d / %d" % [game.level, game.lines], Color("#f6d65b"))
+		_stat_card(progress_rect, "УРОВЕНЬ / ЛИНИИ", "%d / %d" % [_active_level(), _active_lines()], Color("#f6d65b"))
 
 func _stat_label_font_size(rect: Rect2, label: String) -> int:
 	# Choose the largest readable label size that fits before the accent marker.
@@ -1110,8 +1181,8 @@ func _draw_piece_previews() -> void:
 		var start_x := (screen_size.x - total_width) * 0.5
 		hold_rect = Rect2(start_x, top, slot_width, card_height)
 		block_run_skill_rect = Rect2(start_x + (slot_width + slot_gap) * 2.0, top, slot_width, card_height)
-		_draw_preview_card(hold_rect, "ЗАПАС", game.held_type)
-		_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
+		_draw_preview_card(hold_rect, "ЗАПАС", _active_held_piece_id())
+		_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "ДАЛЕЕ", _active_next_piece_id())
 		_draw_block_run_skill_card(block_run_skill_rect)
 	else:
 		var card_width := minf(164.0, (screen_size.x - 36.0 - 14.0) * 0.5)
@@ -1120,13 +1191,13 @@ func _draw_piece_previews() -> void:
 		var start_x := (screen_size.x - total_width) * 0.5
 		hold_rect = Rect2(start_x, top, card_width, card_height)
 		block_run_skill_rect = Rect2()
-		_draw_preview_card(hold_rect, "ЗАПАС", game.held_type)
-		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
+		_draw_preview_card(hold_rect, "ЗАПАС", _active_held_piece_id())
+		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "ДАЛЕЕ", _active_next_piece_id())
 
 func _draw_drop_button() -> void:
 	if drop_rect.size.x < 42.0:
 		return
-	var enabled := not paused and not game.game_over and not _mode_finished() and not _block_run_draft_is_open()
+	var enabled := not paused and not _active_game_over() and not _mode_finished() and not _block_run_draft_is_open()
 	var fill := Color("#e9782d") if enabled else Color("#35445a")
 	var edge := Color("#ffe0a0") if enabled else Color("#8294a9")
 	_draw_soft_panel(drop_rect, fill, edge, 15, 8)
@@ -1183,7 +1254,7 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	if piece_type < 0:
 		draw_string(font, rect.position + Vector2(rect.size.x - 28.0, 43), "—", HORIZONTAL_ALIGNMENT_CENTER, 30, 18, Color("#b7dfff"))
 		return
-	var cells: Array = BlockBuddiesModel.SHAPES[piece_type]
+	var cells: Array = CampaignSpecialPiece.cells_for_rotation(0) if piece_type == 7 else BlockBuddiesModel.SHAPES[piece_type]
 	var min_x := 999
 	var min_y := 999
 	var max_x := -999
@@ -1202,7 +1273,7 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	var piece_origin := Vector2(rect.position.x + rect.size.x - 30.0, rect.position.y + rect.size.y * 0.67) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
-		_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
+		_draw_block(mini_rect, Color("#aebbd1") if piece_type == 7 else BlockBuddiesModel.PALETTE[piece_type])
 func _draw_board() -> void:
 	var frame := board_rect.grow(13)
 	_draw_soft_panel(frame.grow(3), Color("#103d83"), Color("#9aeaff"), 24, 18)
@@ -1217,21 +1288,23 @@ func _draw_board() -> void:
 			empty_style.set_border_width_all(1)
 			empty_style.border_color = Color("#174276")
 			draw_style_box(empty_style, rect)
-			var tile: int = game.grid[y][x]
+			var tile: int = _active_grid()[y][x]
 			if tile >= 0:
 				var tile_color: Color = Color("#aebbd1") if tile == 7 else BlockBuddiesModel.PALETTE[tile]
 				_draw_block(rect.grow(-0.5), tile_color)
-	var ghost := game.ghost_origin()
-	for cell_pos in game.active_cells:
+	var ghost := _campaign_ghost_origin() if _campaign_runtime_active() else game.ghost_origin()
+	var rendered_cells: Array = campaign_piece_runtime.active_cells if _campaign_runtime_active() else game.active_cells
+	for cell_pos in rendered_cells:
 		var p: Vector2i = ghost + cell_pos
 		if p.y >= 0:
 			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-2.0)
 			_draw_soft_panel(rect, Color(0.55, 0.83, 1.0, 0.10), Color(0.65, 0.91, 1.0, 0.24), 6, 0)
-	for cell_pos in game.active_cells:
-		var p: Vector2i = game.origin + cell_pos
+	for cell_pos in rendered_cells:
+		var active_origin: Vector2i = campaign_piece_runtime.origin if _campaign_runtime_active() else game.origin
+		var p: Vector2i = active_origin + cell_pos
 		if p.y >= 0:
 			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-1.3)
-			_draw_block(rect, BlockBuddiesModel.PALETTE[game.active_type])
+			_draw_block(rect, Color("#aebbd1") if (_campaign_runtime_active() and campaign_piece_runtime.active_piece_id == 7) else BlockBuddiesModel.PALETTE[campaign_piece_runtime.active_piece_id if _campaign_runtime_active() else game.active_type])
 	_draw_line_clear_feedback()
 func _draw_line_clear_feedback() -> void:
 	if clear_flash_time <= 0.0:
@@ -1350,7 +1423,7 @@ func _draw_mode_complete() -> void:
 	else:
 		_center_text("ЦЕЛЬ ПО ОЧКАМ • %d" % int(mode_session.rules.get("target_score", 0)), screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
 	_center_text("ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
-	_center_text("ОЧКИ  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
+	_center_text("ОЧКИ  •  %d" % _active_score(), screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
 	if campaign_run_active:
 		_center_text("НАГРАДА  •  +%d МЕТОК" % campaign_last_reward_marks, screen_size.y * 0.5 + 72.0, 13, Color("#ffd05a"))
 		_center_text("НАЖМИ, ЧТОБЫ ВЕРНУТЬСЯ К КАРТЕ", screen_size.y * 0.5 + 104.0, 10, Color("#b9eaff"))
@@ -1368,11 +1441,11 @@ func _game_over_progress_label() -> String:
 		if target_survive > 0.0:
 			return "ВЫЖИВАНИЕ  •  %s / %s" % [_format_elapsed_time(mode_session.elapsed_seconds), _format_elapsed_time(target_survive)]
 		if target_lines > 0 and target_score > 0:
-			return "ЛИНИИ %d/%d  •  ОЧКИ %d/%d" % [mini(game.lines, target_lines), target_lines, mini(game.score, target_score), target_score]
+			return "ЛИНИИ %d/%d  •  ОЧКИ %d/%d" % [mini(_active_lines(), target_lines), target_lines, mini(_active_score(), target_score), target_score]
 		if target_score > 0:
-			return "ОЧКИ  •  %d / %d" % [mini(game.score, target_score), target_score]
-		return "ЛИНИИ  •  %d / %d" % [mini(game.lines, target_lines), target_lines]
-	return "ОЧИЩЕНО ЛИНИЙ  •  %d" % game.lines
+			return "ОЧКИ  •  %d / %d" % [mini(_active_score(), target_score), target_score]
+		return "ЛИНИИ  •  %d / %d" % [mini(_active_lines(), target_lines), target_lines]
+	return "ОЧИЩЕНО ЛИНИЙ  •  %d" % _active_lines()
 
 func _game_over_time_label() -> String:
 	if _is_line_objective_mode():
@@ -1394,12 +1467,12 @@ func _draw_game_over() -> void:
 		_center_text(_game_over_title(), screen_size.y * 0.5 - 88.0, 29, Color("#f4f8ff"))
 		_center_text(_game_over_progress_label(), screen_size.y * 0.5 - 44.0, 16, Color("#c0d3e2"))
 		_center_text(_game_over_time_label(), screen_size.y * 0.5 - 8.0, 16, Color("#f6d65b"))
-		_center_text("ОЧКИ  •  %d" % game.score, screen_size.y * 0.5 + 30.0, 20, Color("#45d9f5"))
+		_center_text("ОЧКИ  •  %d" % _active_score(), screen_size.y * 0.5 + 30.0, 20, Color("#45d9f5"))
 		_center_text("ЕЩЁ ОДИН ЗАБЕГ?", screen_size.y * 0.5 + 91.0, 13, Color("#ffb477"))
 	else:
 		_center_text(_game_over_title(), screen_size.y * 0.5 - 70.0, 34, Color("#f4f8ff"))
 		_center_text("ОЧКИ", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
-		_center_text(str(game.score), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
+		_center_text(str(_active_score()), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
 		_center_text(_game_over_progress_label(), screen_size.y * 0.5 + 36.0, 13, Color("#c0d3e2"))
 		_center_text("НАЖМИ, ЧТОБЫ НАЧАТЬ ЗАНОВО", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
 
