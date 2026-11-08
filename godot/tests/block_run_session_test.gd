@@ -55,7 +55,7 @@ func _run() -> void:
 	score_goal_run.start()
 	score_goal_run.goals = [score_goal_run.encounter.create_goal("score", 0, 0, 0, 1, 0, 9, 902)]
 	var score_event := score_goal_run.on_line_clear(1, 0, 1)
-	if not _check(score_event.goal_events.size() == 1 and score_goal_run.score > 0, "Line-clear score must update score goals")
+	if not _check(score_event.goal_events.size() == 1 and score_goal_run.score > 0, "Line-clear score must update score goals"):
 		return
 
 	var attack_run = Session.new()
