@@ -145,5 +145,32 @@ func _run() -> void:
 	if not await _capture(viewport, "09-mobile-360-results"):
 		quit(1)
 		return
-	print("Visual smoke captures completed.")
+	# The following five screens are a static art-direction gallery, not live
+	# commerce/profile UI. It lets the user review the complete visual language
+	# before we connect navigation, inventory, currencies or persistent data.
+	scene.queue_free()
+	await process_frame
+	viewport.size = Vector2i(720, 1280)
+	var gallery_packed := load("res://scenes/ui_concept_gallery.tscn") as PackedScene
+	if gallery_packed == null:
+		push_error("UI concept gallery scene could not be loaded.")
+		quit(1)
+		return
+	var gallery := gallery_packed.instantiate()
+	viewport.add_child(gallery)
+	for screen in [
+		{"id":"home","file":"10-concept-home-menu"},
+		{"id":"shop","file":"11-concept-shop"},
+		{"id":"heroes","file":"12-concept-hero-roster"},
+		{"id":"upgrades","file":"13-concept-upgrades"},
+		{"id":"block_run","file":"14-concept-block-run-hub"}
+	]:
+		gallery.set("screen_id", screen.id)
+		gallery.queue_redraw()
+		await process_frame
+		await process_frame
+		if not await _capture(viewport, screen.file):
+			quit(1)
+			return
+	print("Gameplay and secondary-screen concept captures completed.")
 	quit(0)
