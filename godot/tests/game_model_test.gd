@@ -98,7 +98,7 @@ func _run() -> void:
 	if not _check(not menu_probe.mode_select_visible and menu_probe.mode_session.mode_id == "sprint" and menu_probe.mode_session.is_running(), "Sprint card tap should launch a Sprint session"):
 		return
 	menu_probe._open_mode_select()
-	if not _check(menu_probe.mode_select_visible and not menu_probe.mode_session.is_running(), "Opening mode selection should pause the active session without advancing it"):
+	if not _check(menu_probe.mode_select_visible and menu_probe.mode_session.is_running(), "Opening mode selection should suspend gameplay without discarding the selected session"):
 		return
 	menu_probe.free()
 
