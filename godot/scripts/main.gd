@@ -1290,7 +1290,10 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	var piece_origin := Vector2(rect.position.x + rect.size.x - 30.0, rect.position.y + rect.size.y * 0.67) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
-		_draw_block(mini_rect, Color("#aebbd1") if piece_type == 7 else BlockBuddiesModel.PALETTE[piece_type])
+		if piece_type == 7:
+			_draw_campaign_special_block(mini_rect)
+		else:
+			_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
 func _draw_board() -> void:
 	var frame := board_rect.grow(13)
 	_draw_soft_panel(frame.grow(3), Color("#103d83"), Color("#9aeaff"), 24, 18)
@@ -1306,9 +1309,10 @@ func _draw_board() -> void:
 			empty_style.border_color = Color("#174276")
 			draw_style_box(empty_style, rect)
 			var tile: int = _active_grid()[y][x]
-			if tile >= 0:
-				var tile_color: Color = Color("#aebbd1") if tile == 7 else BlockBuddiesModel.PALETTE[tile]
-				_draw_block(rect.grow(-0.5), tile_color)
+			if tile == 7:
+				_draw_campaign_special_block(rect.grow(-0.5))
+			elif tile >= 0:
+				_draw_block(rect.grow(-0.5), BlockBuddiesModel.PALETTE[tile])
 	var ghost := _campaign_ghost_origin() if _campaign_runtime_active() else game.ghost_origin()
 	var rendered_cells: Array = campaign_piece_runtime.active_cells if _campaign_runtime_active() else game.active_cells
 	for cell_pos in rendered_cells:
@@ -1321,7 +1325,10 @@ func _draw_board() -> void:
 		var p: Vector2i = active_origin + cell_pos
 		if p.y >= 0:
 			var rect := Rect2(board_rect.position + Vector2(p) * cell, Vector2.ONE * cell).grow(-1.3)
-			_draw_block(rect, Color("#aebbd1") if (_campaign_runtime_active() and campaign_piece_runtime.active_piece_id == 7) else BlockBuddiesModel.PALETTE[campaign_piece_runtime.active_piece_id if _campaign_runtime_active() else game.active_type])
+			if _campaign_runtime_active() and campaign_piece_runtime.active_piece_id == 7:
+				_draw_campaign_special_block(rect)
+			else:
+				_draw_block(rect, BlockBuddiesModel.PALETTE[game.active_type if not _campaign_runtime_active() else campaign_piece_runtime.active_piece_id])
 	_draw_line_clear_feedback()
 func _draw_line_clear_feedback() -> void:
 	if clear_flash_time <= 0.0:
@@ -1342,6 +1349,11 @@ func _draw_block(rect: Rect2, color: Color) -> void:
 	shine.set_corner_radius_all(4)
 	draw_style_box(shine, Rect2(rect.position + Vector2(3, 2), Vector2(rect.size.x - 6, maxf(3.0, rect.size.y * 0.18))))
 	draw_circle(rect.position + Vector2(rect.size.x - 6, 6), 1.5, Color(1, 1, 1, 0.45))
+
+func _draw_campaign_special_block(rect: Rect2) -> void:
+	_draw_block(rect, Color("#25b8c8"))
+	# Gold fastener keeps the live piece visually consistent with its approved preview.
+	draw_circle(rect.position + Vector2(rect.size.x - 6.0, 6.0), 2.0, Color("#ffd05a"))
 func _draw_pause_button() -> void:
 	_draw_pill(pause_rect, Color("#1467bd"), Color("#a4eaff"), 12)
 	var center := pause_rect.get_center()
