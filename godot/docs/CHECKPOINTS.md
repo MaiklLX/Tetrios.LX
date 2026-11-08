@@ -309,3 +309,9 @@
 - Registry is not wired to live gameplay: no gravity, board, input, piece or hero behavior changes in this checkpoint.
 - Dedicated tests cover universe catalog, modifier limits/compatibility, deterministic assignment, preview metadata and the inactive-runtime boundary.
 - Full CI result pending for the KT-531 commit.
+
+
+## KT-532 — Daily Challenge source audit
+- Audited the exact 17-rule `dailyRules` catalog in the development branch's `site/index.html`, including goals, triggers and timing.
+- Classified low-risk tempo/score effects, visual-only effects, preview-only effects and high-risk board/input effects. The source has seven standard tetrominoes only; new campaign pieces will be original designs.
+- No live campaign integration in KT-532. KT-533 will adapt low-risk effects behind isolated session rules; KT-534 will introduce the first original special piece.
