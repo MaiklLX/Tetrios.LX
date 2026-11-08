@@ -97,7 +97,7 @@ func _mode_select_layout(viewport: Vector2) -> Dictionary:
 func _board_metrics(viewport: Vector2) -> Dictionary:
 	# With touch-first input there is no permanent control strip or large title banner.
 	# Reserve compact HUD + enlarged HOLD/NEXT cards, then reclaim the remaining height.
-	var board_top_min := 224.0
+	var board_top_min := 236.0
 	var available_height := maxf(230.0, viewport.y - board_top_min - 36.0)
 	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.68) / BOARD_H, available_height / BOARD_H))
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
@@ -623,7 +623,7 @@ func _draw_block_run_goals() -> void:
 	if states.is_empty():
 		return
 	# Compact 28px goal strip sits above the 72px preview row, including on 360x800 phones.
-	var top := board_rect.position.y - 116.0
+	var top := board_rect.position.y - 122.0
 	var gap := 6.0
 	var outer := 18.0
 	var width := (screen_size.x - outer * 2.0 - gap * 2.0) / 3.0
@@ -647,7 +647,7 @@ func _draw_block_run_goals() -> void:
 
 func _draw_piece_previews() -> void:
 	var card_height := 72.0
-	var top := board_rect.position.y - card_height - 12.0
+	var top := board_rect.position.y - card_height - 16.0
 	if block_run_active:
 		var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
 		var slot_gap := 8.0
