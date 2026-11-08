@@ -75,7 +75,8 @@ func _layout() -> void:
 	if is_instance_valid(buddy):
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale * 1.28
-		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
+		# Anchor the companion flush to the left gutter; never let its sprite intrude into the board frame.
+		buddy.position = Vector2(0.0, board_rect.position.y + 18.0)
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
 		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
