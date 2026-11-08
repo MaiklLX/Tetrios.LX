@@ -53,11 +53,10 @@ func _layout() -> void:
 	var resume_width := minf(220.0, screen_size.x - 64.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
 	mode_button_rect = Rect2(24.0, 42.0, 82.0, 42.0)
-	var mode_card_width := minf(300.0, screen_size.x - 48.0)
-	classic_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 92.0, mode_card_width, 92.0)
-	sprint_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 36.0, mode_card_width, 82.0)
-	classic_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 128.0, mode_card_width, 82.0)
-	marathon_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 + 56.0, mode_card_width, 82.0)
+	var mode_layout := _mode_select_layout(screen_size)
+	classic_mode_rect = mode_layout.classic
+	sprint_mode_rect = mode_layout.sprint
+	marathon_mode_rect = mode_layout.marathon
 	if is_instance_valid(buddy):
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
@@ -65,7 +64,20 @@ func _layout() -> void:
 		buddy.visible = buddy_layout.visible
 	queue_redraw()
 
-func _board_metrics(viewport: Vector2) -> Dictionary:
+func _mode_select_layout(viewport: Vector2) -> Dictionary:
+	var card_width := minf(300.0, viewport.x - 48.0)
+	var left := viewport.x * 0.5 - card_width * 0.5
+	var center_y := viewport.y * 0.5
+	return {
+		"classic": Rect2(left, center_y - 128.0, card_width, 82.0),
+		"sprint": Rect2(left, center_y - 36.0, card_width, 82.0),
+		"marathon": Rect2(left, center_y + 56.0, card_width, 82.0),
+		"title_y": center_y - 210.0,
+		"subtitle_y": center_y - 182.0,
+		"instruction_y": center_y + 178.0
+	}
+
+func _board_metrics(viewport: Vector2):
 	# With touch-first input there is no permanent control strip: give that
 	# space back to the playfield while preserving room for HUD and previews.
 	var board_top_min := 292.0
@@ -327,12 +339,13 @@ func _draw_mode_button() -> void:
 	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 5.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#eaf7ff"))
 
 func _draw_mode_select() -> void:
-	_center_text("CHOOSE YOUR MODE", screen_size.y * 0.5 - 148.0, 26, Color("#f4f8ff"))
-	_center_text("PICK A RUN STYLE", screen_size.y * 0.5 - 120.0, 12, Color("#83a3bd"))
+	var layout := _mode_select_layout(screen_size)
+	_center_text("CHOOSE YOUR MODE", layout.title_y, 26, Color("#f4f8ff"))
+	_center_text("PICK A RUN STYLE", layout.subtitle_y, 12, Color("#83a3bd"))
 	_draw_mode_card(classic_mode_rect, "1  •  CLASSIC", "Endless play. No line or time limit.", Color("#45d9f5"))
 	_draw_mode_card(sprint_mode_rect, "2  •  SPRINT", "Race to clear 40 lines.", Color("#f6d65b"))
 	_draw_mode_card(marathon_mode_rect, "3  •  MARATHON", "Long run. Clear 100 lines.", Color("#ff9b57"))
-	_center_text("TAP A CARD  •  1 / 2 / 3 TO SELECT", screen_size.y * 0.5 + 178.0, 12, Color("#72a6c8"))
+	_center_text("TAP A CARD  •  1 / 2 / 3 TO SELECT", layout.instruction_y, 12, Color("#72a6c8"))
 
 func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Color) -> void:
 	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.97))
@@ -344,7 +357,7 @@ func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Co
 func _is_line_objective_mode() -> bool:
 	return mode_session != null and int(mode_session.rules.get("target_lines", 0)) > 0
 
-func _sprint_progress_ratio() -> float:
+func _objective_progress_ratio() -> float:
 	if not _is_line_objective_mode():
 		return 0.0
 	var target := int(mode_session.rules.get("target_lines", 0))
@@ -369,8 +382,8 @@ func _draw_stats() -> void:
 		_stat_card(progress_rect, mode_label + "  •  " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
-		if _sprint_progress_ratio() > 0.0:
-			draw_rect(Rect2(track.position, Vector2(track.size.x * _sprint_progress_ratio(), track.size.y)), Color("#45d9f5"))
+		if _objective_progress_ratio() > 0.0:
+			draw_rect(Rect2(track.position, Vector2(track.size.x * _objective_progress_ratio(), track.size.y)), Color("#45d9f5"))
 	else:
 		_stat_card(progress_rect, "LEVEL  /  LINES", "%d  /  %d" % [game.level, game.lines], Color("#f6d65b"))
 
@@ -534,13 +547,13 @@ func _game_over_time_label() -> String:
 
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
-	var is_sprint := _is_line_objective_mode()
+	var has_objective := _is_line_objective_mode()
 	var panel_height := 320.0 if is_sprint else 284.0
 	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, panel_height * 0.5), Vector2(320.0, panel_height))
 	panel.position.x = maxf(20.0, panel.position.x)
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#ff9b57"))
-	if is_sprint:
+	if has_objective:
 		_center_text(_game_over_title(), screen_size.y * 0.5 - 88.0, 29, Color("#f4f8ff"))
 		_center_text(_game_over_progress_label(), screen_size.y * 0.5 - 44.0, 16, Color("#c0d3e2"))
 		_center_text(_game_over_time_label(), screen_size.y * 0.5 - 8.0, 16, Color("#f6d65b"))
