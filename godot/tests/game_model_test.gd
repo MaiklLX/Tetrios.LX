@@ -50,6 +50,15 @@ func _run() -> void:
 	var sprint_session = ModeSession.new()
 	if not _check(sprint_session.start("sprint"), "Sprint session should start"):
 		return
+	sprint_session.update(12.4, 0, false)
+	if not _check(is_equal_approx(sprint_session.elapsed_seconds, 12.4), "Sprint timer must accumulate active run time"):
+		return
+	sprint_session.update(0.0, 0, false)
+	if not _check(is_equal_approx(sprint_session.elapsed_seconds, 12.4), "A paused Sprint update must not advance the timer"):
+		return
+	sprint_session.update(3.6, 39, false)
+	if not _check(is_equal_approx(sprint_session.elapsed_seconds, 16.0), "Sprint timer must continue accurately after pause"):
+		return
 	sprint_session.update(0.0, 39, false)
 	if not _check(sprint_session.status == ModeSession.STATUS_RUNNING and sprint_session.remaining_lines(39) == 1, "Sprint should remain active with one line remaining"):
 		return
@@ -83,6 +92,11 @@ func _run() -> void:
 	mode_main.buddy = Buddy.new()
 	mode_main.game.lines = 39
 	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 0.975), "Sprint HUD progress must show 97.5 percent at 39 of 40 lines"):
+		return
+	mode_main.mode_session.elapsed_seconds = 65.0
+	if not _check(mode_main._format_elapsed_time(mode_main.mode_session.elapsed_seconds) == "01:05", "Sprint HUD clock must format minutes and seconds"):
+		return
+	if not _check(mode_main._format_elapsed_time(0.0) == "00:00", "Sprint clock must start at zero"):
 		return
 	mode_main.game.lines = 40
 	mode_main._sync_buddy_state()
