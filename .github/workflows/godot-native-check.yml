@@ -41,6 +41,9 @@ jobs:
       - name: Run campaign progression tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/campaign_progress_test.gd
+      - name: Run Campaign mechanics registry tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_mechanics_test.gd
       - name: Run campaign boss session tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/campaign_boss_session_test.gd
