@@ -22,7 +22,7 @@ var lines := 0
 var lock_serial := 0
 var piece_bag: Array[int] = []
 
-func reset() -> void:
+func reset(spawn_initial_standard: bool = true) -> void:
 	grid.clear()
 	for y in range(HEIGHT):
 		var row: Array[int] = []
@@ -41,7 +41,8 @@ func reset() -> void:
 	lock_serial = 0
 	piece_bag.clear()
 	_refill_bag()
-	spawn_next_standard()
+	if spawn_initial_standard:
+		spawn_next_standard()
 
 func _refill_bag() -> void:
 	piece_bag.clear()
@@ -122,7 +123,9 @@ func spawn_next_standard() -> bool:
 	return spawn_piece(next_id)
 
 func spawn_authored_special() -> bool:
-	# Called only by an explicitly authored campaign encounter.
+	# Authored pieces may enter only an empty spawn slot; never discard a falling piece.
+	if game_over or active_piece_id != -1 or not active_cells.is_empty():
+		return false
 	return spawn_piece(SPECIAL_TYPE)
 
 func move_horizontal(direction: int) -> bool:
@@ -223,7 +226,8 @@ func _lock_piece() -> void:
 			y -= 1
 	if cleared > 0:
 		lines += cleared
-		score += [0, 100, 300, 500, 800][mini(cleared, 4)]
+		var line_rewards := [0, 100, 300, 500, 800]
+		score += line_rewards[mini(cleared, 4)]
 	lock_serial += 1
 	hold_used = false
 	spawn_next_standard()
