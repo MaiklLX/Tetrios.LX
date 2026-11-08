@@ -863,7 +863,7 @@ func _draw_block_run_results() -> void:
 	_center_text("ЛИНИИ  •  %d     ВРЕМЯ  •  %s" % [session.total_lines, elapsed], panel.position.y + 198.0, 13, Color("#c0d3e2"))
 	draw_line(Vector2(panel.position.x + 28.0, panel.position.y + 222.0), Vector2(panel.end.x - 28.0, panel.position.y + 222.0), Color(0.25, 0.52, 0.7, 0.5), 1.0)
 	_center_text("НАГРАДЫ ЗА ВЫПОЛНЕННЫЕ ЦЕЛИ", panel.position.y + 254.0, 11, Color("#83a3bd"))
-	_center_text("+%d 🪙" % session.goal_rewards_earned, panel.position.y + 289.0, 24, Color("#f6d65b"))
+	_center_text("МОНЕТЫ  •  +%d" % session.goal_rewards_earned, panel.position.y + 289.0, 24, Color("#f6d65b"))
 	_center_text("ЦЕЛЕЙ ВЫПОЛНЕНО  •  %d" % session.goal_reward_receipts.size(), panel.position.y + 316.0, 11, Color("#c0d3e2"))
 	_center_text("НАЖМИ, ЧТОБЫ НАЧАТЬ НОВЫЙ ЗАБЕГ", panel.position.y + 360.0, 11, Color("#ffb477"))
 
