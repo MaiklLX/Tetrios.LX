@@ -185,5 +185,25 @@ func _run() -> void:
 	if not _check(model.score >= 100, "A line clear must award score"):
 		return
 
-	print("Godot model tests passed: 10x23 board, seven-bag, spawn centering, movement, rotation, and line clear.")
+	# Ten consecutive single-line clears must advance the level exactly once.
+	var progression_model: BlockBuddiesModel = Model.new()
+	progression_model.reset()
+	for clear_index in range(10):
+		for x in range(Model.WIDTH):
+			progression_model.grid[22][x] = 1 if x < 3 or x > 6 else -1
+		progression_model.active_type = 0
+		progression_model.active_cells.assign(Model.SHAPES[0])
+		progression_model.origin = Vector2i(3, 0)
+		progression_model.hard_drop()
+	if not _check(progression_model.lines == 10, "Ten cleared lines must be counted cumulatively"):
+		return
+	if not _check(progression_model.level == 2, "Every ten cleared lines must advance the level"):
+		return
+	if not _check(progression_model.score == 1000, "Single-line scoring must remain consistent through the level transition"):
+		return
+	progression_model.reset()
+	if not _check(progression_model.lines == 0 and progression_model.level == 1 and progression_model.score == 0, "Restart must reset run score, lines, and level"):
+		return
+
+	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, line clear, scoring, level progression, and reset.")
 	quit(0)
