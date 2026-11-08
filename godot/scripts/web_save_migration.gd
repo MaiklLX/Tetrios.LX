@@ -171,10 +171,16 @@ static func _read_value(raw: Dictionary, key: String, json_encoded: bool) -> Var
 	return value
 
 static func _is_non_negative_int(value: Variant) -> bool:
-	return typeof(value) == TYPE_INT and int(value) >= 0
+	if typeof(value) == TYPE_STRING:
+		return value.is_valid_int() and int(value) >= 0
+	if typeof(value) == TYPE_INT:
+		return int(value) >= 0
+	if typeof(value) == TYPE_FLOAT:
+		return is_finite(float(value)) and float(value) >= 0.0 and floor(float(value)) == float(value)
+	return false
 
 static func _is_positive_int(value: Variant) -> bool:
-	return typeof(value) == TYPE_INT and int(value) > 0
+	return _is_non_negative_int(value) and int(value) > 0
 
 static func _read_non_negative_json_int(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary, fallback: int) -> void:
 	if not raw.has(key):
