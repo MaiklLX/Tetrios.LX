@@ -36,6 +36,23 @@ func _run() -> void:
 		return
 	if not _check(ModeCatalog.get_mode("unknown").is_empty(), "Unknown mode IDs must not silently map to another mode"):
 		return
+
+	# The three-card selector must keep every target distinct and vertically clear.
+	var layout_probe = Main.new()
+	for viewport_size in [Vector2(360.0, 800.0), Vector2(375.0, 812.0), Vector2(412.0, 915.0), Vector2(720.0, 1280.0)]:
+		var menu_layout: Dictionary = layout_probe._mode_select_layout(viewport_size)
+		var classic_card: Rect2 = menu_layout.classic
+		var sprint_card: Rect2 = menu_layout.sprint
+		var marathon_card: Rect2 = menu_layout.marathon
+		if not _check(classic_card.position.x >= 24.0 and classic_card.end.x <= viewport_size.x - 24.0, "Mode cards must fit narrow and wide viewports"):
+			return
+		if not _check(classic_card.end.y < sprint_card.position.y and sprint_card.end.y < marathon_card.position.y, "Mode cards must not overlap"):
+			return
+		if not _check(menu_layout.subtitle_y + 12.0 < classic_card.position.y, "Mode selector subtitle must clear the first card"):
+			return
+		if not _check(marathon_card.end.y + 24.0 < menu_layout.instruction_y, "Mode selector instructions must clear the last card"):
+			return
+	layout_probe.free()
 	classic_rules["target_lines"] = 999
 	if not _check(ModeCatalog.get_mode("classic").get("target_lines", -1) == 0, "Callers must not be able to mutate catalog definitions"):
 		return
@@ -48,6 +65,11 @@ func _run() -> void:
 		return
 	marathon_session.update(1.0, 100, false)
 	if not _check(marathon_session.status == ModeSession.STATUS_COMPLETED and is_equal_approx(marathon_session.elapsed_seconds, 126.0), "Marathon must complete at exactly 100 lines and retain elapsed time"):
+		return
+	var marathon_loss_session = ModeSession.new()
+	marathon_loss_session.start("marathon")
+	marathon_loss_session.update(0.0, 99, true)
+	if not _check(marathon_loss_session.status == ModeSession.STATUS_FAILED and marathon_loss_session.remaining_lines(99) == 1, "Game over before the 100-line target must fail Marathon"):
 		return
 	# Mode session owns objective completion without changing the classic board model.
 	var classic_session = ModeSession.new()
@@ -103,7 +125,7 @@ func _run() -> void:
 	mode_main.mode_select_visible = false
 	mode_main.buddy = Buddy.new()
 	mode_main.game.lines = 39
-	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 0.975), "Sprint HUD progress must show 97.5 percent at 39 of 40 lines"):
+	if not _check(is_equal_approx(mode_main._objective_progress_ratio(), 0.975), "Sprint HUD progress must show 97.5 percent at 39 of 40 lines"):
 		return
 	mode_main.mode_session.elapsed_seconds = 65.0
 	if not _check(mode_main._format_elapsed_time(mode_main.mode_session.elapsed_seconds) == "01:05", "Sprint HUD clock must format minutes and seconds"):
@@ -114,10 +136,10 @@ func _run() -> void:
 	mode_main._sync_buddy_state()
 	if not _check(mode_main.mode_session.status == ModeSession.STATUS_COMPLETED, "Main scene should register Sprint completion as soon as the target is reached"):
 		return
-	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 1.0), "Sprint HUD progress must clamp at 100 percent after completion"):
+	if not _check(is_equal_approx(mode_main._objective_progress_ratio(), 1.0), "Sprint HUD progress must clamp at 100 percent after completion"):
 		return
 	mode_main.mode_session.start("classic")
-	if not _check(is_equal_approx(mode_main._sprint_progress_ratio(), 0.0), "Classic HUD must not expose Sprint progress"):
+	if not _check(is_equal_approx(mode_main._objective_progress_ratio(), 0.0), "Classic HUD must not expose Sprint progress"):
 		return
 	mode_main.mode_session.start("sprint")
 	mode_main.game.lines = 40
@@ -143,6 +165,13 @@ func _run() -> void:
 	menu_probe.sprint_mode_rect = Rect2(0.0, 100.0, 120.0, 80.0)
 	menu_probe._handle_tap(Vector2(60.0, 140.0))
 	if not _check(not menu_probe.mode_select_visible and menu_probe.mode_session.mode_id == "sprint" and menu_probe.mode_session.is_running(), "Sprint card tap should launch a Sprint session"):
+		return
+	menu_probe.mode_select_visible = true
+	menu_probe._handle_tap(Vector2(60.0, 140.0))
+	# Replace the test hitbox with the Marathon card to verify the third route.
+	menu_probe.marathon_mode_rect = Rect2(0.0, 200.0, 120.0, 80.0)
+	menu_probe._handle_tap(Vector2(60.0, 240.0))
+	if not _check(not menu_probe.mode_select_visible and menu_probe.mode_session.mode_id == "marathon" and menu_probe.mode_session.is_running(), "Marathon card tap should launch a Marathon session"):
 		return
 	menu_probe._open_mode_select()
 	if not _check(menu_probe.mode_select_visible and menu_probe.mode_session.is_running(), "Opening mode selection should suspend gameplay without discarding the selected session"):
@@ -297,6 +326,15 @@ func _run() -> void:
 	if not _check(layout_probe._game_over_progress_label() == "LINES  •  37 / 40", "Sprint failure must show achieved lines against the target"):
 		return
 	if not _check(layout_probe._game_over_time_label() == "TIME  •  01:23", "Sprint failure must show the elapsed run time"):
+		return
+	layout_probe.mode_session.start("marathon")
+	layout_probe.game.lines = 99
+	layout_probe.mode_session.elapsed_seconds = 3723.0
+	if not _check(layout_probe._game_over_title() == "MARATHON FAILED", "Marathon failure must use its own mode title"):
+		return
+	if not _check(layout_probe._game_over_progress_label() == "LINES  •  99 / 100", "Marathon failure must retain progress against the 100-line target"):
+		return
+	if not _check(layout_probe._game_over_time_label() == "TIME  •  62:03", "Marathon failure must retain elapsed time without a countdown"):
 		return
 	layout_probe.mode_session.start("classic")
 	if not _check(layout_probe._game_over_title() == "RUN OVER" and layout_probe._game_over_time_label().is_empty(), "Classic game over must retain its original presentation"):
