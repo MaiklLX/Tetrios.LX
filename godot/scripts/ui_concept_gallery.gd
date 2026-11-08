@@ -2,7 +2,7 @@ extends Node2D
 
 # Static, code-drawn UI exploration. This is deliberately separate from the
 # live game scene: it previews the visual language without wiring economy or saves.
-@export_enum("home", "shop", "heroes", "upgrades", "block_run", "campaign", "daily") var screen_id := "home"
+@export_enum("home", "shop", "heroes", "upgrades", "block_run", "campaign", "planet_detail", "daily") var screen_id := "home"
 var viewport_size := Vector2(720.0, 1280.0)
 var font: Font = ThemeDB.fallback_font
 
@@ -29,6 +29,7 @@ func _draw() -> void:
 		"upgrades": _draw_upgrades()
 		"block_run": _draw_block_run()
 		"campaign": _draw_campaign()
+		"planet_detail": _draw_planet_detail()
 		"daily": _draw_daily()
 		_: _draw_home()
 
@@ -495,6 +496,44 @@ func _draw_campaign() -> void:
 			_text("МИР %d" % (planet+1), Vector2(px-17, y+222), 9, PALE)
 		if i == 0:
 			_text("ТЕКУЩАЯ ВСЕЛЕННАЯ", Vector2(viewport_size.x-235, y+32), 10, GOLD)
+	_draw_bottom_nav("ИГРАТЬ")
+
+
+func _draw_planet_detail() -> void:
+	_center("МИР АЗУР", 150, 30, GOLD)
+	_center("Туманность Искр • сектор 01", 182, 14, PALE)
+	# Large, readable planet portrait and orbital rings.
+	var origin := Vector2(viewport_size.x * 0.5, 380)
+	draw_circle(origin, 178, Color(0.25,0.72,1.0,0.08))
+	draw_arc(origin, 150, 0.1, TAU+0.1, 96, Color(0.72,0.9,1.0,0.62), 3, true)
+	draw_arc(origin, 112, 0.8, TAU+0.8, 96, Color(1,1,1,0.22), 2, true)
+	draw_circle(origin, 103, Color("#2a9ed1"))
+	draw_circle(origin + Vector2(-32,-35), 31, Color(1,1,1,0.18))
+	draw_arc(origin + Vector2(0,10), 98, 0.2, 2.7, 80, Color("#165b9b"), 13, true)
+	for island in [Vector2(-42,-8),Vector2(30,26),Vector2(-8,62)]:
+		draw_circle(origin+island, 18, Color("#8de5b5"))
+		draw_circle(origin+island+Vector2(-4,-5), 5, Color("#c7ffd9"))
+	for p in range(3):
+		var angle := -PI/2 + float(p)*TAU/3.0
+		var orbit := origin + Vector2(cos(angle),sin(angle))*150
+		draw_circle(orbit, 12, [CYAN,GOLD,VIOLET][p])
+	# Exploration facts and compact reward / unlock panels.
+	var info := Rect2(34, 590, viewport_size.x-68, 130)
+	_panel(info, Color("#102f68"), CYAN, 20)
+	_text("ОПИСАНИЕ МИРА", Vector2(58, 626), 15, CYAN)
+	_text("Океаническая планета с древними", Vector2(58, 656), 14, WHITE)
+	_text("руинами и редкими энергетическими ядрами.", Vector2(58, 680), 14, WHITE)
+	var half := (viewport_size.x-82)/2.0
+	_panel(Rect2(34, 740, half, 120), Color("#173d75"), GOLD, 18)
+	_text("НАГРАДА", Vector2(55, 775), 13, GOLD)
+	_text("✦ 250 золота", Vector2(55, 811), 18, WHITE)
+	_text("◈ 1 кристалл", Vector2(55, 838), 13, PALE)
+	_panel(Rect2(48+half, 740, half, 120), Color("#28356f"), VIOLET, 18)
+	_text("УСЛОВИЕ", Vector2(69+half, 775), 13, VIOLET)
+	_text("Пройти 3 уровня", Vector2(69+half, 811), 16, WHITE)
+	_text("Открыть сектор", Vector2(69+half, 838), 13, PALE)
+	_button(Rect2(70, 900, viewport_size.x-140, 72), "НАЧАТЬ ИССЛЕДОВАНИЕ", Color("#1767c8"), CYAN, 20)
+	_center("Прогресс и награды пока демонстрационные", 1010, 12, PALE)
 	_draw_bottom_nav("ИГРАТЬ")
 
 func _draw_daily() -> void:
