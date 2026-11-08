@@ -6,9 +6,14 @@ const BOARD_H := 23
 const Model = preload("res://scripts/game_model.gd")
 const Buddy = preload("res://scripts/buddy_companion.gd")
 const ModeSession = preload("res://scripts/mode_session.gd")
+const ModeCatalog = preload("res://scripts/mode_catalog.gd")
 
 var game: BlockBuddiesModel
 var mode_session: BlockBuddiesModeSession
+var mode_select_visible := true
+var mode_button_rect := Rect2()
+var classic_mode_rect := Rect2()
+var sprint_mode_rect := Rect2()
 var gravity_clock := 0.0
 var gravity_interval := 0.78
 var font: Font
@@ -33,7 +38,6 @@ func _ready() -> void:
 	game = Model.new()
 	game.reset()
 	mode_session = ModeSession.new()
-	mode_session.start("classic")
 	buddy = Buddy.new()
 	add_child(buddy)
 	get_viewport().size_changed.connect(_layout)
@@ -47,6 +51,10 @@ func _layout() -> void:
 	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
 	var resume_width := minf(220.0, screen_size.x - 64.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
+	mode_button_rect = Rect2(24.0, 42.0, 82.0, 42.0)
+	var mode_card_width := minf(300.0, screen_size.x - 48.0)
+	classic_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 - 92.0, mode_card_width, 92.0)
+	sprint_mode_rect = Rect2(screen_size.x * 0.5 - mode_card_width * 0.5, screen_size.y * 0.5 + 20.0, mode_card_width, 92.0)
 	if is_instance_valid(buddy):
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
@@ -84,9 +92,9 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if game == null:
 		return
-	if mode_session != null:
+	if mode_session != null and not mode_select_visible:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
-	if not game.game_over and not paused and (mode_session == null or mode_session.is_running()):
+	if not mode_select_visible and not game.game_over and not paused and (mode_session == null or mode_session.is_running()):
 		gravity_interval = _gravity_interval_for_level(game.level)
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
@@ -99,6 +107,15 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
+		if mode_select_visible:
+			if event.keycode == KEY_1:
+				_select_mode("classic")
+			elif event.keycode == KEY_2:
+				_select_mode("sprint")
+			return
+		if event.keycode == KEY_M:
+			_open_mode_select()
+			return
 		if event.keycode == KEY_ESCAPE or event.keycode == KEY_P:
 			_toggle_pause()
 			return
@@ -137,7 +154,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
-	if game == null or game.game_over or paused or _mode_finished() or not board_rect.has_point(start):
+	if mode_select_visible or game == null or game.game_over or paused or _mode_finished() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
@@ -167,12 +184,22 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 	return true
 
 func _toggle_pause() -> void:
-	if game == null or game.game_over or _mode_finished():
+	if game == null or game.game_over or _mode_finished() or mode_select_visible:
 		return
 	paused = not paused
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
+	if mode_select_visible:
+		if classic_mode_rect.has_point(point):
+			_select_mode("classic")
+		elif sprint_mode_rect.has_point(point):
+			_select_mode("sprint")
+		queue_redraw()
+		return
+	if mode_button_rect.has_point(point):
+		_open_mode_select()
+		return
 	if game.game_over or _mode_finished():
 		game.reset()
 		if mode_session != null:
@@ -197,13 +224,35 @@ func _handle_tap(point: Vector2) -> void:
 	_sync_buddy_state()
 	queue_redraw()
 
+func _select_mode(requested_mode_id: String) -> void:
+	if not ModeCatalog.is_valid_mode(requested_mode_id):
+		return
+	game.reset()
+	if mode_session == null:
+		mode_session = ModeSession.new()
+	mode_session.start(requested_mode_id)
+	mode_select_visible = false
+	paused = false
+	gravity_clock = 0.0
+	buddy_last_lines = 0
+	clear_flash_time = 0.0
+	clear_flash_count = 0
+	if is_instance_valid(buddy):
+		buddy.set_state("idle", 0.0)
+	queue_redraw()
+
+func _open_mode_select() -> void:
+	mode_select_visible = true
+	paused = false
+	queue_redraw()
+
 func _mode_finished() -> bool:
 	return mode_session != null and not mode_session.is_running()
 
 func _sync_buddy_state() -> void:
 	if game == null:
 		return
-	if mode_session != null:
+	if mode_session != null and not mode_select_visible:
 		mode_session.update(0.0, game.lines, game.game_over)
 	if not is_instance_valid(buddy):
 		return
@@ -221,6 +270,9 @@ func _sync_buddy_state() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color("#070d1c"))
 	_draw_backdrop()
+	if mode_select_visible:
+		_draw_mode_select()
+		return
 	_draw_header()
 	_draw_stats()
 	_draw_piece_previews()
@@ -257,7 +309,29 @@ func _draw_header() -> void:
 	var mode_name := "Classic" if mode_session == null else str(mode_session.rules.get("name", "Classic"))
 	_center_text("ARCADE • %s MODE" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
+	_draw_mode_button()
 	_draw_pause_button()
+
+func _draw_mode_button() -> void:
+	draw_rect(mode_button_rect, Color(0.055, 0.09, 0.15, 0.94))
+	draw_rect(mode_button_rect, Color("#45d9f5"), false, 1.5)
+	var label := "MODE"
+	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 5.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#eaf7ff"))
+
+func _draw_mode_select() -> void:
+	_center_text("CHOOSE YOUR MODE", screen_size.y * 0.5 - 148.0, 26, Color("#f4f8ff"))
+	_center_text("PICK A RUN STYLE", screen_size.y * 0.5 - 120.0, 12, Color("#83a3bd"))
+	_draw_mode_card(classic_mode_rect, "1  •  CLASSIC", "Endless play. No line or time limit.", Color("#45d9f5"))
+	_draw_mode_card(sprint_mode_rect, "2  •  SPRINT", "Race to clear 40 lines.", Color("#f6d65b"))
+	_center_text("TAP A CARD  •  M TO CHANGE MODE", screen_size.y * 0.5 + 150.0, 12, Color("#72a6c8"))
+
+func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Color) -> void:
+	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.97))
+	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 4.0)), accent)
+	draw_rect(rect, Color(0.28, 0.46, 0.62, 0.55), false, 1.0)
+	draw_string(font, rect.position + Vector2(18.0, 38.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#f4f8ff"))
+	draw_string(font, rect.position + Vector2(18.0, 66.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#9bb6ca"))
 
 func _draw_stats() -> void:
 	var top := 154.0
