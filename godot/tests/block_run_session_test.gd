@@ -157,6 +157,8 @@ func _run() -> void:
 				shield_changed = true
 	if not _check(shield_changed, "Shield rescue must mutate its source-defined bottom three-row zone"):
 		return
+	if not _check(shield_rescue_run.board[0].count(7) == 0 and shield_rescue_run.board[0].count(-1) == 10, "Shield must also clear the upper spawn area as in the Web source"):
+		return
 	var fortress_run = Session.new()
 	fortress_run.start()
 	if not _check(fortress_run.choose_card("shield") and fortress_run.choose_card("armor"), "Shield and Armor must draft for Iron Fortress"):
