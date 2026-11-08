@@ -30,15 +30,25 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	var universe_index := int((node_id - 1) / PLANETS_PER_UNIVERSE)
 	var planet_in_universe := ((node_id - 1) % PLANETS_PER_UNIVERSE) + 1
 	var boss := planet_in_universe % 10 == 0
-	var target_lines := 8 + int((node_id - 1) / 12)
-	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
+	# Difficulty grows in small, bounded chapter steps. It never compounds per planet.
+	var chapter_step := mini(universe_index, 6)
+	var local_step := int((planet_in_universe - 1) / 10)
+	var line_target := 7 + chapter_step + local_step
+	var score_target := 650 + chapter_step * 90 + local_step * 60
+	var objective_type := "lines"
 	var boss_type := "none"
+	var target_lines := line_target
+	var target_score := 0
+	if planet_in_universe in [5, 15, 25]:
+		objective_type = "score"
+		target_lines = 0
+		target_score = score_target
 	if boss:
-		boss_type = "speed" if planet_in_universe == 10 else ("score" if planet_in_universe == 20 else "final")
-	var difficulty_tier := int(node_id / 10)
-	# Every planet raises the score bar; each completed ten-planet stretch adds a lasting difficulty jump.
-	var target_score := 500 + node_id * 22 + difficulty_tier * 150
-	var time_limit := 150 if boss_type == "speed" else (180 if boss_type == "final" else 0)
+		objective_type = "boss_combo"
+		target_lines = line_target + 2
+		target_score = score_target + 180
+		boss_type = "guardian" if planet_in_universe == 10 else ("champion" if planet_in_universe == 20 else "final")
+	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
 	return {
 		"node_id": node_id,
 		"universe_index": universe_index,
@@ -48,9 +58,10 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		"planet_name": "ПЛАНЕТА %03d" % node_id,
 		"is_boss": boss,
 		"boss_type": boss_type,
+		"objective_type": objective_type,
 		"target_lines": target_lines,
 		"target_score": target_score,
-		"time_limit_seconds": time_limit,
+		"time_limit_seconds": 0,
 		"reward_marks": reward
 	}
 
@@ -97,10 +108,10 @@ func complete_planet(node_id: int, cleared_lines: int, score: int = 0, elapsed_s
 		return {"accepted": false, "reason": "planet_not_current"}
 	var definition := get_planet_definition(node_id)
 	var target_lines := int(definition.target_lines)
-	if cleared_lines < target_lines:
+	if target_lines > 0 and cleared_lines < target_lines:
 		return {"accepted": false, "reason": "objective_not_met", "remaining_lines": target_lines - cleared_lines}
 	var target_score := int(definition.get("target_score", 0))
-	if score < target_score:
+	if target_score > 0 and score < target_score:
 		return {"accepted": false, "reason": "score_objective_not_met", "remaining_score": target_score - score}
 	var time_limit := float(definition.get("time_limit_seconds", 0))
 	if time_limit > 0.0 and elapsed_seconds > time_limit:
