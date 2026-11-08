@@ -69,7 +69,7 @@ func _run() -> void:
 	if not _check(run.active_synergies().size() == 1 and run.active_synergies()[0]["name"] == "ХРОНОКОНТРОЛЬ", "Slow + Memory must activate Chrono Control"):
 		return
 	var chrono_attack: Dictionary = run.resolve_enemy_attack()
-	if not _check(run.next_attack_seconds == 24 and chrono_attack["rows"].size() == 1, "Chrono synergy must extend the normal attack interval by eight seconds"):
+	if not _check(run.next_attack_seconds == 24 and chrono_attack["rows"].size() == 2, "Chrono synergy must extend the normal attack interval by eight seconds"):
 		return
 	var line_goal := run.create_goal(BlockRun.GOAL_LINES, 10, 0, 0, 1, 3, 15, 7)
 	var score_goal := run.create_goal(BlockRun.GOAL_SCORE, 0, 1200, 0, 1, 600, 0, 8)
