@@ -325,7 +325,8 @@ func _run() -> void:
 		quit(1)
 		return
 	scene.get("game").lines = 8
-	campaign_session.update(0.0, 8, false)
+	scene.get("game").score = int(scene.get("campaign_progress").get_planet_definition(1).target_score)
+	campaign_session.update(0.0, 8, false, int(scene.get("game").score))
 	scene.call("_process_campaign_completion")
 	if int(scene.get("campaign_progress").unlocked_node) != 2 or int(scene.get("campaign_progress").campaign_marks) != 1:
 		push_error("Completing planet 001 must grant one mark and unlock planet 002.")
