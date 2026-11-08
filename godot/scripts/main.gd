@@ -325,6 +325,7 @@ func _restart_current_run() -> void:
 			var campaign_definition := campaign_progress.get_planet_definition(campaign_run_planet_id)
 			mode_session.rules["target_lines"] = int(campaign_definition.get("target_lines", 8))
 			mode_session.rules["target_score"] = int(campaign_definition.get("target_score", 0))
+			mode_session.rules["target_survive_seconds"] = float(campaign_definition.get("target_survive_seconds", 0))
 			mode_session.rules["time_limit_seconds"] = float(campaign_definition.get("time_limit_seconds", 0))
 			campaign_completion_processed = false
 	if block_run_active:
@@ -759,6 +760,7 @@ func _start_campaign_planet() -> void:
 		return
 	mode_session.rules["target_lines"] = int(definition.target_lines)
 	mode_session.rules["target_score"] = int(definition.get("target_score", 0))
+	mode_session.rules["target_survive_seconds"] = float(definition.get("target_survive_seconds", 0))
 	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
 	campaign_run_active = true
 	campaign_run_planet_id = node_id
@@ -937,7 +939,7 @@ func _draw_campaign_planet() -> void:
 	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
 	var boss_type := str(definition.get("boss_type", "none"))
 	var objective_type := str(definition.get("objective_type", "lines"))
-	var objective_label := "БОСС • СОВМЕЩЁННОЕ ИСПЫТАНИЕ" if objective_type == "boss_combo" else ("НАБЕРИ ОЧКИ" if objective_type == "score" else "ОЧИСТИ ЛИНИИ")
+	var objective_label := "БОСС • СОВМЕЩЁННОЕ ИСПЫТАНИЕ" if objective_type == "boss_combo" else ("ВЫЖИВИ ПОД НАПРЯЖЕНИЕМ" if objective_type == "survive" else ("НАБЕРИ ОЧКИ" if objective_type == "score" else "ОЧИСТИ ЛИНИИ"))
 	if boss_type == "final":
 		objective_label = "ФИНАЛЬНЫЙ БОСС • ИСПЫТАНИЕ МАСТЕРСТВА"
 	draw_string(font, info.position + Vector2(14,51), objective_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if boss_type != "none" else 10, Color("#ffb4d2") if boss_type != "none" else Color("#ffffff"))
@@ -946,6 +948,8 @@ func _draw_campaign_planet() -> void:
 		requirement = "ЛИНИИ %d" % int(definition.target_lines)
 	if int(definition.get("target_score", 0)) > 0:
 		requirement += "  •  ОЧКИ %d" % int(definition.target_score)
+	if int(definition.get("target_survive_seconds", 0)) > 0:
+		requirement = "ВЫЖИВИ %d СЕКУНД" % int(definition.target_survive_seconds)
 	if requirement.is_empty():
 		requirement = "ВЫПОЛНИ ЗАДАНИЕ"
 	draw_string(font, info.position + Vector2(14,75), requirement + "  •  +" + str(definition.get("reward_marks", 1)) + " МЕТОК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
@@ -972,11 +976,14 @@ func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Co
 	draw_string(font, rect.position + Vector2(18.0, 36.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#ffffff"))
 	draw_string(font, rect.position + Vector2(18.0, 64.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#f0f5ff"))
 func _is_line_objective_mode() -> bool:
-	return mode_session != null and (int(mode_session.rules.get("target_lines", 0)) > 0 or int(mode_session.rules.get("target_score", 0)) > 0)
+	return mode_session != null and (int(mode_session.rules.get("target_lines", 0)) > 0 or int(mode_session.rules.get("target_score", 0)) > 0 or float(mode_session.rules.get("target_survive_seconds", 0)) > 0.0)
 
 func _objective_progress_ratio() -> float:
 	if not _is_line_objective_mode():
 		return 0.0
+	var target_survive := float(mode_session.rules.get("target_survive_seconds", 0))
+	if target_survive > 0.0:
+		return clampf(mode_session.elapsed_seconds / target_survive, 0.0, 1.0)
 	var target_lines := int(mode_session.rules.get("target_lines", 0))
 	var target_score := int(mode_session.rules.get("target_score", 0))
 	var line_ratio := 1.0 if target_lines <= 0 else clampf(float(game.lines) / float(target_lines), 0.0, 1.0)
@@ -1001,6 +1008,7 @@ func _draw_stats() -> void:
 	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ • СИН. %d" % synergy_count
 	var score_display := str(score_value)
 	var campaign_score_target := int(mode_session.rules.get("target_score", 0)) if campaign_run_active and mode_session != null else 0
+	var campaign_survive_target := float(mode_session.rules.get("target_survive_seconds", 0)) if campaign_run_active and mode_session != null else 0.0
 	if campaign_score_target > 0:
 		score_label = "ОЧКИ / ЦЕЛЬ"
 		score_display = "%d / %d" % [score_value, campaign_score_target]
@@ -1026,9 +1034,10 @@ func _draw_stats() -> void:
 	elif _is_line_objective_mode():
 		var target := int(mode_session.rules.get("target_lines", 0))
 		var score_target := int(mode_session.rules.get("target_score", 0))
+		var survive_target := float(mode_session.rules.get("target_survive_seconds", 0))
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
 		var mode_label := _mode_display_name(mode_session.mode_id)
-		var objective_value := "%d / %d" % [mini(game.lines, target), target] if target > 0 else "%d / %d" % [mini(game.score, score_target), score_target]
+		var objective_value := "%d / %d" % [mini(game.lines, target), target] if target > 0 else ("%d / %d СЕК" % [mini(floori(mode_session.elapsed_seconds), int(survive_target)), int(survive_target)] if survive_target > 0.0 else "%d / %d" % [mini(game.score, score_target), score_target])
 		_stat_card(progress_rect, mode_label + " • " + elapsed_label, objective_value, Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(12.0, 46.0), Vector2(progress_rect.size.x - 24.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
@@ -1336,6 +1345,8 @@ func _draw_mode_complete() -> void:
 	_center_text(mode_name + " • ВЫПОЛНЕНО", screen_size.y * 0.5 - 56.0, 23, Color("#f4f8ff"))
 	if target > 0:
 		_center_text("ОЧИЩЕНО ЛИНИЙ • %d" % target, screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
+	elif float(mode_session.rules.get("target_survive_seconds", 0)) > 0.0:
+		_center_text("ВЫЖИВИ • %d СЕКУНД" % int(mode_session.rules.get("target_survive_seconds", 0)), screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
 	else:
 		_center_text("ЦЕЛЬ ПО ОЧКАМ • %d" % int(mode_session.rules.get("target_score", 0)), screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
 	_center_text("ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
@@ -1353,6 +1364,9 @@ func _game_over_progress_label() -> String:
 	if _is_line_objective_mode():
 		var target_lines := int(mode_session.rules.get("target_lines", 0))
 		var target_score := int(mode_session.rules.get("target_score", 0))
+		var target_survive := float(mode_session.rules.get("target_survive_seconds", 0))
+		if target_survive > 0.0:
+			return "ВЫЖИВАНИЕ  •  %s / %s" % [_format_elapsed_time(mode_session.elapsed_seconds), _format_elapsed_time(target_survive)]
 		if target_lines > 0 and target_score > 0:
 			return "ЛИНИИ %d/%d  •  ОЧКИ %d/%d" % [mini(game.lines, target_lines), target_lines, mini(game.score, target_score), target_score]
 		if target_score > 0:
