@@ -272,3 +272,12 @@
 - Important integration boundary: this Godot branch does not yet load a native profile or expose a persistent coin wallet. The Web version has its own browser coin balance, and the migration parser can read its legacy keys, but no live profile bridge exists in the Godot scene. KT-481 therefore establishes an idempotent claim ledger, not a spendable wallet credit. Do not present claimed rewards as already added to the user's persistent balance.
 - Persistent profile/wallet wiring remains deferred with the save-system work, consistent with the agreed priority. Next: Block Run end/results screen showing earned goal rewards and clear run outcome; later connect receipts to the native wallet once profile integration is scheduled.
 - No main merge, deployment, APK build/release, persistent storage change, user-data mutation or physical Android test.
+
+
+## KT-482 — Block Run results screen and restart flow
+- Added a dedicated Block Run end screen with room/floor, run score, lines, elapsed time, total goal coin rewards and completed-goal count. Classic and Sprint/Marathon result screens retain their existing layouts.
+- Fixed restart routing: tapping the Block Run results screen or pressing R now resets the model and starts a fresh Block Run session instead of falling back into the previously selected Classic/Sprint/Marathon mode.
+- Added graphical 720×1280 screenshot `07-block-run-results.png`; visually inspected the rendered overlay, text hierarchy and reward summary. The visual capture test also invokes the restart flow and asserts a fresh running session with a non-game-over model.
+- CI run [42476914581](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476914581) on HEAD e3747e9da83d785c80bb6757cbfc51c9d8537493: **SUCCESS** — import, main parse, all model/migration/Block Run test suites, graphical capture/upload and scene smoke.
+- The displayed coin amount is the run's goal-reward total only. It is not yet credited to a persistent wallet; native profile/wallet loading remains deferred. No save or migration changes were made.
+- Block Run remains internal/hidden. No main merge, deployment, APK build/release, user-data mutation or physical Android test.
