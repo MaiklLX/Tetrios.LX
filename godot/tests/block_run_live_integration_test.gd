@@ -50,5 +50,17 @@ func _run() -> void:
 	if not _check(overflow_probe.block_run_session.status == "failed" and overflow_probe.game.game_over, "A garbage attack that pushes an occupied top row out must fail the live run"):
 		return
 	overflow_probe.free()
+
+	var hold_probe = _main_probe()
+	if not _check(hold_probe.start_block_run_session(), "Hold-collision probe session must initialize"):
+		return
+	hold_probe.game.grid[0].fill(2)
+	hold_probe.game.hold_piece()
+	if not _check(hold_probe.game.game_over, "A blocked replacement spawn from Hold must be detected by the model"):
+		return
+	hold_probe._process_block_run_events()
+	if not _check(hold_probe.block_run_session.status == "failed", "A Hold-triggered spawn collision must reach Block Run rescue/failure handling even without a lock event"):
+		return
+	hold_probe.free()
 	print("Block Run live gameplay integration tests passed.")
 	quit(0)
