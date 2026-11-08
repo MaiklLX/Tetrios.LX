@@ -62,5 +62,36 @@ func _run() -> void:
 	if not _check(hold_probe.block_run_session.status == "failed", "A Hold-triggered spawn collision must reach Block Run rescue/failure handling even without a lock event"):
 		return
 	hold_probe.free()
+
+	var shield_probe = _main_probe()
+	if not _check(shield_probe.start_block_run_session(), "Shield rescue probe must initialize"):
+		return
+	if not _check(shield_probe.block_run_session.choose_card("shield"), "Shield must be drafted before the live rescue"):
+		return
+	var shield_spawn: Vector2i = shield_probe.game.origin + shield_probe.game.active_cells[0]
+	shield_probe.game.grid[shield_spawn.y][shield_spawn.x] = 2
+	shield_probe.game.game_over = true
+	shield_probe._process_block_run_events()
+	if not _check(shield_probe.block_run_session.status == "running" and not shield_probe.game.game_over, "Shield must clear the blocked spawn area and resume the live run"):
+		return
+	if not _check(shield_probe.block_run_session.shield_charges == 0 and shield_probe.game.grid[0][shield_spawn.x] == -1, "Live Shield rescue must consume one charge and remove the blocking top-row tile"):
+		return
+	shield_probe.free()
+
+	var nova_probe = _main_probe()
+	if not _check(nova_probe.start_block_run_session(), "Nova rescue probe must initialize"):
+		return
+	if not _check(nova_probe.block_run_session.choose_card("nova"), "Nova must be drafted before the live rescue"):
+		return
+	var nova_spawn: Vector2i = nova_probe.game.origin + nova_probe.game.active_cells[0]
+	nova_probe.game.grid[nova_spawn.y][nova_spawn.x] = 3
+	nova_probe.game.game_over = true
+	nova_probe._process_block_run_events()
+	if not _check(nova_probe.block_run_session.status == "running" and not nova_probe.game.game_over, "Nova bottom-row clear must shift the blocked spawn area clear and resume the live run"):
+		return
+	if not _check(nova_probe.block_run_session.nova_used and nova_probe.game.grid[0][nova_spawn.x] == -1, "Live Nova rescue must be consumed once and clear the spawn obstruction"):
+		return
+	nova_probe.free()
 	print("Block Run live gameplay integration tests passed.")
+
 	quit(0)
