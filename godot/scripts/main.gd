@@ -77,7 +77,7 @@ func _mode_select_layout(viewport: Vector2) -> Dictionary:
 		"instruction_y": center_y + 178.0
 	}
 
-func _board_metrics(viewport: Vector2):
+func _board_metrics(viewport: Vector2) -> Dictionary:
 	# With touch-first input there is no permanent control strip: give that
 	# space back to the playfield while preserving room for HUD and previews.
 	var board_top_min := 292.0
