@@ -41,5 +41,8 @@ jobs:
       - name: Run Block Run model tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/block_run_model_test.gd
+      - name: Run Block Run event effect tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_effects_test.gd
       - name: Run scene smoke test
         run: godot --headless --path godot --quit-after 3
