@@ -209,3 +209,12 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - CI run 42474850074 on code HEAD `66e379fd75a225e7b9c1f84f9c9f9238f3c62b66`: **SUCCESS** — all import/parse, Classic, migration, Block Run model/effect/board/session/bridge/live tests, graphical capture and scene smoke checks passed.
 - New real rendered artifact includes `03-block-run-card-draft.png` at 720×1280. This verifies the modal render only; the complete Block Run mode remains internal and is not exposed in the selector.
 - Still pending: encounter and three-goal HUD, hero skill input/cooldown display, exactly-once wallet reward settlement, run-end/results UX, and full-run playtesting. Persistence remains deferred. No main merge, deployment, APK or physical Android test.
+
+
+## 20. KT-479 — Block Run goals and combat HUD
+- Added live 3-goal progress cards with Russian goal-family labels, current/target progress and reward amount.
+- Added enemy HP, room/boss, floor, attack countdown and active synergy count to the arena HUD. Synergy count comes from actual drafted card pairs.
+- Rebalanced vertical HUD spacing and draw order to keep the goals strip visible above the arena frame and keep the full 10×23 board/control-free layout.
+- Live integration tests cover goal ratio/labels, active goals, attack countdown and synergy activation.
+- Graphical capture `04-block-run-goals-hud.png` at 720×1280 inspected; CI run 42475838582 on code HEAD 2fbde4a924003e6945959065ff570a23e0df8822: **SUCCESS**.
+- Remaining: hero ability input/cooldown UI, exactly-once reward settlement, run-end screen and full-run QA. Block Run is still internal/hidden; no main merge, deploy, APK or persistence work.
