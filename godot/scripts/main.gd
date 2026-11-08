@@ -5,8 +5,10 @@ const BOARD_W := 10
 const BOARD_H := 23
 const Model = preload("res://scripts/game_model.gd")
 const Buddy = preload("res://scripts/buddy_companion.gd")
+const ModeSession = preload("res://scripts/mode_session.gd")
 
 var game: BlockBuddiesModel
+var mode_session: BlockBuddiesModeSession
 var gravity_clock := 0.0
 var gravity_interval := 0.78
 var font: Font
@@ -30,6 +32,8 @@ func _ready() -> void:
 	font = ThemeDB.fallback_font
 	game = Model.new()
 	game.reset()
+	mode_session = ModeSession.new()
+	mode_session.start("classic")
 	buddy = Buddy.new()
 	add_child(buddy)
 	get_viewport().size_changed.connect(_layout)
@@ -80,12 +84,16 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if game == null:
 		return
-	if not game.game_over and not paused:
+	if mode_session != null:
+		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
+	if not game.game_over and not paused and (mode_session == null or mode_session.is_running()):
 		gravity_interval = _gravity_interval_for_level(game.level)
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
 			gravity_clock = 0.0
 			game.tick()
+			if mode_session != null:
+				mode_session.update(0.0, game.lines, game.game_over)
 			queue_redraw()
 	_sync_buddy_state()
 
@@ -94,7 +102,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_ESCAPE or event.keycode == KEY_P:
 			_toggle_pause()
 			return
-		if paused and event.keycode != KEY_R:
+		if (paused or _mode_finished()) and event.keycode != KEY_R:
 			return
 		match event.keycode:
 			KEY_LEFT, KEY_A: game.move_horizontal(-1)
@@ -105,6 +113,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_C: game.hold_piece()
 			KEY_R:
 				game.reset()
+				if mode_session != null:
+					mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
 				paused = false
 				gravity_clock = 0.0
 				buddy_last_lines = 0
@@ -127,7 +137,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
-	if game == null or game.game_over or paused or not board_rect.has_point(start):
+	if game == null or game.game_over or paused or _mode_finished() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
@@ -157,14 +167,16 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 	return true
 
 func _toggle_pause() -> void:
-	if game == null or game.game_over:
+	if game == null or game.game_over or _mode_finished():
 		return
 	paused = not paused
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
-	if game.game_over:
+	if game.game_over or _mode_finished():
 		game.reset()
+		if mode_session != null:
+			mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
 		paused = false
 		gravity_clock = 0.0
 		buddy_last_lines = 0
@@ -185,8 +197,15 @@ func _handle_tap(point: Vector2) -> void:
 	_sync_buddy_state()
 	queue_redraw()
 
+func _mode_finished() -> bool:
+	return mode_session != null and not mode_session.is_running()
+
 func _sync_buddy_state() -> void:
-	if not is_instance_valid(buddy) or game == null:
+	if game == null:
+		return
+	if mode_session != null:
+		mode_session.update(0.0, game.lines, game.game_over)
+	if not is_instance_valid(buddy):
 		return
 	if game.game_over:
 		if buddy.state != "surprised":
@@ -206,7 +225,9 @@ func _draw() -> void:
 	_draw_stats()
 	_draw_piece_previews()
 	_draw_board()
-	if game.game_over:
+	if mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED:
+		_draw_mode_complete()
+	elif game.game_over:
 		_draw_game_over()
 	elif paused:
 		_draw_pause_overlay()
@@ -233,7 +254,8 @@ func _draw_backdrop() -> void:
 
 func _draw_header() -> void:
 	_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
-	_center_text("ARCADE • CLASSIC MODE", 105.0, 15, Color("#72a6c8"))
+	var mode_name := "Classic" if mode_session == null else str(mode_session.rules.get("name", "Classic"))
+	_center_text("ARCADE • %s MODE" % mode_name.to_upper(), 105.0, 15, Color("#72a6c8"))
 	draw_line(Vector2(42, 128), Vector2(screen_size.x - 42, 128), Color(0.22, 0.48, 0.68, 0.35), 1.0)
 	_draw_pause_button()
 
@@ -371,6 +393,17 @@ func _draw_pause_overlay() -> void:
 	var label := "RESUME"
 	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x
 	draw_string(font, resume_rect.get_center() + Vector2(-width * 0.5, 6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#f4f8ff"))
+
+func _draw_mode_complete() -> void:
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
+	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, 118.0), Vector2(320.0, 236.0))
+	panel.position.x = maxf(20.0, panel.position.x)
+	panel.size.x = minf(320.0, screen_size.x - 40.0)
+	_draw_overlay_panel(panel, Color("#f6d65b"))
+	_center_text("SPRINT COMPLETE", screen_size.y * 0.5 - 56.0, 27, Color("#f4f8ff"))
+	_center_text("40 LINES CLEARED", screen_size.y * 0.5 - 12.0, 16, Color("#45d9f5"))
+	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 28.0, 17, Color("#c0d3e2"))
+	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
