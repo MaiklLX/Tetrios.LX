@@ -11,8 +11,6 @@ var gravity_clock := 0.0
 var gravity_interval := 0.78
 var font: Font
 var board_rect := Rect2()
-var controls: Dictionary = {}
-var control_scale := 1.0
 var screen_size := Vector2(720, 1280)
 var buddy: Node2D
 var buddy_last_lines := 0
@@ -20,8 +18,11 @@ var ambient_time := 0.0
 var paused := false
 var pause_rect := Rect2()
 var resume_rect := Rect2()
+var hold_rect := Rect2()
 var touch_start := Vector2.ZERO
 var touch_active := false
+var last_board_tap_msec := -1000
+var last_board_tap_position := Vector2(-1000, -1000)
 
 func _ready() -> void:
 	randomize()
@@ -36,13 +37,7 @@ func _ready() -> void:
 
 func _layout() -> void:
 	screen_size = get_viewport_rect().size
-	var control_metrics := _control_metrics(screen_size.x, screen_size.y)
-	control_scale = float(control_metrics.scale)
-	var button_y: float = control_metrics.button_y
-	var button_h: float = control_metrics.button_h
-	var widths: Array = control_metrics.widths
-	var gap: float = control_metrics.gap
-	var board_metrics := _board_metrics(screen_size, button_y)
+	var board_metrics := _board_metrics(screen_size)
 	board_rect = board_metrics.board_rect
 	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - 110.0, screen_size.y * 0.5 + 22.0, 220.0, 62.0)
@@ -51,44 +46,14 @@ func _layout() -> void:
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
 		buddy.visible = buddy_layout.visible
-	controls.clear()
-	var control_order := ["left", "right", "rotate", "hold", "drop"]
-	var control_x: float = float(control_metrics.start_x)
-	for index in range(control_order.size()):
-		var key: String = control_order[index]
-		controls[key] = Rect2(control_x, button_y, widths[index], button_h)
-		control_x += widths[index] + gap
 	queue_redraw()
 
-func _control_metrics(viewport_width: float, viewport_height: float) -> Dictionary:
-	var base_widths: Array[float] = [76.0, 76.0, 92.0, 76.0, 112.0]
-	var base_gap := 12.0
-	var base_total := 480.0
-	var scale_factor := clampf((viewport_width - 24.0) / base_total, 0.55, 1.0)
-	var widths: Array[float] = []
-	var total := 0.0
-	for base_width in base_widths:
-		var scaled_width: float = base_width * scale_factor
-		widths.append(scaled_width)
-		total += scaled_width
-	var gap := base_gap * scale_factor
-	total += gap * 4.0
-	var button_h := 76.0 * scale_factor
-	var bottom_margin := minf(148.0 * scale_factor, viewport_height * 0.13)
-	return {
-		"scale": scale_factor,
-		"widths": widths,
-		"gap": gap,
-		"total": total,
-		"start_x": (viewport_width - total) * 0.5,
-		"button_h": button_h,
-		"button_y": viewport_height - bottom_margin
-	}
-
-func _board_metrics(viewport: Vector2, button_y: float) -> Dictionary:
+func _board_metrics(viewport: Vector2) -> Dictionary:
+	# With touch-first input there is no permanent control strip: give that
+	# space back to the playfield while preserving room for HUD and previews.
 	var board_top_min := 292.0
-	var available_height := maxf(230.0, button_y - board_top_min - 18.0)
-	var cell := minf((viewport.x - 72.0) / BOARD_W, minf((viewport.y * 0.58) / BOARD_H, available_height / BOARD_H))
+	var available_height := maxf(230.0, viewport.y - board_top_min - 36.0)
+	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.68) / BOARD_H, available_height / BOARD_H))
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
 	var board_position := Vector2((viewport.x - board_size.x) * 0.5, maxf((viewport.y - board_size.y) * 0.5 + 22.0, board_top_min))
 	return {
@@ -165,11 +130,16 @@ func _handle_swipe(start: Vector2, finish: Vector2) -> bool:
 		for i in range(steps):
 			game.move_horizontal(direction)
 	elif delta.y > 0.0:
-		var drops := clampi(roundi(delta.y / threshold), 1, 4)
-		for i in range(drops):
-			game.soft_drop()
-			if game.game_over:
-				break
+		# A decisive long downward swipe is hard drop; shorter gestures
+		# remain soft drop so players can fine-position a piece.
+		if delta.y >= board_rect.size.y * 0.28:
+			game.hard_drop()
+		else:
+			var drops := clampi(roundi(delta.y / threshold), 1, 4)
+			for i in range(drops):
+				game.soft_drop()
+				if game.game_over:
+					break
 	else:
 		game.rotate_piece()
 	_sync_buddy_state()
@@ -195,21 +165,18 @@ func _handle_tap(point: Vector2) -> void:
 		if resume_rect.has_point(point):
 			paused = false
 	else:
-		if controls.left.has_point(point):
-			game.move_horizontal(-1)
-		elif controls.right.has_point(point):
-			game.move_horizontal(1)
-		elif controls.rotate.has_point(point):
-			game.rotate_piece()
-		elif controls.hold.has_point(point):
+		if hold_rect.has_point(point):
 			game.hold_piece()
-		elif controls.drop.has_point(point):
-			game.hard_drop()
 		elif board_rect.has_point(point):
-			if point.x < board_rect.get_center().x:
-				game.move_horizontal(-1)
+			var now := Time.get_ticks_msec()
+			var is_double_tap := now - last_board_tap_msec <= 300 and last_board_tap_position.distance_to(point) <= 54.0
+			if is_double_tap:
+				game.hard_drop()
+				last_board_tap_msec = -1000
 			else:
-				game.move_horizontal(1)
+				game.rotate_piece()
+				last_board_tap_msec = now
+				last_board_tap_position = point
 	_sync_buddy_state()
 	queue_redraw()
 
@@ -232,7 +199,6 @@ func _draw() -> void:
 	_draw_stats()
 	_draw_piece_previews()
 	_draw_board()
-	_draw_controls()
 	if game.game_over:
 		_draw_game_over()
 	elif paused:
@@ -283,7 +249,8 @@ func _draw_piece_previews() -> void:
 	var total_width := card_width * 2.0 + gap
 	var start_x := (screen_size.x - total_width) * 0.5
 	var top := board_rect.position.y - card_height - 10.0
-	_draw_preview_card(Rect2(start_x, top, card_width, card_height), "HOLD", game.held_type)
+	hold_rect = Rect2(start_x, top, card_width, card_height)
+	_draw_preview_card(hold_rect, "HOLD", game.held_type)
 	_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "NEXT", game.peek_next_piece_type())
 
 func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
@@ -348,18 +315,6 @@ func _draw_block(rect: Rect2, color: Color) -> void:
 	draw_line(rect.position + Vector2(3, 3), Vector2(rect.end.x - 3, rect.position.y + 3), color.lightened(0.45), 2.0)
 	draw_line(rect.position + Vector2(3, 3), Vector2(rect.position.x + 3, rect.end.y - 3), color.lightened(0.24), 2.0)
 	draw_line(Vector2(rect.position.x + 3, rect.end.y - 3), rect.end - Vector2(3, 3), color.darkened(0.32), 2.0)
-
-func _draw_controls() -> void:
-	for key in controls:
-		var rect: Rect2 = controls[key]
-		var accent := Color("#45d9f5") if key == "drop" else (Color("#3985d8") if key == "hold" else Color("#28435d"))
-		draw_rect(rect, Color(0.055, 0.10, 0.17, 0.96))
-		draw_rect(rect, accent, false, 2.0)
-		var label: String = str({"left": "◀", "right": "▶", "rotate": "ROTATE", "hold": "HOLD", "drop": "DROP"}[key])
-		var size := maxi(11, roundi((16 if key == "rotate" or key == "hold" else 25) * control_scale))
-		var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-		draw_string(font, rect.get_center() + Vector2(-width * 0.5, size * 0.34), label, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color("#f3f8ff"))
-	_center_text("MOVE  •  ROTATE  •  HOLD (C)  •  DROP  •  P PAUSE", screen_size.y - 34, 10, Color("#66839e"))
 
 func _draw_pause_button() -> void:
 	draw_rect(pause_rect, Color("#10243a"))
