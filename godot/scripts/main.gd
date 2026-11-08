@@ -548,7 +548,7 @@ func _game_over_time_label() -> String:
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
 	var has_objective := _is_line_objective_mode()
-	var panel_height := 320.0 if is_sprint else 284.0
+	var panel_height := 320.0 if has_objective else 284.0
 	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, panel_height * 0.5), Vector2(320.0, panel_height))
 	panel.position.x = maxf(20.0, panel.position.x)
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
