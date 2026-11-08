@@ -492,7 +492,7 @@ func _draw_campaign() -> void:
 			else:
 				draw_rect(Rect2(px-4,py-1,8,7), Color("#9aacc7"))
 				draw_arc(Vector2(px,py-4), 5, PI, TAU, 16, Color("#9aacc7"), 2, true)
-		_text("МИР %d" % (planet+1), Vector2(px-17, y+222), 9, PALE)
+			_text("МИР %d" % (planet+1), Vector2(px-17, y+222), 9, PALE)
 		if i == 0:
 			_text("ТЕКУЩАЯ ВСЕЛЕННАЯ", Vector2(viewport_size.x-235, y+32), 10, GOLD)
 	_draw_bottom_nav("ИГРАТЬ")
