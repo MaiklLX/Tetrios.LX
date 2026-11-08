@@ -46,6 +46,8 @@ const MODES := {
 static func list_modes() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for mode_id in MODES:
+		if mode_id == "campaign":
+			continue
 		result.append(MODES[mode_id].duplicate(true))
 	return result
 
