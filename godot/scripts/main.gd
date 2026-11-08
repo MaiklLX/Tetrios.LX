@@ -101,21 +101,23 @@ func _board_metrics(viewport: Vector2) -> Dictionary:
 	var available_height := maxf(230.0, viewport.y - board_top_min - 36.0)
 	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.68) / BOARD_H, available_height / BOARD_H))
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
-	var board_position := Vector2((viewport.x - board_size.x) * 0.5, maxf((viewport.y - board_size.y) * 0.5 + 22.0, board_top_min))
+	# Reserve a little more breathing room on the DROP side without shrinking the 10x23 playfield.
+	var horizontal_bias := 12.0 if viewport.x <= 480.0 else 0.0
+	var board_position := Vector2(maxf(12.0, (viewport.x - board_size.x) * 0.5 - horizontal_bias), maxf((viewport.y - board_size.y) * 0.5 + 22.0, board_top_min))
 	return {
 		"cell": cell,
 		"board_rect": Rect2(board_position, board_size)
 	}
 
 func _drop_button_layout(viewport: Vector2, board: Rect2) -> Rect2:
-	# Keep the hard-drop target clear of the board frame and slightly above its bottom edge.
-	var right_margin := 7.0
-	var frame_gap := 16.0
-	var width := minf(84.0, viewport.x - board.end.x - frame_gap - right_margin)
-	if width < 42.0:
+	# A broader touch target sits lower and left, with clear breathing room at both edges.
+	var right_margin := 12.0
+	var frame_gap := 12.0
+	var width := minf(96.0, viewport.x - board.end.x - frame_gap - right_margin)
+	if width < 52.0:
 		return Rect2()
-	var height := 52.0
-	var lift := 18.0
+	var height := 60.0
+	var lift := 8.0
 	return Rect2(Vector2(board.end.x + frame_gap, board.end.y - height - lift), Vector2(width, height))
 
 func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
