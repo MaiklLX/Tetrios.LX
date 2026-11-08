@@ -701,14 +701,27 @@ func _draw_block_run_skill_card(rect: Rect2) -> void:
 		block_run_skill_rect = Rect2()
 		return
 	var ready := block_run_hero_level >= 5 and block_run_session.hero_skill_cooldown_seconds <= 0 and block_run_session.status == BlockRunSession.STATUS_RUNNING and not paused and not _block_run_draft_is_open()
+	var unlocked := block_run_hero_level >= 5
 	var remaining := block_run_session.hero_skill_cooldown_seconds
 	var hero_label := _hero_display_name(block_run_hero_id)
-	var state := "ЗАКРЫТО · УР. 5" if block_run_hero_level < 5 else ("ГОТОВО" if ready else "ОТКАТ · %d С" % remaining)
-	var accent := Color("#45d9f5") if ready else Color("#66839e")
-	draw_rect(rect, Color("#0b1d31"))
-	draw_rect(rect, accent, false, 1.5)
-	draw_string(font, rect.position + Vector2(8.0, 17.0), "✦ " + hero_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f4f8ff"))
-	draw_string(font, rect.position + Vector2(8.0, 34.0), state, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, accent)
+	var state := "ЗАКРЫТО · УР. 5" if not unlocked else ("ГОТОВО · ТАП" if ready else "ОТКАТ · %d С" % remaining)
+	var accent := Color("#ffd45c") if ready else (Color("#66839e") if not unlocked else Color("#43b7dc"))
+	var pulse := 0.5 + 0.5 * sin(ambient_time * 4.2)
+	if ready:
+		var glow := Color("#ffd45c")
+		glow.a = 0.12 + pulse * 0.12
+		_draw_soft_panel(rect.grow(2.0), glow, Color("#ffd45c", 0.25 + pulse * 0.45), 16, 11)
+	_draw_soft_panel(rect, Color("#102e4b") if ready else Color("#0b1d31"), accent, 15, 8)
+	var icon_center := Vector2(rect.end.x - 16.0, rect.position.y + 17.0)
+	if ready:
+		draw_circle(icon_center, 11.0 + pulse * 1.2, Color("#ffcf4d", 0.16 + pulse * 0.12))
+		draw_circle(icon_center, 8.0, Color("#7d5312"))
+		draw_string(font, icon_center + Vector2(-5.0, 5.0), "✦", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#fff2b0"))
+	else:
+		draw_circle(icon_center, 8.0, Color("#29465f"))
+		draw_string(font, icon_center + Vector2(-4.0, 4.0), "✦", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, accent)
+	draw_string(font, rect.position + Vector2(8.0, 17.0), hero_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f4f8ff"))
+	draw_string(font, rect.position + Vector2(8.0, 37.0), state, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if ready else 8, accent)
 
 func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 	_draw_soft_panel(rect, Color("#17488a"), Color("#71cfff"), 15, 6)
