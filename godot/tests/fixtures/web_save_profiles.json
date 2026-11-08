@@ -1,0 +1,81 @@
+{
+  "empty": {
+    "local_storage": {}
+  },
+  "typical": {
+    "local_storage": {
+      "bb_coins": "125",
+      "coins": "125",
+      "bbCoins": "125",
+      "bb_gems": "4",
+      "nrRelics": "7",
+      "bbCampaignMarks": "3",
+      "nrNode": "12",
+      "bbSelectedHero": "prism",
+      "bb_xp_plush": "240",
+      "bb_heroLevel_plush": "4",
+      "bb_xp_prism": "90",
+      "bb_heroLevel_prism": "2",
+      "bb_bbCampaignPerks_prism": "{\"guardian\":1,\"tactician\":0,\"scout\":2}",
+      "bb_inventory": "{\"quick\":2,\"shield\":1,\"magnet\":0}",
+      "bb_perks": "[\"heart\",\"lucky\"]",
+      "bb_chestCosmetics": "[\"blue_cap\",\"star_trail\"]",
+      "bb_equippedChestCosmetics": "{\"plush\":\"blue_cap\",\"prism\":\"star_trail\"}",
+      "bb_collectionFragments": "5",
+      "bbDailyQuests": "{\"date\":\"2026-11-08\",\"quests\":[{\"id\":\"clear_3\",\"progress\":2,\"claimed\":false}]}",
+      "bbDailyArchive": "{\"2026-11-07\":{\"completed\":true}}",
+      "bbDailyChallengeCatalogSignature": "catalog-v4",
+      "bbDailyChallengeAssignments": "{\"2026-11-08\":{\"id\":\"daily_08\"}}",
+      "bbDailyChallengeHistory": "{\"2026-11-07\":{\"status\":\"completed\"}}",
+      "bbDailyChallengeCompletedDate": "2026-11-07",
+      "bbDailyReplayCompleted": "[\"2026-11-06\"]",
+      "bbDailyRewardClaimed:2026-11-07": "1",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":5,\"best\":9}",
+      "nrBest": "4200",
+      "nrRuns": "38",
+      "nrDailyDone": "2026-11-07",
+      "bb_haptics": "0"
+    }
+  },
+  "coin_conflict": {
+    "local_storage": {
+      "bb_coins": "125",
+      "coins": "100",
+      "bbCoins": "125"
+    }
+  },
+  "coin_conflict_without_primary": {
+    "local_storage": {
+      "coins": "100",
+      "bbCoins": "125"
+    }
+  },
+  "malformed_json": {
+    "local_storage": {
+      "bb_coins": "125",
+      "bb_inventory": "{broken"
+    }
+  },
+  "legacy_fallbacks": {
+    "local_storage": {
+      "coins": "80",
+      "bbCoins": "80",
+      "bb_xp": "30",
+      "bb_heroLevel": "2",
+      "bb_equippedChestCosmetic": "old_hat",
+      "bbSelectedHero": "plush"
+    }
+  },
+  "unknown_key": {
+    "local_storage": {
+      "bb_coins": "50",
+      "custom_mod_data": "{\"keep\":true}"
+    }
+  },
+  "malformed_reward_marker": {
+    "local_storage": {
+      "bb_coins": "50",
+      "bbDailyRewardClaimed:not-a-date": "1"
+    }
+  }
+}
