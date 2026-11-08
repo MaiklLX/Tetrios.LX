@@ -29,6 +29,9 @@ var held_type := -1
 var hold_used := false
 var piece_bag: Array[int] = []
 var last_random_type := -1
+# Ephemeral event cursor for deterministic gameplay-to-encounter dispatch.
+var lock_serial := 0
+var last_lock_cleared := 0
 
 func reset() -> void:
 	grid.clear()
@@ -45,6 +48,8 @@ func reset() -> void:
 	hold_used = false
 	piece_bag.clear()
 	last_random_type = -1
+	lock_serial = 0
+	last_lock_cleared = 0
 	_spawn()
 
 func _refill_piece_bag() -> void:
@@ -197,6 +202,8 @@ func _lock_piece() -> void:
 		score += rewards[mini(cleared, 4)] * level
 		level = 1 + int(lines / 10)
 	hold_used = false
+	lock_serial += 1
+	last_lock_cleared = cleared
 	_spawn()
 
 
