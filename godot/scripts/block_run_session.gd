@@ -267,5 +267,44 @@ func use_hero_skill(hero_id: String, hero_level: int) -> Dictionary:
 	result["cooldown_remaining"] = hero_skill_cooldown_seconds
 	return result
 
+
+func on_spawn_collision() -> Dictionary:
+	if status != STATUS_RUNNING:
+		return {"accepted":false,"rescued":false,"rescue_type":"","rows_cleared":0}
+	var rescue := Effects.on_spawn_collision(encounter.card_ranks, shield_charges, nova_used)
+	if not bool(rescue.rescued):
+		return {"accepted":true,"rescued":false,"rescue_type":"","rows_cleared":0}
+	shield_charges = int(rescue.shield_charges_remaining)
+	var rows_cleared := 0
+	if str(rescue.rescue_type) == "shield":
+		var start_row := int(rescue.shield_start_row)
+		var row_count := int(rescue.shield_randomized_rows)
+		var fill_probability := float(rescue.shield_fill_probability)
+		var seed_value := room_seed()
+		for row_index in range(start_row, mini(Board.HEIGHT, start_row + row_count)):
+			var row: Array[int] = []
+			row.resize(Board.WIDTH)
+			row.fill(Board.EMPTY)
+			for x in range(Board.WIDTH):
+				var roll := float((seed_value + row_index * 37 + x * 17) % 1000) / 1000.0
+				if roll < fill_probability:
+					row[x] = Board.GARBAGE
+			board[row_index] = row
+	elif str(rescue.rescue_type) == "nova":
+		rows_cleared = int(Board.clear_bottom_rows(board, int(rescue.bottom_rows_to_clear)).cleared)
+		nova_used = true
+	return {
+		"accepted":true,
+		"rescued":true,
+		"rescue_type":str(rescue.rescue_type),
+		"rows_cleared":rows_cleared,
+		"shield_charges_remaining":shield_charges,
+		"nova_used":nova_used,
+		"iron_fortress":bool(rescue.iron_fortress)
+	}
+
+func room_seed() -> int:
+	return encounter.room * 97 + encounter.floor * 31 + run_seconds * 13 + placement_count * 7
+
 func add_relics(amount: int) -> void:
 	relics += maxi(0, amount)
