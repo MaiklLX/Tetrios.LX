@@ -164,6 +164,10 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 
 	for key in raw.keys():
 		var key_text := str(key)
+		if key_text.begins_with("bb_bbCampaignPerks_"):
+			var perk_hero_id := key_text.trim_prefix("bb_bbCampaignPerks_")
+			if not HERO_IDS.has(perk_hero_id):
+				_add_error(result, "Campaign perks reference an unknown hero: " + perk_hero_id)
 		if not _is_known_key(key_text):
 			result["unknown_keys"].append(key_text)
 	if not result["unknown_keys"].is_empty():
