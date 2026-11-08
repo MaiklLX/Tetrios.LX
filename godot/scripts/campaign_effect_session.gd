@@ -99,7 +99,7 @@ func on_line_clear(cleared_lines: int, base_score: int = 0) -> Dictionary:
 			echo_multiplier = minf(2.5, 1.0 + echo_lines * 0.25)
 			multiplier *= echo_multiplier
 		"comet":
-			if (active_seconds - last_piece_drop_at) >= 0.0 and (active_seconds - last_piece_drop_at) < 2.0:
+			if (active_seconds - last_piece_drop_at) >= 0.0 and (active_seconds - last_piece_drop_at) < (2.0 - 0.0001):
 				bonus = 200
 		"pulse":
 			multiplier *= 1.5
