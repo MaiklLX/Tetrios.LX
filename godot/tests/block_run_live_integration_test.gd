@@ -97,6 +97,19 @@ func _run() -> void:
 	if not _check(nova_probe.block_run_session.nova_used and nova_probe.game.grid[0][nova_spawn.x] == -1, "Live Nova rescue must be consumed once and clear the spawn obstruction"):
 		return
 	nova_probe.free()
+	var draft_probe = _main_probe()
+	if not _check(draft_probe.start_block_run_session(), "Live draft probe session must initialize"):
+		return
+	var live_draft: Dictionary = draft_probe.block_run_session.on_line_clear(5, 0, 1)
+	if not _check(live_draft.draft_cards.size() == 3 and draft_probe._block_run_draft_is_open(), "A live level-up must open the native card draft overlay state"):
+		return
+	draft_probe.block_run_draft_rects.append(Rect2(20.0, 20.0, 180.0, 80.0))
+	var live_selected_id := str(draft_probe.block_run_session.pending_card_draft[0].id)
+	draft_probe._handle_tap(Vector2(40.0, 40.0))
+	if not _check(not draft_probe._block_run_draft_is_open() and draft_probe.block_run_session.encounter.get_card_rank(live_selected_id) == 1, "Tapping a visible draft card must apply one rank and resume the encounter"):
+		return
+	draft_probe.free()
+
 	print("Block Run live gameplay integration tests passed.")
 
 	quit(0)
