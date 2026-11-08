@@ -1,6 +1,7 @@
 extends SceneTree
 
 const Campaign = preload("res://scripts/campaign_progress.gd")
+const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -66,5 +67,17 @@ func _run() -> void:
 	var universe_two: Dictionary = legacy.get_universe_progress(1)
 	if not _check(universe_one.completed_count == 11 and universe_one.current and not universe_two.unlocked and not universe_two.current, "Universe summaries must reflect legacy sequential progress"):
 		return
-	print("Campaign progress tests passed: 360-node catalog, milestones, sequential unlocks, objective gates, idempotent rewards, atomic save/load and legacy import.")
+	var legacy_profile := {"campaign": {"unlocked_node": 12, "marks": 37}}
+	var imported_profile = Campaign.new()
+	if not _check(CampaignStore.import_legacy_profile(imported_profile, legacy_profile) and imported_profile.unlocked_node == 12 and imported_profile.campaign_marks == 37, "Profile store must map the legacy campaign section"):
+		return
+	var test_path := "user://campaign_progress_test.cfg"
+	if not _check(CampaignStore.save_progress(progress, test_path), "Campaign store must write a profile snapshot"):
+		return
+	var disk_restored = Campaign.new()
+	var disk_result: Dictionary = CampaignStore.load_progress(disk_restored, test_path)
+	if not _check(disk_result.ok and disk_result.found and disk_restored.to_save_data() == progress.to_save_data(), "Campaign store must restore a persisted snapshot"):
+		return
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_path))
+	print("Campaign progress tests passed: 360-node catalog, milestones, sequential unlocks, objective gates, idempotent rewards, atomic save/load, profile persistence and legacy import.")
 	quit(0)
