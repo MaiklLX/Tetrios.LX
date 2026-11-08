@@ -4,6 +4,7 @@ const Model = preload("res://scripts/game_model.gd")
 const Main = preload("res://scripts/main.gd")
 const WebMigration = preload("res://scripts/web_save_migration.gd")
 const Buddy = preload("res://scripts/buddy_companion.gd")
+const ModeCatalog = preload("res://scripts/mode_catalog.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -17,6 +18,24 @@ func _check(condition: bool, message: String) -> bool:
 
 func _run() -> void:
 	seed(20261105)
+	# Mode catalog keeps mode definitions isolated from the classic model.
+	var available_modes: Array[Dictionary] = ModeCatalog.list_modes()
+	if not _check(available_modes.size() == 2, "The initial catalog should expose Classic and Sprint only"):
+		return
+	var classic_rules: Dictionary = ModeCatalog.get_mode("classic")
+	if not _check(classic_rules.get("target_lines", -1) == 0 and classic_rules.get("time_limit_seconds", -1) == 0, "Classic must remain an unlimited default mode"):
+		return
+	if not _check(classic_rules.get("id", "") == ModeCatalog.DEFAULT_MODE_ID, "Classic must be the safe default mode"):
+		return
+	var sprint_rules: Dictionary = ModeCatalog.get_mode("sprint")
+	if not _check(sprint_rules.get("target_lines", 0) == 40 and sprint_rules.get("time_limit_seconds", -1) == 0, "Sprint must use a clear 40-line objective without an unapproved timer"):
+		return
+	if not _check(ModeCatalog.get_mode("unknown").is_empty(), "Unknown mode IDs must not silently map to another mode"):
+		return
+	classic_rules["target_lines"] = 999
+	if not _check(ModeCatalog.get_mode("classic").get("target_lines", -1) == 0, "Callers must not be able to mutate catalog definitions"):
+		return
+
 	# Buddy reactions are stateful, bounded, and return to idle cleanly.
 	var buddy_probe = Buddy.new()
 	buddy_probe.set_state("happy", 0.1)
