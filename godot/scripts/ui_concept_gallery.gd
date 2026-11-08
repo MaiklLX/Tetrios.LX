@@ -76,7 +76,27 @@ func _top_bar() -> void:
 	_text("✦  1 250", Vector2(viewport_size.x - 170, 63), 18, Color("#fff0b0"))
 
 func _draw_top_bar() -> void:
-	_top_bar()
+	if screen_id != "home":
+		_top_bar()
+		return
+	# Home gets a quiet app chrome; the Buddy identity and wallet already live
+	# in the hero strip below, so do not duplicate the title or currency here.
+	var rect := Rect2(24, 22, viewport_size.x - 48, 68)
+	_panel(rect, Color("#123d82"), Color("#6bdfff"), 20)
+	draw_circle(Vector2(58, 56), 19, Color("#1a8ed1"))
+	draw_circle(Vector2(58, 56), 12, Color("#7de8ff"))
+	draw_rect(Rect2(51,49,14,14), Color("#e8faff"), false, 2)
+	_text("TETRIOS.LX", Vector2(88, 52), 16, WHITE)
+	_text("BLOCK BUDDIES", Vector2(88, 70), 9, PALE)
+	for i in range(2):
+		var x := viewport_size.x - 116 + i * 48
+		_panel(Rect2(x, 35, 40, 42), Color("#102e62"), Color("#4e9bc8"), 13)
+		if i == 0:
+			draw_arc(Vector2(x+20,55), 9, PI, TAU, 24, CYAN, 2, true)
+			draw_line(Vector2(x+20,55),Vector2(x+20,48),WHITE,2)
+		else:
+			for j in range(3):
+				draw_circle(Vector2(x+12+j*8,55),2.2,[CYAN,GOLD,PINK][j])
 
 func _buddy(center: Vector2, scale := 1.0, expression := "happy") -> void:
 	var s := scale
@@ -159,7 +179,7 @@ func _draw_home() -> void:
 	_text("11 ДНЕЙ ПОДРЯД", Vector2(126, streak_y + 29), 18, GOLD)
 	_text("Зайди завтра, чтобы усилить серию", Vector2(126, streak_y + 51), 12, PALE)
 	# Secondary destinations as three compact icon tiles
-	var utility_y := 850.0
+	var utility_y := 900.0
 	var utility_gap := 10.0
 	var utility_w := (w - margin * 2 - utility_gap * 2) / 3.0
 	var utility_names := ["ГЕРОИ", "МАГАЗИН", "УСИЛЕНИЯ"]
@@ -170,7 +190,7 @@ func _draw_home() -> void:
 		_draw_utility_icon(Vector2(x + utility_w * 0.5, utility_y + 36), i)
 		_center_card_text(utility_names[i], Rect2(x, utility_y, utility_w, 80), utility_y + 83, 12, WHITE)
 	# Wallet and lifetime stats share one compact footer row
-	var footer_y := 966.0
+	var footer_y := 1025.0
 	_panel(Rect2(margin, footer_y, w - margin * 2, 66), Color("#102b55"), Color("#397cae"), 17)
 	_text("ЗОЛОТО  8 031", Vector2(54, footer_y + 27), 15, GOLD)
 	_text("КРИСТАЛЛЫ  3", Vector2(w * 0.49, footer_y + 27), 15, CYAN)
