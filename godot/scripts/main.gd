@@ -592,10 +592,18 @@ func _draw_stats() -> void:
 	else:
 		_stat_card(progress_rect, "УРОВЕНЬ / ЛИНИИ", "%d / %d" % [game.level, game.lines], Color("#f6d65b"))
 
+func _stat_label_font_size(rect: Rect2, label: String) -> int:
+	# Choose the largest readable label size that fits before the accent marker.
+	var available_width := maxf(24.0, rect.size.x - 38.0)
+	for candidate in [10, 9, 8]:
+		if font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, candidate).x <= available_width:
+			return candidate
+	return 8
+
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
 	_draw_soft_panel(rect, Color("#124b99"), accent.lightened(0.18), 15, 7)
-	var label_size := 8 if label.length() > 17 else 10
-	draw_string(font, rect.position + Vector2(12, 18), label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#c9eaff"))
+	var label_size := _stat_label_font_size(rect, label)
+	draw_string(font, rect.position + Vector2(12, 18), label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#d9f0ff"))
 	draw_string(font, rect.position + Vector2(12, 41), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#ffffff"))
 	draw_circle(rect.position + Vector2(rect.size.x - 14.0, 14.0), 4.5, accent)
 func _block_run_goal_ratio(goal: Dictionary) -> float:
