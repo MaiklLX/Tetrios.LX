@@ -108,12 +108,15 @@ func _board_metrics(viewport: Vector2) -> Dictionary:
 	}
 
 func _drop_button_layout(viewport: Vector2, board: Rect2) -> Rect2:
-	# Keep a prominent hard-drop target in the right gutter without reducing or covering the 10x23 board.
-	var width := minf(84.0, viewport.x - board.end.x - 14.0)
+	# Keep the hard-drop target clear of the board frame and slightly above its bottom edge.
+	var right_margin := 6.0
+	var frame_gap := 18.0
+	var width := minf(84.0, viewport.x - board.end.x - frame_gap - right_margin)
 	if width < 42.0:
 		return Rect2()
 	var height := 52.0
-	return Rect2(Vector2(board.end.x + 6.0, board.end.y - height - 6.0), Vector2(width, height))
+	var lift := 18.0
+	return Rect2(Vector2(board.end.x + frame_gap, board.end.y - height - lift), Vector2(width, height))
 
 func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
 	return {
