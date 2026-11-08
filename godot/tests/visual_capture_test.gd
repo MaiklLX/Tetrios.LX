@@ -84,5 +84,26 @@ func _run() -> void:
 	if not await _capture(viewport, "03-block-run-card-draft"):
 		quit(1)
 		return
+	if not bool(scene.call("configure_block_run_hero", "prism", 5)):
+		push_error("Could not configure a level-five hero for skill HUD capture.")
+		quit(1)
+		return
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "05-block-run-hero-skill-ready"):
+		quit(1)
+		return
+	var skill_result: Dictionary = scene.call("activate_block_run_hero_skill")
+	if not bool(skill_result.get("accepted", false)) or int(block_run_session.hero_skill_cooldown_seconds) != 45:
+		push_error("Hero skill did not activate with the expected cooldown for visual capture.")
+		quit(1)
+		return
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "06-block-run-hero-skill-cooldown"):
+		quit(1)
+		return
 	print("Visual smoke captures completed.")
 	quit(0)
