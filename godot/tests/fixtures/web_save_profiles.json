@@ -77,5 +77,36 @@
       "bb_coins": "50",
       "bbDailyRewardClaimed:not-a-date": "1"
     }
+  },
+  "invalid_consumable": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bb_inventory": "{\"teleport\":1}"
+    }
+  },
+  "invalid_permanent_perk": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bb_perks": "[\"heart\",\"godmode\"]"
+    }
+  },
+  "invalid_hero_perk_map": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bb_bbCampaignPerks_unknown": "{\"guardian\":1}"
+    }
+  },
+  "invalid_daily_quest": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbDailyQuests": "{\"date\":\"2026-11-08\",\"quests\":[{\"id\":\"q1\",\"title\":\"Clear\",\"target\":3,\"progress\":1,\"reward\":10}]}"
+    }
+  },
+  "reward_marker_without_history": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbDailyRewardClaimed:2026-11-07": "1",
+      "bbDailyChallengeHistory": "{}"
+    }
   }
 }
