@@ -55,6 +55,24 @@ func _run() -> void:
 		quit(1)
 		return
 	var block_run_session = scene.get("block_run_session")
+	block_run_session.total_lines = 2
+	block_run_session.score = 300
+	block_run_session.run_seconds = 8
+	block_run_session.encounter.next_attack_seconds = 17
+	block_run_session.goals.clear()
+	block_run_session.goals.append({"id":1,"type":"lines","label":"Очистить линии","target":5,"reward":15,"claimed":false})
+	block_run_session.goals.append({"id":2,"type":"score","label":"Набрать очки","target":600,"reward":20,"claimed":false})
+	block_run_session.goals.append({"id":3,"type":"survive","label":"Продержаться, секунд","target":20,"reward":12,"claimed":false})
+	if not block_run_session.choose_card("score") or not block_run_session.choose_card("mult"):
+		push_error("Could not prepare the synergy state for Block Run HUD capture.")
+		quit(1)
+		return
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "04-block-run-goals-hud"):
+		quit(1)
+		return
 	var draft_event: Dictionary = block_run_session.on_line_clear(5, 0, 1)
 	if draft_event.draft_cards.size() != 3:
 		push_error("Block Run card draft did not open for visual capture.")
