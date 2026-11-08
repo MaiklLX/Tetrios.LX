@@ -483,7 +483,9 @@ func _format_elapsed_time(total_seconds: float) -> String:
 func _draw_stats() -> void:
 	var top := 140.0
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
-	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(score_value), Color("#45d9f5"))
+	var synergy_count := block_run_session.encounter.active_synergies().size() if block_run_active and block_run_session != null else 0
+	var score_label := "SCORE" if synergy_count == 0 else "SCORE  •  %d SYNERGIES" % synergy_count
+	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 58), score_label, str(score_value), Color("#45d9f5"))
 	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 58)
 	if block_run_active and block_run_session != null:
 		var encounter = block_run_session.encounter
