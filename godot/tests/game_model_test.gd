@@ -322,7 +322,7 @@ func _run() -> void:
 	layout_probe.mode_session.elapsed_seconds = 83.0
 	layout_probe.game.lines = 37
 	layout_probe.game.score = 2450
-	if not _check(layout_probe._game_over_title() == "SPRINT FAILED", "Sprint game over must use a distinct failure title"):
+	if not _check(layout_probe._game_over_title() == "СПРИНТ — НЕ ВЫПОЛНЕН", "Sprint game over must use a distinct failure title"):
 		return
 	if not _check(layout_probe._game_over_progress_label() == "LINES  •  37 / 40", "Sprint failure must show achieved lines against the target"):
 		return
@@ -331,14 +331,14 @@ func _run() -> void:
 	layout_probe.mode_session.start("marathon")
 	layout_probe.game.lines = 99
 	layout_probe.mode_session.elapsed_seconds = 3723.0
-	if not _check(layout_probe._game_over_title() == "MARATHON FAILED", "Marathon failure must use its own mode title"):
+	if not _check(layout_probe._game_over_title() == "МАРАФОН — НЕ ВЫПОЛНЕН", "Marathon failure must use its own mode title"):
 		return
 	if not _check(layout_probe._game_over_progress_label() == "LINES  •  99 / 100", "Marathon failure must retain progress against the 100-line target"):
 		return
 	if not _check(layout_probe._game_over_time_label() == "TIME  •  62:03", "Marathon failure must retain elapsed time without a countdown"):
 		return
 	layout_probe.mode_session.start("classic")
-	if not _check(layout_probe._game_over_title() == "RUN OVER" and layout_probe._game_over_time_label().is_empty(), "Classic game over must retain its original presentation"):
+	if not _check(layout_probe._game_over_title() == "ИГРА ОКОНЧЕНА" and layout_probe._game_over_time_label().is_empty(), "Classic game over must retain its original presentation"):
 		return
 	layout_probe.free()
 	var model: BlockBuddiesModel = Model.new()
