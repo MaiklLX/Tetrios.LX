@@ -281,3 +281,13 @@
 - CI run [42476914581](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476914581) on HEAD e3747e9da83d785c80bb6757cbfc51c9d8537493: **SUCCESS** — import, main parse, all model/migration/Block Run test suites, graphical capture/upload and scene smoke.
 - The displayed coin amount is the run's goal-reward total only. It is not yet credited to a persistent wallet; native profile/wallet loading remains deferred. No save or migration changes were made.
 - Block Run remains internal/hidden. No main merge, deployment, APK build/release, user-data mutation or physical Android test.
+
+## KT-483 — real live line-clear to Block Run reward receipt regression
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open/unmerged.
+- Commit `8122de17f20663d31392bf2c4a8398dae66d3a5d` replaced a synthetic `game.lines = 1` assignment in `block_run_live_integration_test.gd` with a deterministic gameplay fixture: a horizontal I piece drops into a four-cell gap in the bottom row and the model itself clears that row.
+- The regression asserts the model's actual line counter and `last_lock_cleared`, exactly one lock-serial increment, delivery of the line-goal receipt through `_process_block_run_events()`, and exactly-once claim behavior.
+- CI run [42478000377](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478000377) on code HEAD `8122de17f20663d31392bf2c4a8398dae66d3a5d`: **SUCCESS** — Godot 4.4.1 import, main-script parse, Classic/model tests, Web-save migration tests, Block Run model/effect/board/session/bridge/live integration tests, screenshot capture/upload, and scene smoke test.
+- A subsequent branch update added Russian Classic/Sprint/Marathon result-title assertions. Latest CI run [42478102381](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478102381) on descendant HEAD `f502d6e200a8ec5aab6bad371eed328c79897799`: **SUCCESS**.
+- Reviewed latest artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478102381/artifacts/13615864955): the 720×1280 Classic capture shows the procedural Buddy in the left gutter beside the unchanged 2D 10×23 board, with Russian UI labels. The artifact contains mode selector and Block Run captures; no physical Android screenshot is present.
+- CI still emits non-failing headless teardown diagnostics (CanvasItem/ObjectDB/resource leak warnings) after the Classic gameplay model test, plus expected headless audio/V-Sync warnings during screenshot capture. The job exits successfully; these diagnostics remain separate cleanup work and are not represented as a warning-free run.
+- No persistent profile/wallet integration, user-data mutation, main merge, deployment, APK build/release, or physical Android test.
