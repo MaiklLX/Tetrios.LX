@@ -36,10 +36,18 @@ Status: implemented on the Godot development branch. Draft PR #81 remains the re
 - Difficulty values are bounded across all 360 planets; automated tests verify ceilings, soft universe transitions, mission variety, score-only completion and timer-free bosses.
 - Planet detail, live HUD, progress bars and results now display the relevant objective type instead of assuming every mission is line-based.
 
+## KT-530 — Survival missions and broader difficulty range
+- Expanded the campaign's line targets from the former 8–16 range to a gradual 10–24 range, preserving a soft transition between universe chapters.
+- Expanded score quotas into the roughly 900–2,800 range, with chapter and local-planet steps rather than an unbounded per-node multiplier.
+- Added survival-only planets at positions 004 / 014 / 024 in each universe. Their target duration rises gradually from 45 seconds by chapter and local section.
+- Survival missions complete only after the required active play time; pause and campaign navigation do not advance the session clock. A top-out before the target still fails the mission.
+- The live planet detail, HUD timer/progress bar and results panel identify survival missions distinctly.
+- Boss planets remain combined line + score challenges without artificial countdown timers.
+
 ## Staged limitations
 - Fresh profiles begin at Planet 001; the rest of the 360-node route unlocks sequentially.
-- The objective curve is now continuous, but individual non-boss planets do not yet have unique mechanics or authored modifiers.
-- Bosses currently use stronger objective gates and time pressure; dedicated boss intro, HUD treatment, victory/failure presentation and visual capture coverage remain the next presentation pass.
+- Campaign survival is now implemented, but unique authored modifiers are not yet attached to individual planets.
+- Bosses currently use stronger objective gates; dedicated boss intro, HUD treatment, victory/failure presentation and visual capture coverage remain the next presentation pass.
 - Legacy profile mapping is implemented at the campaign-store boundary; automatic Web localStorage-to-Godot profile migration remains a separate integration step.
 - Physical-device verification remains required before release.
 
@@ -47,3 +55,10 @@ Status: implemented on the Godot development branch. Draft PR #81 remains the re
 - Branch: `godot/kt493-gallery-validated-2026-11-08`.
 - PR #81 remains Draft and unmerged.
 - No changes to `main`, public deployment, backup/archive branch, or APK release.
+
+
+## Next design pass — Tetris 2011-inspired mechanics
+- Keep the EA Tetris 2011 reference at the level of design principles, not copied assets or proprietary presentation.
+- Consider a small, authored set of planet modifiers inspired by Rush effects (Anvil / Gravity Crush / Landfill / Ripple / Best Fit), adapted to Buddy's own rules and visual identity.
+- Keep One Touch as a separate optional challenge family based on ghost-piece placement and a carefully tuned decision timer; do not inject its shrinking timer into ordinary campaign missions.
+- Consider character-linked abilities as a limited tactical resource, not an automatic power-up on every planet.
