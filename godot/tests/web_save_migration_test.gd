@@ -78,5 +78,22 @@ func _run() -> void:
 	if not _check(not bad_marker.ok, "Malformed reward marker must block import"):
 		return
 
-	print("Web migration parser tests passed: defaults, complete profile, alias conflicts, malformed JSON, legacy fallbacks, unknown keys, reward idempotency, and source immutability.")
+	print("Web migration tests: adversarial inventory and daily schemas")
+	var invalid_consumable: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_consumable"]["local_storage"])
+	if not _check(not invalid_consumable.ok, "Unknown consumable ids must block migration"):
+		return
+	var invalid_perk: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_permanent_perk"]["local_storage"])
+	if not _check(not invalid_perk.ok, "Unknown permanent perk ids must block migration"):
+		return
+	var invalid_hero_perks: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_hero_perk_map"]["local_storage"])
+	if not _check(not invalid_hero_perks.ok, "Campaign perks for unknown heroes must block migration"):
+		return
+	var invalid_daily: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_daily_quest"]["local_storage"])
+	if not _check(not invalid_daily.ok, "Daily quest records missing required fields must block migration"):
+		return
+	var orphan_reward: Dictionary = WebMigration.parse_local_storage(fixtures["reward_marker_without_history"]["local_storage"])
+	if not _check(orphan_reward.ok and orphan_reward.requires_review, "Reward marker without matching history must require review without granting a reward"):
+		return
+
+	print("Web migration parser tests passed: defaults, complete profile, alias conflicts, malformed JSON, legacy fallbacks, inventory and daily schema validation, reward idempotency, and source immutability.")
 	quit(0)
