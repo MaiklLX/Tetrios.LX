@@ -62,10 +62,12 @@ func _layout() -> void:
 	var board_metrics := _board_metrics(screen_size)
 	board_rect = board_metrics.board_rect
 	drop_rect = _drop_button_layout(screen_size, board_rect)
-	pause_rect = Rect2(screen_size.x - 64.0, 22.0, 42.0, 42.0)
+	# Keep the top utility controls in their own compact row. The score/HUD
+	# begins below it, so the buttons never collide with labels on portrait screens.
+	pause_rect = Rect2(screen_size.x - 60.0, 12.0, 36.0, 36.0)
 	var resume_width := minf(220.0, screen_size.x - 64.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
-	mode_button_rect = Rect2(24.0, 22.0, 82.0, 42.0)
+	mode_button_rect = Rect2(24.0, 12.0, 82.0, 36.0)
 	var mode_layout := _mode_select_layout(screen_size)
 	classic_mode_rect = mode_layout.classic
 	sprint_mode_rect = mode_layout.sprint
@@ -513,10 +515,10 @@ func _draw_header() -> void:
 	_draw_mode_button()
 	_draw_pause_button()
 func _draw_mode_button() -> void:
-	_draw_pill(mode_button_rect, Color("#1767c8"), Color("#8beaff"), 14)
+	_draw_pill(mode_button_rect, Color("#1767c8"), Color("#8beaff"), 12)
 	var label := "РЕЖИМ"
-	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
-	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 5.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
+	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x
+	draw_string(font, mode_button_rect.get_center() + Vector2(-width * 0.5, 4.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#ffffff"))
 func _mode_display_name(mode_id: String) -> String:
 	match mode_id:
 		"classic": return "КЛАССИКА"
@@ -762,14 +764,14 @@ func _draw_block(rect: Rect2, color: Color) -> void:
 	draw_style_box(shine, Rect2(rect.position + Vector2(3, 2), Vector2(rect.size.x - 6, maxf(3.0, rect.size.y * 0.18))))
 	draw_circle(rect.position + Vector2(rect.size.x - 6, 6), 1.5, Color(1, 1, 1, 0.45))
 func _draw_pause_button() -> void:
-	_draw_pill(pause_rect, Color("#1467bd"), Color("#a4eaff"), 14)
+	_draw_pill(pause_rect, Color("#1467bd"), Color("#a4eaff"), 12)
 	var center := pause_rect.get_center()
 	if paused:
-		var triangle := PackedVector2Array([center + Vector2(-5, -10), center + Vector2(9, 0), center + Vector2(-5, 10)])
+		var triangle := PackedVector2Array([center + Vector2(-4, -8), center + Vector2(7, 0), center + Vector2(-4, 8)])
 		draw_colored_polygon(triangle, Color("#ffffff"))
 	else:
-		_draw_pill(Rect2(center + Vector2(-9, -10), Vector2(6, 20)), Color("#ffffff"), Color("#d4f5ff"), 3)
-		_draw_pill(Rect2(center + Vector2(3, -10), Vector2(6, 20)), Color("#ffffff"), Color("#d4f5ff"), 3)
+		_draw_pill(Rect2(center + Vector2(-7, -8), Vector2(5, 16)), Color("#ffffff"), Color("#d4f5ff"), 3)
+		_draw_pill(Rect2(center + Vector2(2, -8), Vector2(5, 16)), Color("#ffffff"), Color("#d4f5ff"), 3)
 func _draw_overlay_panel(rect: Rect2, accent: Color) -> void:
 	_draw_soft_panel(rect.grow(2.0), Color("#154b91"), accent.lightened(0.2), 25, 18)
 	draw_rect(Rect2(rect.position + Vector2(12, 10), Vector2(rect.size.x - 24, 5)), Color(1, 1, 1, 0.15))
