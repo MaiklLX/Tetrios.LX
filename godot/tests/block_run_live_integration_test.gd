@@ -83,6 +83,11 @@ func _run() -> void:
 		return
 	if not _check(nova_probe.block_run_session.choose_card("nova"), "Nova must be drafted before the live rescue"):
 		return
+	# A horizontal I piece occupies only the top spawn row; clearing one
+	# bottom row shifts the obstruction down and opens this spawn footprint.
+	nova_probe.game.active_type = 0
+	nova_probe.game.active_cells.assign(Model.SHAPES[0])
+	nova_probe.game.origin = Vector2i(3, 0)
 	var nova_spawn: Vector2i = nova_probe.game.origin + nova_probe.game.active_cells[0]
 	nova_probe.game.grid[nova_spawn.y][nova_spawn.x] = 3
 	nova_probe.game.game_over = true
