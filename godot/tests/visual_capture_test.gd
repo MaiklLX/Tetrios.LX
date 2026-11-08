@@ -315,8 +315,8 @@ func _run() -> void:
 		quit(1)
 		return
 	var campaign_session = scene.get("mode_session")
-	if campaign_session.mode_id != "campaign" or int(campaign_session.rules.get("target_lines", 0)) != 8:
-		push_error("Planet 001 must launch a campaign session with its own eight-line objective.")
+	if campaign_session.mode_id != "campaign" or int(campaign_session.rules.get("target_lines", 0)) != 10:
+		push_error("Planet 001 must launch a campaign session with its own ten-line objective.")
 		quit(1)
 		return
 	await process_frame
@@ -324,9 +324,9 @@ func _run() -> void:
 	if not await _capture(viewport, "24-live-campaign-level"):
 		quit(1)
 		return
-	scene.get("game").lines = 8
+	scene.get("game").lines = 10
 	scene.get("game").score = int(scene.get("campaign_progress").get_planet_definition(1).target_score)
-	campaign_session.update(0.0, 8, false, int(scene.get("game").score))
+	campaign_session.update(0.0, 10, false, int(scene.get("game").score))
 	scene.call("_process_campaign_completion")
 	if int(scene.get("campaign_progress").unlocked_node) != 2 or int(scene.get("campaign_progress").campaign_marks) != 1:
 		push_error("Completing planet 001 must grant one mark and unlock planet 002.")
