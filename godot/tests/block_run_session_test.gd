@@ -49,7 +49,22 @@ func _run() -> void:
 		return
 	if not _check(line_goal_run.goals.size() == 1 and line_goal_run.goals[0].id != 900 and line_goal_run.goal_rewards_earned == 15, "A completed goal must be replaced immediately and rewards counted once"):
 		return
+	var line_receipt_id := str(line_goal_event.goal_events[0].receipt_id)
+	if not _check(not line_receipt_id.is_empty() and line_goal_run.pending_goal_reward_total() == 15, "A completed goal must create one pending reward receipt"):
+		return
+	var first_claim: Dictionary = line_goal_run.claim_goal_reward(line_receipt_id)
+	if not _check(bool(first_claim.accepted) and int(first_claim.reward) == 15 and line_goal_run.goal_rewards_claimed == 15, "First reward receipt claim must settle the exact coin amount"):
+		return
+	var duplicate_claim: Dictionary = line_goal_run.claim_goal_reward(line_receipt_id)
+	if not _check(not bool(duplicate_claim.accepted) and str(duplicate_claim.reason) == "already_claimed" and line_goal_run.goal_rewards_claimed == 15, "Repeated receipt claim must never pay twice"):
+		return
+	var unknown_claim: Dictionary = line_goal_run.claim_goal_reward("unknown-receipt")
+	if not _check(not bool(unknown_claim.accepted) and line_goal_run.goal_rewards_claimed == 15, "Unknown receipt must not change the reward balance"):
+		return
+	if not _check(line_goal_run.pending_goal_reward_total() == 0, "Claimed goal rewards must leave no pending balance"):
+		return
 
+	print("KT481 TEST: exactly-once goal reward receipts passed")
 	print("KT471 TEST: line goal passed")
 	var survive_goal_run = Session.new()
 	survive_goal_run.start()
