@@ -56,6 +56,9 @@ jobs:
       - name: Run isolated campaign piece runtime tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/campaign_piece_runtime_test.gd
+      - name: Run campaign live integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_live_integration_test.gd
       - name: Run Block Run model tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/block_run_model_test.gd
