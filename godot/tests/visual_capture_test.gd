@@ -175,11 +175,11 @@ func _run() -> void:
 	await process_frame
 	scene.call("_layout")
 	var mobile_stat_card := Rect2(18.0, 56.0, (360.0 - 36.0 - 10.0) * 0.5, 52.0)
-	if int(scene.call("_stat_label_font_size", mobile_stat_card, "ОЧКИ • СИНЕРГИИ 2")) < 9:
+	if int(scene.call("_stat_label_font_size", mobile_stat_card, "ОЧКИ • СИН. 2")) < 10:
 		push_error("Score HUD label is unnecessarily reduced below 9px at 360x800.")
 		quit(1)
 		return
-	if int(scene.call("_stat_label_font_size", mobile_stat_card, "КОМНАТА 1 • УДАР 17С")) < 9:
+	if int(scene.call("_stat_label_font_size", mobile_stat_card, "К1 • Э1 • 17С")) < 9:
 		push_error("Block Run HUD label is unnecessarily reduced below 9px at 360x800.")
 		quit(1)
 		return
