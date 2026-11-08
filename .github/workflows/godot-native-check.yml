@@ -50,6 +50,9 @@ jobs:
       - name: Run isolated campaign effect session tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/campaign_effect_session_test.gd
+      - name: Run campaign special piece prototype tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_special_piece_test.gd
       - name: Run Block Run model tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/block_run_model_test.gd
