@@ -2,6 +2,7 @@ extends SceneTree
 
 const Model = preload("res://scripts/game_model.gd")
 const Main = preload("res://scripts/main.gd")
+const WebMigration = preload("res://scripts/web_save_migration.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -370,5 +371,58 @@ func _run() -> void:
 	if not _check(long_run_model.grid[Model.HEIGHT - 1].count(-1) == Model.WIDTH, "The bottom row must be empty after each successful clear"):
 		return
 
-	print("Godot model tests passed: 10x23 board, versioned save/load validation, collision boundaries, lock behavior, 50-cycle progression, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
+	# Web migration parser is read-only and must preserve the original key/value snapshot.
+	var fixture_file := FileAccess.open("res://tests/fixtures/web_save_profiles.json", FileAccess.READ)
+	if not _check(fixture_file != null, "Web migration fixtures must be available"):
+		return
+	var fixtures: Dictionary = JSON.parse_string(fixture_file.get_as_text())
+	fixture_file.close()
+	if not _check(fixtures is Dictionary, "Web migration fixture catalog must be valid JSON"):
+		return
+
+	var empty_import: Dictionary = WebMigration.parse_local_storage(fixtures["empty"]["local_storage"])
+	if not _check(empty_import.ok and empty_import.profile.economy.coins == 0, "Empty Web profile must produce safe defaults"):
+		return
+
+	var typical_raw: Dictionary = fixtures["typical"]["local_storage"]
+	var typical_before: Dictionary = typical_raw.duplicate(true)
+	var typical_import: Dictionary = WebMigration.parse_local_storage(typical_raw)
+	if not _check(typical_import.ok and not typical_import.requires_review, "Typical Web profile with matching aliases must validate"):
+		return
+	if not _check(typical_import.profile.economy.coins == 125 and typical_import.profile.economy.relics == 7, "Coin and relic balances must remain separate"):
+		return
+	if not _check(typical_import.profile.campaign.marks == 3 and typical_import.profile.campaign.unlocked_node == 12, "Campaign marks and unlocked node must import independently"):
+		return
+	if not _check(typical_import.profile.heroes.selected_id == "prism" and typical_import.profile.heroes.progress.prism.xp == 90, "Selected hero and per-hero progression must import"):
+		return
+	if not _check(typical_import.profile.daily.reward_claimed_dates == ["2026-11-07"], "Daily reward idempotency markers must be preserved without granting rewards"):
+		return
+	if not _check(typical_import.source_backup == typical_before and typical_raw == typical_before, "Parser must preserve source backup and never mutate input"):
+		return
+
+	var coin_conflict: Dictionary = WebMigration.parse_local_storage(fixtures["coin_conflict"]["local_storage"])
+	if not _check(coin_conflict.ok and coin_conflict.requires_review and coin_conflict.profile.economy.coins == 125 and coin_conflict.conflicts.size() == 1, "Primary Web wallet must win but divergent aliases must be reported for review"):
+		return
+	var unresolved_coins: Dictionary = WebMigration.parse_local_storage(fixtures["coin_conflict_without_primary"]["local_storage"])
+	if not _check(not unresolved_coins.ok, "Conflicting legacy coin aliases without primary wallet must block migration"):
+		return
+
+	var malformed: Dictionary = WebMigration.parse_local_storage(fixtures["malformed_json"]["local_storage"])
+	if not _check(not malformed.ok and malformed.source_backup.bb_inventory == "{broken", "Malformed JSON must block import and preserve raw source"):
+		return
+	var legacy: Dictionary = WebMigration.parse_local_storage(fixtures["legacy_fallbacks"]["local_storage"])
+	if not _check(legacy.ok and legacy.profile.heroes.progress.plush.xp == 30, "Legacy Plush XP aliases must remain supported as fallback"):
+		return
+	if not _check(legacy.profile.cosmetics.equipped_by_hero.plush == "old_hat", "Legacy single-slot cosmetic must map to selected hero"):
+		return
+	var unknown: Dictionary = WebMigration.parse_local_storage(fixtures["unknown_key"]["local_storage"])
+	if not _check(unknown.ok and unknown.unknown_keys.has("custom_mod_data") and unknown.source_backup.has("custom_mod_data"), "Unknown keys must be reported and retained in source backup"):
+		return
+	var bad_marker: Dictionary = WebMigration.parse_local_storage(fixtures["malformed_reward_marker"]["local_storage"])
+	if not _check(not bad_marker.ok, "Malformed daily reward marker must block migration rather than silently dropping it"):
+		return
+
+	print("Godot tests passed: gameplay model, save/load validation, read-only Web migration parser, profile fixtures, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
+	quit(0)
+ 10x23 board, versioned save/load validation, collision boundaries, lock behavior, 50-cycle progression, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
 	quit(0)
