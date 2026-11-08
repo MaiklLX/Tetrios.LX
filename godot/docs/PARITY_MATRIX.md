@@ -118,3 +118,12 @@ Important corrections/clarifications from the deeper source pass:
 - KT-445 currently serializes an in-memory gameplay run only. It does not implement disk persistence or the durable profile described in the new contract.
 
 Status: **KT-446 source audit and proposed contract complete; implementation and migration fixtures pending.** No Web source, main branch, deployment, APK or user data was changed.
+
+
+## 11. KT-447 — read-only migration parser
+
+- `scripts/web_save_migration.gd` converts a supplied Web localStorage snapshot into a candidate profile without reading or writing any storage itself.
+- Candidate output retains a deep copy of every original key/value pair, reports unknown keys, and flags conflicting coin aliases for review. Divergent aliases without `bb_coins` block import.
+- Dedicated fixtures cover representative progression, currency separation, legacy hero/cosmetic fallback, malformed JSON and daily reward idempotency markers.
+- CI run `42450365090` on `55e0a8701b97c5b3e45dbcf7576d8d8417504b1c` passed all five stages including the new migration tests.
+- Persistent storage and migration execution remain intentionally disabled.
