@@ -333,10 +333,27 @@ func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Co
 	draw_string(font, rect.position + Vector2(18.0, 38.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("#f4f8ff"))
 	draw_string(font, rect.position + Vector2(18.0, 66.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#9bb6ca"))
 
+func _sprint_progress_ratio() -> float:
+	if mode_session == null or mode_session.mode_id != "sprint":
+		return 0.0
+	var target := int(mode_session.rules.get("target_lines", 0))
+	if target <= 0:
+		return 0.0
+	return clampf(float(game.lines) / float(target), 0.0, 1.0)
+
 func _draw_stats() -> void:
 	var top := 154.0
 	_stat_card(Rect2(42, top, (screen_size.x - 100) * 0.48, 70), "SCORE", str(game.score), Color("#45d9f5"))
-	_stat_card(Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 70), "LEVEL  /  LINES", "%d  /  %d" % [game.level, game.lines], Color("#f6d65b"))
+	var progress_rect := Rect2(screen_size.x * 0.52, top, (screen_size.x - 100) * 0.48, 70)
+	if mode_session != null and mode_session.mode_id == "sprint":
+		var target := int(mode_session.rules.get("target_lines", 40))
+		_stat_card(progress_rect, "SPRINT  •  LINES", "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
+		var track := Rect2(progress_rect.position + Vector2(14.0, 61.0), Vector2(progress_rect.size.x - 28.0, 3.0))
+		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
+		if _sprint_progress_ratio() > 0.0:
+			draw_rect(Rect2(track.position, Vector2(track.size.x * _sprint_progress_ratio(), track.size.y)), Color("#45d9f5"))
+	else:
+		_stat_card(progress_rect, "LEVEL  /  LINES", "%d  /  %d" % [game.level, game.lines], Color("#f6d65b"))
 
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
 	draw_rect(rect, Color(0.055, 0.09, 0.15, 0.94))
