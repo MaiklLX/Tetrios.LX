@@ -2,7 +2,7 @@ extends Node2D
 
 # Static, code-drawn UI exploration. This is deliberately separate from the
 # live game scene: it previews the visual language without wiring economy or saves.
-@export_enum("home", "shop", "heroes", "upgrades", "block_run", "campaign", "planet_detail", "daily") var screen_id := "home"
+@export_enum("home", "shop", "heroes", "upgrades", "block_run", "campaign", "universe_route", "planet_detail", "daily") var screen_id := "home"
 var viewport_size := Vector2(720.0, 1280.0)
 var font: Font = ThemeDB.fallback_font
 
@@ -29,6 +29,7 @@ func _draw() -> void:
 		"upgrades": _draw_upgrades()
 		"block_run": _draw_block_run()
 		"campaign": _draw_campaign()
+		"universe_route": _draw_universe_route()
 		"planet_detail": _draw_planet_detail()
 		"daily": _draw_daily()
 		_: _draw_home()
@@ -449,58 +450,98 @@ func _draw_campaign() -> void:
 	_center("12 ВСЕЛЕННЫХ  •  360 УНИКАЛЬНЫХ ПЛАНЕТ", 174, 14, PALE)
 	_center("Выбери галактику и продолжи путь первооткрывателя", 198, 11, PALE)
 	var names := ["ЗЕЛЁНЫЕ РАВНИНЫ","КАРАВАН ЗВЁЗД","ОГНЕННЫЕ ЗЕМЛИ","ЛЕДЯНАЯ КОРОНА","ЛУННАЯ КОЛОНИЯ","КРЫЛЬЯ ЭКСПЕДИЦИИ","ПЕСКИ ВРЕМЕНИ","ВРАТА МЕЖДУМИРЬЯ","НЕБЕСНЫЙ АРХИПЕЛАГ","СТАНЦИЯ ДРОНОВ","КОСМИЧЕСКИЙ РАЗЛОМ","ДАЛЬНИЙ РУБЕЖ"]
-	var descriptions := ["Живые континенты и сияющие долины","Торговые трассы и дальние перелёты","Лавовые моря и раскалённые разломы","Ледяные кольца и сияющие полюса","Купольные города и исследовательские базы","Эскадрильи и воздушные манёвры","Золотые дюны и песчаные бури","Порталы и нестабильные врата","Кольца и гигантские облака","Дроны и автономные станции","Разрывы пространства и спиральные рукава","Экспедиции к новым рубежам"]
 	var colors := [Color("#286e69"),Color("#246d83"),Color("#a44f35"),Color("#356b9e"),Color("#88704a"),Color("#3b62a0"),Color("#8a6740"),Color("#67519a"),Color("#397f8c"),Color("#53647d"),Color("#5c4c98"),Color("#87527e")]
 	var accents := [Color("#83edbf"),CYAN,Color("#ff9a68"),Color("#a8e5ff"),GOLD,Color("#8ebcff"),Color("#e4c18c"),VIOLET,Color("#8af0e8"),Color("#b6c9df"),Color("#c1a5ff"),PINK]
-	var models := ["planet","jupiter","lava-world","neptune","moon-base-dome","space-fighter","mars","portal-gate","saturn","drone-bot","spiral-galaxy","sci-fi-spaceship"]
-	var icons := ["◉","✦","♨","❄","⌂","➤","☼","◎","◌","⌘","✧","➤"]
-	var card_w := (viewport_size.x - 84.0) / 3.0
-	var card_h := 218.0
+	var card_w := (viewport_size.x - 78.0) / 2.0
+	var card_h := 142.0
 	for i in range(12):
-		var col := i % 3
-		var row := i / 3
+		var col := i % 2
+		var row := i / 2
 		var x := 24.0 + col * (card_w + 6.0)
-		var y := 218.0 + row * 224.0
-		var rect := Rect2(x, y, card_w, card_h)
-		_panel(rect, colors[i], accents[i], 18)
-		# Every universe gets its own planetary/space silhouette and palette.
-		var c := Vector2(x + card_w*0.5, y + 58)
-		draw_circle(c, 42, Color(0.35,0.78,1.0,0.10))
-		draw_arc(c, 35, 0.0, TAU, 48, Color(0.85,0.94,1.0,0.55), 1.7, true)
+		var y := 218.0 + row * 148.0
+		_panel(Rect2(x,y,card_w,card_h),colors[i],accents[i],17)
+		var c := Vector2(x+65,y+58)
+		draw_circle(c,43,Color(0.35,0.78,1.0,0.10))
+		draw_arc(c,36,0,TAU,48,Color(0.85,0.94,1.0,0.55),1.7,true)
 		match i:
 			1,5,9,11:
-				draw_colored_polygon(PackedVector2Array([c+Vector2(-34,0),c+Vector2(0,-9),c+Vector2(35,0),c+Vector2(0,10)]), accents[i])
-				draw_circle(c, 8, WHITE)
+				draw_colored_polygon(PackedVector2Array([c+Vector2(-34,0),c+Vector2(0,-9),c+Vector2(35,0),c+Vector2(0,10)]),accents[i])
+				draw_circle(c,8,WHITE)
 			2:
-				draw_circle(c, 24, Color("#e66b3d"))
-				draw_arc(c, 29, 0.2, 2.6, 32, GOLD, 5, true)
+				draw_circle(c,24,Color("#e66b3d"))
+				draw_arc(c,29,0.2,2.6,32,GOLD,5,true)
 			3,8:
-				draw_circle(c, 25, accents[i])
-				draw_arc(c, 37, -0.2, 2.9, 40, WHITE, 4, true)
+				draw_circle(c,25,accents[i])
+				draw_arc(c,37,-0.2,2.9,40,WHITE,4,true)
 			7,10:
-				draw_circle(c, 23, Color("#111a42"))
-				draw_arc(c, 29, 0, TAU, 40, accents[i], 7, true)
-				draw_circle(c, 6, WHITE)
+				draw_circle(c,23,Color("#111a42"))
+				draw_arc(c,29,0,TAU,40,accents[i],7,true)
+				draw_circle(c,6,WHITE)
 			_:
-				draw_circle(c, 27, accents[i])
-				draw_circle(c+Vector2(-8,-9), 8, Color(1,1,1,0.30))
-				draw_arc(c+Vector2(0,3), 26, 0.2, 2.8, 32, Color(0.05,0.2,0.48,0.5), 3, true)
-		_text("ВСЕЛЕННАЯ %02d" % (i+1), Vector2(x+12,y+116), 9, accents[i])
-		_center_card_text(names[i], Rect2(x+5,y+119,card_w-10,24), y+151, 11, WHITE)
-		_center_card_text("ПЛАНЕТЫ %03d–%03d" % [i*30+1,(i+1)*30], Rect2(x+5,y+154,card_w-10,20), y+174, 9, PALE)
-		var progress := 1.0 if i == 0 else (0.0 if i > 1 else 0.17)
-		var bar := Rect2(x+12,y+184,card_w-24,5)
-		draw_rect(bar, Color("#18355f"))
+				draw_circle(c,27,accents[i])
+				draw_circle(c+Vector2(-8,-9),8,Color(1,1,1,0.30))
+				draw_arc(c+Vector2(0,3),26,0.2,2.8,32,Color(0.05,0.2,0.48,0.5),3,true)
+		_text("ВСЕЛЕННАЯ %02d" % (i+1),Vector2(x+119,y+30),9,accents[i])
+		_text(names[i],Vector2(x+119,y+55),13,WHITE)
+		_text("ПЛАНЕТЫ %03d–%03d" % [i*30+1,(i+1)*30],Vector2(x+119,y+78),10,PALE)
+		var progress := 1.0 if i == 0 else (0.17 if i == 1 else 0.0)
+		var bar := Rect2(x+119,y+92,card_w-132,5)
+		draw_rect(bar,Color("#18355f"))
 		draw_rect(Rect2(bar.position,Vector2(bar.size.x*progress,bar.size.y)),accents[i])
-		var status := "ТЕКУЩАЯ" if i == 0 else ("ОТКРЫТА" if i == 1 else "ЗАКРЫТА")
-		_center_card_text(status, Rect2(x+5,y+190,card_w-10,18), y+207, 9, GOLD if i == 0 else PALE)
-	_center("12 ГАЛАКТИК  •  30 МИРОВ В КАЖДОЙ", 1138, 12, GOLD)
+		_text("ТЕКУЩАЯ" if i==0 else ("ОТКРЫТА" if i==1 else "ЗАКРЫТА"),Vector2(x+119,y+120),9,GOLD if i==0 else PALE)
+	_center("12 ГАЛАКТИК  •  30 МИРОВ В КАЖДОЙ", 1128, 12, GOLD)
+	_draw_bottom_nav("ИГРАТЬ")
+
+
+func _draw_universe_route() -> void:
+	_center("ЗЕЛЁНЫЕ РАВНИНЫ", 142, 28, GOLD)
+	_center("ВСЕЛЕННАЯ 01  •  ПЛАНЕТЫ 001–030", 174, 13, PALE)
+	# Showcase world and orbital navigation.
+	var origin := Vector2(viewport_size.x*0.5, 316)
+	draw_circle(origin,112,Color(0.25,0.72,1.0,0.08))
+	draw_arc(origin,94,0.1,TAU+0.1,80,Color(0.72,0.9,1.0,0.55),2,true)
+	draw_circle(origin,66,Color("#2a9ed1"))
+	draw_circle(origin+Vector2(-22,-24),20,Color(1,1,1,0.18))
+	draw_arc(origin+Vector2(0,8),62,0.2,2.7,64,Color("#165b9b"),9,true)
+	for island in [Vector2(-28,-5),Vector2(24,20),Vector2(-6,42)]:
+		draw_circle(origin+island,12,Color("#8de5b5"))
+	# The original campaign has 30 sequential planet nodes per universe.
+	_panel(Rect2(30,440,viewport_size.x-60,570),Color("#102f68"),CYAN,22)
+	_text("МАРШРУТ ПЕРВООТКРЫВАТЕЛЯ",Vector2(54,478),17,WHITE)
+	_text("30 планет • 10-я, 20-я и 30-я — особые рубежи",Vector2(54,502),11,PALE)
+	var positions: Array[Vector2] = []
+	for node in range(30):
+		var row := node / 6
+		var col := node % 6
+		if row % 2 == 1:
+			col = 5-col
+		positions.append(Vector2(86+col*110,560+row*78))
+	for node in range(29):
+		draw_line(positions[node],positions[node+1],Color("#5c91c4"),3)
+	for node in range(30):
+		var pos := positions[node]
+		var current := node == 0
+		var boss := (node+1)%10==0
+		var done := node < 0
+		var color := GOLD if current else (PINK if boss else Color("#496b9c"))
+		draw_circle(pos,16 if boss else 13,Color("#9a6b22") if current else Color("#193e70"))
+		draw_arc(pos,16 if boss else 13,0,TAU,32,color,3,true)
+		if current:
+			draw_circle(pos,5,WHITE)
+		elif boss:
+			draw_line(pos+Vector2(-5,-5),pos+Vector2(5,5),PINK,2)
+			draw_line(pos+Vector2(5,-5),pos+Vector2(-5,5),PINK,2)
+		else:
+			draw_circle(pos,3,Color("#9bb9dc"))
+		_center_card_text("%03d" % (node+1),Rect2(pos.x-23,pos.y+15,46,16),pos.y+27,8,PALE)
+	_text("001 — ТЕКУЩАЯ ПЛАНЕТА",Vector2(54,970),11,GOLD)
+	_text("Особые узлы: 010  •  020  •  030",Vector2(54,990),10,PALE)
 	_draw_bottom_nav("ИГРАТЬ")
 
 
 func _draw_planet_detail() -> void:
-	_center("МИР АЗУР", 150, 30, GOLD)
-	_center("Туманность Искр • сектор 01", 182, 14, PALE)
+	_center("ПЛАНЕТА 001", 150, 30, GOLD)
+	_center("Зелёные равнины • вселенная 01", 182, 14, PALE)
 	# Large, readable planet portrait and orbital rings.
 	var origin := Vector2(viewport_size.x * 0.5, 380)
 	draw_circle(origin, 178, Color(0.25,0.72,1.0,0.08))
