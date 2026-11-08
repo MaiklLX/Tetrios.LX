@@ -300,7 +300,7 @@ func _run() -> void:
 		return
 	var locked_type: int = lock_model.active_type
 	lock_model.tick()
-	if not _check(lock_model.grid[Model.HEIGHT - 2][4] == locked_type and lock_model.grid[Model.HEIGHT - 1][5] == locked_type, "Tick at the floor must lock all four cells into the board"):
+	if not _check(lock_model.grid[Model.HEIGHT - 2][5] == locked_type and lock_model.grid[Model.HEIGHT - 1][4] == locked_type and lock_model.grid[Model.HEIGHT - 1][5] == locked_type, "Tick at the floor must lock all four cells into the board"):
 		return
 	if not _check(not lock_model.game_over and lock_model.active_cells.size() == 4, "Successful lock must spawn the next active piece"):
 		return
@@ -327,5 +327,5 @@ func _run() -> void:
 	if not _check(long_run_model.grid[Model.HEIGHT - 1].count(-1) == Model.WIDTH, "The bottom row must be empty after each successful clear"):
 		return
 
-	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
+	print("Godot model tests passed: 10x23 board, collision boundaries, lock behavior, 50-cycle progression, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
 	quit(0)
