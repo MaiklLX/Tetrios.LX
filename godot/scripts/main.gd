@@ -7,10 +7,17 @@ const Model = preload("res://scripts/game_model.gd")
 const Buddy = preload("res://scripts/buddy_companion.gd")
 const ModeSession = preload("res://scripts/mode_session.gd")
 const ModeCatalog = preload("res://scripts/mode_catalog.gd")
+const CampaignProgress = preload("res://scripts/campaign_progress.gd")
+const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
 const BlockRunSession = preload("res://scripts/block_run_session.gd")
 const BlockRunBridge = preload("res://scripts/block_run_bridge.gd")
 
 var game: BlockBuddiesModel
+var campaign_progress: BlockBuddiesCampaignProgress
+var campaign_run_active := false
+var campaign_run_planet_id := 0
+var campaign_completion_processed := false
+var campaign_last_reward_marks := 0
 var mode_session: BlockBuddiesModeSession
 var block_run_session: BlockBuddiesBlockRunSession
 var block_run_active := false
@@ -68,6 +75,10 @@ func _ready() -> void:
 	font = ThemeDB.fallback_font
 	game = Model.new()
 	game.reset()
+	campaign_progress = CampaignProgress.new()
+	var campaign_load: Dictionary = CampaignStore.load_progress(campaign_progress)
+	if not bool(campaign_load.get("ok", false)):
+		push_warning("Campaign progress save could not be loaded: " + str(campaign_load.get("reason", "unknown")))
 	home_visible = true
 	mode_select_visible = false
 	mode_session = ModeSession.new()
@@ -188,6 +199,7 @@ func _process(delta: float) -> void:
 		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() else 0.0)
 	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not block_run_active:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
+		_process_campaign_completion()
 	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
 		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(game.level)
 		gravity_clock += delta
@@ -309,6 +321,10 @@ func _restart_current_run() -> void:
 	# otherwise its completed status blocks the first touch on the new run.
 	if mode_session != null:
 		mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
+		if campaign_run_active and mode_session.mode_id == "campaign":
+			var campaign_definition := campaign_progress.get_planet_definition(campaign_run_planet_id)
+			mode_session.rules["target_lines"] = int(campaign_definition.get("target_lines", 8))
+			campaign_completion_processed = false
 	if block_run_active:
 		start_block_run_session()
 	paused = false
@@ -460,10 +476,7 @@ func _handle_tap(point: Vector2) -> void:
 					campaign_screen = "planet"
 					break
 		elif campaign_screen == "planet" and campaign_start_rect.has_point(point) and _campaign_planet_is_unlocked(campaign_universe, campaign_planet):
-			campaign_launch_pending = true
-			campaign_screen = ""
-			mode_select_visible = true
-			paused = false
+			_start_campaign_planet()
 		queue_redraw()
 		return
 	if not secondary_screen.is_empty():
@@ -500,7 +513,10 @@ func _handle_tap(point: Vector2) -> void:
 		_open_mode_select()
 		return
 	if game.game_over or _mode_finished():
-		_restart_current_run()
+		if campaign_run_active and mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED:
+			_return_to_campaign_route()
+		else:
+			_restart_current_run()
 	elif pause_rect.has_point(point):
 		_toggle_pause()
 	elif paused:
@@ -532,6 +548,9 @@ func _select_mode(requested_mode_id: String) -> void:
 	secondary_screen = ""
 	campaign_screen = ""
 	campaign_launch_pending = false
+	campaign_run_active = false
+	campaign_run_planet_id = 0
+	campaign_completion_processed = false
 	paused = false
 	gravity_clock = 0.0
 	buddy_last_lines = 0
@@ -566,6 +585,7 @@ func _sync_buddy_state() -> void:
 		return
 	if mode_session != null and not mode_select_visible:
 		mode_session.update(0.0, game.lines, game.game_over)
+		_process_campaign_completion()
 	if not is_instance_valid(buddy):
 		return
 	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
@@ -673,6 +693,7 @@ func _mode_display_name(mode_id: String) -> String:
 		"classic": return "КЛАССИКА"
 		"sprint": return "СПРИНТ"
 		"marathon": return "МАРАФОН"
+		"campaign": return "КАМПАНИЯ"
 		_: return "РЕЖИМ"
 
 
@@ -721,14 +742,74 @@ func _center_text_in_rect(value: String, rect: Rect2, size: int, color: Color) -
 	draw_string(font, Vector2(rect.get_center().x - width * 0.5, rect.get_center().y + size * 0.35), value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 
+
+func _start_campaign_planet() -> void:
+	var node_id := _campaign_global_planet_id(campaign_universe, campaign_planet)
+	if campaign_progress == null or not _campaign_planet_is_unlocked(campaign_universe, campaign_planet):
+		return
+	var definition := campaign_progress.get_planet_definition(node_id)
+	if definition.is_empty():
+		return
+	game.reset()
+	if mode_session == null:
+		mode_session = ModeSession.new()
+	if not mode_session.start("campaign"):
+		return
+	mode_session.rules["target_lines"] = int(definition.target_lines)
+	campaign_run_active = true
+	campaign_run_planet_id = node_id
+	campaign_completion_processed = false
+	campaign_last_reward_marks = 0
+	block_run_active = false
+	mode_select_visible = false
+	home_visible = false
+	secondary_screen = ""
+	campaign_screen = ""
+	paused = false
+	gravity_clock = 0.0
+	buddy_last_lines = 0
+	clear_flash_time = 0.0
+	clear_flash_count = 0
+	if is_instance_valid(buddy):
+		buddy.set_state("idle", 0.0)
+	queue_redraw()
+
+func _process_campaign_completion() -> void:
+	if not campaign_run_active or campaign_completion_processed or mode_session == null or mode_session.status != ModeSession.STATUS_COMPLETED:
+		return
+	var result: Dictionary = campaign_progress.complete_planet(campaign_run_planet_id, game.lines)
+	if bool(result.get("accepted", false)):
+		campaign_last_reward_marks = int(result.get("reward_marks", 0))
+		if not CampaignStore.save_progress(campaign_progress):
+			push_warning("Campaign progress could not be saved to user profile storage.")
+	campaign_completion_processed = true
+	queue_redraw()
+
+func _return_to_campaign_route() -> void:
+	if campaign_run_planet_id < 1:
+		return
+	campaign_universe = int((campaign_run_planet_id - 1) / CampaignProgress.PLANETS_PER_UNIVERSE)
+	campaign_planet = ((campaign_run_planet_id - 1) % CampaignProgress.PLANETS_PER_UNIVERSE) + 1
+	campaign_screen = "route"
+	campaign_run_active = false
+	campaign_completion_processed = false
+	mode_select_visible = false
+	home_visible = false
+	paused = false
+	queue_redraw()
+
 func _campaign_universe_name(index: int) -> String:
 	var names := ["ЗЕЛЁНЫЕ РАВНИНЫ", "КАРАВАН ЗВЁЗД", "ОГНЕННЫЕ ЗЕМЛИ", "ЛЕДЯНАЯ КОРОНА", "ЛУННАЯ КОЛОНИЯ", "КРЫЛЬЯ ЭКСПЕДИЦИИ", "ПЕСКИ ВРЕМЕНИ", "ВРАТА МЕЖДУМИРЬЯ", "НЕБЕСНЫЙ АРХИПЕЛАГ", "СТАНЦИЯ ДРОНОВ", "КОСМИЧЕСКИЙ РАЗЛОМ", "ДАЛЬНИЙ РУБЕЖ"]
 	return names[clampi(index, 0, names.size() - 1)]
 
+func _campaign_global_planet_id(universe_index: int, planet_number: int) -> int:
+	return universe_index * CampaignProgress.PLANETS_PER_UNIVERSE + planet_number
+
 func _campaign_planet_is_unlocked(universe_index: int, planet_number: int) -> bool:
-	# The first node is the playable campaign entry point. Progression persistence
-	# and unlock receipts are intentionally a separate follow-up milestone.
-	return universe_index == 0 and planet_number == 1
+	if campaign_progress == null:
+		return universe_index == 0 and planet_number == 1
+	var node_id := _campaign_global_planet_id(universe_index, planet_number)
+	return campaign_progress.get_planet_status(node_id) == "current"
 
 func _draw_campaign_screen() -> void:
 	campaign_back_rect = Rect2(16.0, 14.0, 104.0, 40.0)
@@ -757,7 +838,10 @@ func _draw_campaign_atlas() -> void:
 		var row := index / columns
 		var rect := Rect2(margin + float(col) * (card_w + gap), top + float(row) * (card_h + gap), card_w, card_h)
 		campaign_atlas_rects.append(rect)
-		var unlocked := index == 0
+		var universe_progress: Dictionary = campaign_progress.get_universe_progress(index) if campaign_progress != null else {"unlocked": index == 0, "current": index == 0, "completed": false, "completed_count": 0}
+		var unlocked := bool(universe_progress.get("unlocked", false))
+		var is_current := bool(universe_progress.get("current", false))
+		var is_completed := bool(universe_progress.get("completed", false))
 		var fills := [Color("#286e69"),Color("#246d83"),Color("#a44f35"),Color("#356b9e"),Color("#88704a"),Color("#3b62a0"),Color("#8a6740"),Color("#67519a"),Color("#397f8c"),Color("#53647d"),Color("#5c4c98"),Color("#87527e")]
 		var accents := [Color("#83edbf"),Color("#55ddff"),Color("#ff9a68"),Color("#a8e5ff"),Color("#ffd05a"),Color("#8ebcff"),Color("#e4c18c"),Color("#a77bff"),Color("#8af0e8"),Color("#b6c9df"),Color("#c1a5ff"),Color("#ff8fbd")]
 		_draw_soft_panel(rect, fills[index] if unlocked else fills[index].darkened(0.42), accents[index] if unlocked else Color("#5c7394"), 13, 5)
@@ -770,7 +854,7 @@ func _draw_campaign_atlas() -> void:
 		draw_string(font, Vector2(tx, rect.position.y + (25.0 if compact else 34.0)), "ВСЕЛЕННАЯ %02d" % (index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, accents[index])
 		draw_string(font, Vector2(tx, rect.position.y + (43.0 if compact else 59.0)), _campaign_universe_name(index), HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 10, Color("#ffffff"))
 		draw_string(font, Vector2(tx, rect.position.y + (62.0 if compact else 83.0)), "ПЛАНЕТЫ %03d–%03d" % [index * 30 + 1, (index + 1) * 30], HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 9, Color("#d7eaff"))
-		draw_string(font, Vector2(tx, rect.position.y + (75.0 if compact else 112.0)), "ОТКРЫТА" if unlocked else "ЗАКРЫТА", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a") if unlocked else Color("#9bb2d0"))
+		draw_string(font, Vector2(tx, rect.position.y + (75.0 if compact else 112.0)), "ПРОЙДЕНА" if is_completed else ("ТЕКУЩАЯ" if is_current else ("ОТКРЫТА" if unlocked else "ЗАКРЫТА")), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a") if is_current else (Color("#8ef4d3") if is_completed else Color("#9bb2d0")))
 	_center_text("ПЕРВЫЙ МИР ДОСТУПЕН ДЛЯ ИССЛЕДОВАНИЯ", screen_size.y - 14.0, 9, Color("#b9eaff"))
 
 func _draw_campaign_route() -> void:
@@ -807,14 +891,20 @@ func _draw_campaign_route() -> void:
 		draw_line(positions[index], positions[index + 1], Color("#5c91c4"), 2.0)
 	for index in range(30):
 		var pos := positions[index]
-		var unlocked := _campaign_planet_is_unlocked(campaign_universe, index + 1)
+		var node_id := _campaign_global_planet_id(campaign_universe, index + 1)
+		var node_status := campaign_progress.get_planet_status(node_id) if campaign_progress != null else ("current" if node_id == 1 else "locked")
+		var unlocked := node_status == "current"
+		var completed := node_status == "completed"
 		var boss := (index + 1) % 10 == 0
 		var node_radius := 10.0 if compact else 14.0
 		var node_rect := Rect2(pos - Vector2.ONE * (node_radius + 3.0), Vector2.ONE * (node_radius + 3.0) * 2.0)
 		campaign_node_rects.append(node_rect)
-		draw_circle(pos, node_radius, Color("#9a6b22") if unlocked else Color("#193e70"))
+		draw_circle(pos, node_radius, Color("#145d61") if completed else (Color("#9a6b22") if unlocked else Color("#193e70")))
 		draw_arc(pos, node_radius, 0.0, TAU, 32, Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else Color("#496b9c")), 2.0, true)
-		if unlocked:
+		if completed:
+			draw_line(pos + Vector2(-4,0), pos + Vector2(-1,4), Color("#ffffff"), 2.0)
+			draw_line(pos + Vector2(-1,4), pos + Vector2(5,-4), Color("#ffffff"), 2.0)
+		elif unlocked:
 			draw_circle(pos, 3.0, Color("#ffffff"))
 		elif boss:
 			draw_line(pos + Vector2(-4,-4), pos + Vector2(4,4), Color("#ff8fbd"), 1.5)
@@ -823,7 +913,11 @@ func _draw_campaign_route() -> void:
 	_center_text("НАЖМИ НА ОТКРЫТУЮ ПЛАНЕТУ", screen_size.y - 7.0, 8, Color("#b9eaff"))
 
 func _draw_campaign_planet() -> void:
-	var unlocked := _campaign_planet_is_unlocked(campaign_universe, campaign_planet)
+	var node_id := _campaign_global_planet_id(campaign_universe, campaign_planet)
+	var definition: Dictionary = campaign_progress.get_planet_definition(node_id) if campaign_progress != null else {"target_lines": 8, "reward_marks": 1}
+	var planet_status := campaign_progress.get_planet_status(node_id) if campaign_progress != null else ("current" if node_id == 1 else "locked")
+	var unlocked := planet_status == "current"
+	var completed := planet_status == "completed"
 	_center_text("ПЛАНЕТА %03d" % campaign_planet, 112.0, 24, Color("#fff0b9"))
 	_center_text(_campaign_universe_name(campaign_universe), 137.0, 10, Color("#c4edff"))
 	var center := Vector2(screen_size.x * 0.5, screen_size.y * 0.34)
@@ -837,11 +931,11 @@ func _draw_campaign_planet() -> void:
 	var info := Rect2(20.0, screen_size.y * 0.52, screen_size.x - 40.0, 104.0)
 	_draw_soft_panel(info, Color("#102f68"), Color("#55ddff"), 17, 7)
 	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
-	draw_string(font, info.position + Vector2(14,51), "Собери фигуры и очисти поле", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
-	draw_string(font, info.position + Vector2(14,75), "НАГРАДА  •  250 ✦", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffd05a"))
+	draw_string(font, info.position + Vector2(14,51), "ОЧИСТИ %d ЛИНИЙ" % int(definition.get("target_lines", 8)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
+	draw_string(font, info.position + Vector2(14,75), "НАГРАДА  •  %d МЕТОК" % int(definition.get("reward_marks", 1)), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffd05a"))
 	campaign_start_rect = Rect2(26.0, screen_size.y * 0.72, screen_size.x - 52.0, 58.0)
 	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
-	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else "УРОВЕНЬ ЗАКРЫТ", campaign_start_rect, 12, Color("#ffffff"))
+	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else ("УРОВЕНЬ ПРОЙДЕН" if completed else "УРОВЕНЬ ЗАКРЫТ"), campaign_start_rect, 12, Color("#ffffff"))
 	_center_text("ПРОГРЕСС ОТКРЫТИЯ БУДЕТ СОХРАНЯТЬСЯ", screen_size.y * 0.86, 8, Color("#b9eaff"))
 
 
@@ -1212,7 +1306,11 @@ func _draw_mode_complete() -> void:
 	_center_text("ОЧИЩЕНО ЛИНИЙ • %d" % target, screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
 	_center_text("ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
 	_center_text("ОЧКИ  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
-	_center_text("НАЖМИ, ЧТОБЫ СЫГРАТЬ ЕЩЁ", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
+	if campaign_run_active:
+		_center_text("НАГРАДА  •  +%d МЕТОК" % campaign_last_reward_marks, screen_size.y * 0.5 + 72.0, 13, Color("#ffd05a"))
+		_center_text("НАЖМИ, ЧТОБЫ ВЕРНУТЬСЯ К КАРТЕ", screen_size.y * 0.5 + 104.0, 10, Color("#b9eaff"))
+	else:
+		_center_text("НАЖМИ, ЧТОБЫ СЫГРАТЬ ЕЩЁ", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
 func _game_over_title() -> String:
 	return _mode_display_name(mode_session.mode_id) + " — НЕ ВЫПОЛНЕН" if _is_line_objective_mode() else "ИГРА ОКОНЧЕНА"
