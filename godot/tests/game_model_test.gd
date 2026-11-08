@@ -282,6 +282,10 @@ func _run() -> void:
 	save_source.hard_drop()
 	save_source.hold_piece()
 	save_source.move_horizontal(1)
+	save_source.piece_bag.clear()
+	save_source.peek_next_piece_type()
+	if not _check(save_source.piece_bag.size() == Model.SHAPES.size(), "A preview at the seven-bag boundary must refill the full queue"):
+		return
 	var saved_state: Dictionary = save_source.to_save_data()
 	var restored_model: BlockBuddiesModel = Model.new()
 	restored_model.reset()
@@ -339,7 +343,7 @@ func _run() -> void:
 		return
 	var locked_type: int = lock_model.active_type
 	lock_model.tick()
-	if not _check(lock_model.grid[Model.HEIGHT - 2][5] == locked_type and lock_model.grid[Model.HEIGHT - 1][4] == locked_type and lock_model.grid[Model.HEIGHT - 1][5] == locked_type, "Tick at the floor must lock all four cells into the board"):
+	if not _check(lock_model.grid[Model.HEIGHT - 2][4] == locked_type and lock_model.grid[Model.HEIGHT - 2][5] == locked_type and lock_model.grid[Model.HEIGHT - 1][4] == locked_type and lock_model.grid[Model.HEIGHT - 1][5] == locked_type, "Tick at the floor must lock all four cells into the board"):
 		return
 	if not _check(not lock_model.game_over and lock_model.active_cells.size() == 4, "Successful lock must spawn the next active piece"):
 		return
