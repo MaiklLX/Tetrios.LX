@@ -40,6 +40,7 @@ var paused := false
 var pause_rect := Rect2()
 var resume_rect := Rect2()
 var hold_rect := Rect2()
+var drop_rect := Rect2()
 var touch_start := Vector2.ZERO
 var touch_start_msec := 0
 var touch_active := false
@@ -60,6 +61,7 @@ func _layout() -> void:
 	screen_size = get_viewport_rect().size
 	var board_metrics := _board_metrics(screen_size)
 	board_rect = board_metrics.board_rect
+	drop_rect = _drop_button_layout(screen_size, board_rect)
 	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
 	var resume_width := minf(220.0, screen_size.x - 64.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
@@ -101,6 +103,14 @@ func _board_metrics(viewport: Vector2) -> Dictionary:
 		"cell": cell,
 		"board_rect": Rect2(board_position, board_size)
 	}
+
+func _drop_button_layout(viewport: Vector2, board: Rect2) -> Rect2:
+	# Reserve a compact, always-visible hard-drop target in the right gutter.
+	# The board remains unchanged and the button never overlaps its 10x23 cells.
+	var width := minf(68.0, viewport.x - board.end.x - 14.0)
+	if width < 42.0:
+		return Rect2()
+	return Rect2(Vector2(board.end.x + 6.0, board.end.y - 50.0), Vector2(width, 44.0))
 
 func _buddy_layout_for_gutter(gutter_width: float) -> Dictionary:
 	return {
@@ -373,6 +383,8 @@ func _handle_tap(point: Vector2) -> void:
 			activate_block_run_hero_skill()
 		elif hold_rect.has_point(point):
 			game.hold_piece()
+		elif drop_rect.has_point(point):
+			game.hard_drop()
 		elif board_rect.has_point(point):
 			# A single unambiguous tap always rotates; hard drop is swipe-only.
 			game.rotate_piece()
@@ -435,6 +447,7 @@ func _draw() -> void:
 	_draw_stats()
 	_draw_piece_previews()
 	_draw_board()
+	_draw_drop_button()
 	if block_run_active and block_run_session != null:
 		_draw_block_run_goals()
 	if _block_run_draft_is_open():
@@ -626,6 +639,18 @@ func _draw_piece_previews() -> void:
 		block_run_skill_rect = Rect2()
 		_draw_preview_card(hold_rect, "ЗАПАС", game.held_type)
 		_draw_preview_card(Rect2(start_x + card_width + gap, top, card_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
+
+func _draw_drop_button() -> void:
+	if drop_rect.size.x < 42.0:
+		return
+	var enabled := not paused and not game.game_over and not _mode_finished() and not _block_run_draft_is_open()
+	var fill := Color("#3b241b") if enabled else Color("#172335")
+	var accent := Color("#ff9b57") if enabled else Color("#60758b")
+	draw_rect(drop_rect, fill)
+	draw_rect(drop_rect, accent, false, 1.5)
+	var label_size := 10 if drop_rect.size.x >= 54.0 else 8
+	var label_width := font.get_string_size("DROP", HORIZONTAL_ALIGNMENT_LEFT, -1, label_size).x
+	draw_string(font, drop_rect.get_center() + Vector2(-label_width * 0.5, 4.0), "DROP", HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#fff4e8"))
 
 func _hero_display_name(hero_id: String) -> String:
 	match hero_id:
