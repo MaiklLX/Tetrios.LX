@@ -8,6 +8,27 @@ const MAX_CARD_RANK := 5
 static func _rank(ranks: Dictionary, card_id: String) -> int:
 	return clampi(int(ranks.get(card_id, 0)), 0, MAX_CARD_RANK)
 
+static func on_card_drafted(ranks: Dictionary, card_id: String, current_need_lines: int, current_drop_ms: int, current_hold_used: int) -> Dictionary:
+	var next_need := current_need_lines
+	var next_drop := current_drop_ms
+	var next_shield_charges := 0
+	var next_reserve_charges := 0
+	if card_id == "loop":
+		next_need = maxi(3, current_need_lines - 1)
+	if card_id == "slow":
+		next_drop = maxi(150, current_drop_ms - 30)
+	if card_id == "shield" or card_id == "armor":
+		next_shield_charges = _rank(ranks, "shield") + _rank(ranks, "armor")
+	if card_id == "reserve":
+		next_reserve_charges = _rank(ranks, "reserve")
+	return {
+		"need_lines":next_need,
+		"drop_ms":next_drop,
+		"hold_used":0 if card_id == "hold" else current_hold_used,
+		"shield_charges":next_shield_charges,
+		"reserve_charges":next_reserve_charges
+	}
+
 static func hold_limit(ranks: Dictionary) -> int:
 	return 1 + _rank(ranks, "hold")
 
