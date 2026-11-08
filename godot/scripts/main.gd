@@ -717,8 +717,12 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		min_y = mini(min_y, cell_pos.y)
 		max_x = maxi(max_x, cell_pos.x)
 		max_y = maxi(max_y, cell_pos.y)
-	var mini_cell := minf(12.0, minf((rect.size.x - 56.0) / 4.0, (rect.size.y - 24.0) / 4.0))
-	var piece_size := Vector2((max_x - min_x + 1) * mini_cell, (max_y - min_y + 1) * mini_cell)
+	# Fit the actual tetromino bounds instead of reserving a fixed 4x4 square.
+	# Compact shapes (T/L/O) become noticeably larger; tall I pieces still fit safely.
+	var shape_width := float(max_x - min_x + 1)
+	var shape_height := float(max_y - min_y + 1)
+	var mini_cell := minf(16.0, minf((rect.size.x - 40.0) / shape_width, (rect.size.y - 30.0) / shape_height))
+	var piece_size := Vector2(shape_width * mini_cell, shape_height * mini_cell)
 	var piece_origin := Vector2(rect.position.x + rect.size.x - 30.0, rect.position.y + rect.size.y * 0.67) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
