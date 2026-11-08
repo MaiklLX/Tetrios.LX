@@ -39,7 +39,8 @@ func _layout() -> void:
 	var board_metrics := _board_metrics(screen_size)
 	board_rect = board_metrics.board_rect
 	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
-	resume_rect = Rect2(screen_size.x * 0.5 - 110.0, screen_size.y * 0.5 + 22.0, 220.0, 62.0)
+	var resume_width := minf(220.0, screen_size.x - 64.0)
+	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
 	if is_instance_valid(buddy):
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
@@ -326,19 +327,38 @@ func _draw_pause_button() -> void:
 		draw_rect(Rect2(center + Vector2(-8, -10), Vector2(5, 20)), Color("#f4f8ff"))
 		draw_rect(Rect2(center + Vector2(3, -10), Vector2(5, 20)), Color("#f4f8ff"))
 
+func _draw_overlay_panel(rect: Rect2, accent: Color) -> void:
+	draw_rect(rect.grow(9.0), Color(accent.r, accent.g, accent.b, 0.07))
+	draw_rect(rect, Color("#081525"))
+	draw_rect(rect, Color(0.20, 0.52, 0.72, 0.72), false, 1.5)
+	draw_rect(Rect2(rect.position, Vector2(rect.size.x, 4.0)), accent)
+	draw_line(rect.position + Vector2(16.0, 14.0), Vector2(rect.end.x - 16.0, rect.position.y + 14.0), Color(0.58, 0.82, 0.96, 0.12), 1.0)
+
 func _draw_pause_overlay() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
-	_center_text("PAUSED", screen_size.y * 0.47, 38, Color("#ffffff"))
-	draw_rect(resume_rect, Color("#10243a"))
+	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, 128.0), Vector2(320.0, 256.0))
+	panel.position.x = maxf(20.0, panel.position.x)
+	panel.size.x = minf(320.0, screen_size.x - 40.0)
+	_draw_overlay_panel(panel, Color("#45d9f5"))
+	_center_text("PAUSED", screen_size.y * 0.5 - 38.0, 34, Color("#f4f8ff"))
+	_center_text("YOUR RUN IS ON HOLD", screen_size.y * 0.5 - 8.0, 13, Color("#83a3bd"))
+	draw_rect(resume_rect, Color("#102c45"))
 	draw_rect(resume_rect, Color("#45d9f5"), false, 2.0)
 	var label := "RESUME"
-	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x
-	draw_string(font, resume_rect.get_center() + Vector2(-width * 0.5, 7), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("#f4f8ff"))
+	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x
+	draw_string(font, resume_rect.get_center() + Vector2(-width * 0.5, 6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#f4f8ff"))
 
 func _draw_game_over() -> void:
-	draw_rect(Rect2(Vector2(0, 0), screen_size), Color(0.01, 0.02, 0.04, 0.78))
-	_center_text("RUN OVER", screen_size.y * 0.47, 38, Color("#ffffff"))
-	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.47 + 48, 16, Color("#45d9f5"))
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
+	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, 142.0), Vector2(320.0, 284.0))
+	panel.position.x = maxf(20.0, panel.position.x)
+	panel.size.x = minf(320.0, screen_size.x - 40.0)
+	_draw_overlay_panel(panel, Color("#ff9b57"))
+	_center_text("RUN OVER", screen_size.y * 0.5 - 70.0, 34, Color("#f4f8ff"))
+	_center_text("SCORE", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
+	_center_text(str(game.score), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
+	_center_text("LINES CLEARED  •  %d" % game.lines, screen_size.y * 0.5 + 36.0, 13, Color("#c0d3e2"))
+	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
 
 func _center_text(value: String, y: float, size: int, color: Color) -> void:
 	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
