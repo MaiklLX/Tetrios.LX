@@ -115,7 +115,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_copy_json_container(raw, "bb_equippedChestCosmetics", cosmetics, "equipped_by_hero", TYPE_DICTIONARY, result)
 	_read_non_negative_json_int(raw, "bb_collectionFragments", cosmetics, "fragments", result, 0)
 
-	if not cosmetics.has("equipped_by_hero") and raw.has("bb_equippedChestCosmetic"):
+	if cosmetics["equipped_by_hero"].is_empty() and raw.has("bb_equippedChestCosmetic"):
 		var legacy_cosmetic: Variant = _read_value(raw, "bb_equippedChestCosmetic", false)
 		if typeof(legacy_cosmetic) == TYPE_STRING and not legacy_cosmetic.is_empty():
 			cosmetics["equipped_by_hero"] = {str(heroes["selected_id"]): legacy_cosmetic}
@@ -166,8 +166,11 @@ static func _read_value(raw: Dictionary, key: String, json_encoded: bool) -> Var
 	if typeof(value) != TYPE_STRING:
 		return value
 	if json_encoded:
-		var parsed: Variant = JSON.parse_string(value)
-		return parsed
+		var json_parser := JSON.new()
+		var parse_error: Error = json_parser.parse(value)
+		if parse_error != OK:
+			return null
+		return json_parser.data
 	return value
 
 static func _is_non_negative_int(value: Variant) -> bool:
