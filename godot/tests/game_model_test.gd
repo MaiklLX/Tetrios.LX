@@ -124,6 +124,7 @@ func _run() -> void:
 	mode_main.mode_session.start("sprint")
 	mode_main.mode_select_visible = false
 	mode_main.buddy = Buddy.new()
+	mode_main.add_child(mode_main.buddy)
 	mode_main.game.lines = 39
 	if not _check(is_equal_approx(mode_main._objective_progress_ratio(), 0.975), "Sprint HUD progress must show 97.5 percent at 39 of 40 lines"):
 		return
@@ -190,11 +191,13 @@ func _run() -> void:
 	buddy_probe.set_state("not-a-state", 1.0)
 	if not _check(buddy_probe.state == "idle", "Buddy should ignore unsupported reaction states"):
 		return
+	buddy_probe.free()
 
 	var feedback_probe = Main.new()
 	feedback_probe.game = Model.new()
 	feedback_probe.game.reset()
 	feedback_probe.buddy = Buddy.new()
+	feedback_probe.add_child(feedback_probe.buddy)
 	feedback_probe._sync_buddy_state()
 	feedback_probe.game.lines = 2
 	feedback_probe._sync_buddy_state()
@@ -206,6 +209,11 @@ func _run() -> void:
 	feedback_probe._sync_buddy_state()
 	if not _check(feedback_probe.clear_flash_count == 4 and feedback_probe.buddy.state == "victory", "Four-line clear should trigger the special Buddy bonus reaction"):
 		return
+	feedback_probe.game.game_over = true
+	feedback_probe._sync_buddy_state()
+	if not _check(feedback_probe.buddy.state == "surprised", "Game over should trigger the Buddy surprised reaction"):
+		return
+	feedback_probe.free()
 
 	var layout_probe = Main.new()
 	layout_probe.mode_select_visible = false
