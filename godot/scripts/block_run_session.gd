@@ -16,7 +16,9 @@ var run_seconds := 0
 var total_lines := 0
 var score := 0
 var level_charge := 0
+var level := 1
 var need_lines := 5
+var pending_card_draft: Array[Dictionary] = []
 var drop_interval_ms := 780
 var relics := 0
 var placement_count := 0
@@ -37,7 +39,9 @@ func start() -> void:
 	total_lines = 0
 	score = 0
 	level_charge = 0
+	level = 1
 	need_lines = 5
+	pending_card_draft.clear()
 	drop_interval_ms = 780
 	relics = 0
 	placement_count = 0
@@ -116,7 +120,7 @@ func goal_states() -> Array[Dictionary]:
 	return result
 
 func choose_card(card_id: String) -> bool:
-	if status != STATUS_RUNNING or not encounter.choose_card(card_id):
+	if status != STATUS_RUNNING or (not pending_card_draft.is_empty() and not _draft_contains(card_id)) or not encounter.choose_card(card_id):
 		return false
 	var draft := Effects.on_card_drafted(encounter.card_ranks, card_id, need_lines, drop_interval_ms, hold_used)
 	need_lines = int(draft.need_lines)
@@ -124,7 +128,36 @@ func choose_card(card_id: String) -> bool:
 	hold_used = int(draft.hold_used)
 	if card_id == "shield" or card_id == "armor":
 		shield_charges = int(draft.shield_charges)
+	if not pending_card_draft.is_empty():
+		pending_card_draft.clear()
 	return true
+
+func _draft_contains(card_id: String) -> bool:
+	for card in pending_card_draft:
+		if str(card.get("id", "")) == card_id:
+			return true
+	return pending_card_draft.is_empty()
+
+func _check_level_up() -> Array[Dictionary]:
+	if status != STATUS_RUNNING or not pending_card_draft.is_empty() or level_charge < need_lines:
+		return []
+	level_charge -= need_lines
+	level += 1
+	var chrono_synergy := encounter.get_card_rank("slow") > 0 and encounter.get_card_rank("memory") > 0
+	need_lines = clampi(ceili(float(need_lines) * 1.12 + float(level - 1) * 0.12) - encounter.get_card_rank("memory") - encounter.get_card_rank("loop") - (1 if chrono_synergy else 0), 3, 8)
+	drop_interval_ms = maxi(130, drop_interval_ms - 48 - level * 3 + 15 * encounter.get_card_rank("fortress") + 25 * encounter.get_card_rank("slow") + (12 if chrono_synergy else 0))
+	var pool := encounter.card_catalog()
+	pool.shuffle()
+	for card in pool:
+		if encounter.get_card_rank(str(card.get("id", ""))) < Encounter.MAX_CARD_RANK and pending_card_draft.size() < 3:
+			pending_card_draft.append(card.duplicate(true))
+	return pending_card_draft.duplicate(true)
+
+func draft_card_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for card in pending_card_draft:
+		ids.append(str(card.get("id", "")))
+	return ids
 
 func on_piece_locked() -> Dictionary:
 	if status != STATUS_RUNNING:
@@ -155,7 +188,8 @@ func on_line_clear(cleared: int, combo_after_clear: int, level: int) -> Dictiona
 	)
 	total_lines = next_total
 	score += int(result.score)
-	level_charge += int(result.level_charge)
+	level_charge += cleared + int(result.level_charge)
+	var draft_cards := _check_level_up()
 	relics += int(result.relics_added)
 	var damage := encounter.damage_enemy(int(result.monster_damage))
 	var rows_cleared := 0
@@ -178,7 +212,11 @@ func on_line_clear(cleared: int, combo_after_clear: int, level: int) -> Dictiona
 		"relics_added":int(result.relics_added),
 		"flash":bool(result.flash),
 		"reset_drop":bool(result.reset_drop),
-		"goal_events":goal_events
+		"goal_events":goal_events,
+		"level":level,
+		"level_charge":level_charge,
+		"need_lines":need_lines,
+		"draft_cards":draft_cards
 	}
 
 func advance_second() -> Dictionary:
@@ -189,6 +227,7 @@ func advance_second() -> Dictionary:
 	var timer_effect := Effects.on_timer_second(encounter.card_ranks, run_seconds)
 	score += int(timer_effect.score_bonus)
 	level_charge += int(timer_effect.level_charge)
+	var draft_cards := _check_level_up()
 	var goal_events := _settle_completed_goals()
 	encounter.next_attack_seconds -= 1
 	if encounter.next_attack_seconds > 0:
@@ -197,7 +236,11 @@ func advance_second() -> Dictionary:
 			"attack":false,
 			"score_bonus":int(timer_effect.score_bonus),
 			"level_charge":int(timer_effect.level_charge),
-			"goal_events":goal_events
+			"goal_events":goal_events,
+			"draft_cards":draft_cards,
+			"level":level,
+			"level_charge":level_charge,
+			"need_lines":need_lines
 		}
 	var attack := encounter.resolve_enemy_attack()
 	var insertion := {"valid":true,"overflow":false,"inserted":0}
@@ -215,7 +258,11 @@ func advance_second() -> Dictionary:
 		"failed":status == STATUS_FAILED,
 		"score_bonus":int(timer_effect.score_bonus),
 		"level_charge":int(timer_effect.level_charge),
-		"goal_events":goal_events
+		"goal_events":goal_events,
+		"draft_cards":draft_cards,
+		"level":level,
+		"level_charge":level_charge,
+		"need_lines":need_lines
 	}
 
 
@@ -261,6 +308,7 @@ func use_hero_skill(hero_id: String, hero_level: int) -> Dictionary:
 			result.rows_cleared = int(cleared.cleared)
 			level_charge += tier
 			result.level_charge_added = tier
+			result.draft_cards = _check_level_up()
 		_:
 			return {"accepted":false,"reason":"unknown_hero"}
 	hero_skill_cooldown_seconds = 45
