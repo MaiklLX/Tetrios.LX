@@ -106,7 +106,7 @@ func _layout() -> void:
 		# Anchor the companion flush to the left gutter; never let its sprite intrude into the board frame.
 		buddy.position = Vector2(0.0, board_rect.position.y + 18.0)
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-		buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and not mode_select_visible and campaign_screen.is_empty() and not _block_run_draft_is_open() and not result_overlay_visible
+		buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not mode_select_visible and campaign_screen.is_empty() and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
 
 
@@ -185,7 +185,7 @@ func _process(delta: float) -> void:
 		return
 	if block_run_active:
 		_process_block_run_events()
-		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() else 0.0)
+		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() else 0.0)
 	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not block_run_active:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
 	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
@@ -324,7 +324,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		if mode_select_visible:
 			if event.keycode == KEY_ESCAPE:
 				mode_select_visible = false
-				home_visible = true
+				if campaign_launch_pending:
+					campaign_screen = "planet"
+					home_visible = false
+				else:
+					home_visible = true
 				queue_redraw()
 			elif event.keycode == KEY_1:
 				_select_mode("classic")
@@ -524,6 +528,7 @@ func _select_mode(requested_mode_id: String) -> void:
 	home_visible = false
 	secondary_screen = ""
 	campaign_screen = ""
+	campaign_launch_pending = false
 	paused = false
 	gravity_clock = 0.0
 	buddy_last_lines = 0
