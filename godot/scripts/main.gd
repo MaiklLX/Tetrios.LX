@@ -189,7 +189,7 @@ func _advance_block_run_clock(delta: float) -> void:
 	if not block_run_active or block_run_session == null or delta <= 0.0 or block_run_session.status != BlockRunSession.STATUS_RUNNING or _block_run_draft_is_open():
 		return
 	block_run_clock += delta
-	while block_run_clock >= 1.0 and block_run_session.status == BlockRunSession.STATUS_RUNNING:
+	while block_run_clock >= 1.0 and block_run_session.status == BlockRunSession.STATUS_RUNNING and not _block_run_draft_is_open():
 		block_run_clock -= 1.0
 		if not BlockRunBridge.sync_model_to_session(game, block_run_session):
 			block_run_session.status = BlockRunSession.STATUS_FAILED
