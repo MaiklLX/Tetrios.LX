@@ -419,7 +419,31 @@ func _hero_portrait(center: Vector2, hero: int, scale := 1.0) -> void:
 	for eye_x in [-13.0, 13.0]:
 		draw_circle(center + Vector2(eye_x, -2) * s, 4.5*s, Color("#092b61"))
 		draw_circle(center + Vector2(eye_x-1,-4)*s, 1.5*s, WHITE)
-	draw_arc(center + Vector2(0, 9)*s, 10*s, 0.25, 2.9, 18, Color("#092b61"), 2.5*s, true)
+	# Individual signature details make each silhouette readable at thumbnail size.
+	match hero:
+		0: # Plush — soft rounded ears and a warm smile.
+			draw_arc(center + Vector2(0, 9)*s, 10*s, 0.25, 2.9, 18, Color("#092b61"), 2.5*s, true)
+			draw_circle(center + Vector2(-34, 18)*s, 5*s, Color("#ff9ab8"))
+			draw_circle(center + Vector2(34, 18)*s, 5*s, Color("#ff9ab8"))
+		1: # Prism — crystalline brow and faceted cheek marks.
+			draw_line(center+Vector2(-20,-15)*s,center+Vector2(-8,-21)*s,WHITE,2.5*s)
+			draw_line(center+Vector2(8,-21)*s,center+Vector2(20,-15)*s,WHITE,2.5*s)
+			draw_colored_polygon(PackedVector2Array([center+Vector2(-34,12)*s,center+Vector2(-25,5)*s,center+Vector2(-22,18)*s]),Color("#e4c7ff"))
+			draw_colored_polygon(PackedVector2Array([center+Vector2(34,12)*s,center+Vector2(25,5)*s,center+Vector2(22,18)*s]),Color("#e4c7ff"))
+			draw_arc(center + Vector2(0, 10)*s, 8*s, 0.3, 2.8, 16, Color("#092b61"), 2*s, true)
+		2: # Blip — antenna, side fins and curious expression.
+			draw_colored_polygon(PackedVector2Array([center+Vector2(-40,-10)*s,center+Vector2(-53,-20)*s,center+Vector2(-49,5)*s]),Color("#8ef4d3"))
+			draw_colored_polygon(PackedVector2Array([center+Vector2(40,-10)*s,center+Vector2(53,-20)*s,center+Vector2(49,5)*s]),Color("#8ef4d3"))
+			draw_circle(center+Vector2(0,12)*s,4*s,Color("#092b61"))
+		3: # Pixel — stepped visor and square grin.
+			draw_rect(Rect2(center+Vector2(-24,-17)*s,Vector2(48,5)*s),Color("#ffe7a0"))
+			draw_rect(Rect2(center+Vector2(-9,11)*s,Vector2(18,5)*s),Color("#092b61"))
+		4: # Spark — star sparks and a bright confident smile.
+			draw_line(center+Vector2(-38,-20)*s,center+Vector2(-38,-34)*s,GOLD,3*s)
+			draw_line(center+Vector2(-45,-27)*s,center+Vector2(-31,-27)*s,GOLD,3*s)
+			draw_line(center+Vector2(38,-20)*s,center+Vector2(38,-34)*s,GOLD,3*s)
+			draw_line(center+Vector2(31,-27)*s,center+Vector2(45,-27)*s,GOLD,3*s)
+			draw_arc(center + Vector2(0, 8)*s, 12*s, 0.25, 2.9, 18, Color("#092b61"), 3*s, true)
 
 func _draw_campaign() -> void:
 	_center("КОСМИЧЕСКИЙ АТЛАС", 150, 30, GOLD)
