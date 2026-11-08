@@ -106,7 +106,7 @@ func _layout() -> void:
 		# Anchor the companion flush to the left gutter; never let its sprite intrude into the board frame.
 		buddy.position = Vector2(0.0, board_rect.position.y + 18.0)
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-		buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and not mode_select_visible and not _block_run_draft_is_open() and not result_overlay_visible
+		buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and not mode_select_visible and campaign_screen.is_empty() and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
 
 
@@ -186,9 +186,9 @@ func _process(delta: float) -> void:
 	if block_run_active:
 		_process_block_run_events()
 		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() else 0.0)
-	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and not block_run_active:
+	if mode_session != null and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not block_run_active:
 		mode_session.update(delta if not paused else 0.0, game.lines, game.game_over)
-	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
+	if not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not game.game_over and not paused and not _block_run_draft_is_open() and (mode_session == null or mode_session.is_running()):
 		gravity_interval = float(block_run_session.drop_interval_ms) / 1000.0 if block_run_active and block_run_session != null else _gravity_interval_for_level(game.level)
 		gravity_clock += delta
 		if gravity_clock >= gravity_interval:
@@ -333,7 +333,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif event.keycode == KEY_3:
 				_select_mode("marathon")
 			return
-		if home_visible or not secondary_screen.is_empty():
+		if home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty():
 			return
 		if _block_run_draft_is_open():
 			if event.keycode == KEY_1:
@@ -379,7 +379,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
-	if mode_select_visible or home_visible or not secondary_screen.is_empty() or game == null or game.game_over or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
+	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or game.game_over or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
@@ -409,7 +409,7 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 	return true
 
 func _toggle_pause() -> void:
-	if game == null or game.game_over or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty():
+	if game == null or game.game_over or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty():
 		return
 	paused = not paused
 	queue_redraw()
@@ -523,6 +523,7 @@ func _select_mode(requested_mode_id: String) -> void:
 	mode_select_visible = false
 	home_visible = false
 	secondary_screen = ""
+	campaign_screen = ""
 	paused = false
 	gravity_clock = 0.0
 	buddy_last_lines = 0
