@@ -510,19 +510,25 @@ func _draw_daily() -> void:
 	var days := ["ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"]
 	for col in range(7):
 		_center_card_text(days[col], Rect2(38+col*92, 0, 90, 20), 505, 11, PALE)
-	for day in range(30):
-		var col := day % 7
-		var row := day / 7
+	# November 2026 starts on Sunday; offset the first date into the final column.
+	# The highlighted current date is the 8th; earlier dates show completed stamps.
+	var first_weekday_offset := 6
+	for slot in range(36):
+		var day := slot - first_weekday_offset
+		if day < 0 or day >= 30:
+			continue
+		var col := slot % 7
+		var row := slot / 7
 		var x := 48.0 + col * 91.0
-		var y := 530.0 + row * 91.0
+		var y := 530.0 + row * 78.0
 		var active := day == 7
 		var complete := day < 7
 		var fill := Color("#9a6b22") if active else (Color("#176b83") if complete else Color("#17376b"))
-		_panel(Rect2(x, y, 76, 70), fill, GOLD if active else (CYAN if complete else Color("#496c9d")), 12)
-		_center_card_text(str(day+1), Rect2(x, y, 76, 50), y+29, 18, WHITE)
+		_panel(Rect2(x, y, 76, 66), fill, GOLD if active else (CYAN if complete else Color("#496c9d")), 12)
+		_center_card_text(str(day+1), Rect2(x, y, 76, 48), y+28, 18, WHITE)
 		if complete:
-			draw_circle(Vector2(x+58,y+53), 5, Color("#8ef4d3"))
+			draw_circle(Vector2(x+58,y+51), 5, Color("#8ef4d3"))
 		elif active:
-			draw_circle(Vector2(x+58,y+53), 5, GOLD)
+			draw_circle(Vector2(x+58,y+51), 5, GOLD)
 	_text("● Выполнено     ● Сегодня     ○ Впереди", Vector2(58, 975), 12, PALE)
 	_draw_bottom_nav("ИГРАТЬ")
