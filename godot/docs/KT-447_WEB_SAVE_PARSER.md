@@ -3,7 +3,7 @@
 - Date: 2026-11-08
 - Branch: `godot/kt428-buddy-companion-2026-11-07`
 - Parent audit: KT-446, `SAVE_MIGRATION_CONTRACT.md`
-- Status: **READ-ONLY PARSER IMPLEMENTED / FIXTURES ADDED / CI VALIDATION IN PROGRESS**
+- Status: **READ-ONLY PARSER IMPLEMENTED / FIXTURES PASS / CI SUCCESS**
 - Safety: parser has no filesystem writes, no `user://` access, no Web/localStorage access, and no reward-settlement behavior.
 
 ## Implementation
@@ -43,7 +43,9 @@ Added `godot/tests/fixtures/web_save_profiles.json` with:
 - unknown key preservation;
 - malformed daily reward marker.
 
-The existing Godot model test suite now exercises these fixtures, including input immutability and preservation of the raw source backup.
+The dedicated `web_save_migration_test.gd` suite exercises these fixtures, including input immutability and preservation of the raw source backup. It runs as a separate CI step from gameplay-model tests.
+
+Godot's JSON parser represents numeric JSON values as integral floats in some paths. The validator accepts only finite whole-number floats (as well as integer strings for raw localStorage aliases), then normalizes them to integers in the candidate. Fractional and malformed values remain rejected. The legacy single-slot cosmetic fallback is applied when the default per-hero map is empty; the original key remains in the source backup.
 
 ## Not included / gates remain
 
@@ -54,13 +56,22 @@ The existing Godot model test suite now exercises these fixtures, including inpu
 - No Web code changes, main-branch writes, deployment, APK build, or physical Android validation.
 - This is not yet a full proof of every Web key/value range; it is the first parser slice with representative fixtures. Additional field-specific validators and date/schema constraints remain before production migration.
 
+## CI validation
+
+- Workflow run: `42450365090`
+- Commit: `55e0a8701b97c5b3e45dbcf7576d8d8417504b1c`
+- Godot 4.4.1 import: SUCCESS
+- Main script parse: SUCCESS
+- Gameplay model tests: SUCCESS
+- Web save migration fixture tests: SUCCESS
+- Scene smoke test: SUCCESS
+
 ## Next
 
-1. Resolve any CI issues from the new fixtures.
-2. Add adversarial fixtures for malformed hero maps, invalid perk IDs, daily quest shape drift, reward-marker/history disagreement and unsupported future native versions.
-3. Decide an explicit review UX for coin conflicts before any import can be confirmed.
-4. Only after those tests pass, design atomic profile storage and backup recovery as a separate milestone.
+1. Add adversarial fixtures for malformed hero maps, invalid perk IDs, daily quest shape drift, reward-marker/history disagreement and unsupported future native versions.
+2. Decide an explicit review UX for coin conflicts before any import can be confirmed.
+3. Only after those tests pass, design atomic profile storage and backup recovery as a separate milestone.
 
 ## Recovery phrase
 
-`BLOCK BUDDIES — KT-447. Read-only parser in godot/scripts/web_save_migration.gd; fixtures in godot/tests/fixtures/web_save_profiles.json. Parser accepts a localStorage snapshot, preserves source_backup, reports unknown keys and coin alias conflicts, and never writes storage or grants rewards. CI validation pending. Continue with adversarial fixtures; do not enable disk writes/import or touch main/deploy/build APK without approval.`
+`BLOCK BUDDIES — KT-447. Read-only parser in godot/scripts/web_save_migration.gd; fixtures in godot/tests/fixtures/web_save_profiles.json. Parser accepts a localStorage snapshot, preserves source_backup, reports unknown keys and coin alias conflicts, and never writes storage or grants rewards. CI run 42450365090 passed on 55e0a8701b97c5b3e45dbcf7576d8d8417504b1c. Continue with adversarial fixtures; do not enable disk writes/import or touch main/deploy/build APK without approval.`
