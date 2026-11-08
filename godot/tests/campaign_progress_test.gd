@@ -26,7 +26,7 @@ func _run() -> void:
 	var speed_boss := progress.get_planet_definition(10)
 	var score_boss := progress.get_planet_definition(20)
 	var final_boss := progress.get_planet_definition(30)
-	if not _check(first.universe_index == 0 and first.planet_in_universe == 1 and first.target_lines == 8, "First planet definition must be stable"):
+	if not _check(first.universe_index == 0 and first.planet_in_universe == 1 and first.target_lines == 10, "First planet definition must be stable"):
 		return
 	if not _check(boss.is_boss and boss.planet_in_universe == 30 and boss.reward_marks == 5, "Every tenth planet must be a boss milestone"):
 		return
