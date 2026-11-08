@@ -185,3 +185,10 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Timed enemy attacks synchronize the encounter board back to the live model. Garbage overflow ends the run; the active piece is checked after board shifts.
 - Dedicated tests verify one-time dispatch, no duplicate frame processing, garbage insertion into the visible model board and top-out on overflow. CI run 42473197674 passed all suites and graphical screenshot capture.
 - Full Block Run remains hidden: card draft, hero activation, complete encounter/goals HUD, safe wallet reward settlement and run-end UX are not yet wired. End-to-end live spawn rescue still requires a focused integration test.
+
+
+## 17. KT-476 — Hold spawn-collision event ordering
+- Hold-triggered replacement-piece spawn collisions are now processed even when no piece-lock serial changes.
+- Regression test fills the spawn row, invokes Hold, and verifies the Block Run session reaches its rescue/failure decision path.
+- CI run 42473308354 passed all tests and visual capture stages.
+- Successful live Shield/Nova rescue remains to be verified end-to-end; the mode is still not exposed.
