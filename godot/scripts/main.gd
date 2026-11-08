@@ -21,8 +21,6 @@ var resume_rect := Rect2()
 var hold_rect := Rect2()
 var touch_start := Vector2.ZERO
 var touch_active := false
-var last_board_tap_msec := -1000
-var last_board_tap_position := Vector2(-1000, -1000)
 
 func _ready() -> void:
 	randomize()
@@ -168,15 +166,8 @@ func _handle_tap(point: Vector2) -> void:
 		if hold_rect.has_point(point):
 			game.hold_piece()
 		elif board_rect.has_point(point):
-			var now := Time.get_ticks_msec()
-			var is_double_tap := now - last_board_tap_msec <= 300 and last_board_tap_position.distance_to(point) <= 54.0
-			if is_double_tap:
-				game.hard_drop()
-				last_board_tap_msec = -1000
-			else:
-				game.rotate_piece()
-				last_board_tap_msec = now
-				last_board_tap_position = point
+			# A single unambiguous tap always rotates; hard drop is swipe-only.
+			game.rotate_piece()
 	_sync_buddy_state()
 	queue_redraw()
 
