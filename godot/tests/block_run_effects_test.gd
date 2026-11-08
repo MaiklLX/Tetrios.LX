@@ -77,7 +77,7 @@ func _run() -> void:
 		return
 	if not _check(Effects.on_monster_defeated({"rift":5})["bottom_rows_to_clear"] == 3, "Rift must cap its room-clear effect at three rows"):
 		return
-	if not _check(Effects.on_piece_locked({"gear":2}, 10)["score_bonus"] == 50, "Gear must award rank-scaled score every fifth placement"):
+	if not _check(Effects.on_piece_locked({"gear":2}, 10)["score_bonus"] == 50 and Effects.on_piece_locked({"hold":3}, 10, "pixel", 10)["hold_limit"] == 3, "Gear must award rank-scaled score and Pixel must retain its hero-specific Hold override"):
 		return
 	print("Block Run event effect tests passed.")
 	quit(0)
