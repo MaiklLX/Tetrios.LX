@@ -655,5 +655,38 @@ func _run() -> void:
 	if not _check(long_run_model.grid[Model.HEIGHT - 1].count(-1) == Model.WIDTH, "The bottom row must be empty after each successful clear"):
 		return
 
-	print("Godot gameplay model tests passed: save/load validation, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
+	# Home hub navigation is explicit and reversible; the existing game modes remain reachable.
+	var hub_probe = Main.new()
+	hub_probe.game = Model.new()
+	hub_probe.game.reset()
+	hub_probe.mode_session = ModeSession.new()
+	hub_probe.home_visible = true
+	hub_probe.home_campaign_rect = Rect2(0.0, 0.0, 140.0, 70.0)
+	hub_probe.home_block_run_rect = Rect2(0.0, 80.0, 140.0, 70.0)
+	hub_probe.home_tasks_rect = Rect2(0.0, 160.0, 140.0, 70.0)
+	hub_probe.home_heroes_rect = Rect2(160.0, 0.0, 100.0, 70.0)
+	hub_probe.home_shop_rect = Rect2(270.0, 0.0, 100.0, 70.0)
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	if not _check(not hub_probe.home_visible and hub_probe.mode_select_visible, "Campaign card should open the mode selector from Home"):
+		return
+	hub_probe.secondary_back_rect = Rect2(0.0, 0.0, 100.0, 60.0)
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	if not _check(hub_probe.home_visible and not hub_probe.mode_select_visible, "Mode selector back target should return to Home"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 190.0))
+	if not _check(hub_probe.secondary_screen == "daily" and not hub_probe.home_visible, "Daily task card should open its own screen"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	if not _check(hub_probe.home_visible and hub_probe.secondary_screen.is_empty(), "Secondary screen back target should return to Home"):
+		return
+	hub_probe._handle_tap(Vector2(200.0, 30.0))
+	if not _check(hub_probe.secondary_screen == "heroes", "Heroes navigation should open the Heroes section"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	hub_probe._handle_tap(Vector2(300.0, 30.0))
+	if not _check(hub_probe.secondary_screen == "shop", "Shop navigation should open the Shop section"):
+		return
+	hub_probe.free()
+
+	print("Godot gameplay model tests passed: home navigation, save/load validation, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
 	quit(0)
