@@ -399,9 +399,9 @@ func _draw() -> void:
 	_draw_header()
 	_draw_stats()
 	_draw_piece_previews()
+	_draw_board()
 	if block_run_active and block_run_session != null:
 		_draw_block_run_goals()
-	_draw_board()
 	if _block_run_draft_is_open():
 		_draw_block_run_draft()
 		return
@@ -534,27 +534,27 @@ func _draw_block_run_goals() -> void:
 	var states := block_run_session.goal_states()
 	if states.is_empty():
 		return
-	var top := board_rect.position.y - 38.0
+	var top := board_rect.position.y - 39.0
 	var gap := 5.0
 	var outer := 18.0
 	var width := (screen_size.x - outer * 2.0 - gap * 2.0) / 3.0
 	for index in range(mini(3, states.size())):
 		var goal: Dictionary = states[index]
-		var rect := Rect2(outer + index * (width + gap), top, width, 34.0)
+		var rect := Rect2(outer + index * (width + gap), top, width, 24.0)
 		var ratio := _block_run_goal_ratio(goal)
 		draw_rect(rect, Color("#0a1b2d"))
 		draw_rect(rect, Color(0.20, 0.50, 0.68, 0.5), false, 1.0)
 		var label := _block_run_goal_short_label(goal)
 		var progress := "%d/%d" % [int(goal.get("value", 0)), int(goal.get("target", 1))]
 		var reward := "+%d" % int(goal.get("reward", 0))
-		draw_string(font, rect.position + Vector2(6.0, 12.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#83a3bd"))
+		draw_string(font, rect.position + Vector2(6.0, 10.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#83a3bd"))
 		var progress_width := font.get_string_size(progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
-		draw_string(font, rect.position + Vector2(rect.size.x - progress_width - 5.0, 12.0), progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#f4f8ff"))
-		var track := Rect2(rect.position + Vector2(6.0, 19.0), Vector2(rect.size.x - 12.0, 3.0))
+		draw_string(font, rect.position + Vector2(rect.size.x - progress_width - 5.0, 10.0), progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#f4f8ff"))
+		var track := Rect2(rect.position + Vector2(6.0, 15.0), Vector2(rect.size.x - 12.0, 3.0))
 		draw_rect(track, Color("#1b3045"))
 		if ratio > 0.0:
 			draw_rect(Rect2(track.position, Vector2(track.size.x * ratio, track.size.y)), Color("#45d9f5"))
-		draw_string(font, rect.position + Vector2(6.0, 31.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
+		draw_string(font, rect.position + Vector2(6.0, 23.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
 
 func _draw_piece_previews() -> void:
 	var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
