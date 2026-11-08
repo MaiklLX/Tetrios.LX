@@ -131,6 +131,7 @@ func _run() -> void:
 		return
 
 	var layout_probe = Main.new()
+	layout_probe.mode_select_visible = false
 	var narrow_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(60.0)
 	if not _check(not narrow_gutter.visible, "Buddy must hide when the left gutter is too narrow"):
 		return
