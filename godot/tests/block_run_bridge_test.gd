@@ -48,5 +48,7 @@ func _run() -> void:
 	model.grid[blocked_cell.y][blocked_cell.x] = 1
 	if not _check(not model.resume_after_board_rescue() and model.game_over, "A still-blocked spawn must remain terminal after rescue validation"):
 		return
+	if not _check(not model.validate_active_piece_after_board_mutation() and model.game_over, "An enemy board shift that overlaps the falling piece must top out safely"):
+		return
 	print("Block Run live-board bridge tests passed.")
 	quit(0)
