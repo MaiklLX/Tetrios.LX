@@ -145,6 +145,7 @@ func _run() -> void:
 		return
 	# Capture a narrow portrait viewport as well as the desktop-sized reference.
 	viewport.size = Vector2i(360, 800)
+	await process_frame
 	scene.call("_layout")
 	var mobile_board_rect: Rect2 = scene.get("board_rect")
 	var mobile_drop_rect: Rect2 = scene.get("drop_rect")
@@ -156,7 +157,7 @@ func _run() -> void:
 	var mobile_lock_serial_before: int = mobile_model.lock_serial
 	scene.call("_handle_tap", mobile_drop_rect.get_center())
 	if int(mobile_model.lock_serial) != mobile_lock_serial_before + 1:
-		push_error("Tapping the prominent Drop control did not hard-drop and lock the active piece at 360x800.")
+		push_error("Tapping the prominent Drop control did not hard-drop and lock the active piece at 360x800 (drop=%s, board=%s)." % [str(mobile_drop_rect), str(mobile_board_rect)])
 		quit(1)
 		return
 	scene.call("_restart_current_run")
