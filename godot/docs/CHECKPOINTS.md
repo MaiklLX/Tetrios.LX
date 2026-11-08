@@ -105,3 +105,13 @@
 - Validation: Godot Native Project Check run `42461758390` on code HEAD `ede9fdcb1124dfa6d75e0316e0bc477aa7ac3bbe` — import, main script parse, gameplay/model tests, Web migration tests and scene smoke test all **SUCCESS**.
 - The prior intermediate CI attempts exposed a type annotation omission, a stale local variable name and a test setup issue; each was corrected before the successful run above.
 - No changes to `main` or the Web game; no merge, deployment, APK build/release, persistence integration or user-data modification. Physical Android runtime remains unverified.
+
+
+## KT-466 — Block Run Roguelike native domain foundation
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Audited original Web source at `main@38c61b606187b88ce8a48a1c6b71d264aecf4258`.
+- Added isolated `block_run_model.gd`: 35 card definitions, three source synergies, room/floor/boss progression, source-matched enemy HP, attack cycles/timers, deterministic garbage patterns, enemy damage and room transition, five-rank card drafting, Reserve charges and four goal families.
+- Added `block_run_model_test.gd` and a dedicated CI step. Tests cover room 1, room 5 boss, Breach/Crossfire/Siege patterns, deterministic garbage rows, room transitions, rank cap, score+mult and slow+memory synergies, Reserve absorption, Chrono timing and all goal types.
+- CI run `42462476795` on HEAD `22ae4ba386fd67c3dde07b9cbcd653a7c0ce8bcd`: **SUCCESS** — import, main parse, gameplay tests, migration tests, Block Run model tests and scene smoke test.
+- The mode is not yet selectable/playable: encounter HUD, board integration, all 35 card event effects, three simultaneous goals/reward settlement, five hero abilities, relic economy and run-end flow remain next stages.
+- No save/storage work, main changes, merge, deployment, APK build/release or physical-device test.
