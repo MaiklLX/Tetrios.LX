@@ -199,6 +199,136 @@ func _lock_piece() -> void:
 	hold_used = false
 	_spawn()
 
+
+const SAVE_VERSION := 1
+
+# JSON-safe snapshot only. File/storage ownership stays outside the model.
+func to_save_data() -> Dictionary:
+	var saved_grid: Array = []
+	for row in grid:
+		saved_grid.append(row.duplicate())
+	var saved_cells: Array = []
+	for cell in active_cells:
+		saved_cells.append([cell.x, cell.y])
+	return {
+		"version": SAVE_VERSION,
+		"grid": saved_grid,
+		"active_type": active_type,
+		"active_cells": saved_cells,
+		"origin": [origin.x, origin.y],
+		"score": score,
+		"lines": lines,
+		"level": level,
+		"game_over": game_over,
+		"held_type": held_type,
+		"hold_used": hold_used,
+		"piece_bag": piece_bag.duplicate(),
+		"last_random_type": last_random_type
+	}
+
+func load_save_data(data: Dictionary) -> bool:
+	# Validate into local candidates first. A rejected snapshot must not
+	# partially overwrite the current live game.
+	if data.get("version") != SAVE_VERSION:
+		return false
+	var saved_grid: Variant = data.get("grid")
+	var saved_cells: Variant = data.get("active_cells")
+	var saved_origin: Variant = data.get("origin")
+	var saved_bag: Variant = data.get("piece_bag")
+	if typeof(saved_grid) != TYPE_ARRAY or saved_grid.size() != HEIGHT:
+		return false
+	if typeof(saved_cells) != TYPE_ARRAY or saved_cells.size() != 4:
+		return false
+	if typeof(saved_origin) != TYPE_ARRAY or saved_origin.size() != 2:
+		return false
+	if typeof(saved_bag) != TYPE_ARRAY or saved_bag.size() >= SHAPES.size():
+		return false
+
+	var restored_grid: Array = []
+	for row_value in saved_grid:
+		if typeof(row_value) != TYPE_ARRAY or row_value.size() != WIDTH:
+			return false
+		var restored_row: Array = []
+		for tile_value in row_value:
+			if typeof(tile_value) != TYPE_INT or int(tile_value) < -1 or int(tile_value) >= SHAPES.size():
+				return false
+			restored_row.append(int(tile_value))
+		restored_grid.append(restored_row)
+
+	var restored_type: Variant = data.get("active_type")
+	var restored_score: Variant = data.get("score")
+	var restored_lines: Variant = data.get("lines")
+	var restored_level: Variant = data.get("level")
+	var restored_game_over: Variant = data.get("game_over")
+	var restored_held_type: Variant = data.get("held_type")
+	var restored_hold_used: Variant = data.get("hold_used")
+	var restored_last_type: Variant = data.get("last_random_type")
+	if typeof(restored_type) != TYPE_INT or int(restored_type) < 0 or int(restored_type) >= SHAPES.size():
+		return false
+	if typeof(restored_score) != TYPE_INT or int(restored_score) < 0:
+		return false
+	if typeof(restored_lines) != TYPE_INT or int(restored_lines) < 0:
+		return false
+	if typeof(restored_level) != TYPE_INT or int(restored_level) != 1 + int(int(restored_lines) / 10):
+		return false
+	if typeof(restored_game_over) != TYPE_BOOL or typeof(restored_hold_used) != TYPE_BOOL:
+		return false
+	if typeof(restored_held_type) != TYPE_INT or int(restored_held_type) < -1 or int(restored_held_type) >= SHAPES.size():
+		return false
+	if typeof(restored_last_type) != TYPE_INT or int(restored_last_type) < -1 or int(restored_last_type) >= SHAPES.size():
+		return false
+	if typeof(saved_origin[0]) != TYPE_INT or typeof(saved_origin[1]) != TYPE_INT:
+		return false
+	var restored_origin := Vector2i(int(saved_origin[0]), int(saved_origin[1]))
+	if restored_origin.x < 0 or restored_origin.y < 0 or restored_origin.y >= HEIGHT:
+		return false
+
+	var restored_cells: Array[Vector2i] = []
+	var unique_cells: Dictionary = {}
+	for cell_value in saved_cells:
+		if typeof(cell_value) != TYPE_ARRAY or cell_value.size() != 2:
+			return false
+		if typeof(cell_value[0]) != TYPE_INT or typeof(cell_value[1]) != TYPE_INT:
+			return false
+		var cell := Vector2i(int(cell_value[0]), int(cell_value[1]))
+		if cell.x < 0 or cell.x > 3 or cell.y < 0 or cell.y > 3:
+			return false
+		var cell_key := "%d:%d" % [cell.x, cell.y]
+		if unique_cells.has(cell_key):
+			return false
+		unique_cells[cell_key] = true
+		var board_position := restored_origin + cell
+		if board_position.x < 0 or board_position.x >= WIDTH or board_position.y < 0 or board_position.y >= HEIGHT:
+			return false
+		if not bool(restored_game_over) and restored_grid[board_position.y][board_position.x] != -1:
+			return false
+		restored_cells.append(cell)
+
+	var restored_bag: Array[int] = []
+	var unique_bag: Dictionary = {}
+	for piece_value in saved_bag:
+		if typeof(piece_value) != TYPE_INT or int(piece_value) < 0 or int(piece_value) >= SHAPES.size():
+			return false
+		if unique_bag.has(int(piece_value)):
+			return false
+		unique_bag[int(piece_value)] = true
+		restored_bag.append(int(piece_value))
+
+	# Commit only after every field and board invariant has passed.
+	grid = restored_grid
+	active_type = int(restored_type)
+	active_cells = restored_cells
+	origin = restored_origin
+	score = int(restored_score)
+	lines = int(restored_lines)
+	level = int(restored_level)
+	game_over = bool(restored_game_over)
+	held_type = int(restored_held_type)
+	hold_used = bool(restored_hold_used)
+	piece_bag.assign(restored_bag)
+	last_random_type = int(restored_last_type)
+	return true
+
 func ghost_origin() -> Vector2i:
 	var ghost := origin
 	while not _collides(ghost + Vector2i(0, 1), active_cells):
