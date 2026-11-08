@@ -142,3 +142,12 @@
 - CI run `42463302261` on HEAD `5dcecbf891c9ac098ae86f0d36bcfbc4fc6b48ad`: **SUCCESS** — import, parse, gameplay, migration, Block Run model/effect/board tests and scene smoke test all passed.
 - This is an isolated adapter and is not yet wired into the live main scene or piece-lock loop. Next: connect attacks/rescues to the active board, then goals/rewards, hero skills and encounter/draft UI.
 - PR #77 remains Draft/open/unmerged. No main merge, deployment, APK build/release, persistence or physical-device test.
+
+
+## KT-470 — Block Run encounter/session integration
+- Added `godot/scripts/block_run_session.gd`, composing encounter model, deterministic card effects and board adapter.
+- Session now routes card drafts, placement bonuses, line-clear scoring/damage, relics, timer events, enemy attack countdown, garbage insertion, Reserve absorption, top-out failure and Rift room-clear effect.
+- Added `godot/tests/block_run_session_test.gd` and CI stage `Run Block Run session integration tests`.
+- CI run `42463408749` (#143) on HEAD `6b8bd27f280ef2eabaf4ef0e90457535557af18a`: **SUCCESS** — import, parse, gameplay, migration, Block Run model/effects/board/session tests and scene smoke test all passed.
+- Session coordinator is not yet connected to `main.gd`; Block Run remains hidden and is not yet playable. Shield/Nova rescue, three live goals/rewards, hero abilities, draft/encounter HUD and run-end UI remain.
+- PR #77 remains Draft/open/unmerged. No main merge, deployment, APK build/release, persistence or physical-device test.
