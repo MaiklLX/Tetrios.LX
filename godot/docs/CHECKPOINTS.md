@@ -115,3 +115,12 @@
 - CI run `42462476795` on HEAD `22ae4ba386fd67c3dde07b9cbcd653a7c0ce8bcd`: **SUCCESS** — import, main parse, gameplay tests, migration tests, Block Run model tests and scene smoke test.
 - The mode is not yet selectable/playable: encounter HUD, board integration, all 35 card event effects, three simultaneous goals/reward settlement, five hero abilities, relic economy and run-end flow remain next stages.
 - No save/storage work, main changes, merge, deployment, APK build/release or physical-device test.
+
+
+## KT-467 — Block Run card event/effect audit
+- Audited all 35 card IDs against the legacy Web runtime paths: piece lock, line clear, timer tick, level-up, spawn collision, rotation, render, monster attack and monster defeat.
+- Added `godot/docs/KT-467_BLOCK_RUN_CARD_EVENT_MAP.md` with the observed trigger/effect for every card and the three exact synergies.
+- Identified two source discrepancies that must not be silently copied as design intent: Luck has no observed runtime consumer in the audited source, and Comet's local timer check is assigned immediately before use, making its under-35-second condition effectively always true. Slow's prose description also needs reconciliation with its actual level-up interval math.
+- Defined the event dispatcher contract for KT-468: piece lock, line clear, timer second, level-up, spawn collision, rotation, monster attack and monster defeat. Random outcomes must be deterministic in tests.
+- No native card effects have been wired yet; this checkpoint is an audit gate before implementation.
+- No main merge, deployment, APK build/release, persistence or user-data changes.
