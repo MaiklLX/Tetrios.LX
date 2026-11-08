@@ -111,13 +111,13 @@ func _run() -> void:
 		return
 	var prism_run = Session.new()
 	prism_run.start()
-	var prism_hp := prism_run.encounter.enemy_hp
+	var prism_hp: int = prism_run.encounter.enemy_hp
 	var prism_skill := prism_run.use_hero_skill("prism", 5)
 	if not _check(prism_skill.enemy_damage == mini(prism_hp, 13) and prism_run.hero_skill_cooldown_seconds == 45, "Prism must deal 8+tier*5 damage and start a 45-second cooldown"):
 		return
 	var blip_run = Session.new()
 	blip_run.start()
-	var attack_before := blip_run.encounter.next_attack_seconds
+	var attack_before: int = blip_run.encounter.next_attack_seconds
 	var blip_skill := blip_run.use_hero_skill("blip", 10)
 	if not _check(blip_skill.attack_delay_added == 20 and blip_run.encounter.next_attack_seconds == attack_before + 20, "Blip must delay the next attack by 12+tier*4 seconds"):
 		return
@@ -129,7 +129,7 @@ func _run() -> void:
 		return
 	var spark_run = Session.new()
 	spark_run.start()
-	var spark_hp := spark_run.encounter.enemy_hp
+	var spark_hp: int = spark_run.encounter.enemy_hp
 	var spark_skill := spark_run.use_hero_skill("spark", 5)
 	if not _check(spark_skill.enemy_damage == mini(spark_hp, 17), "Spark must deal 12+tier*5 damage"):
 		return
