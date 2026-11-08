@@ -29,15 +29,12 @@ Status: implemented on the Godot development branch. Draft PR #81 remains the re
   - `25-live-campaign-level-complete.png`
   - `26-live-campaign-progress.png`
 
-## KT-529 — Continuous difficulty curve and boss gates
-- Every planet now has both a line target and a score target; score requirements rise on every single planet from 001 through 360.
-- Line targets rise in measured steps and never reset at a universe boundary.
-- Difficulty tiers add a persistent score-target jump every ten planets, so the 10/20/30 milestones feel materially harder and the following planets do not become easier.
-- Planet 010 uses a 150-second speed limit plus its increased line/score objectives.
-- Planet 020 requires its increased line and score targets.
-- Planet 030 combines the increased line/score targets with a 180-second limit.
-- Campaign restarts preserve all three objective values.
-- Automated tests cover all 360 planets for strictly increasing score targets, non-decreasing line targets, universe transitions, boss spikes, score gates and time failures.
+## KT-529 — Varied missions and bounded difficulty
+- Replaced the unbounded per-planet score grind with a capped chapter curve: small universe-level steps and gentle within-universe variation.
+- Ordinary planets rotate between focused line-clear missions and score-only missions (for example, planets 005, 015 and 025). Score-only planets do not secretly require line clears or a timer.
+- Every tenth planet is a boss with a combined line + score objective. Guardian, Champion and Final boss milestones have stronger quotas, but no artificial speed deadline.
+- Difficulty values are bounded across all 360 planets; automated tests verify ceilings, soft universe transitions, mission variety, score-only completion and timer-free bosses.
+- Planet detail, live HUD, progress bars and results now display the relevant objective type instead of assuming every mission is line-based.
 
 ## Staged limitations
 - Fresh profiles begin at Planet 001; the rest of the 360-node route unlocks sequentially.
