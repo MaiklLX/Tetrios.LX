@@ -251,10 +251,12 @@ func _advance_block_run_clock(delta: float) -> void:
 
 func _restart_current_run() -> void:
 	game.reset()
+	# The mode lifecycle must also return to running when restarting Block Run;
+	# otherwise its completed status blocks the first touch on the new run.
+	if mode_session != null:
+		mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
 	if block_run_active:
 		start_block_run_session()
-	elif mode_session != null:
-		mode_session.start(mode_session.mode_id if not mode_session.mode_id.is_empty() else "classic")
 	paused = false
 	gravity_clock = 0.0
 	buddy_last_lines = 0
