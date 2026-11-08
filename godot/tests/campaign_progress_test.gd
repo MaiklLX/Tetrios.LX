@@ -34,11 +34,25 @@ func _run() -> void:
 		return
 	if not _check(final_planet.universe_index == 11 and final_planet.planet_in_universe == 30 and final_planet.reward_marks == 15, "Planet 360 must be the final campaign milestone"):
 		return
-	if not _check(speed_boss.boss_type == "speed" and speed_boss.time_limit_seconds == 150 and speed_boss.target_score == 0, "Planet 010 must be a timed speed boss"):
+	if not _check(speed_boss.boss_type == "speed" and speed_boss.time_limit_seconds == 150 and speed_boss.target_score > 0, "Planet 010 must be a timed speed boss with a higher score target"):
 		return
 	if not _check(score_boss.boss_type == "score" and score_boss.target_score > 0 and score_boss.time_limit_seconds == 0, "Planet 020 must require both lines and score"):
 		return
 	if not _check(final_boss.boss_type == "final" and final_boss.target_score > 0 and final_boss.time_limit_seconds > 0, "Planet 030 must combine lines, score and time"):
+		return
+	var previous_score := 0
+	var previous_lines := 0
+	for node_id in range(1, Campaign.TOTAL_PLANETS + 1):
+		var definition: Dictionary = progress.get_planet_definition(node_id)
+		if not _check(int(definition.target_score) > previous_score, "Every planet must increase the score objective, including universe transitions"):
+			return
+		if not _check(int(definition.target_lines) >= previous_lines, "Line objectives must never decrease across the campaign"):
+			return
+		previous_score = int(definition.target_score)
+		previous_lines = int(definition.target_lines)
+	if not _check(int(progress.get_planet_definition(31).target_score) > int(progress.get_planet_definition(30).target_score), "New universe must continue beyond the previous universe boss"):
+		return
+	if not _check(int(progress.get_planet_definition(10).target_score) > int(progress.get_planet_definition(9).target_score) + 100, "Boss planet must have a substantial difficulty spike"):
 		return
 	if not _check(progress.is_unlocked(1) and not progress.is_unlocked(2) and progress.get_planet_status(2) == "locked", "Only the current planet is initially available"):
 		return
