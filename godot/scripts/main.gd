@@ -447,7 +447,8 @@ func _draw_board() -> void:
 			draw_rect(rect, Color(0.18, 0.32, 0.43, 0.25), false, 1.0)
 			var tile: int = game.grid[y][x]
 			if tile >= 0:
-				_draw_block(rect, BlockBuddiesModel.PALETTE[tile])
+				var tile_color: Color = Color("#9aa8b8") if tile == 7 else BlockBuddiesModel.PALETTE[tile]
+				_draw_block(rect, tile_color)
 	var ghost := game.ghost_origin()
 	for cell_pos in game.active_cells:
 		var p: Vector2i = ghost + cell_pos
