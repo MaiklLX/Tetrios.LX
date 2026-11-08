@@ -115,6 +115,7 @@ func _run() -> void:
 	block_run_session.goal_reward_receipts["capture-goal-1"] = {"id":"capture-goal-1","goal_id":1,"reward":25,"claimed":true}
 	block_run_session.status = "failed"
 	scene.get("game").game_over = true
+	scene.call("_sync_buddy_state")
 	scene.queue_redraw()
 	await process_frame
 	await process_frame
