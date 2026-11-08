@@ -211,5 +211,17 @@ func _run() -> void:
 		if not await _capture(viewport, screen.file):
 			quit(1)
 			return
+		if screen.id == "home":
+			viewport.size = Vector2i(360, 800)
+			gallery.queue_redraw()
+			await process_frame
+			await process_frame
+			if not await _capture(viewport, "17-concept-home-360x800"):
+				quit(1)
+				return
+			viewport.size = Vector2i(720, 1280)
+			gallery.queue_redraw()
+			await process_frame
+			await process_frame
 	print("Gameplay and secondary-screen concept captures completed.")
 	quit(0)
