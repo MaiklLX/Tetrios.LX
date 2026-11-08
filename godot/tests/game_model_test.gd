@@ -252,5 +252,29 @@ func _run() -> void:
 	if not _check(level_two_model.score == 1638, "Four-line clear at level two must award 800 points multiplied by two, plus hard-drop points"):
 		return
 
-	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, and reset.")
+	# A blocked spawn must end the run; game-over must reject further moves and drops.
+	var game_over_model: BlockBuddiesModel = Model.new()
+	game_over_model.reset()
+	for x in range(1, Model.WIDTH):
+		game_over_model.grid[0][x] = 1
+	game_over_model.hard_drop()
+	if not _check(game_over_model.game_over, "A blocked next-piece spawn must trigger game over"):
+		return
+	var game_over_origin: Vector2i = game_over_model.origin
+	var game_over_score: int = game_over_model.score
+	game_over_model.move_horizontal(-1)
+	game_over_model.hard_drop()
+	if not _check(game_over_model.origin == game_over_origin and game_over_model.score == game_over_score, "Game over must reject movement and hard drop"):
+		return
+	game_over_model.reset()
+	if not _check(not game_over_model.game_over and game_over_model.score == 0 and game_over_model.lines == 0 and game_over_model.level == 1, "Restart after game over must restore a fresh run"):
+		return
+	if not _check(game_over_model.held_type == -1 and not game_over_model.hold_used, "Restart after game over must clear Hold state"):
+		return
+	for y in range(Model.HEIGHT):
+		for x in range(Model.WIDTH):
+			if not _check(game_over_model.grid[y][x] == -1, "Restart after game over must clear the entire board"):
+				return
+
+	print("Godot model tests passed: 10x23 board, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
 	quit(0)
