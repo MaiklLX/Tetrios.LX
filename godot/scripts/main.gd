@@ -392,7 +392,8 @@ func _advance_block_run_clock(delta: float) -> void:
 
 
 func _restart_current_run() -> void:
-	game.reset()
+	if not campaign_run_active:
+		game.reset()
 	# Campaign owns a separate board and piece lifecycle; the shared model stays untouched.
 	# Retry replays the authored opening piece only on its designated campaign planet.
 	# The mode lifecycle must also return to running when restarting Block Run;
@@ -834,7 +835,6 @@ func _start_campaign_planet() -> void:
 	var definition := campaign_progress.get_planet_definition(node_id)
 	if definition.is_empty():
 		return
-	game.reset()
 	if mode_session == null:
 		mode_session = ModeSession.new()
 	if not mode_session.start("campaign"):
