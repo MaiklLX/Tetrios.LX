@@ -30,12 +30,14 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	var universe_index := int((node_id - 1) / PLANETS_PER_UNIVERSE)
 	var planet_in_universe := ((node_id - 1) % PLANETS_PER_UNIVERSE) + 1
 	var boss := planet_in_universe % 10 == 0
-	var target_lines := 8 + universe_index * 2 + (planet_in_universe - 1) * 2
+	var target_lines := 8 + int((node_id - 1) / 12)
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
 	var boss_type := "none"
 	if boss:
 		boss_type = "speed" if planet_in_universe == 10 else ("score" if planet_in_universe == 20 else "final")
-	var target_score := target_lines * (110 + universe_index * 15) if boss_type in ["score", "final"] else 0
+	var difficulty_tier := int(node_id / 10)
+	# Every planet raises the score bar; each completed ten-planet stretch adds a lasting difficulty jump.
+	var target_score := 500 + node_id * 22 + difficulty_tier * 150
 	var time_limit := 150 if boss_type == "speed" else (180 if boss_type == "final" else 0)
 	return {
 		"node_id": node_id,
