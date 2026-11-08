@@ -53,6 +53,14 @@ func _run() -> void:
 		return
 	var classic_board_rect: Rect2 = scene.get("board_rect")
 	var classic_drop_rect: Rect2 = scene.get("drop_rect")
+	var classic_mode_button: Rect2 = scene.get("mode_button_rect")
+	var classic_pause_button: Rect2 = scene.get("pause_rect")
+	var classic_stats_left := Rect2(42.0, 60.0, (float(viewport.size.x) - 100.0) * 0.48, 58.0)
+	var classic_stats_right := Rect2(float(viewport.size.x) * 0.52, 60.0, (float(viewport.size.x) - 100.0) * 0.48, 58.0)
+	if classic_mode_button.intersects(classic_stats_left) or classic_mode_button.intersects(classic_stats_right) or classic_pause_button.intersects(classic_stats_left) or classic_pause_button.intersects(classic_stats_right):
+		push_error("Arena top utility controls overlap the score/HUD cards at 720x1280.")
+		quit(1)
+		return
 	if classic_drop_rect.size.x < 42.0 or classic_drop_rect.size.y < 52.0 or classic_drop_rect.position.x < classic_board_rect.end.x + 5.0 or classic_drop_rect.end.x > float(viewport.size.x) - 7.0 or classic_drop_rect.position.y < classic_board_rect.position.y or classic_drop_rect.end.y > classic_board_rect.end.y - 5.0 or classic_drop_rect.intersects(classic_board_rect):
 		push_error("Visible Drop control is missing, undersized, clipped, or overlaps the 10x23 board at 720x1280.")
 		quit(1)
@@ -149,6 +157,14 @@ func _run() -> void:
 	scene.call("_layout")
 	var mobile_board_rect: Rect2 = scene.get("board_rect")
 	var mobile_drop_rect: Rect2 = scene.get("drop_rect")
+	var mobile_mode_button: Rect2 = scene.get("mode_button_rect")
+	var mobile_pause_button: Rect2 = scene.get("pause_rect")
+	var mobile_stats_left := Rect2(42.0, 60.0, (float(viewport.size.x) - 100.0) * 0.48, 58.0)
+	var mobile_stats_right := Rect2(float(viewport.size.x) * 0.52, 60.0, (float(viewport.size.x) - 100.0) * 0.48, 58.0)
+	if mobile_mode_button.intersects(mobile_stats_left) or mobile_mode_button.intersects(mobile_stats_right) or mobile_pause_button.intersects(mobile_stats_left) or mobile_pause_button.intersects(mobile_stats_right):
+		push_error("Arena top utility controls overlap the score/HUD cards at 360x800.")
+		quit(1)
+		return
 	if mobile_drop_rect.size.x < 42.0 or mobile_drop_rect.size.y < 52.0 or mobile_drop_rect.position.x < mobile_board_rect.end.x + 5.0 or mobile_drop_rect.end.x > float(viewport.size.x) - 7.0 or mobile_drop_rect.position.y < mobile_board_rect.position.y or mobile_drop_rect.end.y > mobile_board_rect.end.y - 5.0 or mobile_drop_rect.intersects(mobile_board_rect):
 		push_error("Visible Drop control is missing, undersized, clipped, or overlaps the 10x23 board at 360x800.")
 		quit(1)
