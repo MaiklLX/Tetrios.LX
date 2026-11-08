@@ -16,6 +16,7 @@ var control_scale := 1.0
 var screen_size := Vector2(720, 1280)
 var buddy: Node2D
 var buddy_last_lines := 0
+var ambient_time := 0.0
 var paused := false
 var pause_rect := Rect2()
 var resume_rect := Rect2()
@@ -106,6 +107,7 @@ func _gravity_interval_for_level(current_level: int) -> float:
 	return maxf(0.08, 0.78 * pow(0.85, maxi(1, current_level) - 1))
 
 func _process(delta: float) -> void:
+	ambient_time = fmod(ambient_time + delta, 1000.0)
 	if game == null:
 		return
 	if not game.game_over and not paused:
@@ -237,10 +239,24 @@ func _draw() -> void:
 		_draw_pause_overlay()
 
 func _draw_backdrop() -> void:
-	for i in range(7):
-		var radius := 110.0 + i * 44.0
-		draw_arc(Vector2(screen_size.x * 0.5, screen_size.y * 0.43), radius, 0, TAU, 96, Color(0.16, 0.43, 0.72, 0.035), 2.0)
-	draw_circle(Vector2(screen_size.x * 0.5, screen_size.y * 0.42), 4.0, Color(0.25, 0.82, 1.0, 0.22))
+	# Layered arcade atmosphere: restrained radial light, pixel stars and slow
+	# drifting signal particles. All geometry is procedural; no external art.
+	var pulse := 0.5 + 0.5 * sin(ambient_time * 0.7)
+	var glow_center := Vector2(screen_size.x * 0.5, screen_size.y * 0.43)
+	draw_circle(glow_center, screen_size.x * 0.44, Color(0.025, 0.12, 0.23, 0.12 + pulse * 0.025))
+	for i in range(8):
+		var radius := 90.0 + i * 48.0
+		var alpha := 0.025 + pulse * 0.008 if i < 3 else 0.018
+		draw_arc(glow_center, radius, 0, TAU, 96, Color(0.16, 0.55, 0.86, alpha), 1.0)
+	for i in range(34):
+		var seed_x := float((i * 73 + 19) % 997) / 997.0
+		var seed_y := float((i * 139 + 47) % 991) / 991.0
+		var drift := fmod(ambient_time * (5.0 + float(i % 4) * 2.0) + float(i * 17), screen_size.y + 24.0)
+		var point := Vector2(seed_x * screen_size.x, fmod(seed_y * screen_size.y + drift, screen_size.y))
+		var twinkle := 0.25 + 0.45 * (0.5 + 0.5 * sin(ambient_time * 1.4 + float(i)))
+		var pixel_size := 1.0 if i % 3 else 2.0
+		draw_rect(Rect2(point, Vector2.ONE * pixel_size), Color(0.31, 0.76, 1.0, twinkle * 0.42))
+	draw_circle(glow_center, 3.0 + pulse * 1.5, Color(0.25, 0.82, 1.0, 0.16 + pulse * 0.12))
 
 func _draw_header() -> void:
 	_center_text("BLOCK BUDDIES", 62.0, 36, Color("#f5f8ff"))
@@ -295,9 +311,15 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		draw_rect(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
 
 func _draw_board() -> void:
-	var frame := board_rect.grow(10)
-	draw_rect(frame, Color(0.025, 0.045, 0.08, 0.98))
-	draw_rect(frame, Color(0.20, 0.55, 0.78, 0.48), false, 2.0)
+	var frame := board_rect.grow(13)
+	# A layered cabinet frame gives the playfield a distinct arcade-machine
+	# silhouette without reducing the 10x23 playable area.
+	draw_rect(frame.grow(5), Color(0.04, 0.30, 0.52, 0.045))
+	draw_rect(frame, Color(0.018, 0.035, 0.068, 0.99))
+	draw_rect(frame, Color(0.16, 0.42, 0.64, 0.72), false, 1.0)
+	draw_rect(board_rect.grow(3), Color(0.025, 0.055, 0.09, 0.98))
+	draw_rect(board_rect.grow(3), Color(0.22, 0.66, 0.88, 0.38), false, 1.0)
+	draw_line(frame.position + Vector2(8, 5), Vector2(frame.end.x - 8, frame.position.y + 5), Color(0.35, 0.78, 1.0, 0.24), 1.0)
 	var cell := board_rect.size.x / BOARD_W
 	for y in range(BOARD_H):
 		for x in range(BOARD_W):
