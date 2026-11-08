@@ -936,13 +936,18 @@ func _draw_campaign_planet() -> void:
 	_draw_soft_panel(info, Color("#102f68"), Color("#55ddff"), 17, 7)
 	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
 	var boss_type := str(definition.get("boss_type", "none"))
-	var objective_label := "БОСС • СКОРОСТНОЙ ЗАБЕГ" if boss_type == "speed" else ("БОСС • НАБЕРИ ОЧКИ" if boss_type == "score" else ("ФИНАЛЬНЫЙ БОСС" if boss_type == "final" else "ОЧИСТИ %d ЛИНИЙ" % int(definition.get("target_lines", 8))))
+	var objective_type := str(definition.get("objective_type", "lines"))
+	var objective_label := "БОСС • СОВМЕЩЁННОЕ ИСПЫТАНИЕ" if objective_type == "boss_combo" else ("НАБЕРИ ОЧКИ" if objective_type == "score" else "ОЧИСТИ ЛИНИИ")
+	if boss_type == "final":
+		objective_label = "ФИНАЛЬНЫЙ БОСС • ИСПЫТАНИЕ МАСТЕРСТВА"
 	draw_string(font, info.position + Vector2(14,51), objective_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if boss_type != "none" else 10, Color("#ffb4d2") if boss_type != "none" else Color("#ffffff"))
-	var requirement := "ЛИНИИ %d" % int(definition.get("target_lines", 8))
+	var requirement := ""
+	if int(definition.get("target_lines", 0)) > 0:
+		requirement = "ЛИНИИ %d" % int(definition.target_lines)
 	if int(definition.get("target_score", 0)) > 0:
 		requirement += "  •  ОЧКИ %d" % int(definition.target_score)
-	if int(definition.get("time_limit_seconds", 0)) > 0:
-		requirement += "  •  %d СЕК" % int(definition.time_limit_seconds)
+	if requirement.is_empty():
+		requirement = "ВЫПОЛНИ ЗАДАНИЕ"
 	draw_string(font, info.position + Vector2(14,75), requirement + "  •  +" + str(definition.get("reward_marks", 1)) + " МЕТОК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
 	campaign_start_rect = Rect2(26.0, screen_size.y * 0.72, screen_size.x - 52.0, 58.0)
 	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
