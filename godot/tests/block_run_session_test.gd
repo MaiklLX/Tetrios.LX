@@ -14,10 +14,12 @@ func _check(condition: bool, message: String) -> bool:
 
 func _run() -> void:
 	seed(471)
+	print("KT471 TEST: before initial run")
 	var run = Session.new()
 	run.start()
 	if not _check(run.status == Session.STATUS_RUNNING and run.encounter.room == 1 and run.board.size() == 23, "Session must initialize a fresh encounter and 10x23 board"):
 		return
+	print("KT471 TEST: initial goals created")
 	if not _check(run.goals.size() == 3 and run.goal_states().size() == 3, "A new run must begin with exactly three active goals"):
 		return
 	var goal_ids: Dictionary = {}
@@ -29,12 +31,15 @@ func _run() -> void:
 		goal_ids[int(goal.id)] = true
 	if not _check(run.choose_card("score") and run.choose_card("burst") and run.choose_card("hunter"), "Session must draft valid cards into its isolated encounter"):
 		return
+	print("KT471 TEST: before initial line clear")
 	var clear := run.on_line_clear(3, 2, 1)
+	print("KT471 TEST: initial line clear settled")
 	if not _check(clear["accepted"] and clear["score_total"] > 0 and clear["monster_damage"] == 3 + 2 + 1, "Line clear must route score and card damage into the active encounter"):
 		return
 	if not _check(run.total_lines == 3 and run.encounter.enemy_hp < run.encounter.enemy_max_hp, "Line clear must update run progress and enemy HP"):
 		return
 
+	print("KT471 TEST: initial combat passed")
 	var line_goal_run = Session.new()
 	line_goal_run.start()
 	line_goal_run.goals = [line_goal_run.encounter.create_goal("lines", 0, 0, 0, 1, 0, 5, 900)]
@@ -44,6 +49,7 @@ func _run() -> void:
 	if not _check(line_goal_run.goals.size() == 1 and line_goal_run.goals[0].id != 900 and line_goal_run.goal_rewards_earned == 15, "A completed goal must be replaced immediately and rewards counted once"):
 		return
 
+	print("KT471 TEST: line goal passed")
 	var survive_goal_run = Session.new()
 	survive_goal_run.start()
 	survive_goal_run.goals = [survive_goal_run.encounter.create_goal("survive", 0, 0, 0, 1, 0, 7, 901)]
@@ -53,6 +59,7 @@ func _run() -> void:
 	if not _check(survive_event.goal_events.size() == 1 and survive_goal_run.run_seconds == 15, "Survive goals must settle when the source-defined minimum timer target is reached"):
 		return
 
+	print("KT471 TEST: survive goal passed")
 	var score_goal_run = Session.new()
 	score_goal_run.start()
 	score_goal_run.goals = [score_goal_run.encounter.create_goal("score", 0, 0, 0, 1, 0, 9, 902)]
@@ -60,6 +67,7 @@ func _run() -> void:
 	if not _check(score_event.goal_events.size() == 1 and score_goal_run.score > 0, "Line-clear score must update score goals"):
 		return
 
+	print("KT471 TEST: score goal passed")
 	var attack_run = Session.new()
 	attack_run.start()
 	attack_run.encounter.next_attack_seconds = 1
