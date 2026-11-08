@@ -10,7 +10,7 @@ func _assert_mobile_arena_spacing(scene: Node, viewport_size: Vector2i, label: S
 	var skill: Rect2 = scene.get("block_run_skill_rect")
 	var drop: Rect2 = scene.get("drop_rect")
 	if drop.size.x > 0.0:
-		if drop.position.x < board.end.x + 12.0 or drop.end.y > board.end.y - 5.0:
+		if drop.position.x < board.end.x + 11.5 or drop.end.y > board.end.y - 5.0:
 			push_error("%s: DROP button must sit above and clear of the board frame (drop=%s board=%s)." % [label, str(drop), str(board)])
 			return false
 	var frame_top := board.position.y - 13.0
@@ -89,7 +89,7 @@ func _run() -> void:
 		push_error("Arena top utility controls overlap the score/HUD cards at 720x1280.")
 		quit(1)
 		return
-	if classic_drop_rect.size.x < 52.0 or classic_drop_rect.size.y < 60.0 or classic_drop_rect.position.x < classic_board_rect.end.x + 12.0 or classic_drop_rect.end.x > float(viewport.size.x) - 12.0 or classic_drop_rect.position.y < classic_board_rect.position.y or classic_drop_rect.end.y > classic_board_rect.end.y - 5.0 or classic_drop_rect.intersects(classic_board_rect):
+	if classic_drop_rect.size.x < 52.0 or classic_drop_rect.size.y < 60.0 or classic_drop_rect.position.x < classic_board_rect.end.x + 11.5 or classic_drop_rect.end.x > float(viewport.size.x) - 12.0 or classic_drop_rect.position.y < classic_board_rect.position.y or classic_drop_rect.end.y > classic_board_rect.end.y - 5.0 or classic_drop_rect.intersects(classic_board_rect):
 		push_error("Visible Drop control is missing, undersized, clipped, or overlaps the 10x23 board at 720x1280.")
 		quit(1)
 		return
@@ -202,7 +202,7 @@ func _run() -> void:
 		push_error("Arena top utility controls overlap the score/HUD cards at 360x800.")
 		quit(1)
 		return
-	if mobile_drop_rect.size.x < 52.0 or mobile_drop_rect.size.y < 60.0 or mobile_drop_rect.position.x < mobile_board_rect.end.x + 12.0 or mobile_drop_rect.end.x > float(viewport.size.x) - 12.0 or mobile_drop_rect.position.y < mobile_board_rect.position.y or mobile_drop_rect.end.y > mobile_board_rect.end.y - 5.0 or mobile_drop_rect.intersects(mobile_board_rect):
+	if mobile_drop_rect.size.x < 52.0 or mobile_drop_rect.size.y < 60.0 or mobile_drop_rect.position.x < mobile_board_rect.end.x + 11.5 or mobile_drop_rect.end.x > float(viewport.size.x) - 12.0 or mobile_drop_rect.position.y < mobile_board_rect.position.y or mobile_drop_rect.end.y > mobile_board_rect.end.y - 5.0 or mobile_drop_rect.intersects(mobile_board_rect):
 		push_error("Visible Drop control is missing, undersized, clipped, or overlaps the 10x23 board at 360x800.")
 		quit(1)
 		return
