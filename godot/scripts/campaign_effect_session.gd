@@ -19,6 +19,7 @@ var artifact_bonus_until := 0.0
 var echo_lines := 0
 var echo_multiplier := 1.0
 var last_piece_drop_at := -1000000.0
+var dropped_piece_count := 0
 
 func start(next_modifier_id: String, initial_drop_interval_ms: int = 780) -> bool:
 	if not SUPPORTED_MODIFIERS.has(next_modifier_id):
@@ -32,6 +33,7 @@ func start(next_modifier_id: String, initial_drop_interval_ms: int = 780) -> boo
 	echo_lines = 0
 	echo_multiplier = 1.0
 	last_piece_drop_at = -1000000.0
+	dropped_piece_count = 0
 	return true
 
 func is_active() -> bool:
@@ -47,10 +49,6 @@ func advance_active_time(delta_seconds: float) -> Dictionary:
 		gravity_steps = int(floor(active_seconds / 25.0) - floor(previous / 25.0))
 		for _step in range(gravity_steps):
 			drop_interval_ms = maxi(MIN_GRAVITY_MS, drop_interval_ms - 55)
-	elif modifier_id == "pulse":
-		gravity_steps = int(floor(active_seconds / 5.0) - floor(previous / 5.0))
-		for _step in range(gravity_steps):
-			drop_interval_ms = maxi(MIN_PULSE_GRAVITY_MS, drop_interval_ms - 25)
 	elif modifier_id == "gravityFlip":
 		var reset_count := int(floor(active_seconds / 30.0) - floor(previous / 30.0))
 		for _step in range(reset_count):
@@ -65,9 +63,20 @@ func advance_active_time(delta_seconds: float) -> Dictionary:
 		"artifact_active":active_seconds < artifact_bonus_until
 	}
 
-func on_piece_dropped() -> void:
-	if is_active():
-		last_piece_drop_at = active_seconds
+func on_piece_dropped() -> Dictionary:
+	if not is_active():
+		return {"accepted":false,"drop_interval_ms":drop_interval_ms,"piece_count":dropped_piece_count}
+	last_piece_drop_at = active_seconds
+	dropped_piece_count += 1
+	var pulse_triggered := modifier_id == "pulse" and dropped_piece_count % 5 == 0
+	if pulse_triggered:
+		drop_interval_ms = maxi(MIN_PULSE_GRAVITY_MS, drop_interval_ms - 25)
+	return {
+		"accepted":true,
+		"piece_count":dropped_piece_count,
+		"pulse_triggered":pulse_triggered,
+		"drop_interval_ms":drop_interval_ms
+	}
 
 func on_piece_locked(cleared_lines: int) -> Dictionary:
 	if not is_active():
@@ -127,5 +136,6 @@ func snapshot() -> Dictionary:
 		"artifact_bonus_until":artifact_bonus_until,
 		"echo_lines":echo_lines,
 		"echo_multiplier":echo_multiplier,
-		"last_piece_drop_at":last_piece_drop_at
+		"last_piece_drop_at":last_piece_drop_at,
+		"dropped_piece_count":dropped_piece_count
 	}
