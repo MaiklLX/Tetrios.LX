@@ -47,8 +47,10 @@ func _run() -> void:
 	var survive_goal_run = Session.new()
 	survive_goal_run.start()
 	survive_goal_run.goals = [survive_goal_run.encounter.create_goal("survive", 0, 0, 0, 1, 0, 7, 901)]
-	var survive_event := survive_goal_run.advance_second()
-	if not _check(survive_event.goal_events.size() == 1 and survive_goal_run.run_seconds == 1, "Survive goals must settle on the run clock"):
+	var survive_event: Dictionary = {}
+	for second in range(15):
+		survive_event = survive_goal_run.advance_second()
+	if not _check(survive_event.goal_events.size() == 1 and survive_goal_run.run_seconds == 15, "Survive goals must settle when the source-defined minimum timer target is reached"):
 		return
 
 	var score_goal_run = Session.new()
