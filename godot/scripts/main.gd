@@ -146,6 +146,15 @@ func start_block_run_session() -> bool:
 func _process_block_run_events() -> void:
 	if not block_run_active or block_run_session == null or block_run_session.status != BlockRunSession.STATUS_RUNNING:
 		return
+	# Hold can trigger a replacement-piece spawn collision without locking a
+	# piece, so rescue/failure must be evaluated independently of lock_serial.
+	if game.game_over:
+		var immediate_rescue: Dictionary = BlockRunBridge.rescue_spawn_collision(game, block_run_session)
+		if not bool(immediate_rescue.get("rescued", false)) or not bool(immediate_rescue.get("live_resumed", false)):
+			block_run_session.status = BlockRunSession.STATUS_FAILED
+			game.game_over = true
+		queue_redraw()
+		return
 	if game.lock_serial == block_run_last_lock_serial:
 		return
 	# A model action can lock at most one piece. Refuse to guess if an event
