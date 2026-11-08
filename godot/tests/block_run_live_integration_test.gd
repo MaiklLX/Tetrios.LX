@@ -129,6 +129,52 @@ func _run() -> void:
 		return
 	hud_probe.free()
 
+	var locked_probe = _main_probe()
+	if not _check(locked_probe.start_block_run_session(), "Locked-skill probe session must initialize"):
+		return
+	locked_probe.configure_block_run_hero("plush", 4)
+	var locked_result: Dictionary = locked_probe.activate_block_run_hero_skill()
+	if not _check(not bool(locked_result.get("accepted", false)) and str(locked_result.get("reason", "")) == "locked", "Hero skill must remain locked below level five"):
+		return
+	locked_probe.free()
+
+	for hero_id in ["plush", "prism", "blip", "pixel", "spark"]:
+		var skill_probe = _main_probe()
+		if not _check(skill_probe.start_block_run_session(), "Hero skill live probe must initialize for " + hero_id):
+			return
+		if not _check(skill_probe.configure_block_run_hero(hero_id, 5), "Known hero profile must configure for " + hero_id):
+			return
+		var skill_result: Dictionary = skill_probe.activate_block_run_hero_skill()
+		if not _check(bool(skill_result.get("accepted", false)), "Live skill must activate for " + hero_id + ": " + str(skill_result)):
+			return
+		if not _check(skill_probe.block_run_session.hero_skill_cooldown_seconds == 45, "Hero skill must start the shared 45-second cooldown for " + hero_id):
+			return
+		if not _check(skill_probe.game.grid.size() == 23 and skill_probe.block_run_session.board.size() == 23, "Skill mutation must preserve the live 10x23 board for " + hero_id):
+			return
+		var repeated_result: Dictionary = skill_probe.activate_block_run_hero_skill()
+		if not _check(not bool(repeated_result.get("accepted", false)) and str(repeated_result.get("reason", "")) == "cooldown", "Repeated activation must be rejected during cooldown for " + hero_id):
+			return
+		for second in range(45):
+			skill_probe.block_run_session.advance_second()
+		if not _check(skill_probe.block_run_session.hero_skill_cooldown_seconds == 0, "Cooldown must expire after 45 active run seconds for " + hero_id):
+			return
+		skill_probe.free()
+
+	var paused_skill_probe = _main_probe()
+	if not _check(paused_skill_probe.start_block_run_session(), "Paused-skill probe must initialize"):
+		return
+	paused_skill_probe.configure_block_run_hero("blip", 5)
+	paused_skill_probe.paused = true
+	var paused_skill_result: Dictionary = paused_skill_probe.activate_block_run_hero_skill()
+	if not _check(not bool(paused_skill_result.get("accepted", false)), "Hero skill must not activate while paused"):
+		return
+	paused_skill_probe.paused = false
+	paused_skill_probe.block_run_session.pending_card_draft.append({"id":"test-draft"})
+	var draft_skill_result: Dictionary = paused_skill_probe.activate_block_run_hero_skill()
+	if not _check(not bool(draft_skill_result.get("accepted", false)), "Hero skill must not activate while a card draft is open"):
+		return
+	paused_skill_probe.free()
+
 	print("Block Run live gameplay integration tests passed.")
 
 	quit(0)
