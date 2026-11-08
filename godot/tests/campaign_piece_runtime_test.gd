@@ -22,6 +22,9 @@ func _run() -> void:
 		return
 	if not _check(runtime.active_piece_id >= 0 and runtime.active_cells.size() == 4, "Runtime must start with a standard four-cell piece"):
 		return
+	if not _check(not runtime.spawn_authored_special(), "Authored special spawn must not discard a falling standard piece"):
+		return
+	runtime.reset(false)
 	if not _check(runtime.spawn_authored_special() and runtime.active_piece_id == Runtime.SPECIAL_TYPE and runtime.active_cells.size() == 5, "Authored campaign event must explicitly spawn the five-cell Cargo Hook"):
 		return
 	if not _check(runtime.origin.x == 3 and runtime.rotation_index == 0, "Cargo Hook must spawn centered with base orientation"):
@@ -40,8 +43,8 @@ func _run() -> void:
 	var blocked := runtime.rotate_piece()
 	if not _check(not blocked and runtime.origin == previous_origin and runtime.rotation_index == previous_rotation and runtime.active_cells == previous_cells, "Blocked rotation must preserve the exact previous pose"):
 		return
-	runtime.reset()
-	if not _check(runtime.spawn_authored_special(), "Special piece must spawn after reset when explicitly requested"):
+	runtime.reset(false)
+	if not _check(runtime.spawn_authored_special(), "Special piece must spawn from an explicitly empty authored spawn slot"):
 		return
 	var special_id := runtime.active_piece_id
 	if not _check(runtime.hold_piece() and runtime.held_piece_id == special_id and runtime.active_piece_id < 7 and runtime.active_cells.size() == 4, "Hold must safely move special→standard"):
@@ -77,7 +80,7 @@ func _run() -> void:
 	var clear_runtime = Runtime.new()
 	clear_runtime.reset()
 	for x in range(Runtime.WIDTH):
-		if x < 3 or x > 7:
+		if x != 4:
 			clear_runtime.grid[22][x] = 0
 	clear_runtime.active_piece_id = Runtime.SPECIAL_TYPE
 	clear_runtime.active_cells = Special.cells_for_rotation(0)
