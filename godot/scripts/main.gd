@@ -635,7 +635,7 @@ func _draw_block_run_goals() -> void:
 		var label := _block_run_goal_short_label(goal)
 		var progress := "%d/%d" % [int(goal.get("value", 0)), int(goal.get("target", 1))]
 		var reward := "+%d" % int(goal.get("reward", 0))
-		draw_string(font, rect.position + Vector2(6.0, 11.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#a9d8f2"))
+		draw_string(font, rect.position + Vector2(6.0, 11.0), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#a9d8f2"))
 		var progress_width := font.get_string_size(progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x
 		draw_string(font, rect.position + Vector2(rect.size.x - progress_width - 5.0, 10.0), progress, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
 		var track_width := maxf(18.0, rect.size.x - 48.0)
