@@ -110,6 +110,25 @@ func _run() -> void:
 		return
 	draft_probe.free()
 
+	var hud_probe = _main_probe()
+	if not _check(hud_probe.start_block_run_session(), "HUD probe session must initialize"):
+		return
+	var line_goal := {"type":"lines","value":3,"target":6,"reward":15}
+	var score_goal := {"type":"score","value":900,"target":900,"reward":20}
+	if not _check(is_equal_approx(hud_probe._block_run_goal_ratio(line_goal), 0.5), "Goal HUD progress must clamp and scale current value against target"):
+		return
+	if not _check(is_equal_approx(hud_probe._block_run_goal_ratio(score_goal), 1.0), "Completed goal HUD progress must cap at 100 percent"):
+		return
+	if not _check(hud_probe._block_run_goal_short_label(line_goal) == "ЛИНИИ" and hud_probe._block_run_goal_short_label({"type":"survive"}) == "ВРЕМЯ", "Goal HUD must use compact Russian labels for goal families"):
+		return
+	if not _check(hud_probe.block_run_session.goal_states().size() == 3 and hud_probe.block_run_session.encounter.next_attack_seconds > 0, "Live encounter HUD must receive three goals and a positive attack countdown"):
+		return
+	if not _check(hud_probe.block_run_session.encounter.active_synergies().is_empty(), "No synergy should be shown before its card pair is drafted"):
+		return
+	if not _check(hud_probe.block_run_session.choose_card("score") and hud_probe.block_run_session.choose_card("mult") and hud_probe.block_run_session.encounter.active_synergies().size() == 1, "HUD synergy state must activate after both matching cards are drafted"):
+		return
+	hud_probe.free()
+
 	print("Block Run live gameplay integration tests passed.")
 
 	quit(0)
