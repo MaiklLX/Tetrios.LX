@@ -418,6 +418,11 @@ func _handle_tap(point: Vector2) -> void:
 		queue_redraw()
 		return
 	if mode_select_visible:
+		if secondary_back_rect.has_point(point):
+			mode_select_visible = false
+			home_visible = true
+			queue_redraw()
+			return
 		if classic_mode_rect.has_point(point):
 			_select_mode("classic")
 		elif sprint_mode_rect.has_point(point):
@@ -651,6 +656,8 @@ func _center_text_in_rect(value: String, rect: Rect2, size: int, color: Color) -
 
 func _draw_mode_select() -> void:
 	var layout := _mode_select_layout(screen_size)
+	_draw_soft_panel(secondary_back_rect, Color("#155c9c"), Color("#7bdfff"), 14, 6)
+	draw_string(font, secondary_back_rect.position + Vector2(12.0, 27.0), "‹  ДОМОЙ", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
 	_center_text("ВЫБЕРИ РЕЖИМ", layout.title_y, 29, Color("#fff0b9"))
 	_center_text("СОБЕРИ КОМБО И ПОЗНАКОМЬСЯ С BUDDY!", layout.subtitle_y, 11, Color("#c4edff"))
 	_draw_mode_card(classic_mode_rect, "1  •  КЛАССИКА", "Играй в своём ритме и набирай очки.", Color("#42d9ff"))
