@@ -337,6 +337,14 @@ func load_save_data(data: Dictionary) -> bool:
 	return true
 
 # Re-check the active piece after an encounter-owned board rescue.
+func validate_active_piece_after_board_mutation() -> bool:
+	if game_over:
+		return false
+	if _collides(origin, active_cells):
+		game_over = true
+		return false
+	return true
+
 func resume_after_board_rescue() -> bool:
 	if not game_over:
 		return true
