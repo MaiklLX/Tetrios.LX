@@ -377,6 +377,8 @@ func _sync_buddy_state() -> void:
 		mode_session.update(0.0, game.lines, game.game_over)
 	if not is_instance_valid(buddy):
 		return
+	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
+	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open()
 	if game.game_over:
 		if buddy.state != "surprised":
 			buddy.set_state("surprised", 0.0)
