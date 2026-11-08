@@ -590,7 +590,7 @@ func _sync_buddy_state() -> void:
 		return
 	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 	var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-	buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and not mode_select_visible and not _block_run_draft_is_open() and not result_overlay_visible
+	buddy.visible = buddy_layout.visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() and not mode_select_visible and not _block_run_draft_is_open() and not result_overlay_visible
 	if game.game_over:
 		if buddy.state != "surprised":
 			buddy.set_state("surprised", 0.0)
@@ -900,7 +900,7 @@ func _draw_campaign_route() -> void:
 		var node_rect := Rect2(pos - Vector2.ONE * (node_radius + 3.0), Vector2.ONE * (node_radius + 3.0) * 2.0)
 		campaign_node_rects.append(node_rect)
 		draw_circle(pos, node_radius, Color("#145d61") if completed else (Color("#9a6b22") if unlocked else Color("#193e70")))
-		draw_arc(pos, node_radius, 0.0, TAU, 32, Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else Color("#496b9c")), 2.0, true)
+		draw_arc(pos, node_radius, 0.0, TAU, 32, Color("#8ef4d3") if completed else (Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else Color("#496b9c"))), 2.0, true)
 		if completed:
 			draw_line(pos + Vector2(-4,0), pos + Vector2(-1,4), Color("#ffffff"), 2.0)
 			draw_line(pos + Vector2(-1,4), pos + Vector2(5,-4), Color("#ffffff"), 2.0)
