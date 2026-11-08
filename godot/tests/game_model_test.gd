@@ -276,6 +276,45 @@ func _run() -> void:
 			if not _check(game_over_model.grid[y][x] == -1, "Restart after game over must clear the entire board"):
 				return
 
+	# Versioned snapshot round-trip must preserve a complete live run.
+	var save_source: BlockBuddiesModel = Model.new()
+	save_source.reset()
+	save_source.hard_drop()
+	save_source.hold_piece()
+	save_source.move_horizontal(1)
+	var saved_state: Dictionary = save_source.to_save_data()
+	var restored_model: BlockBuddiesModel = Model.new()
+	restored_model.reset()
+	if not _check(restored_model.load_save_data(saved_state), "A valid versioned snapshot must restore successfully"):
+		return
+	if not _check(restored_model.to_save_data() == saved_state, "Snapshot round-trip must preserve board, active piece, bag, Hold, and scoring state"):
+		return
+
+	# Malformed snapshots must be rejected without mutating the live model.
+	var preserved_state: Dictionary = restored_model.to_save_data()
+	var bad_version: Dictionary = saved_state.duplicate(true)
+	bad_version["version"] = 999
+	if not _check(not restored_model.load_save_data(bad_version), "Unknown snapshot versions must be rejected"):
+		return
+	if not _check(restored_model.to_save_data() == preserved_state, "Rejected version must not mutate the current run"):
+		return
+	var bad_grid: Dictionary = saved_state.duplicate(true)
+	bad_grid["grid"][0].pop_back()
+	if not _check(not restored_model.load_save_data(bad_grid), "Snapshots with malformed board dimensions must be rejected"):
+		return
+	if not _check(restored_model.to_save_data() == preserved_state, "Rejected board data must not partially overwrite the current run"):
+		return
+	var bad_bag: Dictionary = saved_state.duplicate(true)
+	bad_bag["piece_bag"] = [0, 0]
+	if not _check(not restored_model.load_save_data(bad_bag), "Snapshots with duplicate pieces in the bag must be rejected"):
+		return
+	if not _check(restored_model.to_save_data() == preserved_state, "Rejected bag data must leave the current run unchanged"):
+		return
+	var bad_level: Dictionary = saved_state.duplicate(true)
+	bad_level["level"] = 99
+	if not _check(not restored_model.load_save_data(bad_level), "Inconsistent level and line totals must be rejected"):
+		return
+
 	# Collision boundaries: horizontal I must not cross either side wall.
 	var boundary_model: BlockBuddiesModel = Model.new()
 	boundary_model.reset()
@@ -327,5 +366,5 @@ func _run() -> void:
 	if not _check(long_run_model.grid[Model.HEIGHT - 1].count(-1) == Model.WIDTH, "The bottom row must be empty after each successful clear"):
 		return
 
-	print("Godot model tests passed: 10x23 board, collision boundaries, lock behavior, 50-cycle progression, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
+	print("Godot model tests passed: 10x23 board, versioned save/load validation, collision boundaries, lock behavior, 50-cycle progression, seven-bag, movement, rotation, Hold, preview, 1-4 line clears, scoring, level progression, game over, and reset.")
 	quit(0)
