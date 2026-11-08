@@ -235,23 +235,23 @@ func use_hero_skill(hero_id: String, hero_level: int) -> Dictionary:
 				board[y].fill(Board.EMPTY)
 			result.rows_cleared = rows
 		"prism":
-			var damage := 8 + tier * 5
-			var hit := encounter.damage_enemy(damage)
-			result.enemy_damage = int(hit.damaged)
-			result.enemy_defeated = bool(hit.defeated)
-			if bool(hit.defeated):
-				var rift_rows := mini(3, int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear))
-				var cleared := Board.clear_bottom_rows(board, rift_rows)
-				result.rows_cleared = int(cleared.cleared)
+			var prism_damage := 8 + tier * 5
+			var prism_hit := encounter.damage_enemy(prism_damage)
+			result.enemy_damage = int(prism_hit.damaged)
+			result.enemy_defeated = bool(prism_hit.defeated)
+			if bool(prism_hit.defeated):
+				var prism_rift_rows := mini(3, int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear))
+				var prism_cleared := Board.clear_bottom_rows(board, prism_rift_rows)
+				result.rows_cleared = int(prism_cleared.cleared)
 		"spark":
-			var damage := 12 + tier * 5
-			var hit := encounter.damage_enemy(damage)
-			result.enemy_damage = int(hit.damaged)
-			result.enemy_defeated = bool(hit.defeated)
-			if bool(hit.defeated):
-				var rift_rows := mini(3, int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear))
-				var cleared := Board.clear_bottom_rows(board, rift_rows)
-				result.rows_cleared = int(cleared.cleared)
+			var spark_damage := 12 + tier * 5
+			var spark_hit := encounter.damage_enemy(spark_damage)
+			result.enemy_damage = int(spark_hit.damaged)
+			result.enemy_defeated = bool(spark_hit.defeated)
+			if bool(spark_hit.defeated):
+				var spark_rift_rows := mini(3, int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear))
+				var spark_cleared := Board.clear_bottom_rows(board, spark_rift_rows)
+				result.rows_cleared = int(spark_cleared.cleared)
 		"blip":
 			var delay := 12 + tier * 4
 			encounter.next_attack_seconds += delay
