@@ -105,13 +105,13 @@
   "invalid_daily_archive_record": {
     "local_storage": {
       "bb_coins": "20",
-      "bbDailyArchive": "{\\"2026-11-07\\":{\\"date\\":\\"2026-11-06\\",\\"quests\\":[]}}"
+      "bbDailyArchive": "{\"2026-11-07\":{\"date\":\"2026-11-06\",\"quests\":[]}}"
     }
   },
   "invalid_calendar_date": {
     "local_storage": {
       "bb_coins": "20",
-      "bbDailyQuests": "{\\"date\\":\\"2026-02-29\\",\\"quests\\":[]}"
+      "bbDailyQuests": "{\"date\":\"2026-02-29\",\"quests\":[]}"
     }
   },
   "reward_marker_without_history": {
