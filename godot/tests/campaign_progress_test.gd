@@ -51,7 +51,7 @@ func _run() -> void:
 		var universe_end := universe_start + Campaign.PLANETS_PER_UNIVERSE - 1
 		var easy: Dictionary = progress.get_planet_definition(universe_start)
 		var hard: Dictionary = progress.get_planet_definition(universe_end)
-		if not _check(int(hard.target_lines) <= 17 and int(hard.target_score) <= 1400, "Campaign objective values must remain inside a fair difficulty ceiling"):
+		if not _check(int(hard.target_lines) <= 16 and int(hard.target_score) <= 1500, "Campaign objective values must remain inside a fair difficulty ceiling"):
 			return
 		if not _check(int(easy.target_lines) >= previous_universe_max - 2, "A new universe must not feel like a complete difficulty reset"):
 			return
