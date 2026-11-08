@@ -104,6 +104,11 @@ func _buddy(center: Vector2, scale := 1.0, expression := "happy") -> void:
 	draw_circle(center + Vector2(48, -48) * s, 9 * s, GOLD)
 
 func _draw_home() -> void:
+	# Narrow phones get a purpose-designed compact layout, not a clipped desktop
+	# composition. Every destination and daily loop remains visible without scroll.
+	if viewport_size.y <= 900.0:
+		_draw_home_compact()
+		return
 	# Compact command center: all primary destinations and daily loops fit in one
 	# portrait viewport. Detailed content lives on the destination screens.
 	var w := viewport_size.x
@@ -171,6 +176,65 @@ func _draw_home() -> void:
 	_text("КРИСТАЛЛЫ  3", Vector2(w * 0.49, footer_y + 27), 15, CYAN)
 	_text("РЕКОРД 28 872", Vector2(54, footer_y + 51), 11, PALE)
 	_text("19 ЗАПУСКОВ  •  6 ДОСТИЖЕНИЙ", Vector2(w * 0.49, footer_y + 51), 11, PALE)
+	_draw_bottom_nav("ГЛАВНАЯ")
+
+func _draw_home_compact() -> void:
+	var w := viewport_size.x
+	var m := 14.0
+	var inner := w - m * 2
+	# Brand strip
+	_panel(Rect2(m, 102, inner, 76), Color("#102f68"), CYAN, 17)
+	_buddy(Vector2(52, 140), 0.30)
+	_text("BLOCK BUDDIES", Vector2(88, 135), 17, WHITE)
+	_text("СОБИРАЙ • ОТКРЫВАЙ МИРЫ", Vector2(88, 155), 9, PALE)
+	_text("✦ 8 031   ◈ 3", Vector2(w - 112, 119), 10, GOLD)
+	# Three primary modes, each with a compact icon and concise descriptor
+	var names := ["КАМПАНИЯ", "БЛОК-РАН", "ЕЖЕДНЕВНЫЙ ВЫЗОВ"]
+	var subs := ["Вселенные • планеты", "Герои • боссы • усиления", "Задание дня • награды"]
+	var fills := [Color("#124e80"), Color("#343078"), Color("#51401e")]
+	for i in range(3):
+		var y := 186.0 + i * 57.0
+		_panel(Rect2(m, y, inner, 51), fills[i], [CYAN,VIOLET,GOLD][i], 14)
+		_draw_mode_icon(Vector2(43, y+25), i, 0.43)
+		_text(names[i], Vector2(75, y+22), 13, WHITE)
+		_text(subs[i], Vector2(75, y+39), 9, PALE)
+		draw_string(font, Vector2(w-34, y+33), "›", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, [CYAN,VIOLET,GOLD][i])
+	# Three daily goals with thin progress bars
+	var ty := 365.0
+	_panel(Rect2(m, ty, inner, 119), Color("#102b59"), Color("#4e9bc8"), 15)
+	_text("ЕЖЕДНЕВНЫЕ ЗАДАНИЯ", Vector2(27, ty+20), 12, CYAN)
+	_text("3 ЦЕЛИ", Vector2(w-66, ty+20), 9, PALE)
+	var tasks := ["Очистить 8 линий", "Набрать 2 000 очков", "Сыграть 4 партии"]
+	var prog := ["6 / 8", "0 / 2 000", "0 / 4"]
+	for i in range(3):
+		var y := ty + 31 + i * 28
+		_text(tasks[i], Vector2(28, y+10), 10, WHITE)
+		_text(prog[i], Vector2(w-65, y+10), 9, PALE)
+		var bar := Rect2(28, y+14, inner-28, 3)
+		draw_rect(bar, Color("#2a4266"))
+		draw_rect(Rect2(bar.position, Vector2(bar.size.x * [0.75,0.0,0.0][i],3)), [CYAN,VIOLET,GOLD][i])
+	# Visit streak
+	var sy := 491.0
+	_panel(Rect2(m, sy, inner, 45), Color("#28285c"), VIOLET, 13)
+	_draw_flame(Vector2(38, sy+22), 0.34)
+	_text("11 ДНЕЙ ПОДРЯД", Vector2(62, sy+20), 12, GOLD)
+	_text("Серия посещений", Vector2(62, sy+35), 9, PALE)
+	# Heroes, shop and upgrades in a single icon row
+	var uy := 544.0
+	var ug := 7.0
+	var uw := (inner - ug*2)/3.0
+	var utility := ["ГЕРОИ","МАГАЗИН","УСИЛЕНИЯ"]
+	for i in range(3):
+		var x := m + i*(uw+ug)
+		_panel(Rect2(x, uy, uw, 67), [Color("#164c83"),Color("#175e76"),Color("#49377d")][i], [CYAN,Color("#8ef4d3"),VIOLET][i], 13)
+		_draw_utility_icon(Vector2(x+uw*0.5, uy+25), i)
+		_center_card_text(utility[i], Rect2(x,uy,uw,60), uy+59, 9, WHITE)
+	# Resource and lifetime stats in one compact panel
+	var ry := 620.0
+	_panel(Rect2(m, ry, inner, 57), Color("#102b55"), Color("#397cae"), 13)
+	_text("ЗОЛОТО  8 031", Vector2(27, ry+22), 11, GOLD)
+	_text("КРИСТАЛЛЫ  3", Vector2(w*0.52, ry+22), 11, CYAN)
+	_text("РЕКОРД 28 872  •  19 ПАРТИЙ  •  6 НАГРАД", Vector2(27, ry+43), 9, PALE)
 	_draw_bottom_nav("ГЛАВНАЯ")
 
 func _draw_mode_icon(center: Vector2, mode: int, scale := 1.0) -> void:
