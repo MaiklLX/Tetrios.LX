@@ -167,7 +167,9 @@ func _run() -> void:
 		{"id":"shop","file":"11-concept-shop"},
 		{"id":"heroes","file":"12-concept-hero-roster"},
 		{"id":"upgrades","file":"13-concept-upgrades"},
-		{"id":"block_run","file":"14-concept-block-run-hub"}
+		{"id":"block_run","file":"14-concept-block-run-hub"},
+		{"id":"campaign","file":"15-concept-cosmic-atlas"},
+		{"id":"daily","file":"16-concept-daily-calendar"}
 	]:
 		gallery.set("screen_id", screen.id)
 		gallery.queue_redraw()
