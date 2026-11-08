@@ -567,7 +567,7 @@ func _draw_stats() -> void:
 	# Wider, balanced HUD cards keep values readable on narrow portrait screens.
 	var top := 56.0
 	var outer := 18.0
-	var gap := 10.0
+	var gap := 14.0
 	var card_width := (screen_size.x - outer * 2.0 - gap) * 0.5
 	var card_height := 52.0
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
@@ -606,7 +606,7 @@ func _stat_label_font_size(rect: Rect2, label: String) -> int:
 	return 10
 
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
-	_draw_soft_panel(rect, Color("#124b99"), accent.lightened(0.18), 15, 7)
+	_draw_soft_panel(rect, Color("#124b99"), accent.lightened(0.18), 15, 4)
 	var label_size := _stat_label_font_size(rect, label)
 	draw_string(font, rect.position + Vector2(12, 18), label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#d9f0ff"))
 	draw_string(font, rect.position + Vector2(12, 41), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#ffffff"))
@@ -629,14 +629,14 @@ func _draw_block_run_goals() -> void:
 		return
 	# Compact 28px goal strip sits above the 72px preview row, including on 360x800 phones.
 	var top := board_rect.position.y - 122.0
-	var gap := 6.0
+	var gap := 10.0
 	var outer := 18.0
 	var width := (screen_size.x - outer * 2.0 - gap * 2.0) / 3.0
 	for index in range(mini(3, states.size())):
 		var goal: Dictionary = states[index]
 		var rect := Rect2(outer + index * (width + gap), top, width, 28.0)
 		var ratio := _block_run_goal_ratio(goal)
-		_draw_soft_panel(rect, Color("#0b2850"), Color("#3d82b5"), 8, 2)
+		_draw_soft_panel(rect, Color("#0b2850"), Color("#3d82b5"), 8, 1)
 		var label := _block_run_goal_short_label(goal)
 		var progress := "%d/%d" % [int(goal.get("value", 0)), int(goal.get("target", 1))]
 		var reward := "+%d" % int(goal.get("reward", 0))
@@ -654,8 +654,9 @@ func _draw_piece_previews() -> void:
 	var card_height := 72.0
 	var top := board_rect.position.y - card_height - 16.0
 	if block_run_active:
-		var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
-		var slot_gap := 8.0
+		var slot_outer := 14.0
+		var slot_gap := 12.0
+		var slot_width := minf((screen_size.x - slot_outer * 2.0 - slot_gap * 2.0) / 3.0, 164.0)
 		var total_width := slot_width * 3.0 + slot_gap * 2.0
 		var start_x := (screen_size.x - total_width) * 0.5
 		hold_rect = Rect2(start_x, top, slot_width, card_height)
@@ -664,8 +665,8 @@ func _draw_piece_previews() -> void:
 		_draw_preview_card(Rect2(start_x + slot_width + slot_gap, top, slot_width, card_height), "ДАЛЕЕ", game.peek_next_piece_type())
 		_draw_block_run_skill_card(block_run_skill_rect)
 	else:
-		var card_width := minf(164.0, (screen_size.x - 36.0) * 0.5)
-		var gap := 12.0
+		var card_width := minf(164.0, (screen_size.x - 36.0 - 14.0) * 0.5)
+		var gap := 14.0
 		var total_width := card_width * 2.0 + gap
 		var start_x := (screen_size.x - total_width) * 0.5
 		hold_rect = Rect2(start_x, top, card_width, card_height)
@@ -713,7 +714,7 @@ func _draw_block_run_skill_card(rect: Rect2) -> void:
 		var glow := Color("#ffd45c")
 		glow.a = 0.12 + pulse * 0.12
 		_draw_soft_panel(rect.grow(2.0), glow, Color("#ffd45c", 0.25 + pulse * 0.45), 16, 11)
-	_draw_soft_panel(rect, Color("#102e4b") if ready else Color("#0b1d31"), accent, 15, 8)
+	_draw_soft_panel(rect, Color("#102e4b") if ready else Color("#0b1d31"), accent, 15, 5)
 	var icon_center := Vector2(rect.end.x - 16.0, rect.position.y + 17.0)
 	if ready:
 		draw_circle(icon_center, 11.0 + pulse * 1.2, Color("#ffcf4d", 0.16 + pulse * 0.12))
@@ -726,7 +727,7 @@ func _draw_block_run_skill_card(rect: Rect2) -> void:
 	draw_string(font, rect.position + Vector2(8.0, 37.0), state, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if ready else 8, accent)
 
 func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
-	_draw_soft_panel(rect, Color("#17488a"), Color("#71cfff"), 15, 6)
+	_draw_soft_panel(rect, Color("#17488a"), Color("#71cfff"), 15, 3)
 	# Keep the label in a dedicated upper-left lane; center the tetromino in the
 	# lower-right lane so labels and piece cells never collide on 360px screens.
 	draw_string(font, rect.position + Vector2(9, 19), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#d9f4ff"))
