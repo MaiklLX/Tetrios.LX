@@ -31,6 +31,15 @@ const MODES := {
 		"time_limit_seconds": 0,
 		"starting_level": 1,
 		"level_lines": 10
+	},
+	"campaign": {
+		"id": "campaign",
+		"name": "Campaign",
+		"description": "Уровень космической кампании с целью планеты.",
+		"target_lines": 8,
+		"time_limit_seconds": 0,
+		"starting_level": 1,
+		"level_lines": 10
 	}
 }
 
