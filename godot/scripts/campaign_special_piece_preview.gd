@@ -78,7 +78,7 @@ func _draw_feature() -> void:
 	_panel(panel, Color("#0b223e"), Color("#36758e"), 28)
 	_text("ФОРМА ПО УМОЛЧАНИЮ", Vector2(56, 268), 15, MUTED)
 	var cells := SpecialPiece.cells_for_rotation(0)
-	var size := 74.0
+	var size := 66.0
 	var dimensions := SpecialPiece.dimensions(cells)
 	var shape_size := Vector2(dimensions.x * size, dimensions.y * size)
 	var origin := Vector2(panel.get_center().x - shape_size.x * 0.5, 315 + (245.0 - shape_size.y) * 0.5)
