@@ -157,6 +157,10 @@ func _run() -> void:
 		quit(1)
 		return
 	var gallery := gallery_packed.instantiate()
+	if gallery.get_script() == null or not gallery.has_method("_draw"):
+		push_error("UI concept gallery script did not load; refusing to save blank concept captures.")
+		quit(1)
+		return
 	viewport.add_child(gallery)
 	for screen in [
 		{"id":"home","file":"10-concept-home-menu"},
