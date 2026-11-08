@@ -82,3 +82,14 @@
 - CI workflow run `42450599486` on HEAD `31b0545a9a7447b3b42c86ee1c1238327009cc16`: import, parse, gameplay tests, migration tests and scene smoke test all **SUCCESS**.
 - Remaining gaps: historical daily archive and catalog-signature drift, full cosmetic catalog validation, hero skill state, mode-specific interrupted runs, and review UI. No persistent storage or actual import is enabled.
 - No main edits, merge, deployment, APK build or user-data modification.
+
+
+## KT-449 — Daily archive and calendar-date audit
+- Date: 2026-11-08
+- Branch: `godot/kt428-buddy-companion-2026-11-07`
+- Added strict validation for actual Web daily quest archive records: date key, matching embedded date, quest array and complete quest fields.
+- Date validation now rejects impossible Gregorian dates, including non-leap-year February 29.
+- Archive entries above 90 are retained in full with a warning; import does not reproduce the Web save-time trim.
+- Catalog signature is preserved byte-for-byte as an opaque source string. It is not recalculated and does not trigger assignment/history deletion in the native migration parser.
+- Added malformed archive/date fixtures and a 91-entry no-trim regression test.
+- Parser remains pure/read-only. No storage writes, rewards, cloud sync, main edits, merge, deployment or APK build.
