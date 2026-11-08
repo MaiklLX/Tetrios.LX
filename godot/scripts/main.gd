@@ -73,7 +73,7 @@ func _layout() -> void:
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
 		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
+		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
 	queue_redraw()
 
 func _mode_select_layout(viewport: Vector2) -> Dictionary:
@@ -412,7 +412,8 @@ func _sync_buddy_state() -> void:
 	if not is_instance_valid(buddy):
 		return
 	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
-	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open()
+	var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
+	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
 	if game.game_over:
 		if buddy.state != "surprised":
 			buddy.set_state("surprised", 0.0)
