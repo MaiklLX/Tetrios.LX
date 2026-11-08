@@ -33,7 +33,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	# Difficulty grows in small, bounded chapter steps. It never compounds per planet.
 	var chapter_step := mini(universe_index, 6)
 	var local_step := int((planet_in_universe - 1) / 10)
-	var line_target := 10 + chapter_step * 2 + local_step * 2
+	var line_target := 10 + chapter_step * 2 + local_step
 	var score_target := 900 + chapter_step * 220 + local_step * 160
 	var objective_type := "lines"
 	var boss_type := "none"
