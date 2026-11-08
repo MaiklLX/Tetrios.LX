@@ -26,6 +26,7 @@ var nova_used := false
 var goals: Array[Dictionary] = []
 var next_goal_id := 0
 var goal_rewards_earned := 0
+var hero_skill_cooldown_seconds := 0
 
 func start() -> void:
 	encounter = Encounter.new()
@@ -46,6 +47,7 @@ func start() -> void:
 	goals.clear()
 	next_goal_id = 0
 	goal_rewards_earned = 0
+	hero_skill_cooldown_seconds = 0
 	for goal_index in range(3):
 		goals.append(_create_goal())
 
@@ -183,6 +185,7 @@ func advance_second() -> Dictionary:
 	if status != STATUS_RUNNING:
 		return {"accepted":false,"attack":false,"failed":status == STATUS_FAILED,"goal_events":[]}
 	run_seconds += 1
+	hero_skill_cooldown_seconds = maxi(0, hero_skill_cooldown_seconds - 1)
 	var timer_effect := Effects.on_timer_second(encounter.card_ranks, run_seconds)
 	score += int(timer_effect.score_bonus)
 	level_charge += int(timer_effect.level_charge)
@@ -214,6 +217,55 @@ func advance_second() -> Dictionary:
 		"level_charge":int(timer_effect.level_charge),
 		"goal_events":goal_events
 	}
+
+
+func use_hero_skill(hero_id: String, hero_level: int) -> Dictionary:
+	if status != STATUS_RUNNING:
+		return {"accepted":false,"reason":"run_not_active"}
+	if hero_level < 5:
+		return {"accepted":false,"reason":"locked"}
+	if hero_skill_cooldown_seconds > 0:
+		return {"accepted":false,"reason":"cooldown","remaining":hero_skill_cooldown_seconds}
+	var tier := 1 + int((hero_level - 5) / 5)
+	var result := {"accepted":true,"hero_id":hero_id,"tier":tier,"cooldown":45,"enemy_damage":0,"enemy_defeated":false,"rows_cleared":0,"level_charge_added":0,"attack_delay_added":0,"score_bonus":0}
+	match hero_id:
+		"plush":
+			var rows := mini(Board.HEIGHT, 2 + tier)
+			for y in range(rows):
+				board[y].fill(Board.EMPTY)
+			result.rows_cleared = rows
+		"prism":
+			var damage := 8 + tier * 5
+			var hit := encounter.damage_enemy(damage)
+			result.enemy_damage = int(hit.damaged)
+			result.enemy_defeated = bool(hit.defeated)
+			if bool(hit.defeated):
+				var rift_rows := mini(3, int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear))
+				var cleared := Board.clear_bottom_rows(board, rift_rows)
+				result.rows_cleared = int(cleared.cleared)
+		"spark":
+			var damage := 12 + tier * 5
+			var hit := encounter.damage_enemy(damage)
+			result.enemy_damage = int(hit.damaged)
+			result.enemy_defeated = bool(hit.defeated)
+			if bool(hit.defeated):
+				var rift_rows := mini(3, int(Effects.on_monster_defeated(encounter.card_ranks).bottom_rows_to_clear))
+				var cleared := Board.clear_bottom_rows(board, rift_rows)
+				result.rows_cleared = int(cleared.cleared)
+		"blip":
+			var delay := 12 + tier * 4
+			encounter.next_attack_seconds += delay
+			result.attack_delay_added = delay
+		"pixel":
+			var cleared := Board.clear_bottom_rows(board, tier)
+			result.rows_cleared = int(cleared.cleared)
+			level_charge += tier
+			result.level_charge_added = tier
+		_:
+			return {"accepted":false,"reason":"unknown_hero"}
+	hero_skill_cooldown_seconds = 45
+	result["cooldown_remaining"] = hero_skill_cooldown_seconds
+	return result
 
 func add_relics(amount: int) -> void:
 	relics += maxi(0, amount)
