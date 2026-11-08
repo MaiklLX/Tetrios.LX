@@ -993,7 +993,19 @@ func _draw_stats() -> void:
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
 	var synergy_count := block_run_session.encounter.active_synergies().size() if block_run_active and block_run_session != null else 0
 	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ • СИН. %d" % synergy_count
-	_stat_card(Rect2(outer, top, card_width, card_height), score_label, str(score_value), Color("#45d9f5"))
+	var score_display := str(score_value)
+	var campaign_score_target := int(mode_session.rules.get("target_score", 0)) if campaign_run_active and mode_session != null else 0
+	if campaign_score_target > 0:
+		score_label = "ОЧКИ / ЦЕЛЬ"
+		score_display = "%d / %d" % [score_value, campaign_score_target]
+	var score_rect := Rect2(outer, top, card_width, card_height)
+	_stat_card(score_rect, score_label, score_display, Color("#45d9f5"))
+	if campaign_score_target > 0:
+		var score_track := Rect2(score_rect.position + Vector2(12.0, 46.0), Vector2(score_rect.size.x - 24.0, 3.0))
+		draw_rect(score_track, Color(0.12, 0.19, 0.27, 1.0))
+		var score_ratio := clampf(float(score_value) / float(campaign_score_target), 0.0, 1.0)
+		if score_ratio > 0.0:
+			draw_rect(Rect2(score_track.position, Vector2(score_track.size.x * score_ratio, score_track.size.y)), Color("#45d9f5"))
 	var progress_rect := Rect2(outer + card_width + gap, top, card_width, card_height)
 	if block_run_active and block_run_session != null:
 		var encounter = block_run_session.encounter
