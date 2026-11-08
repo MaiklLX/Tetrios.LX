@@ -56,7 +56,7 @@ func _run() -> void:
 		if not _check(int(easy.target_lines) >= previous_universe_max - 2, "A new universe must not feel like a complete difficulty reset"):
 			return
 		previous_universe_max = int(hard.target_lines)
-	if not _check(int(progress.get_planet_definition(10).target_lines) > int(progress.get_planet_definition(9).target_lines) and progress.get_planet_definition(10).objective_type == "boss_combo", "Boss planets must add a meaningful but bounded combined challenge"):
+	if not _check(int(progress.get_planet_definition(10).target_score) > 0 and progress.get_planet_definition(10).objective_type == "boss_combo", "Boss planets must add a meaningful but bounded combined challenge"):
 		return
 	if not _check(progress.is_unlocked(1) and not progress.is_unlocked(2) and progress.get_planet_status(2) == "locked", "Only the current planet is initially available"):
 		return
@@ -67,6 +67,11 @@ func _run() -> void:
 		return
 	var boss_success: Dictionary = boss_progress.complete_planet(20, int(score_boss.target_lines), int(score_boss.target_score), 10.0)
 	if not _check(boss_success.accepted, "Score boss must complete when both line and score objectives are met"):
+		return
+	var score_only_progress = Campaign.new()
+	score_only_progress.import_legacy_progress(5, 0)
+	var score_only_success: Dictionary = score_only_progress.complete_planet(5, 0, int(score_planet.target_score), 5000.0)
+	if not _check(score_only_success.accepted, "Score-only missions must not require lines or impose a hidden timer"):
 		return
 	var guardian_progress = Campaign.new()
 	guardian_progress.import_legacy_progress(10, 0)
