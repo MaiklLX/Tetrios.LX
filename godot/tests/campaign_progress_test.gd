@@ -66,7 +66,7 @@ func _run() -> void:
 		return
 	var speed_progress = Campaign.new()
 	speed_progress.import_legacy_progress(10, 0)
-	var speed_timeout: Dictionary = speed_progress.complete_planet(10, int(speed_boss.target_lines), 0, float(speed_boss.time_limit_seconds) + 1.0)
+	var speed_timeout: Dictionary = speed_progress.complete_planet(10, int(speed_boss.target_lines), int(speed_boss.target_score), float(speed_boss.time_limit_seconds) + 1.0)
 	if not _check(not speed_timeout.accepted and speed_timeout.reason == "time_limit_exceeded", "Speed boss must reject a run beyond its time limit"):
 		return
 	var too_early: Dictionary = progress.complete_planet(2, 999)
@@ -75,7 +75,7 @@ func _run() -> void:
 	var insufficient: Dictionary = progress.complete_planet(1, 7)
 	if not _check(not insufficient.accepted and insufficient.reason == "objective_not_met" and progress.unlocked_node == 1, "Incomplete objectives must not unlock the next planet"):
 		return
-	var completion: Dictionary = progress.complete_planet(1, 8)
+	var completion: Dictionary = progress.complete_planet(1, 8, int(first.target_score))
 	if not _check(completion.accepted and completion.reward_marks == 1 and progress.unlocked_node == 2, "First planet completion must award marks and unlock planet 002"):
 		return
 	if not _check(progress.get_planet_status(1) == "completed" and progress.get_planet_status(2) == "current", "Planet states must update after completion"):
