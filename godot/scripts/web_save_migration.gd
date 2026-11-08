@@ -155,6 +155,8 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_validate_equipped_cosmetics(cosmetics["equipped_by_hero"], result)
 	if daily.has("quests_current"):
 		_validate_daily_quests(daily["quests_current"], result)
+	if daily.has("quest_archive"):
+		_validate_daily_archive(daily["quest_archive"], result)
 	_validate_date_dictionary(daily.get("challenge_assignments", {}), "bbDailyChallengeAssignments", result)
 	_validate_date_dictionary(daily.get("challenge_history", {}), "bbDailyChallengeHistory", result)
 	if typeof(daily.get("challenge_history", {})) == TYPE_DICTIONARY:
@@ -220,12 +222,33 @@ static func _validate_daily_quests(value: Variant, result: Dictionary) -> void:
 	if not value.has("quests") or typeof(value["quests"]) != TYPE_ARRAY:
 		_add_error(result, "bbDailyQuests must contain a quests array")
 		return
-	for quest in value["quests"]:
+	_validate_daily_quest_entries(value["quests"], result)
+
+static func _validate_daily_archive(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	if value.size() > 90:
+		result["warnings"].append("Daily quest archive exceeds the Web 90-day save window; all entries were preserved without trimming")
+	for date_key in value.keys():
+		var date_text := str(date_key)
+		var entry: Variant = value[date_key]
+		if not _looks_like_date(date_text) or typeof(entry) != TYPE_DICTIONARY:
+			_add_error(result, "bbDailyArchive contains an invalid date record: " + date_text)
+			continue
+		if typeof(entry.get("date")) != TYPE_STRING or str(entry.get("date")) != date_text:
+			_add_error(result, "bbDailyArchive record date does not match its key: " + date_text)
+		if typeof(entry.get("quests")) != TYPE_ARRAY:
+			_add_error(result, "bbDailyArchive record must contain a quests array: " + date_text)
+			continue
+		_validate_daily_quest_entries(entry["quests"], result)
+
+static func _validate_daily_quest_entries(quests: Array, result: Dictionary) -> void:
+	for quest in quests:
 		if typeof(quest) != TYPE_DICTIONARY:
 			_add_error(result, "Daily quest entry must be an object")
 			continue
-		if typeof(quest.get("id")) != TYPE_STRING or typeof(quest.get("title")) != TYPE_STRING:
-			_add_error(result, "Daily quest must contain string id and title")
+		if typeof(quest.get("id")) != TYPE_STRING or str(quest.get("id")).is_empty() or typeof(quest.get("title")) != TYPE_STRING or str(quest.get("title")).is_empty():
+			_add_error(result, "Daily quest must contain non-empty string id and title")
 		if not _is_positive_int(quest.get("target")) or not _is_non_negative_int(quest.get("progress")):
 			_add_error(result, "Daily quest target/progress must be valid non-negative integers")
 		if not _is_non_negative_int(quest.get("reward")) or typeof(quest.get("claimed")) != TYPE_BOOL:
@@ -315,9 +338,16 @@ static func _looks_like_date(value: String) -> bool:
 	var day_text := value.substr(8, 2)
 	if not year_text.is_valid_int() or not month_text.is_valid_int() or not day_text.is_valid_int():
 		return false
+	var year := int(year_text)
 	var month := int(month_text)
 	var day := int(day_text)
-	return int(year_text) >= 2000 and month >= 1 and month <= 12 and day >= 1 and day <= 31
+	if year < 2000 or month < 1 or month > 12 or day < 1:
+		return false
+	var days_in_month := [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+	var leap_year := (year % 4 == 0 and year % 100 != 0) or year % 400 == 0
+	if leap_year:
+		days_in_month[1] = 29
+	return day <= days_in_month[month - 1]
 
 static func _is_known_key(key: String) -> bool:
 	if KNOWN_DIRECT_KEYS.has(key):
