@@ -60,10 +60,10 @@ func _layout() -> void:
 	screen_size = get_viewport_rect().size
 	var board_metrics := _board_metrics(screen_size)
 	board_rect = board_metrics.board_rect
-	pause_rect = Rect2(screen_size.x - 64.0, 42.0, 42.0, 42.0)
+	pause_rect = Rect2(screen_size.x - 64.0, 22.0, 42.0, 42.0)
 	var resume_width := minf(220.0, screen_size.x - 64.0)
 	resume_rect = Rect2(screen_size.x * 0.5 - resume_width * 0.5, screen_size.y * 0.5 + 42.0, resume_width, 54.0)
-	mode_button_rect = Rect2(24.0, 42.0, 82.0, 42.0)
+	mode_button_rect = Rect2(24.0, 22.0, 82.0, 42.0)
 	var mode_layout := _mode_select_layout(screen_size)
 	classic_mode_rect = mode_layout.classic
 	sprint_mode_rect = mode_layout.sprint
@@ -92,7 +92,7 @@ func _mode_select_layout(viewport: Vector2) -> Dictionary:
 func _board_metrics(viewport: Vector2) -> Dictionary:
 	# With touch-first input there is no permanent control strip: give that
 	# space back to the playfield while preserving room for HUD and previews.
-	var board_top_min := 292.0
+	var board_top_min := 224.0
 	var available_height := maxf(230.0, viewport.y - board_top_min - 36.0)
 	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.68) / BOARD_H, available_height / BOARD_H))
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
@@ -492,15 +492,8 @@ func _draw_backdrop() -> void:
 	draw_circle(Vector2(screen_size.x * 0.12, screen_size.y * 0.9), 42.0, Color(0.08, 0.72, 0.82, 0.28 + pulse * 0.08))
 	draw_circle(Vector2(screen_size.x * 0.88, screen_size.y * 0.88), 58.0, Color(0.48, 0.23, 0.87, 0.24))
 func _draw_header() -> void:
-	if screen_size.x < 420.0:
-		var title_size := 21
-		var title_width := font.get_string_size("BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size).x
-		var title_center_x := (mode_button_rect.end.x + pause_rect.position.x) * 0.5
-		draw_string(font, Vector2(title_center_x - title_width * 0.5, 62.0), "BLOCK BUDDIES", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, Color("#fff4c7"))
-	else:
-		_center_text("BLOCK BUDDIES", 62.0, 36, Color("#fff2c0"))
-	var mode_name := "БЛОК-РАН" if block_run_active else _mode_display_name("classic" if mode_session == null else mode_session.mode_id)
-	_center_text("✨  %s  ✨" % mode_name.to_upper(), 105.0, 15, Color("#a8edff"))
+	# During active play the title banner is intentionally hidden. The compact
+	# mode switch and pause affordance remain available without stealing arena space.
 	_draw_mode_button()
 	_draw_pause_button()
 func _draw_mode_button() -> void:
@@ -547,7 +540,7 @@ func _format_elapsed_time(total_seconds: float) -> String:
 	return "%02d:%02d" % [minutes, seconds]
 
 func _draw_stats() -> void:
-	var top := 140.0
+	var top := 60.0
 	var score_value := block_run_session.score if block_run_active and block_run_session != null else game.score
 	var synergy_count := block_run_session.encounter.active_synergies().size() if block_run_active and block_run_session != null else 0
 	var score_label := "ОЧКИ" if synergy_count == 0 else "ОЧКИ  •  СИНЕРГИИ %d" % synergy_count
@@ -597,7 +590,7 @@ func _draw_block_run_goals() -> void:
 	var states := block_run_session.goal_states()
 	if states.is_empty():
 		return
-	var top := board_rect.position.y - 39.0
+	var top := board_rect.position.y - 98.0
 	var gap := 5.0
 	var outer := 18.0
 	var width := (screen_size.x - outer * 2.0 - gap * 2.0) / 3.0
@@ -620,8 +613,8 @@ func _draw_block_run_goals() -> void:
 		draw_string(font, rect.position + Vector2(6.0, 23.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
 
 func _draw_piece_previews() -> void:
-	var card_height := 46.0
-	var top := board_rect.position.y - card_height - 42.0
+	var card_height := 60.0
+	var top := board_rect.position.y - card_height - 8.0
 	if block_run_active:
 		var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
 		var slot_gap := 8.0
@@ -681,9 +674,9 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		min_y = mini(min_y, cell_pos.y)
 		max_x = maxi(max_x, cell_pos.x)
 		max_y = maxi(max_y, cell_pos.y)
-	var mini_cell := minf(9.0, (rect.size.x - 56.0) / 4.0)
+	var mini_cell := minf(13.0, (rect.size.x - 64.0) / 4.0)
 	var piece_size := Vector2((max_x - min_x + 1) * mini_cell, (max_y - min_y + 1) * mini_cell)
-	var piece_origin := Vector2(rect.position.x + rect.size.x - 34.0, rect.get_center().y) - piece_size * 0.5
+	var piece_origin := Vector2(rect.position.x + rect.size.x - 42.0, rect.get_center().y) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
 		_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
