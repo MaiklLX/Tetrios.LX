@@ -17,6 +17,10 @@ Status: implementation checkpoint; Draft review only.
 - Portrait 360×800: score HUD, Block Run goals, preview cards and arena remain separated without overlap.
 - No permanent on-screen directional control strip is introduced.
 
+## Layout assertion update
+
+The responsive layout test now expects the board to begin at or below y=224px rather than the old y=292px threshold. The compact HUD occupies y=60–118px; enlarged previews occupy the region immediately above the board. This keeps the new reclaimed space intentional and regression-tested.
+
 ## Drop control discrepancy
 
 The current Godot scene has no visible DROP button: hard drop is performed by a fast downward swipe (and Enter on keyboard); slower downward swipes soft-drop. The user mentioned making the DROP button more prominent. Before adding a persistent touch button, compare the exact screen/reference they mean with the current Godot and Web/PWA builds. Do not silently add a control that could conflict with the previously approved gesture-first layout.
