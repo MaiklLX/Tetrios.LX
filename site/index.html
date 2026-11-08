@@ -9317,7 +9317,7 @@ if (resetProgressBtn) {
         board=Array.from({length:H},()=>Array(W).fill(0));
         piece={t:0,shape:[[0,1,0],[1,1,1]],x:3,y:4};
         started=true;paused=false;gameOver=false;touch=null;lastTouchDropAt=-Infinity;
-        bbHardDropAcceptedAt=0;bbHardDropInProgress=false;
+        bbHardDropAcceptedAt=-Infinity;bbHardDropInProgress=false;
         render();
         return {ready:!!piece,x:piece.x,y:piece.y};
       },
