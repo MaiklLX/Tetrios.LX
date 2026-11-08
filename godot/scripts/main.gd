@@ -504,17 +504,40 @@ func _draw_mode_complete() -> void:
 	_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
 	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffcf6b"))
 
+func _game_over_title() -> String:
+	return "SPRINT FAILED" if mode_session != null and mode_session.mode_id == "sprint" else "RUN OVER"
+
+func _game_over_progress_label() -> String:
+	if mode_session != null and mode_session.mode_id == "sprint":
+		var target := int(mode_session.rules.get("target_lines", 40))
+		return "LINES  •  %d / %d" % [mini(game.lines, target), target]
+	return "LINES CLEARED  •  %d" % game.lines
+
+func _game_over_time_label() -> String:
+	if mode_session != null and mode_session.mode_id == "sprint":
+		return "TIME  •  " + _format_elapsed_time(mode_session.elapsed_seconds)
+	return ""
+
 func _draw_game_over() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))
-	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, 142.0), Vector2(320.0, 284.0))
+	var is_sprint := mode_session != null and mode_session.mode_id == "sprint"
+	var panel_height := 320.0 if is_sprint else 284.0
+	var panel := Rect2(screen_size * 0.5 - Vector2(160.0, panel_height * 0.5), Vector2(320.0, panel_height))
 	panel.position.x = maxf(20.0, panel.position.x)
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#ff9b57"))
-	_center_text("RUN OVER", screen_size.y * 0.5 - 70.0, 34, Color("#f4f8ff"))
-	_center_text("SCORE", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
-	_center_text(str(game.score), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
-	_center_text("LINES CLEARED  •  %d" % game.lines, screen_size.y * 0.5 + 36.0, 13, Color("#c0d3e2"))
-	_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
+	if is_sprint:
+		_center_text(_game_over_title(), screen_size.y * 0.5 - 88.0, 29, Color("#f4f8ff"))
+		_center_text(_game_over_progress_label(), screen_size.y * 0.5 - 44.0, 16, Color("#c0d3e2"))
+		_center_text(_game_over_time_label(), screen_size.y * 0.5 - 8.0, 16, Color("#f6d65b"))
+		_center_text("SCORE  •  %d" % game.score, screen_size.y * 0.5 + 30.0, 20, Color("#45d9f5"))
+		_center_text("ONE MORE RUN?", screen_size.y * 0.5 + 91.0, 13, Color("#ffb477"))
+	else:
+		_center_text(_game_over_title(), screen_size.y * 0.5 - 70.0, 34, Color("#f4f8ff"))
+		_center_text("SCORE", screen_size.y * 0.5 - 30.0, 12, Color("#83a3bd"))
+		_center_text(str(game.score), screen_size.y * 0.5 + 2.0, 28, Color("#45d9f5"))
+		_center_text(_game_over_progress_label(), screen_size.y * 0.5 + 36.0, 13, Color("#c0d3e2"))
+		_center_text("TAP ANYWHERE TO PLAY AGAIN", screen_size.y * 0.5 + 88.0, 13, Color("#ffb477"))
 
 func _center_text(value: String, y: float, size: int, color: Color) -> void:
 	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
