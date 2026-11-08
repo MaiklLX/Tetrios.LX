@@ -41,6 +41,9 @@ func _run() -> void:
 	if not _check(final_boss.boss_type == "final" and final_boss.target_score > 0 and final_boss.target_lines > 0 and final_boss.time_limit_seconds == 0, "Planet 030 must combine lines and score without an artificial timer"):
 		return
 	var score_planet := progress.get_planet_definition(5)
+	var survive_planet := progress.get_planet_definition(4)
+	if not _check(survive_planet.objective_type == "survive" and survive_planet.target_lines == 0 and survive_planet.target_score == 0 and survive_planet.target_survive_seconds >= 45, "Planet 004 must be a survival-only mission with a clear time target"):
+		return
 	if not _check(score_planet.objective_type == "score" and score_planet.target_lines == 0 and score_planet.target_score > 0, "Planet 005 must be a score-only mission, not a combined grind"):
 		return
 	if not _check(first.objective_type == "lines" and first.target_score == 0, "Ordinary planets must use a focused line objective"):
@@ -51,7 +54,7 @@ func _run() -> void:
 		var universe_end := universe_start + Campaign.PLANETS_PER_UNIVERSE - 1
 		var easy: Dictionary = progress.get_planet_definition(universe_start)
 		var hard: Dictionary = progress.get_planet_definition(universe_end)
-		if not _check(int(hard.target_lines) <= 16 and int(hard.target_score) <= 1500, "Campaign objective values must remain inside a fair difficulty ceiling"):
+		if not _check(int(hard.target_lines) <= 28 and int(hard.target_score) <= 2900, "Campaign objective values must remain inside a fair difficulty ceiling"):
 			return
 		if not _check(int(easy.target_lines) >= previous_universe_max - 2, "A new universe must not feel like a complete difficulty reset"):
 			return
@@ -72,6 +75,14 @@ func _run() -> void:
 	score_only_progress.import_legacy_progress(5, 0)
 	var score_only_success: Dictionary = score_only_progress.complete_planet(5, 0, int(score_planet.target_score), 5000.0)
 	if not _check(score_only_success.accepted, "Score-only missions must not require lines or impose a hidden timer"):
+		return
+	var survive_progress = Campaign.new()
+	survive_progress.import_legacy_progress(4, 0)
+	var early_survival: Dictionary = survive_progress.complete_planet(4, 0, 0, float(survive_planet.target_survive_seconds) - 1.0)
+	if not _check(not early_survival.accepted and early_survival.reason == "survival_objective_not_met", "Survival planets must reject an early finish"):
+		return
+	var completed_survival: Dictionary = survive_progress.complete_planet(4, 0, 0, float(survive_planet.target_survive_seconds))
+	if not _check(completed_survival.accepted, "Survival-only planets must complete after the required time without line or score quotas"):
 		return
 	var guardian_progress = Campaign.new()
 	guardian_progress.import_legacy_progress(10, 0)
@@ -124,5 +135,5 @@ func _run() -> void:
 	if not _check(disk_result.ok and disk_result.found and disk_restored.to_save_data() == progress.to_save_data(), "Campaign store must restore a persisted snapshot"):
 		return
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(test_path))
-	print("Campaign progress tests passed: 360-node catalog, bounded difficulty, varied missions, boss objectives, sequential unlocks, rewards, persistence and legacy import.")
+	print("Campaign progress tests passed: 360-node catalog, expanded bounded difficulty, line/score/survival missions, boss objectives, sequential unlocks, rewards, persistence and legacy import.")
 	quit(0)
