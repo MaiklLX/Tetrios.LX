@@ -29,6 +29,22 @@ func _run() -> void:
 	if not _check(buddy_probe.state == "idle", "Buddy should ignore unsupported reaction states"):
 		return
 
+	var feedback_probe = Main.new()
+	feedback_probe.game = Model.new()
+	feedback_probe.game.reset()
+	feedback_probe.buddy = Buddy.new()
+	feedback_probe._sync_buddy_state()
+	feedback_probe.game.lines = 2
+	feedback_probe._sync_buddy_state()
+	if not _check(feedback_probe.clear_flash_count == 2 and feedback_probe.clear_flash_time > 0.0, "Line clears should trigger visible celebration feedback"):
+		return
+	if not _check(feedback_probe.buddy.state == "happy", "Single and double line clears should trigger Buddy happy reaction"):
+		return
+	feedback_probe.game.lines = 6
+	feedback_probe._sync_buddy_state()
+	if not _check(feedback_probe.clear_flash_count == 4 and feedback_probe.buddy.state == "victory", "Four-line clear should trigger the special Buddy bonus reaction"):
+		return
+
 	var layout_probe = Main.new()
 	var narrow_gutter: Dictionary = layout_probe._buddy_layout_for_gutter(60.0)
 	if not _check(not narrow_gutter.visible, "Buddy must hide when the left gutter is too narrow"):
