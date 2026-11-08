@@ -10,7 +10,7 @@
 | Mode | Confirmed source behavior | Source | Godot migration status |
 |---|---|---|---|
 | Campaign | Node/sector progression; node-specific objectives; line-clear/placement/rotation/hold counters; campaign perks and relic choices; campaign completion checks. | `site/index.html`: `startGameNow()`, `bbGetNodeGoals()`, `bbCheckCampaignCompletion()`, `bbCampaignRun`; `docs/checkpoints/CHECKPOINT_389_GAMEPLAY_EVOLUTION_AND_VISUAL_QA.md`. | Not implemented. |
-| Block Run (`rogue`) | Roguelike run; 35 upgrade cards with ranks/synergies; room/floor progression; monster HP and timed attacks; three run goals; hero abilities interact with monster/board. | `site/index.html`: `upgrades`, `bbRogueStartRoom()`, `bbRogueRenderEncounter()`, `bbRogueEnemyAttack()`, `bbRogueDamageEnemy()`, `showUpgrade()`, `bbRenderGoals()`; checkpoint #389; native KT-466. | **Domain foundation only**: source-matched room/boss/attack/card-rank/synergy/goal model + tests. Board integration and playable run loop not implemented. |
+| Block Run (`rogue`) | Roguelike run; 35 upgrade cards with ranks/synergies; room/floor progression; monster HP and timed attacks; three run goals; hero abilities interact with monster/board. | `site/index.html`: `upgrades`, `bbRogueStartRoom()`, `bbRogueRenderEncounter()`, `bbRogueEnemyAttack()`, `bbRogueDamageEnemy()`, `showUpgrade()`, `bbRenderGoals()`; checkpoint #389; native KT-466. | **Domain + deterministic effect foundation**: source-matched room/boss/attack/card-rank/synergy/goal model and pure event-effect calculations + tests. Not wired to the live board; playable run loop not implemented. |
 | Daily | Date-assigned challenge catalog with goal/rule/modifier; per-day history and assignments; replay/archive; daily completion and rewards; modifiers affect gameplay/timers. | `site/index.html`: `dailyRules`, `bbDailyRuleForDate()`, `bbGetActiveDailyRule()`, `bbResetDailyMechanicState()`, `bbCheckDailyCompletion()`, `bbDailySaveChallengeHistory()`; checkpoint #389. | Not implemented. |
 
 **Mode boundary:** upgrade drafting/ranks/synergies, room/floor state and monster encounter timers are Block Run-only. Campaign keeps its own progression/perks/relic choices. Daily keeps its own modifier system. Do not merge these systems into one generic progression loop.
@@ -98,7 +98,7 @@ This is an inventory of observed keys, not a finalized native save schema. Befor
 
 - Board height was corrected from 20 to 23.
 - Tetromino order and colors were corrected to match the source.
-- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has only the KT-466 domain foundation; encounter-to-board integration, full card effects, relic settlement and hero abilities remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
+- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has KT-466/KT-468 domain and deterministic effect foundations; effects are not yet wired to the board. Encounter integration, board mutations, goal/relic settlement and hero abilities remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
 - 3D Buddy presentation is still pending. The gameplay board remains 2D by design.
 
 ## Recovery phrase
