@@ -552,12 +552,9 @@ func _draw_daily() -> void:
 	var symbols := ["☼","◉","⟲","⌁","✦","●","⟡","⌛","✧","☄","◇","⚡","⬡","◐","✧","⛨","⚛"]
 	var labels := ["ЗАРЯД","ГРАВ","ПЕРЕВ","ГЛИТЧ","АРТЕФ","РИСК","КОМБО","ВРЕМЯ","ЦВЕТ","КОМЕТА","ЗЕРК","ИМП","ТИШ","ВСЛЕП","ПРИЗМ","ЩИТ","СИНГ"]
 	var colors := [GOLD,CYAN,VIOLET,PINK,GOLD,Color("#ff765e"),Color("#9ce7cb"),VIOLET,CYAN,GOLD,PINK,CYAN,PALE,Color("#a9b8d2"),VIOLET,Color("#82e4d0"),PINK]
-	for col in range(7):
-		var key_y := 470.0
-		_center_card_text(days[col], Rect2(40+col*91,0,76,20), key_y, 9, PALE)
 	# November 1, 2026 is Sunday; all 30 dates receive a named daily modifier.
 	for slot in range(42):
-		var day := slot - 6
+		var day := slot - 5
 		if day < 1 or day > 30:
 			continue
 		var col := slot % 7
