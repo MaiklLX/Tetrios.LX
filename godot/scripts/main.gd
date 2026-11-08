@@ -638,7 +638,7 @@ func _draw_block_run_goals() -> void:
 		draw_string(font, rect.position + Vector2(rect.size.x - 34.0, 29.0), reward, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#f6d65b"))
 
 func _draw_piece_previews() -> void:
-	var card_height := 60.0
+	var card_height := 72.0
 	var top := board_rect.position.y - card_height - 16.0
 	if block_run_active:
 		var slot_width := minf((screen_size.x - 36.0) / 3.0, 164.0)
@@ -717,9 +717,9 @@ func _draw_preview_card(rect: Rect2, label: String, piece_type: int) -> void:
 		min_y = mini(min_y, cell_pos.y)
 		max_x = maxi(max_x, cell_pos.x)
 		max_y = maxi(max_y, cell_pos.y)
-	var mini_cell := minf(13.0, minf((rect.size.x - 64.0) / 4.0, (rect.size.y - 22.0) / 4.0))
+	var mini_cell := minf(12.0, minf((rect.size.x - 56.0) / 4.0, (rect.size.y - 24.0) / 4.0))
 	var piece_size := Vector2((max_x - min_x + 1) * mini_cell, (max_y - min_y + 1) * mini_cell)
-	var piece_origin := Vector2(rect.position.x + rect.size.x - 24.0, rect.position.y + rect.size.y * 0.66) - piece_size * 0.5
+	var piece_origin := Vector2(rect.position.x + rect.size.x - 30.0, rect.position.y + rect.size.y * 0.67) - piece_size * 0.5
 	for cell_pos in cells:
 		var mini_rect := Rect2(piece_origin + Vector2(cell_pos.x - min_x, cell_pos.y - min_y) * mini_cell, Vector2.ONE * mini_cell).grow(-0.7)
 		_draw_block(mini_rect, BlockBuddiesModel.PALETTE[piece_type])
