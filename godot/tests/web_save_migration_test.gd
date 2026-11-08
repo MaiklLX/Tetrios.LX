@@ -94,6 +94,22 @@ func _run() -> void:
 	var orphan_reward: Dictionary = WebMigration.parse_local_storage(fixtures["reward_marker_without_history"]["local_storage"])
 	if not _check(orphan_reward.ok and orphan_reward.requires_review, "Reward marker without matching history must require review without granting a reward"):
 		return
+	var invalid_archive: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_daily_archive_record"]["local_storage"])
+	if not _check(not invalid_archive.ok, "Daily archive record date must match its key and contain a valid record"):
+		return
+	var invalid_calendar: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_calendar_date"]["local_storage"])
+	if not _check(not invalid_calendar.ok, "Impossible calendar dates such as February 29 in a non-leap year must be rejected"):
+		return
+	var large_archive: Dictionary = {}
+	for day_index in range(91):
+		var date_text := "2026-01-%02d" % (day_index + 1)
+		large_archive[date_text] = {"date": date_text, "quests": []}
+	var large_archive_raw := {"bb_coins": "20", "bbDailyArchive": JSON.stringify(large_archive)}
+	var large_archive_import: Dictionary = WebMigration.parse_local_storage(large_archive_raw)
+	if not _check(large_archive_import.ok and large_archive_import.profile.daily.quest_archive.size() == 91, "Archives over 90 entries must be preserved in full and never trimmed during migration"):
+		return
+	if not _check(large_archive_import.warnings.size() > 0, "Archives over the Web 90-day save window must surface a preservation warning"):
+		return
 
 	print("Web migration parser tests passed: defaults, complete profile, alias conflicts, malformed JSON, legacy fallbacks, inventory and daily schema validation, reward idempotency, and source immutability.")
 	quit(0)
