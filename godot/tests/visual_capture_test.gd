@@ -1,6 +1,5 @@
 extends SceneTree
 
-const BlockRunSession = preload("res://scripts/block_run_session.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -114,7 +113,7 @@ func _run() -> void:
 		return
 	block_run_session.goal_rewards_earned = 47
 	block_run_session.goal_reward_receipts["capture-goal-1"] = {"id":"capture-goal-1","goal_id":1,"reward":25,"claimed":true}
-	block_run_session.status = BlockRunSession.STATUS_FAILED
+	block_run_session.status = "failed"
 	scene.get("game").game_over = true
 	scene.queue_redraw()
 	await process_frame
