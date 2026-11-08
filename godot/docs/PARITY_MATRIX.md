@@ -10,7 +10,7 @@
 | Mode | Confirmed source behavior | Source | Godot migration status |
 |---|---|---|---|
 | Campaign | Node/sector progression; node-specific objectives; line-clear/placement/rotation/hold counters; campaign perks and relic choices; campaign completion checks. | `site/index.html`: `startGameNow()`, `bbGetNodeGoals()`, `bbCheckCampaignCompletion()`, `bbCampaignRun`; `docs/checkpoints/CHECKPOINT_389_GAMEPLAY_EVOLUTION_AND_VISUAL_QA.md`. | Not implemented. |
-| Block Run (`rogue`) | Roguelike run; 35 upgrade cards with ranks/synergies; room/floor progression; monster HP and timed attacks; three run goals; hero abilities interact with monster/board. | `site/index.html`: `upgrades`, `bbRogueStartRoom()`, `bbRogueRenderEncounter()`, `bbRogueEnemyAttack()`, `bbRogueDamageEnemy()`, `showUpgrade()`, `bbRenderGoals()`; checkpoint #389; native KT-466. | **Domain + deterministic effects + board/session integration**: encounter model, card event calculations, validated board mutations and a tested session coordinator for timed attacks, line-clear damage, Reserve, Rift and three live goals with source-matched target/reward ranges and immediate replacement events. Coordinator is not wired to main scene; playable run loop not implemented. |
+| Block Run (`rogue`) | Roguelike run; 35 upgrade cards with ranks/synergies; room/floor progression; monster HP and timed attacks; three run goals; hero abilities interact with monster/board. | `site/index.html`: `upgrades`, `bbRogueStartRoom()`, `bbRogueRenderEncounter()`, `bbRogueEnemyAttack()`, `bbRogueDamageEnemy()`, `showUpgrade()`, `bbRenderGoals()`; checkpoint #389; native KT-466. | **Domain + deterministic effects + board/session integration**: encounter model, card event calculations, validated board mutations, timed attacks, line-clear damage, Reserve, Rift, three live goals/replacement events, and source-matched active abilities for all five Buddy heroes with level-5 unlock and 45-second cooldown. Coordinator is not wired to main scene; playable run loop not implemented. |
 | Daily | Date-assigned challenge catalog with goal/rule/modifier; per-day history and assignments; replay/archive; daily completion and rewards; modifiers affect gameplay/timers. | `site/index.html`: `dailyRules`, `bbDailyRuleForDate()`, `bbGetActiveDailyRule()`, `bbResetDailyMechanicState()`, `bbCheckDailyCompletion()`, `bbDailySaveChallengeHistory()`; checkpoint #389. | Not implemented. |
 
 **Mode boundary:** upgrade drafting/ranks/synergies, room/floor state and monster encounter timers are Block Run-only. Campaign keeps its own progression/perks/relic choices. Daily keeps its own modifier system. Do not merge these systems into one generic progression loop.
@@ -98,7 +98,7 @@ This is an inventory of observed keys, not a finalized native save schema. Befor
 
 - Board height was corrected from 20 to 23.
 - Tetromino order and colors were corrected to match the source.
-- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has KT-466–KT-470 domain/effect/board/session foundations; the session coordinator is not wired to main scene. Three-goal/reward settlement, Shield/Nova rescue integration, hero abilities, draft/encounter HUD and run-end flow remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
+- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has KT-466–KT-472 domain/effect/board/session foundations, including three live goals and all five hero abilities. The session coordinator is not wired to the main scene; reward-wallet settlement, Shield/Nova rescue integration, draft/encounter/goals HUD and run-end flow remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
 - 3D Buddy presentation is still pending. The gameplay board remains 2D by design.
 
 ## Recovery phrase
@@ -144,3 +144,18 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Web trims the archive to 90 sorted date keys only on a subsequent save. Native migration preserves every imported archive entry, including entries beyond 90, and warns rather than truncating.
 - Calendar validation follows Gregorian month lengths and leap years.
 - Daily challenge catalog signature is retained as an opaque exact source value. A changed catalog in Web clears assignments only; it does not clear history or reward markers. Native migration must not regenerate historical assignments or settle rewards.
+
+
+## 13. KT-472 — Block Run hero ability parity
+- Source: `site/index.html`, `bbUseHeroActiveSkill()`, legacy baseline audited during KT-472.
+- Native session method `use_hero_skill(hero_id, hero_level)` matches the five Block Run branches:
+  - `plush`: clear top `min(H, 2 + tier)` rows.
+  - `prism`: damage enemy by `8 + tier × 5`.
+  - `blip`: add `12 + tier × 4` seconds to the next enemy attack.
+  - `pixel`: clear `tier` bottom rows and add `tier` level charge.
+  - `spark`: damage enemy by `12 + tier × 5`.
+- Tier is `1 + floor((heroLevel - 5) / 5)`; unlock at hero level 5; shared skill cooldown 45 seconds, advanced by active Block Run seconds.
+- On Prism/Spark kill, the drafted Rift card is applied using the existing bottom-row clear effect.
+- Regression tests cover all five branches, lockout below level 5, tier-2 scaling, cooldown and enemy damage.
+- CI run `42467652778` passed all code and screenshot pipeline stages on code SHA `0ce7ed5fba9a30bebeef406375612283317a7598`.
+- Status boundary: this is tested session/domain behavior, not yet live UI integration. No hero skill is exposed in the current main scene.
