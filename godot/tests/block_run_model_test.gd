@@ -79,7 +79,7 @@ func _run() -> void:
 		return
 	if not _check(score_goal.target == 2200 and score_goal.reward == 10, "Score goal target must match source range"):
 		return
-	if not _check(survive_goal.target == 40 and survive_goal.reward == 11, "Survival goal target must match source range"):
+	if not _check(survive_goal.target == 55 and survive_goal.reward == 11, "Survival goal target must match source range"):
 		return
 	if not _check(level_goal.target == 6 and level_goal.reward == 12, "Level goal target must match source range"):
 		return
