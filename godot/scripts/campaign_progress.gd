@@ -33,7 +33,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	# Difficulty grows in small, bounded chapter steps. It never compounds per planet.
 	var chapter_step := mini(universe_index, 6)
 	var local_step := int((planet_in_universe - 1) / 10)
-	var line_target := 7 + chapter_step + local_step
+	var line_target := 8 + chapter_step + local_step
 	var score_target := 650 + chapter_step * 90 + local_step * 60
 	var objective_type := "lines"
 	var boss_type := "none"
@@ -45,7 +45,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		target_score = score_target
 	if boss:
 		objective_type = "boss_combo"
-		target_lines = line_target + 2
+		target_lines = line_target
 		target_score = score_target + 180
 		boss_type = "guardian" if planet_in_universe == 10 else ("champion" if planet_in_universe == 20 else "final")
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
