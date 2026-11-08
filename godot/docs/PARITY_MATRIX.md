@@ -169,3 +169,11 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Regression tests cover charge, mutation geometry, combined shield/armor, Nova and one-time use.
 - CI run `42468010685` on code SHA `d79a40dc78d112f5ea6b077ac3b24e278687c816`: **SUCCESS**, including rendered viewport screenshots and scene smoke test.
 - This remains session/domain behavior; live game model/main scene does not yet call the rescue method.
+
+
+## 15. KT-474 — live-board bridge foundation
+- Added validated two-way synchronization between the 10×23 Classic model grid and Block Run session board. Invalid grids are rejected without partial writes.
+- Added a live spawn-rescue revalidation helper: the active piece must fit after board mutation; otherwise the encounter remains failed.
+- Existing renderer now handles the Block Run garbage tile value safely.
+- CI run 42472885866 passed all model, migration, Block Run domain/board/session/bridge tests, graphical screenshot capture/upload and scene smoke test.
+- Integration boundary remains explicit: `main.gd` has not yet connected every live gameplay event to the bridge. Block Run remains hidden/unplayable; no screenshot currently depicts it.
