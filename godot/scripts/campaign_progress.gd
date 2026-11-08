@@ -33,12 +33,17 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	# Difficulty grows in small, bounded chapter steps. It never compounds per planet.
 	var chapter_step := mini(universe_index, 6)
 	var local_step := int((planet_in_universe - 1) / 10)
-	var line_target := 8 + chapter_step + local_step
-	var score_target := 650 + chapter_step * 90 + local_step * 60
+	var line_target := 10 + chapter_step * 2 + local_step * 2
+	var score_target := 900 + chapter_step * 220 + local_step * 160
 	var objective_type := "lines"
 	var boss_type := "none"
 	var target_lines := line_target
 	var target_score := 0
+	var target_survive_seconds := 0
+	if planet_in_universe in [4, 14, 24]:
+		objective_type = "survive"
+		target_lines = 0
+		target_survive_seconds = 45 + chapter_step * 5 + local_step * 10
 	if planet_in_universe in [5, 15, 25]:
 		objective_type = "score"
 		target_lines = 0
@@ -46,7 +51,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	if boss:
 		objective_type = "boss_combo"
 		target_lines = line_target
-		target_score = score_target + 180
+		target_score = score_target + 300
 		boss_type = "guardian" if planet_in_universe == 10 else ("champion" if planet_in_universe == 20 else "final")
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
 	return {
@@ -61,6 +66,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		"objective_type": objective_type,
 		"target_lines": target_lines,
 		"target_score": target_score,
+		"target_survive_seconds": target_survive_seconds,
 		"time_limit_seconds": 0,
 		"reward_marks": reward
 	}
@@ -113,6 +119,9 @@ func complete_planet(node_id: int, cleared_lines: int, score: int = 0, elapsed_s
 	var target_score := int(definition.get("target_score", 0))
 	if target_score > 0 and score < target_score:
 		return {"accepted": false, "reason": "score_objective_not_met", "remaining_score": target_score - score}
+	var target_survive := float(definition.get("target_survive_seconds", 0))
+	if target_survive > 0.0 and elapsed_seconds < target_survive:
+		return {"accepted": false, "reason": "survival_objective_not_met", "remaining_seconds": target_survive - elapsed_seconds}
 	var time_limit := float(definition.get("time_limit_seconds", 0))
 	if time_limit > 0.0 and elapsed_seconds > time_limit:
 		return {"accepted": false, "reason": "time_limit_exceeded"}
