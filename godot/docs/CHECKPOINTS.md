@@ -349,3 +349,15 @@
 - Registered the new test in `.github/workflows/godot-native-check.yml`.
 - **No live gameplay integration:** no scene imports the runtime, no campaign planet uses it yet, and no change was made to the shared model, Classic, Sprint/Marathon, Block Run, standard saves, main, public deployment or APK release. PR #81 remains Draft/unmerged.
 - Validation: **PASS** — GitHub Actions Godot Native Project Check run #42521720136 on commit `c8ec55a81b8e961d5b6e00073cd5c094b5a0f5e8` completed successfully. All 22 workflow steps passed, including project import, main scene parse, Classic/model and Web migration suites, campaign progression/mechanics/boss/effect/special-piece/runtime tests, all Block Run suites, rendered screenshot capture/upload, and scene smoke test.
+
+
+## KT-538 — Campaign-only Cargo Hook live integration
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Connected the approved five-cell Cargo Hook to the live campaign launch path through the dedicated campaign runtime. Planet 031 (Universe 02, «Караван звёзд») is the authored first-piece event; ordinary campaign planets still start with a standard tetromino.
+- Campaign input, gravity, Hold, rotation, drop/lock/line clear, board rendering, ghost, previews, score and objective counters route through the campaign runtime only while Campaign is active. After the Cargo Hook locks, the standard seven-piece bag resumes.
+- Planet 031 detail now announces the special piece before launch. The live special piece uses the approved cyan/gold visual identity.
+- Campaign launch and retry no longer reset the shared Classic model. Integration coverage exercises real Planet 001 and Planet 031 launch paths, retry isolation, Cargo Hook rotation/drop, standard-piece continuation, shared-model immutability and standard-mode input routing.
+- Visual capture now includes `28-campaign-cargo-hook-planet-detail.png` and `29-campaign-cargo-hook-live-arena.png`.
+- Validation: **PASS** — Godot Native Project Check run [#42524193502](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42524193502) on HEAD `13ac1126f9c38f22d0c854ff40381ad57fd22d2b`; all 23 workflow steps passed, including project import, main parse, campaign live integration, all Classic/Web migration/Campaign/Block Run suites, screenshot capture/upload and scene smoke test.
+- No special piece in Classic, Sprint/Marathon or Block Run; no shared seven-bag or standard save schema changes. No main merge, deployment, APK build/release or physical-device verification.
+- Next: KT-539 — campaign-only Hold/preview polish and persistence/recovery contract before wider authored special-piece rollout.
