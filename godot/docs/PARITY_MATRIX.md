@@ -98,7 +98,7 @@ This is an inventory of observed keys, not a finalized native save schema. Befor
 
 - Board height was corrected from 20 to 23.
 - Tetromino order and colors were corrected to match the source.
-- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has KT-466–KT-472 domain/effect/board/session foundations, including three live goals and all five hero abilities. The session coordinator is not wired to the main scene; reward-wallet settlement, Shield/Nova rescue integration, draft/encounter/goals HUD and run-end flow remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
+- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has KT-466–KT-473 domain/effect/board/session foundations, including three live goals, all five hero abilities, and tested Shield/Iron Fortress/Nova board rescue mutations. The session coordinator is not wired to the main scene; reward-wallet settlement, live piece/board lifecycle, draft/encounter/goals HUD and run-end flow remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
 - 3D Buddy presentation is still pending. The gameplay board remains 2D by design.
 
 ## Recovery phrase
@@ -159,3 +159,13 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Regression tests cover all five branches, lockout below level 5, tier-2 scaling, cooldown and enemy damage.
 - CI run `42467652778` passed all code and screenshot pipeline stages on code SHA `0ce7ed5fba9a30bebeef406375612283317a7598`.
 - Status boundary: this is tested session/domain behavior, not yet live UI integration. No hero skill is exposed in the current main scene.
+
+
+## 14. KT-473 — Shield / Iron Fortress / Nova rescue
+- Session method `on_spawn_collision()` now applies the source-selected rescue and mutates the isolated 10×23 board.
+- Shield: consume one charge; deterministic 22% fill across the lower 3 rows.
+- Shield + Armor / Iron Fortress: consume one charge; deterministic 10% fill across the lower 5 rows.
+- Nova: clear the rank-scaled bottom rows once per run; later collisions cannot reuse it.
+- Regression tests cover charge, mutation geometry, combined shield/armor, Nova and one-time use.
+- CI run `42468010685` on code SHA `d79a40dc78d112f5ea6b077ac3b24e278687c816`: **SUCCESS**, including rendered viewport screenshots and scene smoke test.
+- This remains session/domain behavior; live game model/main scene does not yet call the rescue method.
