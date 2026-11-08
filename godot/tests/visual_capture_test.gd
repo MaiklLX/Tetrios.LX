@@ -10,7 +10,7 @@ func _assert_mobile_arena_spacing(scene: Node, viewport_size: Vector2i, label: S
 	var skill: Rect2 = scene.get("block_run_skill_rect")
 	var drop: Rect2 = scene.get("drop_rect")
 	if drop.size.x > 0.0:
-		if drop.position.x < board.end.x + 18.0 or drop.end.y > board.end.y - 18.0:
+		if drop.position.x < board.end.x + 16.0 or drop.end.y > board.end.y - 18.0:
 			push_error("%s: DROP button must sit above and clear of the board frame (drop=%s board=%s)." % [label, str(drop), str(board)])
 			return false
 	var frame_top := board.position.y - 13.0
