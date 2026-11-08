@@ -1024,10 +1024,12 @@ func _draw_stats() -> void:
 		if hp_ratio > 0.0:
 			draw_rect(Rect2(hp_track.position, Vector2(hp_track.size.x * hp_ratio, hp_track.size.y)), Color("#ff9b57"))
 	elif _is_line_objective_mode():
-		var target := int(mode_session.rules.get("target_lines", 40))
+		var target := int(mode_session.rules.get("target_lines", 0))
+		var score_target := int(mode_session.rules.get("target_score", 0))
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
 		var mode_label := _mode_display_name(mode_session.mode_id)
-		_stat_card(progress_rect, mode_label + " • " + elapsed_label, "%d / %d" % [mini(game.lines, target), target], Color("#f6d65b"))
+		var objective_value := "%d / %d" % [mini(game.lines, target), target] if target > 0 else "%d / %d" % [mini(game.score, score_target), score_target]
+		_stat_card(progress_rect, mode_label + " • " + elapsed_label, objective_value, Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(12.0, 46.0), Vector2(progress_rect.size.x - 24.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
 		if _objective_progress_ratio() > 0.0:
