@@ -43,7 +43,7 @@ func _panel(rect: Rect2, fill: Color, accent: Color, radius := 24) -> void:
 	var shadow := StyleBoxFlat.new()
 	shadow.bg_color = Color(0.015, 0.06, 0.20, 0.38)
 	shadow.set_corner_radius_all(radius)
-	draw_style_box(shadow, rect.translated(Vector2(0, 9)))
+	draw_style_box(shadow, Rect2(rect.position + Vector2(0, 9), rect.size))
 	var box := StyleBoxFlat.new()
 	box.bg_color = fill
 	box.set_corner_radius_all(radius)
