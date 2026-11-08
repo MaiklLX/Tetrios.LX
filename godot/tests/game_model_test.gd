@@ -38,9 +38,9 @@ func _run() -> void:
 		return
 
 	# The three-card selector must keep every target distinct and vertically clear.
-	var layout_probe = Main.new()
+	var mode_layout_probe = Main.new()
 	for viewport_size in [Vector2(360.0, 800.0), Vector2(375.0, 812.0), Vector2(412.0, 915.0), Vector2(720.0, 1280.0)]:
-		var menu_layout: Dictionary = layout_probe._mode_select_layout(viewport_size)
+		var menu_layout: Dictionary = mode_layout_probe._mode_select_layout(viewport_size)
 		var classic_card: Rect2 = menu_layout.classic
 		var sprint_card: Rect2 = menu_layout.sprint
 		var marathon_card: Rect2 = menu_layout.marathon
@@ -52,7 +52,7 @@ func _run() -> void:
 			return
 		if not _check(marathon_card.end.y + 24.0 < menu_layout.instruction_y, "Mode selector instructions must clear the last card"):
 			return
-	layout_probe.free()
+	mode_layout_probe.free()
 	classic_rules["target_lines"] = 999
 	if not _check(ModeCatalog.get_mode("classic").get("target_lines", -1) == 0, "Callers must not be able to mutate catalog definitions"):
 		return
