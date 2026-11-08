@@ -324,6 +324,8 @@ func _restart_current_run() -> void:
 		if campaign_run_active and mode_session.mode_id == "campaign":
 			var campaign_definition := campaign_progress.get_planet_definition(campaign_run_planet_id)
 			mode_session.rules["target_lines"] = int(campaign_definition.get("target_lines", 8))
+			mode_session.rules["target_score"] = int(campaign_definition.get("target_score", 0))
+			mode_session.rules["time_limit_seconds"] = float(campaign_definition.get("time_limit_seconds", 0))
 			campaign_completion_processed = false
 	if block_run_active:
 		start_block_run_session()
