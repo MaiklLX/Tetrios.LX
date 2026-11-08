@@ -22,6 +22,15 @@ const MODES := {
 		"time_limit_seconds": 0,
 		"starting_level": 1,
 		"level_lines": 10
+	},
+	"marathon": {
+		"id": "marathon",
+		"name": "Marathon",
+		"description": "Длинный забег до 100 очищенных линий.",
+		"target_lines": 100,
+		"time_limit_seconds": 0,
+		"starting_level": 1,
+		"level_lines": 10
 	}
 }
 
