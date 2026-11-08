@@ -95,5 +95,50 @@ func _run() -> void:
 	var stopped := overflow_run.advance_second()
 	if not _check(not stopped["accepted"], "A failed run must reject later timer events"):
 		return
+
+	print("KT472 TEST: source-matched hero abilities")
+	var locked_skill_run = Session.new()
+	locked_skill_run.start()
+	var locked_skill := locked_skill_run.use_hero_skill("plush", 4)
+	if not _check(not locked_skill.accepted and locked_skill.reason == "locked", "Hero skills must remain locked below level five"):
+		return
+	var plush_run = Session.new()
+	plush_run.start()
+	plush_run.board[0][0] = 3
+	plush_run.board[1][1] = 4
+	var plush_skill := plush_run.use_hero_skill("plush", 5)
+	if not _check(plush_skill.accepted and plush_skill.rows_cleared == 3 and plush_run.board[0][0] == -1 and plush_run.board[2][0] == -1, "Plush must clear the top 2+tier rows"):
+		return
+	var prism_run = Session.new()
+	prism_run.start()
+	var prism_hp := prism_run.encounter.enemy_hp
+	var prism_skill := prism_run.use_hero_skill("prism", 5)
+	if not _check(prism_skill.enemy_damage == mini(prism_hp, 13) and prism_run.hero_skill_cooldown_seconds == 45, "Prism must deal 8+tier*5 damage and start a 45-second cooldown"):
+		return
+	var blip_run = Session.new()
+	blip_run.start()
+	var attack_before := blip_run.encounter.next_attack_seconds
+	var blip_skill := blip_run.use_hero_skill("blip", 10)
+	if not _check(blip_skill.attack_delay_added == 20 and blip_run.encounter.next_attack_seconds == attack_before + 20, "Blip must delay the next attack by 12+tier*4 seconds"):
+		return
+	var pixel_run = Session.new()
+	pixel_run.start()
+	pixel_run.board[22].fill(7)
+	var pixel_skill := pixel_run.use_hero_skill("pixel", 10)
+	if not _check(pixel_skill.rows_cleared == 2 and pixel_skill.level_charge_added == 2 and pixel_run.level_charge == 2 and pixel_run.board[22].count(7) == 0, "Pixel must clear tier bottom rows and add matching level charge"):
+		return
+	var spark_run = Session.new()
+	spark_run.start()
+	var spark_hp := spark_run.encounter.enemy_hp
+	var spark_skill := spark_run.use_hero_skill("spark", 5)
+	if not _check(spark_skill.enemy_damage == mini(spark_hp, 17), "Spark must deal 12+tier*5 damage"):
+		return
+	var cooldown_skill := spark_run.use_hero_skill("spark", 5)
+	if not _check(not cooldown_skill.accepted and cooldown_skill.reason == "cooldown" and cooldown_skill.remaining == 45, "Hero skill must reject repeated activation during cooldown"):
+		return
+	var cooldown_elapsed := spark_run.advance_second()
+	if not _check(cooldown_elapsed.accepted and spark_run.hero_skill_cooldown_seconds == 44, "Hero cooldown must decrease in real run seconds"):
+		return
+
 	print("Block Run session integration tests passed: three live goals, replacement, rewards, timer/score/line progress, combat, attacks and failure.")
 	quit(0)
