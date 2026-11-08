@@ -229,7 +229,7 @@ func to_save_data() -> Dictionary:
 func load_save_data(data: Dictionary) -> bool:
 	# Validate into local candidates first. A rejected snapshot must not
 	# partially overwrite the current live game.
-	if data.get("version") != SAVE_VERSION:
+	if typeof(data.get("version")) != TYPE_INT or int(data.get("version")) != SAVE_VERSION:
 		return false
 	var saved_grid: Variant = data.get("grid")
 	var saved_cells: Variant = data.get("active_cells")
@@ -241,7 +241,7 @@ func load_save_data(data: Dictionary) -> bool:
 		return false
 	if typeof(saved_origin) != TYPE_ARRAY or saved_origin.size() != 2:
 		return false
-	if typeof(saved_bag) != TYPE_ARRAY or saved_bag.size() >= SHAPES.size():
+	if typeof(saved_bag) != TYPE_ARRAY or saved_bag.size() > SHAPES.size():
 		return false
 
 	var restored_grid: Array = []
