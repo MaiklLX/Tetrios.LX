@@ -177,3 +177,11 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Existing renderer now handles the Block Run garbage tile value safely.
 - CI run 42472885866 passed all model, migration, Block Run domain/board/session/bridge tests, graphical screenshot capture/upload and scene smoke test.
 - Integration boundary remains explicit: `main.gd` has not yet connected every live gameplay event to the bridge. Block Run remains hidden/unplayable; no screenshot currently depicts it.
+
+
+## 16. KT-475 — live Block Run event routing
+- Main scene now has an internal (not user-selectable) Block Run session path.
+- Gameplay model lock serials let the scene dispatch piece placement exactly once; line-progress deltas feed the session's line-clear event.
+- Timed enemy attacks synchronize the encounter board back to the live model. Garbage overflow ends the run; the active piece is checked after board shifts.
+- Dedicated tests verify one-time dispatch, no duplicate frame processing, garbage insertion into the visible model board and top-out on overflow. CI run 42473197674 passed all suites and graphical screenshot capture.
+- Full Block Run remains hidden: card draft, hero activation, complete encounter/goals HUD, safe wallet reward settlement and run-end UX are not yet wired. End-to-end live spawn rescue still requires a focused integration test.
