@@ -28,7 +28,7 @@ func _run() -> void:
 	if not _check(clear["relics_added"] == 1 and clear["flash"] and clear["reset_drop"], "Infinity, Flash and Plasma must fire on a three-line clear"):
 		return
 	var single := Effects.on_line_clear({"dust":2}, 1, 1, 1, 1, 35, 5)
-	if not _check(single["score"] == 200 and single["monster_damage"] == 1, "Single clear must add Dust and base monster damage"):
+	if not _check(single["score"] == 300 and single["monster_damage"] == 1, "Single clear must add Dust and base monster damage"):
 		return
 	var empty_clear := Effects.on_line_clear({"dust":2}, 0, 0, 0, 1, 0, 5)
 	if not _check(empty_clear["score"] == 0 and empty_clear["monster_damage"] == 0, "No clear must not grant card rewards"):
@@ -40,7 +40,7 @@ func _run() -> void:
 	if not _check(timer90["level_charge"] == 2 and timer90["score_bonus"] == 500, "Tide and Unstable must both resolve on the 90-second boundary"):
 		return
 	var level_up := Effects.on_level_up({"memory":1,"loop":1,"slow":1,"fortress":1,"void":1,"comet":1}, 5, 2, 760)
-	if not _check(level_up["next_need_lines"] == 4, "Memory, Loop and Chrono Control must reduce the next level threshold with a floor of three"):
+	if not _check(level_up["next_need_lines"] == 3, "Memory, Loop and Chrono Control must reduce the next level threshold with a floor of three"):
 		return
 	if not _check(level_up["next_drop_ms"] == 760 - 48 - 6 + 15 + 25 + 12, "Slow, Fortress and Chrono Control must affect level-up gravity interval"):
 		return
