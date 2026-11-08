@@ -146,7 +146,7 @@ func _run() -> void:
 	shield_rescue_run.start()
 	if not _check(shield_rescue_run.choose_card("shield"), "Shield card must draft before rescue"):
 		return
-	var shield_before := shield_rescue_run.shield_charges
+	var shield_before: int = shield_rescue_run.shield_charges
 	var shield_rescue := shield_rescue_run.on_spawn_collision()
 	if not _check(shield_rescue.rescued and shield_rescue.rescue_type == "shield" and shield_rescue.shield_charges_remaining == shield_before - 1, "Shield must consume exactly one charge and rescue the spawn collision"):
 		return
@@ -173,7 +173,7 @@ func _run() -> void:
 	if not _check(nova_rescue.rescued and nova_rescue.rescue_type == "nova" and nova_rescue.rows_cleared == 1 and nova_run.board[22].count(7) == 0 and nova_run.nova_used, "Nova must clear its ranked number of bottom rows exactly once"):
 		return
 	var nova_again := nova_run.on_spawn_collision()
-	if not _check(not nova_again.rescued and not nova_again.nova_used == false, "Nova must not rescue a second spawn collision"):
+	if not _check(not nova_again.rescued and nova_run.nova_used, "Nova must not rescue a second spawn collision"):
 		return
 
 	print("Block Run session integration tests passed: three live goals, replacement, rewards, timer/score/line progress, combat, attacks and failure.")
