@@ -211,3 +211,10 @@
 - Visual artifact remains the real 720×1280 mode-selector + Classic arena pair. It confirms the unchanged visible scenes; Block Run is still not exposed and no Block Run screenshot is claimed.
 - Remaining before mode exposure: audit/route all gameplay input and gravity event paths under the Block Run state, validate actual spawn-rescue path end-to-end on the live board, wire card draft/encounter/goals HUD, hero abilities and run-end UI, and settle goal rewards safely. No persistent wallet or storage work.
 - No main merge, deployment, APK build/release or physical Android test.
+
+
+## KT-476 — Hold-triggered spawn-collision routing
+- Fixed an event-order gap: Hold can spawn a replacement piece and hit a blocked spawn without incrementing the piece-lock cursor. The Block Run dispatcher now checks spawn collision independently before waiting for a lock event.
+- Added regression coverage where Hold attempts a replacement spawn into a blocked top row; the collision reaches the encounter rescue/failure path even though no lock event occurred.
+- CI run [42473308354](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473308354) on code SHA `e941a3688c454fd5ddc2c5706b8c449012f47693`: **SUCCESS** — all Godot import/parse, Classic/migration/Block Run model, effect, board, session, bridge and live-loop tests, screenshot capture/upload and scene smoke test.
+- This closes the Hold event-order gap but does not yet prove a successful Shield/Nova rescue on a live top-out board. Block Run remains hidden and unplayable until full card/hero/goal UI and end-to-end rescue validation are complete.
