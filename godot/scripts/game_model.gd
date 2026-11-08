@@ -329,6 +329,15 @@ func load_save_data(data: Dictionary) -> bool:
 	last_random_type = int(restored_last_type)
 	return true
 
+# Re-check the active piece after an encounter-owned board rescue.
+func resume_after_board_rescue() -> bool:
+	if not game_over:
+		return true
+	if _collides(origin, active_cells):
+		return false
+	game_over = false
+	return true
+
 func ghost_origin() -> Vector2i:
 	var ghost := origin
 	while not _collides(ghost + Vector2i(0, 1), active_cells):
