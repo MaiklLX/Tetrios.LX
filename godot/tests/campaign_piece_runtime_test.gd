@@ -16,6 +16,7 @@ func _check(condition: bool, message: String) -> bool:
 
 func _run() -> void:
 	seed(20261109)
+	print("KT-537 runtime: board and authored spawn")
 	var runtime = Runtime.new()
 	runtime.reset()
 	if not _check(runtime.grid.size() == 23 and runtime.grid[0].size() == 10, "Campaign runtime must own an independent 10×23 board"):
@@ -24,6 +25,7 @@ func _run() -> void:
 		return
 	if not _check(not runtime.spawn_authored_special(), "Authored special spawn must not discard a falling standard piece"):
 		return
+	print("KT-537 runtime: rotation and collision")
 	runtime.reset(false)
 	if not _check(runtime.spawn_authored_special() and runtime.active_piece_id == Runtime.SPECIAL_TYPE and runtime.active_cells.size() == 5, "Authored campaign event must explicitly spawn the five-cell Cargo Hook"):
 		return
@@ -46,6 +48,7 @@ func _run() -> void:
 	runtime.reset(false)
 	if not _check(runtime.spawn_authored_special(), "Special piece must spawn from an explicitly empty authored spawn slot"):
 		return
+	print("KT-537 runtime: Hold lifecycle")
 	var special_id: int = runtime.active_piece_id
 	if not _check(runtime.hold_piece() and runtime.held_piece_id == special_id and runtime.active_piece_id < 7 and runtime.active_cells.size() == 4, "Hold must safely move special→standard"):
 		return
@@ -58,6 +61,7 @@ func _run() -> void:
 		return
 	if not _check(runtime.hold_piece() and runtime.active_piece_id == special_id and runtime.held_piece_id == standard_id and runtime.active_cells.size() == 5, "Hold must safely move standard→special"):
 		return
+	print("KT-537 runtime: snapshot validation")
 	var snap := runtime.snapshot()
 	var restored = Runtime.new()
 	restored.reset()
@@ -77,8 +81,9 @@ func _run() -> void:
 	if not _check(not restored.restore(malformed) and restored.snapshot() == preserved, "Malformed board dimensions must fail closed"):
 		return
 	# A special piece can clear a line and must use the same row compaction rules.
+	print("KT-537 runtime: line clear")
 	var clear_runtime = Runtime.new()
-	clear_runtime.reset()
+	clear_runtime.reset(false)
 	for x in range(Runtime.WIDTH):
 		if x != 4:
 			clear_runtime.grid[22][x] = 0
