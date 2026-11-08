@@ -241,3 +241,13 @@
 - CI run [42474850074](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42474850074) on code HEAD `66e379fd75a225e7b9c1f84f9c9f9238f3c62b66`: **SUCCESS** — import, main parse, Classic/migration suites, Block Run model/effects/board/session/bridge/live integration, rendered screenshots and scene smoke test.
 - Remaining: full encounter/three-goal HUD, hero ability input/cooldown UI, exactly-once settlement of goal rewards to the existing wallet, run-end/results screen, and full-run end-to-end QA. Block Run remains internal/hidden; no public mode exposure.
 - No main merge, deployment, APK build/release, persistence changes, user-data mutation or physical Android test. Save-system work remains deferred.
+
+
+## KT-479 — Block Run live goals and encounter HUD
+- Added a compact three-goal strip to the native Block Run arena. It displays each goal family, current/target progress and coin reward; progress is clamped to 0–100% and the three goal families are rendered in Russian.
+- Encounter HUD now includes room/boss, floor, enemy HP bar and seconds until the next attack. Score HUD displays the number of active synergies; this is driven by the live card-pair state (not a hardcoded visual).
+- Reworked top spacing so the score/encounter cards, HOLD/NEXT previews and goal strip fit above the board without permanent controls or reducing the 10×23 playfield. Goal strip is drawn above the board frame to avoid clipping.
+- Added live integration checks for goal progress, compact labels, three-goal state, attack countdown presence and synergy activation after drafting the matching pair.
+- Added a fourth graphical Godot capture `04-block-run-goals-hud.png` at 720×1280. The rendered screenshot was inspected: three goal meters, active synergy count, room/floor, enemy HP and attack countdown are visible together.
+- CI run [42475838582](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42475838582) on code HEAD `2fbde4a924003e6945959065ff570a23e0df8822`: **SUCCESS** — import, parse, Classic/migration, Block Run model/effects/board/session/bridge/live integration, graphical screenshot capture and scene smoke all passed.
+- Remaining before Block Run exposure: hero skill input/cooldown UI, exactly-once wallet reward settlement, run-end/results screen and full-run end-to-end QA. Mode remains hidden. Persistence stays deferred; no main merge, deployment, APK or physical-device test.
