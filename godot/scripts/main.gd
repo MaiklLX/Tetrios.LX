@@ -193,6 +193,9 @@ func _advance_block_run_clock(delta: float) -> void:
 			block_run_session.status = BlockRunSession.STATUS_FAILED
 			game.game_over = true
 			break
+		if not game.validate_active_piece_after_board_mutation():
+			block_run_session.status = BlockRunSession.STATUS_FAILED
+			break
 	queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
