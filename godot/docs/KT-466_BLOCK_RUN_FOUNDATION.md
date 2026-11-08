@@ -36,4 +36,5 @@
 - No save/storage work was performed. No main merge, deploy, APK build/release, or physical-device validation.
 
 ### Validation
-- Pending CI after commit.
+- Validation: Godot Native Project Check run `42462476795` on HEAD `22ae4ba386fd67c3dde07b9cbcd653a7c0ce8bcd` — **SUCCESS**. Import, main script parse, existing gameplay tests, Web migration tests, dedicated Block Run model tests and scene smoke test all passed.
+- CI caught and corrected two issues before acceptance: typed-array construction in the attack-cycle selector, and a Crossfire fixture that expected one row instead of the source-defined two. The final run passed after both corrections.
