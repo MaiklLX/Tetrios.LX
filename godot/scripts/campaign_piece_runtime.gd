@@ -119,7 +119,7 @@ func spawn_next_standard() -> bool:
 		return false
 	if piece_bag.is_empty():
 		_refill_bag()
-	var next_id := piece_bag.pop_front()
+	var next_id: int = int(piece_bag.pop_front())
 	return spawn_piece(next_id)
 
 func spawn_authored_special() -> bool:
