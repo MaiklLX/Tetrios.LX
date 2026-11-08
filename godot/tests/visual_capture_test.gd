@@ -1,5 +1,7 @@
 extends SceneTree
 
+const BlockRunSession = preload("res://scripts/block_run_session.gd")
+
 func _initialize() -> void:
 	call_deferred("_run")
 
