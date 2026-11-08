@@ -30,6 +30,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 	var universe_index := int((node_id - 1) / PLANETS_PER_UNIVERSE)
 	var planet_in_universe := ((node_id - 1) % PLANETS_PER_UNIVERSE) + 1
 	var boss := planet_in_universe % 10 == 0
+	var target_lines := 8 + universe_index * 2 + (planet_in_universe - 1) * 2
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
 	var boss_type := "none"
 	if boss:
@@ -45,7 +46,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		"planet_name": "ПЛАНЕТА %03d" % node_id,
 		"is_boss": boss,
 		"boss_type": boss_type,
-		"target_lines": 8 + universe_index * 2 + (planet_in_universe - 1) * 2,
+		"target_lines": target_lines,
 		"target_score": target_score,
 		"time_limit_seconds": time_limit,
 		"reward_marks": reward
