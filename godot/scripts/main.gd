@@ -31,6 +31,15 @@ var home_heroes_rect := Rect2()
 var home_shop_rect := Rect2()
 var home_upgrades_rect := Rect2()
 var secondary_back_rect := Rect2()
+
+var campaign_screen := ""
+var campaign_universe := 0
+var campaign_planet := 1
+var campaign_atlas_rects: Array[Rect2] = []
+var campaign_node_rects: Array[Rect2] = []
+var campaign_start_rect := Rect2()
+var campaign_back_rect := Rect2()
+var campaign_launch_pending := false
 var mode_button_rect := Rect2()
 var classic_mode_rect := Rect2()
 var sprint_mode_rect := Rect2()
@@ -407,7 +416,12 @@ func _toggle_pause() -> void:
 
 func _handle_tap(point: Vector2) -> void:
 	if home_visible:
-		if home_campaign_rect.has_point(point) or home_block_run_rect.has_point(point):
+		if home_campaign_rect.has_point(point):
+			campaign_screen = "atlas"
+			campaign_universe = 0
+			campaign_planet = 1
+			home_visible = false
+		elif home_block_run_rect.has_point(point):
 			home_visible = false
 			mode_select_visible = true
 		elif home_heroes_rect.has_point(point):
@@ -420,6 +434,34 @@ func _handle_tap(point: Vector2) -> void:
 			_open_secondary_screen("daily")
 		queue_redraw()
 		return
+	if not campaign_screen.is_empty():
+		if campaign_back_rect.has_point(point):
+			if campaign_screen == "planet":
+				campaign_screen = "route"
+			elif campaign_screen == "route":
+				campaign_screen = "atlas"
+			else:
+				campaign_screen = ""
+				home_visible = true
+		elif campaign_screen == "atlas":
+			for index in range(campaign_atlas_rects.size()):
+				if campaign_atlas_rects[index].has_point(point):
+					campaign_universe = index
+					campaign_screen = "route"
+					break
+		elif campaign_screen == "route":
+			for index in range(campaign_node_rects.size()):
+				if campaign_node_rects[index].has_point(point):
+					campaign_planet = index + 1
+					campaign_screen = "planet"
+					break
+		elif campaign_screen == "planet" and campaign_start_rect.has_point(point) and _campaign_planet_is_unlocked(campaign_universe, campaign_planet):
+			campaign_launch_pending = true
+			campaign_screen = ""
+			mode_select_visible = true
+			paused = false
+		queue_redraw()
+		return
 	if not secondary_screen.is_empty():
 		if secondary_back_rect.has_point(point):
 			secondary_screen = ""
@@ -430,6 +472,7 @@ func _handle_tap(point: Vector2) -> void:
 		if secondary_back_rect.has_point(point):
 			mode_select_visible = false
 			home_visible = true
+			campaign_launch_pending = false
 			queue_redraw()
 			return
 		if classic_mode_rect.has_point(point):
@@ -535,6 +578,9 @@ func _draw() -> void:
 	_draw_backdrop()
 	if home_visible:
 		_draw_home_hub()
+		return
+	if not campaign_screen.is_empty():
+		_draw_campaign_screen()
 		return
 	if not secondary_screen.is_empty():
 		_draw_secondary_screen()
@@ -664,6 +710,131 @@ func _draw_secondary_screen() -> void:
 func _center_text_in_rect(value: String, rect: Rect2, size: int, color: Color) -> void:
 	var width := font.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 	draw_string(font, Vector2(rect.get_center().x - width * 0.5, rect.get_center().y + size * 0.35), value, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+
+func _campaign_universe_name(index: int) -> String:
+	var names := ["ЗЕЛЁНЫЕ РАВНИНЫ", "КАРАВАН ЗВЁЗД", "ОГНЕННЫЕ ЗЕМЛИ", "ЛЕДЯНАЯ КОРОНА", "ЛУННАЯ КОЛОНИЯ", "КРЫЛЬЯ ЭКСПЕДИЦИИ", "ПЕСКИ ВРЕМЕНИ", "ВРАТА МЕЖДУМИРЬЯ", "НЕБЕСНЫЙ АРХИПЕЛАГ", "СТАНЦИЯ ДРОНОВ", "КОСМИЧЕСКИЙ РАЗЛОМ", "ДАЛЬНИЙ РУБЕЖ"]
+	return names[clampi(index, 0, names.size() - 1)]
+
+func _campaign_planet_is_unlocked(universe_index: int, planet_number: int) -> bool:
+	# The first node is the playable campaign entry point. Progression persistence
+	# and unlock receipts are intentionally a separate follow-up milestone.
+	return universe_index == 0 and planet_number == 1
+
+func _draw_campaign_screen() -> void:
+	campaign_back_rect = Rect2(16.0, 14.0, 104.0, 40.0)
+	_draw_soft_panel(campaign_back_rect, Color("#155c9c"), Color("#7bdfff"), 14, 6)
+	draw_string(font, campaign_back_rect.position + Vector2(11.0, 26.0), "‹  НАЗАД", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
+	if campaign_screen == "atlas":
+		_draw_campaign_atlas()
+	elif campaign_screen == "route":
+		_draw_campaign_route()
+	else:
+		_draw_campaign_planet()
+
+func _draw_campaign_atlas() -> void:
+	_center_text("КОСМИЧЕСКИЙ АТЛАС", 104.0, 23, Color("#fff0b9"))
+	_center_text("12 ВСЕЛЕННЫХ  •  360 ПЛАНЕТ", 128.0, 10, Color("#c4edff"))
+	campaign_atlas_rects.clear()
+	var compact := screen_size.x <= 480.0
+	var columns := 2 if compact else 3
+	var gap := 7.0
+	var margin := 14.0 if compact else 22.0
+	var card_w := (screen_size.x - margin * 2.0 - gap * float(columns - 1)) / float(columns)
+	var card_h := 82.0 if compact else 166.0
+	var top := 151.0
+	for index in range(12):
+		var col := index % columns
+		var row := index / columns
+		var rect := Rect2(margin + float(col) * (card_w + gap), top + float(row) * (card_h + gap), card_w, card_h)
+		campaign_atlas_rects.append(rect)
+		var unlocked := index == 0
+		var fills := [Color("#286e69"),Color("#246d83"),Color("#a44f35"),Color("#356b9e"),Color("#88704a"),Color("#3b62a0"),Color("#8a6740"),Color("#67519a"),Color("#397f8c"),Color("#53647d"),Color("#5c4c98"),Color("#87527e")]
+		var accents := [Color("#83edbf"),Color("#55ddff"),Color("#ff9a68"),Color("#a8e5ff"),Color("#ffd05a"),Color("#8ebcff"),Color("#e4c18c"),Color("#a77bff"),Color("#8af0e8"),Color("#b6c9df"),Color("#c1a5ff"),Color("#ff8fbd")]
+		_draw_soft_panel(rect, fills[index] if unlocked else fills[index].darkened(0.42), accents[index] if unlocked else Color("#5c7394"), 13, 5)
+		var orb := Vector2(rect.position.x + (29.0 if compact else 48.0), rect.get_center().y)
+		draw_circle(orb, 17.0 if compact else 28.0, Color(accents[index].r, accents[index].g, accents[index].b, 0.20))
+		draw_arc(orb, 14.0 if compact else 24.0, 0.0, TAU, 36, accents[index], 1.5, true)
+		draw_circle(orb, 7.0 if compact else 12.0, accents[index])
+		var tx := rect.position.x + (53.0 if compact else 86.0)
+		var title_size := 8 if compact else 11
+		draw_string(font, Vector2(tx, rect.position.y + (25.0 if compact else 34.0)), "ВСЕЛЕННАЯ %02d" % (index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, title_size, accents[index])
+		draw_string(font, Vector2(tx, rect.position.y + (43.0 if compact else 59.0)), _campaign_universe_name(index), HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 10, Color("#ffffff"))
+		draw_string(font, Vector2(tx, rect.position.y + (62.0 if compact else 83.0)), "ПЛАНЕТЫ %03d–%03d" % [index * 30 + 1, (index + 1) * 30], HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 9, Color("#d7eaff"))
+		draw_string(font, Vector2(tx, rect.position.y + (75.0 if compact else 112.0)), "ОТКРЫТА" if unlocked else "ЗАКРЫТА", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a") if unlocked else Color("#9bb2d0"))
+	_center_text("ПЕРВЫЙ МИР ДОСТУПЕН ДЛЯ ИССЛЕДОВАНИЯ", screen_size.y - 14.0, 9, Color("#b9eaff"))
+
+func _draw_campaign_route() -> void:
+	var compact := screen_size.x <= 480.0
+	_center_text(_campaign_universe_name(campaign_universe), 104.0, 17 if compact else 25, Color("#fff0b9"))
+	_center_text("ВСЕЛЕННАЯ %02d  •  30 ПЛАНЕТ" % (campaign_universe + 1), 128.0, 10, Color("#c4edff"))
+	var planet_origin := Vector2(screen_size.x * 0.5, 190.0 if compact else 225.0)
+	draw_circle(planet_origin, 42.0 if compact else 66.0, Color("#2a9ed1"))
+	draw_circle(planet_origin + Vector2(-13.0, -15.0), 13.0 if compact else 20.0, Color(1,1,1,0.18))
+	draw_arc(planet_origin + Vector2(0, 5), 39.0 if compact else 62.0, 0.2, 2.7, 64, Color("#165b9b"), 6.0 if compact else 9.0, true)
+	for island in [Vector2(-18,-4), Vector2(16,13), Vector2(-4,25)]:
+		draw_circle(planet_origin + island * (1.0 if compact else 1.5), 7.0 if compact else 12.0, Color("#8de5b5"))
+	var panel_top := 252.0 if compact else 326.0
+	var panel_bottom := screen_size.y - 24.0
+	var panel := Rect2(14.0, panel_top, screen_size.x - 28.0, panel_bottom - panel_top)
+	_draw_soft_panel(panel, Color("#102f68"), Color("#55ddff"), 18, 8)
+	draw_string(font, panel.position + Vector2(12, 24), "МАРШРУТ ПЕРВООТКРЫВАТЕЛЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11 if compact else 16, Color("#ffffff"))
+	draw_string(font, panel.position + Vector2(12, 43), "30 планет • особые рубежи: 010 / 020 / 030", HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 10, Color("#c4edff"))
+	campaign_node_rects.clear()
+	var cols := 6
+	var rows := 5
+	var node_area_top := panel.position.y + 67.0
+	var node_area_height := panel.size.y - 94.0
+	var step_x := (panel.size.x - 42.0) / 5.0
+	var step_y := node_area_height / 4.0
+	var positions: Array[Vector2] = []
+	for index in range(30):
+		var row := index / cols
+		var col := index % cols
+		if row % 2 == 1:
+			col = cols - 1 - col
+		positions.append(Vector2(panel.position.x + 21.0 + float(col) * step_x, node_area_top + float(row) * step_y))
+	for index in range(29):
+		draw_line(positions[index], positions[index + 1], Color("#5c91c4"), 2.0)
+	for index in range(30):
+		var pos := positions[index]
+		var unlocked := _campaign_planet_is_unlocked(campaign_universe, index + 1)
+		var boss := (index + 1) % 10 == 0
+		var node_radius := 10.0 if compact else 14.0
+		var node_rect := Rect2(pos - Vector2.ONE * (node_radius + 3.0), Vector2.ONE * (node_radius + 3.0) * 2.0)
+		campaign_node_rects.append(node_rect)
+		draw_circle(pos, node_radius, Color("#9a6b22") if unlocked else Color("#193e70"))
+		draw_arc(pos, node_radius, 0.0, TAU, 32, Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else Color("#496b9c")), 2.0, true)
+		if unlocked:
+			draw_circle(pos, 3.0, Color("#ffffff"))
+		elif boss:
+			draw_line(pos + Vector2(-4,-4), pos + Vector2(4,4), Color("#ff8fbd"), 1.5)
+			draw_line(pos + Vector2(4,-4), pos + Vector2(-4,4), Color("#ff8fbd"), 1.5)
+		draw_string(font, pos + Vector2(-10, node_radius + 12), "%02d" % (index + 1), HORIZONTAL_ALIGNMENT_CENTER, 22, 7 if compact else 9, Color("#d7eaff"))
+	_center_text("НАЖМИ НА ОТКРЫТУЮ ПЛАНЕТУ", screen_size.y - 7.0, 8, Color("#b9eaff"))
+
+func _draw_campaign_planet() -> void:
+	var unlocked := _campaign_planet_is_unlocked(campaign_universe, campaign_planet)
+	_center_text("ПЛАНЕТА %03d" % campaign_planet, 112.0, 24, Color("#fff0b9"))
+	_center_text(_campaign_universe_name(campaign_universe), 137.0, 10, Color("#c4edff"))
+	var center := Vector2(screen_size.x * 0.5, screen_size.y * 0.34)
+	draw_circle(center, 88.0, Color(0.25,0.72,1.0,0.08))
+	draw_arc(center, 73.0, 0.1, TAU + 0.1, 72, Color(0.72,0.9,1.0,0.62), 2.0, true)
+	draw_circle(center, 54.0, Color("#2a9ed1"))
+	draw_circle(center + Vector2(-17,-18), 16.0, Color(1,1,1,0.18))
+	draw_arc(center + Vector2(0,5), 51.0, 0.2, 2.7, 64, Color("#165b9b"), 7.0, true)
+	for island in [Vector2(-22,-5),Vector2(16,13),Vector2(-4,30)]:
+		draw_circle(center + island, 9.0, Color("#8de5b5"))
+	var info := Rect2(20.0, screen_size.y * 0.52, screen_size.x - 40.0, 104.0)
+	_draw_soft_panel(info, Color("#102f68"), Color("#55ddff"), 17, 7)
+	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
+	draw_string(font, info.position + Vector2(14,51), "Собери фигуры и очисти поле", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
+	draw_string(font, info.position + Vector2(14,75), "НАГРАДА  •  250 ✦", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffd05a"))
+	campaign_start_rect = Rect2(26.0, screen_size.y * 0.72, screen_size.x - 52.0, 58.0)
+	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
+	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else "УРОВЕНЬ ЗАКРЫТ", campaign_start_rect, 12, Color("#ffffff"))
+	_center_text("ПРОГРЕСС ОТКРЫТИЯ БУДЕТ СОХРАНЯТЬСЯ", screen_size.y * 0.86, 8, Color("#b9eaff"))
+
 
 func _draw_mode_select() -> void:
 	var layout := _mode_select_layout(screen_size)
