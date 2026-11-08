@@ -329,6 +329,20 @@ func _run() -> void:
 	layout_probe._handle_tap(Vector2(100.0, 100.0))
 	if not _check(layout_probe.game.origin == before_tap_origin and layout_probe.game.active_cells != before_tap_cells, "Single board tap must rotate without dropping the piece"):
 		return
+	# HOLD is a dedicated preview-card tap target, not a board gesture.
+	layout_probe.game.reset()
+	layout_probe.board_rect = Rect2(0.0, 0.0, 380.0, 874.0)
+	layout_probe.hold_rect = Rect2(400.0, 0.0, 80.0, 50.0)
+	var held_piece_before_tap: int = layout_probe.game.active_type
+	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
+	if not _check(layout_probe.game.held_type == held_piece_before_tap and layout_probe.game.hold_used, "Tapping the HOLD preview card must store the active piece"):
+		return
+	if not _check(layout_probe.game.active_type != held_piece_before_tap and layout_probe.game.origin == Vector2i(3, 0), "HOLD tap must spawn the next piece without rotating or moving it"):
+		return
+	var held_piece_after_first_tap: int = layout_probe.game.active_type
+	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
+	if not _check(layout_probe.game.active_type == held_piece_after_first_tap and layout_probe.game.held_type == held_piece_before_tap, "A second HOLD tap before locking must not swap pieces again"):
+		return
 	if not _check(not layout_probe._handle_swipe(Vector2(500.0, 100.0), Vector2(420.0, 100.0)), "Swipes beginning outside the board must not steal button taps"):
 		return
 	# Sprint failure feedback must be distinct and retain progress, time, and score context.
