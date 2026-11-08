@@ -134,3 +134,11 @@
 - CI run `42462909799` on HEAD `cdf419b0f73eddc71f12e88aee4578a6f9edffd0`: **SUCCESS** — import, parse, gameplay, migration, Block Run model, Block Run event-effect tests and scene smoke test.
 - The effect layer is still isolated and not connected to the live board. Board mutations, active run integration, goals/rewards, hero abilities, relic wallet, HUD/draft/result UI and responsive QA remain pending.
 - No storage work, main merge, deployment, APK build/release or physical-device test.
+
+
+## KT-469 — Block Run board mutation adapter
+- Added `godot/scripts/block_run_board.gd`: validated 10×23 board mutations for deterministic garbage insertion, top-out reporting, bottom-row clearing and rescue-row patterns.
+- Added `godot/tests/block_run_board_test.gd` and CI stage `Run Block Run board mutation tests`.
+- CI run `42463302261` on HEAD `5dcecbf891c9ac098ae86f0d36bcfbc4fc6b48ad`: **SUCCESS** — import, parse, gameplay, migration, Block Run model/effect/board tests and scene smoke test all passed.
+- This is an isolated adapter and is not yet wired into the live main scene or piece-lock loop. Next: connect attacks/rescues to the active board, then goals/rewards, hero skills and encounter/draft UI.
+- PR #77 remains Draft/open/unmerged. No main merge, deployment, APK build/release, persistence or physical-device test.
