@@ -310,20 +310,43 @@ func _run() -> void:
 		quit(1)
 		return
 	scene.call("_handle_tap", scene.get("campaign_start_rect").get_center())
-	if not bool(scene.get("mode_select_visible")) or not bool(scene.get("campaign_launch_pending")):
-		push_error("Starting the unlocked planet must enter mode selection with campaign context.")
+	if not bool(scene.get("campaign_run_active")) or bool(scene.get("mode_select_visible")):
+		push_error("Starting the unlocked planet must launch its campaign level directly.")
 		quit(1)
 		return
-	scene.call("_handle_tap", scene.get("secondary_back_rect").get_center())
-	await process_frame
-	await process_frame
-	if str(scene.get("campaign_screen")) != "planet":
-		push_error("Returning from mode selection must restore the selected planet detail.")
+	var campaign_session = scene.get("mode_session")
+	if campaign_session.mode_id != "campaign" or int(campaign_session.rules.get("target_lines", 0)) != 8:
+		push_error("Planet 001 must launch a campaign session with its own eight-line objective.")
 		quit(1)
 		return
-	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
 	await process_frame
 	await process_frame
+	if not await _capture(viewport, "24-live-campaign-level"):
+		quit(1)
+		return
+	scene.get("game").lines = 8
+	campaign_session.update(0.0, 8, false)
+	scene.call("_process_campaign_completion")
+	if int(scene.get("campaign_progress").unlocked_node) != 2 or int(scene.get("campaign_progress").campaign_marks) != 1:
+		push_error("Completing planet 001 must grant one mark and unlock planet 002.")
+		quit(1)
+		return
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "25-live-campaign-level-complete"):
+		quit(1)
+		return
+	scene.call("_handle_tap", Vector2(180.0, 400.0))
+	await process_frame
+	await process_frame
+	if str(scene.get("campaign_screen")) != "route" or bool(scene.get("campaign_run_active")):
+		push_error("Campaign completion must return to the updated universe route.")
+		quit(1)
+		return
+	if not await _capture(viewport, "26-live-campaign-progress"):
+		quit(1)
+		return
 	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
 	await process_frame
 	await process_frame
