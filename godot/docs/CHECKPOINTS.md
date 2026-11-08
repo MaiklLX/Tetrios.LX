@@ -176,3 +176,15 @@
 - Real rendered screenshot artifact: `block-buddies-visual-checks`, 720×1280 selector and Classic arena. These screenshots confirm existing scenes render; they do not depict Block Run, which is still not connected to the main scene.
 - Remaining: connect session to the live piece/board lifecycle; integrate Shield/Nova rescue mutations; build card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable.
 - No main merge, deployment, APK build/release, persistence work or physical-device test.
+
+
+## KT-473 — Block Run Shield / Iron Fortress / Nova rescue mutations
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open.
+- Added session-level `on_spawn_collision()` that applies the existing source effect decision and mutates the isolated 10×23 Block Run board.
+- Shield consumes one charge and randomizes the source-defined lower 3 rows at 22% fill; Shield + Armor (Iron Fortress) randomizes lower 5 rows at 10% fill. The mutation uses a deterministic run seed for reproducible tests.
+- Nova clears its rank-scaled number of bottom rows and marks the one-time rescue as consumed. A second spawn collision cannot reuse Nova.
+- Added regression coverage for charge consumption, board mutation, Iron Fortress combination, Nova row clearing and one-time use.
+- First test attempt exposed a GDScript static type inference issue in a test fixture; explicit typing fixed it. Final CI run [42468010685](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42468010685) on HEAD `d79a40dc78d112f5ea6b077ac3b24e278687c816`: **SUCCESS** — import, main parse, gameplay, migration, Block Run model/effects/board/session tests, rendered screenshot capture/upload and scene smoke test.
+- Real rendered screenshot artifact: `block-buddies-visual-checks`, 720×1280; current Classic arena screenshot is also available in the run artifacts. It confirms existing Classic rendering only; it is not a Block Run screen.
+- Status boundary: rescue logic is implemented and tested inside the Block Run session. It is not yet called from the live game model or main scene. Block Run remains hidden/unplayable until the live board/piece lifecycle, draft/HUD and run-end flow are integrated.
+- No main merge, deployment, APK build/release, persistent storage changes or physical Android test.
