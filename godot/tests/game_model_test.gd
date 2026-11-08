@@ -274,6 +274,21 @@ func _run() -> void:
 		return
 	if not _check(not layout_probe._handle_swipe(Vector2(500.0, 100.0), Vector2(420.0, 100.0)), "Swipes beginning outside the board must not steal button taps"):
 		return
+	# Sprint failure feedback must be distinct and retain progress, time, and score context.
+	layout_probe.mode_session = ModeSession.new()
+	layout_probe.mode_session.start("sprint")
+	layout_probe.mode_session.elapsed_seconds = 83.0
+	layout_probe.game.lines = 37
+	layout_probe.game.score = 2450
+	if not _check(layout_probe._game_over_title() == "SPRINT FAILED", "Sprint game over must use a distinct failure title"):
+		return
+	if not _check(layout_probe._game_over_progress_label() == "LINES  •  37 / 40", "Sprint failure must show achieved lines against the target"):
+		return
+	if not _check(layout_probe._game_over_time_label() == "TIME  •  01:23", "Sprint failure must show the elapsed run time"):
+		return
+	layout_probe.mode_session.start("classic")
+	if not _check(layout_probe._game_over_title() == "RUN OVER" and layout_probe._game_over_time_label().is_empty(), "Classic game over must retain its original presentation"):
+		return
 	layout_probe.free()
 	var model: BlockBuddiesModel = Model.new()
 	model.reset()
