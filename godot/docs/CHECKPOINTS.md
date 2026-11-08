@@ -124,3 +124,13 @@
 - Defined the event dispatcher contract for KT-468: piece lock, line clear, timer second, level-up, spawn collision, rotation, monster attack and monster defeat. Random outcomes must be deterministic in tests.
 - No native card effects have been wired yet; this checkpoint is an audit gate before implementation.
 - No main merge, deployment, APK build/release, persistence or user-data changes.
+
+
+## KT-468 — Deterministic Block Run card event effects
+- Added `godot/scripts/block_run_effects.gd`: pure deterministic event calculations for card draft, piece lock, line clear, timer second, level-up, rotation, piece spawn, spawn collision and monster defeat.
+- Implemented source-grounded effects for scoring/multipliers, line/monster damage, level charge, relic gain, Flash/Plasma, Tide/Unstable, Memory/Loop/Slow/Fortress, Stable/Shift, Mirror/Prism/Aura, Shield/Armor/Nova/Rift, Gear, Reserve and Hold. Comet is gated for source-bug review; Luck remains unimplemented because no runtime consumer was found.
+- Preserved Pixel's hero-specific Hold override and exact Shield/Iron Fortress rescue geometry.
+- Added `godot/tests/block_run_effects_test.gd` and a dedicated CI step.
+- CI run `42462909799` on HEAD `cdf419b0f73eddc71f12e88aee4578a6f9edffd0`: **SUCCESS** — import, parse, gameplay, migration, Block Run model, Block Run event-effect tests and scene smoke test.
+- The effect layer is still isolated and not connected to the live board. Board mutations, active run integration, goals/rewards, hero abilities, relic wallet, HUD/draft/result UI and responsive QA remain pending.
+- No storage work, main merge, deployment, APK build/release or physical-device test.
