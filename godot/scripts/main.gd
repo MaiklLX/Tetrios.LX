@@ -972,15 +972,16 @@ func _draw_mode_card(rect: Rect2, title: String, description: String, accent: Co
 	draw_string(font, rect.position + Vector2(18.0, 36.0), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#ffffff"))
 	draw_string(font, rect.position + Vector2(18.0, 64.0), description, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#f0f5ff"))
 func _is_line_objective_mode() -> bool:
-	return mode_session != null and int(mode_session.rules.get("target_lines", 0)) > 0
+	return mode_session != null and (int(mode_session.rules.get("target_lines", 0)) > 0 or int(mode_session.rules.get("target_score", 0)) > 0)
 
 func _objective_progress_ratio() -> float:
 	if not _is_line_objective_mode():
 		return 0.0
-	var target := int(mode_session.rules.get("target_lines", 0))
-	if target <= 0:
-		return 0.0
-	return clampf(float(game.lines) / float(target), 0.0, 1.0)
+	var target_lines := int(mode_session.rules.get("target_lines", 0))
+	var target_score := int(mode_session.rules.get("target_score", 0))
+	var line_ratio := 1.0 if target_lines <= 0 else clampf(float(game.lines) / float(target_lines), 0.0, 1.0)
+	var score_ratio := 1.0 if target_score <= 0 else clampf(float(game.score) / float(target_score), 0.0, 1.0)
+	return minf(line_ratio, score_ratio)
 
 func _format_elapsed_time(total_seconds: float) -> String:
 	var safe_seconds := maxi(0, floori(total_seconds))
@@ -1329,9 +1330,12 @@ func _draw_mode_complete() -> void:
 	panel.size.x = minf(320.0, screen_size.x - 40.0)
 	_draw_overlay_panel(panel, Color("#f6d65b"))
 	var mode_name := _mode_display_name(mode_session.mode_id)
-	var target := int(mode_session.rules.get("target_lines", game.lines))
+	var target := int(mode_session.rules.get("target_lines", 0))
 	_center_text(mode_name + " • ВЫПОЛНЕНО", screen_size.y * 0.5 - 56.0, 23, Color("#f4f8ff"))
-	_center_text("ОЧИЩЕНО ЛИНИЙ • %d" % target, screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
+	if target > 0:
+		_center_text("ОЧИЩЕНО ЛИНИЙ • %d" % target, screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
+	else:
+		_center_text("ЦЕЛЬ ПО ОЧКАМ • %d" % int(mode_session.rules.get("target_score", 0)), screen_size.y * 0.5 - 22.0, 14, Color("#45d9f5"))
 	_center_text("ВРЕМЯ  •  " + _format_elapsed_time(mode_session.elapsed_seconds), screen_size.y * 0.5 + 10.0, 15, Color("#f6d65b"))
 	_center_text("ОЧКИ  •  %d" % game.score, screen_size.y * 0.5 + 42.0, 17, Color("#c0d3e2"))
 	if campaign_run_active:
@@ -1345,8 +1349,13 @@ func _game_over_title() -> String:
 
 func _game_over_progress_label() -> String:
 	if _is_line_objective_mode():
-		var target := int(mode_session.rules.get("target_lines", 40))
-		return "ЛИНИИ  •  %d / %d" % [mini(game.lines, target), target]
+		var target_lines := int(mode_session.rules.get("target_lines", 0))
+		var target_score := int(mode_session.rules.get("target_score", 0))
+		if target_lines > 0 and target_score > 0:
+			return "ЛИНИИ %d/%d  •  ОЧКИ %d/%d" % [mini(game.lines, target_lines), target_lines, mini(game.score, target_score), target_score]
+		if target_score > 0:
+			return "ОЧКИ  •  %d / %d" % [mini(game.score, target_score), target_score]
+		return "ЛИНИИ  •  %d / %d" % [mini(game.lines, target_lines), target_lines]
 	return "ОЧИЩЕНО ЛИНИЙ  •  %d" % game.lines
 
 func _game_over_time_label() -> String:
