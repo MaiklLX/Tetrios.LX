@@ -200,3 +200,14 @@
 - Screenshot artifact `block-buddies-visual-checks` (720×1280) contains the current mode selector and Classic arena. It confirms existing scenes still render; it is **not** a Block Run screenshot.
 - Important boundary: this is the tested synchronization/rescue boundary, not yet the complete live gameplay hookup. Main still does not route every lock, line-clear, timer, attack, hero-skill or draft event through the bridge. Block Run remains hidden and unplayable. Next: connect event lifecycle with exactly-once dispatch, then test actual attack/rescue behavior on the live board before exposing the mode.
 - No main merge, deployment, APK build/release, persistence work or physical Android test.
+
+
+## KT-475 — live Block Run lock / line / timer event routing
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Added an ephemeral monotonic lock-event cursor to the gameplay model. The main scene consumes each piece-lock event once, routes placement bonuses and line-clear progress into the Block Run session, and refuses to continue if the cursor unexpectedly skips an event.
+- Added an internal Block Run session start path (not exposed in the mode selector). The bridge now routes timed enemy attacks back onto the live 10×23 model board; garbage overflow ends the run. The active falling piece is revalidated after board shifts so an attack cannot silently place a block inside it.
+- Added isolated live-loop tests: one lock dispatches one placement, line-progress delta dispatches once, repeated frame processing does not double-count, timed Breach garbage reaches both session and live board, and occupied top-row overflow produces Game Over.
+- CI run [42473197674](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473197674) on code HEAD `66e20ad135dfadd431113af66e1de6793a7feb1f`: **SUCCESS** — import, main parse, all Classic/migration/Block Run domain/session/bridge/live-loop tests, real rendered screenshot capture/upload and scene smoke test.
+- Visual artifact remains the real 720×1280 mode-selector + Classic arena pair. It confirms the unchanged visible scenes; Block Run is still not exposed and no Block Run screenshot is claimed.
+- Remaining before mode exposure: audit/route all gameplay input and gravity event paths under the Block Run state, validate actual spawn-rescue path end-to-end on the live board, wire card draft/encounter/goals HUD, hero abilities and run-end UI, and settle goal rewards safely. No persistent wallet or storage work.
+- No main merge, deployment, APK build/release or physical Android test.
