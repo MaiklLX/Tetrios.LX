@@ -192,3 +192,11 @@ Status: **KT-446 source audit and proposed contract complete; implementation and
 - Regression test fills the spawn row, invokes Hold, and verifies the Block Run session reaches its rescue/failure decision path.
 - CI run 42473308354 passed all tests and visual capture stages.
 - Successful live Shield/Nova rescue remains to be verified end-to-end; the mode is still not exposed.
+
+
+## 18. KT-477 — Shield/Nova top-out rescue parity
+- Web-source audit confirmed Shield replaces the entire board with empty rows plus a sparse randomized lower zone; native implementation previously retained the obstructing upper stack. Native Shield now matches the full-board reset, including 3-row and Iron Fortress 5-row variants.
+- Live scene integration tests verify Shield clears a blocked spawn and resumes; Nova's rank-1 bottom-row clear resumes a valid horizontal-I spawn after the old top row shifts down.
+- Initial Nova test fixture used a multi-row piece for a one-row rescue and failed strict collision validation; corrected the test geometry rather than weakening runtime validation.
+- CI run 42473876259 on code SHA 5d19c2ff9f240578bfab1e588a5f5d7c0c77070f passed all tests, visual capture and scene smoke test.
+- Block Run remains hidden until card/hero/goal/result UI and reward settlement are complete.
