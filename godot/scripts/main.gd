@@ -20,6 +20,7 @@ var pause_rect := Rect2()
 var resume_rect := Rect2()
 var hold_rect := Rect2()
 var touch_start := Vector2.ZERO
+var touch_start_msec := 0
 var touch_active := false
 
 func _ready() -> void:
@@ -107,15 +108,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventScreenTouch:
 		if event.pressed:
 			touch_start = event.position
+			touch_start_msec = Time.get_ticks_msec()
 			touch_active = true
 		elif touch_active:
+			var touch_duration_msec := Time.get_ticks_msec() - touch_start_msec
 			touch_active = false
-			if not _handle_swipe(touch_start, event.position):
+			if not _handle_swipe(touch_start, event.position, touch_duration_msec):
 				_handle_tap(event.position)
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_handle_tap(event.position)
 
-func _handle_swipe(start: Vector2, finish: Vector2) -> bool:
+func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
 	if game == null or game.game_over or paused or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
@@ -128,9 +131,10 @@ func _handle_swipe(start: Vector2, finish: Vector2) -> bool:
 		for i in range(steps):
 			game.move_horizontal(direction)
 	elif delta.y > 0.0:
-		# A decisive long downward swipe is hard drop; shorter gestures
-		# remain soft drop so players can fine-position a piece.
-		if delta.y >= board_rect.size.y * 0.28:
+		# Hard drop requires both a decisive travel distance and a quick
+		# gesture. Slow downward drags remain soft-drop input.
+		var is_quick_drop := delta.y >= board_rect.size.y * 0.22 and duration_msec <= 350
+		if is_quick_drop:
 			game.hard_drop()
 		else:
 			var drops := clampi(roundi(delta.y / threshold), 1, 4)
