@@ -81,11 +81,18 @@ func _run() -> void:
 	var pulse_score := pulse.on_line_clear(1, 100)
 	if not _check(pulse_score.score_multiplier == 1.5 and pulse_score.score_after_modifier == 150, "Pulse applies a 1.5x line-clear score multiplier"):
 		return
-	pulse.advance_active_time(5.0)
-	if not _check(pulse.drop_interval_ms == 755, "Pulse accelerates gravity by 25 ms every five active seconds"):
+	for piece_index in range(4):
+		var pulse_event := pulse.on_piece_dropped()
+		if not _check(not pulse_event.pulse_triggered and pulse.drop_interval_ms == 780, "Pulse must not accelerate before the fifth dropped piece"):
+			return
+	var fifth_piece := pulse.on_piece_dropped()
+	if not _check(fifth_piece.pulse_triggered and pulse.drop_interval_ms == 755, "Pulse accelerates by 25 ms on every fifth dropped piece"):
 		return
-	pulse.advance_active_time(100.0)
-	if not _check(pulse.drop_interval_ms == 180, "Pulse gravity respects the source minimum of 180 ms"):
+	for piece_index in range(100):
+		pulse.on_piece_dropped()
+	if not _check(pulse.drop_interval_ms == 180, "Pulse gravity respects the source minimum of 180 ms after repeated fifth-piece triggers"):
+		return
+	if not _check(pulse.snapshot().dropped_piece_count == 105, "Pulse snapshot retains the deterministic dropped-piece count"):
 		return
 
 	print("Campaign isolated effect session tests passed.")
