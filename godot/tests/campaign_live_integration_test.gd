@@ -72,6 +72,20 @@ func _run() -> void:
 	if not _check(bool(main_scene.get("campaign_run_active")) and runtime.active_piece_id == 7 and runtime.active_cells.size() == 5, "Authored Planet 057 must launch with the five-cell Cargo Hook"):
 		return
 
+	# KT-545: Planet 033 must start from its authored deterministic Cargo Corridor board.
+	progress.import_legacy_progress(33, 0)
+	main_scene.set("campaign_universe", 1)
+	main_scene.set("campaign_planet", 3)
+	main_scene.call("_start_campaign_planet")
+	runtime = main_scene.get("campaign_piece_runtime")
+	var layout_cells := 0
+	for row in runtime.grid:
+		for value in row:
+			if int(value) >= 0:
+				layout_cells += 1
+	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 27 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 033 must launch with its authored board and a standard active piece"):
+		return
+
 	main_scene.set("campaign_run_active", false)
 	var campaign_origin: Vector2i = runtime.origin
 	var classic_origin: Vector2i = shared_game.origin
