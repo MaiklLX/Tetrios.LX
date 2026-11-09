@@ -15,7 +15,7 @@ static func collection(viewport: Vector2) -> Dictionary:
 	var detail_rect := Rect2(12.0, height - detail_bottom_gap - detail_height, maxf(1.0, width - 24.0), detail_height)
 	var grid_viewport := Rect2(margin, top, maxf(1.0, width - margin * 2.0), maxf(1.0, detail_rect.position.y - top - 8.0))
 	var cell_width := (width - margin * 2.0 - gap * float(columns - 1)) / float(columns)
-	var cell_height := minf(56.0 if compact else 76.0, cell_width) if compact else minf(76.0, maxf(18.0, (grid_viewport.size.y - gap * 6.0) / 7.0))
+	var cell_height := minf(56.0, cell_width * 0.9) if compact else minf(76.0, maxf(18.0, (grid_viewport.size.y - gap * 6.0) / 7.0))
 	var inspect_width := minf(80.0, maxf(64.0, detail_rect.size.x * 0.27))
 	var inspect_rect := Rect2(detail_rect.end.x - inspect_width - 8.0, detail_rect.position.y + (detail_height - 36.0) * 0.5, inspect_width, 36.0 if not short_screen else 32.0)
 	var row_count := int(ceil(49.0 / float(columns)))
