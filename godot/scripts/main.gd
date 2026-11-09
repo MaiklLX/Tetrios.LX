@@ -1063,15 +1063,17 @@ func _draw_campaign_collection() -> void:
 		var kind := str(item.get("kind", ""))
 		var universe_number := int(item.get("universe_number", 0))
 		var universe_complete := universe_number > 0 and int(universe_unlocked_counts.get(universe_number, 0)) == 4
-		var accent := Color("#55ddcf") if kind == "universe_relic" else (Color("#ff91bd") if kind == "boss_insignia" else Color("#ffd05a"))
+		var visual_variant := int(item.get("visual_variant", 0))
+		var planet_id := int(item.get("planet_id", 0))
+		var accent := _collection_universe_accent(kind, universe_number, planet_id)
 		var muted_accent := accent if unlocked else accent.darkened(0.66).lerp(Color("#7186a5"), 0.55)
-		var fill := Color("#123f58") if kind == "universe_relic" and unlocked else (Color("#512d4d") if kind == "boss_insignia" and unlocked else (Color("#57451f") if unlocked else Color("#172e50")))
+		var fill := muted_accent.darkened(0.78) if unlocked else muted_accent.darkened(0.88)
 		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else muted_accent, 8, 3 if selected else 1)
 		if universe_complete:
 			draw_rect(Rect2(rect.position + Vector2(5.0, 3.0), Vector2(rect.size.x - 10.0, 2.0)), Color("#8ef4d3"))
 			draw_circle(Vector2(rect.end.x - 7.0, rect.position.y + 7.0), 3.0, Color("#8ef4d3"))
 		var emblem_center := Vector2(rect.get_center().x, rect.position.y + cell_h * 0.39)
-		_draw_collection_emblem(emblem_center, minf(11.0, cell_w * 0.27), kind, muted_accent)
+		_draw_collection_emblem(emblem_center, minf(11.0, cell_w * 0.27), kind, muted_accent, visual_variant, planet_id)
 		if not unlocked:
 			var lock_center := emblem_center + Vector2(0.0, 1.0)
 			draw_arc(lock_center, minf(7.0, cell_w * 0.18), PI, TAU, 16, Color("#7186a5"), 1.5, true)
@@ -1095,49 +1097,127 @@ func _draw_campaign_collection() -> void:
 		draw_string(font, detail_rect.position + Vector2(11.0, 66.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 7, Color("#ffd77a"))
 	_center_text("ВЫБЕРИ ЗНАК, ЧТОБЫ УЗНАТЬ ЕГО ИСТОРИЮ", screen_size.y - 8.0, 8, Color("#b9eaff"))
 
-func _draw_collection_emblem(center: Vector2, radius: float, kind: String, accent: Color) -> void:
+func _collection_universe_accent(kind: String, universe_number: int, planet_id: int) -> Color:
+	if kind == "campaign_crown":
+		return Color("#ffd05a")
+	var universe_colors := [
+		Color("#83edbf"), Color("#55ddff"), Color("#ff9a68"), Color("#a8e5ff"),
+		Color("#ffd05a"), Color("#8ebcff"), Color("#e4c18c"), Color("#a77bff"),
+		Color("#8af0e8"), Color("#b6c9df"), Color("#c1a5ff"), Color("#ff8fbd")
+	]
+	var color_index := clampi(universe_number - 1, 0, universe_colors.size() - 1)
+	var accent: Color = universe_colors[color_index]
+	if kind == "boss_insignia":
+		var boss_step := int((planet_id - 1) / 10) % 3
+		accent = accent.lightened(0.06 * boss_step)
+	return accent
+
+
+func _draw_collection_emblem(center: Vector2, radius: float, kind: String, accent: Color, visual_variant: int = 0, planet_id: int = 0) -> void:
 	if kind == "universe_relic":
-		var crystal := PackedVector2Array([
-			center + Vector2(0.0, -radius),
-			center + Vector2(radius * 0.72, -radius * 0.22),
-			center + Vector2(radius * 0.48, radius * 0.68),
-			center + Vector2(0.0, radius),
-			center + Vector2(-radius * 0.48, radius * 0.68),
-			center + Vector2(-radius * 0.72, -radius * 0.22)
-		])
-		draw_colored_polygon(crystal, accent.darkened(0.45))
-		draw_polyline(PackedVector2Array([crystal[0], crystal[1], crystal[2], crystal[3], crystal[4], crystal[5], crystal[0]]), accent, 1.7, true)
-		draw_line(center + Vector2(0.0, -radius), center + Vector2(0.0, radius * 0.8), accent.lightened(0.3), 1.2)
-		draw_line(center + Vector2(-radius * 0.72, -radius * 0.22), center + Vector2(radius * 0.48, radius * 0.68), accent.lightened(0.15), 1.0)
+		match visual_variant:
+			1: # Green Plains — living sprout
+				var leaf_a := PackedVector2Array([center + Vector2(0, 1), center + Vector2(-radius, -radius * 0.72), center + Vector2(-radius * 0.12, -radius * 0.42)])
+				var leaf_b := PackedVector2Array([center + Vector2(0, 1), center + Vector2(radius, -radius * 0.9), center + Vector2(radius * 0.18, -radius * 0.35)])
+				draw_colored_polygon(leaf_a, accent.darkened(0.28))
+				draw_colored_polygon(leaf_b, accent.darkened(0.12))
+				draw_line(center + Vector2(0, radius), center + Vector2(0, -radius * 0.45), accent.lightened(0.35), 1.8)
+			2: # Star Caravan — compass
+				var points := PackedVector2Array([center + Vector2(0, -radius), center + Vector2(radius * 0.3, -radius * 0.25), center + Vector2(radius, 0), center + Vector2(radius * 0.3, radius * 0.25), center + Vector2(0, radius), center + Vector2(-radius * 0.3, radius * 0.25), center + Vector2(-radius, 0), center + Vector2(-radius * 0.3, -radius * 0.25)])
+				draw_colored_polygon(points, accent.darkened(0.42))
+				draw_polyline(points, accent, 1.5, true)
+				draw_line(center + Vector2(-radius * 0.72, 0), center + Vector2(radius * 0.72, 0), accent.lightened(0.4), 1.0)
+			3: # Ashen Sun — solar core
+				for ray in range(8):
+					var angle := TAU * float(ray) / 8.0
+					draw_line(center + Vector2.from_angle(angle) * radius * 0.55, center + Vector2.from_angle(angle) * radius, accent, 1.5)
+				draw_circle(center, radius * 0.48, accent.darkened(0.3))
+				draw_arc(center, radius * 0.48, 0, TAU, 24, accent.lightened(0.45), 1.4, true)
+			4: # Ice Crown — snowflake
+				for ray in range(6):
+					var angle := TAU * float(ray) / 6.0 - PI * 0.5
+					var direction := Vector2.from_angle(angle)
+					draw_line(center - direction * radius * 0.82, center + direction * radius * 0.82, accent, 1.6)
+					for side in [-1.0, 1.0]:
+						var branch := center + direction * radius * 0.48
+						draw_line(branch, branch + direction.rotated(side * 0.72) * radius * 0.28, accent.lightened(0.28), 1.1)
+			5: # Lunar Archive — crescent
+				draw_circle(center, radius * 0.82, accent.darkened(0.22))
+				draw_circle(center + Vector2(radius * 0.38, -radius * 0.16), radius * 0.72, Color("#102f68"))
+				draw_circle(center + Vector2(-radius * 0.3, -radius * 0.35), radius * 0.12, accent.lightened(0.45))
+			6: # Expedition — feather
+				var feather := PackedVector2Array([center + Vector2(-radius * 0.78, radius * 0.8), center + Vector2(-radius * 0.38, -radius * 0.82), center + Vector2(radius * 0.7, -radius * 0.45), center + Vector2(radius * 0.38, radius * 0.42)])
+				draw_colored_polygon(feather, accent.darkened(0.3))
+				draw_polyline(feather, accent, 1.5, true)
+				draw_line(center + Vector2(-radius * 0.7, radius * 0.72), center + Vector2(radius * 0.58, -radius * 0.32), accent.lightened(0.4), 1.2)
+			7: # Sands of Time — hourglass
+				var glass := PackedVector2Array([center + Vector2(-radius * 0.72, -radius), center + Vector2(radius * 0.72, -radius), center + Vector2(radius * 0.12, 0), center + Vector2(radius * 0.72, radius), center + Vector2(-radius * 0.72, radius), center + Vector2(-radius * 0.12, 0)])
+				draw_colored_polygon(glass, accent.darkened(0.42))
+				draw_polyline(glass, accent, 1.5, true)
+				draw_circle(center + Vector2(0, radius * 0.46), radius * 0.12, accent.lightened(0.35))
+			8: # Between Worlds — portal
+				draw_arc(center, radius * 0.82, 0, TAU, 32, accent, 2.0, true)
+				draw_arc(center, radius * 0.55, 0, TAU, 32, accent.lightened(0.3), 1.4, true)
+				draw_line(center + Vector2(-radius * 0.2, -radius * 0.45), center + Vector2(radius * 0.2, radius * 0.45), accent, 1.4)
+			9: # Sky Archipelago — three floating isles
+				draw_circle(center + Vector2(-radius * 0.42, radius * 0.18), radius * 0.34, accent.darkened(0.2))
+				draw_circle(center + Vector2(radius * 0.35, radius * 0.24), radius * 0.29, accent)
+				draw_circle(center + Vector2(0, -radius * 0.4), radius * 0.25, accent.lightened(0.3))
+				draw_arc(center + Vector2(0, radius * 0.16), radius * 0.82, PI * 0.1, PI * 0.9, 16, accent, 1.2, true)
+			10: # Drone Station — mechanical gear
+				draw_circle(center, radius * 0.7, accent.darkened(0.3))
+				for tooth in range(8):
+					var angle := TAU * float(tooth) / 8.0
+					draw_line(center + Vector2.from_angle(angle) * radius * 0.58, center + Vector2.from_angle(angle) * radius, accent, 2.0)
+				draw_circle(center, radius * 0.25, Color("#102f68"))
+				draw_arc(center, radius * 0.25, 0, TAU, 20, accent.lightened(0.4), 1.2, true)
+			11: # Cosmic Rift — fractured shard
+				var shard := PackedVector2Array([center + Vector2(-radius * 0.18, -radius), center + Vector2(radius * 0.72, -radius * 0.12), center + Vector2(radius * 0.12, radius), center + Vector2(-radius * 0.72, radius * 0.12)])
+				draw_colored_polygon(shard, accent.darkened(0.35))
+				draw_polyline(shard, accent, 1.6, true)
+				draw_line(center + Vector2(-radius * 0.18, -radius * 0.6), center + Vector2(radius * 0.1, radius * 0.62), accent.lightened(0.42), 1.2)
+			_: # Far Frontier — beacon
+				var beacon := PackedVector2Array([center + Vector2(-radius * 0.36, radius), center + Vector2(-radius * 0.2, -radius * 0.35), center + Vector2(radius * 0.2, -radius * 0.35), center + Vector2(radius * 0.36, radius)])
+				draw_colored_polygon(beacon, accent.darkened(0.3))
+				draw_polyline(beacon, accent, 1.5, true)
+				draw_line(center + Vector2(-radius, -radius * 0.78), center + Vector2(-radius * 0.38, -radius * 0.48), accent.lightened(0.35), 1.2)
+				draw_line(center + Vector2(radius, -radius * 0.78), center + Vector2(radius * 0.38, -radius * 0.48), accent.lightened(0.35), 1.2)
 	elif kind == "boss_insignia":
-		var shield := PackedVector2Array([
-			center + Vector2(-radius * 0.78, -radius * 0.72),
-			center + Vector2(radius * 0.78, -radius * 0.72),
-			center + Vector2(radius * 0.66, radius * 0.25),
-			center + Vector2(0.0, radius),
-			center + Vector2(-radius * 0.66, radius * 0.25),
-			center + Vector2(-radius * 0.78, -radius * 0.72)
-		])
-		draw_colored_polygon(shield, accent.darkened(0.42))
-		draw_polyline(shield, accent, 1.7, true)
-		draw_line(center + Vector2(0.0, -radius * 0.35), center + Vector2(0.0, radius * 0.48), accent.lightened(0.35), 1.3)
-		draw_line(center + Vector2(-radius * 0.42, 0.0), center + Vector2(radius * 0.42, 0.0), accent.lightened(0.35), 1.3)
+		var universe_number := clampi(int((visual_variant - 1) / 30) + 1, 1, 12)
+		var boss_rank := clampi(int((planet_id - 1) / 10) % 3 + 1, 1, 3)
+		match universe_number % 4:
+			0:
+				var shield := PackedVector2Array([center + Vector2(-radius * 0.82, -radius * 0.68), center + Vector2(radius * 0.82, -radius * 0.68), center + Vector2(radius * 0.62, radius * 0.25), center + Vector2(0, radius), center + Vector2(-radius * 0.62, radius * 0.25)])
+				draw_colored_polygon(shield, accent.darkened(0.42))
+				draw_polyline(shield, accent, 1.5, true)
+			1:
+				var hex := PackedVector2Array([center + Vector2(-radius * 0.5, -radius * 0.88), center + Vector2(radius * 0.5, -radius * 0.88), center + Vector2(radius, 0), center + Vector2(radius * 0.5, radius * 0.88), center + Vector2(-radius * 0.5, radius * 0.88), center + Vector2(-radius, 0)])
+				draw_colored_polygon(hex, accent.darkened(0.42))
+				draw_polyline(hex, accent, 1.5, true)
+			2:
+				draw_circle(center, radius * 0.82, accent.darkened(0.42))
+				draw_arc(center, radius * 0.82, 0, TAU, 32, accent, 1.5, true)
+			_:
+				var diamond := PackedVector2Array([center + Vector2(0, -radius), center + Vector2(radius * 0.78, 0), center + Vector2(0, radius), center + Vector2(-radius * 0.78, 0)])
+				draw_colored_polygon(diamond, accent.darkened(0.42))
+				draw_polyline(diamond, accent, 1.5, true)
+		match boss_rank:
+			1:
+				draw_colored_polygon(PackedVector2Array([center + Vector2(0, -radius * 0.48), center + Vector2(radius * 0.4, radius * 0.35), center + Vector2(-radius * 0.4, radius * 0.35)]), accent.lightened(0.38))
+			2:
+				draw_line(center + Vector2(-radius * 0.52, 0), center + Vector2(radius * 0.52, 0), accent.lightened(0.5), 2.0)
+				draw_line(center + Vector2(0, -radius * 0.52), center + Vector2(0, radius * 0.52), accent.lightened(0.5), 2.0)
+				draw_circle(center, radius * 0.18, accent.lightened(0.45))
+			_:
+				for ray in range(8):
+					var angle := TAU * float(ray) / 8.0
+					draw_line(center + Vector2.from_angle(angle) * radius * 0.22, center + Vector2.from_angle(angle) * radius * 0.58, accent.lightened(0.48), 1.3)
+				draw_circle(center, radius * 0.18, accent.lightened(0.3))
 	else:
-		var crown := PackedVector2Array([
-			center + Vector2(-radius, -radius * 0.12),
-			center + Vector2(-radius * 0.62, radius * 0.22),
-			center + Vector2(-radius * 0.38, -radius * 0.62),
-			center + Vector2(0.0, -radius * 0.08),
-			center + Vector2(radius * 0.38, -radius * 0.62),
-			center + Vector2(radius * 0.62, radius * 0.22),
-			center + Vector2(radius, -radius * 0.12),
-			center + Vector2(radius * 0.78, radius * 0.82),
-			center + Vector2(-radius * 0.78, radius * 0.82),
-			center + Vector2(-radius, -radius * 0.12)
-		])
-		draw_colored_polygon(crown, accent.darkened(0.38))
-		draw_polyline(crown, accent, 1.7, true)
-		draw_line(center + Vector2(-radius * 0.58, radius * 0.42), center + Vector2(radius * 0.58, radius * 0.42), accent.lightened(0.35), 1.2)
+		var crown := PackedVector2Array([center + Vector2(-radius, -radius * 0.12), center + Vector2(-radius * 0.62, radius * 0.22), center + Vector2(-radius * 0.38, -radius * 0.62), center + Vector2(0, -radius * 0.08), center + Vector2(radius * 0.38, -radius * 0.62), center + Vector2(radius * 0.62, radius * 0.22), center + Vector2(radius, -radius * 0.12), center + Vector2(radius * 0.78, radius * 0.82), center + Vector2(-radius * 0.78, radius * 0.82)])
+		draw_colored_polygon(crown, accent.darkened(0.25))
+		draw_polyline(crown, accent, 1.8, true)
+		draw_circle(center + Vector2(0, -radius * 0.05), radius * 0.16, accent.lightened(0.5))
 
 func _draw_campaign_route() -> void:
 	var compact := screen_size.x <= 480.0
