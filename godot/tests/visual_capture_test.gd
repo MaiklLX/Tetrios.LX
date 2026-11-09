@@ -390,7 +390,7 @@ func _run() -> void:
 	scene.call("_start_campaign_planet")
 	var cargo_runtime = scene.get("campaign_piece_runtime")
 	if not bool(scene.get("campaign_run_active")) or cargo_runtime == null or int(cargo_runtime.active_piece_id) != 7 or cargo_runtime.active_cells.size() != 5:
-		push_error("Planet 031 must launch directly with the authored five-cell Cargo Hook.")
+		push_error("Planet 056 must launch directly with the authored five-cell Cargo Hook.")
 		quit(1)
 		return
 	await process_frame
