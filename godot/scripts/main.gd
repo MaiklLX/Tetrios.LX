@@ -58,6 +58,8 @@ var campaign_collection_rect := Rect2()
 var campaign_collection_item_rects: Array[Rect2] = []
 var campaign_collection_selected := 0
 var campaign_collection_inspect_rect := Rect2()
+var campaign_collection_grid_viewport_rect := Rect2()
+var campaign_collection_scroll_offset := 0.0
 var campaign_collection_reveal_queue: Array[String] = []
 var campaign_collection_reveal_active := false
 var campaign_collection_reveal_time := 0.0
@@ -520,6 +522,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				_restart_current_run()
 		_sync_buddy_state()
 		queue_redraw()
+	elif event is InputEventMouseButton and event.pressed and campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active and (event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+		_scroll_campaign_collection_rows(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
 	elif event is InputEventScreenTouch:
 		if event.pressed:
 			touch_start = event.position
@@ -534,6 +538,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		_handle_tap(event.position)
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
+	if campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active:
+		var collection_delta := finish - start
+		if campaign_collection_grid_viewport_rect.has_point(start) and absf(collection_delta.y) >= 28.0 and absf(collection_delta.y) > absf(collection_delta.x):
+			_scroll_campaign_collection_rows(1 if collection_delta.y < 0.0 else -1)
+			return true
 	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or _active_game_over() or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
 		return false
 	var delta := finish - start
@@ -593,6 +602,7 @@ func _handle_tap(point: Vector2) -> void:
 		elif home_collection_rect.has_point(point):
 			campaign_screen = "collection"
 			campaign_collection_selected = 0
+			campaign_collection_scroll_offset = 0.0
 			campaign_collection_from_home = true
 			home_visible = false
 			_begin_next_campaign_collection_reveal()
@@ -622,6 +632,7 @@ func _handle_tap(point: Vector2) -> void:
 		elif campaign_collection_rect.has_point(point) and campaign_screen == "atlas":
 			campaign_screen = "collection"
 			campaign_collection_selected = 0
+			campaign_collection_scroll_offset = 0.0
 			campaign_collection_from_home = false
 			_begin_next_campaign_collection_reveal()
 		elif campaign_back_rect.has_point(point):
@@ -1078,9 +1089,13 @@ func _draw_campaign_collection() -> void:
 		legend_start += legend.width
 	var gap := float(layout.gap)
 	var margin := float(layout.margin)
+	var columns := int(layout.columns)
 	var cell_w := float(layout.cell_width)
 	var cell_h := float(layout.cell_height)
 	var top := float(layout.top)
+	var grid_viewport: Rect2 = layout.grid_viewport_rect
+	campaign_collection_grid_viewport_rect = grid_viewport
+	var scroll_offset := campaign_collection_scroll_offset
 	campaign_collection_item_rects.clear()
 	var universe_unlocked_counts: Dictionary = {}
 	for item in items:
@@ -1091,10 +1106,13 @@ func _draw_campaign_collection() -> void:
 			universe_unlocked_counts[universe_number] = int(universe_unlocked_counts.get(universe_number, 0)) + 1
 	for index in range(items.size()):
 		var item: Dictionary = items[index]
-		var col := index % 7
-		var row := index / 7
-		var rect := Rect2(margin + float(col) * (cell_w + gap), top + float(row) * (cell_h + gap), cell_w, cell_h)
-		campaign_collection_item_rects.append(rect)
+		var col := index % columns
+		var row := index / columns
+		var rect := Rect2(margin + float(col) * (cell_w + gap), top + float(row) * (cell_h + gap) - scroll_offset, cell_w, cell_h)
+		var visible_cell := rect.position.y >= grid_viewport.position.y - 0.1 and rect.end.y <= grid_viewport.end.y + 0.1
+		campaign_collection_item_rects.append(rect if visible_cell else Rect2())
+		if not visible_cell:
+			continue
 		var unlocked := bool(item.get("unlocked", false))
 		var selected := index == campaign_collection_selected
 		var kind := str(item.get("kind", ""))
@@ -1137,13 +1155,27 @@ func _draw_campaign_collection() -> void:
 		draw_string(font, detail_rect.position + Vector2(10.0, detail_rect.size.y - 5.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#ffd77a"))
 		_draw_soft_panel(campaign_collection_inspect_rect, Color("#174d79"), Color("#8fe8ff"), 9, 3)
 		_center_text("ОСМОТР", campaign_collection_inspect_rect.position.y + campaign_collection_inspect_rect.size.y * 0.67, 8, Color("#ffffff"))
-	_center_text("ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»", float(layout.footer_y), 8, Color("#b9eaff"))
+	var footer_text := "ЛИСТАЙ СЕТКУ ВВЕРХ / ВНИЗ" if bool(layout.scrollable) else "ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»"
+	_center_text(footer_text, float(layout.footer_y), 8, Color("#b9eaff"))
 	if campaign_collection_reveal_active or campaign_collection_preview_active:
 		var modal_item := selected_item
 		var is_new_reward := campaign_collection_reveal_active
 		if is_new_reward and not campaign_collection_reveal_queue.is_empty():
 			modal_item = CampaignCollection.get_item(campaign_progress, campaign_collection_reveal_queue[0])
 		_draw_campaign_collection_reward_modal(modal_item, is_new_reward)
+
+
+func _scroll_campaign_collection_rows(direction: int) -> void:
+	if direction == 0:
+		return
+	var layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
+	var row_step := float(layout.get("cell_height", 0.0)) + float(layout.get("gap", 0.0))
+	var max_scroll := float(layout.get("max_scroll", 0.0))
+	if row_step <= 0.0 or max_scroll <= 0.0:
+		return
+	campaign_collection_scroll_offset = clampf(campaign_collection_scroll_offset + float(direction) * row_step, 0.0, max_scroll)
+	queue_redraw()
+
 
 func _begin_next_campaign_collection_reveal() -> void:
 	if campaign_collection_reveal_queue.is_empty():
