@@ -21,8 +21,6 @@ var campaign_run_active := false
 var campaign_run_planet_id := 0
 var campaign_completion_processed := false
 var campaign_last_reward_marks := 0
-var campaign_checkpoint_clock := 0.0
-const CAMPAIGN_CHECKPOINT_INTERVAL := 10.0
 var campaign_piece_runtime: BlockBuddiesCampaignPieceRuntime
 const CARGO_HOOK_PLANET_ID := 31
 var mode_session: BlockBuddiesModeSession
@@ -80,61 +78,11 @@ var touch_active := false
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED and _campaign_runtime_active() and mode_session != null and mode_session.is_running():
 		paused = true
-		_save_campaign_checkpoint()
 		queue_redraw()
-
-func _save_campaign_checkpoint() -> bool:
-	if not _campaign_runtime_active() or mode_session == null or not mode_session.is_running() or campaign_completion_processed:
-		return false
-	var saved := CampaignRunStore.save_run(campaign_run_planet_id, campaign_piece_runtime, CampaignRunStore.DEFAULT_PATH, mode_session.elapsed_seconds)
-	if not saved:
-		push_warning("Campaign run checkpoint could not be saved.")
-	return saved
 
 func _clear_campaign_checkpoint() -> void:
 	if not CampaignRunStore.clear_run():
 		push_warning("Campaign run checkpoint could not be cleared.")
-	campaign_checkpoint_clock = 0.0
-
-func _try_restore_campaign_run() -> bool:
-	var state: Dictionary = CampaignRunStore.load_latest_run_state()
-	if state.is_empty():
-		return false
-	var planet_id := int(state.get("planet_id", 0))
-	var definition := campaign_progress.get_planet_definition(planet_id)
-	if definition.is_empty() or campaign_progress.get_planet_status(planet_id) != "current":
-		_clear_campaign_checkpoint()
-		return false
-	var runtime = CampaignRuntime.new()
-	runtime.reset(false)
-	if not runtime.restore(state.runtime):
-		_clear_campaign_checkpoint()
-		return false
-	if mode_session == null:
-		mode_session = ModeSession.new()
-	if not mode_session.start("campaign"):
-		return false
-	mode_session.rules["target_lines"] = int(definition.get("target_lines", 0))
-	mode_session.rules["target_score"] = int(definition.get("target_score", 0))
-	mode_session.rules["target_survive_seconds"] = float(definition.get("target_survive_seconds", 0))
-	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
-	mode_session.elapsed_seconds = float(state.get("elapsed_seconds", 0.0))
-	campaign_run_planet_id = planet_id
-	campaign_piece_runtime = runtime
-	campaign_run_active = true
-	campaign_completion_processed = false
-	campaign_last_reward_marks = 0
-	block_run_active = false
-	mode_select_visible = false
-	home_visible = false
-	secondary_screen = ""
-	campaign_screen = ""
-	paused = true
-	gravity_clock = 0.0
-	campaign_checkpoint_clock = 0.0
-	buddy_last_lines = runtime.lines
-	queue_redraw()
-	return true
 
 func _ready() -> void:
 	randomize()
@@ -153,7 +101,7 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_layout)
 	_layout()
 	set_process(true)
-	_try_restore_campaign_run()
+	_clear_campaign_checkpoint()
 
 func _layout() -> void:
 	screen_size = get_viewport_rect().size
@@ -261,11 +209,6 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if game == null:
 		return
-	if _campaign_runtime_active() and not paused and mode_session != null and mode_session.is_running():
-		campaign_checkpoint_clock += delta
-		if campaign_checkpoint_clock >= CAMPAIGN_CHECKPOINT_INTERVAL:
-			campaign_checkpoint_clock = 0.0
-			_save_campaign_checkpoint()
 	if block_run_active:
 		_process_block_run_events()
 		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() else 0.0)
@@ -587,9 +530,6 @@ func _toggle_pause() -> void:
 		return
 	paused = not paused
 	if paused:
-		_save_campaign_checkpoint()
-	else:
-		campaign_checkpoint_clock = 0.0
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
