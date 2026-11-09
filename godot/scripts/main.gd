@@ -95,6 +95,13 @@ var touch_start_msec := 0
 var touch_active := false
 var touch_feedback_position := Vector2.ZERO
 var touch_feedback_time := 0.0
+var tutorial_active := false
+var tutorial_context := ""
+var tutorial_step := 0
+var tutorial_home_completed := false
+var tutorial_gameplay_completed := false
+var tutorial_next_rect := Rect2()
+var tutorial_skip_rect := Rect2()
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED and _campaign_runtime_active() and mode_session != null and mode_session.is_running():
@@ -123,6 +130,7 @@ func _ready() -> void:
 	add_child(buddy)
 	get_viewport().size_changed.connect(_layout)
 	_layout()
+	_load_tutorial_state()
 	set_process(true)
 	_clear_campaign_checkpoint()
 
@@ -582,6 +590,8 @@ func _classify_arena_swipe(delta: Vector2) -> String:
 	return "none"
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
+	if tutorial_active:
+		return true
 	if campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active:
 		var collection_delta := finish - start
 		if campaign_collection_grid_viewport_rect.has_point(start) and absf(collection_delta.x) >= 28.0 and absf(collection_delta.x) > absf(collection_delta.y) * 1.2:
@@ -632,6 +642,13 @@ func _toggle_pause() -> void:
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
+	if tutorial_active:
+		if tutorial_skip_rect.has_point(point):
+			_finish_tutorial()
+		elif tutorial_next_rect.has_point(point):
+			_advance_tutorial()
+		queue_redraw()
+		return
 	if campaign_collection_reveal_active and campaign_screen.is_empty():
 		_dismiss_campaign_collection_modal()
 		return
@@ -797,6 +814,10 @@ func _select_mode(requested_mode_id: String) -> void:
 	clear_flash_count = 0
 	if is_instance_valid(buddy):
 		buddy.set_state("idle", 0.0)
+	if not tutorial_gameplay_completed:
+		tutorial_active = true
+		tutorial_context = "gameplay"
+		tutorial_step = 0
 	queue_redraw()
 
 
@@ -846,15 +867,19 @@ func _draw() -> void:
 	_draw_backdrop()
 	if home_visible:
 		_draw_home_hub()
+		_draw_tutorial_overlay()
 		return
 	if not campaign_screen.is_empty():
 		_draw_campaign_screen()
+		_draw_tutorial_overlay()
 		return
 	if not secondary_screen.is_empty():
 		_draw_secondary_screen()
+		_draw_tutorial_overlay()
 		return
 	if mode_select_visible:
 		_draw_mode_select()
+		_draw_tutorial_overlay()
 		return
 	_draw_header()
 	_draw_stats()
@@ -875,6 +900,135 @@ func _draw() -> void:
 	if campaign_collection_reveal_active and campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
 		_draw_campaign_collection_reward_modal(CampaignCollection.get_item(campaign_progress, campaign_collection_reveal_queue[0]), true)
 	_draw_touch_feedback()
+	_draw_tutorial_overlay()
+
+
+func _load_tutorial_state() -> void:
+	var config := ConfigFile.new()
+	config.load("user://tutorial.cfg")
+	tutorial_home_completed = bool(config.get_value("tutorial", "home_completed", false))
+	tutorial_gameplay_completed = bool(config.get_value("tutorial", "gameplay_completed", false))
+	if not tutorial_home_completed:
+		tutorial_active = true
+		tutorial_context = "home"
+		tutorial_step = 0
+
+
+func _save_tutorial_state() -> void:
+	var config := ConfigFile.new()
+	config.load("user://tutorial.cfg")
+	config.set_value("tutorial", "home_completed", tutorial_home_completed)
+	config.set_value("tutorial", "gameplay_completed", tutorial_gameplay_completed)
+	var save_error := config.save("user://tutorial.cfg")
+	if save_error != OK:
+		push_warning("Tutorial completion could not be saved: " + str(save_error))
+
+
+func _finish_tutorial() -> void:
+	if tutorial_context == "home":
+		tutorial_home_completed = true
+	elif tutorial_context == "gameplay":
+		tutorial_gameplay_completed = true
+	_save_tutorial_state()
+	tutorial_active = false
+	tutorial_context = ""
+	tutorial_step = 0
+	tutorial_next_rect = Rect2()
+	tutorial_skip_rect = Rect2()
+	queue_redraw()
+
+
+func _advance_tutorial() -> void:
+	if tutorial_context == "home":
+		match tutorial_step:
+			0:
+				home_visible = false
+				campaign_screen = "atlas"
+				tutorial_step = 1
+			1:
+				campaign_universe = 0
+				campaign_route_scroll_offset = 0.0
+				campaign_screen = "route"
+				tutorial_step = 2
+			2:
+				campaign_screen = "collection"
+				campaign_collection_selected = 0
+				campaign_collection_scroll_offset = 0.0
+				campaign_collection_from_home = true
+				tutorial_step = 3
+			_:
+				campaign_screen = ""
+				home_visible = true
+				_finish_tutorial()
+	elif tutorial_context == "gameplay":
+		if tutorial_step < 2:
+			tutorial_step += 1
+		else:
+			_finish_tutorial()
+	queue_redraw()
+
+
+func _tutorial_copy() -> Dictionary:
+	if tutorial_context == "home":
+		match tutorial_step:
+			0: return {"title":"ТВОЯ ИГРА — ТВОЙ МАРШРУТ","lines":["Кампания — большое путешествие по планетам.","Block Run — отдельный забег с усилениями.","Нажимай «Далее», и я покажу основные разделы."]}
+			1: return {"title":"КОСМИЧЕСКИЙ АТЛАС","lines":["Здесь собраны 12 вселенных и 360 планет.","Открывай миры последовательно — каждый со своим характером.","Далее покажу, как устроен путь внутри вселенной."]}
+			2: return {"title":"ПОДЪЁМ К ВЕРШИНЕ","lines":["Планета 001 начинается внизу маршрута.","Проводи вверх, чтобы подниматься к новым испытаниям.","Розовые крупные узлы отмечают боссов."]}
+			_: return {"title":"ТВОИ ТРОФЕИ","lines":["Награды стали крупнее — листай их влево и вправо.","Выбирай трофей, чтобы увидеть его описание.","Теперь покажу управление прямо во время игры."]}
+	if tutorial_context == "gameplay":
+		match tutorial_step:
+			0: return {"title":"СЧЁТ И ПОДСКАЗКИ","lines":["Верхние карточки показывают очки и цель уровня.","Над полем — запасная и следующая фигура.","Следи за целью: она подскажет, к чему идти."]}
+			1: return {"title":"ИГРОВОЕ ПОЛЕ","lines":["Здесь собирай линии и освобождай пространство.","Призрачная фигура показывает место приземления.","Не спеши: сначала оцени, куда лучше поставить блок."]}
+			_: return {"title":"УПРАВЛЕНИЕ ПАЛЬЦЕМ","lines":["Свайп влево / вправо — перемещение фигуры.","Короткий чёткий свайп вверх — поворот; вниз — ускорение.","Длинный быстрый свайп вниз — сброс. Кнопки HOLD и DROP тоже доступны."]}
+	return {"title":"ПОДСКАЗКА","lines":["Изучи экран и попробуй основные действия."]}
+
+
+func _tutorial_target_rect() -> Rect2:
+	if tutorial_context == "home":
+		if tutorial_step == 0:
+			return home_campaign_rect.merge(home_block_run_rect)
+		if tutorial_step == 1 and not campaign_atlas_rects.is_empty():
+			return campaign_atlas_rects[0]
+		if tutorial_step == 2:
+			return campaign_route_scroll_viewport_rect
+		if tutorial_step == 3:
+			return campaign_collection_grid_viewport_rect
+	elif tutorial_context == "gameplay":
+		if tutorial_step == 0:
+			return Rect2(14.0, 48.0, screen_size.x - 28.0, 64.0)
+		if tutorial_step == 1:
+			return board_rect
+		return drop_rect.merge(hold_rect)
+	return Rect2()
+
+
+func _draw_tutorial_overlay() -> void:
+	if not tutorial_active:
+		return
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.025, 0.07, 0.62))
+	var target := _tutorial_target_rect()
+	if target.size.x > 0.0 and target.size.y > 0.0:
+		draw_rect(target.grow(7.0), Color("#ffd05a"), false, 3.0, true)
+		var target_center := target.get_center()
+		draw_circle(target_center, 5.0, Color("#fff0b9"))
+	var bubble_width := minf(520.0, screen_size.x - 28.0)
+	var bubble_height := 174.0 if screen_size.y >= 560.0 else 150.0
+	var bubble := Rect2(Vector2((screen_size.x - bubble_width) * 0.5, screen_size.y - bubble_height - 28.0), Vector2(bubble_width, bubble_height))
+	_draw_soft_panel(bubble, Color("#102b58"), Color("#ffd05a"), 20, 14)
+	var pointer_x := clampf(target.get_center().x, bubble.position.x + 24.0, bubble.end.x - 24.0) if target.size.x > 0.0 else bubble.get_center().x
+	var pointer := PackedVector2Array([Vector2(pointer_x - 12.0, bubble.position.y + 1.0), Vector2(pointer_x + 12.0, bubble.position.y + 1.0), Vector2(pointer_x, bubble.position.y - 13.0)])
+	draw_colored_polygon(pointer, Color("#ffd05a"))
+	var copy := _tutorial_copy()
+	draw_string(font, bubble.position + Vector2(16.0, 30.0), str(copy.title), HORIZONTAL_ALIGNMENT_LEFT, bubble.size.x - 32.0, 15, Color("#fff0b9"))
+	var body_lines: Array = copy.get("lines", [])
+	for index in range(mini(body_lines.size(), 3)):
+		draw_string(font, bubble.position + Vector2(16.0, 58.0 + float(index) * 21.0), str(body_lines[index]), HORIZONTAL_ALIGNMENT_LEFT, bubble.size.x - 32.0, 10, Color("#e0f2ff"))
+	tutorial_skip_rect = Rect2(bubble.position.x + 14.0, bubble.end.y - 46.0, 112.0, 34.0)
+	tutorial_next_rect = Rect2(bubble.end.x - 126.0, bubble.end.y - 46.0, 112.0, 34.0)
+	_draw_pill(tutorial_skip_rect, Color("#1b426f"), Color("#719ac1"), 10)
+	_center_text_in_rect("ПРОПУСТИТЬ", tutorial_skip_rect, 8, Color("#d5eaff"))
+	_draw_pill(tutorial_next_rect, Color("#a56b20"), Color("#ffe18a"), 10)
+	_center_text_in_rect("ДАЛЕЕ  ›", tutorial_next_rect, 10, Color("#ffffff"))
 
 
 func _draw_touch_feedback() -> void:
