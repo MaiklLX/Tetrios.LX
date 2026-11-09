@@ -2,6 +2,7 @@ class_name BlockBuddiesCampaignProgress
 extends RefCounted
 
 const SAVE_VERSION := 1
+const PlanetCatalog = preload("res://scripts/campaign_planet_catalog.gd")
 const UNIVERSE_COUNT := 12
 const PLANETS_PER_UNIVERSE := 30
 const TOTAL_PLANETS := UNIVERSE_COUNT * PLANETS_PER_UNIVERSE
@@ -54,7 +55,7 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		target_score = score_target + 300
 		boss_type = "guardian" if planet_in_universe == 10 else ("champion" if planet_in_universe == 20 else "final")
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
-	return {
+	var definition := {
 		"node_id": node_id,
 		"universe_index": universe_index,
 		"universe_number": universe_index + 1,
@@ -70,6 +71,13 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		"time_limit_seconds": 0,
 		"reward_marks": reward
 	}
+	var authored := PlanetCatalog.get_planet(universe_index, planet_in_universe)
+	if not authored.is_empty():
+		definition.merge(authored, true)
+		definition["chapter_id"] = "star_caravan"
+		definition["chapter_title"] = "Караван звёзд"
+		definition["content_status"] = "authored_foundation"
+	return definition
 
 func is_unlocked(node_id: int) -> bool:
 	if node_id < 1 or node_id > TOTAL_PLANETS:
