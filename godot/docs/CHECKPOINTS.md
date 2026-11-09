@@ -361,3 +361,12 @@
 - Validation: **PASS** — Godot Native Project Check run [#42524193502](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42524193502) on HEAD `13ac1126f9c38f22d0c854ff40381ad57fd22d2b`; all 23 workflow steps passed, including project import, main parse, campaign live integration, all Classic/Web migration/Campaign/Block Run suites, screenshot capture/upload and scene smoke test.
 - No special piece in Classic, Sprint/Marathon or Block Run; no shared seven-bag or standard save schema changes. No main merge, deployment, APK build/release or physical-device verification.
 - Next: KT-539 — campaign-only Hold/preview polish and persistence/recovery contract before wider authored special-piece rollout.
+
+## KT-539 — Campaign Hold, preview and checkpoint recovery boundary
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Audited the live preview path: while Campaign is active, the Hold and Next cards already read from the campaign-owned runtime; outside Campaign they continue to read from the shared standard model. Hold remains once per falling piece and resets on lock; swapping a held piece restores its canonical base orientation.
+- Added `godot/scripts/campaign_piece_store.gd`, a separate versioned campaign checkpoint envelope bound to an authored planet ID. It validates the complete runtime snapshot in a temporary campaign runtime before saving or restoring; malformed, missing, unsupported-version and wrong-planet checkpoints fail closed without partial destination mutation.
+- Added `godot/tests/campaign_piece_store_test.gd` for exact snapshot recovery (including active pose and Hold state), planet binding, invalid save rejection and independent cleanup. Registered the suite in the Godot Native Project Check workflow.
+- Added `godot/docs/KT-539_CAMPAIGN_HOLD_PREVIEW_AND_RECOVERY.md` with the lifecycle contract and the remaining integration decision.
+- **Important boundary:** automatic resume is not enabled yet. The adapter is validated in isolation; pause/background/periodic checkpoint triggers and completion/retry cleanup still require a separately tested lifecycle integration. No shared save schema or standard mode behavior changed.
+- No main merge, public deployment, APK build/release or physical-device verification.
