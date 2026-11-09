@@ -1,0 +1,62 @@
+name: Godot Web Preview Build
+
+on:
+  push:
+    branches:
+      - godot/kt548-web-preview-prep-2026-11-09
+    paths:
+      - "godot/**"
+      - ".github/workflows/godot-web-preview.yml"
+  pull_request:
+    paths:
+      - "godot/**"
+      - ".github/workflows/godot-web-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export-web:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot with Web export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import project
+        run: godot --headless --editor --path godot --quit
+
+      - name: Run Web save migration tests
+        run: godot --headless --path godot --script res://tests/web_save_migration_test.gd
+
+      - name: Export Web preview
+        run: |
+          set -euo pipefail
+          mkdir -p build/godot-web
+          godot --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/build/godot-web/index.html"
+          test -s build/godot-web/index.html
+          find build/godot-web -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+          if ! find build/godot-web -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.wasm.br' \) | grep -q .; then
+            echo "::error::Web export is missing its WebAssembly runtime"
+            exit 1
+          fi
+          if ! find build/godot-web -maxdepth 1 -type f \( -name '*.pck' -o -name '*.pck.br' \) | grep -q .; then
+            echo "::error::Web export is missing its game data package"
+            exit 1
+          fi
+
+      - name: Upload isolated Web preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: block-buddies-godot-web-preview
+          path: build/godot-web/
+          if-no-files-found: error
+          retention-days: 14
