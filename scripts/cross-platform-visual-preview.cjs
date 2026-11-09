@@ -110,7 +110,9 @@ const targets = [
         failures.push(target.name + ': KT-553 Godot-style pressed state is incomplete (' + JSON.stringify(pressState) + ')');
       }
       await page.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-menu-press-feedback.png',fullPage:false});
-      await pressTarget.evaluate(el => el.remove());
+      // Release outside the control: preserve the real menu DOM and avoid
+      // dispatching a click that would launch the mode under test.
+      await page.mouse.move(Math.max(1, pressBox.x - 12), Math.max(1, pressBox.y - 12));
       await page.mouse.up();
     }
 
