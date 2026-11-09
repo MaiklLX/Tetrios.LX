@@ -58,6 +58,14 @@ func _run() -> void:
 			return
 		if not _check(bool(layout.get("scrollable", false)) == (max_scroll > 0.5), "Scroll affordance must match actual overflow at %s" % [viewport]):
 			return
+		var last_item_offset := CollectionLayout.scroll_offset_for_index(layout, 48, 0.0)
+		var first_visible_row := roundi(last_item_offset / row_step)
+		var last_item_row := 48 / columns
+		if not _check(last_item_row >= first_visible_row and last_item_row < first_visible_row + visible_rows, "Newly revealed final reward must be brought into the visible grid rows at %s" % [viewport]):
+			return
+		var first_item_offset := CollectionLayout.scroll_offset_for_index(layout, 0, max_scroll)
+		if not _check(first_item_offset == 0.0, "Selecting the first reward must scroll the collection back to its first row at %s" % [viewport]):
+			return
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
 			return
