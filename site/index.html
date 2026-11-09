@@ -7242,14 +7242,16 @@ function buildMap() {
     track.className = 'bb-planet-track';
     const positions = [];
     const planetCount = b.end - b.start + 1;
-    const trackWidth = 70 + (planetCount - 1) * 174 + 170;
-    const trackHeight = 450;
+    const trackWidth = Math.max(300, viewport.clientWidth - 28);
+    const stepY = 78;
+    const trackHeight = 150 + (planetCount - 1) * stepY;
     for (let i = 0; i < planetCount; i++) {
-      const x = 70 + i * 174;
-      const wave = Math.sin(i * 1.04 + b.id * .73);
-      const alternate = [-26, 38, -52, 54, -12, 68, -42, 20][i % 8];
-      const y = Math.max(104, Math.min(344, 218 + wave * 70 + alternate));
-      positions.push({x:x+58,y});
+      // KT-555: vertical serpentine ascent, matching Godot's bottom-to-top route.
+      const side = i % 2 === 0 ? 0.30 : 0.70;
+      const sway = Math.sin(i * 1.04 + b.id * .73) * 12;
+      const x = trackWidth * side + sway;
+      const y = trackHeight - 82 - i * stepY;
+      positions.push({x,y});
     }
     const path = document.createElementNS('http://www.w3.org/2000/svg','svg');
     path.setAttribute('class','bb-treasure-trail');
@@ -7277,15 +7279,18 @@ function buildMap() {
       const planet = document.createElement('button');
       planet.type = 'button';
       planet.className = 'bb-planet-node' + (n === current ? ' is-current' : '') + (n === bbCampaignArrivalNode ? ' is-arrival' : '') + (done ? ' is-cleared' : '') + (!open ? ' is-locked' : '');
-      planet.style.left = positions[local].x - 58 + 'px';
-      planet.style.top = positions[local].y - 66 + 'px';
-      planet.style.setProperty('--planet-size', [104,126,90,114,136,98,118][local % 7] + 'px');
+      planet.style.left = positions[local].x - 48 + 'px';
+      planet.style.top = positions[local].y - 61 + 'px';
+      planet.style.setProperty('--planet-size', [88,96,82,92,104,86,98][local % 7] + 'px');
+      planet.dataset.planetNumber = String(n);
+      if (local % 10 === 9) planet.classList.add('is-boss');
+      if ([4,14,24].includes(local)) planet.classList.add('is-milestone');
       planet.classList.add('bb-planet-shape-' + (local % 6));
       planet.style.setProperty('--planet-hue', String((b.id * 31 + local * 13) % 360));
       planet.style.setProperty('--planet-delay', (local % 9) * -0.23 + 's');
       planet.innerHTML =
         '<span class="bb-planet-orbit"></span>' +
-        '<span class="bb-planet-sphere" data-universe-model="planet" data-universe-variant="' + (b.id * planetCount + local + 1) + '"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '✹' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
+        '<span class="bb-planet-sphere" data-universe-model="planet" data-universe-variant="' + (b.id * planetCount + local + 1) + '"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '♛' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
         '<strong>' + String(n).padStart(3,'0') + '</strong>' +
         '<small>' + (done ? 'ПРОЙДЕНА' : n === current ? 'ДОСТУПНА' : 'ЗАКРЫТА') + '</small>';
       planet.onclick = () => {
@@ -7303,6 +7308,7 @@ function buildMap() {
     }
     track.style.width = trackWidth + 'px';
     track.style.height = trackHeight + 'px';
+    track.dataset.routeOrientation = 'vertical';
     viewport.appendChild(track);
     g.appendChild(viewport);
 
@@ -7312,7 +7318,7 @@ function buildMap() {
     g.appendChild(hint);
     requestAnimationFrame(() => {
       const active = track.querySelector('.is-current');
-      if (active) viewport.scrollTo({left:Math.max(0,active.offsetLeft - viewport.clientWidth * .38),behavior:'smooth'});
+      if (active) viewport.scrollTo({top:Math.max(0,active.offsetTop - viewport.clientHeight * .58),behavior:'smooth'});
       if(bbCampaignArrivalNode===current){const arrived=track.querySelector('.is-arrival');if(arrived){arrived.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});}bbCampaignArrivalNode=0;}
     });
   };
@@ -14657,6 +14663,72 @@ button:not(.board):focus-visible{
 .bb-collection-detail-copy em{font-size:8px;font-style:normal;color:#ffd77a}
 .bb-collection-modal>.action{flex:0 0 auto;margin-top:0}
 @media(max-width:420px){.bb-collection-modal{gap:9px;padding:13px}.bb-collection-card{height:140px}.bb-collection-detail{min-height:88px;gap:10px;padding:9px}.bb-collection-detail-emblem{width:48px;height:48px;flex-basis:48px;font-size:25px}.bb-collection-detail-copy strong{font-size:12px}.bb-collection-detail-copy span{font-size:9px}}
+</style>
+
+
+
+<style id="bb-kt555-godot-vertical-campaign-route">
+/* KT-555: translate Godot's bottom-to-top serpentine planet route to the
+   existing browser campaign DOM. Only presentation/scroll axis changes;
+   node IDs, unlock state, mission entry and the 360-node save stay intact. */
+#campaign .bb-planet-viewport{
+  width:calc(100% + 28px)!important;
+  height:min(62dvh,620px)!important;
+  min-height:360px;
+  margin-left:-14px!important;
+  padding:10px 14px 14px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  scroll-snap-type:y proximity!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#8fe8ff66 transparent!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  touch-action:pan-y!important;
+}
+#campaign .bb-planet-track{
+  width:100%!important;
+  min-width:100%!important;
+  padding:0!important;
+  margin:0!important;
+}
+#campaign .bb-treasure-trail{
+  position:absolute!important;
+  inset:0 auto auto 0!important;
+  width:100%!important;
+  height:100%!important;
+  overflow:visible;
+  pointer-events:none;
+}
+#campaign .bb-planet-node{
+  width:96px!important;
+  height:122px!important;
+  min-width:96px!important;
+  scroll-snap-align:center!important;
+  touch-action:pan-y!important;
+}
+#campaign .bb-planet-node .bb-planet-sphere{
+  width:76px!important;
+  height:76px!important;
+  flex-basis:76px!important;
+}
+#campaign .bb-planet-node.is-current .bb-planet-sphere{
+  box-shadow:inset -17px -17px 22px #030817bd,0 0 0 4px #fff0b944,0 0 28px var(--biome-color),0 0 48px #55ddff55!important;
+}
+#campaign .bb-planet-node.is-boss .bb-planet-sphere{
+  border:2px solid #ff91bd!important;
+  box-shadow:inset -17px -17px 22px #030817bd,0 0 0 4px #ff91bd35,0 0 25px #ff91bd77!important;
+}
+#campaign .bb-planet-node.is-boss strong{color:#ffb4d2!important}
+#campaign .bb-planet-node.is-milestone .bb-planet-sphere{
+  border-color:#ffd05a!important;
+  box-shadow:inset -17px -17px 22px #030817bd,0 0 18px #ffd05a55!important;
+}
+@media(max-width:420px){
+  #campaign .bb-planet-viewport{height:min(58dvh,560px)!important;min-height:330px}
+  #campaign .bb-planet-node{width:88px!important;min-width:88px!important}
+  #campaign .bb-planet-node .bb-planet-sphere{width:68px!important;height:68px!important;flex-basis:68px!important}
+}
 </style>
 
 </body></html>
