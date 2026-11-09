@@ -32,7 +32,7 @@ static func acknowledge_first(progress: BlockBuddiesCampaignProgress, pending_id
 	if pending_ids.is_empty():
 		return {"ok": false, "reason": "empty_queue", "pending_reward_reveals": []}
 	var remaining: Array[String] = pending_ids.duplicate()
-	var acknowledged_id := remaining.pop_front()
+	var acknowledged_id: String = str(remaining.pop_front())
 	if not CampaignStore.save_progress(progress, path, remaining):
 		return {"ok": false, "reason": "save_failed", "acknowledged_id": "", "pending_reward_reveals": pending_ids.duplicate()}
 	return {"ok": true, "reason": "acknowledged", "acknowledged_id": acknowledged_id, "pending_reward_reveals": remaining}
