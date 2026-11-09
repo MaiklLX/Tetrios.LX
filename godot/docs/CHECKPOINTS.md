@@ -422,3 +422,12 @@
 - Planet 056 and 057 are marked as live Cargo Hook campaign events, reusing the existing campaign-only runtime. Boss phases, authored board layouts and other universe mechanics are not claimed as implemented.
 - Added catalog tests to the Godot CI workflow. CI result for the latest commit is not yet confirmed.
 - No changes to standard modes, save version, campaign rewards or exit/restart behavior. No main merge, public deployment or APK release.
+
+
+## KT-544A — Star Caravan authored mission presentation (09.11.2026)
+- Planet detail now presents authored mission title, player-facing briefing, objective family, target/reward and a dedicated boss/signature-event identity line.
+- Compact portrait and wider portrait layouts use bounded text wrapping; mission detail panel and start action remain separated.
+- Added real Godot viewport captures for authored opening, Guardian briefing and Cargo Hook mission: `30-star-caravan-authored-planet-detail.png`, `31-star-caravan-guardian-briefing.png`, `32-star-caravan-cargo-hook-mission-briefing.png`.
+- This is a presentation milestone, not a claim that boss phases or additional hazards are already playable. Gameplay objectives and Cargo Hook runtime remain unchanged.
+- No standard-mode, save, reward, progression or exit/restart behavior changes. No main merge, public deployment or APK release.
+- CI must be checked on the latest commit before this milestone is accepted.
