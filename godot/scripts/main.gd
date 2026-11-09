@@ -287,10 +287,18 @@ func _hold_active_piece() -> bool:
 	game.hold_piece()
 	return true
 
+func _campaign_planet_uses_cargo_hook(node_id: int) -> bool:
+	if node_id == CARGO_HOOK_PLANET_ID:
+		return true
+	if campaign_progress == null:
+		return false
+	var definition: Dictionary = campaign_progress.get_planet_definition(node_id)
+	return str(definition.get("special_piece_id", "")) == "cargo_hook" and str(definition.get("event_status", "")) == "live_campaign_piece"
+
 func _reset_campaign_piece_runtime() -> bool:
 	campaign_piece_runtime = CampaignRuntime.new()
 	campaign_piece_runtime.reset(false)
-	if campaign_run_planet_id == CARGO_HOOK_PLANET_ID:
+	if _campaign_planet_uses_cargo_hook(campaign_run_planet_id):
 		return campaign_piece_runtime.spawn_authored_special()
 	return campaign_piece_runtime.spawn_next_standard()
 
