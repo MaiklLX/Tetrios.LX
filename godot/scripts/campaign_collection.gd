@@ -86,3 +86,16 @@ static func get_item(progress: BlockBuddiesCampaignProgress, item_id: String) ->
 		if str(item.get("id", "")) == item_id:
 			return item
 	return {}
+
+static func get_newly_unlocked_ids(previous_summary: Dictionary, current_summary: Dictionary) -> Array[String]:
+	var previously_unlocked: Dictionary = {}
+	for item in previous_summary.get("items", []):
+		if bool(item.get("unlocked", false)):
+			previously_unlocked[str(item.get("id", ""))] = true
+	var newly_unlocked: Array[String] = []
+	for item in current_summary.get("items", []):
+		var item_id := str(item.get("id", ""))
+		if item_id.is_empty() or not bool(item.get("unlocked", false)) or previously_unlocked.has(item_id):
+			continue
+		newly_unlocked.append(item_id)
+	return newly_unlocked
