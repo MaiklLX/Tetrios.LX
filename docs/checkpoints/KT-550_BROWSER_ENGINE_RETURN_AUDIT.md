@@ -319,3 +319,13 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Site commit: `06bcf64a26173e33045b2b3e2b501deff315c2c0`.
 - This is a new hypothesis, not a verified fix. Await CI and inspect all viewport route reports plus the 390×844 board measurement.
 - Safeguards remain: PR #85 Draft; no merge, deployment, main changes, Godot preview changes, or APK build. Do not post screenshots in chat.
+
+
+## КТ-563 — исправление гонки smooth-scroll (2026-11-09)
+
+- По CI run `42672369923` выяснено, что KT-562 выставляла целевой `scrollTop`, но общие стили атласа сохраняли `scroll-behavior:smooth!important`. Поэтому программная прокрутка оставалась анимированной во время замера; вызов `scrollIntoView` дополнительно мог прокручивать страницу вместо локального контейнера.
+- Для `#campaign .bb-planet-viewport` в KT-556 добавлен приоритетный `scroll-behavior:auto!important`.
+- `alignCurrentPlanet` теперь повторно выставляет локальный `scroll-behavior:auto`, проверяет фактический `scrollTop` и помечает `applied` только если целевая позиция действительно достигнута. Удалён fallback через `active.scrollIntoView`, который мог уводить документ.
+- Изменение не затрагивает IDs планет, прогрессию, сохранения, боевую логику или размеры арены.
+- Кодовый commit: `7656135b424253a2ea891ff141f2b227334ff794`.
+- Статус: ожидается CI; исправление пока не подтверждено браузерным прогоном.
