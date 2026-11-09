@@ -77,6 +77,9 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		definition["chapter_id"] = "star_caravan"
 		definition["chapter_title"] = "Караван звёзд"
 		definition["content_status"] = "authored_foundation"
+		var mission: Variant = authored.get("mission_definition", {})
+		if typeof(mission) == TYPE_DICTIONARY and not mission.is_empty():
+			definition.merge(mission, true)
 	return definition
 
 func is_unlocked(node_id: int) -> bool:
