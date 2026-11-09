@@ -26,7 +26,10 @@ func _run() -> void:
 	if not _check(source.hold_piece(), "Campaign Hold must accept special-to-standard"):
 		return
 	var expected := source.snapshot()
-	if not _check(Store.save_run(31, source, path), "Valid campaign snapshot must save"):
+	if not _check(Store.save_run(31, source, path, 42.5), "Valid campaign snapshot must save with elapsed time"):
+		return
+	var saved_state: Dictionary = Store.load_latest_run_state(path)
+	if not _check(int(saved_state.get("planet_id", 0)) == 31 and is_equal_approx(float(saved_state.get("elapsed_seconds", -1.0)), 42.5), "Latest checkpoint lookup must recover planet identity and elapsed time"):
 		return
 	var restored = Runtime.new()
 	restored.reset()
