@@ -370,3 +370,12 @@
 - Added `godot/docs/KT-539_CAMPAIGN_HOLD_PREVIEW_AND_RECOVERY.md` with the lifecycle contract and the remaining integration decision.
 - **Important boundary:** automatic resume is not enabled yet. The adapter is validated in isolation; pause/background/periodic checkpoint triggers and completion/retry cleanup still require a separately tested lifecycle integration. No shared save schema or standard mode behavior changed.
 - No main merge, public deployment, APK build/release or physical-device verification.
+
+## KT-540 — Campaign checkpoint lifecycle integration
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Campaign runs now write a validated checkpoint every 10 seconds of active play, immediately on manual pause, and on Godot's application-paused notification. Paused time is excluded.
+- On app launch, a valid current-planet checkpoint is restored into the campaign-owned runtime and opens paused; the player explicitly resumes. The objective timer is restored alongside the board snapshot.
+- Checkpoints are cleared on retry, planet completion, return to route, or switching to a standard mode. Stale checkpoints for a planet that is no longer current are discarded.
+- The campaign progression/reward store remains separate; only running sessions are checkpointed, and the existing completion guard prevents completion processing from being replayed by a restored completed session.
+- Store tests cover exact runtime recovery, elapsed time, planet identity and rejection without partial mutation. CI #435 validates the change; see [KT-540 lifecycle contract](KT-540_CAMPAIGN_CHECKPOINT_LIFECYCLE.md).
+- OS-level background/foreground behavior still requires physical Android/iOS testing. No main merge, public deployment or APK release.
