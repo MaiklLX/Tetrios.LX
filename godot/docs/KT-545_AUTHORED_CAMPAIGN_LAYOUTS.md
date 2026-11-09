@@ -30,11 +30,22 @@ Rows are authored top-to-bottom within the bottom stack. Each row is exactly 10 
 - Visual CI captures Planet 033 briefing and live arena screens.
 - Full Godot CI must pass before this KT is accepted.
 
+## KT-545.2 — authored mission contracts and multi-layout verification
+- Added explicit mission contracts for the three starting-layout missions rather than relying only on the generated chapter formula:
+  - Planet 033: line objective 12, guided difficulty, expected duration 90–150 seconds.
+  - Planet 036: line objective 12, standard difficulty, expected duration 120–180 seconds.
+  - Planet 046: line objective 13, standard difficulty, expected duration 150–210 seconds.
+- The catalog validator now rejects unknown objective families, negative targets, incompatible objective fields, unsupported difficulty bands, malformed duration ranges and non-array event schedules.
+- Campaign progression applies the authored mission contract to the live campaign session definition; ordinary planets continue using the bounded formula fallback.
+- Catalog regression tests verify the resolved objective and pacing fields and reject malformed contracts.
+- Live integration now launches all three authored layouts through the actual campaign entry point, checks occupied-cell totals (26 / 27 / 27), confirms a standard tetromino spawns, and continues to verify shared Classic isolation.
+- Visual capture now includes briefing and live-arena captures for all three layout missions. These are CI screenshots, not static gallery concepts.
+
 ## Remaining KT-545 work
-- Extend the mission definition schema with explicit objective variants, authored difficulty/duration bands and deterministic event metadata.
-- Add more than one authored layout per mission family and test fair completion paths.
-- Complete the 30-node Star Caravan pacing pass; do not label briefing-only entries as live mechanics.
-- Produce a reviewable screenshot set for the newly authored layout missions.
+- Inspect the new CI screenshot captures for all three layouts and adjust any unfair or visually confusing gap patterns.
+- Add deterministic completion-path simulation for each authored layout; successful spawn alone is not proof of fair playability.
+- Complete the remaining 30-node Star Caravan objective/difficulty/duration audit; do not label briefing-only entries as live mechanics.
+- Full Godot CI must pass on the final KT-545 head before this checkpoint is accepted.
 
 ## Acceptance boundary
 This slice proves the authored-layout runtime seam; it does not mean the full Star Caravan chapter or all 360 planets are complete. No modifier registry entry becomes live without a dedicated runtime implementation, briefing, deterministic tests and visual proof.
