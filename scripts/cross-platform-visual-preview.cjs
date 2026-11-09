@@ -501,6 +501,10 @@ const targets = [
       if (geometry.frame && geometry.frame.right > target.width + 2) {
         failures.push(target.name + ': arena extends beyond the right viewport edge');
       }
+      if (target.mobile && target.width < 600 && target.height > 600 &&
+          geometry.frame && geometry.frame.width < target.width * 0.53) {
+        failures.push(target.name + ': KT-552 portrait playfield did not reach the expanded 53vw minimum (' + geometry.frame.width + 'px)');
+      }
     } else if (geometry.frame && (geometry.frame.y < -2 || geometry.frame.bottom > target.height + 2)) {
       failures.push(target.name + ': desktop arena is not contained by the viewport');
     }
@@ -518,6 +522,9 @@ const targets = [
       failures.push(target.name + ': expected the single-renderer 2D arena with no 3D toggle or overlay (' + JSON.stringify(arenaModeState) + ')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
+    if (target.mobile && target.width < 600 && target.height > 600) {
+      await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-kt552-tall-phone-arena.png', fullPage: false });
+    }
     console.log('[stage:final-arena-verified] ' + target.name);
 
     report.push({ target: target.name, engine: target.engine, geometry, sideScrollCheck, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
