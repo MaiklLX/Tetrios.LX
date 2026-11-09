@@ -31,6 +31,13 @@ func _run() -> void:
 	var planet_56 := campaign.get_planet_definition(56)
 	var boss_40 := campaign.get_planet_definition(40)
 	var boss_60 := campaign.get_planet_definition(60)
+	var layout_33 := campaign.get_planet_definition(33)
+	if not _check(layout_33.layout_id == "cargo_corridor" and layout_33.starting_layout.size() == 3, "Planet 033 must resolve its authored Cargo Corridor board layout"):
+		return
+	var malformed_layout := chapter.duplicate(true)
+	malformed_layout.planets[2].starting_layout[0] = "##########"
+	if not _check(not Catalog.validate_chapter(malformed_layout).valid, "Catalog validator must reject malformed authored board cells"):
+		return
 	if not _check(planet_31.chapter_id == "star_caravan" and planet_31.title == "Первый сигнал", "Planet 031 must resolve to authored Star Caravan content"):
 		return
 	if not _check(planet_56.event_status == "live_campaign_piece" and planet_56.special_piece_id == "cargo_hook", "Planet 056 must identify the Cargo Hook showcase as live campaign content"):
