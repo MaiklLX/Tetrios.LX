@@ -8,6 +8,7 @@ const Buddy = preload("res://scripts/buddy_companion.gd")
 const ModeSession = preload("res://scripts/mode_session.gd")
 const ModeCatalog = preload("res://scripts/mode_catalog.gd")
 const CampaignProgress = preload("res://scripts/campaign_progress.gd")
+const CampaignAchievements = preload("res://scripts/campaign_achievements.gd")
 const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
 const CampaignRuntime = preload("res://scripts/campaign_piece_runtime.gd")
 const CampaignRunStore = preload("res://scripts/campaign_piece_store.gd")
@@ -997,12 +998,23 @@ func _draw_campaign_route() -> void:
 	var panel := Rect2(14.0, panel_top, screen_size.x - 28.0, panel_bottom - panel_top)
 	_draw_soft_panel(panel, Color("#102f68"), Color("#55ddff"), 18, 8)
 	draw_string(font, panel.position + Vector2(12, 24), "МАРШРУТ ПЕРВООТКРЫВАТЕЛЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11 if compact else 16, Color("#ffffff"))
-	draw_string(font, panel.position + Vector2(12, 43), "30 планет • особые рубежи: 010 / 020 / 030", HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 10, Color("#c4edff"))
+	draw_string(font, panel.position + Vector2(12, 43), "30 планет • рубежи: 005 / 010 / 015 / 020 / 025 / 030", HORIZONTAL_ALIGNMENT_LEFT, -1, 7 if compact else 10, Color("#c4edff"))
+	var achievement_summary: Dictionary = CampaignAchievements.get_summary(campaign_progress, campaign_universe)
+	var achievement_items: Array = achievement_summary.get("achievements", [])
+	var next_achievement: Dictionary = {}
+	for achievement in achievement_items:
+		if not bool(achievement.get("unlocked", false)):
+			next_achievement = achievement
+			break
+	var achievement_count := int(achievement_summary.get("unlocked_count", 0))
+	var achievement_total := int(achievement_summary.get("total_count", 0))
+	var milestone_label := "ВСЕ ПРОМЕЖУТОЧНЫЕ РУБЕЖИ ПРОЙДЕНЫ" if next_achievement.is_empty() else "СЛЕДУЮЩАЯ ОТМЕТКА: %s • ПЛАНЕТА %02d" % [str(next_achievement.get("title", "РУБЕЖ")), int(next_achievement.get("planet_in_universe", 0))]
+	draw_string(font, panel.position + Vector2(12, 59), "%s  (%d/%d)" % [milestone_label, achievement_count, achievement_total], HORIZONTAL_ALIGNMENT_LEFT, -1, 7 if compact else 9, Color("#ffd77a"))
 	campaign_node_rects.clear()
 	var cols := 6
 	var rows := 5
-	var node_area_top := panel.position.y + 67.0
-	var node_area_height := panel.size.y - 94.0
+	var node_area_top := panel.position.y + 83.0
+	var node_area_height := panel.size.y - 110.0
 	var step_x := (panel.size.x - 42.0) / 5.0
 	var step_y := node_area_height / 4.0
 	var positions: Array[Vector2] = []
@@ -1021,11 +1033,13 @@ func _draw_campaign_route() -> void:
 		var unlocked := node_status == "current"
 		var completed := node_status == "completed"
 		var boss := (index + 1) % 10 == 0
-		var node_radius := 10.0 if compact else 14.0
+		var milestone := (index + 1) in [5, 15, 25]
+		var node_radius := (11.0 if compact else 15.0) if milestone else (10.0 if compact else 14.0)
 		var node_rect := Rect2(pos - Vector2.ONE * (node_radius + 3.0), Vector2.ONE * (node_radius + 3.0) * 2.0)
 		campaign_node_rects.append(node_rect)
 		draw_circle(pos, node_radius, Color("#145d61") if completed else (Color("#9a6b22") if unlocked else Color("#193e70")))
-		draw_arc(pos, node_radius, 0.0, TAU, 32, Color("#8ef4d3") if completed else (Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else Color("#496b9c"))), 2.0, true)
+		var node_accent := Color("#8ef4d3") if completed else (Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else (Color("#55ddff") if milestone else Color("#496b9c"))))
+		draw_arc(pos, node_radius, 0.0, TAU, 32, node_accent, 2.0, true)
 		if completed:
 			draw_line(pos + Vector2(-4,0), pos + Vector2(-1,4), Color("#ffffff"), 2.0)
 			draw_line(pos + Vector2(-1,4), pos + Vector2(5,-4), Color("#ffffff"), 2.0)
