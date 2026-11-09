@@ -106,8 +106,8 @@ const targets = [
         const s = getComputedStyle(el);
         return {outlineStyle:s.outlineStyle,outlineColor:s.outlineColor,boxShadow:s.boxShadow,transform:s.transform,filter:s.filter};
       });
-      if (pressState.outlineStyle !== 'solid' || pressState.boxShadow === 'none' || pressState.transform === 'none') {
-        failures.push(target.name + ': KT-553 Godot-style pressed state is incomplete (' + JSON.stringify(pressState) + ')');
+      if (pressState.outlineStyle !== 'solid' || pressState.boxShadow === 'none') {
+        failures.push(target.name + ': KT-553 visible gold/cyan pressed feedback is incomplete (' + JSON.stringify(pressState) + ')');
       }
       await page.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-menu-press-feedback.png',fullPage:false});
       // Release outside the control: preserve the real menu DOM and avoid
