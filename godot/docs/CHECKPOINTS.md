@@ -468,3 +468,11 @@
 - Added touch-scroll handling for the reward strip and route, with independent offsets and visible scroll indicators.
 - Added responsive layout assertions for reward card size, horizontal scrolling, selection visibility and scrollbar bounds. Existing collection grid helper remains for legacy regression coverage but is no longer used by the active reward screen.
 - Validation pending after this UI batch. No merge, public deployment, APK build/release or physical-device acceptance.
+
+
+## KT-549.3 — First-run speech-bubble onboarding (2026-11-09)
+- Added a first-launch guided tour with speech-bubble callouts for the home menu, universe atlas, vertical planet route and horizontal reward carousel.
+- Added a separate first-gameplay walkthrough for the HUD, playfield and touch controls. Home and gameplay completion are persisted in `user://tutorial.cfg`; the player can skip the tour.
+- Tutorial touch routing consumes drags but still allows short taps on Next/Skip. Button widths adapt on very narrow screens.
+- The full combined KT-549.1–549.3 branch is under CI in Draft PR #84. Automated regression, Web export and Chromium smoke checks must pass on the latest head before acceptance.
+- No merge, main change, public Pages deployment, APK build/release or physical Xiaomi 13T verification.
