@@ -483,3 +483,12 @@
 - Moved labels and values into a wider text column so the icon is an anchor rather than a replacement for meaning; small labels now have more room and adaptive sizing.
 - The HUD retains text values for clarity and accessibility; this is a visual aid, not an icon-only interface.
 - Validation pending on the latest combined branch head. No merge, deployment, APK release or device acceptance.
+
+
+## KT-549.5 — Full mobile-first validation checkpoint (2026-11-09)
+- Latest tested source head before this documentation-only checkpoint: `0ed47a56ae9d6a42e14b10f27557e15686410388`.
+- GitHub Actions run `42621716888` completed successfully: Godot project import/check, all regression scripts, Web export, Chromium dependency setup and real-browser smoke tests.
+- An earlier test-only failure was traced to the gesture probe inheriting the new first-run tutorial state. The probe now explicitly disables onboarding; production tutorial behavior is unchanged.
+- The latest branch adds press-state outlines above every screen, short tap handling for tutorial buttons, responsive speech-bubble placement and directional tails.
+- PR #84 remains Draft and unmerged. Main and the public Pages deployment are untouched. No APK has been built or released.
+- Xiaomi 13T hardware validation is still outstanding. Automated browser success does not certify physical touch feel, display cutouts, haptics or device-specific safe areas.
