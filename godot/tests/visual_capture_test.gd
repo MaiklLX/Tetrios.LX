@@ -364,6 +364,29 @@ func _run() -> void:
 	if not await _capture(viewport, "28-campaign-cargo-hook-planet-detail"):
 		quit(1)
 		return
+	if str(campaign_progress.get_planet_definition(31).get("title", "")) != "Первый сигнал":
+		push_error("Star Caravan planet detail must expose its authored title.")
+		quit(1)
+		return
+	if not await _capture(viewport, "30-star-caravan-authored-planet-detail"):
+		quit(1)
+		return
+	campaign_progress.import_legacy_progress(40, 0)
+	scene.set("campaign_planet", 10)
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "31-star-caravan-guardian-briefing"):
+		quit(1)
+		return
+	campaign_progress.import_legacy_progress(56, 0)
+	scene.set("campaign_planet", 26)
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "32-star-caravan-cargo-hook-mission-briefing"):
+		quit(1)
+		return
 	scene.call("_start_campaign_planet")
 	var cargo_runtime = scene.get("campaign_piece_runtime")
 	if not bool(scene.get("campaign_run_active")) or cargo_runtime == null or int(cargo_runtime.active_piece_id) != 7 or cargo_runtime.active_cells.size() != 5:
