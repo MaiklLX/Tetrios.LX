@@ -163,3 +163,32 @@ Status: implementation committed to the isolated browser-return branch; cross-pl
 ### Safety
 - Isolated branch `web/kt550-browser-return-2026-11-09`; PR #85 remains Draft.
 - No merge, Pages deployment, APK build or APK release.
+
+## KT-554 — Godot campaign reward shelf in browser (2026-11-09)
+
+Status: first browser implementation and cross-platform assertions committed; CI pending.
+
+### Godot source of truth
+- `godot/scripts/campaign_collection.gd` defines exactly 49 campaign rewards: 12 universe relics, 36 boss insignias and the final campaign crown.
+- `godot/scripts/campaign_collection_layout.gd` defines the horizontal strip: 12 px gap, card width 82–142 px, short-screen strip height 150 px and standard strip height 220 px; selection stays synchronized with the detail panel.
+- `godot/scripts/main.gd` supplies universe-specific accents, locked/unlocked treatments, selected-card outline and reward descriptions.
+
+### Browser implementation
+- Added the `Полка наград` entry point below the existing campaign start control.
+- The browser collection is built from the same 49-item structure and the 12 universe accents. It includes 12 universe relics, commander insignias at every 10th planet in each 30-planet universe, and the final crown.
+- Unlock status is derived read-only from the existing sequential `nrNode` save (`completed = unlocked node - 1`). No new save key, reward currency, campaign node ID or progression rule is introduced.
+- Cards use a horizontally scrollable snap rail, selected-card gold/cyan treatment, per-universe accent, locked/unlocked status and a detail panel with title, description and unlock condition.
+- Campaign completion refreshes the shelf count; opening the collection does not modify progress.
+
+### Automated acceptance
+- Cross-platform preview checks exactly 49 cards, horizontal overflow/scrollability, final crown detail and its locked state on a fresh campaign save.
+- Capture `*-campaign-reward-shelf.png` for desktop Chromium and iOS WebKit.
+- Verify existing campaign atlas/mission tests continue after opening and closing the shelf.
+
+### Known scope boundary
+- This is the first browser translation of the reward shelf. The emblems are currently lightweight CSS/vector-symbol treatments using the correct universe accents; a later visual refinement can replace them with more faithful Canvas/SVG versions of Godot `_draw_collection_emblem()` without changing collection IDs or progression.
+- Physical-device testing remains outstanding.
+
+### Safety
+- Isolated branch `web/kt550-browser-return-2026-11-09`; PR #85 remains Draft.
+- No merge, Pages deployment, APK build or APK release.
