@@ -628,6 +628,8 @@ func _handle_tap(point: Vector2) -> void:
 							campaign_collection_preview_active = true
 						else:
 							campaign_collection_selected = index
+							var collection_layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
+							campaign_collection_scroll_offset = CampaignCollectionLayout.scroll_offset_for_index(collection_layout, index, campaign_collection_scroll_offset)
 						break
 		elif campaign_collection_rect.has_point(point) and campaign_screen == "atlas":
 			campaign_screen = "collection"
