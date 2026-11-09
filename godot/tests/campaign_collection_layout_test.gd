@@ -66,6 +66,14 @@ func _run() -> void:
 		var first_item_offset := CollectionLayout.scroll_offset_for_index(layout, 0, max_scroll)
 		if not _check(first_item_offset == 0.0, "Selecting the first reward must scroll the collection back to its first row at %s" % [viewport]):
 			return
+		for item_index in range(49):
+			var selected_offset := CollectionLayout.scroll_offset_for_index(layout, item_index, max_scroll * 0.5)
+			var selected_first_row := roundi(selected_offset / row_step)
+			var selected_row := item_index / columns
+			if not _check(selected_row >= selected_first_row and selected_row < selected_first_row + visible_rows, "Every selected reward must be scrolled into view at index %d on %s" % [item_index, viewport]):
+				return
+			if not _check(selected_offset >= -0.1 and selected_offset <= max_scroll + 0.1, "Selection scrolling must stay within scroll bounds at index %d on %s" % [item_index, viewport]):
+				return
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
 			return
