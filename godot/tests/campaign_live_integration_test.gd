@@ -57,6 +57,21 @@ func _run() -> void:
 	if not _check(shared_game.grid == shared_grid and shared_game.origin == shared_origin and shared_game.active_type == shared_type, "Campaign gameplay must not mutate the shared Classic model"):
 		return
 
+	# KT-543.1: the authored catalog schedules Cargo Hook on Star Caravan planets 056 and 057.
+	progress.import_legacy_progress(56, 0)
+	main_scene.set("campaign_universe", 1)
+	main_scene.set("campaign_planet", 26)
+	main_scene.call("_start_campaign_planet")
+	runtime = main_scene.get("campaign_piece_runtime")
+	if not _check(bool(main_scene.get("campaign_run_active")) and runtime.active_piece_id == 7 and runtime.active_cells.size() == 5, "Authored Planet 056 must launch with the five-cell Cargo Hook"):
+		return
+	progress.import_legacy_progress(57, 0)
+	main_scene.set("campaign_planet", 27)
+	main_scene.call("_start_campaign_planet")
+	runtime = main_scene.get("campaign_piece_runtime")
+	if not _check(bool(main_scene.get("campaign_run_active")) and runtime.active_piece_id == 7 and runtime.active_cells.size() == 5, "Authored Planet 057 must launch with the five-cell Cargo Hook"):
+		return
+
 	main_scene.set("campaign_run_active", false)
 	var campaign_origin: Vector2i = runtime.origin
 	var classic_origin: Vector2i = shared_game.origin
