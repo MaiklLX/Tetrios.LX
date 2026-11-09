@@ -998,7 +998,7 @@ func _tutorial_target_rect() -> Rect2:
 			return Rect2(14.0, 48.0, screen_size.x - 28.0, 64.0)
 		if tutorial_step == 1:
 			return board_rect
-		return drop_rect.merge(hold_rect)
+		return drop_rect
 	return Rect2()
 
 
@@ -1011,9 +1011,14 @@ func _draw_tutorial_overlay() -> void:
 		draw_rect(target.grow(7.0), Color("#ffd05a"), false, 3.0, true)
 		var target_center := target.get_center()
 		draw_circle(target_center, 5.0, Color("#fff0b9"))
+	if tutorial_context == "gameplay" and tutorial_step == 2 and hold_rect.size.x > 0.0:
+		draw_rect(hold_rect.grow(7.0), Color("#ffd05a"), false, 3.0, true)
 	var bubble_width := minf(520.0, screen_size.x - 28.0)
 	var bubble_height := 174.0 if screen_size.y >= 560.0 else 150.0
-	var bubble := Rect2(Vector2((screen_size.x - bubble_width) * 0.5, screen_size.y - bubble_height - 28.0), Vector2(bubble_width, bubble_height))
+	var bubble_y := screen_size.y - bubble_height - 28.0
+	if (tutorial_context == "home" and tutorial_step == 2) or (tutorial_context == "gameplay" and tutorial_step == 2):
+		bubble_y = maxf(14.0, screen_size.y * 0.12)
+	var bubble := Rect2(Vector2((screen_size.x - bubble_width) * 0.5, bubble_y), Vector2(bubble_width, bubble_height))
 	_draw_soft_panel(bubble, Color("#102b58"), Color("#ffd05a"), 20, 14)
 	var pointer_x := clampf(target.get_center().x, bubble.position.x + 24.0, bubble.end.x - 24.0) if target.size.x > 0.0 else bubble.get_center().x
 	var pointer := PackedVector2Array([Vector2(pointer_x - 12.0, bubble.position.y + 1.0), Vector2(pointer_x + 12.0, bubble.position.y + 1.0), Vector2(pointer_x, bubble.position.y - 13.0)])
