@@ -90,6 +90,8 @@ var drop_rect := Rect2()
 var touch_start := Vector2.ZERO
 var touch_start_msec := 0
 var touch_active := false
+var touch_feedback_position := Vector2.ZERO
+var touch_feedback_time := 0.0
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED and _campaign_runtime_active() and mode_session != null and mode_session.is_running():
@@ -191,7 +193,9 @@ func _board_metrics(viewport: Vector2) -> Dictionary:
 	# Reserve compact HUD + enlarged HOLD/NEXT cards, then reclaim the remaining height.
 	var board_top_min := 236.0
 	var available_height := maxf(230.0, viewport.y - board_top_min - 36.0)
-	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.68) / BOARD_H, available_height / BOARD_H))
+	# Tall mobile screens should spend their extra height on a larger board,
+	# not leave the playfield floating in a narrow, letterboxed canvas.
+	var cell := minf((viewport.x - 64.0) / BOARD_W, minf((viewport.y * 0.78) / BOARD_H, available_height / BOARD_H))
 	var board_size := Vector2(cell * BOARD_W, cell * BOARD_H)
 	# Reserve a little more breathing room on the DROP side without shrinking the 10x23 playfield.
 	var horizontal_bias := 21.0 if viewport.x <= 480.0 else 0.0
@@ -229,6 +233,9 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if clear_flash_time > 0.0:
 		clear_flash_time = maxf(0.0, clear_flash_time - delta)
+		queue_redraw()
+	if touch_feedback_time > 0.0:
+		touch_feedback_time = maxf(0.0, touch_feedback_time - delta)
 		queue_redraw()
 	if game == null:
 		return
@@ -529,13 +536,22 @@ func _unhandled_input(event: InputEvent) -> void:
 			touch_start = event.position
 			touch_start_msec = Time.get_ticks_msec()
 			touch_active = true
+			touch_feedback_position = event.position
+			touch_feedback_time = 0.18
+			queue_redraw()
 		elif touch_active:
 			var touch_duration_msec := Time.get_ticks_msec() - touch_start_msec
 			touch_active = false
+			touch_feedback_position = event.position
+			touch_feedback_time = 0.18
 			if not _handle_swipe(touch_start, event.position, touch_duration_msec):
 				_handle_tap(event.position)
+			queue_redraw()
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		touch_feedback_position = event.position
+		touch_feedback_time = 0.18
 		_handle_tap(event.position)
+		queue_redraw()
 
 func _arena_gesture_start_is_valid(point: Vector2) -> bool:
 	if not Rect2(Vector2.ZERO, screen_size).has_point(point):
@@ -547,6 +563,21 @@ func _arena_gesture_start_is_valid(point: Vector2) -> bool:
 			return false
 	return true
 
+func _classify_arena_swipe(delta: Vector2) -> String:
+	var horizontal := absf(delta.x)
+	var vertical := absf(delta.y)
+	var horizontal_threshold := maxf(34.0, board_rect.size.x / BOARD_W * 0.85)
+	var vertical_threshold := maxf(46.0, board_rect.size.x / BOARD_W)
+	# A strong dominant axis is required. Diagonal thumb travel is common on
+	# phones and must never be mistaken for an intentional rotation.
+	if horizontal >= horizontal_threshold and horizontal >= vertical * 1.45:
+		return "horizontal"
+	if vertical >= vertical_threshold and vertical >= horizontal * 1.45:
+		return "vertical"
+	if maxf(horizontal, vertical) >= minf(horizontal_threshold, vertical_threshold):
+		return "ambiguous"
+	return "none"
+
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
 	if campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active:
 		var collection_delta := finish - start
@@ -556,22 +587,26 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or _active_game_over() or paused or _mode_finished() or _block_run_draft_is_open() or not _arena_gesture_start_is_valid(start):
 		return false
 	var delta := finish - start
-	var threshold := 36.0
-	if maxf(absf(delta.x), absf(delta.y)) < threshold:
+	var gesture_axis := _classify_arena_swipe(delta)
+	if gesture_axis == "none":
 		return false
-	if absf(delta.x) > absf(delta.y):
+	if gesture_axis == "ambiguous":
+		# Consume a deliberate diagonal drag without turning it into a tap or
+		# guessing whether the player meant to move, rotate or drop.
+		return true
+	if gesture_axis == "horizontal":
 		var steps := clampi(roundi(absf(delta.x) / maxf(board_rect.size.x / BOARD_W, 1.0)), 1, 3)
 		var direction := 1 if delta.x > 0.0 else -1
 		for i in range(steps):
 			_move_piece_horizontal(direction)
 	elif delta.y > 0.0:
-		# Hard drop requires both a decisive travel distance and a quick
-		# gesture. Slow downward drags remain soft-drop input.
-		var is_quick_drop := delta.y >= board_rect.size.y * 0.22 and duration_msec <= 350
+		# Hard drop requires both a decisive travel distance and a quick,
+		# clearly vertical gesture. Slow downward drags remain soft-drop input.
+		var is_quick_drop := delta.y >= board_rect.size.y * 0.22 and duration_msec <= 420
 		if is_quick_drop:
 			_hard_drop_active_piece()
 		else:
-			var drops := clampi(roundi(delta.y / threshold), 1, 4)
+			var drops := clampi(roundi(delta.y / maxf(44.0, board_rect.size.x / BOARD_W)), 1, 4)
 			for i in range(drops):
 				_soft_drop_active_piece()
 				if _active_game_over():
@@ -830,7 +865,18 @@ func _draw() -> void:
 		_draw_pause_overlay()
 	if campaign_collection_reveal_active and campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
 		_draw_campaign_collection_reward_modal(CampaignCollection.get_item(campaign_progress, campaign_collection_reveal_queue[0]), true)
+	_draw_touch_feedback()
 
+
+func _draw_touch_feedback() -> void:
+	if touch_feedback_time <= 0.0:
+		return
+	var progress := 1.0 - touch_feedback_time / 0.18
+	var radius := 8.0 + progress * 24.0
+	var alpha := (1.0 - progress) * 0.62
+	draw_circle(touch_feedback_position, radius, Color(0.58, 0.91, 1.0, alpha * 0.12))
+	draw_arc(touch_feedback_position, radius, 0.0, TAU, 32, Color(0.72, 0.96, 1.0, alpha), 2.0, true)
+	draw_circle(touch_feedback_position, 3.0 + (1.0 - progress) * 2.0, Color(1.0, 1.0, 1.0, alpha * 0.75))
 
 func _draw_soft_panel(rect: Rect2, fill: Color, edge: Color = Color("#7dcfff"), radius: int = 18, shadow_size: int = 10) -> void:
 	var style := StyleBoxFlat.new()
