@@ -451,3 +451,12 @@
 - Added `godot/tests/gesture_input_test.gd`: validates left/right gutter gesture acceptance, reserved control hit targets, horizontal movement and rotation immediately after hard drop.
 - Added the regression test to `.github/workflows/godot-preview-pr-check.yml`.
 - Validation for KT-548.5 is pending in PR CI. No main merge, new Pages deploy, APK build/release or physical-device verification is claimed for this follow-up.
+
+
+## KT-549.1 — Mobile touch and full-height viewport foundation (2026-11-09)
+- Started isolated branch `godot/kt549-mobile-first-polish-2026-11-09` from the validated KT-548.5 head; PR #83 remains Draft and unmerged.
+- Godot Web viewport now uses `stretch/aspect=expand` so tall devices can use their full screen instead of retaining the 720×1280 canvas aspect with unused side space.
+- Increased the board height budget for tall viewports from 68% to 78%, retaining width and bottom safety limits.
+- Reworked swipe classification: horizontal and vertical actions require a strong dominant axis (1.45×); ambiguous diagonals are consumed without triggering movement, rotation or an accidental tap. Vertical drop timing is slightly more forgiving.
+- Added a lightweight touch ripple on press/release and regression coverage for tall-screen board sizing, horizontal/vertical classification and diagonal rejection.
+- Awaiting CI and browser validation. Physical Xiaomi 13T verification is still required; no claim of device acceptance, main merge, Pages deployment or APK release.
