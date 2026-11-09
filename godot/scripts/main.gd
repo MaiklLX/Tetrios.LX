@@ -97,12 +97,44 @@ func _clear_campaign_checkpoint() -> void:
 	campaign_checkpoint_clock = 0.0
 
 func _try_restore_campaign_run() -> bool:
-	var state: Dictionary = CampaignRunStore.load_run_state(0)
+	var state: Dictionary = CampaignRunStore.load_latest_run_state()
 	if state.is_empty():
-		# Planet identity is part of the envelope; inspect the stored ID only via
-		# a dedicated safe lookup so normal progress data remains separate.
 		return false
-	return false
+	var planet_id := int(state.get("planet_id", 0))
+	var definition := campaign_progress.get_planet_definition(planet_id)
+	if definition.is_empty() or campaign_progress.get_planet_status(planet_id) != "current":
+		_clear_campaign_checkpoint()
+		return false
+	var runtime = CampaignRuntime.new()
+	runtime.reset(false)
+	if not runtime.restore(state.runtime):
+		_clear_campaign_checkpoint()
+		return false
+	if mode_session == null:
+		mode_session = ModeSession.new()
+	if not mode_session.start("campaign"):
+		return false
+	mode_session.rules["target_lines"] = int(definition.get("target_lines", 0))
+	mode_session.rules["target_score"] = int(definition.get("target_score", 0))
+	mode_session.rules["target_survive_seconds"] = float(definition.get("target_survive_seconds", 0))
+	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
+	mode_session.elapsed_seconds = float(state.get("elapsed_seconds", 0.0))
+	campaign_run_planet_id = planet_id
+	campaign_piece_runtime = runtime
+	campaign_run_active = true
+	campaign_completion_processed = false
+	campaign_last_reward_marks = 0
+	block_run_active = false
+	mode_select_visible = false
+	home_visible = false
+	secondary_screen = ""
+	campaign_screen = ""
+	paused = true
+	gravity_clock = 0.0
+	campaign_checkpoint_clock = 0.0
+	buddy_last_lines = runtime.lines
+	queue_redraw()
+	return true
 
 func _ready() -> void:
 	randomize()
