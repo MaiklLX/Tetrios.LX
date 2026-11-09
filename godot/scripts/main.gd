@@ -1116,6 +1116,20 @@ func _draw_campaign_planet() -> void:
 		draw_string(font, info.position + Vector2(13,info_height - 6.0), "ОСОБАЯ ФИГУРА  •  ГРУЗОВОЙ КРЮК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
 	elif boss_type != "none":
 		draw_string(font, info.position + Vector2(13,info_height - 6.0), "КОМАНДИР  •  " + str(definition.get("boss_name", "СТРАЖ")), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffb4d2"))
+	var milestone_achievement: Dictionary = {}
+	var universe_achievements: Array[Dictionary] = CampaignAchievements.get_achievements(campaign_progress, campaign_universe)
+	for achievement in universe_achievements:
+		if int(achievement.get("required_planet", -1)) == node_id:
+			milestone_achievement = achievement
+			break
+	if not milestone_achievement.is_empty():
+		var reward_rect := Rect2(info.position.x, info.end.y + 9.0, info.size.x, 48.0)
+		var reward_unlocked := bool(milestone_achievement.get("unlocked", false))
+		var reward_edge := Color("#8ef4d3") if reward_unlocked else Color("#ffd05a")
+		_draw_soft_panel(reward_rect, Color("#145b59") if reward_unlocked else Color("#59451f"), reward_edge, 12, 5)
+		var reward_status := "ОТМЕТКА ПОЛУЧЕНА" if reward_unlocked else "НАГРАДА ЗА РУБЕЖ"
+		draw_string(font, reward_rect.position + Vector2(11.0, 17.0), reward_status, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, reward_edge)
+		draw_string(font, reward_rect.position + Vector2(11.0, 35.0), str(milestone_achievement.get("title", "ЗНАК ПУТИ")) + "  •  " + str(milestone_achievement.get("reward_label", "Знак пути")), HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#ffffff"))
 	campaign_start_rect = Rect2(24.0, screen_size.y * 0.75, screen_size.x - 48.0, 54.0)
 	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
 	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else ("УРОВЕНЬ ПРОЙДЕН" if completed else "УРОВЕНЬ ЗАКРЫТ"), campaign_start_rect, 12, Color("#ffffff"))
