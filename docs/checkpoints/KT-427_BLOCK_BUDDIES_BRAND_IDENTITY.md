@@ -30,3 +30,14 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - The 375×812 geometry report shows the board frame and utility rail aligned to within 0.01px vertically; 412×915 retains the designed inset utility rail. Both reports preserve the 10:23 board ratio and stay inside the viewport.
 - iOS WebKit reported a cancelled local soundtrack request during page teardown; this did not produce a page/console error or fail any preview assertion.
 - These are browser-engine previews only. They do not confirm physical iPhone/Android touch behavior or orientation handling on a real device. No deployment, merge, APK build or release.
+
+
+## 2026-11-09 — KT-427.6: browser-measured 375px rail alignment
+
+- Code HEAD under validation: `53ea25fb7d379532e983c22832fa514d56d30be6`.
+- The full-page WebKit preview exposed a remaining 375×812 mismatch: the side rail measured 483.32px against a 494.75px arena frame. A fixed `.976` correction then over-expanded the Chromium fixture to 506.53px and correctly failed Mobile Arena Visual Preview run [42610737073](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42610737073).
+- Replaced the fixed scale with a runtime measurement based on the untransformed side-rail `offsetHeight` and the live arena-frame height. Chromium and WebKit now receive their own measured scale without user-agent sniffing.
+- Added a 375×812 regression assertion to both the cross-platform and mobile preview workflows; the rail top and bottom must each stay within 2px of the arena frame.
+- Mobile Arena Visual Preview [run 42611289452](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42611289452): **SUCCESS** on the code HEAD above. Artifact [13669359759](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42611289452/artifacts/13669359759) downloaded and inspected. At 375×812, frame height is 494.75px and side-rail height is 494.7478px (top delta −0.007px, bottom delta −0.009px); Hold and Drop remain visible and usable. At 412×915 the intended inset rail remains unchanged.
+- Cross-platform Visual Preview [run 42611289275](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42611289275) was still **in progress** when this checkpoint was written. No pass is claimed for that run.
+- Browser previews are not physical-device validation. No changes to `main`, no deployment, no APK build/release, and no user-data mutation.
