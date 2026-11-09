@@ -17,10 +17,10 @@ const CHAPTERS := {
 		"planets": [
 			{"local_id":1,"title":"Первый сигнал","briefing":"Караван выходит на маршрут. Освой поле и найди спокойный ритм укладки.","mission_tag":"intro","event_id":"","event_status":"none"},
 			{"local_id":2,"title":"Первые контейнеры","briefing":"Собери линии без спешки: грузовой путь начинается с точности.","mission_tag":"practice","event_id":"","event_status":"none"},
-			{"local_id":3,"title":"Чистый коридор","briefing":"Освободи пространство для следующей партии фигур.","mission_tag":"precision","event_id":"","event_status":"none"},
+			{"local_id":3,"title":"Чистый коридор","briefing":"Освободи пространство для следующей партии фигур: начни с трёх грузовых рядов с открытыми коридорами.","mission_tag":"authored_layout","event_id":"cargo_corridor_layout","event_status":"none","layout_id":"cargo_corridor","starting_layout":["111111.111",".22222222.","333.333333"]},
 			{"local_id":4,"title":"Дежурство на борту","briefing":"Удерживай поле в рабочем состоянии, пока караван проходит опасный сектор.","mission_tag":"survival","event_id":"","event_status":"none"},
 			{"local_id":5,"title":"Оплата за доставку","briefing":"Набери нужное количество очков за аккуратные очистки.","mission_tag":"score","event_id":"","event_status":"none"},
-			{"local_id":6,"title":"Узкий пролёт","briefing":"Планируй укладку заранее: свободное место скоро понадобится.","mission_tag":"precision","event_id":"","event_status":"none"},
+			{"local_id":6,"title":"Узкий пролёт","briefing":"Планируй укладку заранее: три смещённых грузовых ряда оставляют узкие проходы.","mission_tag":"authored_layout","event_id":"offset_bay_layout","event_status":"none","layout_id":"offset_bay","starting_layout":["44.4444444","555555.555","66.6666666"]},
 			{"local_id":7,"title":"Поток грузов","briefing":"Сохраняй темп и не заполняй верхние ряды.","mission_tag":"flow","event_id":"","event_status":"none"},
 			{"local_id":8,"title":"Маршрутный маяк","briefing":"Проверь стабильность укладки перед входом в сектор каравана.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":9,"title":"Проверка экипажа","briefing":"Последняя тренировка перед встречей с первым стражем маршрута.","mission_tag":"mastery","event_id":"","event_status":"none"},
@@ -30,7 +30,7 @@ const CHAPTERS := {
 			{"local_id":13,"title":"Точный расчёт","briefing":"Каждая очистка важна: не трать пространство впустую.","mission_tag":"precision","event_id":"","event_status":"none"},
 			{"local_id":14,"title":"Тихая вахта","briefing":"Продержись до конца опасного участка маршрута.","mission_tag":"survival","event_id":"","event_status":"none"},
 			{"local_id":15,"title":"Премия навигатора","briefing":"Докажи мастерство результатом, а не только количеством линий.","mission_tag":"score","event_id":"","event_status":"none"},
-			{"local_id":16,"title":"Сложный стык","briefing":"Собирай линии так, чтобы не запирать будущие фигуры.","mission_tag":"precision","event_id":"","event_status":"none"},
+			{"local_id":16,"title":"Сложный стык","briefing":"Собирай линии на подготовленном поле: чередующиеся проёмы требуют точного выбора фигуры.","mission_tag":"authored_layout","event_id":"staggered_joint_layout","event_status":"none","layout_id":"staggered_joint","starting_layout":["0.00000000","1111111.11","22.2222222"]},
 			{"local_id":17,"title":"Резервный отсек","briefing":"Подготовь свободный объём поля для неожиданного груза.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":18,"title":"Тяговый импульс","briefing":"Проверь устойчивость темпа на длинной серии очисток.","mission_tag":"tempo","event_id":"","event_status":"none"},
 			{"local_id":19,"title":"Передача смены","briefing":"Сохрани контроль над полем перед испытанием чемпиона.","mission_tag":"mastery","event_id":"","event_status":"none"},
@@ -77,6 +77,25 @@ static func validate_chapter(chapter: Dictionary) -> Dictionary:
 		for required_key in ["title", "briefing", "mission_tag", "event_status"]:
 			if str(planet.get(required_key, "")).strip_edges().is_empty():
 				return {"valid":false,"reason":"missing_"+required_key,"local_id":index + 1}
+		if planet.has("starting_layout"):
+			var layout: Variant = planet.get("starting_layout")
+			if typeof(layout) != TYPE_ARRAY or layout.is_empty() or layout.size() > 19:
+				return {"valid":false,"reason":"invalid_starting_layout","local_id":index + 1}
+			for row in layout:
+				if typeof(row) != TYPE_STRING or str(row).length() != 10:
+					return {"valid":false,"reason":"invalid_layout_row","local_id":index + 1}
+				var occupied := 0
+				for x in range(10):
+					var token := str(row).substr(x, 1)
+					if token == ".":
+						continue
+					if not token.is_valid_int() or int(token) < 0 or int(token) > 6:
+						return {"valid":false,"reason":"invalid_layout_cell","local_id":index + 1}
+					occupied += 1
+				if occupied <= 0 or occupied >= 10:
+					return {"valid":false,"reason":"invalid_layout_row_density","local_id":index + 1}
+			if str(planet.get("layout_id", "")).strip_edges().is_empty():
+				return {"valid":false,"reason":"missing_layout_id","local_id":index + 1}
 		var event_status := str(planet.event_status)
 		if event_status != "none" and str(planet.get("event_id", "")).strip_edges().is_empty():
 			return {"valid":false,"reason":"missing_event_id","local_id":index + 1}
