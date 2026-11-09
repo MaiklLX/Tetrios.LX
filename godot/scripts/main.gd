@@ -1028,13 +1028,30 @@ func _draw_campaign_collection() -> void:
 	var total_count := int(summary.get("total_count", 49))
 	_center_text("ПОЛКА НАГРАД", 101.0, 22, Color("#fff0b9"))
 	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], 126.0, 10, Color("#c4edff"))
+	var legend_y := 145.0
+	var legend_start := screen_size.x * 0.5 - (108.0 if screen_size.x <= 480.0 else 142.0)
+	for legend in [
+		{"label": "РЕЛИКВИИ", "color": Color("#55ddcf"), "width": 64.0},
+		{"label": "БОССЫ", "color": Color("#ff91bd"), "width": 53.0},
+		{"label": "КОРОНА", "color": Color("#ffd05a"), "width": 62.0}
+	]:
+		draw_circle(Vector2(legend_start + 4.0, legend_y - 3.0), 3.0, legend.color)
+		draw_string(font, Vector2(legend_start + 12.0, legend_y), legend.label, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#d7eaff"))
+		legend_start += legend.width
 	var compact := screen_size.x <= 480.0
 	var gap := 4.0
 	var margin := 13.0 if compact else 24.0
 	var cell_w := (screen_size.x - margin * 2.0 - gap * 6.0) / 7.0
-	var cell_h := minf(58.0 if compact else 76.0, (screen_size.y - 270.0) / 7.0)
-	var top := 151.0
+	var cell_h := minf(56.0 if compact else 76.0, (screen_size.y - 292.0) / 7.0)
+	var top := 160.0
 	campaign_collection_item_rects.clear()
+	var universe_unlocked_counts: Dictionary = {}
+	for item in items:
+		if str(item.get("kind", "")) == "campaign_crown":
+			continue
+		var universe_number := int(item.get("universe_number", 0))
+		if bool(item.get("unlocked", false)):
+			universe_unlocked_counts[universe_number] = int(universe_unlocked_counts.get(universe_number, 0)) + 1
 	for index in range(items.size()):
 		var item: Dictionary = items[index]
 		var col := index % 7
@@ -1043,31 +1060,84 @@ func _draw_campaign_collection() -> void:
 		campaign_collection_item_rects.append(rect)
 		var unlocked := bool(item.get("unlocked", false))
 		var selected := index == campaign_collection_selected
-		var edge := Color("#ffd05a") if unlocked else Color("#526d91")
-		var fill := Color("#57451f") if unlocked else Color("#172e50")
-		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else edge, 8, 3 if selected else 1)
+		var kind := str(item.get("kind", ""))
+		var universe_number := int(item.get("universe_number", 0))
+		var universe_complete := universe_number > 0 and int(universe_unlocked_counts.get(universe_number, 0)) == 4
+		var accent := Color("#55ddcf") if kind == "universe_relic" else (Color("#ff91bd") if kind == "boss_insignia" else Color("#ffd05a"))
+		var muted_accent := accent if unlocked else accent.darkened(0.66).lerp(Color("#7186a5"), 0.55)
+		var fill := Color("#123f58") if kind == "universe_relic" and unlocked else (Color("#512d4d") if kind == "boss_insignia" and unlocked else (Color("#57451f") if unlocked else Color("#172e50")))
+		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else muted_accent, 8, 3 if selected else 1)
+		if universe_complete:
+			draw_rect(Rect2(rect.position + Vector2(5.0, 3.0), Vector2(rect.size.x - 10.0, 2.0)), Color("#8ef4d3"))
+			draw_circle(Vector2(rect.end.x - 7.0, rect.position.y + 7.0), 3.0, Color("#8ef4d3"))
 		var emblem_center := Vector2(rect.get_center().x, rect.position.y + cell_h * 0.39)
-		if unlocked:
-			draw_circle(emblem_center, minf(10.0, cell_w * 0.25), Color("#ffd05a", 0.20))
-			draw_arc(emblem_center, minf(9.0, cell_w * 0.23), 0.0, TAU, 24, Color("#ffd05a"), 1.6, true)
-			draw_line(emblem_center + Vector2(-4.0, 0.0), emblem_center + Vector2(0.0, 4.0), Color("#fff0b9"), 2.0)
-			draw_line(emblem_center + Vector2(0.0, 4.0), emblem_center + Vector2(5.0, -5.0), Color("#fff0b9"), 2.0)
-		else:
-			draw_arc(emblem_center, minf(8.0, cell_w * 0.20), PI, TAU, 16, Color("#7186a5"), 1.8, true)
-			var lock_rect := Rect2(emblem_center + Vector2(-5.0, -1.0), Vector2(10.0, 8.0))
-			draw_rect(lock_rect, Color("#7186a5"), false, 1.5)
-		var short_label := "Р%02d" % int(item.get("universe_number", 0)) if str(item.get("kind", "")) == "universe_relic" else ("КОРОНА" if str(item.get("kind", "")) == "campaign_crown" else "Б%03d" % int(item.get("planet_id", 0)))
-		draw_string(font, Vector2(rect.position.x + 1.0, rect.end.y - 5.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 2.0, 7 if compact else 9, Color("#fff0b9") if unlocked else Color("#8095b2"))
+		_draw_collection_emblem(emblem_center, minf(11.0, cell_w * 0.27), kind, muted_accent)
+		if not unlocked:
+			var lock_center := emblem_center + Vector2(0.0, 1.0)
+			draw_arc(lock_center, minf(7.0, cell_w * 0.18), PI, TAU, 16, Color("#7186a5"), 1.5, true)
+			draw_rect(Rect2(lock_center + Vector2(-4.0, -1.0), Vector2(8.0, 7.0)), Color("#7186a5"), false, 1.3)
+		var short_label := "Р%02d" % universe_number if kind == "universe_relic" else ("КОРОНА" if kind == "campaign_crown" else "Б%03d" % int(item.get("planet_id", 0)))
+		draw_string(font, Vector2(rect.position.x + 1.0, rect.end.y - 5.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 2.0, 7 if compact else 9, Color("#ffffff") if unlocked else Color("#8095b2"))
 	var selected_item: Dictionary = items[clampi(campaign_collection_selected, 0, items.size() - 1)] if not items.is_empty() else {}
-	var detail_rect := Rect2(14.0, screen_size.y - 91.0, screen_size.x - 28.0, 70.0)
+	var detail_rect := Rect2(14.0, screen_size.y - 99.0, screen_size.x - 28.0, 78.0)
 	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 13, 5)
 	if not selected_item.is_empty():
 		var is_unlocked := bool(selected_item.get("unlocked", false))
-		var status := "ПОЛУЧЕНО" if is_unlocked else "ЕЩЁ ВПЕРЕДИ"
-		draw_string(font, detail_rect.position + Vector2(11.0, 19.0), status, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
-		draw_string(font, detail_rect.position + Vector2(11.0, 37.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 11, Color("#ffffff"))
-		draw_string(font, detail_rect.position + Vector2(11.0, 55.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#c4edff"))
+		var kind := str(selected_item.get("kind", ""))
+		var universe_number := int(selected_item.get("universe_number", 0))
+		var category := "РЕЛИКВИЯ ВСЕЛЕННОЙ %02d" % universe_number if kind == "universe_relic" else ("ЗНАК ПОБЕЖДЁННОГО БОССА" if kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА КАМПАНИИ")
+		var status := category + ("  •  ПОЛУЧЕНО" if is_unlocked else "  •  ЕЩЁ ВПЕРЕДИ")
+		draw_string(font, detail_rect.position + Vector2(11.0, 16.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
+		draw_string(font, detail_rect.position + Vector2(11.0, 34.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 11, Color("#ffffff"))
+		draw_string(font, detail_rect.position + Vector2(11.0, 50.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#c4edff"))
+		var unlock_planet := int(selected_item.get("unlock_planet", 0))
+		var requirement := "УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 360 ПЛАНЕТ" if kind == "campaign_crown" else ("УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ" if kind == "universe_relic" else "УСЛОВИЕ: ПОБЕДИТЬ БОССА НА ПЛАНЕТЕ %03d" % unlock_planet)
+		draw_string(font, detail_rect.position + Vector2(11.0, 66.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 7, Color("#ffd77a"))
 	_center_text("ВЫБЕРИ ЗНАК, ЧТОБЫ УЗНАТЬ ЕГО ИСТОРИЮ", screen_size.y - 8.0, 8, Color("#b9eaff"))
+
+func _draw_collection_emblem(center: Vector2, radius: float, kind: String, accent: Color) -> void:
+	if kind == "universe_relic":
+		var crystal := PackedVector2Array([
+			center + Vector2(0.0, -radius),
+			center + Vector2(radius * 0.72, -radius * 0.22),
+			center + Vector2(radius * 0.48, radius * 0.68),
+			center + Vector2(0.0, radius),
+			center + Vector2(-radius * 0.48, radius * 0.68),
+			center + Vector2(-radius * 0.72, -radius * 0.22)
+		])
+		draw_colored_polygon(crystal, accent.darkened(0.45))
+		draw_polyline(PackedVector2Array([crystal[0], crystal[1], crystal[2], crystal[3], crystal[4], crystal[5], crystal[0]]), accent, 1.7, true)
+		draw_line(center + Vector2(0.0, -radius), center + Vector2(0.0, radius * 0.8), accent.lightened(0.3), 1.2)
+		draw_line(center + Vector2(-radius * 0.72, -radius * 0.22), center + Vector2(radius * 0.48, radius * 0.68), accent.lightened(0.15), 1.0)
+	elif kind == "boss_insignia":
+		var shield := PackedVector2Array([
+			center + Vector2(-radius * 0.78, -radius * 0.72),
+			center + Vector2(radius * 0.78, -radius * 0.72),
+			center + Vector2(radius * 0.66, radius * 0.25),
+			center + Vector2(0.0, radius),
+			center + Vector2(-radius * 0.66, radius * 0.25),
+			center + Vector2(-radius * 0.78, -radius * 0.72)
+		])
+		draw_colored_polygon(shield, accent.darkened(0.42))
+		draw_polyline(shield, accent, 1.7, true)
+		draw_line(center + Vector2(0.0, -radius * 0.35), center + Vector2(0.0, radius * 0.48), accent.lightened(0.35), 1.3)
+		draw_line(center + Vector2(-radius * 0.42, 0.0), center + Vector2(radius * 0.42, 0.0), accent.lightened(0.35), 1.3)
+	else:
+		var crown := PackedVector2Array([
+			center + Vector2(-radius, -radius * 0.12),
+			center + Vector2(-radius * 0.62, radius * 0.22),
+			center + Vector2(-radius * 0.38, -radius * 0.62),
+			center + Vector2(0.0, -radius * 0.08),
+			center + Vector2(radius * 0.38, -radius * 0.62),
+			center + Vector2(radius * 0.62, radius * 0.22),
+			center + Vector2(radius, -radius * 0.12),
+			center + Vector2(radius * 0.78, radius * 0.82),
+			center + Vector2(-radius * 0.78, radius * 0.82),
+			center + Vector2(-radius, -radius * 0.12)
+		])
+		draw_colored_polygon(crown, accent.darkened(0.38))
+		draw_polyline(crown, accent, 1.7, true)
+		draw_line(center + Vector2(-radius * 0.58, radius * 0.42), center + Vector2(radius * 0.58, radius * 0.42), accent.lightened(0.35), 1.2)
 
 func _draw_campaign_route() -> void:
 	var compact := screen_size.x <= 480.0
