@@ -60,6 +60,9 @@ var campaign_collection_selected := 0
 var campaign_collection_inspect_rect := Rect2()
 var campaign_collection_grid_viewport_rect := Rect2()
 var campaign_collection_scroll_offset := 0.0
+var campaign_route_scroll_offset := 0.0
+var campaign_route_scroll_max := 0.0
+var campaign_route_scroll_viewport_rect := Rect2()
 var campaign_collection_reveal_queue: Array[String] = []
 var campaign_collection_reveal_active := false
 var campaign_collection_reveal_time := 0.0
@@ -581,8 +584,13 @@ func _classify_arena_swipe(delta: Vector2) -> String:
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
 	if campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active:
 		var collection_delta := finish - start
-		if campaign_collection_grid_viewport_rect.has_point(start) and absf(collection_delta.y) >= 28.0 and absf(collection_delta.y) > absf(collection_delta.x):
-			_scroll_campaign_collection_rows(1 if collection_delta.y < 0.0 else -1)
+		if campaign_collection_grid_viewport_rect.has_point(start) and absf(collection_delta.x) >= 28.0 and absf(collection_delta.x) > absf(collection_delta.y) * 1.2:
+			_scroll_campaign_collection_rows(1 if collection_delta.x < 0.0 else -1)
+			return true
+	if campaign_screen == "route":
+		var route_delta := finish - start
+		if campaign_route_scroll_viewport_rect.has_point(start) and absf(route_delta.y) >= 32.0 and absf(route_delta.y) > absf(route_delta.x) * 1.2:
+			_scroll_campaign_route(1 if route_delta.y < 0.0 else -1)
 			return true
 	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or _active_game_over() or paused or _mode_finished() or _block_run_draft_is_open() or not _arena_gesture_start_is_valid(start):
 		return false
@@ -673,7 +681,7 @@ func _handle_tap(point: Vector2) -> void:
 							campaign_collection_preview_active = true
 						else:
 							campaign_collection_selected = index
-							var collection_layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
+							var collection_layout: Dictionary = CampaignCollectionLayout.collection_strip(screen_size)
 							campaign_collection_scroll_offset = CampaignCollectionLayout.scroll_offset_for_index(collection_layout, index, campaign_collection_scroll_offset)
 						break
 		elif campaign_collection_rect.has_point(point) and campaign_screen == "atlas":
@@ -694,6 +702,7 @@ func _handle_tap(point: Vector2) -> void:
 			for index in range(campaign_atlas_rects.size()):
 				if campaign_atlas_rects[index].has_point(point):
 					campaign_universe = index
+					campaign_route_scroll_offset = 0.0
 					campaign_screen = "route"
 					break
 		elif campaign_screen == "route":
@@ -1131,10 +1140,10 @@ func _draw_campaign_collection() -> void:
 	var items: Array = summary.get("items", [])
 	var unlocked_count := int(summary.get("unlocked_count", 0))
 	var total_count := int(summary.get("total_count", 49))
-	var layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
+	var layout: Dictionary = CampaignCollectionLayout.collection_strip(screen_size)
 	var compact := bool(layout.compact)
-	_center_text("ПОЛКА НАГРАД", float(layout.title_y), 22 if not bool(layout.short_screen) else 19, Color("#fff0b9"))
-	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], float(layout.subtitle_y), 10 if not bool(layout.short_screen) else 9, Color("#c4edff"))
+	_center_text("ПОЛКА НАГРАД", float(layout.title_y), 22 if not compact else 19, Color("#fff0b9"))
+	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], float(layout.subtitle_y), 10 if not compact else 9, Color("#c4edff"))
 	var legend_y := float(layout.legend_y)
 	var legend_start := screen_size.x * 0.5 - 89.5
 	for legend in [
@@ -1145,30 +1154,18 @@ func _draw_campaign_collection() -> void:
 		draw_circle(Vector2(legend_start + 4.0, legend_y - 3.0), 3.0, legend.color)
 		draw_string(font, Vector2(legend_start + 12.0, legend_y), legend.label, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#d7eaff"))
 		legend_start += legend.width
-	var gap := float(layout.gap)
-	var margin := float(layout.margin)
-	var columns := int(layout.columns)
-	var cell_w := float(layout.cell_width)
-	var cell_h := float(layout.cell_height)
-	var top := float(layout.top)
 	var grid_viewport: Rect2 = layout.grid_viewport_rect
 	campaign_collection_grid_viewport_rect = grid_viewport
-	campaign_collection_scroll_offset = clampf(campaign_collection_scroll_offset, 0.0, float(layout.get("max_scroll", 0.0)))
-	var scroll_offset := campaign_collection_scroll_offset
+	var gap := float(layout.gap)
+	var card_width := float(layout.card_width)
+	var card_height := float(layout.card_height)
+	var stride := card_width + gap
+	campaign_collection_scroll_offset = clampf(campaign_collection_scroll_offset, 0.0, float(layout.max_scroll))
 	campaign_collection_item_rects.clear()
-	var universe_unlocked_counts: Dictionary = {}
-	for item in items:
-		if str(item.get("kind", "")) == "campaign_crown":
-			continue
-		var universe_number := int(item.get("universe_number", 0))
-		if bool(item.get("unlocked", false)):
-			universe_unlocked_counts[universe_number] = int(universe_unlocked_counts.get(universe_number, 0)) + 1
 	for index in range(items.size()):
 		var item: Dictionary = items[index]
-		var col := index % columns
-		var row := index / columns
-		var rect := Rect2(margin + float(col) * (cell_w + gap), top + float(row) * (cell_h + gap) - scroll_offset, cell_w, cell_h)
-		var visible_cell := rect.position.y >= grid_viewport.position.y - 0.1 and rect.end.y <= grid_viewport.end.y + 0.1
+		var rect := Rect2(grid_viewport.position.x + float(index) * stride - campaign_collection_scroll_offset, grid_viewport.position.y + (grid_viewport.size.y - card_height) * 0.5, card_width, card_height)
+		var visible_cell := rect.end.x >= grid_viewport.position.x and rect.position.x <= grid_viewport.end.x
 		campaign_collection_item_rects.append(rect if visible_cell else Rect2())
 		if not visible_cell:
 			continue
@@ -1176,58 +1173,56 @@ func _draw_campaign_collection() -> void:
 		var selected := index == campaign_collection_selected
 		var kind := str(item.get("kind", ""))
 		var universe_number := int(item.get("universe_number", 0))
-		var universe_complete := universe_number > 0 and int(universe_unlocked_counts.get(universe_number, 0)) == 4
 		var visual_variant := int(item.get("visual_variant", 0))
 		var planet_id := int(item.get("planet_id", 0))
 		var accent := _collection_universe_accent(kind, universe_number, planet_id)
 		var muted_accent := accent if unlocked else accent.darkened(0.66).lerp(Color("#7186a5"), 0.55)
 		var fill := muted_accent.darkened(0.78) if unlocked else muted_accent.darkened(0.88)
-		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else muted_accent, 8, 3 if selected else 1)
+		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else muted_accent, 13, 4 if selected else 2)
 		if selected:
 			draw_rect(rect.grow(1.5), Color("#fff0b9"), false, 2.0, true)
-			draw_rect(rect.grow(-2.0), Color(0.56, 0.91, 1.0, 0.72), false, 1.0, true)
-		if universe_complete:
-			draw_rect(Rect2(rect.position + Vector2(5.0, 3.0), Vector2(rect.size.x - 10.0, 2.0)), Color("#8ef4d3"))
-			draw_circle(Vector2(rect.end.x - 7.0, rect.position.y + 7.0), 3.0, Color("#8ef4d3"))
-		var emblem_center := Vector2(rect.get_center().x, rect.position.y + cell_h * 0.39)
-		_draw_collection_emblem(emblem_center, minf(11.0, cell_w * 0.27), kind, muted_accent, visual_variant, planet_id)
+		var emblem_center := Vector2(rect.get_center().x, rect.position.y + card_height * 0.39)
+		var emblem_radius := minf(35.0, card_width * 0.31)
+		draw_circle(emblem_center, emblem_radius + 8.0, Color(muted_accent.r, muted_accent.g, muted_accent.b, 0.12))
+		_draw_collection_emblem(emblem_center, emblem_radius, kind, muted_accent, visual_variant, planet_id)
 		if not unlocked:
-			# Keep the reward silhouette unobstructed; the lock sits in its own corner badge.
-			var lock_center := Vector2(rect.end.x - 8.0, rect.position.y + 8.0)
-			draw_circle(lock_center, 5.5, Color("#172b4c"))
-			draw_arc(lock_center + Vector2(0.0, -1.0), 2.7, PI, TAU, 12, Color("#a9bdd5"), 1.1, true)
-			draw_rect(Rect2(lock_center + Vector2(-2.6, -0.2), Vector2(5.2, 4.0)), Color("#a9bdd5"))
-		var short_label := "Р%02d" % universe_number if kind == "universe_relic" else ("КОРОНА" if kind == "campaign_crown" else "Б%03d" % int(item.get("planet_id", 0)))
-		draw_string(font, Vector2(rect.position.x + 1.0, rect.end.y - 5.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 2.0, 7 if compact else 9, Color("#ffffff") if unlocked else Color("#8095b2"))
+			var lock_center := Vector2(rect.end.x - 12.0, rect.position.y + 12.0)
+			draw_circle(lock_center, 8.0, Color("#172b4c"))
+			draw_arc(lock_center + Vector2(0.0, -1.0), 3.7, PI, TAU, 12, Color("#a9bdd5"), 1.3, true)
+			draw_rect(Rect2(lock_center + Vector2(-3.4, -0.2), Vector2(6.8, 5.0)), Color("#a9bdd5"))
+		var short_label := "РЕЛИКВИЯ %02d" % universe_number if kind == "universe_relic" else ("ГЛАВНЫЙ ТРОФЕЙ" if kind == "campaign_crown" else "БОСС %03d" % planet_id)
+		draw_string(font, Vector2(rect.position.x + 5.0, rect.end.y - 13.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 10.0, 8 if compact else 9, Color("#ffffff") if unlocked else Color("#8095b2"))
 	var selected_item: Dictionary = items[clampi(campaign_collection_selected, 0, items.size() - 1)] if not items.is_empty() else {}
 	var detail_rect: Rect2 = layout.detail_rect
-	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 13, 5)
+	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 15, 5)
 	campaign_collection_inspect_rect = layout.inspect_rect
 	if not selected_item.is_empty():
 		var is_unlocked := bool(selected_item.get("unlocked", false))
 		var selected_kind := str(selected_item.get("kind", ""))
 		var selected_universe_number := int(selected_item.get("universe_number", 0))
+		var selected_planet := int(selected_item.get("planet_id", 0))
+		var accent := _collection_universe_accent(selected_kind, selected_universe_number, selected_planet)
+		var detail_icon_center := Vector2(detail_rect.position.x + 48.0, detail_rect.get_center().y)
+		_draw_collection_emblem(detail_icon_center, minf(32.0, detail_rect.size.y * 0.24), selected_kind, accent, int(selected_item.get("visual_variant", 0)), selected_planet)
+		var text_left := detail_rect.position.x + 88.0
+		var text_width := maxf(44.0, campaign_collection_inspect_rect.position.x - text_left - 10.0)
 		var category := "РЕЛИКВИЯ %02d" % selected_universe_number if selected_kind == "universe_relic" else ("БОСС" if selected_kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА")
 		var status := category + (" • ПОЛУЧЕНО" if is_unlocked else " • ВПЕРЕДИ")
-		var detail_text_width := maxf(40.0, campaign_collection_inspect_rect.position.x - detail_rect.position.x - 18.0)
-		var detail_font := 7 if compact else 8
-		draw_string(font, detail_rect.position + Vector2(10.0, 14.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, detail_font, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
-		draw_string(font, detail_rect.position + Vector2(10.0, 31.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 10 if compact else 11, Color("#ffffff"))
-		draw_string(font, detail_rect.position + Vector2(10.0, 45.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#c4edff"))
+		draw_string(font, Vector2(text_left, detail_rect.position.y + 22.0), status, HORIZONTAL_ALIGNMENT_LEFT, text_width, 8 if compact else 9, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
+		draw_string(font, Vector2(text_left, detail_rect.position.y + 47.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, text_width, 11 if compact else 13, Color("#ffffff"))
+		draw_string(font, Vector2(text_left, detail_rect.position.y + 68.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, text_width, 8 if compact else 9, Color("#c4edff"))
 		var unlock_planet := int(selected_item.get("unlock_planet", 0))
 		var requirement := "УСЛОВИЕ: 360 ПЛАНЕТ" if selected_kind == "campaign_crown" else ("УСЛОВИЕ: 30 ПЛАНЕТ" if selected_kind == "universe_relic" else "УСЛОВИЕ: БОСС %03d" % unlock_planet)
-		draw_string(font, detail_rect.position + Vector2(10.0, detail_rect.size.y - 5.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#ffd77a"))
-		_draw_soft_panel(campaign_collection_inspect_rect, Color("#174d79"), Color("#8fe8ff"), 9, 3)
+		draw_string(font, Vector2(text_left, detail_rect.end.y - 10.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, text_width, 7 if compact else 8, Color("#ffd77a"))
+		_draw_soft_panel(campaign_collection_inspect_rect, Color("#174d79"), Color("#8fe8ff"), 10, 3)
 		_center_text("ОСМОТР", campaign_collection_inspect_rect.position.y + campaign_collection_inspect_rect.size.y * 0.67, 8, Color("#ffffff"))
-	if bool(layout.scrollable):
-		var scroll_visual: Dictionary = CampaignCollectionLayout.scrollbar(layout, campaign_collection_scroll_offset)
-		var scroll_track: Rect2 = scroll_visual.get("track", Rect2())
-		var scroll_thumb: Rect2 = scroll_visual.get("thumb", Rect2())
-		if scroll_track.size.x > 0.0 and scroll_track.size.y > 0.0 and scroll_thumb.size.x > 0.0 and scroll_thumb.size.y > 0.0:
-			draw_line(scroll_track.position, Vector2(scroll_track.position.x, scroll_track.end.y), Color(0.42, 0.62, 0.82, 0.28), 2.0, true)
-			draw_line(scroll_thumb.position, Vector2(scroll_thumb.position.x, scroll_thumb.end.y), Color("#8fe8ff"), 3.0, true)
-	var footer_text := "ЛИСТАЙ СЕТКУ ВВЕРХ / ВНИЗ" if bool(layout.scrollable) else "ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»"
-	_center_text(footer_text, float(layout.footer_y), 8, Color("#b9eaff"))
+	var scroll_visual: Dictionary = CampaignCollectionLayout.scrollbar_strip(layout, campaign_collection_scroll_offset)
+	var scroll_track: Rect2 = scroll_visual.get("track", Rect2())
+	var scroll_thumb: Rect2 = scroll_visual.get("thumb", Rect2())
+	if scroll_track.size.x > 0.0 and scroll_thumb.size.x > 0.0:
+		draw_line(scroll_track.position, Vector2(scroll_track.end.x, scroll_track.position.y), Color(0.42, 0.62, 0.82, 0.28), 2.0, true)
+		draw_line(scroll_thumb.position, Vector2(scroll_thumb.end.x, scroll_thumb.position.y), Color("#8fe8ff"), 3.0, true)
+	_center_text("ЛИСТАЙ НАГРАДЫ ПО ГОРИЗОНТАЛИ" if float(layout.max_scroll) > 0.5 else "ВЫБЕРИ НАГРАДУ ДЛЯ ПРОСМОТРА", float(layout.footer_y), 8, Color("#b9eaff"))
 	if campaign_collection_reveal_active or campaign_collection_preview_active:
 		var modal_item := selected_item
 		var is_new_reward := campaign_collection_reveal_active
@@ -1239,12 +1234,19 @@ func _draw_campaign_collection() -> void:
 func _scroll_campaign_collection_rows(direction: int) -> void:
 	if direction == 0:
 		return
-	var layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
-	var row_step := float(layout.get("cell_height", 0.0)) + float(layout.get("gap", 0.0))
+	var layout: Dictionary = CampaignCollectionLayout.collection_strip(screen_size)
+	var stride := float(layout.get("card_width", 0.0)) + float(layout.get("gap", 0.0))
 	var max_scroll := float(layout.get("max_scroll", 0.0))
-	if row_step <= 0.0 or max_scroll <= 0.0:
+	if stride <= 0.0 or max_scroll <= 0.0:
 		return
-	campaign_collection_scroll_offset = clampf(campaign_collection_scroll_offset + float(direction) * row_step, 0.0, max_scroll)
+	campaign_collection_scroll_offset = clampf(campaign_collection_scroll_offset + float(direction) * stride * 2.0, 0.0, max_scroll)
+	queue_redraw()
+
+
+func _scroll_campaign_route(direction: int) -> void:
+	if direction == 0 or campaign_route_scroll_max <= 0.0:
+		return
+	campaign_route_scroll_offset = clampf(campaign_route_scroll_offset + float(direction) * 90.0, 0.0, campaign_route_scroll_max)
 	queue_redraw()
 
 
@@ -1455,8 +1457,8 @@ func _draw_campaign_route() -> void:
 	var panel_bottom := screen_size.y - 24.0
 	var panel := Rect2(14.0, panel_top, screen_size.x - 28.0, panel_bottom - panel_top)
 	_draw_soft_panel(panel, Color("#102f68"), Color("#55ddff"), 18, 8)
-	draw_string(font, panel.position + Vector2(12, 24), "МАРШРУТ ПЕРВООТКРЫВАТЕЛЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11 if compact else 16, Color("#ffffff"))
-	draw_string(font, panel.position + Vector2(12, 43), "30 планет • рубежи: 005 / 010 / 015 / 020 / 025 / 030", HORIZONTAL_ALIGNMENT_LEFT, -1, 7 if compact else 10, Color("#c4edff"))
+	draw_string(font, panel.position + Vector2(12, 24), "ПУТЬ К ВЕРШИНЕ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11 if compact else 16, Color("#ffffff"))
+	draw_string(font, panel.position + Vector2(12, 43), "30 планет • боссы на рубежах 010 / 020 / 030", HORIZONTAL_ALIGNMENT_LEFT, -1, 7 if compact else 10, Color("#c4edff"))
 	var achievement_summary: Dictionary = CampaignAchievements.get_summary(campaign_progress, campaign_universe)
 	var achievement_items: Array = achievement_summary.get("achievements", [])
 	var next_achievement: Dictionary = {}
@@ -1466,24 +1468,34 @@ func _draw_campaign_route() -> void:
 			break
 	var achievement_count := int(achievement_summary.get("unlocked_count", 0))
 	var achievement_total := int(achievement_summary.get("total_count", 0))
-	var milestone_label := "ВСЕ ПРОМЕЖУТОЧНЫЕ РУБЕЖИ ПРОЙДЕНЫ" if next_achievement.is_empty() else "СЛЕДУЮЩАЯ ОТМЕТКА: %s • ПЛАНЕТА %02d" % [str(next_achievement.get("title", "РУБЕЖ")), int(next_achievement.get("planet_in_universe", 0))]
+	var milestone_label := "ВСЕ РУБЕЖИ ПРОЙДЕНЫ" if next_achievement.is_empty() else "СЛЕДУЮЩАЯ ОТМЕТКА: %s • %02d" % [str(next_achievement.get("title", "РУБЕЖ")), int(next_achievement.get("planet_in_universe", 0))]
 	draw_string(font, panel.position + Vector2(12, 59), "%s  (%d/%d)" % [milestone_label, achievement_count, achievement_total], HORIZONTAL_ALIGNMENT_LEFT, -1, 7 if compact else 9, Color("#ffd77a"))
 	campaign_node_rects.clear()
-	var cols := 6
-	var rows := 5
 	var node_area_top := panel.position.y + 83.0
-	var node_area_height := panel.size.y - 110.0
-	var step_x := (panel.size.x - 42.0) / 5.0
-	var step_y := node_area_height / 4.0
+	var node_area_height := maxf(100.0, panel.size.y - 112.0)
+	campaign_route_scroll_viewport_rect = Rect2(panel.position.x + 8.0, node_area_top - 14.0, panel.size.x - 16.0, node_area_height + 20.0)
+	var step_y := 70.0 if compact else 86.0
+	var content_height := step_y * 14.0 + 80.0
+	campaign_route_scroll_max = maxf(0.0, content_height - node_area_height)
+	campaign_route_scroll_offset = clampf(campaign_route_scroll_offset, 0.0, campaign_route_scroll_max)
+	# Scroll offset is climb progress: zero shows Planet 001 at the bottom;
+	# swiping upward moves the camera toward the final boss at the top.
+	var visual_offset := campaign_route_scroll_max - campaign_route_scroll_offset
 	var positions: Array[Vector2] = []
 	for index in range(30):
-		var row := index / cols
-		var col := index % cols
-		if row % 2 == 1:
-			col = cols - 1 - col
-		positions.append(Vector2(panel.position.x + 21.0 + float(col) * step_x, node_area_top + float(row) * step_y))
+		var pair_row := index / 2
+		var row := 14 - pair_row
+		var col := index % 2 if pair_row % 2 == 0 else 1 - (index % 2)
+		var x := panel.position.x + panel.size.x * (0.29 if col == 0 else 0.71)
+		var y := node_area_top + float(row) * step_y - visual_offset
+		positions.append(Vector2(x, y))
+	var clip_rect := campaign_route_scroll_viewport_rect
 	for index in range(29):
-		draw_line(positions[index], positions[index + 1], Color("#5c91c4"), 2.0)
+		var a: Vector2 = positions[index]
+		var b: Vector2 = positions[index + 1]
+		var bounds := Rect2(Vector2(minf(a.x, b.x), minf(a.y, b.y)), Vector2(absf(a.x - b.x), absf(a.y - b.y))).grow(8.0)
+		if bounds.intersects(clip_rect):
+			draw_line(a, b, Color("#5c91c4"), 2.0)
 	for index in range(30):
 		var pos := positions[index]
 		var node_id := _campaign_global_planet_id(campaign_universe, index + 1)
@@ -1492,22 +1504,33 @@ func _draw_campaign_route() -> void:
 		var completed := node_status == "completed"
 		var boss := (index + 1) % 10 == 0
 		var milestone := (index + 1) in [5, 15, 25]
-		var node_radius := (11.0 if compact else 15.0) if milestone else (10.0 if compact else 14.0)
-		var node_rect := Rect2(pos - Vector2.ONE * (node_radius + 3.0), Vector2.ONE * (node_radius + 3.0) * 2.0)
+		var node_radius := (12.0 if compact else 17.0) if milestone or boss else (10.0 if compact else 14.0)
+		var node_rect := Rect2(pos - Vector2.ONE * (node_radius + 5.0), Vector2.ONE * (node_radius + 5.0) * 2.0)
 		campaign_node_rects.append(node_rect)
-		draw_circle(pos, node_radius, Color("#145d61") if completed else (Color("#9a6b22") if unlocked else Color("#193e70")))
+		if not clip_rect.grow(22.0).has_point(pos):
+			continue
+		draw_circle(pos, node_radius + (5.0 if boss else 2.0), Color("#371d43") if boss else Color("#102d58"))
+		draw_circle(pos, node_radius, Color("#145d61") if completed else (Color("#9a6b22") if unlocked else (Color("#543052") if boss else Color("#193e70"))))
 		var node_accent := Color("#8ef4d3") if completed else (Color("#ffd05a") if unlocked else (Color("#ff8fbd") if boss else (Color("#55ddff") if milestone else Color("#496b9c"))))
-		draw_arc(pos, node_radius, 0.0, TAU, 32, node_accent, 2.0, true)
+		draw_arc(pos, node_radius, 0.0, TAU, 32, node_accent, 2.0 if not boss else 3.0, true)
 		if completed:
 			draw_line(pos + Vector2(-4,0), pos + Vector2(-1,4), Color("#ffffff"), 2.0)
 			draw_line(pos + Vector2(-1,4), pos + Vector2(5,-4), Color("#ffffff"), 2.0)
 		elif unlocked:
 			draw_circle(pos, 3.0, Color("#ffffff"))
 		elif boss:
-			draw_line(pos + Vector2(-4,-4), pos + Vector2(4,4), Color("#ff8fbd"), 1.5)
-			draw_line(pos + Vector2(4,-4), pos + Vector2(-4,4), Color("#ff8fbd"), 1.5)
-		draw_string(font, pos + Vector2(-10, node_radius + 12), "%02d" % (index + 1), HORIZONTAL_ALIGNMENT_CENTER, 22, 7 if compact else 9, Color("#d7eaff"))
-	_center_text("НАЖМИ НА ОТКРЫТУЮ ПЛАНЕТУ", screen_size.y - 7.0, 8, Color("#b9eaff"))
+			draw_line(pos + Vector2(-4,-4), pos + Vector2(4,4), Color("#ff8fbd"), 2.0)
+			draw_line(pos + Vector2(4,-4), pos + Vector2(-4,4), Color("#ff8fbd"), 2.0)
+		draw_string(font, pos + Vector2(-14, node_radius + 14), "%03d" % (index + 1), HORIZONTAL_ALIGNMENT_CENTER, 28, 8 if compact else 10, Color("#d7eaff"))
+	if campaign_route_scroll_max > 0.5:
+		var track := Rect2(panel.end.x - 8.0, node_area_top, 2.0, node_area_height)
+		var thumb_height := maxf(28.0, track.size.y * node_area_height / content_height)
+		var progress := campaign_route_scroll_offset / campaign_route_scroll_max
+		var thumb_y := track.position.y + (track.size.y - thumb_height) * (1.0 - progress)
+		draw_line(track.position, Vector2(track.position.x, track.end.y), Color(0.42, 0.62, 0.82, 0.28), 2.0, true)
+		draw_line(Vector2(track.position.x, thumb_y), Vector2(track.position.x, thumb_y + thumb_height), Color("#8fe8ff"), 3.0, true)
+	_center_text("ПРОВЕДИ ВВЕРХ — ПОДНИМАЙСЯ К ФИНАЛЬНОМУ БОССУ", screen_size.y - 7.0, 8, Color("#b9eaff"))
+
 
 func _campaign_briefing_lines(value: String, max_chars: int, max_lines: int) -> Array[String]:
 	var words := value.split(" ", false)
