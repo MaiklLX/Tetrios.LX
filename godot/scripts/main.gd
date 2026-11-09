@@ -105,6 +105,11 @@ func _ready() -> void:
 	var campaign_load: Dictionary = CampaignStore.load_progress(campaign_progress)
 	if not bool(campaign_load.get("ok", false)):
 		push_warning("Campaign progress save could not be loaded: " + str(campaign_load.get("reason", "unknown")))
+	else:
+		for pending_id in campaign_load.get("pending_reward_reveals", []):
+			var reward_id := str(pending_id)
+			if not reward_id.is_empty() and CampaignCollection.get_item(campaign_progress, reward_id).is_empty() == false:
+				campaign_collection_reveal_queue.append(reward_id)
 	home_visible = true
 	mode_select_visible = false
 	mode_session = ModeSession.new()
@@ -971,7 +976,7 @@ func _process_campaign_completion() -> void:
 				campaign_collection_reveal_queue.append(reward_id)
 		if campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
 			_begin_next_campaign_collection_reveal()
-		if not CampaignStore.save_progress(campaign_progress):
+		if not CampaignStore.save_progress(campaign_progress, CampaignStore.DEFAULT_PATH, campaign_collection_reveal_queue):
 			push_warning("Campaign progress could not be saved to user profile storage.")
 	campaign_completion_processed = true
 	_clear_campaign_checkpoint()
@@ -1161,6 +1166,8 @@ func _dismiss_campaign_collection_modal() -> void:
 		campaign_collection_reveal_time = 0.0
 		if not campaign_collection_reveal_queue.is_empty():
 			campaign_collection_reveal_queue.pop_front()
+		if not CampaignStore.save_progress(campaign_progress, CampaignStore.DEFAULT_PATH, campaign_collection_reveal_queue):
+			push_warning("Pending campaign reward reveals could not be saved.")
 		if not campaign_collection_reveal_queue.is_empty():
 			_begin_next_campaign_collection_reveal()
 	else:
