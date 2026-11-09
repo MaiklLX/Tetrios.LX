@@ -147,6 +147,20 @@ const targets = [
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
     await campaignPage.waitForTimeout(3000);
+    // KT-554: verify the browser reward shelf reproduces the 49-item Godot
+    // collection without changing the existing 360-node campaign progression.
+    await campaignPage.locator('#bbOpenCampaignCollection').waitFor({state:'visible',timeout:10000});
+    await campaignPage.locator('#bbOpenCampaignCollection').click();
+    const collectionCount=await campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id]').count();
+    if(collectionCount!==49) failures.push(target.name+': KT-554 expected 49 reward cards, got '+collectionCount);
+    const collectionFinal=campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id="campaign_crown"]');
+    await collectionFinal.click();
+    const collectionDetail=await campaignPage.locator('.bb-collection-detail').innerText();
+    if(!collectionDetail.includes('Корона дальнего пути')||!collectionDetail.includes('ЕЩЁ ВПЕРЕДИ')) failures.push(target.name+': KT-554 final crown detail or locked state is incorrect ('+collectionDetail+')');
+    const collectionRailState=await campaignPage.locator('#bbCampaignCollectionRail').evaluate(el=>({scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,overflow:getComputedStyle(el).overflowX}));
+    if(collectionRailState.scrollWidth<=collectionRailState.clientWidth||collectionRailState.overflow==='hidden') failures.push(target.name+': KT-554 reward strip is not horizontally scrollable ('+JSON.stringify(collectionRailState)+')');
+    await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-reward-shelf.png',fullPage:false});
+    await campaignPage.locator('#bbCampaignCollectionClose').click();
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
       return {
