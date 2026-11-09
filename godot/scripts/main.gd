@@ -591,7 +591,7 @@ func _classify_arena_swipe(delta: Vector2) -> String:
 
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
 	if tutorial_active:
-		return true
+		return start.distance_to(finish) >= 24.0
 	if campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active:
 		var collection_delta := finish - start
 		if campaign_collection_grid_viewport_rect.has_point(start) and absf(collection_delta.x) >= 28.0 and absf(collection_delta.x) > absf(collection_delta.y) * 1.2:
@@ -1023,8 +1023,9 @@ func _draw_tutorial_overlay() -> void:
 	var body_lines: Array = copy.get("lines", [])
 	for index in range(mini(body_lines.size(), 3)):
 		draw_string(font, bubble.position + Vector2(16.0, 58.0 + float(index) * 21.0), str(body_lines[index]), HORIZONTAL_ALIGNMENT_LEFT, bubble.size.x - 32.0, 10, Color("#e0f2ff"))
-	tutorial_skip_rect = Rect2(bubble.position.x + 14.0, bubble.end.y - 46.0, 112.0, 34.0)
-	tutorial_next_rect = Rect2(bubble.end.x - 126.0, bubble.end.y - 46.0, 112.0, 34.0)
+	var tutorial_button_width := minf(112.0, (bubble.size.x - 42.0) * 0.5)
+	tutorial_skip_rect = Rect2(bubble.position.x + 14.0, bubble.end.y - 46.0, tutorial_button_width, 34.0)
+	tutorial_next_rect = Rect2(bubble.end.x - 14.0 - tutorial_button_width, bubble.end.y - 46.0, tutorial_button_width, 34.0)
 	_draw_pill(tutorial_skip_rect, Color("#1b426f"), Color("#719ac1"), 10)
 	_center_text_in_rect("ПРОПУСТИТЬ", tutorial_skip_rect, 8, Color("#d5eaff"))
 	_draw_pill(tutorial_next_rect, Color("#a56b20"), Color("#ffe18a"), 10)
@@ -1414,8 +1415,8 @@ func _begin_next_campaign_collection_reveal() -> void:
 		if str(items[index].get("id", "")) == next_id:
 			campaign_collection_selected = index
 			break
-	var collection_layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
-	campaign_collection_scroll_offset = CampaignCollectionLayout.scroll_offset_for_index(collection_layout, campaign_collection_selected, campaign_collection_scroll_offset)
+	var collection_layout: Dictionary = CampaignCollectionLayout.collection_strip(screen_size)
+	campaign_collection_scroll_offset = CampaignCollectionLayout.scroll_offset_for_index_strip(collection_layout, campaign_collection_selected, campaign_collection_scroll_offset)
 	campaign_collection_reveal_active = true
 	campaign_collection_preview_active = false
 	campaign_collection_reveal_time = 0.0
