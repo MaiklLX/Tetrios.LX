@@ -85,7 +85,9 @@ func _run() -> void:
 			if not _check(thumb.position.y >= track.position.y - 0.1 and thumb.end.y <= track.end.y + 0.1 and end_thumb.end.y >= thumb.end.y, "Scroll thumb must remain on its track and move downward with scroll offset at %s" % [viewport]):
 				return
 		else:
-			if not _check(Rect2(scroll_visual.get("track", Rect2())).is_empty() and Rect2(scroll_visual.get("thumb", Rect2())).is_empty(), "Non-scrollable grid must not show a scroll indicator at %s" % [viewport]):
+			var empty_track: Rect2 = scroll_visual.get("track", Rect2())
+			var empty_thumb: Rect2 = scroll_visual.get("thumb", Rect2())
+			if not _check(empty_track.is_empty() and empty_thumb.is_empty(), "Non-scrollable grid must not show a scroll indicator at %s" % [viewport]):
 				return
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
