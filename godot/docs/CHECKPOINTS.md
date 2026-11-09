@@ -379,3 +379,13 @@
 - The campaign progression/reward store remains separate; only running sessions are checkpointed, and the existing completion guard prevents completion processing from being replayed by a restored completed session.
 - Store tests cover exact runtime recovery, elapsed time, planet identity and rejection without partial mutation. CI #435 validates the change; see [KT-540 lifecycle contract](KT-540_CAMPAIGN_CHECKPOINT_LIFECYCLE.md).
 - OS-level background/foreground behavior still requires physical Android/iOS testing. No main merge, public deployment or APK release.
+
+
+## KT-541 — Restart campaign level after exit
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Adopted the simpler run rule: leaving a campaign level or relaunching the app starts the current planet from its authored beginning. Board, active piece, Hold state and objective timer are transient to the current app session.
+- Removed periodic checkpoint writes, pause-time disk writes and automatic checkpoint restoration from the live scene. Startup clears any legacy run checkpoint left by the previous KT-540 implementation.
+- Manual pause remains available in-session. If the app is backgrounded but its process survives, it pauses in memory and resumes only after the player presses Resume. If the process is terminated, the next launch begins the level again.
+- Campaign progression, completed planets, marks and reward receipts remain persisted independently; restarting a level does not roll back earned campaign progress.
+- The campaign checkpoint store remains isolated and covered by tests, but is no longer part of live run lifecycle.
+- Validation pending on the latest commit. No main merge, public deployment or APK release.
