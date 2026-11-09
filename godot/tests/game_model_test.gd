@@ -356,7 +356,9 @@ func _run() -> void:
 	if not _check(layout_probe.game.active_type == paused_piece_type and layout_probe.game.held_type == -1 and not layout_probe.game.game_over, "HOLD and DROP taps must not mutate gameplay while paused"):
 		return
 	layout_probe.paused = false
-	if not _check(not layout_probe._handle_swipe(Vector2(500.0, 100.0), Vector2(420.0, 100.0)), "Swipes beginning outside the board must not steal button taps"):
+	if not _check(layout_probe._arena_gesture_start_is_valid(Vector2(500.0, 100.0)), "Free arena space outside the board must accept gestures"):
+		return
+	if not _check(not layout_probe._handle_swipe(layout_probe.drop_rect.get_center(), Vector2(420.0, 100.0)), "A swipe beginning on the dedicated DROP control must remain reserved for its tap action"):
 		return
 	# Sprint failure feedback must be distinct and retain progress, time, and score context.
 	layout_probe.mode_session = ModeSession.new()
