@@ -95,7 +95,7 @@ func _run() -> void:
 		for value in row:
 			if int(value) >= 0:
 				layout_cells += 1
-	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 25 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 036 must launch its authored Offset Bay layout with a standard piece"):
+	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 27 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 036 must launch its authored Offset Bay layout with a standard piece"):
 		return
 	progress.import_legacy_progress(46, 0)
 	main_scene.set("campaign_planet", 16)
@@ -106,7 +106,7 @@ func _run() -> void:
 		for value in row:
 			if int(value) >= 0:
 				layout_cells += 1
-	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 26 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 046 must launch its authored Staggered Joint layout with a standard piece"):
+	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 27 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 046 must launch its authored Staggered Joint layout with a standard piece"):
 		return
 
 	main_scene.set("campaign_run_active", false)
