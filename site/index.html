@@ -9316,9 +9316,14 @@ if (resetProgressBtn) {
       prepareGestureTest(){
         board=Array.from({length:H},()=>Array(W).fill(0));
         piece={t:0,shape:[[0,1,0],[1,1,1]],x:3,y:4};
+        // Keep Hold/Drop assertions deterministic: Hold must swap to a
+        // different tetromino, then Drop must respawn the known T piece.
+        nextType=1;
+        holdUsed=0;
         started=true;paused=false;gameOver=false;touch=null;lastTouchDropAt=-Infinity;
         bbHardDropAcceptedAt=-Infinity;bbHardDropInProgress=false;
         render();
+        restartDrop();
         return {ready:!!piece,x:piece.x,y:piece.y};
       },
       getPieceState(){
