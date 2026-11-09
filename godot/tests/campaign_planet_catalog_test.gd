@@ -32,7 +32,15 @@ func _run() -> void:
 	var boss_40 := campaign.get_planet_definition(40)
 	var boss_60 := campaign.get_planet_definition(60)
 	var layout_33 := campaign.get_planet_definition(33)
+	var layout_36 := campaign.get_planet_definition(36)
+	var layout_46 := campaign.get_planet_definition(46)
 	if not _check(layout_33.layout_id == "cargo_corridor" and layout_33.starting_layout.size() == 3, "Planet 033 must resolve its authored Cargo Corridor board layout"):
+		return
+	if not _check(layout_33.objective_type == "lines" and layout_33.target_lines == 12 and layout_33.difficulty_band == "guided" and layout_33.expected_duration_seconds == [90, 150], "Planet 033 must resolve its explicit guided objective and duration band"):
+		return
+	if not _check(layout_36.objective_type == "lines" and layout_36.target_lines == 12 and layout_36.difficulty_band == "standard" and layout_36.expected_duration_seconds == [120, 180], "Planet 036 must resolve its authored standard mission contract"):
+		return
+	if not _check(layout_46.objective_type == "lines" and layout_46.target_lines == 13 and layout_46.expected_duration_seconds == [150, 210], "Planet 046 must resolve its later-chapter objective and pacing band"):
 		return
 	var malformed_layout := chapter.duplicate(true)
 	malformed_layout.planets[2].starting_layout[0] = "##########"
@@ -45,6 +53,14 @@ func _run() -> void:
 	if not _check(planet_56.objective_type == "lines" and planet_56.target_lines > 0, "Authored event metadata must preserve the validated line objective"):
 		return
 	if not _check(boss_40.boss_name == "Страж конвоя" and boss_60.boss_name == "Адмирал дальнего пути", "Star Caravan bosses must have authored identities"):
+		return
+	var malformed_mission := chapter.duplicate(true)
+	malformed_mission.planets[2].mission_definition.target_lines = -1
+	if not _check(not Catalog.validate_chapter(malformed_mission).valid, "Catalog validator must reject negative authored mission targets"):
+		return
+	malformed_mission = chapter.duplicate(true)
+	malformed_mission.planets[5].mission_definition.expected_duration_seconds = [180, 90]
+	if not _check(not Catalog.validate_chapter(malformed_mission).valid, "Catalog validator must reject inverted mission duration bands"):
 		return
 	var malformed := chapter.duplicate(true)
 	malformed.planets[4].local_id = 99
