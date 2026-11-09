@@ -7351,7 +7351,7 @@ function buildMap() {
     g.appendChild(hint);
     requestAnimationFrame(() => {
       const active = track.querySelector('.is-current');
-      if (active) viewport.scrollTo({top:Math.max(0,active.offsetTop - viewport.clientHeight * .58),behavior:'smooth'});
+      if (active) viewport.scrollTop = Math.max(0,active.offsetTop - viewport.clientHeight * .58);
       if(bbCampaignArrivalNode===current){const arrived=track.querySelector('.is-arrival');if(arrived){arrived.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});}bbCampaignArrivalNode=0;}
     });
   };
