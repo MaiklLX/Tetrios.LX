@@ -12,6 +12,7 @@ const CampaignAchievements = preload("res://scripts/campaign_achievements.gd")
 const CampaignCollection = preload("res://scripts/campaign_collection.gd")
 const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
 const CampaignCollectionLayout = preload("res://scripts/campaign_collection_layout.gd")
+const CampaignRewardQueue = preload("res://scripts/campaign_reward_reveal_queue.gd")
 const CampaignRuntime = preload("res://scripts/campaign_piece_runtime.gd")
 const CampaignRunStore = preload("res://scripts/campaign_piece_store.gd")
 const CampaignSpecialPiece = preload("res://scripts/campaign_special_piece.gd")
@@ -107,10 +108,7 @@ func _ready() -> void:
 	if not bool(campaign_load.get("ok", false)):
 		push_warning("Campaign progress save could not be loaded: " + str(campaign_load.get("reason", "unknown")))
 	else:
-		for pending_id in campaign_load.get("pending_reward_reveals", []):
-			var reward_id := str(pending_id)
-			if not reward_id.is_empty() and CampaignCollection.get_item(campaign_progress, reward_id).is_empty() == false:
-				campaign_collection_reveal_queue.append(reward_id)
+		campaign_collection_reveal_queue = CampaignRewardQueue.sanitize(campaign_progress, campaign_load.get("pending_reward_reveals", []))
 	home_visible = true
 	mode_select_visible = false
 	mode_session = ModeSession.new()
@@ -972,9 +970,8 @@ func _process_campaign_completion() -> void:
 	if bool(result.get("accepted", false)):
 		campaign_last_reward_marks = int(result.get("reward_marks", 0))
 		var current_collection: Dictionary = CampaignCollection.get_collection_summary(campaign_progress)
-		for reward_id in CampaignCollection.get_newly_unlocked_ids(previous_collection, current_collection):
-			if not campaign_collection_reveal_queue.has(reward_id):
-				campaign_collection_reveal_queue.append(reward_id)
+		var newly_unlocked: Array[String] = CampaignCollection.get_newly_unlocked_ids(previous_collection, current_collection)
+		campaign_collection_reveal_queue = CampaignRewardQueue.append_unique(campaign_collection_reveal_queue, newly_unlocked)
 		if campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
 			_begin_next_campaign_collection_reveal()
 		if not CampaignStore.save_progress(campaign_progress, CampaignStore.DEFAULT_PATH, campaign_collection_reveal_queue):
@@ -1165,12 +1162,14 @@ func _begin_next_campaign_collection_reveal() -> void:
 
 func _dismiss_campaign_collection_modal() -> void:
 	if campaign_collection_reveal_active:
+		var acknowledgement: Dictionary = CampaignRewardQueue.acknowledge_first(campaign_progress, campaign_collection_reveal_queue)
+		if not bool(acknowledgement.get("ok", false)):
+			push_warning("Pending campaign reward reveal could not be acknowledged: " + str(acknowledgement.get("reason", "unknown")))
+			queue_redraw()
+			return
+		campaign_collection_reveal_queue = acknowledgement.get("pending_reward_reveals", [])
 		campaign_collection_reveal_active = false
 		campaign_collection_reveal_time = 0.0
-		if not campaign_collection_reveal_queue.is_empty():
-			campaign_collection_reveal_queue.pop_front()
-		if not CampaignStore.save_progress(campaign_progress, CampaignStore.DEFAULT_PATH, campaign_collection_reveal_queue):
-			push_warning("Pending campaign reward reveals could not be saved.")
 		if not campaign_collection_reveal_queue.is_empty():
 			_begin_next_campaign_collection_reveal()
 	else:
