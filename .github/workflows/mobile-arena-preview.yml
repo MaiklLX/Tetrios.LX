@@ -164,6 +164,16 @@ jobs:
                   geometry.side.bottom > geometry.frame.bottom + 3)) {
                 failures.push('Right utility rail is not aligned beside the arena at ' + viewport.name + ': ' + JSON.stringify({frame:geometry.frame,side:geometry.side}));
               }
+              // KT-427.6: the 375px narrow rail must share the frame's top and
+              // bottom edges in both Chromium and WebKit, not merely avoid clipping.
+              if (viewport.name === '375x812' && geometry.frame && geometry.side) {
+                const topDelta = Math.abs(geometry.side.y - geometry.frame.y);
+                const bottomDelta = Math.abs(geometry.side.bottom - geometry.frame.bottom);
+                if (topDelta > 2 || bottomDelta > 2) {
+                  failures.push('375x812 utility rail must align with the arena frame (top delta ' +
+                    topDelta.toFixed(2) + 'px, bottom delta ' + bottomDelta.toFixed(2) + 'px)');
+                }
+              }
               if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36 ||
                   geometry.drop.x < geometry.side.x - 1 || geometry.drop.right > geometry.side.right + 1 ||
                   geometry.drop.bottom > viewport.height + 2) {
