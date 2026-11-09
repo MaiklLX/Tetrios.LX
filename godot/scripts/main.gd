@@ -1038,7 +1038,12 @@ func _draw_tutorial_overlay() -> void:
 
 
 func _touch_feedback_target_rect(point: Vector2) -> Rect2:
-	if home_visible:
+	if tutorial_active:
+		if tutorial_next_rect.has_point(point):
+			return tutorial_next_rect
+		if tutorial_skip_rect.has_point(point):
+			return tutorial_skip_rect
+	elif home_visible:
 		for rect in [home_campaign_rect, home_block_run_rect, home_tasks_rect, home_collection_rect, home_heroes_rect, home_shop_rect, home_upgrades_rect]:
 			if rect.has_point(point):
 				return rect
