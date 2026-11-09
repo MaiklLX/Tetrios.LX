@@ -35,7 +35,7 @@ func _run() -> void:
 		return
 	if not _check(planet_56.event_status == "live_campaign_piece" and planet_56.special_piece_id == "cargo_hook", "Planet 056 must identify the Cargo Hook showcase as live campaign content"):
 		return
-	if not _check(planet_56.objective_type == "score" and planet_56.target_score > 0, "Authored metadata must preserve the validated score objective"):
+	if not _check(planet_56.objective_type == "lines" and planet_56.target_lines > 0, "Authored event metadata must preserve the validated line objective"):
 		return
 	if not _check(boss_40.boss_name == "Страж конвоя" and boss_60.boss_name == "Адмирал дальнего пути", "Star Caravan bosses must have authored identities"):
 		return
