@@ -399,3 +399,16 @@
 - Staged KT-543 catalog audit, KT-544 Star Caravan mechanic package, KT-545 authored mission runner/layouts, KT-546 boss framework, KT-547 reward sinks, KT-548 universe-by-universe content production and KT-549 full-campaign balance/release acceptance.
 - Immediate next action: KT-543 data-backed audit of all 360 nodes and a chapter authoring matrix. No gameplay changes in KT-542.
 - No main merge, public deployment or APK release.
+
+
+## KT-543 — 360-planet campaign catalog audit
+- Read-only audit completed from the current progression and mechanics definitions.
+- Exact mission-family distribution: 252 standard line-clear, 36 score-only, 36 survival-only and 36 boss-combo nodes.
+- Registry currently schedules 33 ordinary single-modifier nodes and 19 paired boss nodes (71 modifier entries) from Universe 02 onward; these are candidate assignments, not proof of live mechanics.
+- Identified a key integration gap: six candidate registry modifier IDs differ from the six source-audited isolated effect-adapter IDs. A tested mapping/runtime contract is required before these become playable campaign rules.
+- Universe 02 is the only chapter with a live signature event so far: Cargo Hook on Planet 031. Other universe mechanic families remain registry/planned concepts.
+- Bosses currently share the same line+score objective structure; 12 distinct authored boss encounters and their presentation remain future work.
+- Campaign marks and exactly-once receipts persist, but a meaningful reward sink/collection loop and full 360th-node finale presentation remain to be completed.
+- Added `godot/docs/KT-543_CAMPAIGN_360_CATALOG_AUDIT.md` with universe matrix, chapter rhythm, gaps and acceptance gates.
+- Next: implement the versioned authored planet-definition schema and deterministic catalog validator, retaining the existing formula as fallback during migration.
+- No gameplay changes, main merge, public deployment or APK release.
