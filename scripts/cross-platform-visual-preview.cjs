@@ -92,6 +92,28 @@ const targets = [
       continue;
     }
 
+    // KT-553: capture the actual pressed state on a real menu control. Remove
+    // the held control before mouseup so the visual probe cannot start a game.
+    const pressTarget = page.locator('button.mode[data-mode="rogue"]');
+    const pressBox = await pressTarget.boundingBox();
+    if (!pressBox) {
+      failures.push(target.name + ': KT-553 press target has no visible geometry');
+    } else {
+      await page.mouse.move(pressBox.x + pressBox.width / 2, pressBox.y + pressBox.height / 2);
+      await page.mouse.down();
+      await page.waitForTimeout(90);
+      const pressState = await pressTarget.evaluate(el => {
+        const s = getComputedStyle(el);
+        return {outlineStyle:s.outlineStyle,outlineColor:s.outlineColor,boxShadow:s.boxShadow,transform:s.transform,filter:s.filter};
+      });
+      if (pressState.outlineStyle !== 'solid' || pressState.boxShadow === 'none' || pressState.transform === 'none') {
+        failures.push(target.name + ': KT-553 Godot-style pressed state is incomplete (' + JSON.stringify(pressState) + ')');
+      }
+      await page.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-menu-press-feedback.png',fullPage:false});
+      await pressTarget.evaluate(el => el.remove());
+      await page.mouse.up();
+    }
+
     console.log('[stage:card-library] ' + target.name);
     // The complete card archive must be available before starting a run on every platform.
     await page.locator('#bbOpenCardLibrary').click();
