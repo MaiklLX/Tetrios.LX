@@ -55,6 +55,11 @@ var campaign_atlas_rects: Array[Rect2] = []
 var campaign_collection_rect := Rect2()
 var campaign_collection_item_rects: Array[Rect2] = []
 var campaign_collection_selected := 0
+var campaign_collection_inspect_rect := Rect2()
+var campaign_collection_reveal_queue: Array[String] = []
+var campaign_collection_reveal_active := false
+var campaign_collection_reveal_time := 0.0
+var campaign_collection_preview_active := false
 var campaign_node_rects: Array[Rect2] = []
 var campaign_start_rect := Rect2()
 var campaign_back_rect := Rect2()
@@ -213,6 +218,9 @@ func _gravity_interval_for_level(current_level: int) -> float:
 
 func _process(delta: float) -> void:
 	ambient_time = fmod(ambient_time + delta, 1000.0)
+	if campaign_collection_reveal_active:
+		campaign_collection_reveal_time += delta
+		queue_redraw()
 	if clear_flash_time > 0.0:
 		clear_flash_time = maxf(0.0, clear_flash_time - delta)
 		queue_redraw()
@@ -457,6 +465,9 @@ func _restart_current_run() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
+		if campaign_screen == "collection" and event.keycode == KEY_ESCAPE and (campaign_collection_reveal_active or campaign_collection_preview_active):
+			_dismiss_campaign_collection_modal()
+			return
 		if mode_select_visible:
 			if event.keycode == KEY_ESCAPE:
 				mode_select_visible = false
@@ -577,25 +588,35 @@ func _handle_tap(point: Vector2) -> void:
 			campaign_collection_selected = 0
 			campaign_collection_from_home = true
 			home_visible = false
+			_begin_next_campaign_collection_reveal()
 		queue_redraw()
 		return
 	if not campaign_screen.is_empty():
 		if campaign_screen == "collection":
-			if campaign_back_rect.has_point(point):
+			if campaign_collection_reveal_active or campaign_collection_preview_active:
+				_dismiss_campaign_collection_modal()
+			elif campaign_back_rect.has_point(point):
 				if campaign_collection_from_home:
 					campaign_screen = ""
 					home_visible = true
 					campaign_collection_from_home = false
 				else:
 					campaign_screen = "atlas"
+			elif campaign_collection_inspect_rect.has_point(point):
+				campaign_collection_preview_active = true
 			else:
 				for index in range(campaign_collection_item_rects.size()):
 					if campaign_collection_item_rects[index].has_point(point):
-						campaign_collection_selected = index
+						if campaign_collection_selected == index:
+							campaign_collection_preview_active = true
+						else:
+							campaign_collection_selected = index
 						break
 		elif campaign_collection_rect.has_point(point) and campaign_screen == "atlas":
 			campaign_screen = "collection"
 			campaign_collection_selected = 0
+			campaign_collection_from_home = false
+			_begin_next_campaign_collection_reveal()
 		elif campaign_back_rect.has_point(point):
 			if campaign_screen == "planet":
 				campaign_screen = "route"
@@ -935,9 +956,14 @@ func _start_campaign_planet() -> void:
 func _process_campaign_completion() -> void:
 	if not campaign_run_active or campaign_completion_processed or mode_session == null or mode_session.status != ModeSession.STATUS_COMPLETED:
 		return
+	var previous_collection: Dictionary = CampaignCollection.get_collection_summary(campaign_progress)
 	var result: Dictionary = campaign_progress.complete_planet(campaign_run_planet_id, _active_lines(), _active_score(), mode_session.elapsed_seconds)
 	if bool(result.get("accepted", false)):
 		campaign_last_reward_marks = int(result.get("reward_marks", 0))
+		var current_collection: Dictionary = CampaignCollection.get_collection_summary(campaign_progress)
+		for reward_id in CampaignCollection.get_newly_unlocked_ids(previous_collection, current_collection):
+			if not campaign_collection_reveal_queue.has(reward_id):
+				campaign_collection_reveal_queue.append(reward_id)
 		if not CampaignStore.save_progress(campaign_progress):
 			push_warning("Campaign progress could not be saved to user profile storage.")
 	campaign_completion_processed = true
