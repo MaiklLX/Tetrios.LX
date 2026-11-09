@@ -57,7 +57,7 @@ jobs:
           cp -a "$RUNNER_TEMP/three-package/package" public-site/site/vendor/three
           test -s public-site/site/vendor/three/build/three.module.js
           test -s public-site/site/vendor/three/examples/jsm/loaders/GLTFLoader.js
-          node public-site/site/validate-3d-runtime.mjs
+          cd public-site && node site/validate-3d-runtime.mjs
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -109,9 +109,8 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Verify mobile build in Chromium
-        working-directory: mobile-source
         timeout-minutes: 5
-        run: node scripts/validate-godot-web.mjs
+        run: node mobile-source/scripts/validate-godot-web.mjs
 
       - name: Upload complete Pages site (legacy + current preview + mobile test)
         uses: actions/upload-pages-artifact@v3
