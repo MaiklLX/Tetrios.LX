@@ -3,6 +3,7 @@ extends SceneTree
 const Campaign = preload("res://scripts/campaign_progress.gd")
 const Collection = preload("res://scripts/campaign_collection.gd")
 const ProgressStore = preload("res://scripts/campaign_progress_store.gd")
+const RewardQueue = preload("res://scripts/campaign_reward_reveal_queue.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -101,6 +102,29 @@ func _run() -> void:
 	var restored_progress = Campaign.new()
 	var restored_save: Dictionary = ProgressStore.load_progress(restored_progress, store_path)
 	if not _check(bool(restored_save.get("ok", false)) and restored_save.get("pending_reward_reveals", []) == pending_ids, "Pending reward reveals must survive save and reload in their original order"):
+		return
+	var appended_ids: Array[String] = RewardQueue.append_unique(pending_ids, ["boss_insignia_030", "boss_insignia_010", ""])
+	if not _check(appended_ids == ["universe_relic_01", "boss_insignia_030", "boss_insignia_010"], "New rewards must append once, preserve order and ignore empty IDs"):
+		return
+	var sanitized_ids: Array[String] = RewardQueue.sanitize(first_universe, ["boss_insignia_030", "unknown_reward", "universe_relic_01", "boss_insignia_030", ""])
+	if not _check(sanitized_ids == pending_ids, "Restored reveal queue must discard unknown, empty and duplicate IDs without reordering valid rewards"):
+		return
+	var first_ack: Dictionary = RewardQueue.acknowledge_first(first_universe, pending_ids, store_path)
+	if not _check(bool(first_ack.get("ok", false)) and first_ack.get("acknowledged_id", "") == "universe_relic_01" and first_ack.get("pending_reward_reveals", []) == ["boss_insignia_030"], "Acknowledging a reveal must consume exactly the first reward and persist the remainder"):
+		return
+	var after_first_ack = Campaign.new()
+	var after_first_ack_save: Dictionary = ProgressStore.load_progress(after_first_ack, store_path)
+	if not _check(bool(after_first_ack_save.get("ok", false)) and after_first_ack_save.get("pending_reward_reveals", []) == ["boss_insignia_030"], "A restart after the first acknowledgement must restore only the next unacknowledged reward"):
+		return
+	var second_ack: Dictionary = RewardQueue.acknowledge_first(after_first_ack, ["boss_insignia_030"], store_path)
+	if not _check(bool(second_ack.get("ok", false)) and second_ack.get("acknowledged_id", "") == "boss_insignia_030" and second_ack.get("pending_reward_reveals", []).is_empty(), "The second acknowledgement must clear only the final reward"):
+		return
+	var after_second_ack = Campaign.new()
+	var after_second_ack_save: Dictionary = ProgressStore.load_progress(after_second_ack, store_path)
+	if not _check(bool(after_second_ack_save.get("ok", false)) and after_second_ack_save.get("pending_reward_reveals", []).is_empty(), "A restart after all acknowledgements must not replay completed reveals"):
+		return
+	var failed_ack: Dictionary = RewardQueue.acknowledge_first(first_universe, pending_ids, "user://missing_reward_queue_dir/save.cfg")
+	if not _check(not bool(failed_ack.get("ok", true)) and failed_ack.get("pending_reward_reveals", []) == pending_ids, "A failed save must leave the original reward queue intact and unacknowledged"):
 		return
 	var legacy_store_path := "user://campaign_collection_legacy_test.cfg"
 	var legacy_config := ConfigFile.new()
