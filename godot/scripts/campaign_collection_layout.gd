@@ -64,3 +64,17 @@ static func reward_modal(viewport: Vector2) -> Rect2:
 	var width := minf(maxf(180.0, viewport.x - 24.0), 360.0)
 	var height := minf(maxf(240.0, viewport.y - 32.0), 356.0)
 	return Rect2((viewport - Vector2(width, height)) * 0.5, Vector2(width, height))
+
+
+static func scrollbar(layout: Dictionary, scroll_offset: float) -> Dictionary:
+	if not bool(layout.get("scrollable", false)):
+		return {"track": Rect2(), "thumb": Rect2()}
+	var grid: Rect2 = layout.get("grid_viewport_rect", Rect2())
+	var row_count := maxi(1, int(layout.get("row_count", 1)))
+	var visible_rows := clampi(int(layout.get("visible_rows", 1)), 1, row_count)
+	var max_scroll := maxf(0.0, float(layout.get("max_scroll", 0.0)))
+	var track := Rect2(grid.end.x + 3.0, grid.position.y + 2.0, 2.0, maxf(1.0, grid.size.y - 4.0))
+	var thumb_height := minf(track.size.y, maxf(18.0, track.size.y * float(visible_rows) / float(row_count)))
+	var progress := clampf(scroll_offset / max_scroll, 0.0, 1.0) if max_scroll > 0.0 else 0.0
+	var thumb_y := track.position.y + (track.size.y - thumb_height) * progress
+	return {"track": track, "thumb": Rect2(track.position.x - 0.5, thumb_y, 3.0, thumb_height)}
