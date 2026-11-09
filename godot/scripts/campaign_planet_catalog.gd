@@ -136,11 +136,22 @@ static func validate_chapter(chapter: Dictionary) -> Dictionary:
 			var phases: Variant = planet.get("boss_phases")
 			if typeof(phases) != TYPE_ARRAY or phases.size() != 3:
 				return {"valid":false,"reason":"boss_requires_three_phases","local_id":index + 1}
-			for phase in phases:
+			var total_phase_lines := 0
+			var total_phase_score := 0
+			for phase_index in range(phases.size()):
+				var phase: Variant = phases[phase_index]
 				if typeof(phase) != TYPE_DICTIONARY or str(phase.get("title", "")).strip_edges().is_empty():
 					return {"valid":false,"reason":"invalid_boss_phase","local_id":index + 1}
-				if int(phase.get("target_lines", 0)) <= 0 and int(phase.get("target_score", 0)) <= 0:
-					return {"valid":false,"reason":"empty_boss_phase","local_id":index + 1}
+				var phase_lines := int(phase.get("target_lines", 0))
+				var phase_score := int(phase.get("target_score", 0))
+				if phase_lines < 0 or phase_score < 0:
+					return {"valid":false,"reason":"negative_boss_phase_target","local_id":index + 1,"phase":phase_index + 1}
+				if phase_lines == 0 and phase_score == 0:
+					return {"valid":false,"reason":"empty_boss_phase","local_id":index + 1,"phase":phase_index + 1}
+				total_phase_lines += phase_lines
+				total_phase_score += phase_score
+			if total_phase_lines <= 0 or total_phase_score < 0:
+				return {"valid":false,"reason":"invalid_boss_phase_totals","local_id":index + 1}
 		if event_status == "implemented" and not boss:
 			return {"valid":false,"reason":"unapproved_implemented_event","local_id":index + 1}
 	return {"valid":true,"reason":"ok","planet_count":planets.size()}
