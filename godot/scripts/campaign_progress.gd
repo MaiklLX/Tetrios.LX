@@ -54,6 +54,9 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		target_lines = line_target
 		target_score = score_target + 300
 		boss_type = "guardian" if planet_in_universe == 10 else ("champion" if planet_in_universe == 20 else "final")
+	var difficulty_band := "guided" if planet_in_universe <= 9 else ("standard" if planet_in_universe <= 19 else ("advanced" if planet_in_universe <= 29 else "mastery"))
+	var duration_floor := 90 + local_step * 30
+	var expected_duration := [duration_floor, duration_floor + 60]
 	var reward := 1 + (4 if boss else 0) + (10 if node_id == TOTAL_PLANETS else 0)
 	var definition := {
 		"node_id": node_id,
@@ -68,6 +71,9 @@ func get_planet_definition(node_id: int) -> Dictionary:
 		"target_lines": target_lines,
 		"target_score": target_score,
 		"target_survive_seconds": target_survive_seconds,
+		"difficulty_band": difficulty_band,
+		"expected_duration_seconds": expected_duration,
+		"event_schedule": [],
 		"time_limit_seconds": 0,
 		"reward_marks": reward
 	}
