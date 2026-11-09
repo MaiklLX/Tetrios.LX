@@ -40,6 +40,15 @@ func _run() -> void:
 	seed(20261109)
 	var probe := _make_probe()
 	var board_center: Vector2 = probe.board_rect.get_center()
+	var tall_metrics: Dictionary = probe._board_metrics(Vector2(720.0, 1600.0))
+	if not _check(float(tall_metrics.cell) >= 50.0 and tall_metrics.board_rect.end.y < 1600.0, "Tall phone layout must enlarge the board while staying inside the expanded viewport"):
+		return
+	if not _check(probe._classify_arena_swipe(Vector2(90.0, 8.0)) == "horizontal", "A clearly horizontal swipe must be classified as movement"):
+		return
+	if not _check(probe._classify_arena_swipe(Vector2(5.0, -70.0)) == "vertical", "A clearly vertical upward swipe must be classified as rotation"):
+		return
+	if not _check(probe._classify_arena_swipe(Vector2(65.0, -58.0)) == "ambiguous", "A diagonal swipe must not be guessed as movement or rotation"):
+		return
 	var left_gutter := Vector2(4.0, board_center.y)
 	var right_gutter := Vector2(716.0, board_center.y)
 	if not _check(not probe.board_rect.has_point(left_gutter) and probe._arena_gesture_start_is_valid(left_gutter), "Free left gutter must accept gestures even though it is outside the board"):
@@ -58,7 +67,11 @@ func _run() -> void:
 		return
 
 	var shape_before: Array[Vector2i] = probe.game.active_cells.duplicate()
-	if not _check(probe._handle_swipe(right_gutter, right_gutter + Vector2(0.0, -60.0)), "A rotation swipe beginning in the free right gutter must be handled"):
+	if not _check(probe._handle_swipe(right_gutter, right_gutter + Vector2(65.0, -58.0)), "An ambiguous diagonal swipe must be consumed safely"):
+		return
+	if not _check(probe.game.active_cells == shape_before, "An ambiguous diagonal swipe must not rotate the active piece"):
+		return
+	if not _check(probe._handle_swipe(right_gutter, right_gutter + Vector2(0.0, -70.0)), "A clearly vertical rotation swipe beginning in the free right gutter must be handled"):
 		return
 	if not _check(probe.game.active_cells != shape_before, "A right-gutter swipe must rotate the active piece"):
 		return
