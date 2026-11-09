@@ -14517,4 +14517,36 @@ body .app{background:transparent!important;background-color:transparent!importan
 }
 </style>
 
+
+
+<style id="bb-kt552-portrait-arena-scale">
+/* KT-552: reclaim a little more of the tall-phone portrait viewport for the
+   10:23 playfield. Keep the Godot KT-549 cabinet treatment; only scale its
+   existing browser implementation, never the board's logical geometry. */
+@media (max-width:600px) and (max-height:860px) and (orientation:portrait){
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,56vw)!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:64dvh!important;
+    aspect-ratio:10/23!important;
+    flex:0 0 auto!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    align-items:center!important;
+    justify-content:center!important;
+    min-height:0!important;
+  }
+}
+@media (min-width:381px) and (max-width:600px) and (min-height:861px) and (orientation:portrait){
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,56vw)!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:66dvh!important;
+    aspect-ratio:10/23!important;
+  }
+}
+</style>
+
 </body></html>
