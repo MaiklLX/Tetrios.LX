@@ -44,7 +44,7 @@ static func get_collection_summary(progress: BlockBuddiesCampaignProgress) -> Di
 			"unlocked": unlocked
 		})
 		for boss_step in [10, 20, 30]:
-			var boss_node := universe_index * Campaign.PLANETS_PER_UNIVERSE + boss_step
+			var boss_node: int = universe_index * Campaign.PLANETS_PER_UNIVERSE + int(boss_step)
 			var boss_definition: Dictionary = progress.get_planet_definition(boss_node)
 			var boss_unlocked := progress.is_completed(boss_node)
 			if boss_unlocked:
