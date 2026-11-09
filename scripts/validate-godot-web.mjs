@@ -31,8 +31,6 @@ const server = createServer(async (request, response) => {
       "Content-Type": mime[extname(filePath)] ?? "application/octet-stream",
       "Content-Length": info.size,
       "Cache-Control": "no-store",
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp",
     });
     response.end(await readFile(filePath));
   } catch {
@@ -126,7 +124,10 @@ try {
     return { available: true, markerRoundTrip: marker === "persisted", godotDatabases: names };
   });
   if (!storage.markerRoundTrip) throw new Error("IndexedDB persistence round-trip failed");
-  results.push({ check: "browser IndexedDB persistence capability", ...storage });
+  if (!storage.godotDatabases.includes("/userfs")) {
+    throw new Error(`Godot IndexedDB user filesystem was not initialized: ${JSON.stringify(storage.godotDatabases)}`);
+  }
+  results.push({ check: "Godot IndexedDB user filesystem + browser storage round-trip", ...storage });
 
   for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }, { width: 1280, height: 800 }]) {
     await page.setViewportSize(viewport);
@@ -152,6 +153,17 @@ try {
   });
   if (!stillRunning) throw new Error("Game stopped after mobile touch input");
   results.push({ check: "mobile touch input", passed: true });
+
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => !document.querySelector("#status"), { timeout: 90000 });
+  const persistedGodotFs = await page.evaluate(async () => {
+    const names = typeof indexedDB.databases === "function"
+      ? (await indexedDB.databases()).map((entry) => entry.name).filter(Boolean)
+      : [];
+    return names.includes("/userfs");
+  });
+  if (!persistedGodotFs) throw new Error("Godot IndexedDB user filesystem did not survive browser reload");
+  results.push({ check: "Godot user filesystem survives reload", passed: true });
 
   if (failures.length) throw new Error(`Browser runtime errors:\\n${failures.join("\\n")}`);
   console.log(JSON.stringify({ status: "PASS", results, runtimeErrors: failures }, null, 2));
