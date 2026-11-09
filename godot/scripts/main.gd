@@ -1127,15 +1127,20 @@ func _draw_campaign_collection() -> void:
 		var muted_accent := accent if unlocked else accent.darkened(0.66).lerp(Color("#7186a5"), 0.55)
 		var fill := muted_accent.darkened(0.78) if unlocked else muted_accent.darkened(0.88)
 		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else muted_accent, 8, 3 if selected else 1)
+		if selected:
+			draw_rect(rect.grow(1.5), Color("#fff0b9"), false, 2.0, true)
+			draw_rect(rect.grow(-2.0), Color(0.56, 0.91, 1.0, 0.72), false, 1.0, true)
 		if universe_complete:
 			draw_rect(Rect2(rect.position + Vector2(5.0, 3.0), Vector2(rect.size.x - 10.0, 2.0)), Color("#8ef4d3"))
 			draw_circle(Vector2(rect.end.x - 7.0, rect.position.y + 7.0), 3.0, Color("#8ef4d3"))
 		var emblem_center := Vector2(rect.get_center().x, rect.position.y + cell_h * 0.39)
 		_draw_collection_emblem(emblem_center, minf(11.0, cell_w * 0.27), kind, muted_accent, visual_variant, planet_id)
 		if not unlocked:
-			var lock_center := emblem_center + Vector2(0.0, 1.0)
-			draw_arc(lock_center, minf(7.0, cell_w * 0.18), PI, TAU, 16, Color("#7186a5"), 1.5, true)
-			draw_rect(Rect2(lock_center + Vector2(-4.0, -1.0), Vector2(8.0, 7.0)), Color("#7186a5"), false, 1.3)
+			# Keep the reward silhouette unobstructed; the lock sits in its own corner badge.
+			var lock_center := Vector2(rect.end.x - 8.0, rect.position.y + 8.0)
+			draw_circle(lock_center, 5.5, Color("#172b4c"))
+			draw_arc(lock_center + Vector2(0.0, -1.0), 2.7, PI, TAU, 12, Color("#a9bdd5"), 1.1, true)
+			draw_rect(Rect2(lock_center + Vector2(-2.6, -0.2), Vector2(5.2, 4.0)), Color("#a9bdd5"))
 		var short_label := "Р%02d" % universe_number if kind == "universe_relic" else ("КОРОНА" if kind == "campaign_crown" else "Б%03d" % int(item.get("planet_id", 0)))
 		draw_string(font, Vector2(rect.position.x + 1.0, rect.end.y - 5.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 2.0, 7 if compact else 9, Color("#ffffff") if unlocked else Color("#8095b2"))
 	var selected_item: Dictionary = items[clampi(campaign_collection_selected, 0, items.size() - 1)] if not items.is_empty() else {}
@@ -1158,6 +1163,13 @@ func _draw_campaign_collection() -> void:
 		draw_string(font, detail_rect.position + Vector2(10.0, detail_rect.size.y - 5.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#ffd77a"))
 		_draw_soft_panel(campaign_collection_inspect_rect, Color("#174d79"), Color("#8fe8ff"), 9, 3)
 		_center_text("ОСМОТР", campaign_collection_inspect_rect.position.y + campaign_collection_inspect_rect.size.y * 0.67, 8, Color("#ffffff"))
+	if bool(layout.scrollable):
+		var scroll_visual: Dictionary = CampaignCollectionLayout.scrollbar(layout, campaign_collection_scroll_offset)
+		var scroll_track: Rect2 = scroll_visual.get("track", Rect2())
+		var scroll_thumb: Rect2 = scroll_visual.get("thumb", Rect2())
+		if not scroll_track.is_empty() and not scroll_thumb.is_empty():
+			draw_line(scroll_track.position, Vector2(scroll_track.position.x, scroll_track.end.y), Color(0.42, 0.62, 0.82, 0.28), 2.0, true)
+			draw_line(scroll_thumb.position, Vector2(scroll_thumb.position.x, scroll_thumb.end.y), Color("#8fe8ff"), 3.0, true)
 	var footer_text := "ЛИСТАЙ СЕТКУ ВВЕРХ / ВНИЗ" if bool(layout.scrollable) else "ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»"
 	_center_text(footer_text, float(layout.footer_y), 8, Color("#b9eaff"))
 	if campaign_collection_reveal_active or campaign_collection_preview_active:
