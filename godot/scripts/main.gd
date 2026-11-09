@@ -419,6 +419,7 @@ func _restart_current_run() -> void:
 			mode_session.rules["target_score"] = int(campaign_definition.get("target_score", 0))
 			mode_session.rules["target_survive_seconds"] = float(campaign_definition.get("target_survive_seconds", 0))
 			mode_session.rules["time_limit_seconds"] = float(campaign_definition.get("time_limit_seconds", 0))
+			mode_session.rules["boss_phases"] = campaign_definition.get("boss_phases", []).duplicate(true)
 			campaign_completion_processed = false
 			if not _reset_campaign_piece_runtime():
 				push_error("Campaign piece runtime could not restart the authored planet.")
@@ -858,6 +859,7 @@ func _start_campaign_planet() -> void:
 	mode_session.rules["target_score"] = int(definition.get("target_score", 0))
 	mode_session.rules["target_survive_seconds"] = float(definition.get("target_survive_seconds", 0))
 	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
+	mode_session.rules["boss_phases"] = definition.get("boss_phases", []).duplicate(true)
 	campaign_run_planet_id = node_id
 	_clear_campaign_checkpoint()
 	if not _reset_campaign_piece_runtime():
@@ -1172,7 +1174,13 @@ func _draw_stats() -> void:
 		var elapsed_label := _format_elapsed_time(mode_session.elapsed_seconds)
 		var mode_label := _mode_display_name(mode_session.mode_id)
 		var objective_value := "%d / %d" % [mini(_active_lines(), target), target] if target > 0 else ("%d / %d СЕК" % [mini(floori(mode_session.elapsed_seconds), int(survive_target)), int(survive_target)] if survive_target > 0.0 else "%d / %d" % [mini(_active_score(), score_target), score_target])
-		_stat_card(progress_rect, mode_label + " • " + elapsed_label, objective_value, Color("#f6d65b"))
+		if campaign_run_active and mode_session.has_boss_phases():
+			var phase_progress: Dictionary = mode_session.boss_phase_progress(_active_lines(), _active_score())
+			mode_label = "ФАЗА %d/%d • %s" % [int(phase_progress.get("index", 1)), int(phase_progress.get("count", 3)), str(phase_progress.get("title", "БОСС")).left(9)]
+			var phase_lines := int(phase_progress.get("target_lines", 0))
+			var phase_score := int(phase_progress.get("target_score", 0))
+			objective_value = "ЛИНИИ %d/%d" % [int(phase_progress.get("lines", 0)), phase_lines] if phase_lines > 0 else "ОЧКИ %d/%d" % [int(phase_progress.get("score", 0)), phase_score]
+		_stat_card(progress_rect, mode_label + " • " + elapsed_label, objective_value, Color("#ff9b57") if campaign_run_active and mode_session.has_boss_phases() else Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(12.0, 46.0), Vector2(progress_rect.size.x - 24.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
 		if _objective_progress_ratio() > 0.0:
