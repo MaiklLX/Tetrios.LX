@@ -460,3 +460,11 @@
 - Reworked swipe classification: horizontal and vertical actions require a strong dominant axis (1.45×); ambiguous diagonals are consumed without triggering movement, rotation or an accidental tap. Vertical drop timing is slightly more forgiving.
 - Added a lightweight touch ripple on press/release and regression coverage for tall-screen board sizing, horizontal/vertical classification and diagonal rejection.
 - Awaiting CI and browser validation. Physical Xiaomi 13T verification is still required; no claim of device acceptance, main merge, Pages deployment or APK release.
+
+
+## KT-549.2 — Reward carousel and vertical planet ascent (2026-11-09)
+- Replaced the compact multi-row reward grid with a horizontal, swipeable strip of 49 larger trophy cards. The selected trophy retains a detail panel and inspect action; the strip exposes a horizontal progress indicator.
+- Reworked the campaign route into a two-lane serpentine climb with 15 vertical tiers: Planet 001 begins at the bottom, progress is scrolled upward, and boss Planet 030 sits at the summit. Boss milestones 010 and 020 remain visible along the ascent.
+- Added touch-scroll handling for the reward strip and route, with independent offsets and visible scroll indicators.
+- Added responsive layout assertions for reward card size, horizontal scrolling, selection visibility and scrollbar bounds. Existing collection grid helper remains for legacy regression coverage but is no longer used by the active reward screen.
+- Validation pending after this UI batch. No merge, public deployment, APK build/release or physical-device acceptance.
