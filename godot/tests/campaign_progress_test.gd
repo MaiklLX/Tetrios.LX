@@ -103,6 +103,12 @@ func _run() -> void:
 	var duplicate: Dictionary = progress.complete_planet(1, 999)
 	if not _check(not duplicate.accepted and duplicate.reason == "already_completed" and progress.campaign_marks == 1, "Rewards must not be claimable twice"):
 		return
+	var reward_summary: Dictionary = progress.get_reward_summary()
+	if not _check(reward_summary.marks_earned == 1 and reward_summary.marks_available > reward_summary.marks_earned and reward_summary.completed_planets == 1 and reward_summary.total_planets == 360, "Campaign reward summary must expose earned/available marks and overall completion"):
+		return
+	var first_universe_summary: Dictionary = progress.get_universe_progress(0)
+	if not _check(first_universe_summary.marks_earned == 1 and first_universe_summary.marks_available > 0, "Universe summary must expose its own earned and available marks"):
+		return
 	var snapshot := progress.to_save_data()
 	var restored = Campaign.new()
 	if not _check(restored.load_save_data(snapshot), "Valid campaign progress snapshot must restore"):
@@ -113,6 +119,14 @@ func _run() -> void:
 	var invalid := snapshot.duplicate(true)
 	invalid.completed_nodes = [1, 3]
 	if not _check(not restored.load_save_data(invalid) and restored.to_save_data() == before_bad_load, "Invalid save must not partially mutate live progress"):
+		return
+	invalid = snapshot.duplicate(true)
+	invalid.reward_receipts.erase("1")
+	if not _check(not restored.load_save_data(invalid) and restored.to_save_data() == before_bad_load, "Modern saves must reject a partial reward ledger"):
+		return
+	invalid = snapshot.duplicate(true)
+	invalid.campaign_marks = 99
+	if not _check(not restored.load_save_data(invalid) and restored.to_save_data() == before_bad_load, "Modern saves must reject reward totals that do not match receipts"):
 		return
 	var legacy = Campaign.new()
 	if not _check(legacy.import_legacy_progress(12, 37), "Legacy Web campaign progress must import"):
