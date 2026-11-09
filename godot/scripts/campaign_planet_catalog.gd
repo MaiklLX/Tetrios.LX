@@ -74,10 +74,12 @@ static func validate_chapter(chapter: Dictionary) -> Dictionary:
 			return {"valid":false,"reason":"invalid_planet_record","local_id":index + 1}
 		if int(planet.get("local_id", -1)) != index + 1:
 			return {"valid":false,"reason":"non_sequential_planet_id","local_id":index + 1}
-		for required_key in ["title", "briefing", "mission_tag", "event_id", "event_status"]:
+		for required_key in ["title", "briefing", "mission_tag", "event_status"]:
 			if str(planet.get(required_key, "")).strip_edges().is_empty():
 				return {"valid":false,"reason":"missing_"+required_key,"local_id":index + 1}
 		var event_status := str(planet.event_status)
+		if event_status != "none" and str(planet.get("event_id", "")).strip_edges().is_empty():
+			return {"valid":false,"reason":"missing_event_id","local_id":index + 1}
 		if not ["none", "briefing_only", "live_campaign_piece", "implemented"].has(event_status):
 			return {"valid":false,"reason":"unknown_event_status","local_id":index + 1}
 		if event_status == "live_campaign_piece" and str(planet.get("special_piece_id", "")) != "cargo_hook":
