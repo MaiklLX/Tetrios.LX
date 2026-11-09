@@ -41,6 +41,12 @@ Rows are authored top-to-bottom within the bottom stack. Each row is exactly 10 
 - Live integration now launches all three authored layouts through the actual campaign entry point, checks occupied-cell totals (26 / 27 / 27), confirms a standard tetromino spawns, and continues to verify shared Classic isolation.
 - Visual capture now includes briefing and live-arena captures for all three layout missions. These are CI screenshots, not static gallery concepts.
 
+## KT-545.3 — complete Star Caravan mission pacing audit
+- Every one of the 30 Star Caravan planets now resolves a supported objective type, difficulty band, expected duration range and deterministic event-schedule field through the campaign progression contract.
+- The baseline pacing ladder is bounded by planet position: planets 001–009 guided, 010–019 standard, 020–029 advanced, and the chapter finale mastery. The three authored-layout missions retain their explicit overrides.
+- The campaign catalog test now walks all 30 live planet definitions and checks objective, difficulty, duration and event-schedule completeness, in addition to the authored layout and malformed-data tests.
+- This is a metadata and validation audit, not a claim that all 30 encounters have unique mechanics or bespoke visual content.
+
 ## Remaining KT-545 work
 - Inspect the new CI screenshot captures for all three layouts and adjust any unfair or visually confusing gap patterns.
 - Add deterministic completion-path simulation for each authored layout; successful spawn alone is not proof of fair playability.
