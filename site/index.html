@@ -6576,6 +6576,39 @@ const bbCampaignCollectionRelics = [
   ['Знак дальнего рубежа','Последняя печать на пути к дальнему рубежу.']
 ];
 const bbCampaignCollectionAccents = ['#83edbf','#55ddff','#ff9a68','#a8e5ff','#ffd05a','#8ebcff','#e4c18c','#a77bff','#8af0e8','#b6c9df','#c1a5ff','#ff8fbd'];
+// KT-555 visual refinement: SVG equivalents of Godot _draw_collection_emblem().
+function bbCampaignCollectionEmblem(item) {
+  const a=item.accent||'#ffd05a';
+  const stroke='stroke="'+a+'" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"';
+  const dark='fill="'+a+'" fill-opacity=".24"';
+  let art='';
+  if(item.kind==='relic'){
+    switch(item.universe){
+      case 1: art='<path d="M50 76V36M50 50C19 49 16 24 16 18c24-1 36 11 34 32ZM50 47C54 20 76 15 86 14c2 26-12 37-36 33Z" '+stroke+' '+dark+'/>';break;
+      case 2: art='<path d="M50 8 62 38 92 50 62 62 50 92 38 62 8 50 38 38Z" '+stroke+' '+dark+'/><path d="M17 50H83" '+stroke+'/>';break;
+      case 3: art='<circle cx="50" cy="50" r="22" '+stroke+' '+dark+'/>'+Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;return '<path d="M'+(50+Math.cos(a)*27)+' '+(50+Math.sin(a)*27)+'L'+(50+Math.cos(a)*43)+' '+(50+Math.sin(a)*43)+'" '+stroke+'/>'}).join('');break;
+      case 4: art=Array.from({length:3},(_,i)=>{const a=i*Math.PI/3;const x=Math.cos(a)*37,y=Math.sin(a)*37;return '<path d="M'+(50-x)+' '+(50-y)+'L'+(50+x)+' '+(50+y)+'M'+(50+x*.58)+' '+(50+y*.58)+'l'+(-Math.cos(a-.72)*13)+' '+(-Math.sin(a-.72)*13)+'m0 0l'+(Math.cos(a+.72)*13)+' '+(Math.sin(a+.72)*13)+'" '+stroke+'/>'}).join('');break;
+      case 5: art='<circle cx="48" cy="50" r="34" '+dark+' '+stroke+'/><circle cx="64" cy="42" r="31" fill="#102f68"/><circle cx="31" cy="28" r="5" fill="'+a+'"/>';break;
+      case 6: art='<path d="M18 82 36 12 83 27 68 68Z" '+dark+' '+stroke+'/><path d="M22 78 72 27" '+stroke+'/>';break;
+      case 7: art='<path d="M23 13H77L57 47 77 87H23L43 53Z" '+dark+' '+stroke+'/><circle cx="50" cy="73" r="5" fill="'+a+'"/>';break;
+      case 8: art='<circle cx="50" cy="50" r="37" '+stroke+'/><circle cx="50" cy="50" r="24" '+stroke+' opacity=".7"/><path d="m39 23 22 54" '+stroke+'/>';break;
+      case 9: art='<circle cx="30" cy="61" r="15" '+dark+'/><circle cx="70" cy="64" r="13" fill="'+a+'" fill-opacity=".6"/><circle cx="50" cy="28" r="12" fill="'+a+'"/><path d="M14 72Q50 91 86 72" '+stroke+'/>';break;
+      case 10: art='<circle cx="50" cy="50" r="27" '+dark+' '+stroke+'/>'+Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;return '<path d="M'+(50+Math.cos(a)*27)+' '+(50+Math.sin(a)*27)+'L'+(50+Math.cos(a)*42)+' '+(50+Math.sin(a)*42)+'" '+stroke+'/>'}).join('')+'<circle cx="50" cy="50" r="10" fill="#102f68" '+stroke+'/>';break;
+      case 11: art='<path d="m42 7 39 35-27 51-35-32Z" '+dark+' '+stroke+'/><path d="m42 17 8 34-14 26" '+stroke+'/>';break;
+      default: art='<path d="m34 86 8-61h16l8 61Z" '+dark+' '+stroke+'/><path d="m9 21 26 14M91 21 65 35" '+stroke+'/>';
+    }
+  }else if(item.kind==='boss'){
+    const rank=Math.floor(((item.planet||1)-1)/10)%3+1;
+    const shape=[ '<path d="M50 8 91 27 79 70 50 92 21 70 9 27Z" ', '<path d="M30 8H70L92 50 70 92H30L8 50Z" ', '<circle cx="50" cy="50" r="41" ', '<path d="M50 7 91 50 50 93 9 50Z" ' ][item.universe%4];
+    art=shape+dark+' '+stroke+'/>';
+    if(rank===1)art+='<path d="m50 28 18 37H32Z" fill="'+a+'"/>';
+    else if(rank===2)art+='<path d="M25 50H75M50 25V75" '+stroke+'/><circle cx="50" cy="50" r="8" fill="'+a+'"/>';
+    else art=Array.from({length:8},(_,i)=>{const v=i*Math.PI/4;return '<path d="M'+(50+Math.cos(v)*13)+' '+(50+Math.sin(v)*13)+'L'+(50+Math.cos(v)*33)+' '+(50+Math.sin(v)*33)+'" '+stroke+'/>'}).join('')+'<circle cx="50" cy="50" r="8" fill="'+a+'"/>'+shape+dark+' '+stroke+'/>';
+  }else{
+    art='<path d="m8 35 20 13 8-35 14 25 14-25 8 35 20-13-8 52H16Z" '+dark+' '+stroke+'/><circle cx="50" cy="39" r="7" fill="'+a+'"/>';
+  }
+  return '<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">'+art+'</svg>';
+}
 function bbGetCampaignCollectionItems() {
   const completed = Math.max(0, Math.min(bbTotalNodes, bbGetUnlockedNode()) - 1);
   const items = [];
@@ -14729,6 +14762,13 @@ button:not(.board):focus-visible{
   #campaign .bb-planet-node{width:88px!important;min-width:88px!important}
   #campaign .bb-planet-node .bb-planet-sphere{width:68px!important;height:68px!important;flex-basis:68px!important}
 }
+</style>
+
+
+<style id="bb-kt555-collection-emblem-svg">
+.bb-collection-emblem svg{width:58px;height:58px;overflow:visible;filter:drop-shadow(0 0 5px color-mix(in srgb,var(--relic-accent) 35%,transparent))}
+.bb-collection-detail-emblem svg{width:48px;height:48px;overflow:visible;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--relic-accent) 40%,transparent))}
+.bb-collection-card.is-locked .bb-collection-emblem{opacity:.62}
 </style>
 
 </body></html>
