@@ -152,9 +152,9 @@ func get_reward_summary() -> Dictionary:
 		if bool(definition.get("is_boss", false)):
 			boss_marks_earned += reward
 	return {
-		"marks_earned": marks_earned,
+		"marks_earned": campaign_marks,
 		"marks_available": marks_available,
-		"marks_remaining": maxi(0, marks_available - marks_earned),
+		"marks_remaining": maxi(0, marks_available - campaign_marks),
 		"boss_marks_earned": boss_marks_earned,
 		"boss_marks_available": boss_marks_available,
 		"completed_planets": completed_nodes.size(),
