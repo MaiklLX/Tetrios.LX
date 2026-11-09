@@ -118,3 +118,25 @@ Godot KT-549 остаётся отдельным референсом. PR #84 о
 - В браузере уже есть близкая базовая космическая тема и CSS-переменные `--bg`, `--panel`, `--cyan`, `--violet`, `--gold`; это хорошая стартовая база, но не доказательство полного соответствия.
 - Визуальный разрыв нужно искать прежде всего в композиции экранов и графике кампании/наградах, а не заменять тему целиком.
 - Поэтому KT-552 начинается с viewport и арены, а следующие отдельные этапы должны портировать карту и коллекцию с точной геометрией из Godot.
+
+
+## KT-552 — portrait arena scale and visual evidence (2026-11-09)
+
+Status: implementation committed to the isolated browser-return branch; automated visual verification is triggered by PR updates.
+
+### Implementation
+- Added `bb-kt552-portrait-arena-scale` at the end of `site/index.html`.
+- For portrait phones up to 860 CSS px tall, the board cabinet may now use up to 56vw (instead of the earlier 51vw cap), while remaining constrained by its parent width and 64dvh.
+- For portrait phones 861 CSS px and taller, the same 56vw target is used with a 66dvh ceiling.
+- The board remains 10:23. No game logic, 10×23 logical grid, input handling, saves, campaign data, or desktop CSS was changed.
+- The existing Godot-inspired cabinet border, dark blue panel, cyan edge glow and surrounding arena composition remain intact; this is a scale/layout adjustment, not a visual redesign.
+
+### Visual regression evidence
+- Extended `scripts/cross-platform-visual-preview.cjs` to save a dedicated `*-kt552-tall-phone-arena.png` screenshot for portrait mobile targets.
+- Added a geometry assertion that the tall-phone portrait cabinet reaches at least 53% of viewport width while staying within the viewport. Existing 10:23 ratio, HUD fit, objective clearance, touch gesture, and desktop checks remain active.
+- CI screenshot artifacts are the intended evidence for review; screenshots will be attached here in the PR artifact once the run finishes. No screenshot is claimed as passed until the run and artifact are available.
+
+### Safety / next
+- Branch only: `web/kt550-browser-return-2026-11-09`; PR #85 remains Draft.
+- No merge, deployment, APK build, or APK release.
+- Next visual stages remain planet atlas and reward collection; each requires the same Godot-to-browser comparison and screenshot evidence.
