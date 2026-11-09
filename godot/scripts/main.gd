@@ -697,6 +697,8 @@ func _handle_tap(point: Vector2) -> void:
 func _select_mode(requested_mode_id: String) -> void:
 	if not ModeCatalog.is_valid_mode(requested_mode_id):
 		return
+	if campaign_run_active:
+		_clear_campaign_checkpoint()
 	game.reset()
 	if mode_session == null:
 		mode_session = ModeSession.new()
