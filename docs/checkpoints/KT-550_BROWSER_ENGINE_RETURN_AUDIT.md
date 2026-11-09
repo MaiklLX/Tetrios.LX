@@ -308,3 +308,14 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Site commit: `ca72c10d2d57b0a31d531c274d855d2d46a06ec0`.
 - This is a targeted responsiveness change, not a confirmed fix. Await the next cross-platform preview run; verify the detail opens, hero selection starts the campaign, and all viewport route assertions pass.
 - Safety: PR #85 remains Draft; do not merge, deploy Pages, touch main, Godot preview, or build an APK without explicit approval. Do not post screenshots in chat.
+
+
+## KT-562 — route alignment timing diagnosis
+
+- CI run `42658665309` completed with failure. The campaign hero selection did not remain the blocker: the visual preview reached arena verification on mobile, and the recorded page/console errors and failed requests were empty.
+- The decisive failures are the vertical campaign route on desktop Chromium and iOS WebKit: the map has 30 nodes, 3 bosses, vertical overflow and the correct bottom-to-top order, but `routeAlign` remains `not-run`, `scrollTop` remains 0, and planet 001 is outside the viewport. Android Chromium did run the alignment and reported `applied` with planet 001.
+- Separate existing geometry failure remains at iOS WebKit 390×844: the board did not reach the KT-552 53vw minimum (reported 118.08px). Keep this as a separate follow-up; do not hide or relax the assertion.
+- Added a 90ms timer fallback to invoke the existing route alignment if animation-frame scheduling has not applied it. The existing geometry calculation and all route/game progression logic remain unchanged.
+- Site commit: `06bcf64a26173e33045b2b3e2b501deff315c2c0`.
+- This is a new hypothesis, not a verified fix. Await CI and inspect all viewport route reports plus the 390×844 board measurement.
+- Safeguards remain: PR #85 Draft; no merge, deployment, main changes, Godot preview changes, or APK build. Do not post screenshots in chat.
