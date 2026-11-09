@@ -287,3 +287,15 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Временный дублирующий CSS override KT-559 удалён из `site/index.html`, чтобы не накапливать лишние правила и не маскировать настоящую причину. Диагностические поля routeState в preview-скрипте оставлены.
 - Факт остаётся прежним: в run 42648167574 активная планета не попала в видимую область; изменение KT-557 не подтверждено. Нужен следующий свежий preview на текущем HEAD и анализ реальных значений currentRect, viewport scrollHeight/clientHeight, computed overflow-y, а также ошибок JavaScript. Если preview workflow не стартует автоматически для нового HEAD, сначала восстановить CI-триггер, не объявляя маршрут исправным.
 - KT-559 закрыта как неудачная гипотеза; задача начальной прокрутки остаётся открытой. PR #85 Draft; main, Pages, Godot preview и APK не затронуты.
+
+
+## KT-560 — retryable initial route alignment (2026-11-09)
+
+- Ветка: `web/kt550-browser-return-2026-11-09`, PR #85 Draft.
+- Повторный анализ полного CSS-каскада подтвердил, что вертикальный overflow и высота карты задаются поздними правилами KT-555/556; прежняя гипотеза о flex/position уже снята.
+- Выявлен риск порядка отображения: `buildMap()` может построить планетную систему в момент перехода экрана кампании, когда viewport ещё не получил конечную высоту. Старый расчёт использовал viewport-relative rect без проверки измеримости и не имел повторной попытки.
+- Заменено выравнивание на координаты активной планеты относительно её фактического containing track (`offsetTop + offsetHeight / 2`) с ограничением по максимальному scrollTop. Если viewport ещё скрыт/нулевой высоты, выравнивание повторяется до 12 кадров. Записываются диагностические dataset-маркеры результата; при неприменившейся прокрутке есть fallback через `scrollIntoView`.
+- Cross-platform preview теперь дополнительно фиксирует статус выравнивания, целевую позицию, номер узла и геометрию трека; тест требует успешного статуса `applied`.
+- Изменения: site commit `64dbf0202abb48e6b9550d1c93210c36a961f4c6`; preview diagnostics commit `3c6590af95907be9a54e80de5adf8dd2d6cfae05`.
+- **Статус: ожидает CI.** Проверка списка workflow runs на ветке пока не показала свежего запуска; отсутствие запуска не является прохождением теста.
+- Не менялись node IDs, unlock/progression, mission handlers, save keys, Godot preview, main, Pages или APK. PR #85 остаётся Draft; merge/deploy/release не выполнялись.
