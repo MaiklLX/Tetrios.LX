@@ -25,6 +25,23 @@ func _run() -> void:
 		return
 	if not _check(not runtime.spawn_authored_special(), "Authored special spawn must not discard a falling standard piece"):
 		return
+	# KT-545: authored starting layouts are deterministic and validated atomically.
+	runtime.reset(false)
+	var authored_rows := ["111111.111", ".22222222.", "333.333333"]
+	if not _check(runtime.apply_authored_starting_layout(authored_rows), "Campaign runtime must accept a valid authored 10-column starting layout"):
+		return
+	var occupied_cells := 0
+	for row in runtime.grid:
+		for value in row:
+			if int(value) >= 0:
+				occupied_cells += 1
+	if not _check(occupied_cells == 27, "Authored layout must populate exactly the 27 declared cells"):
+		return
+	var before_invalid_layout: Array = runtime.grid.duplicate(true)
+	if not _check(not runtime.apply_authored_starting_layout(["##########"]) and runtime.grid == before_invalid_layout, "Invalid authored layouts must be rejected without mutating the board"):
+		return
+	if not _check(runtime.spawn_next_standard(), "A standard piece must spawn safely above an authored starting layout"):
+		return
 	print("KT-537 runtime: rotation and collision")
 	runtime.reset(false)
 	if not _check(runtime.spawn_authored_special() and runtime.active_piece_id == Runtime.SPECIAL_TYPE and runtime.active_cells.size() == 5, "Authored campaign event must explicitly spawn the five-cell Cargo Hook"):
