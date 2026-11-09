@@ -190,6 +190,7 @@ const targets = [
     // changing the existing 30 planets per universe or their node identities.
     await campaignPage.locator('#campaign .bb-galaxy-card').first().click();
     await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({state:'visible',timeout:10000});
+    await campaignPage.waitForTimeout(350);
     const routeState=await campaignPage.evaluate(()=>{
       const track=document.querySelector('#campaign .bb-planet-track');
       const viewport=document.querySelector('#campaign .bb-planet-viewport');
@@ -201,10 +202,12 @@ const targets = [
         bossCount:nodes.filter(node=>node.classList.contains('is-boss')).length,
         verticalOverflow:!!viewport&&viewport.scrollHeight>viewport.clientHeight,
         firstAtBottom:y.length>1&&y[0]>y[y.length-1],
+        currentVisible:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active||!viewport)return false;const a=active.getBoundingClientRect(),v=viewport.getBoundingClientRect();return a.bottom>v.top&&a.top<v.bottom})(),
+        scrollTop:viewport?.scrollTop||0,
         bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber)
       };
     });
-    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom){
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
