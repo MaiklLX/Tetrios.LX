@@ -1130,6 +1130,13 @@ func _is_line_objective_mode() -> bool:
 func _objective_progress_ratio() -> float:
 	if not _is_line_objective_mode():
 		return 0.0
+	if campaign_run_active and mode_session.has_boss_phases():
+		var phase: Dictionary = mode_session.boss_phase_progress(_active_lines(), _active_score())
+		var phase_lines := int(phase.get("target_lines", 0))
+		var phase_score := int(phase.get("target_score", 0))
+		var line_ratio := 1.0 if phase_lines <= 0 else clampf(float(phase.get("lines", 0)) / float(phase_lines), 0.0, 1.0)
+		var score_ratio := 1.0 if phase_score <= 0 else clampf(float(phase.get("score", 0)) / float(phase_score), 0.0, 1.0)
+		return minf(line_ratio, score_ratio)
 	var target_survive := float(mode_session.rules.get("target_survive_seconds", 0))
 	if target_survive > 0.0:
 		return clampf(mode_session.elapsed_seconds / target_survive, 0.0, 1.0)
@@ -1192,7 +1199,12 @@ func _draw_stats() -> void:
 			mode_label = "ФАЗА %d/%d • %s" % [int(phase_progress.get("index", 1)), int(phase_progress.get("count", 3)), str(phase_progress.get("title", "БОСС")).left(9)]
 			var phase_lines := int(phase_progress.get("target_lines", 0))
 			var phase_score := int(phase_progress.get("target_score", 0))
-			objective_value = "ЛИНИИ %d/%d" % [int(phase_progress.get("lines", 0)), phase_lines] if phase_lines > 0 else "ОЧКИ %d/%d" % [int(phase_progress.get("score", 0)), phase_score]
+			if phase_lines > 0 and phase_score > 0:
+				objective_value = "Л %d/%d  О %d/%d" % [int(phase_progress.get("lines", 0)), phase_lines, int(phase_progress.get("score", 0)), phase_score]
+			elif phase_lines > 0:
+				objective_value = "ЛИНИИ %d/%d" % [int(phase_progress.get("lines", 0)), phase_lines]
+			else:
+				objective_value = "ОЧКИ %d/%d" % [int(phase_progress.get("score", 0)), phase_score]
 		_stat_card(progress_rect, mode_label + " • " + elapsed_label, objective_value, Color("#ff9b57") if campaign_run_active and mode_session.has_boss_phases() else Color("#f6d65b"))
 		var track := Rect2(progress_rect.position + Vector2(12.0, 46.0), Vector2(progress_rect.size.x - 24.0, 3.0))
 		draw_rect(track, Color(0.12, 0.19, 0.27, 1.0))
