@@ -6,6 +6,7 @@ on:
       - godot/kt548-web-preview-prep-2026-11-09
     paths:
       - "godot/**"
+      - "scripts/validate-godot-web.mjs"
       - ".github/workflows/godot-web-preview.yml"
   pull_request:
     paths:
@@ -19,7 +20,7 @@ permissions:
 jobs:
   export-web:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -135,6 +136,15 @@ jobs:
             echo "::error::Web export is missing its game data package"
             exit 1
           fi
+
+      - name: Install browser smoke-test dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+
+      - name: Run real-browser Web smoke tests
+        timeout-minutes: 5
+        run: node scripts/validate-godot-web.mjs
 
       - name: Upload isolated Web preview artifact
         uses: actions/upload-artifact@v4
