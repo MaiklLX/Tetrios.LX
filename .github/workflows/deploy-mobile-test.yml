@@ -23,8 +23,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
-    env:
-      SOURCE_REF: 035cdb8cc325ce7088ecf7dc25bca9e97ae24a6e
     steps:
       - name: Checkout current public site from main
         uses: actions/checkout@v4
@@ -35,7 +33,7 @@ jobs:
       - name: Checkout KT-549 mobile build source
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.SOURCE_REF }}
+          ref: 035cdb8cc325ce7088ecf7dc25bca9e97ae24a6e
           path: mobile-source
 
       - name: Prepare existing public site
