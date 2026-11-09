@@ -73,6 +73,7 @@ func _run() -> void:
 		return
 
 	# KT-545: Planet 033 must start from its authored deterministic Cargo Corridor board.
+	main_scene.call("_return_to_campaign_route")
 	progress.import_legacy_progress(33, 0)
 	main_scene.set("campaign_universe", 1)
 	main_scene.set("campaign_planet", 3)
@@ -86,6 +87,7 @@ func _run() -> void:
 	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 26 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 033 must launch with its authored board and a standard active piece"):
 		return
 	# KT-545.2: verify the other authored layout families through the real launch path.
+	main_scene.call("_return_to_campaign_route")
 	progress.import_legacy_progress(36, 0)
 	main_scene.set("campaign_planet", 6)
 	main_scene.call("_start_campaign_planet")
@@ -97,6 +99,7 @@ func _run() -> void:
 				layout_cells += 1
 	if not _check(bool(main_scene.get("campaign_run_active")) and layout_cells == 27 and runtime.active_piece_id >= 0 and runtime.active_piece_id < 7, "Planet 036 must launch its authored Offset Bay layout with a standard piece"):
 		return
+	main_scene.call("_return_to_campaign_route")
 	progress.import_legacy_progress(46, 0)
 	main_scene.set("campaign_planet", 16)
 	main_scene.call("_start_campaign_planet")
