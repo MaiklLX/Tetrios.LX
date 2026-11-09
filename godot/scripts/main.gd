@@ -465,7 +465,7 @@ func _restart_current_run() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
-		if campaign_screen == "collection" and event.keycode == KEY_ESCAPE and (campaign_collection_reveal_active or campaign_collection_preview_active):
+		if event.keycode == KEY_ESCAPE and (campaign_collection_reveal_active or (campaign_screen == "collection" and campaign_collection_preview_active)):
 			_dismiss_campaign_collection_modal()
 			return
 		if mode_select_visible:
@@ -566,6 +566,9 @@ func _toggle_pause() -> void:
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
+	if campaign_collection_reveal_active and campaign_screen.is_empty():
+		_dismiss_campaign_collection_modal()
+		return
 	if home_visible:
 		if home_campaign_rect.has_point(point):
 			campaign_screen = "atlas"
@@ -798,6 +801,8 @@ func _draw() -> void:
 		_draw_game_over()
 	elif paused:
 		_draw_pause_overlay()
+	if campaign_collection_reveal_active and campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
+		_draw_campaign_collection_reward_modal(CampaignCollection.get_item(campaign_progress, campaign_collection_reveal_queue[0]), true)
 
 
 func _draw_soft_panel(rect: Rect2, fill: Color, edge: Color = Color("#7dcfff"), radius: int = 18, shadow_size: int = 10) -> void:
@@ -964,6 +969,8 @@ func _process_campaign_completion() -> void:
 		for reward_id in CampaignCollection.get_newly_unlocked_ids(previous_collection, current_collection):
 			if not campaign_collection_reveal_queue.has(reward_id):
 				campaign_collection_reveal_queue.append(reward_id)
+		if campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
+			_begin_next_campaign_collection_reveal()
 		if not CampaignStore.save_progress(campaign_progress):
 			push_warning("Campaign progress could not be saved to user profile storage.")
 	campaign_completion_processed = true
