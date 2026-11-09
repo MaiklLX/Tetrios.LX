@@ -389,3 +389,13 @@
 - Campaign progression, completed planets, marks and reward receipts remain persisted independently; restarting a level does not roll back earned campaign progress.
 - The campaign checkpoint store remains isolated and covered by tests, but is no longer part of live run lifecycle.
 - Validation pending on the latest commit. No main merge, public deployment or APK release.
+
+
+## KT-542 — Full campaign completion master plan
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Reframed Cosmic Campaign as a core Block Buddies pillar that must be content-complete before public release, not merely a 360-node map.
+- Recorded the verified current state: 12 universes / 360 sequential nodes; formula-derived line, score, survival and boss objectives; data-only universe mechanic registry with most mechanics still planned; six candidate modifiers; isolated audited effect adapters; Planet 031 Cargo Hook integration; persistent campaign progression and rewards; restart-from-beginning behavior for unfinished levels.
+- Defined release acceptance: distinct playable universe identities, authored mission definitions, safe mechanic teaching, boss encounters, readable special events, a complete opening-to-finale arc, meaningful persistent reward sinks, deterministic progression/retry/reward tests, and real-device verification.
+- Staged KT-543 catalog audit, KT-544 Star Caravan mechanic package, KT-545 authored mission runner/layouts, KT-546 boss framework, KT-547 reward sinks, KT-548 universe-by-universe content production and KT-549 full-campaign balance/release acceptance.
+- Immediate next action: KT-543 data-backed audit of all 360 nodes and a chapter authoring matrix. No gameplay changes in KT-542.
+- No main merge, public deployment or APK release.
