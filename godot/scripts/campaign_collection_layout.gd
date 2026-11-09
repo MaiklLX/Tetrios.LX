@@ -20,8 +20,8 @@ static func collection(viewport: Vector2) -> Dictionary:
 	var inspect_rect := Rect2(detail_rect.end.x - inspect_width - 8.0, detail_rect.position.y + (detail_height - 36.0) * 0.5, inspect_width, 36.0 if not short_screen else 32.0)
 	var row_count := int(ceil(49.0 / float(columns)))
 	var content_height := float(row_count) * cell_height + float(maxi(0, row_count - 1)) * gap
-	var max_scroll := maxf(0.0, content_height - grid_viewport.size.y)
 	var visible_rows := maxi(1, int(floor((grid_viewport.size.y + gap) / (cell_height + gap))))
+	var max_scroll := float(maxi(0, row_count - visible_rows)) * (cell_height + gap)
 	return {
 		"compact": compact,
 		"short_screen": short_screen,
