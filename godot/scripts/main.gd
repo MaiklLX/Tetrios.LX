@@ -1109,19 +1109,97 @@ func _draw_campaign_collection() -> void:
 	var selected_item: Dictionary = items[clampi(campaign_collection_selected, 0, items.size() - 1)] if not items.is_empty() else {}
 	var detail_rect := Rect2(14.0, screen_size.y - 99.0, screen_size.x - 28.0, 78.0)
 	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 13, 5)
+	campaign_collection_inspect_rect = Rect2(detail_rect.end.x - 91.0, detail_rect.position.y + 20.0, 80.0, 38.0)
 	if not selected_item.is_empty():
 		var is_unlocked := bool(selected_item.get("unlocked", false))
 		var selected_kind := str(selected_item.get("kind", ""))
 		var selected_universe_number := int(selected_item.get("universe_number", 0))
 		var category := "РЕЛИКВИЯ ВСЕЛЕННОЙ %02d" % selected_universe_number if selected_kind == "universe_relic" else ("ЗНАК ПОБЕЖДЁННОГО БОССА" if selected_kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА КАМПАНИИ")
 		var status := category + ("  •  ПОЛУЧЕНО" if is_unlocked else "  •  ЕЩЁ ВПЕРЕДИ")
-		draw_string(font, detail_rect.position + Vector2(11.0, 16.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
-		draw_string(font, detail_rect.position + Vector2(11.0, 34.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 11, Color("#ffffff"))
-		draw_string(font, detail_rect.position + Vector2(11.0, 50.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#c4edff"))
+		var detail_text_width := detail_rect.size.x - 116.0
+		draw_string(font, detail_rect.position + Vector2(11.0, 16.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
+		draw_string(font, detail_rect.position + Vector2(11.0, 34.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 11, Color("#ffffff"))
+		draw_string(font, detail_rect.position + Vector2(11.0, 50.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 8, Color("#c4edff"))
 		var unlock_planet := int(selected_item.get("unlock_planet", 0))
-		var requirement := "УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 360 ПЛАНЕТ" if selected_kind == "campaign_crown" else ("УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ" if selected_kind == "universe_relic" else "УСЛОВИЕ: ПОБЕДИТЬ БОССА НА ПЛАНЕТЕ %03d" % unlock_planet)
-		draw_string(font, detail_rect.position + Vector2(11.0, 66.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 7, Color("#ffd77a"))
-	_center_text("ВЫБЕРИ ЗНАК, ЧТОБЫ УЗНАТЬ ЕГО ИСТОРИЮ", screen_size.y - 8.0, 8, Color("#b9eaff"))
+		var requirement := "УСЛОВИЕ: ВСЕ 360 ПЛАНЕТ" if selected_kind == "campaign_crown" else ("УСЛОВИЕ: ВСЕ 30 ПЛАНЕТ МИРА" if selected_kind == "universe_relic" else "УСЛОВИЕ: БОСС ПЛАНЕТЫ %03d" % unlock_planet)
+		draw_string(font, detail_rect.position + Vector2(11.0, 66.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#ffd77a"))
+		_draw_soft_panel(campaign_collection_inspect_rect, Color("#174d79"), Color("#8fe8ff"), 9, 3)
+		_center_text("ОСМОТР", campaign_collection_inspect_rect.position.y + 24.0, 9, Color("#ffffff"))
+	_center_text("ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»", screen_size.y - 8.0, 8, Color("#b9eaff"))
+	if campaign_collection_reveal_active or campaign_collection_preview_active:
+		var modal_item := selected_item
+		var is_new_reward := campaign_collection_reveal_active
+		if is_new_reward and not campaign_collection_reveal_queue.is_empty():
+			modal_item = CampaignCollection.get_item(campaign_progress, campaign_collection_reveal_queue[0])
+		_draw_campaign_collection_reward_modal(modal_item, is_new_reward)
+
+func _begin_next_campaign_collection_reveal() -> void:
+	if campaign_collection_reveal_queue.is_empty():
+		return
+	var next_id := campaign_collection_reveal_queue[0]
+	var summary: Dictionary = CampaignCollection.get_collection_summary(campaign_progress)
+	var items: Array = summary.get("items", [])
+	for index in range(items.size()):
+		if str(items[index].get("id", "")) == next_id:
+			campaign_collection_selected = index
+			break
+	campaign_collection_reveal_active = true
+	campaign_collection_preview_active = false
+	campaign_collection_reveal_time = 0.0
+
+
+func _dismiss_campaign_collection_modal() -> void:
+	if campaign_collection_reveal_active:
+		campaign_collection_reveal_active = false
+		campaign_collection_reveal_time = 0.0
+		if not campaign_collection_reveal_queue.is_empty():
+			campaign_collection_reveal_queue.pop_front()
+		if not campaign_collection_reveal_queue.is_empty():
+			_begin_next_campaign_collection_reveal()
+	else:
+		campaign_collection_preview_active = false
+	queue_redraw()
+
+
+func _draw_campaign_collection_reward_modal(item: Dictionary, is_new_reward: bool) -> void:
+	if item.is_empty():
+		return
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.015, 0.025, 0.07, 0.82))
+	var panel_size := Vector2(minf(screen_size.x - 28.0, 360.0), minf(screen_size.y - 150.0, 356.0))
+	panel_size.x = maxf(260.0, panel_size.x)
+	panel_size.y = maxf(300.0, panel_size.y)
+	var panel := Rect2(screen_size * 0.5 - panel_size * 0.5, panel_size)
+	var kind := str(item.get("kind", ""))
+	var universe_number := int(item.get("universe_number", 0))
+	var planet_id := int(item.get("planet_id", 0))
+	var visual_variant := int(item.get("visual_variant", 0))
+	var accent := _collection_universe_accent(kind, universe_number, planet_id)
+	_draw_soft_panel(panel, Color("#0b1d42"), accent, 22, 12)
+	var heading := "НОВАЯ НАГРАДА!" if is_new_reward else "ОСМОТР ТРОФЕЯ"
+	draw_string(font, Vector2(panel.position.x + 10.0, panel.position.y + 34.0), heading, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 17, Color("#fff0b9"))
+	var emblem_center := Vector2(panel.get_center().x, panel.position.y + 130.0)
+	var reveal_progress := clampf(campaign_collection_reveal_time / 0.7, 0.0, 1.0) if is_new_reward else 1.0
+	var emblem_scale := 0.78 + 0.22 * reveal_progress
+	var emblem_radius := 43.0 * emblem_scale
+	var pulse := 0.5 + 0.5 * sin(ambient_time * 3.2)
+	draw_circle(emblem_center, emblem_radius + 17.0 + pulse * 5.0, Color(accent.r, accent.g, accent.b, 0.10))
+	draw_arc(emblem_center, emblem_radius + 16.0 + pulse * 5.0, 0.0, TAU, 56, Color(accent.r, accent.g, accent.b, 0.68), 2.0, true)
+	if is_new_reward:
+		var burst_radius := 56.0 + reveal_progress * 42.0
+		var burst_alpha := 1.0 - reveal_progress
+		draw_arc(emblem_center, burst_radius, 0.0, TAU, 48, Color(accent.r, accent.g, accent.b, burst_alpha), 2.2, true)
+		for sparkle in range(12):
+			var angle := TAU * float(sparkle) / 12.0 + ambient_time * 0.18
+			var sparkle_pos := emblem_center + Vector2.from_angle(angle) * (58.0 + pulse * 8.0)
+			draw_line(sparkle_pos - Vector2(3.0, 0.0), sparkle_pos + Vector2(3.0, 0.0), accent.lightened(0.35), 1.5)
+			draw_line(sparkle_pos - Vector2(0.0, 3.0), sparkle_pos + Vector2(0.0, 3.0), accent.lightened(0.35), 1.5)
+	_draw_collection_emblem(emblem_center, emblem_radius, kind, accent, visual_variant, planet_id)
+	var status := "ПОЛУЧЕНО" if bool(item.get("unlocked", false)) else "ЕЩЁ ВПЕРЕДИ"
+	draw_string(font, Vector2(panel.position.x + 18.0, panel.position.y + 202.0), status, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 36.0, 9, Color("#8ef4d3") if bool(item.get("unlocked", false)) else Color("#ffd05a"))
+	draw_string(font, Vector2(panel.position.x + 10.0, panel.position.y + 228.0), str(item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 15, Color("#ffffff"))
+	draw_string(font, Vector2(panel.position.x + 22.0, panel.position.y + 250.0), str(item.get("description", "")), HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 44.0, 9, Color("#c4edff"))
+	var instruction := "КОСНИСЬ, ЧТОБЫ ПРОДОЛЖИТЬ" if is_new_reward else "КОСНИСЬ, ЧТОБЫ ЗАКРЫТЬ"
+	draw_string(font, Vector2(panel.position.x + 10.0, panel.end.y - 22.0), instruction, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 9, Color("#fff0b9"))
 
 func _collection_universe_accent(kind: String, universe_number: int, planet_id: int) -> Color:
 	if kind == "campaign_crown":
