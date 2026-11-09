@@ -17,6 +17,8 @@ func _check(condition: bool, message: String) -> bool:
 func _make_probe() -> Node2D:
 	var probe = Main.new()
 	get_root().add_child(probe)
+	probe.tutorial_active = false
+	probe.tutorial_home_completed = true
 	probe.game = Model.new()
 	probe.game.reset()
 	probe.mode_session = ModeSession.new()
