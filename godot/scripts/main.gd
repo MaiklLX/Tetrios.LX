@@ -41,6 +41,8 @@ var secondary_screen := ""
 var home_campaign_rect := Rect2()
 var home_block_run_rect := Rect2()
 var home_tasks_rect := Rect2()
+var home_collection_rect := Rect2()
+var campaign_collection_from_home := false
 var home_heroes_rect := Rect2()
 var home_shop_rect := Rect2()
 var home_upgrades_rect := Rect2()
@@ -124,6 +126,7 @@ func _layout() -> void:
 	home_campaign_rect = home_layout.campaign
 	home_block_run_rect = home_layout.block_run
 	home_tasks_rect = home_layout.tasks
+	home_collection_rect = home_layout.collection
 	home_heroes_rect = home_layout.heroes
 	home_shop_rect = home_layout.shop
 	home_upgrades_rect = home_layout.upgrades
@@ -152,7 +155,8 @@ func _home_layout(viewport: Vector2) -> Dictionary:
 	return {
 		"campaign": Rect2(left, top + 96.0, width, card_height),
 		"block_run": Rect2(left, top + 96.0 + card_height + gap, width, card_height),
-		"tasks": Rect2(left, top + 96.0 + (card_height + gap) * 2.0, width, 82.0),
+		"tasks": Rect2(left, top + 96.0 + (card_height + gap) * 2.0, (width - 8.0) * 0.5, 82.0),
+		"collection": Rect2(left + (width + 8.0) * 0.5, top + 96.0 + (card_height + gap) * 2.0, (width - 8.0) * 0.5, 82.0),
 		"heroes": Rect2(left, viewport.y - 92.0, tab_width, 58.0),
 		"shop": Rect2(left + tab_width + tab_gap, viewport.y - 92.0, tab_width, 58.0),
 		"upgrades": Rect2(left + (tab_width + tab_gap) * 2.0, viewport.y - 92.0, tab_width, 58.0)
@@ -568,12 +572,22 @@ func _handle_tap(point: Vector2) -> void:
 			_open_secondary_screen("upgrades")
 		elif home_tasks_rect.has_point(point):
 			_open_secondary_screen("daily")
+		elif home_collection_rect.has_point(point):
+			campaign_screen = "collection"
+			campaign_collection_selected = 0
+			campaign_collection_from_home = true
+			home_visible = false
 		queue_redraw()
 		return
 	if not campaign_screen.is_empty():
 		if campaign_screen == "collection":
 			if campaign_back_rect.has_point(point):
-				campaign_screen = "atlas"
+				if campaign_collection_from_home:
+					campaign_screen = ""
+					home_visible = true
+					campaign_collection_from_home = false
+				else:
+					campaign_screen = "atlas"
 			else:
 				for index in range(campaign_collection_item_rects.size()):
 					if campaign_collection_item_rects[index].has_point(point):
@@ -844,8 +858,14 @@ func _draw_home_hub() -> void:
 	draw_string(font, home_block_run_rect.position + Vector2(18.0, 64.0), "СОБИРАЙ УСИЛЕНИЯ И ПОБЕЖДАЙ", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#f5e6ff"))
 	draw_string(font, home_block_run_rect.end - Vector2(34.0, 22.0), "›", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color("#fff0a8"))
 	_draw_soft_panel(home_tasks_rect, Color("#14548d"), Color("#79e5db"), 18, 8)
-	draw_string(font, home_tasks_rect.position + Vector2(14.0, 29.0), "ЕЖЕДНЕВНЫЕ ЗАДАНИЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#ffffff"))
-	draw_string(font, home_tasks_rect.position + Vector2(14.0, 53.0), "ВЫПОЛНИ 3 ЦЕЛИ И ЗАБЕРИ НАГРАДУ", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#c9f8ef"))
+	draw_string(font, home_tasks_rect.position + Vector2(10.0, 29.0), "ЕЖЕДНЕВНЫЕ", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
+	draw_string(font, home_tasks_rect.position + Vector2(10.0, 48.0), "ЗАДАНИЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#ffffff"))
+	_draw_soft_panel(home_collection_rect, Color("#59451f"), Color("#ffd05a"), 18, 8)
+	var collection_summary: Dictionary = CampaignCollection.get_collection_summary(campaign_progress)
+	var collection_count := int(collection_summary.get("unlocked_count", 0))
+	var collection_total := int(collection_summary.get("total_count", 49))
+	draw_string(font, home_collection_rect.position + Vector2(10.0, 29.0), "★ ПОЛКА НАГРАД", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#fff0b9"))
+	draw_string(font, home_collection_rect.position + Vector2(10.0, 49.0), "%02d / %02d ПОЛУЧЕНО" % [collection_count, collection_total], HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#ffe2a0"))
 	_draw_soft_panel(home_heroes_rect, Color("#155c9c"), Color("#7bdfff"), 16, 7)
 	_draw_soft_panel(home_shop_rect, Color("#8b541e"), Color("#ffd16c"), 16, 7)
 	_draw_soft_panel(home_upgrades_rect, Color("#6c4a9c"), Color("#d2aaff"), 16, 7)
@@ -966,9 +986,7 @@ func _draw_campaign_screen() -> void:
 		_draw_campaign_planet()
 
 func _draw_campaign_atlas() -> void:
-	campaign_collection_rect = Rect2(screen_size.x - 154.0, 14.0, 138.0, 40.0)
-	_draw_soft_panel(campaign_collection_rect, Color("#59451f"), Color("#ffd05a"), 14, 6)
-	draw_string(font, campaign_collection_rect.position + Vector2(9.0, 26.0), "★  ПОЛКА НАГРАД", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#fff0b9"))
+	campaign_collection_rect = Rect2()
 	_center_text("КОСМИЧЕСКИЙ АТЛАС", 104.0, 23, Color("#fff0b9"))
 	_center_text("12 ВСЕЛЕННЫХ  •  360 ПЛАНЕТ", 128.0, 10, Color("#c4edff"))
 	campaign_atlas_rects.clear()
