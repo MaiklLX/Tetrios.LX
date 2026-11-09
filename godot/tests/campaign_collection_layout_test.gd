@@ -36,7 +36,7 @@ func _run() -> void:
 		var detail: Rect2 = layout.get("detail_rect", Rect2())
 		var inspect: Rect2 = layout.get("inspect_rect", Rect2())
 		var grid_viewport: Rect2 = layout.get("grid_viewport_rect", Rect2())
-		var expected_columns := 5 if viewport.x <= 360.0 else (6 if viewport.x <= 480.0 else 7)
+		var expected_columns := 4 if viewport.x <= 320.0 else (5 if viewport.x <= 390.0 else (6 if viewport.x <= 480.0 else 7))
 		var grid_right := margin + float(columns) * cell_width + float(columns - 1) * gap
 		if not _check(columns == expected_columns and row_count == int(ceil(49.0 / float(columns))), "Collection should switch to a wider-cell grid on narrow viewports at %s" % [viewport]):
 			return
@@ -69,5 +69,5 @@ func _run() -> void:
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
 			return
-	print("Campaign collection layout tests passed: responsive 5x10 / 6x9 / 7x7 grids, preserved reward emblem scale, row-snapped scrolling and 8 viewport sizes.")
+	print("Campaign collection layout tests passed: responsive 4x13 / 5x10 / 6x9 / 7x7 grids, preserved reward emblem scale, row-snapped scrolling and 8 viewport sizes.")
 	quit(0)
