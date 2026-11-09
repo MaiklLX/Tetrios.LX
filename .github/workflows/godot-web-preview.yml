@@ -11,6 +11,7 @@ on:
   pull_request:
     paths:
       - "godot/**"
+      - "scripts/validate-godot-web.mjs"
       - ".github/workflows/godot-web-preview.yml"
   workflow_dispatch:
 
