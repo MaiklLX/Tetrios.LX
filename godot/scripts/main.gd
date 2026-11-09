@@ -529,7 +529,6 @@ func _toggle_pause() -> void:
 	if game == null or _active_game_over() or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty():
 		return
 	paused = not paused
-	if paused:
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
