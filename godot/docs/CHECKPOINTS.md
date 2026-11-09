@@ -476,3 +476,10 @@
 - Tutorial touch routing consumes drags but still allows short taps on Next/Skip. Button widths adapt on very narrow screens.
 - The full combined KT-549.1–549.3 branch is under CI in Draft PR #84. Automated regression, Web export and Chromium smoke checks must pass on the latest head before acceptance.
 - No merge, main change, public Pages deployment, APK build/release or physical Xiaomi 13T verification.
+
+
+## KT-549.4 — Arena HUD icon language (2026-11-09)
+- Added distinct compact visual symbols to the score/objective cards: score star, boss target, level bars and timer dial.
+- Moved labels and values into a wider text column so the icon is an anchor rather than a replacement for meaning; small labels now have more room and adaptive sizing.
+- The HUD retains text values for clarity and accessibility; this is a visual aid, not an icon-only interface.
+- Validation pending on the latest combined branch head. No merge, deployment, APK release or device acceptance.
