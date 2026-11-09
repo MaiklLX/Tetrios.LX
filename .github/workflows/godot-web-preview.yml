@@ -154,3 +154,81 @@ jobs:
           path: build/godot-web/
           if-no-files-found: error
           retention-days: 14
+
+  deploy-preview:
+    name: Publish isolated Godot browser preview
+    needs: export-web
+    if: github.event_name == 'push' && github.ref == 'refs/heads/godot/kt548-web-preview-prep-2026-11-09'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}godot-preview/
+    steps:
+      - name: Checkout preserved public site from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: legacy-source
+          persist-credentials: false
+
+      - name: Download validated Godot Web artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: block-buddies-godot-web-preview
+          path: build/godot-web
+
+      - name: Assemble unchanged legacy site plus isolated Godot preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          PUBLISH_DIR="$RUNNER_TEMP/pages-site"
+          mkdir -p "$PUBLISH_DIR"
+          cp -a legacy-source/site/. "$PUBLISH_DIR/"
+
+          mkdir -p "$PUBLISH_DIR/audio"
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "$PUBLISH_DIR/audio/chills.mp3"
+          test -s "$PUBLISH_DIR/audio/chills.mp3"
+          AUDIO_SIZE="$(stat -c%s "$PUBLISH_DIR/audio/chills.mp3")"
+          if [ "$AUDIO_SIZE" -lt 1000000 ]; then
+            echo "::error::CC0 soundtrack download is unexpectedly small"
+            exit 1
+          fi
+
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package" "$PUBLISH_DIR/vendor"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf "$PUBLISH_DIR/vendor/three"
+          cp -a "$RUNNER_TEMP/three-package/package" "$PUBLISH_DIR/vendor/three"
+          test -s "$PUBLISH_DIR/vendor/three/build/three.module.js"
+          test -s "$PUBLISH_DIR/vendor/three/examples/jsm/loaders/GLTFLoader.js"
+          node "$PUBLISH_DIR/validate-3d-runtime.mjs"
+
+          mkdir -p "$PUBLISH_DIR/godot-preview"
+          cp -a build/godot-web/. "$PUBLISH_DIR/godot-preview/"
+          test -s "$PUBLISH_DIR/godot-preview/index.html"
+          test -s "$PUBLISH_DIR/godot-preview/index.wasm"
+          test -s "$PUBLISH_DIR/godot-preview/index.pck"
+          touch "$PUBLISH_DIR/.nojekyll"
+          echo "Legacy site preserved; Godot preview isolated at /godot-preview/"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload combined Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/pages-site
+
+      - name: Deploy preserved site and isolated Godot preview
+        id: deployment
+        uses: actions/deploy-pages@v4
