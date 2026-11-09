@@ -298,6 +298,11 @@ func _campaign_planet_uses_cargo_hook(node_id: int) -> bool:
 func _reset_campaign_piece_runtime() -> bool:
 	campaign_piece_runtime = CampaignRuntime.new()
 	campaign_piece_runtime.reset(false)
+	var definition: Dictionary = campaign_progress.get_planet_definition(campaign_run_planet_id) if campaign_progress != null else {}
+	var authored_layout: Variant = definition.get("starting_layout", [])
+	if not authored_layout.is_empty() and not campaign_piece_runtime.apply_authored_starting_layout(authored_layout):
+		push_error("Authored campaign starting layout failed validation at runtime.")
+		return false
 	if _campaign_planet_uses_cargo_hook(campaign_run_planet_id):
 		return campaign_piece_runtime.spawn_authored_special()
 	return campaign_piece_runtime.spawn_next_standard()
