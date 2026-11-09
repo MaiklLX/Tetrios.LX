@@ -7362,13 +7362,18 @@ function buildMap() {
         const nodeCenter = active.offsetTop + active.offsetHeight / 2;
         const maxScroll = Math.max(0, viewport.scrollHeight - viewportHeight);
         const desiredTop = Math.max(0, Math.min(maxScroll, nodeCenter - viewportHeight * .58));
+        // Force an immediate local scroll. The shared atlas stylesheet sets
+        // scroll-behavior:smooth!important; without this override, programmatic
+        // alignment is still animating when the campaign map is measured.
+        viewport.style.setProperty('scroll-behavior','auto','important');
         viewport.scrollTop = desiredTop;
-        viewport.dataset.routeAlign = 'applied';
+        if (Math.abs(viewport.scrollTop - desiredTop) > 2) {
+          viewport.scrollTo({top:desiredTop,behavior:'auto'});
+        }
+        const aligned = Math.abs(viewport.scrollTop - desiredTop) <= 2;
+        viewport.dataset.routeAlign = aligned ? 'applied' : 'scroll-not-applied';
         viewport.dataset.routeAlignTop = String(Math.round(desiredTop));
         viewport.dataset.routeAlignNode = active.dataset.planetNumber || '';
-        if (Math.abs(viewport.scrollTop - desiredTop) > 2) {
-          active.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'});
-        }
       } else if (alignmentFrames++ < 12) {
         requestAnimationFrame(alignCurrentPlanet);
       } else {
@@ -14808,6 +14813,7 @@ button:not(.board):focus-visible{
 <style id="bb-kt556-vertical-route-scroll">
 /* KT-556: the campaign planet route is a vertical map, not a horizontal strip. */
 #campaign .bb-planet-viewport{
+  scroll-behavior:auto!important;
   height:min(58vh,560px)!important;
   min-height:320px!important;
   overflow-x:hidden!important;
