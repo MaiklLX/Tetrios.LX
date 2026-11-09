@@ -1167,7 +1167,7 @@ func _draw_campaign_collection() -> void:
 		var scroll_visual: Dictionary = CampaignCollectionLayout.scrollbar(layout, campaign_collection_scroll_offset)
 		var scroll_track: Rect2 = scroll_visual.get("track", Rect2())
 		var scroll_thumb: Rect2 = scroll_visual.get("thumb", Rect2())
-		if not scroll_track.is_empty() and not scroll_thumb.is_empty():
+		if scroll_track.size.x > 0.0 and scroll_track.size.y > 0.0 and scroll_thumb.size.x > 0.0 and scroll_thumb.size.y > 0.0:
 			draw_line(scroll_track.position, Vector2(scroll_track.position.x, scroll_track.end.y), Color(0.42, 0.62, 0.82, 0.28), 2.0, true)
 			draw_line(scroll_thumb.position, Vector2(scroll_thumb.position.x, scroll_thumb.end.y), Color("#8fe8ff"), 3.0, true)
 	var footer_text := "ЛИСТАЙ СЕТКУ ВВЕРХ / ВНИЗ" if bool(layout.scrollable) else "ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»"
