@@ -204,7 +204,13 @@ const targets = [
         firstAtBottom:y.length>1&&y[0]>y[y.length-1],
         currentVisible:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active||!viewport)return false;const a=active.getBoundingClientRect(),v=viewport.getBoundingClientRect();return a.bottom>v.top&&a.top<v.bottom})(),
         scrollTop:viewport?.scrollTop||0,
-        bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber)
+        bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber),
+        trackDisplay:track?getComputedStyle(track).display:null,
+        nodePosition:nodes[0]?getComputedStyle(nodes[0]).position:null,
+        viewportOverflowY:viewport?getComputedStyle(viewport).overflowY:null,
+        viewportClientHeight:viewport?.clientHeight||0,
+        viewportScrollHeight:viewport?.scrollHeight||0,
+        currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),height:Math.round(r.height)}})()
       };
     });
     if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible){
