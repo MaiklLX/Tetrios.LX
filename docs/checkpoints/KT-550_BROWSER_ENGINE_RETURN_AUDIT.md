@@ -248,3 +248,13 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Следующий обязательный шаг: новый полный cross-platform preview; проверить, что на свежем снимке активная планета 001 видна, 49 SVG-эмблем присутствуют, и Android 393×873 завершает захват. Не объявлять KT-556 закрытой до успешного результата.
 - Снимки диагностического прогона: ios-webkit-412x915-campaign-vertical-route.png и ios-webkit-412x915-campaign-reward-shelf.png из artifact tetrios-cross-platform-visual-preview (run 42642873567). Эти route-снимки диагностические, не финальный результат после KT-556.
 - Safety: PR #85 остаётся Draft; main, Pages, Godot preview и APK не затронуты.
+
+
+### KT-557 — initial route alignment by viewport geometry
+
+- Дата: 2026-11-09
+- Повторный cross-platform preview run 42645723197 подтвердил, что KT-556 CSS override не устранил неверную начальную позицию маршрута: desktop 1920×1080 всё ещё показывал 025–030 при доступной планете 001.
+- Установлена более точная причина: offsetTop относится к offsetParent, а не гарантированно к прокручиваемому viewport. Поэтому вычисление scrollTop могло не учитывать реальное положение активной планеты внутри карты.
+- KT-557 заменяет расчёт на разницу getBoundingClientRect() активной планеты и viewport; позиционирование выполняется после двух кадров layout. Сохранены существующие node IDs, порядок планет, unlock-логика, обработчик запуска и ключи сохранений.
+- Следующая проверка должна подтвердить видимость .is-current после входа во вселенную на desktop Chromium, iOS WebKit и Android Chromium. Также отдельно проверить mission-entry flow: предыдущий прогон завершился дополнительным timeout ожидания #bbStartHeroChoose на desktop 1920×1080; это пока не классифицировано как игровая ошибка и требует изоляции.
+- PR #85 остаётся Draft; публикация, merge, APK build/release не выполняются.
