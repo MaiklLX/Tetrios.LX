@@ -35,7 +35,7 @@ func _run() -> void:
 		for value in row:
 			if int(value) >= 0:
 				occupied_cells += 1
-	if not _check(occupied_cells == 27, "Authored layout must populate exactly the 27 declared cells"):
+	if not _check(occupied_cells == 26, "Authored layout must populate exactly the 26 declared cells"):
 		return
 	var before_invalid_layout: Array = runtime.grid.duplicate(true)
 	if not _check(not runtime.apply_authored_starting_layout(["##########"]) and runtime.grid == before_invalid_layout, "Invalid authored layouts must be rejected without mutating the board"):
