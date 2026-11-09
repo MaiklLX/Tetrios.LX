@@ -60,7 +60,7 @@ This slice proves the authored-layout runtime seam; it does not mean the full St
 ## KT-546.1 — boss phase contract hardening
 - The boss catalog validator now checks every phase independently: phase titles must be present, quotas cannot be negative, and no phase may have both line and score quotas set to zero.
 - Three-phase encounters must retain a positive total line-clear requirement across the full encounter; malformed phase data fails closed before it can enter a live campaign session.
-- Added regression cases for negative phase quotas and an empty/unwinnable phase.
+- Added regression cases for negative phase quotas and an empty/unwinnable phase; the tests also verify that each boss's three phase quotas sum exactly to the encounter-wide line and score targets.
 - Existing authored bosses remain three sequential phases with per-phase progress baselines; the live HUD now displays both active quotas when a phase requires both.
 - This is a data-integrity and player-readability improvement. It does not add unimplemented attack patterns or claim new boss mechanics.
 - CI validation is required on the resulting branch head before this checkpoint is accepted.
