@@ -210,10 +210,15 @@ const targets = [
         viewportOverflowY:viewport?getComputedStyle(viewport).overflowY:null,
         viewportClientHeight:viewport?.clientHeight||0,
         viewportScrollHeight:viewport?.scrollHeight||0,
+        alignmentStatus:viewport?.dataset.routeAlign||'not-run',
+        alignmentTop:viewport?.dataset.routeAlignTop||null,
+        alignmentNode:viewport?.dataset.routeAlignNode||null,
+        trackOffsetHeight:track?.offsetHeight||0,
+        currentOffsetTop:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));return active?.offsetTop??null})(),
         currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),height:Math.round(r.height)}})()
       };
     });
-    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible){
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
