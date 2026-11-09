@@ -11,6 +11,7 @@ const CampaignProgress = preload("res://scripts/campaign_progress.gd")
 const CampaignAchievements = preload("res://scripts/campaign_achievements.gd")
 const CampaignCollection = preload("res://scripts/campaign_collection.gd")
 const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
+const CampaignCollectionLayout = preload("res://scripts/campaign_collection_layout.gd")
 const CampaignRuntime = preload("res://scripts/campaign_piece_runtime.gd")
 const CampaignRunStore = preload("res://scripts/campaign_piece_store.gd")
 const CampaignSpecialPiece = preload("res://scripts/campaign_special_piece.gd")
@@ -1064,9 +1065,11 @@ func _draw_campaign_collection() -> void:
 	var items: Array = summary.get("items", [])
 	var unlocked_count := int(summary.get("unlocked_count", 0))
 	var total_count := int(summary.get("total_count", 49))
-	_center_text("ПОЛКА НАГРАД", 101.0, 22, Color("#fff0b9"))
-	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], 126.0, 10, Color("#c4edff"))
-	var legend_y := 145.0
+	var layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
+	var compact := bool(layout.compact)
+	_center_text("ПОЛКА НАГРАД", float(layout.title_y), 22 if not bool(layout.short_screen) else 19, Color("#fff0b9"))
+	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], float(layout.subtitle_y), 10 if not bool(layout.short_screen) else 9, Color("#c4edff"))
+	var legend_y := float(layout.legend_y)
 	var legend_start := screen_size.x * 0.5 - 89.5
 	for legend in [
 		{"label": "РЕЛИКВИИ", "color": Color("#55ddcf"), "width": 64.0},
@@ -1076,12 +1079,11 @@ func _draw_campaign_collection() -> void:
 		draw_circle(Vector2(legend_start + 4.0, legend_y - 3.0), 3.0, legend.color)
 		draw_string(font, Vector2(legend_start + 12.0, legend_y), legend.label, HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("#d7eaff"))
 		legend_start += legend.width
-	var compact := screen_size.x <= 480.0
-	var gap := 4.0
-	var margin := 13.0 if compact else 24.0
-	var cell_w := (screen_size.x - margin * 2.0 - gap * 6.0) / 7.0
-	var cell_h := minf(56.0 if compact else 76.0, (screen_size.y - 292.0) / 7.0)
-	var top := 160.0
+	var gap := float(layout.gap)
+	var margin := float(layout.margin)
+	var cell_w := float(layout.cell_width)
+	var cell_h := float(layout.cell_height)
+	var top := float(layout.top)
 	campaign_collection_item_rects.clear()
 	var universe_unlocked_counts: Dictionary = {}
 	for item in items:
@@ -1119,25 +1121,26 @@ func _draw_campaign_collection() -> void:
 		var short_label := "Р%02d" % universe_number if kind == "universe_relic" else ("КОРОНА" if kind == "campaign_crown" else "Б%03d" % int(item.get("planet_id", 0)))
 		draw_string(font, Vector2(rect.position.x + 1.0, rect.end.y - 5.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 2.0, 7 if compact else 9, Color("#ffffff") if unlocked else Color("#8095b2"))
 	var selected_item: Dictionary = items[clampi(campaign_collection_selected, 0, items.size() - 1)] if not items.is_empty() else {}
-	var detail_rect := Rect2(14.0, screen_size.y - 99.0, screen_size.x - 28.0, 78.0)
+	var detail_rect: Rect2 = layout.detail_rect
 	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 13, 5)
-	campaign_collection_inspect_rect = Rect2(detail_rect.end.x - 91.0, detail_rect.position.y + 20.0, 80.0, 38.0)
+	campaign_collection_inspect_rect = layout.inspect_rect
 	if not selected_item.is_empty():
 		var is_unlocked := bool(selected_item.get("unlocked", false))
 		var selected_kind := str(selected_item.get("kind", ""))
 		var selected_universe_number := int(selected_item.get("universe_number", 0))
-		var category := "РЕЛИКВИЯ ВСЕЛЕННОЙ %02d" % selected_universe_number if selected_kind == "universe_relic" else ("ЗНАК ПОБЕЖДЁННОГО БОССА" if selected_kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА КАМПАНИИ")
-		var status := category + ("  •  ПОЛУЧЕНО" if is_unlocked else "  •  ЕЩЁ ВПЕРЕДИ")
-		var detail_text_width := detail_rect.size.x - 116.0
-		draw_string(font, detail_rect.position + Vector2(11.0, 16.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
-		draw_string(font, detail_rect.position + Vector2(11.0, 34.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 11, Color("#ffffff"))
-		draw_string(font, detail_rect.position + Vector2(11.0, 50.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 8, Color("#c4edff"))
+		var category := "РЕЛИКВИЯ %02d" % selected_universe_number if selected_kind == "universe_relic" else ("БОСС" if selected_kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА")
+		var status := category + (" • ПОЛУЧЕНО" if is_unlocked else " • ВПЕРЕДИ")
+		var detail_text_width := maxf(40.0, campaign_collection_inspect_rect.position.x - detail_rect.position.x - 18.0)
+		var detail_font := 7 if compact else 8
+		draw_string(font, detail_rect.position + Vector2(10.0, 14.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, detail_font, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
+		draw_string(font, detail_rect.position + Vector2(10.0, 31.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 10 if compact else 11, Color("#ffffff"))
+		draw_string(font, detail_rect.position + Vector2(10.0, 45.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#c4edff"))
 		var unlock_planet := int(selected_item.get("unlock_planet", 0))
-		var requirement := "УСЛОВИЕ: ВСЕ 360 ПЛАНЕТ" if selected_kind == "campaign_crown" else ("УСЛОВИЕ: ВСЕ 30 ПЛАНЕТ МИРА" if selected_kind == "universe_relic" else "УСЛОВИЕ: БОСС ПЛАНЕТЫ %03d" % unlock_planet)
-		draw_string(font, detail_rect.position + Vector2(11.0, 66.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#ffd77a"))
+		var requirement := "УСЛОВИЕ: 360 ПЛАНЕТ" if selected_kind == "campaign_crown" else ("УСЛОВИЕ: 30 ПЛАНЕТ" if selected_kind == "universe_relic" else "УСЛОВИЕ: БОСС %03d" % unlock_planet)
+		draw_string(font, detail_rect.position + Vector2(10.0, detail_rect.size.y - 5.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_text_width, 7, Color("#ffd77a"))
 		_draw_soft_panel(campaign_collection_inspect_rect, Color("#174d79"), Color("#8fe8ff"), 9, 3)
-		_center_text("ОСМОТР", campaign_collection_inspect_rect.position.y + 24.0, 9, Color("#ffffff"))
-	_center_text("ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»", screen_size.y - 8.0, 8, Color("#b9eaff"))
+		_center_text("ОСМОТР", campaign_collection_inspect_rect.position.y + campaign_collection_inspect_rect.size.y * 0.67, 8, Color("#ffffff"))
+	_center_text("ВЫБЕРИ НАГРАДУ ИЛИ НАЖМИ «ОСМОТР»", float(layout.footer_y), 8, Color("#b9eaff"))
 	if campaign_collection_reveal_active or campaign_collection_preview_active:
 		var modal_item := selected_item
 		var is_new_reward := campaign_collection_reveal_active
@@ -1179,41 +1182,38 @@ func _draw_campaign_collection_reward_modal(item: Dictionary, is_new_reward: boo
 	if item.is_empty():
 		return
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.015, 0.025, 0.07, 0.82))
-	var panel_size := Vector2(minf(screen_size.x - 28.0, 360.0), minf(screen_size.y - 150.0, 356.0))
-	panel_size.x = maxf(260.0, panel_size.x)
-	panel_size.y = maxf(300.0, panel_size.y)
-	var panel := Rect2(screen_size * 0.5 - panel_size * 0.5, panel_size)
+	var panel := CampaignCollectionLayout.reward_modal(screen_size)
+	_draw_soft_panel(panel, Color("#0b1d42"), _collection_universe_accent(str(item.get("kind", "")), int(item.get("universe_number", 0)), int(item.get("planet_id", 0))), 22, 12)
 	var kind := str(item.get("kind", ""))
 	var universe_number := int(item.get("universe_number", 0))
 	var planet_id := int(item.get("planet_id", 0))
 	var visual_variant := int(item.get("visual_variant", 0))
 	var accent := _collection_universe_accent(kind, universe_number, planet_id)
-	_draw_soft_panel(panel, Color("#0b1d42"), accent, 22, 12)
 	var heading := "НОВАЯ НАГРАДА!" if is_new_reward else "ОСМОТР ТРОФЕЯ"
-	draw_string(font, Vector2(panel.position.x + 10.0, panel.position.y + 34.0), heading, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 17, Color("#fff0b9"))
-	var emblem_center := Vector2(panel.get_center().x, panel.position.y + 130.0)
+	draw_string(font, Vector2(panel.position.x + 10.0, panel.position.y + 31.0), heading, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 15, Color("#fff0b9"))
+	var emblem_center := Vector2(panel.get_center().x, panel.position.y + panel.size.y * 0.355)
 	var reveal_progress := clampf(campaign_collection_reveal_time / 0.7, 0.0, 1.0) if is_new_reward else 1.0
 	var emblem_scale := 0.78 + 0.22 * reveal_progress
-	var emblem_radius := 43.0 * emblem_scale
+	var emblem_radius := minf(43.0, panel.size.y * 0.12) * emblem_scale
 	var pulse := 0.5 + 0.5 * sin(ambient_time * 3.2)
-	draw_circle(emblem_center, emblem_radius + 17.0 + pulse * 5.0, Color(accent.r, accent.g, accent.b, 0.10))
-	draw_arc(emblem_center, emblem_radius + 16.0 + pulse * 5.0, 0.0, TAU, 56, Color(accent.r, accent.g, accent.b, 0.68), 2.0, true)
+	draw_circle(emblem_center, emblem_radius + 14.0 + pulse * 4.0, Color(accent.r, accent.g, accent.b, 0.10))
+	draw_arc(emblem_center, emblem_radius + 13.0 + pulse * 4.0, 0.0, TAU, 56, Color(accent.r, accent.g, accent.b, 0.68), 2.0, true)
 	if is_new_reward:
-		var burst_radius := 56.0 + reveal_progress * 42.0
+		var burst_radius := emblem_radius + 13.0 + reveal_progress * 28.0
 		var burst_alpha := 1.0 - reveal_progress
 		draw_arc(emblem_center, burst_radius, 0.0, TAU, 48, Color(accent.r, accent.g, accent.b, burst_alpha), 2.2, true)
 		for sparkle in range(12):
 			var angle := TAU * float(sparkle) / 12.0 + ambient_time * 0.18
-			var sparkle_pos := emblem_center + Vector2.from_angle(angle) * (58.0 + pulse * 8.0)
+			var sparkle_pos := emblem_center + Vector2.from_angle(angle) * (emblem_radius + 17.0 + pulse * 5.0)
 			draw_line(sparkle_pos - Vector2(3.0, 0.0), sparkle_pos + Vector2(3.0, 0.0), accent.lightened(0.35), 1.5)
 			draw_line(sparkle_pos - Vector2(0.0, 3.0), sparkle_pos + Vector2(0.0, 3.0), accent.lightened(0.35), 1.5)
 	_draw_collection_emblem(emblem_center, emblem_radius, kind, accent, visual_variant, planet_id)
 	var status := "ПОЛУЧЕНО" if bool(item.get("unlocked", false)) else "ЕЩЁ ВПЕРЕДИ"
-	draw_string(font, Vector2(panel.position.x + 18.0, panel.position.y + 202.0), status, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 36.0, 9, Color("#8ef4d3") if bool(item.get("unlocked", false)) else Color("#ffd05a"))
-	draw_string(font, Vector2(panel.position.x + 10.0, panel.position.y + 228.0), str(item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 15, Color("#ffffff"))
-	draw_string(font, Vector2(panel.position.x + 22.0, panel.position.y + 250.0), str(item.get("description", "")), HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 44.0, 9, Color("#c4edff"))
+	draw_string(font, Vector2(panel.position.x + 14.0, panel.position.y + panel.size.y * 0.585), status, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 28.0, 9, Color("#8ef4d3") if bool(item.get("unlocked", false)) else Color("#ffd05a"))
+	draw_string(font, Vector2(panel.position.x + 10.0, panel.position.y + panel.size.y * 0.665), str(item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 14, Color("#ffffff"))
+	draw_string(font, Vector2(panel.position.x + 18.0, panel.position.y + panel.size.y * 0.745), str(item.get("description", "")), HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 36.0, 8, Color("#c4edff"))
 	var instruction := "КОСНИСЬ, ЧТОБЫ ПРОДОЛЖИТЬ" if is_new_reward else "КОСНИСЬ, ЧТОБЫ ЗАКРЫТЬ"
-	draw_string(font, Vector2(panel.position.x + 10.0, panel.end.y - 22.0), instruction, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 9, Color("#fff0b9"))
+	draw_string(font, Vector2(panel.position.x + 10.0, panel.end.y - 16.0), instruction, HORIZONTAL_ALIGNMENT_CENTER, panel.size.x - 20.0, 8, Color("#fff0b9"))
 
 func _collection_universe_accent(kind: String, universe_number: int, planet_id: int) -> Color:
 	if kind == "campaign_crown":
