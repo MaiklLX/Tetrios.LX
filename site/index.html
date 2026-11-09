@@ -7385,12 +7385,24 @@ function buildMap() {
         bbCampaignArrivalNode = 0;
       }
     };
-    // Wait for layout, and retry briefly if the campaign screen is still hidden.
-    // Keep a timer fallback: some WebKit/Chromium transition states can defer
-    // animation-frame callbacks while the campaign view is being revealed.
+    // The atlas may be revealed after its DOM is created. Observe the actual
+    // viewport layout so alignment runs when it receives measurable geometry,
+    // even if the browser defers animation-frame callbacks during transitions.
+    viewport.dataset.routeAlign = 'pending';
+    let routeObserver = null;
+    if (typeof ResizeObserver === 'function') {
+      routeObserver = new ResizeObserver(() => {
+        if (viewport.clientHeight > 0 && track.offsetHeight > 0) {
+          alignCurrentPlanet();
+          if (viewport.dataset.routeAlign === 'applied') routeObserver.disconnect();
+        }
+      });
+      routeObserver.observe(viewport);
+    }
     requestAnimationFrame(() => requestAnimationFrame(alignCurrentPlanet));
     setTimeout(() => {
       if (viewport.dataset.routeAlign !== 'applied') alignCurrentPlanet();
+      if (viewport.dataset.routeAlign === 'applied' && routeObserver) routeObserver.disconnect();
     }, 90);
   };
 
