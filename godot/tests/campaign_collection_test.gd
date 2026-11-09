@@ -2,6 +2,7 @@ extends SceneTree
 
 const Campaign = preload("res://scripts/campaign_progress.gd")
 const Collection = preload("res://scripts/campaign_collection.gd")
+const ProgressStore = preload("res://scripts/campaign_progress_store.gd")
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -93,5 +94,24 @@ func _run() -> void:
 		return
 	if not _check(Collection.get_item(final_progress, "campaign_crown").unlocked, "Campaign crown must unlock only after all 360 planets"):
 		return
+	var store_path := "user://campaign_collection_pending_test.cfg"
+	var pending_ids: Array[String] = ["universe_relic_01", "boss_insignia_030"]
+	if not _check(ProgressStore.save_progress(first_universe, store_path, pending_ids), "Campaign store must save pending reward reveal IDs alongside progress"):
+		return
+	var restored_progress = Campaign.new()
+	var restored_save: Dictionary = ProgressStore.load_progress(restored_progress, store_path)
+	if not _check(bool(restored_save.get("ok", false)) and restored_save.get("pending_reward_reveals", []) == pending_ids, "Pending reward reveals must survive save and reload in their original order"):
+		return
+	var legacy_store_path := "user://campaign_collection_legacy_test.cfg"
+	var legacy_config := ConfigFile.new()
+	legacy_config.set_value("campaign", "progress", first_universe.to_save_data())
+	if not _check(legacy_config.save(legacy_store_path) == OK, "Legacy save fixture must be writable"):
+		return
+	var legacy_progress = Campaign.new()
+	var legacy_load: Dictionary = ProgressStore.load_progress(legacy_progress, legacy_store_path)
+	if not _check(bool(legacy_load.get("ok", false)) and legacy_load.get("pending_reward_reveals", []).is_empty(), "Older saves without a pending reveal field must load with an empty queue"):
+		return
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(store_path))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(legacy_store_path))
 	print("Campaign collection tests passed: 12 universe relics, 36 boss insignias, final crown, locked states, per-universe unlocks and full completion.")
 	quit(0)
