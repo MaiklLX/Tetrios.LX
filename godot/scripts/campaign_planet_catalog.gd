@@ -24,7 +24,7 @@ const CHAPTERS := {
 			{"local_id":7,"title":"Поток грузов","briefing":"Сохраняй темп и не заполняй верхние ряды.","mission_tag":"flow","event_id":"","event_status":"none"},
 			{"local_id":8,"title":"Маршрутный маяк","briefing":"Проверь стабильность укладки перед входом в сектор каравана.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":9,"title":"Проверка экипажа","briefing":"Последняя тренировка перед встречей с первым стражем маршрута.","mission_tag":"mastery","event_id":"","event_status":"none"},
-			{"local_id":10,"title":"Страж конвоя","briefing":"Страж проверяет и объём очистки, и качество набранных очков.","mission_tag":"boss_guardian","event_id":"convoy_guardian","event_status":"briefing_only","boss_name":"Страж конвоя","boss_phase":"single"},
+			{"local_id":10,"title":"Страж конвоя","briefing":"Страж проверяет и объём очистки, и качество набранных очков.","mission_tag":"boss_guardian","event_id":"convoy_guardian","event_status":"implemented","boss_name":"Страж конвоя","boss_phases":[{"title":"Разведка заслона","target_lines":4,"target_score":0},{"title":"Перехват конвоя","target_lines":4,"target_score":450},{"title":"Разрыв блокады","target_lines":4,"target_score":970}]},
 			{"local_id":11,"title":"После тревоги","briefing":"Караван продолжает путь. Верни полю безопасную форму.","mission_tag":"recovery","event_id":"","event_status":"none"},
 			{"local_id":12,"title":"Смена построения","briefing":"Чередуй формы и оставляй место для длинных комбинаций.","mission_tag":"practice","event_id":"","event_status":"none"},
 			{"local_id":13,"title":"Точный расчёт","briefing":"Каждая очистка важна: не трать пространство впустую.","mission_tag":"precision","event_id":"","event_status":"none"},
@@ -34,7 +34,7 @@ const CHAPTERS := {
 			{"local_id":17,"title":"Резервный отсек","briefing":"Подготовь свободный объём поля для неожиданного груза.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":18,"title":"Тяговый импульс","briefing":"Проверь устойчивость темпа на длинной серии очисток.","mission_tag":"tempo","event_id":"","event_status":"none"},
 			{"local_id":19,"title":"Передача смены","briefing":"Сохрани контроль над полем перед испытанием чемпиона.","mission_tag":"mastery","event_id":"","event_status":"none"},
-			{"local_id":20,"title":"Чемпион каравана","briefing":"Чемпион требует выдержки: выполни обе части задания без гонки со временем.","mission_tag":"boss_champion","event_id":"caravan_champion","event_status":"briefing_only","boss_name":"Чемпион каравана","boss_phase":"single"},
+			{"local_id":20,"title":"Чемпион каравана","briefing":"Чемпион требует выдержки: выполни обе части задания без гонки со временем.","mission_tag":"boss_champion","event_id":"caravan_champion","event_status":"implemented","boss_name":"Чемпион каравана","boss_phases":[{"title":"Навигационный тест","target_lines":4,"target_score":0},{"title":"Тяжёлый конвой","target_lines":4,"target_score":500},{"title":"Вызов чемпиона","target_lines":5,"target_score":1080}]},
 			{"local_id":21,"title":"Новый сектор","briefing":"После победы маршрут меняется. Освой новый ритм укладки.","mission_tag":"recovery","event_id":"","event_status":"none"},
 			{"local_id":22,"title":"Грузовой баланс","briefing":"Сочетай безопасную высоту поля с эффективными очистками.","mission_tag":"efficiency","event_id":"","event_status":"none"},
 			{"local_id":23,"title":"Длинная связка","briefing":"Строй последовательности очисток, не теряя контроля над верхом поля.","mission_tag":"combo","event_id":"","event_status":"none"},
@@ -44,7 +44,7 @@ const CHAPTERS := {
 			{"local_id":27,"title":"Манёвр сцепки","briefing":"Подготовь место и используй нестандартную геометрию с умом.","mission_tag":"special_piece_mastery","event_id":"cargo_hook_mastery","event_status":"live_campaign_piece","special_piece_id":"cargo_hook"},
 			{"local_id":28,"title":"Сборка конвоя","briefing":"Сочетай обычные фигуры и подготовку к особой доставке.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":29,"title":"Последний сигнал","briefing":"Перед финалом маршрута проверь каждое решение и оставь запас пространства.","mission_tag":"mastery","event_id":"","event_status":"none"},
-			{"local_id":30,"title":"Адмирал дальнего пути","briefing":"Финальный командир каравана проверяет весь накопленный опыт главы.","mission_tag":"boss_final","event_id":"caravan_admiral","event_status":"briefing_only","boss_name":"Адмирал дальнего пути","boss_phase":"single"}
+			{"local_id":30,"title":"Адмирал дальнего пути","briefing":"Финальный командир каравана проверяет весь накопленный опыт главы.","mission_tag":"boss_final","event_id":"caravan_admiral","event_status":"implemented","boss_name":"Адмирал дальнего пути","boss_phases":[{"title":"Внешний периметр","target_lines":5,"target_score":0},{"title":"Штурм флагмана","target_lines":4,"target_score":600},{"title":"Решающая доставка","target_lines":5,"target_score":1140}]}
 		]
 	}
 }
@@ -87,4 +87,15 @@ static func validate_chapter(chapter: Dictionary) -> Dictionary:
 		var boss := index + 1 in [10, 20, 30]
 		if boss != planet.has("boss_name"):
 			return {"valid":false,"reason":"boss_metadata_mismatch","local_id":index + 1}
+		if boss:
+			var phases: Variant = planet.get("boss_phases")
+			if typeof(phases) != TYPE_ARRAY or phases.size() != 3:
+				return {"valid":false,"reason":"boss_requires_three_phases","local_id":index + 1}
+			for phase in phases:
+				if typeof(phase) != TYPE_DICTIONARY or str(phase.get("title", "")).strip_edges().is_empty():
+					return {"valid":false,"reason":"invalid_boss_phase","local_id":index + 1}
+				if int(phase.get("target_lines", 0)) <= 0 and int(phase.get("target_score", 0)) <= 0:
+					return {"valid":false,"reason":"empty_boss_phase","local_id":index + 1}
+		if event_status == "implemented" and not boss:
+			return {"valid":false,"reason":"unapproved_implemented_event","local_id":index + 1}
 	return {"valid":true,"reason":"ok","planet_count":planets.size()}
