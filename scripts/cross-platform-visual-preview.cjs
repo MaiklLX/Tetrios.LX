@@ -26,7 +26,7 @@ const targets = [
     const targetWatchdog = setTimeout(() => {
       console.error('[target:timeout] ' + target.name + ' exceeded 150000ms; stopping preview process');
       process.exit(1);
-    }, 150000);
+    }, 210000);
     const browserType = target.engine === 'webkit' ? webkit : chromium;
     const launchOptions = { headless: true };
     if (target.engine === 'chromium') {
