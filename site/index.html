@@ -6558,6 +6558,64 @@ const bbBiomes = [
 
 const bbTotalNodes = 360;
 
+// KT-554: Godot KT-549 campaign collection — 12 universe relics,
+// 36 commander insignias and the final campaign crown. Unlocks are derived
+// read-only from the existing sequential nrNode save; no progression keys change.
+const bbCampaignCollectionRelics = [
+  ['Сердце равнин','Память о покорении Зелёных равнин.'],
+  ['Компас каравана','Знак доверия звёздного каравана.'],
+  ['Искра пепельного солнца','Трофей за покорение Огненных земель.'],
+  ['Осколок ледяной короны','Холодный знак выдержки и мастерства.'],
+  ['Лунный архив','Свидетельство освоения лунной колонии.'],
+  ['Перо экспедиции','Память о смелости дальней экспедиции.'],
+  ['Песочные часы','Реликвия тех, кто не потерял путь во времени.'],
+  ['Ключ междумирья','Ключ, открывающий дорогу между мирами.'],
+  ['Звёздный фрагмент','Фрагмент небесного архипелага.'],
+  ['Ядро станции','Знак победы над испытаниями станции.'],
+  ['Осколок разлома','Осколок, вынесенный из космического разлома.'],
+  ['Знак дальнего рубежа','Последняя печать на пути к дальнему рубежу.']
+];
+const bbCampaignCollectionAccents = ['#83edbf','#55ddff','#ff9a68','#a8e5ff','#ffd05a','#8ebcff','#e4c18c','#a77bff','#8af0e8','#b6c9df','#c1a5ff','#ff8fbd'];
+function bbGetCampaignCollectionItems() {
+  const completed = Math.max(0, Math.min(bbTotalNodes, bbGetUnlockedNode()) - 1);
+  const items = [];
+  for (let universe=0; universe<12; universe++) {
+    const lastPlanet=(universe+1)*30;
+    items.push({id:'universe_relic_'+String(universe+1).padStart(2,'0'),kind:'relic',universe:universe+1,title:bbCampaignCollectionRelics[universe][0],description:bbCampaignCollectionRelics[universe][1],requirement:lastPlanet,accent:bbCampaignCollectionAccents[universe],symbol:bbBiomes[universe].icon,unlocked:completed>=lastPlanet});
+    for (const step of [10,20,30]) {
+      const planet=universe*30+step;
+      items.push({id:'boss_insignia_'+String(planet).padStart(3,'0'),kind:'boss',universe:universe+1,planet,title:'Знак командира · '+String(planet).padStart(3,'0'),description:'Знак за победу над командиром на планете '+String(planet).padStart(3,'0')+'.',requirement:planet,accent:bbCampaignCollectionAccents[universe],symbol:'♛',unlocked:completed>=planet});
+    }
+  }
+  items.push({id:'campaign_crown',kind:'crown',title:'Корона дальнего пути',description:'Главная реликвия за завершение всех 360 планет.',requirement:360,accent:'#ffd05a',symbol:'♕',unlocked:completed>=360});
+  return items;
+}
+function bbOpenCampaignCollection(selectedId) {
+  const items=bbGetCampaignCollectionItems();
+  const unlocked=items.filter(item=>item.unlocked).length;
+  const selected=items.find(item=>item.id===selectedId)||items.find(item=>item.unlocked)||items[0];
+  const cards=items.map((item,index)=>'<button type="button" class="bb-collection-card'+(item.id===selected.id?' is-selected':'')+(item.unlocked?' is-unlocked':' is-locked')+'" data-bb-collection-id="'+item.id+'" aria-label="'+(item.unlocked?'Получено: ':'Заблокировано: ')+item.title+'"><span class="bb-collection-emblem" style="--relic-accent:'+item.accent+'">'+(item.unlocked?item.symbol:'◇')+'</span><span class="bb-collection-card-label">'+(item.kind==='relic'?'РЕЛИКВИЯ '+String(item.universe).padStart(2,'0'):item.kind==='boss'?'БОСС '+String(item.planet).padStart(3,'0'):'ГЛАВНЫЙ ТРОФЕЙ')+'</span><span class="bb-collection-lock">'+(item.unlocked?'ПОЛУЧЕНО':'ЗАКРЫТО')+'</span></button>').join('');
+  const detail='<div class="bb-collection-detail" style="--relic-accent:'+selected.accent+'"><div class="bb-collection-detail-emblem">'+(selected.unlocked?selected.symbol:'◇')+'</div><div class="bb-collection-detail-copy"><small>'+(selected.kind==='relic'?'РЕЛИКВИЯ ВСЕЛЕННОЙ '+String(selected.universe).padStart(2,'0'):selected.kind==='boss'?'ЗНАК ПОБЕДЫ НАД БОССОМ':'ГЛАВНАЯ НАГРАДА')+' · '+(selected.unlocked?'ПОЛУЧЕНО':'ЕЩЁ ВПЕРЕДИ')+'</small><strong>'+selected.title+'</strong><span>'+selected.description+'</span><em>УСЛОВИЕ: '+(selected.kind==='crown'?'ПОКОРИТЬ ВСЕ 360 ПЛАНЕТ':selected.kind==='relic'?'ПОКОРИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ':'ПОБЕДИТЬ НА ПЛАНЕТЕ '+String(selected.requirement).padStart(3,'0'))+'</em></div></div>';
+  bbModal('<section class="bb-collection-modal"><header><div class="eyebrow">АТЛАС ДОСТИЖЕНИЙ</div><h3>★ ПОЛКА НАГРАД</h3><p>ТВОИ ДОСТИЖЕНИЯ · '+String(unlocked).padStart(2,'0')+' / 49 ПОЛУЧЕНО</p><div class="bb-collection-legend"><span>● РЕЛИКВИИ</span><span>● БОССЫ</span><span>● КОРОНА</span></div></header><div class="bb-collection-rail" id="bbCampaignCollectionRail">'+cards+'</div>'+detail+'<button type="button" class="action secondary" id="bbCampaignCollectionClose">ЗАКРЫТЬ</button></section>');
+  const rail=$('bbCampaignCollectionRail');
+  rail.querySelectorAll('[data-bb-collection-id]').forEach(button=>button.addEventListener('click',()=>bbOpenCampaignCollection(button.dataset.bbCollectionId)));
+  const active=rail.querySelector('.is-selected');
+  if(active) active.scrollIntoView({block:'nearest',inline:'center'});
+  $('bbCampaignCollectionClose').onclick=closeOverlay;
+}
+const bbCampaignStartButton=$('campaignStart');
+if(bbCampaignStartButton&&!$('bbOpenCampaignCollection')){
+  bbCampaignStartButton.insertAdjacentHTML('afterend','<button type="button" class="action secondary" id="bbOpenCampaignCollection">★ ПОЛКА НАГРАД · 00 / 49</button>');
+  $('bbOpenCampaignCollection').onclick=()=>bbOpenCampaignCollection();
+}
+function bbUpdateCampaignCollectionButton(){
+  const button=$('bbOpenCampaignCollection');
+  if(!button)return;
+  const count=bbGetCampaignCollectionItems().filter(item=>item.unlocked).length;
+  button.textContent='★ ПОЛКА НАГРАД · '+String(count).padStart(2,'0')+' / 49';
+}
+
+
 function bbGetBiome(node) {
   return bbBiomes.find(b => node >= b.start && node <= b.end)
     || bbBiomes[0];
@@ -14570,6 +14628,32 @@ button:not(.board):focus-visible{
   box-shadow:0 0 0 4px rgba(85,221,255,.2),0 0 18px rgba(85,221,255,.24);
 }
 @media(prefers-reduced-motion:reduce){button:not(.board){transition:none}}
+</style>
+
+
+<style id="bb-kt554-godot-reward-strip">
+.bb-collection-modal{width:min(100%,760px);max-height:min(88dvh,760px);overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:clamp(14px,3vw,24px);border:1px solid #55ddff;border-radius:22px;background:radial-gradient(ellipse at 50% 0%,#163d6d 0%,#0b1d42 54%,#080f25 100%);box-shadow:0 0 34px #55ddff25,inset 0 0 28px #55ddff0b;color:#eef8ff}
+.bb-collection-modal header{text-align:center;flex:0 0 auto}
+.bb-collection-modal header h3{margin:4px 0;color:#fff0b9;font-size:clamp(18px,4vw,22px);letter-spacing:.08em}
+.bb-collection-modal header p{margin:4px 0 7px;color:#c4edff;font-size:10px;letter-spacing:.12em}
+.bb-collection-legend{display:flex;justify-content:center;gap:15px;color:#d7eaff;font-size:8px;letter-spacing:.08em}
+.bb-collection-legend span:nth-child(1){color:#55ddcf}.bb-collection-legend span:nth-child(2){color:#ff91bd}.bb-collection-legend span:nth-child(3){color:#ffd05a}
+.bb-collection-rail{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding:8px 4px 14px;scrollbar-width:thin;scrollbar-color:#8fe8ff55 transparent}
+.bb-collection-card{flex:0 0 clamp(82px,22vw,142px);height:150px;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px 7px 10px;border:1px solid color-mix(in srgb,var(--relic-accent) 52%,transparent);border-radius:14px;background:linear-gradient(155deg,#152d51,#0b1830);color:#c4edff;transition:transform .12s,border-color .12s,box-shadow .12s}
+.bb-collection-card.is-selected{border:2px solid #fff0b9;box-shadow:0 0 0 2px #55ddff35,0 0 20px #55ddff35;transform:translateY(-3px)}
+.bb-collection-card.is-locked{filter:saturate(.45);opacity:.67}
+.bb-collection-emblem{width:66px;height:66px;display:grid;place-items:center;border:2px solid var(--relic-accent);border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--relic-accent) 24%,#10213e),#0a1429 72%);box-shadow:0 0 22px color-mix(in srgb,var(--relic-accent) 25%,transparent),inset 0 0 16px color-mix(in srgb,var(--relic-accent) 14%,transparent);color:var(--relic-accent);font-size:34px;text-shadow:0 0 12px var(--relic-accent)}
+.bb-collection-card-label{font-size:9px;font-weight:900;letter-spacing:.04em;text-align:center;color:#fff;white-space:nowrap}
+.bb-collection-lock{font-size:8px;letter-spacing:.08em;color:var(--relic-accent)}
+.bb-collection-detail{display:flex;align-items:center;gap:14px;min-height:94px;padding:12px;border:1px solid #55ddff;border-radius:15px;background:linear-gradient(110deg,#102f68,#0c1e3d);box-shadow:inset 0 0 18px #55ddff10}
+.bb-collection-detail-emblem{flex:0 0 58px;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--relic-accent);background:#09172c;color:var(--relic-accent);font-size:31px;box-shadow:0 0 20px color-mix(in srgb,var(--relic-accent) 24%,transparent)}
+.bb-collection-detail-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.bb-collection-detail-copy small{font-size:8px;color:#8ef4d3;letter-spacing:.08em}
+.bb-collection-detail-copy strong{font-size:13px;color:#fff}
+.bb-collection-detail-copy span{font-size:10px;line-height:1.4;color:#c4edff}
+.bb-collection-detail-copy em{font-size:8px;font-style:normal;color:#ffd77a}
+.bb-collection-modal>.action{flex:0 0 auto;margin-top:0}
+@media(max-width:420px){.bb-collection-modal{gap:9px;padding:13px}.bb-collection-card{height:140px}.bb-collection-detail{min-height:88px;gap:10px;padding:9px}.bb-collection-detail-emblem{width:48px;height:48px;flex-basis:48px;font-size:25px}.bb-collection-detail-copy strong{font-size:12px}.bb-collection-detail-copy span{font-size:9px}}
 </style>
 
 </body></html>
