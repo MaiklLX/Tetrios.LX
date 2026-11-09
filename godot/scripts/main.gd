@@ -9,6 +9,7 @@ const ModeSession = preload("res://scripts/mode_session.gd")
 const ModeCatalog = preload("res://scripts/mode_catalog.gd")
 const CampaignProgress = preload("res://scripts/campaign_progress.gd")
 const CampaignAchievements = preload("res://scripts/campaign_achievements.gd")
+const CampaignCollection = preload("res://scripts/campaign_collection.gd")
 const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
 const CampaignRuntime = preload("res://scripts/campaign_piece_runtime.gd")
 const CampaignRunStore = preload("res://scripts/campaign_piece_store.gd")
@@ -49,6 +50,9 @@ var campaign_screen := ""
 var campaign_universe := 0
 var campaign_planet := 1
 var campaign_atlas_rects: Array[Rect2] = []
+var campaign_collection_rect := Rect2()
+var campaign_collection_item_rects: Array[Rect2] = []
+var campaign_collection_selected := 0
 var campaign_node_rects: Array[Rect2] = []
 var campaign_start_rect := Rect2()
 var campaign_back_rect := Rect2()
@@ -567,7 +571,18 @@ func _handle_tap(point: Vector2) -> void:
 		queue_redraw()
 		return
 	if not campaign_screen.is_empty():
-		if campaign_back_rect.has_point(point):
+		if campaign_screen == "collection":
+			if campaign_back_rect.has_point(point):
+				campaign_screen = "atlas"
+			else:
+				for index in range(campaign_collection_item_rects.size()):
+					if campaign_collection_item_rects[index].has_point(point):
+						campaign_collection_selected = index
+						break
+		elif campaign_collection_rect.has_point(point) and campaign_screen == "atlas":
+			campaign_screen = "collection"
+			campaign_collection_selected = 0
+		elif campaign_back_rect.has_point(point):
 			if campaign_screen == "planet":
 				campaign_screen = "route"
 			elif campaign_screen == "route":
@@ -943,12 +958,17 @@ func _draw_campaign_screen() -> void:
 	draw_string(font, campaign_back_rect.position + Vector2(11.0, 26.0), "‹  НАЗАД", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("#ffffff"))
 	if campaign_screen == "atlas":
 		_draw_campaign_atlas()
+	elif campaign_screen == "collection":
+		_draw_campaign_collection()
 	elif campaign_screen == "route":
 		_draw_campaign_route()
 	else:
 		_draw_campaign_planet()
 
 func _draw_campaign_atlas() -> void:
+	campaign_collection_rect = Rect2(screen_size.x - 154.0, 14.0, 138.0, 40.0)
+	_draw_soft_panel(campaign_collection_rect, Color("#59451f"), Color("#ffd05a"), 14, 6)
+	draw_string(font, campaign_collection_rect.position + Vector2(9.0, 26.0), "★  ПОЛКА НАГРАД", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#fff0b9"))
 	_center_text("КОСМИЧЕСКИЙ АТЛАС", 104.0, 23, Color("#fff0b9"))
 	_center_text("12 ВСЕЛЕННЫХ  •  360 ПЛАНЕТ", 128.0, 10, Color("#c4edff"))
 	campaign_atlas_rects.clear()
@@ -982,6 +1002,54 @@ func _draw_campaign_atlas() -> void:
 		draw_string(font, Vector2(tx, rect.position.y + (62.0 if compact else 83.0)), "ПЛАНЕТЫ %03d–%03d" % [index * 30 + 1, (index + 1) * 30], HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 9, Color("#d7eaff"))
 		draw_string(font, Vector2(tx, rect.position.y + (75.0 if compact else 112.0)), "ПРОЙДЕНА" if is_completed else ("ТЕКУЩАЯ" if is_current else ("ОТКРЫТА" if unlocked else "ЗАКРЫТА")), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a") if is_current else (Color("#8ef4d3") if is_completed else Color("#9bb2d0")))
 	_center_text("ПЕРВЫЙ МИР ДОСТУПЕН ДЛЯ ИССЛЕДОВАНИЯ", screen_size.y - 14.0, 9, Color("#b9eaff"))
+
+func _draw_campaign_collection() -> void:
+	var summary: Dictionary = CampaignCollection.get_collection_summary(campaign_progress)
+	var items: Array = summary.get("items", [])
+	var unlocked_count := int(summary.get("unlocked_count", 0))
+	var total_count := int(summary.get("total_count", 49))
+	_center_text("ПОЛКА НАГРАД", 101.0, 22, Color("#fff0b9"))
+	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], 126.0, 10, Color("#c4edff"))
+	var compact := screen_size.x <= 480.0
+	var gap := 4.0
+	var margin := 13.0 if compact else 24.0
+	var cell_w := (screen_size.x - margin * 2.0 - gap * 6.0) / 7.0
+	var cell_h := minf(58.0 if compact else 76.0, (screen_size.y - 270.0) / 7.0)
+	var top := 151.0
+	campaign_collection_item_rects.clear()
+	for index in range(items.size()):
+		var item: Dictionary = items[index]
+		var col := index % 7
+		var row := index / 7
+		var rect := Rect2(margin + float(col) * (cell_w + gap), top + float(row) * (cell_h + gap), cell_w, cell_h)
+		campaign_collection_item_rects.append(rect)
+		var unlocked := bool(item.get("unlocked", false))
+		var selected := index == campaign_collection_selected
+		var edge := Color("#ffd05a") if unlocked else Color("#526d91")
+		var fill := Color("#57451f") if unlocked else Color("#172e50")
+		_draw_soft_panel(rect, fill, Color("#fff0b9") if selected else edge, 8, 3 if selected else 1)
+		var emblem_center := Vector2(rect.get_center().x, rect.position.y + cell_h * 0.39)
+		if unlocked:
+			draw_circle(emblem_center, minf(10.0, cell_w * 0.25), Color("#ffd05a", 0.20))
+			draw_arc(emblem_center, minf(9.0, cell_w * 0.23), 0.0, TAU, 24, Color("#ffd05a"), 1.6, true)
+			draw_line(emblem_center + Vector2(-4.0, 0.0), emblem_center + Vector2(0.0, 4.0), Color("#fff0b9"), 2.0)
+			draw_line(emblem_center + Vector2(0.0, 4.0), emblem_center + Vector2(5.0, -5.0), Color("#fff0b9"), 2.0)
+		else:
+			draw_arc(emblem_center, minf(8.0, cell_w * 0.20), PI, TAU, 16, Color("#7186a5"), 1.8, true)
+			var lock_rect := Rect2(emblem_center + Vector2(-5.0, -1.0), Vector2(10.0, 8.0))
+			draw_rect(lock_rect, Color("#7186a5"), false, 1.5)
+		var short_label := "Р%02d" % int(item.get("universe_number", 0)) if str(item.get("kind", "")) == "universe_relic" else ("КОРОНА" if str(item.get("kind", "")) == "campaign_crown" else "Б%03d" % int(item.get("planet_id", 0)))
+		draw_string(font, Vector2(rect.position.x + 1.0, rect.end.y - 5.0), short_label, HORIZONTAL_ALIGNMENT_CENTER, rect.size.x - 2.0, 7 if compact else 9, Color("#fff0b9") if unlocked else Color("#8095b2"))
+	var selected_item: Dictionary = items[clampi(campaign_collection_selected, 0, items.size() - 1)] if not items.is_empty() else {}
+	var detail_rect := Rect2(14.0, screen_size.y - 91.0, screen_size.x - 28.0, 70.0)
+	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 13, 5)
+	if not selected_item.is_empty():
+		var is_unlocked := bool(selected_item.get("unlocked", false))
+		var status := "ПОЛУЧЕНО" if is_unlocked else "ЕЩЁ ВПЕРЕДИ"
+		draw_string(font, detail_rect.position + Vector2(11.0, 19.0), status, HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
+		draw_string(font, detail_rect.position + Vector2(11.0, 37.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 11, Color("#ffffff"))
+		draw_string(font, detail_rect.position + Vector2(11.0, 55.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#c4edff"))
+	_center_text("ВЫБЕРИ ЗНАК, ЧТОБЫ УЗНАТЬ ЕГО ИСТОРИЮ", screen_size.y - 8.0, 8, Color("#b9eaff"))
 
 func _draw_campaign_route() -> void:
 	var compact := screen_size.x <= 480.0
