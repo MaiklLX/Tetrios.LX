@@ -1,0 +1,367 @@
+class_name BlockBuddiesWebMigration
+extends RefCounted
+
+const HERO_IDS := ["plush", "prism", "blip", "pixel", "spark"]
+const KNOWN_DIRECT_KEYS := [
+	"coins", "bbCoins", "nrRelics", "bbCampaignMarks", "nrNode",
+	"bbSelectedHero", "bb_equippedChestCosmetic", "bb_equippedChestCosmetics",
+	"bbDailyQuests", "bbDailyArchive", "bbDailyChallengeCatalogSignature",
+	"bbDailyChallengeAssignments", "bbDailyChallengeHistory",
+	"bbDailyChallengeCompletedDate", "bbDailyReplayCompleted", "bbVisitStreak",
+	"nrBest", "nrRuns", "nrDailyDone", "bb_haptics"
+]
+
+# Pure, read-only conversion. Input is a snapshot of localStorage key/value
+# strings. This class never accesses the filesystem, localStorage, or user://.
+static func parse_local_storage(raw: Dictionary) -> Dictionary:
+	var result := {
+		"ok": true,
+		"requires_review": false,
+		"errors": [],
+		"warnings": [],
+		"conflicts": [],
+		"unknown_keys": [],
+		"source_backup": raw.duplicate(true),
+		"profile": {
+			"schema_version": 1,
+			"economy": {"coins": 0, "gems": 3, "relics": 0},
+			"campaign": {"unlocked_node": 1, "marks": 0, "hero_perks": {}},
+			"heroes": {"selected_id": "plush", "progress": {}},
+			"inventory": {"consumables": {}, "permanent_perks": []},
+			"cosmetics": {"owned": [], "equipped_by_hero": {}, "fragments": 0},
+			"daily": {},
+			"stats": {"best_score": 0, "runs": 0, "last_daily_run_date": ""},
+			"settings": {"haptics": true}
+		}
+	}
+	var profile: Dictionary = result["profile"]
+	var economy: Dictionary = profile["economy"]
+	var campaign: Dictionary = profile["campaign"]
+	var heroes: Dictionary = profile["heroes"]
+	var hero_progress: Dictionary = heroes["progress"]
+	var inventory: Dictionary = profile["inventory"]
+	var cosmetics: Dictionary = profile["cosmetics"]
+	var daily: Dictionary = profile["daily"]
+	var stats: Dictionary = profile["stats"]
+	var settings: Dictionary = profile["settings"]
+
+	# Coins: the Web runtime loads bb_coins. Other keys are legacy mirrors.
+	var primary_coins: Variant = _read_value(raw, "bb_coins", true)
+	var alias_coins: Variant = _read_value(raw, "coins", false)
+	var mirror_coins: Variant = _read_value(raw, "bbCoins", false)
+	var primary_valid: bool = _is_non_negative_int(primary_coins)
+	var alias_valid: bool = _is_non_negative_int(alias_coins)
+	var mirror_valid: bool = _is_non_negative_int(mirror_coins)
+	if raw.has("bb_coins") and not primary_valid:
+		_add_error(result, "bb_coins is present but is not a valid non-negative integer")
+	elif primary_valid:
+		economy["coins"] = int(primary_coins)
+		for alias in [{"key":"coins","value":alias_coins,"valid":alias_valid},{"key":"bbCoins","value":mirror_coins,"valid":mirror_valid}]:
+			if raw.has(alias.key) and (not alias.valid or int(alias.value) != int(primary_coins)):
+				result["conflicts"].append({"field":"economy.coins","authoritative_key":"bb_coins","other_key":alias.key,"other_value":raw[alias.key]})
+				result["requires_review"] = true
+	elif alias_valid and mirror_valid and int(alias_coins) == int(mirror_coins):
+		economy["coins"] = int(alias_coins)
+		result["warnings"].append("bb_coins is absent; matching legacy coin aliases were used")
+	elif alias_valid and not raw.has("bbCoins"):
+		economy["coins"] = int(alias_coins)
+		result["warnings"].append("bb_coins is absent; legacy coins key was used")
+	elif mirror_valid and not raw.has("coins"):
+		economy["coins"] = int(mirror_coins)
+		result["warnings"].append("bb_coins is absent; bbCoins mirror was used")
+	elif raw.has("coins") or raw.has("bbCoins"):
+		_add_error(result, "Coin aliases disagree or are malformed and bb_coins is absent; manual reconciliation is required")
+
+	_read_non_negative_json_int(raw, "bb_gems", economy, "gems", result, 3)
+	_read_non_negative_raw_int(raw, "nrRelics", economy, "relics", result, 0)
+	_read_non_negative_raw_int(raw, "bbCampaignMarks", campaign, "marks", result, 0)
+	_read_positive_raw_int(raw, "nrNode", campaign, "unlocked_node", result, 1)
+	_read_non_negative_raw_int(raw, "nrBest", stats, "best_score", result, 0)
+	_read_non_negative_raw_int(raw, "nrRuns", stats, "runs", result, 0)
+
+	var selected: Variant = _read_value(raw, "bbSelectedHero", false)
+	if raw.has("bbSelectedHero"):
+		if typeof(selected) == TYPE_STRING and HERO_IDS.has(selected):
+			heroes["selected_id"] = selected
+		else:
+			_add_error(result, "bbSelectedHero contains an unknown hero id")
+
+	for hero_id in HERO_IDS:
+		var xp_key: String = "bb_xp_" + hero_id
+		var level_key: String = "bb_heroLevel_" + hero_id
+		var xp: Variant = _read_value(raw, xp_key, true)
+		var hero_level: Variant = _read_value(raw, level_key, true)
+		if hero_id == "plush":
+			if not raw.has(xp_key):
+				xp = _read_value(raw, "bb_xp", true)
+			if not raw.has(level_key):
+				hero_level = _read_value(raw, "bb_heroLevel", true)
+		if raw.has(xp_key) or raw.has(level_key) or (hero_id == "plush" and (raw.has("bb_xp") or raw.has("bb_heroLevel"))):
+			if not _is_non_negative_int(xp) or not _is_positive_int(hero_level):
+				_add_error(result, "Invalid XP/level pair for hero " + hero_id)
+			else:
+				hero_progress[hero_id] = {"xp": int(xp), "level": int(hero_level)}
+		var perk_key: String = "bb_bbCampaignPerks_" + hero_id
+		if raw.has(perk_key):
+			var perks: Variant = _read_value(raw, perk_key, true)
+			if typeof(perks) != TYPE_DICTIONARY:
+				_add_error(result, "Invalid campaign perk object for hero " + hero_id)
+			else:
+				campaign["hero_perks"][hero_id] = perks
+
+	_copy_json_container(raw, "bb_inventory", inventory, "consumables", TYPE_DICTIONARY, result)
+	_copy_json_container(raw, "bb_perks", inventory, "permanent_perks", TYPE_ARRAY, result)
+	_copy_json_container(raw, "bb_chestCosmetics", cosmetics, "owned", TYPE_ARRAY, result)
+	_copy_json_container(raw, "bb_equippedChestCosmetics", cosmetics, "equipped_by_hero", TYPE_DICTIONARY, result)
+	_read_non_negative_json_int(raw, "bb_collectionFragments", cosmetics, "fragments", result, 0)
+	_validate_consumables(inventory["consumables"], result)
+	_validate_permanent_perks(inventory["permanent_perks"], result)
+	_validate_campaign_perks(campaign["hero_perks"], result)
+
+	if cosmetics["equipped_by_hero"].is_empty() and raw.has("bb_equippedChestCosmetic"):
+		var legacy_cosmetic: Variant = _read_value(raw, "bb_equippedChestCosmetic", false)
+		if typeof(legacy_cosmetic) == TYPE_STRING and not legacy_cosmetic.is_empty():
+			cosmetics["equipped_by_hero"] = {str(heroes["selected_id"]): legacy_cosmetic}
+			result["warnings"].append("Legacy single-slot cosmetic equip mapped to the selected hero; source key preserved")
+
+	_copy_json_container(raw, "bbDailyQuests", daily, "quests_current", TYPE_DICTIONARY, result)
+	_copy_json_container(raw, "bbDailyArchive", daily, "quest_archive", TYPE_DICTIONARY, result)
+	_copy_json_container(raw, "bbDailyChallengeAssignments", daily, "challenge_assignments", TYPE_DICTIONARY, result)
+	_copy_json_container(raw, "bbDailyChallengeHistory", daily, "challenge_history", TYPE_DICTIONARY, result)
+	_copy_json_container(raw, "bbDailyReplayCompleted", daily, "replayed_dates", TYPE_ARRAY, result)
+	_copy_json_container(raw, "bbVisitStreak", daily, "visit_streak", TYPE_DICTIONARY, result)
+	_copy_raw_string(raw, "bbDailyChallengeCatalogSignature", daily, "challenge_catalog_signature", result)
+	_copy_raw_string(raw, "bbDailyChallengeCompletedDate", daily, "last_completed_date", result)
+	_copy_raw_string(raw, "nrDailyDone", stats, "last_daily_run_date", result)
+	var haptics: Variant = _read_value(raw, "bb_haptics", false)
+	if raw.has("bb_haptics"):
+		if haptics == "0":
+			settings["haptics"] = false
+		elif haptics == "1":
+			settings["haptics"] = true
+		else:
+			_add_error(result, "bb_haptics must be 0 or 1")
+
+	var reward_dates: Array[String] = []
+	for key in raw.keys():
+		var key_text := str(key)
+		if key_text.begins_with("bbDailyRewardClaimed:"):
+			var date_text := key_text.trim_prefix("bbDailyRewardClaimed:")
+			if str(raw[key]) == "1" and _looks_like_date(date_text):
+				reward_dates.append(date_text)
+			else:
+				_add_error(result, "Malformed daily reward marker: " + key_text)
+	daily["reward_claimed_dates"] = reward_dates
+	_validate_equipped_cosmetics(cosmetics["equipped_by_hero"], result)
+	if daily.has("quests_current"):
+		_validate_daily_quests(daily["quests_current"], result)
+	if daily.has("quest_archive"):
+		_validate_daily_archive(daily["quest_archive"], result)
+	_validate_date_dictionary(daily.get("challenge_assignments", {}), "bbDailyChallengeAssignments", result)
+	_validate_date_dictionary(daily.get("challenge_history", {}), "bbDailyChallengeHistory", result)
+	if typeof(daily.get("challenge_history", {})) == TYPE_DICTIONARY:
+		for reward_date in reward_dates:
+			if not daily.get("challenge_history", {}).has(reward_date):
+				result["requires_review"] = true
+				result["warnings"].append("Daily reward marker has no matching challenge-history entry: " + reward_date)
+
+	for key in raw.keys():
+		var key_text := str(key)
+		if key_text.begins_with("bb_bbCampaignPerks_"):
+			var perk_hero_id := key_text.trim_prefix("bb_bbCampaignPerks_")
+			if not HERO_IDS.has(perk_hero_id):
+				_add_error(result, "Campaign perks reference an unknown hero: " + perk_hero_id)
+		if not _is_known_key(key_text):
+			result["unknown_keys"].append(key_text)
+	if not result["unknown_keys"].is_empty():
+		result["warnings"].append("Unknown source keys were preserved in source_backup and were not imported")
+
+	return result
+
+static func _validate_consumables(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for item_id in value.keys():
+		if not ["quick", "shield", "magnet"].has(str(item_id)):
+			_add_error(result, "Unknown consumable id: " + str(item_id))
+		elif not _is_non_negative_int(value[item_id]):
+			_add_error(result, "Consumable count must be a non-negative integer: " + str(item_id))
+
+static func _validate_permanent_perks(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_ARRAY:
+		return
+	for perk_id in value:
+		if typeof(perk_id) != TYPE_STRING or not ["heart", "rainbow", "lucky"].has(str(perk_id)):
+			_add_error(result, "Unknown permanent perk id: " + str(perk_id))
+
+static func _validate_campaign_perks(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for hero_id in value.keys():
+		if not HERO_IDS.has(str(hero_id)) or typeof(value[hero_id]) != TYPE_DICTIONARY:
+			_add_error(result, "Invalid hero campaign-perk map: " + str(hero_id))
+			continue
+		for perk_id in value[hero_id].keys():
+			if not ["guardian", "tactician", "scout"].has(str(perk_id)):
+				_add_error(result, "Unknown campaign perk id: " + str(perk_id))
+			elif not _is_non_negative_int(value[hero_id][perk_id]):
+				_add_error(result, "Campaign perk rank must be a non-negative integer: " + str(perk_id))
+
+static func _validate_equipped_cosmetics(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for hero_id in value.keys():
+		if not HERO_IDS.has(str(hero_id)) or typeof(value[hero_id]) != TYPE_STRING or str(value[hero_id]).is_empty():
+			_add_error(result, "Invalid equipped cosmetic mapping for hero: " + str(hero_id))
+
+static func _validate_daily_quests(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	if not value.has("date") or typeof(value["date"]) != TYPE_STRING or not _looks_like_date(value["date"]):
+		_add_error(result, "bbDailyQuests must contain a valid date")
+	if not value.has("quests") or typeof(value["quests"]) != TYPE_ARRAY:
+		_add_error(result, "bbDailyQuests must contain a quests array")
+		return
+	_validate_daily_quest_entries(value["quests"], result)
+
+static func _validate_daily_archive(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	if value.size() > 90:
+		result["warnings"].append("Daily quest archive exceeds the Web 90-day save window; all entries were preserved without trimming")
+	for date_key in value.keys():
+		var date_text := str(date_key)
+		var entry: Variant = value[date_key]
+		if not _looks_like_date(date_text) or typeof(entry) != TYPE_DICTIONARY:
+			_add_error(result, "bbDailyArchive contains an invalid date record: " + date_text)
+			continue
+		if typeof(entry.get("date")) != TYPE_STRING or str(entry.get("date")) != date_text:
+			_add_error(result, "bbDailyArchive record date does not match its key: " + date_text)
+		if typeof(entry.get("quests")) != TYPE_ARRAY:
+			_add_error(result, "bbDailyArchive record must contain a quests array: " + date_text)
+			continue
+		_validate_daily_quest_entries(entry["quests"], result)
+
+static func _validate_daily_quest_entries(quests: Array, result: Dictionary) -> void:
+	for quest in quests:
+		if typeof(quest) != TYPE_DICTIONARY:
+			_add_error(result, "Daily quest entry must be an object")
+			continue
+		if typeof(quest.get("id")) != TYPE_STRING or str(quest.get("id")).is_empty() or typeof(quest.get("title")) != TYPE_STRING or str(quest.get("title")).is_empty():
+			_add_error(result, "Daily quest must contain non-empty string id and title")
+		if not _is_positive_int(quest.get("target")) or not _is_non_negative_int(quest.get("progress")):
+			_add_error(result, "Daily quest target/progress must be valid non-negative integers")
+		if not _is_non_negative_int(quest.get("reward")) or typeof(quest.get("claimed")) != TYPE_BOOL:
+			_add_error(result, "Daily quest reward/claimed fields are malformed")
+
+static func _validate_date_dictionary(value: Variant, source_key: String, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	for date_key in value.keys():
+		if not _looks_like_date(str(date_key)) or typeof(value[date_key]) != TYPE_DICTIONARY:
+			_add_error(result, source_key + " contains an invalid date record")
+
+static func _read_value(raw: Dictionary, key: String, json_encoded: bool) -> Variant:
+	if not raw.has(key):
+		return null
+	var value: Variant = raw[key]
+	if typeof(value) != TYPE_STRING:
+		return value
+	if json_encoded:
+		var json_parser := JSON.new()
+		var parse_error: Error = json_parser.parse(value)
+		if parse_error != OK:
+			return null
+		return json_parser.data
+	return value
+
+static func _is_non_negative_int(value: Variant) -> bool:
+	if typeof(value) == TYPE_STRING:
+		return value.is_valid_int() and int(value) >= 0
+	if typeof(value) == TYPE_INT:
+		return int(value) >= 0
+	if typeof(value) == TYPE_FLOAT:
+		return is_finite(float(value)) and float(value) >= 0.0 and floor(float(value)) == float(value)
+	return false
+
+static func _is_positive_int(value: Variant) -> bool:
+	return _is_non_negative_int(value) and int(value) > 0
+
+static func _read_non_negative_json_int(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary, fallback: int) -> void:
+	if not raw.has(key):
+		return
+	var value: Variant = _read_value(raw, key, true)
+	if _is_non_negative_int(value):
+		target[field] = int(value)
+	else:
+		_add_error(result, key + " must contain a JSON non-negative integer")
+
+static func _read_non_negative_raw_int(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary, fallback: int) -> void:
+	if not raw.has(key):
+		return
+	var value: Variant = _read_value(raw, key, false)
+	if typeof(value) == TYPE_STRING and value.is_valid_int():
+		value = int(value)
+	if _is_non_negative_int(value):
+		target[field] = int(value)
+	else:
+		_add_error(result, key + " must contain a non-negative integer")
+
+static func _read_positive_raw_int(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary, fallback: int) -> void:
+	_read_non_negative_raw_int(raw, key, target, field, result, fallback)
+	if raw.has(key) and int(target.get(field, fallback)) < 1:
+		_add_error(result, key + " must be at least 1")
+
+static func _copy_json_container(raw: Dictionary, key: String, target: Dictionary, field: String, expected_type: int, result: Dictionary) -> void:
+	if not raw.has(key):
+		return
+	var value: Variant = _read_value(raw, key, true)
+	if typeof(value) != expected_type:
+		_add_error(result, key + " contains malformed JSON or an unexpected data type")
+	else:
+		target[field] = value.duplicate(true) if typeof(value) == TYPE_DICTIONARY or typeof(value) == TYPE_ARRAY else value
+
+static func _copy_raw_string(raw: Dictionary, key: String, target: Dictionary, field: String, result: Dictionary) -> void:
+	if not raw.has(key):
+		return
+	var value: Variant = _read_value(raw, key, false)
+	if typeof(value) == TYPE_STRING:
+		target[field] = value
+	else:
+		_add_error(result, key + " must be a string")
+
+static func _looks_like_date(value: String) -> bool:
+	if value.length() != 10 or value.substr(4, 1) != "-" or value.substr(7, 1) != "-":
+		return false
+	var year_text := value.substr(0, 4)
+	var month_text := value.substr(5, 2)
+	var day_text := value.substr(8, 2)
+	if not year_text.is_valid_int() or not month_text.is_valid_int() or not day_text.is_valid_int():
+		return false
+	var year := int(year_text)
+	var month := int(month_text)
+	var day := int(day_text)
+	if year < 2000 or month < 1 or month > 12 or day < 1:
+		return false
+	var days_in_month := [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+	var leap_year := (year % 4 == 0 and year % 100 != 0) or year % 400 == 0
+	if leap_year:
+		days_in_month[1] = 29
+	return day <= days_in_month[month - 1]
+
+static func _is_known_key(key: String) -> bool:
+	if KNOWN_DIRECT_KEYS.has(key):
+		return true
+	if key == "bb_coins" or key == "bb_gems" or key == "bb_inventory" or key == "bb_perks" or key == "bb_chestCosmetics" or key == "bb_equippedChestCosmetics" or key == "bb_collectionFragments":
+		return true
+	if key == "bb_xp" or key == "bb_heroLevel":
+		return true
+	if key.begins_with("bb_xp_") or key.begins_with("bb_heroLevel_") or key.begins_with("bb_bbCampaignPerks_"):
+		return true
+	if key.begins_with("bbDailyRewardClaimed:"):
+		return true
+	return false
+
+static func _add_error(result: Dictionary, message: String) -> void:
+	result["ok"] = false
+	result["errors"].append(message)

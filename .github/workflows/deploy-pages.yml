@@ -61,6 +61,51 @@ jobs:
           echo "Prepared pinned local Three.js 0.180.0 runtime"
           node "$GITHUB_WORKSPACE/site/validate-3d-runtime.mjs"
 
+      - name: Setup Godot with Web export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import Godot project and run regression suite
+        run: |
+          set -euo pipefail
+          godot --headless --editor --path godot --quit
+          godot --headless --path godot --check-only --script res://scripts/main.gd
+          for test in \
+            game_model_test.gd web_save_migration_test.gd campaign_progress_test.gd \
+            campaign_collection_test.gd campaign_collection_layout_test.gd campaign_achievements_test.gd \
+            campaign_planet_catalog_test.gd campaign_mechanics_test.gd campaign_boss_session_test.gd \
+            campaign_effect_session_test.gd campaign_special_piece_test.gd campaign_piece_runtime_test.gd \
+            campaign_live_integration_test.gd campaign_piece_store_test.gd block_run_model_test.gd \
+            block_run_effects_test.gd block_run_board_test.gd block_run_session_test.gd \
+            block_run_bridge_test.gd block_run_live_integration_test.gd; do
+            echo "Running $test"
+            godot --headless --path godot --script "res://tests/$test"
+          done
+          godot --headless --path godot --quit-after 3
+
+      - name: Export Godot Web build into isolated preview folder
+        run: |
+          set -euo pipefail
+          mkdir -p build/godot-web site/godot-preview
+          godot --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/build/godot-web/index.html"
+          test -s build/godot-web/index.html
+          compgen -G "build/godot-web/*.wasm" >/dev/null || compgen -G "build/godot-web/*.wasm.br" >/dev/null
+          compgen -G "build/godot-web/*.pck" >/dev/null || compgen -G "build/godot-web/*.pck.br" >/dev/null
+          cp -a build/godot-web/. site/godot-preview/
+          test -s site/godot-preview/index.html
+
+      - name: Install Chromium smoke-test dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+
+      - name: Verify Godot preview in real Chromium
+        timeout-minutes: 5
+        run: node scripts/validate-godot-web.mjs
+
       - name: Upload web game
         uses: actions/upload-pages-artifact@v3
         with:
