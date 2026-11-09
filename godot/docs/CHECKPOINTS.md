@@ -412,3 +412,13 @@
 - Added `godot/docs/KT-543_CAMPAIGN_360_CATALOG_AUDIT.md` with universe matrix, chapter rhythm, gaps and acceptance gates.
 - Next: implement the versioned authored planet-definition schema and deterministic catalog validator, retaining the existing formula as fallback during migration.
 - No gameplay changes, main merge, public deployment or APK release.
+
+
+## KT-543.1 — Versioned authored Star Caravan catalog foundation
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Added schema v1 authored catalog with 30 uniquely identified Star Caravan planet records, Russian mission titles/briefings, mission tags, explicit event statuses and boss identities.
+- Added deterministic validator for chapter identity, schema version, exactly 30 sequential planets, required metadata, event status/binding and boss metadata.
+- Campaign progression overlays authored presentation/event metadata for Universe 02 (global nodes 031–060); the existing objective/reward curve remains intact, and the other 330 nodes retain formula fallback.
+- Planet 056 and 057 are marked as live Cargo Hook campaign events, reusing the existing campaign-only runtime. Boss phases, authored board layouts and other universe mechanics are not claimed as implemented.
+- Added catalog tests to the Godot CI workflow. CI result for the latest commit is not yet confirmed.
+- No changes to standard modes, save version, campaign rewards or exit/restart behavior. No main merge, public deployment or APK release.
