@@ -65,6 +65,34 @@ func _run() -> void:
 	if not _check(runtime.origin == campaign_origin and shared_game.origin != classic_origin, "Classic input must not mutate the isolated campaign runtime"):
 		return
 
+	# KT-544B: Planet 040 is a live three-phase boss encounter, isolated to Campaign.
+	progress.import_legacy_progress(40, 0)
+	main_scene.set("campaign_universe", 1)
+	main_scene.set("campaign_planet", 10)
+	main_scene.call("_start_campaign_planet")
+	if not _check(bool(main_scene.get("campaign_run_active")), "Unlocked Planet 040 must launch its authored boss encounter"):
+		return
+	var boss_session: Variant = main_scene.get("mode_session")
+	var boss_runtime: Variant = main_scene.get("campaign_piece_runtime")
+	if not _check(boss_session.has_boss_phases() and boss_session.rules.boss_phases.size() == 3, "Planet 040 must load three authored boss phases"):
+		return
+	boss_runtime.lines = 4
+	boss_runtime.score = 200
+	boss_session.update(1.0, boss_runtime.lines, false, boss_runtime.score)
+	if not _check(boss_session.boss_phase_index == 1 and boss_session.status == "running", "Completing the first phase must advance but not finish the boss"):
+		return
+	boss_runtime.lines = 8
+	boss_runtime.score = 650
+	boss_session.update(1.0, boss_runtime.lines, false, boss_runtime.score)
+	if not _check(boss_session.boss_phase_index == 2 and boss_session.status == "running", "Completing the second phase must enter the final boss phase"):
+		return
+	boss_runtime.lines = 12
+	boss_runtime.score = 1420
+	boss_session.update(1.0, boss_runtime.lines, false, boss_runtime.score)
+	main_scene.call("_process_campaign_completion")
+	if not _check(boss_session.status == "completed" and progress.unlocked_node == 41 and progress.campaign_marks == 5, "The final phase must complete Planet 040 and grant its boss reward exactly once"):
+		return
+
 	main_scene.queue_free()
-	print("Campaign live integration passed: real Planet 001/031 launch, campaign retry isolation, authored Cargo Hook, standard follow-up piece, Classic model isolation and standard-mode input routing.")
+	print("Campaign live integration passed: real Planet 001/031 launch, campaign retry isolation, authored Cargo Hook, standard follow-up piece, Classic model isolation, standard-mode routing and live three-phase Planet 040 boss completion.")
 	quit(0)
