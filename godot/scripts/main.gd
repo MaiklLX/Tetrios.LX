@@ -1882,18 +1882,47 @@ func _draw_stats() -> void:
 		_stat_card(progress_rect, "УРОВЕНЬ / ЛИНИИ", "%d / %d" % [_active_level(), _active_lines()], Color("#f6d65b"))
 
 func _stat_label_font_size(rect: Rect2, label: String) -> int:
-	# Choose the largest readable label size that fits before the accent marker.
-	var available_width := maxf(24.0, rect.size.x - 38.0)
-	for candidate in [12, 11, 10]:
+	# Reserve a clear icon column, then use the largest label size that fits.
+	var available_width := maxf(24.0, rect.size.x - 58.0)
+	for candidate in [12, 11, 10, 9]:
 		if font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, candidate).x <= available_width:
 			return candidate
-	return 10
+	return 9
+
+
+func _draw_stat_icon(center: Vector2, label: String, accent: Color) -> void:
+	draw_circle(center, 15.0, Color(accent.r, accent.g, accent.b, 0.16))
+	draw_arc(center, 14.0, 0.0, TAU, 32, Color(accent.r, accent.g, accent.b, 0.7), 1.4, true)
+	if label.contains("ОЧКИ"):
+		var star := PackedVector2Array()
+		for point_index in range(10):
+			var angle := -PI * 0.5 + TAU * float(point_index) / 10.0
+			var radius := 9.0 if point_index % 2 == 0 else 4.2
+			star.append(center + Vector2.from_angle(angle) * radius)
+		draw_colored_polygon(star, accent)
+		draw_polyline(star, Color("#fff4c7"), 1.0, true)
+	elif label.contains("БОСС"):
+		draw_arc(center, 7.0, 0.0, TAU, 24, accent, 2.0, true)
+		draw_line(center + Vector2(-11.0, 0.0), center + Vector2(11.0, 0.0), accent, 1.5)
+		draw_line(center + Vector2(0.0, -11.0), center + Vector2(0.0, 11.0), accent, 1.5)
+		draw_circle(center, 2.5, Color("#ffffff"))
+	elif label.contains("УРОВЕНЬ"):
+		for bar in range(3):
+			var height := 5.0 + float(bar) * 4.0
+			draw_rect(Rect2(center + Vector2(-10.0 + float(bar) * 7.0, 8.0 - height), Vector2(4.0, height)), accent)
+	else:
+		draw_arc(center, 8.0, 0.0, TAU, 28, accent, 2.0, true)
+		draw_line(center, center + Vector2(0.0, -6.0), Color("#ffffff"), 1.8)
+		draw_line(center, center + Vector2(5.0, 3.0), Color("#ffffff"), 1.8)
+
 
 func _stat_card(rect: Rect2, label: String, value: String, accent: Color) -> void:
 	_draw_soft_panel(rect, Color("#124b99"), accent.lightened(0.18), 15, 4)
+	var icon_center := rect.position + Vector2(22.0, rect.size.y * 0.5)
+	_draw_stat_icon(icon_center, label, accent)
 	var label_size := _stat_label_font_size(rect, label)
-	draw_string(font, rect.position + Vector2(12, 18), label, HORIZONTAL_ALIGNMENT_LEFT, -1, label_size, Color("#d9f0ff"))
-	draw_string(font, rect.position + Vector2(12, 41), value, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#ffffff"))
+	draw_string(font, rect.position + Vector2(44.0, 18.0), label, HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 56.0, label_size, Color("#d9f0ff"))
+	draw_string(font, rect.position + Vector2(44.0, 42.0), value, HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 56.0, 18, Color("#ffffff"))
 	draw_circle(rect.position + Vector2(rect.size.x - 14.0, 14.0), 4.5, accent)
 func _block_run_goal_ratio(goal: Dictionary) -> float:
 	var target := maxi(1, int(goal.get("target", 1)))
