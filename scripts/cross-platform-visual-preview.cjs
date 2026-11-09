@@ -474,6 +474,18 @@ const targets = [
     if (!geometry.frame || ratio < 0.42 || ratio > 0.45) {
       failures.push(target.name + ': arena frame ratio is outside the 10:23 tolerance (' + ratio + ')');
     }
+    // KT-427.6: protect the measured 375x812 side-rail/frame alignment in the
+    // full application preview, not only in the lightweight mobile fixture.
+    if (target.name === 'ios-webkit-375x812' && geometry.frame && geometry.side) {
+      const heightDelta = Math.abs(geometry.side.height - geometry.frame.height);
+      const frameCenter = geometry.frame.y + geometry.frame.height / 2;
+      const sideCenter = geometry.side.y + geometry.side.height / 2;
+      const centerDelta = Math.abs(sideCenter - frameCenter);
+      if (heightDelta > 2 || centerDelta > 2) {
+        failures.push(target.name + ': side rail must align with the arena frame (height delta ' +
+          heightDelta.toFixed(2) + 'px, center delta ' + centerDelta.toFixed(2) + 'px)');
+      }
+    }
     if (geometry.document.width > target.width + 2) {
       failures.push(target.name + ': horizontal document overflow (' + geometry.document.width + 'px)');
     }
