@@ -14771,4 +14771,19 @@ button:not(.board):focus-visible{
 .bb-collection-card.is-locked .bb-collection-emblem{opacity:.62}
 </style>
 
+
+<style id="bb-kt556-vertical-route-scroll">
+/* KT-556: the campaign planet route is a vertical map, not a horizontal strip. */
+#campaign .bb-planet-viewport{
+  height:min(58vh,560px)!important;
+  min-height:320px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  scroll-snap-type:none!important;
+  touch-action:pan-y!important;
+  overscroll-behavior-y:contain!important;
+}
+#campaign .bb-planet-track{width:100%!important;min-width:100%!important;}
+@media(max-width:520px){#campaign .bb-planet-viewport{height:min(58vh,560px)!important;min-height:300px!important;}}
+</style>
 </body></html>
