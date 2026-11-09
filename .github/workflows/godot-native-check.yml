@@ -44,6 +44,9 @@ jobs:
       - name: Run campaign collection tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/campaign_collection_test.gd
+      - name: Run campaign achievement tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_achievements_test.gd
       - name: Run campaign authored catalog tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/campaign_planet_catalog_test.gd
