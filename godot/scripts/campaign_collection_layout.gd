@@ -6,7 +6,7 @@ static func collection(viewport: Vector2) -> Dictionary:
 	var height := maxf(1.0, viewport.y)
 	var compact := width <= 480.0
 	var short_screen := height < 560.0
-	var columns := 5 if width <= 360.0 else (6 if compact else 7)
+	var columns := 4 if width <= 320.0 else (5 if width <= 390.0 else (6 if compact else 7))
 	var margin := 10.0 if width <= 360.0 else (13.0 if compact else 24.0)
 	var gap := 4.0 if width <= 360.0 else 4.0
 	var top := 130.0 if short_screen else 160.0
