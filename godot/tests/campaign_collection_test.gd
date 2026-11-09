@@ -107,7 +107,7 @@ func _run() -> void:
 	if not _check(appended_ids == ["universe_relic_01", "boss_insignia_030", "boss_insignia_010"], "New rewards must append once, preserve order and ignore empty IDs"):
 		return
 	var sanitized_ids: Array[String] = RewardQueue.sanitize(first_universe, ["boss_insignia_030", "unknown_reward", "universe_relic_01", "boss_insignia_030", ""])
-	if not _check(sanitized_ids == pending_ids, "Restored reveal queue must discard unknown, empty and duplicate IDs without reordering valid rewards"):
+	if not _check(sanitized_ids == ["boss_insignia_030", "universe_relic_01"], "Restored reveal queue must discard unknown, empty and duplicate IDs without reordering valid rewards"):
 		return
 	var first_ack: Dictionary = RewardQueue.acknowledge_first(first_universe, pending_ids, store_path)
 	if not _check(bool(first_ack.get("ok", false)) and first_ack.get("acknowledged_id", "") == "universe_relic_01" and first_ack.get("pending_reward_reveals", []) == ["boss_insignia_030"], "Acknowledging a reveal must consume exactly the first reward and persist the remainder"):
