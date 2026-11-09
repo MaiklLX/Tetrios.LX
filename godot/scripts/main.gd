@@ -522,7 +522,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				_restart_current_run()
 		_sync_buddy_state()
 		queue_redraw()
-	elif event is InputEventMouseButton and event.pressed and campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active and (event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+	elif event is InputEventMouseButton and event.pressed and campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active and campaign_collection_grid_viewport_rect.has_point(event.position) and (event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
 		_scroll_campaign_collection_rows(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
 	elif event is InputEventScreenTouch:
 		if event.pressed:
@@ -1095,6 +1095,7 @@ func _draw_campaign_collection() -> void:
 	var top := float(layout.top)
 	var grid_viewport: Rect2 = layout.grid_viewport_rect
 	campaign_collection_grid_viewport_rect = grid_viewport
+	campaign_collection_scroll_offset = clampf(campaign_collection_scroll_offset, 0.0, float(layout.get("max_scroll", 0.0)))
 	var scroll_offset := campaign_collection_scroll_offset
 	campaign_collection_item_rects.clear()
 	var universe_unlocked_counts: Dictionary = {}
