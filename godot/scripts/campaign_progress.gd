@@ -262,6 +262,14 @@ func load_save_data(data: Dictionary) -> bool:
 		if int(receipt.get("node_id", -1)) != node_id or typeof(receipt.get("reward_marks")) != TYPE_INT or int(receipt.reward_marks) < 0 or receipt.get("claimed") != true:
 			return false
 		restored_receipts[node_text] = receipt.duplicate(true)
+	if not restored_receipts.is_empty():
+		if restored_receipts.size() != restored_nodes.size():
+			return false
+		var receipt_total := 0
+		for receipt_value in restored_receipts.values():
+			receipt_total += int(receipt_value.get("reward_marks", 0))
+		if receipt_total != int(candidate_marks):
+			return false
 	unlocked_node = int(candidate_unlocked)
 	completed_nodes = restored_nodes
 	campaign_marks = int(candidate_marks)
