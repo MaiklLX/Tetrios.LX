@@ -441,3 +441,13 @@
 - Added unit tests for phase transitions, per-phase baselines, near-miss rejection and final completion. Extended live integration to complete Planet 040 and verify its reward/unlock.
 - Phase system remains dormant in Classic, Sprint/Marathon and Block Run. No board, save schema, rewards, exit/restart behavior, main or public release changes.
 - CI result for the latest PR head is pending; no pass is claimed yet.
+
+
+## KT-548.5 — Full-screen free-area touch gestures (2026-11-09)
+- Published the isolated Godot Web preview at `/godot-preview/` through Pages deployment run [#42615190536](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42615190536), following successful PR validation run [#42596156626](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42596156626).
+- Publication commit: `ae410e7ba5fdb430c9b8854c29bb52b53bf78d32`. Legacy site root remains the existing route; the preview is isolated. The preserved backup branch remains separate. No APK release.
+- Follow-up branch: `godot/kt548.5-fullscreen-touch-gestures-2026-11-09`.
+- Godot arena gestures now begin anywhere on the active game surface except explicit tap controls (Mode, Pause, Hold, DROP and Block Run hero skill). This includes free gutters around the 10×23 board; menu, modal, paused and completed states remain excluded.
+- Added `godot/tests/gesture_input_test.gd`: validates left/right gutter gesture acceptance, reserved control hit targets, horizontal movement and rotation immediately after hard drop.
+- Added the regression test to `.github/workflows/godot-preview-pr-check.yml`.
+- Validation for KT-548.5 is pending in PR CI. No main merge, new Pages deploy, APK build/release or physical-device verification is claimed for this follow-up.
