@@ -398,6 +398,34 @@ func _run() -> void:
 	if not await _capture(viewport, "29-campaign-cargo-hook-live-arena"):
 		quit(1)
 		return
+	# KT-545: capture a live authored board-layout mission, not a static concept.
+	scene.call("_return_to_campaign_route")
+	campaign_progress.import_legacy_progress(33, 0)
+	scene.set("campaign_universe", 1)
+	scene.set("campaign_planet", 3)
+	scene.set("campaign_screen", "planet")
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "33-star-caravan-authored-layout-planet-detail"):
+		quit(1)
+		return
+	scene.call("_start_campaign_planet")
+	await process_frame
+	await process_frame
+	var layout_runtime = scene.get("campaign_piece_runtime")
+	var occupied_layout_cells := 0
+	for row in layout_runtime.grid:
+		for value in row:
+			if int(value) >= 0:
+				occupied_layout_cells += 1
+	if occupied_layout_cells != 26:
+		push_error("Planet 033 must start with its 26 authored cargo-layout cells.")
+		quit(1)
+		return
+	if not await _capture(viewport, "34-star-caravan-authored-layout-live-arena"):
+		quit(1)
+		return
 	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
 	await process_frame
 	await process_frame
