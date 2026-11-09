@@ -133,6 +133,8 @@ func _run() -> void:
 		return
 	if not _check(legacy.completed_nodes.size() == 11 and legacy.unlocked_node == 12 and legacy.campaign_marks == 37 and legacy.reward_receipts.is_empty(), "Legacy import must preserve node and marks without granting duplicate receipts"):
 		return
+	if not _check(int(legacy.get_reward_summary().marks_earned) == 37, "Reward summary must preserve legacy mark totals rather than inventing per-planet receipts"):
+		return
 	var universe_one: Dictionary = legacy.get_universe_progress(0)
 	var universe_two: Dictionary = legacy.get_universe_progress(1)
 	if not _check(universe_one.completed_count == 11 and universe_one.current and not universe_two.unlocked and not universe_two.current, "Universe summaries must reflect legacy sequential progress"):
