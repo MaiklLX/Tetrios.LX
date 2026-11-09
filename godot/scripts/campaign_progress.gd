@@ -114,12 +114,52 @@ func get_universe_progress(universe_index: int) -> Dictionary:
 			completed_count += 1
 	var unlocked := campaign_complete or first_node <= unlocked_node
 	var is_current := unlocked and not campaign_complete and unlocked_node >= first_node and unlocked_node <= last_node
+	var marks_earned := 0
+	var marks_available := 0
+	for node_id in range(first_node, last_node + 1):
+		var definition := get_planet_definition(node_id)
+		var reward := int(definition.get("reward_marks", 0))
+		marks_available += reward
+		if is_completed(node_id):
+			var receipt: Dictionary = reward_receipts.get(str(node_id), {})
+			marks_earned += int(receipt.get("reward_marks", reward if reward_receipts.is_empty() else 0))
 	return {
 		"unlocked": unlocked,
 		"current": is_current,
 		"completed": completed_count == PLANETS_PER_UNIVERSE,
 		"completed_count": completed_count,
-		"total": PLANETS_PER_UNIVERSE
+		"total": PLANETS_PER_UNIVERSE,
+		"marks_earned": marks_earned,
+		"marks_available": marks_available
+	}
+
+func get_reward_summary() -> Dictionary:
+	var marks_available := 0
+	var boss_marks_available := 0
+	for node_id in range(1, TOTAL_PLANETS + 1):
+		var definition := get_planet_definition(node_id)
+		var reward := int(definition.get("reward_marks", 0))
+		marks_available += reward
+		if bool(definition.get("is_boss", false)):
+			boss_marks_available += reward
+	var marks_earned := 0
+	var boss_marks_earned := 0
+	for node_id in completed_nodes:
+		var definition := get_planet_definition(node_id)
+		var receipt: Dictionary = reward_receipts.get(str(node_id), {})
+		var reward := int(receipt.get("reward_marks", int(definition.get("reward_marks", 0)) if reward_receipts.is_empty() else 0))
+		marks_earned += reward
+		if bool(definition.get("is_boss", false)):
+			boss_marks_earned += reward
+	return {
+		"marks_earned": marks_earned,
+		"marks_available": marks_available,
+		"marks_remaining": maxi(0, marks_available - marks_earned),
+		"boss_marks_earned": boss_marks_earned,
+		"boss_marks_available": boss_marks_available,
+		"completed_planets": completed_nodes.size(),
+		"total_planets": TOTAL_PLANETS,
+		"completion_ratio": float(completed_nodes.size()) / float(TOTAL_PLANETS)
 	}
 
 func complete_planet(node_id: int, cleared_lines: int, score: int = 0, elapsed_seconds: float = 0.0) -> Dictionary:
