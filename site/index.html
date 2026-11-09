@@ -7455,7 +7455,7 @@ if (mode === 'daily') {
     $('gameSub').textContent = 'Каждый уровень приносит новые сюрпризы!';
   }
 }
-show('game');bbSyncDailyGoalPlacement();bbRenderGoals();render();updateHud();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);bbRenderHeroSkillSlot();
+show('game');bbSyncDailyGoalPlacement();bbRenderGoals();render();updateHud();bbScheduleNarrowPortraitRailSync();if(tickTimer)clearInterval(tickTimer);if(dropTimer)clearInterval(dropTimer);tickTimer=setInterval(()=>{if(started&&!paused&&!gameOver){runSeconds++;$('timer').textContent=fmt(runSeconds);bbRenderHeroSkillSlot();
 if(
   mode==='daily' &&
   bbIsDailyMechanic('chronoRift') &&
@@ -8177,6 +8177,29 @@ if(window.matchMedia){
   const bbPhoneOrientationQuery=window.matchMedia('(orientation: landscape)');
   bbPhoneOrientationQuery.addEventListener?.('change',bbSyncPhoneOrientation);
 }
+
+// KT-427.6: fit the narrow portrait utility rail to the live arena frame.
+// offsetHeight excludes transforms, so the measured ratio remains stable in
+// both Chromium and WebKit despite their different text metrics.
+function bbSyncNarrowPortraitRail(){
+  const game=$('game');
+  const frame=game?.querySelector('.playlayout>.boardframe');
+  const side=game?.querySelector('.playlayout>.sidecol');
+  if(!game||game.hidden||!frame||!side)return;
+  const narrowPortrait=window.matchMedia('(min-width:361px) and (max-width:380px) and (orientation:portrait)').matches;
+  if(!narrowPortrait){side.style.removeProperty('--bb-side-scale-y');return;}
+  const frameHeight=frame.getBoundingClientRect().height;
+  const naturalSideHeight=side.offsetHeight;
+  if(frameHeight>0&&naturalSideHeight>0){
+    const scale=Math.max(.9,Math.min(1.02,frameHeight/naturalSideHeight));
+    side.style.setProperty('--bb-side-scale-y',scale.toFixed(5));
+  }
+}
+function bbScheduleNarrowPortraitRailSync(){
+  requestAnimationFrame(bbSyncNarrowPortraitRail);
+}
+window.addEventListener('resize',bbScheduleNarrowPortraitRailSync,{passive:true});
+window.addEventListener('orientationchange',bbScheduleNarrowPortraitRailSync,{passive:true});
 
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><div class="eyebrow">ПЕРЕДЫШКА</div><h3>Пауза</h3><p>Партия на паузе. Можно спокойно проверить баланс и вернуться в игру.</p></div><div class="bb-pause-wallet"><span>🪙 <small>ТВОИ МОНЕТЫ</small></span><strong>${bbCoins.toLocaleString('ru-RU')}</strong><em>Баланс аккаунта</em></div><button class="action" id="resume">▶ ПРОДОЛЖИТЬ ИГРУ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
@@ -14796,17 +14819,16 @@ body .app{background:transparent!important;background-color:transparent!importan
  #menu.home-dashboard.home-dashboard > .hero p{font-size:8px!important}
 }
 
-/* KT-427.6 — align the full-page 375x812 rail with the arena frame.
-   The cross-platform preview measured 483.32px for the side rail against a
-   494.75px frame after the previous .9533 scale. A .976 scale restores the
-   shared height and center without changing card order, spacing, or hit boxes. */
+/* KT-427.6 — match the 375x812 side rail to the frame using a measured
+   CSS variable. Chromium and WebKit have different text metrics, so a fixed
+   scale aligns one engine but makes the other overshoot. */
 @media (min-width: 361px) and (max-width: 380px) and (orientation: portrait) {
   #game>.playlayout>.sidecol {
     top: auto !important;
     bottom: auto !important;
     gap: 3px !important;
     overflow: visible !important;
-    transform: scaleY(.976) !important;
+    transform: scaleY(var(--bb-side-scale-y, .9533)) !important;
     transform-origin: center center !important;
   }
 }
