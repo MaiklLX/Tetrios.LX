@@ -1187,6 +1187,8 @@ func _begin_next_campaign_collection_reveal() -> void:
 		if str(items[index].get("id", "")) == next_id:
 			campaign_collection_selected = index
 			break
+	var collection_layout: Dictionary = CampaignCollectionLayout.collection(screen_size)
+	campaign_collection_scroll_offset = CampaignCollectionLayout.scroll_offset_for_index(collection_layout, campaign_collection_selected, campaign_collection_scroll_offset)
 	campaign_collection_reveal_active = true
 	campaign_collection_preview_active = false
 	campaign_collection_reveal_time = 0.0
