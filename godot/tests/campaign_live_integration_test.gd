@@ -87,7 +87,7 @@ func _run() -> void:
 	if not _check(boss_session.boss_phase_index == 2 and boss_session.status == "running", "Completing the second phase must enter the final boss phase"):
 		return
 	boss_runtime.lines = 12
-	boss_runtime.score = 1420
+	boss_runtime.score = 1620
 	boss_session.update(1.0, boss_runtime.lines, false, boss_runtime.score)
 	main_scene.call("_process_campaign_completion")
 	if not _check(boss_session.status == "completed" and progress.unlocked_node == 41 and progress.campaign_marks == 5, "The final phase must complete Planet 040 and grant its boss reward exactly once"):
