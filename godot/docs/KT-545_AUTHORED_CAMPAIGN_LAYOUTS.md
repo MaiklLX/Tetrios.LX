@@ -73,3 +73,12 @@ This slice proves the authored-layout runtime seam; it does not mean the full St
 - Legacy imports remain compatible: they preserve the historic mark total and do not fabricate per-planet receipts. The summary uses the imported total as the source of truth.
 - Added tests for earned/available summaries, per-universe totals, duplicate-claim protection, partial-ledger rejection, mismatched totals and legacy mark preservation.
 - This checkpoint establishes reliable reward accounting and progression data. It does not yet introduce spendable currency, shop prices, or unapproved reward unlocks.
+
+
+## KT-547.2 — коллекция реликвий кампании
+- Добавлен отдельный каталог коллекции без зависимости от UI и без введения новой валюты.
+- Коллекция содержит 49 предметов: 12 реликвий за полное прохождение каждой вселенной, 36 знаков командиров за победы над боссами на каждой десятой планете и одну финальную корону за завершение всех 360 планет.
+- Предметы открываются автоматически из подтверждённого прогресса. Повторные прохождения не создают дополнительные копии и не меняют экономику меток.
+- Каталог предоставляет единый сводный счётчик, процент коллекции и поиск предмета по стабильному ID; отсутствующий прогресс обрабатывается безопасно.
+- Добавлен отдельный regression test и включён в Godot CI.
+- Это фундамент коллекционной системы и проверяемые правила открытия. Визуальная витрина, инвентарь экипировки и магазин пока не подключены.
