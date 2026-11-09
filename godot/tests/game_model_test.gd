@@ -251,11 +251,18 @@ func _run() -> void:
 	for viewport_size in [Vector2(360.0, 800.0), Vector2(375.0, 812.0), Vector2(412.0, 915.0), Vector2(450.0, 800.0), Vector2(720.0, 1280.0)]:
 		var board_metrics: Dictionary = layout_probe._board_metrics(viewport_size)
 		var responsive_board: Rect2 = board_metrics.board_rect
-		if not _check(responsive_board.position.y >= 292.0, "Board must stay below the stats and preview region"):
+		if not _check(responsive_board.position.y >= 224.0, "Board must stay below the compact HUD and enlarged preview region"):
 			return
 		if not _check(responsive_board.end.y <= viewport_size.y - 35.9, "Board must preserve a bottom safe margin"):
 			return
 		if not _check(responsive_board.position.x >= 31.9 and responsive_board.end.x <= viewport_size.x - 31.9, "Board must remain horizontally centered with side gutters"):
+			return
+		var responsive_drop: Rect2 = layout_probe._drop_button_layout(viewport_size, responsive_board)
+		if not _check(responsive_drop.size.x >= 42.0 and responsive_drop.size.y >= 52.0, "Drop control must remain a usable touch target on every portrait viewport"):
+			return
+		if not _check(responsive_drop.position.x >= responsive_board.end.x + 5.0 and responsive_drop.end.x <= viewport_size.x - 7.0 and not responsive_drop.intersects(responsive_board), "Drop control must stay in the right gutter without covering the board"):
+			return
+		if not _check(responsive_drop.position.y >= responsive_board.position.y and responsive_drop.end.y <= responsive_board.end.y - 5.0, "Drop control must stay within the board's vertical span and safe margins"):
 			return
 	layout_probe.game = Model.new()
 	layout_probe.game.reset()
@@ -322,6 +329,33 @@ func _run() -> void:
 	layout_probe._handle_tap(Vector2(100.0, 100.0))
 	if not _check(layout_probe.game.origin == before_tap_origin and layout_probe.game.active_cells != before_tap_cells, "Single board tap must rotate without dropping the piece"):
 		return
+	# HOLD is a dedicated preview-card tap target, not a board gesture.
+	layout_probe.game.reset()
+	layout_probe.board_rect = Rect2(0.0, 0.0, 380.0, 874.0)
+	layout_probe.hold_rect = Rect2(400.0, 0.0, 80.0, 50.0)
+	var held_piece_before_tap: int = layout_probe.game.active_type
+	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
+	if not _check(layout_probe.game.held_type == held_piece_before_tap and layout_probe.game.hold_used, "Tapping the HOLD preview card must store the active piece"):
+		return
+	var expected_hold_spawn := Vector2i(layout_probe.game._centered_spawn_x(layout_probe.game.active_cells), 0)
+	if not _check(layout_probe.game.active_type != held_piece_before_tap and layout_probe.game.origin == expected_hold_spawn, "HOLD tap must spawn the next piece at its shape-centered spawn position"):
+		return
+	var held_piece_after_first_tap: int = layout_probe.game.active_type
+	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
+	if not _check(layout_probe.game.active_type == held_piece_after_first_tap and layout_probe.game.held_type == held_piece_before_tap, "A second HOLD tap before locking must not swap pieces again"):
+		return
+	# Paused gameplay must reject gameplay-card taps rather than consuming a piece.
+	layout_probe.game = Model.new()
+	layout_probe.game.reset()
+	layout_probe.paused = true
+	layout_probe.hold_rect = Rect2(400.0, 0.0, 80.0, 50.0)
+	layout_probe.drop_rect = Rect2(500.0, 0.0, 60.0, 70.0)
+	var paused_piece_type: int = layout_probe.game.active_type
+	layout_probe._handle_tap(layout_probe.hold_rect.get_center())
+	layout_probe._handle_tap(layout_probe.drop_rect.get_center())
+	if not _check(layout_probe.game.active_type == paused_piece_type and layout_probe.game.held_type == -1 and not layout_probe.game.game_over, "HOLD and DROP taps must not mutate gameplay while paused"):
+		return
+	layout_probe.paused = false
 	if not _check(not layout_probe._handle_swipe(Vector2(500.0, 100.0), Vector2(420.0, 100.0)), "Swipes beginning outside the board must not steal button taps"):
 		return
 	# Sprint failure feedback must be distinct and retain progress, time, and score context.
@@ -621,5 +655,44 @@ func _run() -> void:
 	if not _check(long_run_model.grid[Model.HEIGHT - 1].count(-1) == Model.WIDTH, "The bottom row must be empty after each successful clear"):
 		return
 
-	print("Godot gameplay model tests passed: save/load validation, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
+	# Home hub navigation is explicit and reversible; the existing game modes remain reachable.
+	var hub_probe = Main.new()
+	hub_probe.game = Model.new()
+	hub_probe.game.reset()
+	hub_probe.mode_session = ModeSession.new()
+	hub_probe.home_visible = true
+	hub_probe.home_campaign_rect = Rect2(0.0, 0.0, 140.0, 70.0)
+	hub_probe.home_block_run_rect = Rect2(0.0, 80.0, 140.0, 70.0)
+	hub_probe.home_tasks_rect = Rect2(0.0, 160.0, 140.0, 70.0)
+	hub_probe.home_heroes_rect = Rect2(160.0, 0.0, 100.0, 70.0)
+	hub_probe.home_shop_rect = Rect2(270.0, 0.0, 100.0, 70.0)
+	hub_probe.home_upgrades_rect = Rect2(380.0, 0.0, 100.0, 70.0)
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	if not _check(not hub_probe.home_visible and hub_probe.campaign_screen == "atlas" and not hub_probe.mode_select_visible, "Campaign card should open the live Cosmic Atlas from Home"):
+		return
+	hub_probe.campaign_back_rect = Rect2(0.0, 0.0, 100.0, 60.0)
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	if not _check(hub_probe.home_visible and hub_probe.campaign_screen.is_empty(), "Cosmic Atlas back target should return to Home"):
+		return
+	hub_probe.secondary_back_rect = Rect2(0.0, 0.0, 100.0, 60.0)
+	hub_probe._handle_tap(Vector2(40.0, 190.0))
+	if not _check(hub_probe.secondary_screen == "daily" and not hub_probe.home_visible, "Daily task card should open its own screen"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	if not _check(hub_probe.home_visible and hub_probe.secondary_screen.is_empty(), "Secondary screen back target should return to Home"):
+		return
+	hub_probe._handle_tap(Vector2(200.0, 30.0))
+	if not _check(hub_probe.secondary_screen == "heroes", "Heroes navigation should open the Heroes section"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	hub_probe._handle_tap(Vector2(300.0, 30.0))
+	if not _check(hub_probe.secondary_screen == "shop", "Shop navigation should open the Shop section"):
+		return
+	hub_probe._handle_tap(Vector2(40.0, 30.0))
+	hub_probe._handle_tap(Vector2(400.0, 30.0))
+	if not _check(hub_probe.secondary_screen == "upgrades", "Upgrades navigation should open the Upgrades section"):
+		return
+	hub_probe.free()
+
+	print("Godot gameplay model tests passed: home navigation, save/load validation, collision, lock, progression, seven-bag, Hold, preview, scoring, game over, and reset.")
 	quit(0)

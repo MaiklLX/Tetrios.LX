@@ -177,7 +177,6 @@
 - Remaining: connect session to the live piece/board lifecycle; integrate Shield/Nova rescue mutations; build card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable.
 - No main merge, deployment, APK build/release, persistence work or physical-device test.
 
-
 ## KT-473 — Block Run Shield / Iron Fortress / Nova rescue mutations
 - Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open.
 - Added session-level `on_spawn_collision()` that applies the existing source effect decision and mutates the isolated 10×23 Block Run board.
@@ -300,3 +299,145 @@
 - Log comparison: the previous run emitted CanvasItem/ObjectDB/resource-leak warnings after the gameplay model test; these are absent in KT-484. Remaining V-Sync and ALSA dummy-audio messages occur only during headless visual capture and did not fail the job.
 - Visual artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782/artifacts/13616556489) was uploaded. Physical Android rendering and orientation behavior remain unverified.
 - No main merge, deployment, APK build/release, persistent profile write, or user-data mutation.
+
+## KT-531 — Campaign mechanics registry foundation
+- Added `campaign_mechanics.gd` as a data-only registry for 12 universes, thematic mechanic families, six initial low-risk candidate modifiers, deterministic planet assignment, preview metadata, and validation for unknown, duplicate, excessive, or incompatible assignments.
+- Ordinary planets are limited to one modifier; bosses may receive two only through an explicitly approved pair. The registry remains `mechanics_live=false`; no gameplay effects, physics, board, pieces, input, or save data changed.
+- Added deterministic registry tests and a dedicated CI step. CI run #388 / run ID `42514568042` completed successfully.
+- No live modifier integration, main merge, public deployment, or APK release.
+
+## KT-532 — Daily Challenge source audit
+- Audited the source `dailyRules` catalog and documented 17 actual rules: sun, gravity, gravityFlip, glitchReactor, artifactHunt, redZone, echoCombo, chronoRift, chroma, comet, mirror, pulse, silent, blindAssembly, prismaticChaos, lastShield, and singularity.
+- Classified safe early campaign candidates (gravity, gravityFlip, artifactHunt, echoCombo, comet, pulse), visual-only palette effects, high-risk effects requiring separate design/tests, and preview-only next-piece suppression. `silent` and `blindAssembly` are treated as one concept.
+- Recorded that palette effects must never change collision/gameplay IDs; `sun` depends on Block Run level-charge semantics; and the source game has only seven standard tetrominoes, so campaign special pieces must be original Block Buddies designs.
+- No campaign live integration in this checkpoint.
+
+## KT-533 — Isolated campaign tempo and score adapters
+- Added `campaign_effect_session.gd`, a reversible session adapter for six source-audited low-risk Daily rules: gravity, gravityFlip, artifactHunt, echoCombo, comet and pulse.
+- Ported source-defined thresholds and outcomes: gravity −55 ms every 25 active seconds (150 ms floor); gravityFlip −30 ms per cleared line with accumulated penalty restored every 30 active seconds (150 ms floor); artifact +50% for eight seconds after each four cleared lines; echo +0.25 per cleared line up to ×2.5 and resets on a lock without a clear; comet +200 points inside its two-second window; pulse ×1.5 line-clear score and −25 ms on every fifth dropped piece (180 ms floor).
+- The adapter uses active-time deltas for time-based rules, counts piece-drop events for Pulse, exposes deterministic result dictionaries and a snapshot, rejects unsupported high-risk modifiers, and does not mutate the live board or global modes.
+- Added deterministic tests and a dedicated CI step. The first failures exposed a test setup/timing mistake; corrected tests now validate Comet from the actual piece-drop event and Pulse after 24 fifth-piece triggers (120 drops from a fresh session) to reach the 180 ms floor.
+- No live campaign scene integration in KT-533. Classic and Block Run remain unchanged.
+
+## KT-534 — First original campaign special-piece geometry prototype
+- Added isolated `campaign_special_piece.gd` for the five-cell `cargo_hook` pentomino (display name: «Грузовой крюк»).
+- Defines four normalized, distinct rotations, centered spawn positioning, board-boundary/occupied-cell fit checks, and deterministic horizontal wall kicks.
+- Added tests for five-cell preservation, four unique rotations, normalized bounds, rotation wraparound, centered spawn on the 10-column board, wall/floor/occupied-cell rejection, successful rotation, right-wall kick, and safe rejection when all candidate poses are blocked.
+- The module is not imported by `game_model.gd`, does not enter the seven-bag, does not alter saves, and is not wired into live gameplay. It is a campaign-only geometry prototype; Classic and Block Run remain untouched.
+- Next: review visual readability and play-feel in a dedicated campaign preview, then decide whether/how to integrate behind a campaign-only feature gate. No main merge, public deployment, or APK release.
+
+## KT-535 — Campaign Cargo Hook visual preview
+- Added a standalone portrait review scene, campaign_special_piece_preview.tscn, with a large default-orientation render and a 2×2 gallery of all four distinct rotations.
+- Styled the five-cell piece with a consistent cyan/teal body, gold fasteners, dimensional highlights, and a dark cosmic campaign backdrop. The screen labels it as campaign-only and explicitly separates it from Classic and Block Run.
+- Extended the CI visual capture to load the isolated preview, verify all four card bounds fit within 720×1280, verify each rotation retains five cells and all four shapes are distinct, and save 27-campaign-cargo-hook-preview.png.
+- The preview scene is not referenced by the main scene, gameplay model, seven-bag, or save system. No gameplay integration, main merge, deployment, or APK release.
+
+## KT-536 — Campaign special-piece integration contract
+- Date: 2026-11-08; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Added `godot/docs/KT-536_CAMPAIGN_SPECIAL_PIECE_INTEGRATION_CONTRACT.md` as a design-only gate before gameplay integration.
+- Audited the current boundary: the shared `game_model.gd` seven-bag and save validator assume seven four-cell tetrominoes, while the Cargo Hook is a five-cell campaign-only prototype. A direct insertion would risk changing shared mode behavior and standard save compatibility.
+- Recommended a dedicated campaign-owned runtime/model boundary with explicit campaign launch selection, special-piece identity and snapshot data, authored level opt-in, and no special IDs in the standard seven-piece range.
+- Defined geometry, board, lifecycle, Hold, persistence, visual and mode-isolation test gates; staged KT-537–KT-540 implementation plan.
+- **No gameplay code or silhouette changed.** The Cargo Hook remains pending the user's visual approval. Classic, Sprint/Marathon and Block Run remain on the original seven-piece model. No main merge, deployment or APK release.
+
+## KT-537 — Isolated campaign special-piece runtime
+- User approved the Cargo Hook silhouette; the authored five-cell shape remains unchanged.
+- Added `godot/scripts/campaign_piece_runtime.gd`, a campaign-owned 10×23 runtime that is separate from `game_model.gd`. It supports standard tetrominoes plus explicit authored Cargo Hook spawns, movement, rotation/wall kicks, soft/hard drop, locking, row clearing and game-over collision checks.
+- Added bidirectional Hold handling (special→standard and standard→special), with one Hold per falling piece and reset on lock.
+- Added versioned campaign snapshots with strict validation of board dimensions, piece IDs, rotation geometry, active placement, Hold state and standard-only seven-bag. Invalid/unknown snapshots are rejected before any live state mutation.
+- Added `godot/tests/campaign_piece_runtime_test.gd` covering independent board, explicit special spawn, five-cell rotation, blocked-rotation atomicity, Hold in both directions, lock/line clear, save/restore, malformed snapshots and shared-model isolation.
+- Registered the new test in `.github/workflows/godot-native-check.yml`.
+- **No live gameplay integration:** no scene imports the runtime, no campaign planet uses it yet, and no change was made to the shared model, Classic, Sprint/Marathon, Block Run, standard saves, main, public deployment or APK release. PR #81 remains Draft/unmerged.
+- Validation: **PASS** — GitHub Actions Godot Native Project Check run #42521720136 on commit `c8ec55a81b8e961d5b6e00073cd5c094b5a0f5e8` completed successfully. All 22 workflow steps passed, including project import, main scene parse, Classic/model and Web migration suites, campaign progression/mechanics/boss/effect/special-piece/runtime tests, all Block Run suites, rendered screenshot capture/upload, and scene smoke test.
+
+
+## KT-538 — Campaign-only Cargo Hook live integration
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Connected the approved five-cell Cargo Hook to the live campaign launch path through the dedicated campaign runtime. Planet 031 (Universe 02, «Караван звёзд») is the authored first-piece event; ordinary campaign planets still start with a standard tetromino.
+- Campaign input, gravity, Hold, rotation, drop/lock/line clear, board rendering, ghost, previews, score and objective counters route through the campaign runtime only while Campaign is active. After the Cargo Hook locks, the standard seven-piece bag resumes.
+- Planet 031 detail now announces the special piece before launch. The live special piece uses the approved cyan/gold visual identity.
+- Campaign launch and retry no longer reset the shared Classic model. Integration coverage exercises real Planet 001 and Planet 031 launch paths, retry isolation, Cargo Hook rotation/drop, standard-piece continuation, shared-model immutability and standard-mode input routing.
+- Visual capture now includes `28-campaign-cargo-hook-planet-detail.png` and `29-campaign-cargo-hook-live-arena.png`.
+- Validation: **PASS** — Godot Native Project Check run [#42524193502](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42524193502) on HEAD `13ac1126f9c38f22d0c854ff40381ad57fd22d2b`; all 23 workflow steps passed, including project import, main parse, campaign live integration, all Classic/Web migration/Campaign/Block Run suites, screenshot capture/upload and scene smoke test.
+- No special piece in Classic, Sprint/Marathon or Block Run; no shared seven-bag or standard save schema changes. No main merge, deployment, APK build/release or physical-device verification.
+- Next: KT-539 — campaign-only Hold/preview polish and persistence/recovery contract before wider authored special-piece rollout.
+
+## KT-539 — Campaign Hold, preview and checkpoint recovery boundary
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Audited the live preview path: while Campaign is active, the Hold and Next cards already read from the campaign-owned runtime; outside Campaign they continue to read from the shared standard model. Hold remains once per falling piece and resets on lock; swapping a held piece restores its canonical base orientation.
+- Added `godot/scripts/campaign_piece_store.gd`, a separate versioned campaign checkpoint envelope bound to an authored planet ID. It validates the complete runtime snapshot in a temporary campaign runtime before saving or restoring; malformed, missing, unsupported-version and wrong-planet checkpoints fail closed without partial destination mutation.
+- Added `godot/tests/campaign_piece_store_test.gd` for exact snapshot recovery (including active pose and Hold state), planet binding, invalid save rejection and independent cleanup. Registered the suite in the Godot Native Project Check workflow.
+- Added `godot/docs/KT-539_CAMPAIGN_HOLD_PREVIEW_AND_RECOVERY.md` with the lifecycle contract and the remaining integration decision.
+- **Important boundary:** automatic resume is not enabled yet. The adapter is validated in isolation; pause/background/periodic checkpoint triggers and completion/retry cleanup still require a separately tested lifecycle integration. No shared save schema or standard mode behavior changed.
+- No main merge, public deployment, APK build/release or physical-device verification.
+
+## KT-540 — Campaign checkpoint lifecycle integration
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Campaign runs now write a validated checkpoint every 10 seconds of active play, immediately on manual pause, and on Godot's application-paused notification. Paused time is excluded.
+- On app launch, a valid current-planet checkpoint is restored into the campaign-owned runtime and opens paused; the player explicitly resumes. The objective timer is restored alongside the board snapshot.
+- Checkpoints are cleared on retry, planet completion, return to route, or switching to a standard mode. Stale checkpoints for a planet that is no longer current are discarded.
+- The campaign progression/reward store remains separate; only running sessions are checkpointed, and the existing completion guard prevents completion processing from being replayed by a restored completed session.
+- Store tests cover exact runtime recovery, elapsed time, planet identity and rejection without partial mutation. CI #435 validates the change; see [KT-540 lifecycle contract](KT-540_CAMPAIGN_CHECKPOINT_LIFECYCLE.md).
+- OS-level background/foreground behavior still requires physical Android/iOS testing. No main merge, public deployment or APK release.
+
+
+## KT-541 — Restart campaign level after exit
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Adopted the simpler run rule: leaving a campaign level or relaunching the app starts the current planet from its authored beginning. Board, active piece, Hold state and objective timer are transient to the current app session.
+- Removed periodic checkpoint writes, pause-time disk writes and automatic checkpoint restoration from the live scene. Startup clears any legacy run checkpoint left by the previous KT-540 implementation.
+- Manual pause remains available in-session. If the app is backgrounded but its process survives, it pauses in memory and resumes only after the player presses Resume. If the process is terminated, the next launch begins the level again.
+- Campaign progression, completed planets, marks and reward receipts remain persisted independently; restarting a level does not roll back earned campaign progress.
+- The campaign checkpoint store remains isolated and covered by tests, but is no longer part of live run lifecycle.
+- Validation pending on the latest commit. No main merge, public deployment or APK release.
+
+
+## KT-542 — Full campaign completion master plan
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Reframed Cosmic Campaign as a core Block Buddies pillar that must be content-complete before public release, not merely a 360-node map.
+- Recorded the verified current state: 12 universes / 360 sequential nodes; formula-derived line, score, survival and boss objectives; data-only universe mechanic registry with most mechanics still planned; six candidate modifiers; isolated audited effect adapters; Planet 031 Cargo Hook integration; persistent campaign progression and rewards; restart-from-beginning behavior for unfinished levels.
+- Defined release acceptance: distinct playable universe identities, authored mission definitions, safe mechanic teaching, boss encounters, readable special events, a complete opening-to-finale arc, meaningful persistent reward sinks, deterministic progression/retry/reward tests, and real-device verification.
+- Staged KT-543 catalog audit, KT-544 Star Caravan mechanic package, KT-545 authored mission runner/layouts, KT-546 boss framework, KT-547 reward sinks, KT-548 universe-by-universe content production and KT-549 full-campaign balance/release acceptance.
+- Immediate next action: KT-543 data-backed audit of all 360 nodes and a chapter authoring matrix. No gameplay changes in KT-542.
+- No main merge, public deployment or APK release.
+
+
+## KT-543 — 360-planet campaign catalog audit
+- Read-only audit completed from the current progression and mechanics definitions.
+- Exact mission-family distribution: 252 standard line-clear, 36 score-only, 36 survival-only and 36 boss-combo nodes.
+- Registry currently schedules 33 ordinary single-modifier nodes and 19 paired boss nodes (71 modifier entries) from Universe 02 onward; these are candidate assignments, not proof of live mechanics.
+- Identified a key integration gap: six candidate registry modifier IDs differ from the six source-audited isolated effect-adapter IDs. A tested mapping/runtime contract is required before these become playable campaign rules.
+- Universe 02 is the only chapter with a live signature event so far: Cargo Hook on Planet 031. Other universe mechanic families remain registry/planned concepts.
+- Bosses currently share the same line+score objective structure; 12 distinct authored boss encounters and their presentation remain future work.
+- Campaign marks and exactly-once receipts persist, but a meaningful reward sink/collection loop and full 360th-node finale presentation remain to be completed.
+- Added `godot/docs/KT-543_CAMPAIGN_360_CATALOG_AUDIT.md` with universe matrix, chapter rhythm, gaps and acceptance gates.
+- Next: implement the versioned authored planet-definition schema and deterministic catalog validator, retaining the existing formula as fallback during migration.
+- No gameplay changes, main merge, public deployment or APK release.
+
+
+## KT-543.1 — Versioned authored Star Caravan catalog foundation
+- Date: 2026-11-09; branch `godot/kt493-gallery-validated-2026-11-08`; PR #81 remains Draft/open/unmerged.
+- Added schema v1 authored catalog with 30 uniquely identified Star Caravan planet records, Russian mission titles/briefings, mission tags, explicit event statuses and boss identities.
+- Added deterministic validator for chapter identity, schema version, exactly 30 sequential planets, required metadata, event status/binding and boss metadata.
+- Campaign progression overlays authored presentation/event metadata for Universe 02 (global nodes 031–060); the existing objective/reward curve remains intact, and the other 330 nodes retain formula fallback.
+- Planet 056 and 057 are marked as live Cargo Hook campaign events, reusing the existing campaign-only runtime. Boss phases, authored board layouts and other universe mechanics are not claimed as implemented.
+- Added catalog tests to the Godot CI workflow. CI result for the latest commit is not yet confirmed.
+- No changes to standard modes, save version, campaign rewards or exit/restart behavior. No main merge, public deployment or APK release.
+
+
+## KT-544A — Star Caravan authored mission presentation (09.11.2026)
+- Planet detail now presents authored mission title, player-facing briefing, objective family, target/reward and a dedicated boss/signature-event identity line.
+- Compact portrait and wider portrait layouts use bounded text wrapping; mission detail panel and start action remain separated.
+- Added real Godot viewport captures for authored opening, Guardian briefing and Cargo Hook mission: `30-star-caravan-authored-planet-detail.png`, `31-star-caravan-guardian-briefing.png`, `32-star-caravan-cargo-hook-mission-briefing.png`.
+- This is a presentation milestone, not a claim that boss phases or additional hazards are already playable. Gameplay objectives and Cargo Hook runtime remain unchanged.
+- No standard-mode, save, reward, progression or exit/restart behavior changes. No main merge, public deployment or APK release.
+- CI must be checked on the latest commit before this milestone is accepted.
+
+
+## KT-544B — Three-phase Star Caravan boss encounters (09.11.2026)
+- Added optional sequential phase support to the mode-session coordinator; it is enabled only when a campaign boss definition explicitly supplies phases.
+- Authored three distinct three-stage encounters for Planet 040 «Страж конвоя», Planet 050 «Чемпион каравана» and Planet 060 «Адмирал дальнего пути».
+- Phase progress uses fresh line/score baselines after each transition. The live campaign HUD identifies the active phase and its phase objective.
+- Campaign launch and retry load authored phases; catalog validation requires exactly three non-empty phases per boss milestone.
+- Added unit tests for phase transitions, per-phase baselines, near-miss rejection and final completion. Extended live integration to complete Planet 040 and verify its reward/unlock.
+- Phase system remains dormant in Classic, Sprint/Marathon and Block Run. No board, save schema, rewards, exit/restart behavior, main or public release changes.
+- CI result for the latest PR head is pending; no pass is claimed yet.

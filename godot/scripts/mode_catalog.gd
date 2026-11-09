@@ -31,12 +31,23 @@ const MODES := {
 		"time_limit_seconds": 0,
 		"starting_level": 1,
 		"level_lines": 10
+	},
+	"campaign": {
+		"id": "campaign",
+		"name": "Campaign",
+		"description": "Уровень космической кампании с целью планеты.",
+		"target_lines": 8,
+		"time_limit_seconds": 0,
+		"starting_level": 1,
+		"level_lines": 10
 	}
 }
 
 static func list_modes() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for mode_id in MODES:
+		if mode_id == "campaign":
+			continue
 		result.append(MODES[mode_id].duplicate(true))
 	return result
 
