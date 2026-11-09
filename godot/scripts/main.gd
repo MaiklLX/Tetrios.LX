@@ -868,18 +868,22 @@ func _draw() -> void:
 	if home_visible:
 		_draw_home_hub()
 		_draw_tutorial_overlay()
+		_draw_touch_feedback()
 		return
 	if not campaign_screen.is_empty():
 		_draw_campaign_screen()
 		_draw_tutorial_overlay()
+		_draw_touch_feedback()
 		return
 	if not secondary_screen.is_empty():
 		_draw_secondary_screen()
 		_draw_tutorial_overlay()
+		_draw_touch_feedback()
 		return
 	if mode_select_visible:
 		_draw_mode_select()
 		_draw_tutorial_overlay()
+		_draw_touch_feedback()
 		return
 	_draw_header()
 	_draw_stats()
@@ -899,8 +903,8 @@ func _draw() -> void:
 		_draw_pause_overlay()
 	if campaign_collection_reveal_active and campaign_screen.is_empty() and not campaign_collection_reveal_queue.is_empty():
 		_draw_campaign_collection_reward_modal(CampaignCollection.get_item(campaign_progress, campaign_collection_reveal_queue[0]), true)
-	_draw_touch_feedback()
 	_draw_tutorial_overlay()
+	_draw_touch_feedback()
 
 
 func _load_tutorial_state() -> void:
