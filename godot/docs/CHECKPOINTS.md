@@ -300,3 +300,20 @@
 - Log comparison: the previous run emitted CanvasItem/ObjectDB/resource-leak warnings after the gameplay model test; these are absent in KT-484. Remaining V-Sync and ALSA dummy-audio messages occur only during headless visual capture and did not fail the job.
 - Visual artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782/artifacts/13616556489) was uploaded. Physical Android rendering and orientation behavior remain unverified.
 - No main merge, deployment, APK build/release, persistent profile write, or user-data mutation.
+
+
+## KT-486–KT-490 — русская локализация и мобильная визуальная проверка (08.11.2026)
+- KT-486: завершены русские подписи HUD, целей, экрана завершения и результатов Block Run; Sprint/Marathon сохраняют время и прогресс.
+- KT-487: имена пяти героев в карточке способности переведены на русский; состояние готовности не показывает клавишу Q, лишнюю для сенсорного интерфейса.
+- KT-488: CI дополнен реальными Godot viewport-скриншотами в портретном размере 360×800 наряду с 720×1280.
+- KT-489–KT-490: исправлены две найденные на 360×800 визуальные проблемы — Buddy скрывался за модальным экраном результатов/паузы, заголовок центрируется между верхними кнопками и помещается без перекрытия.
+- Просмотрены кадры арены и результатов 360×800; Buddy остаётся вне панели, заголовок не заходит под кнопки.
+- CI run [42479580700](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42479580700) на HEAD `dc1802f663f48c930025a6ac177ed7d9128c9379`: **SUCCESS** — импорт, парсинг, модельные и Block Run тесты, visual capture и scene smoke.
+- Артефакт содержит 9 кадров режимов, Classic, Block Run и мобильных экранов. Это Godot viewport/Xvfb, не физическое Android-устройство.
+
+## KT-491 — геометрия и действие видимой кнопки Drop (09.11.2026)
+- В `visual_capture_test.gd` добавлены проверки для Classic 720×1280 и узкого портрета 360×800: Drop не меньше 42×44, находится справа от поля 10×23, не выходит за viewport и не пересекает рамку поля.
+- Тест передаёт центр видимой Drop-области в обработчик игрового тапа и проверяет ровно одно увеличение `lock_serial`; затем возвращает Classic перед запуском Block Run capture.
+- Текущий HEAD PR #77: `ca592f3b4fc6deeae41d0946097e33f63c4d0d61`. CI [run 42481294873](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481294873): **SUCCESS** — Godot 4.4.1 import, parse, Classic/model, Web-save migration, все Block Run suites, visual capture/upload и scene smoke.
+- Артефакт [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481294873/artifacts/13617996102) скачан и просмотрен: `08-mobile-360-arena.png` показывает Buddy в левом безопасном поле рядом с неизменённой 2D-ареной 10×23 и видимую кнопку Drop вне рамки поля.
+- Физическое Android-тестирование, портрет/альбом на устройстве, реальные touch-жесты и регрессия постоянных сохранений не подтверждены. APK не собирался; main, публикация и пользовательские данные не затронуты.
