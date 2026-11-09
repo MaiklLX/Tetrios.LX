@@ -120,9 +120,12 @@ func _run() -> void:
 	invalid.completed_nodes = [1, 3]
 	if not _check(not restored.load_save_data(invalid) and restored.to_save_data() == before_bad_load, "Invalid save must not partially mutate live progress"):
 		return
-	invalid = snapshot.duplicate(true)
-	invalid.reward_receipts.erase("1")
-	if not _check(not restored.load_save_data(invalid) and restored.to_save_data() == before_bad_load, "Modern saves must reject a partial reward ledger"):
+	var multi_reward_progress = Campaign.new()
+	multi_reward_progress.complete_planet(1, int(multi_reward_progress.get_planet_definition(1).target_lines))
+	multi_reward_progress.complete_planet(2, int(multi_reward_progress.get_planet_definition(2).target_lines))
+	var partial_ledger: Dictionary = multi_reward_progress.to_save_data()
+	partial_ledger.reward_receipts.erase("1")
+	if not _check(not restored.load_save_data(partial_ledger) and restored.to_save_data() == before_bad_load, "Modern saves must reject a partially deleted multi-entry reward ledger"):
 		return
 	invalid = snapshot.duplicate(true)
 	invalid.campaign_marks = 99
