@@ -10,6 +10,7 @@ const ModeCatalog = preload("res://scripts/mode_catalog.gd")
 const CampaignProgress = preload("res://scripts/campaign_progress.gd")
 const CampaignStore = preload("res://scripts/campaign_progress_store.gd")
 const CampaignRuntime = preload("res://scripts/campaign_piece_runtime.gd")
+const CampaignRunStore = preload("res://scripts/campaign_piece_store.gd")
 const CampaignSpecialPiece = preload("res://scripts/campaign_special_piece.gd")
 const BlockRunSession = preload("res://scripts/block_run_session.gd")
 const BlockRunBridge = preload("res://scripts/block_run_bridge.gd")
@@ -20,6 +21,8 @@ var campaign_run_active := false
 var campaign_run_planet_id := 0
 var campaign_completion_processed := false
 var campaign_last_reward_marks := 0
+var campaign_checkpoint_clock := 0.0
+const CAMPAIGN_CHECKPOINT_INTERVAL := 10.0
 var campaign_piece_runtime: BlockBuddiesCampaignPieceRuntime
 const CARGO_HOOK_PLANET_ID := 31
 var mode_session: BlockBuddiesModeSession
@@ -74,6 +77,33 @@ var touch_start := Vector2.ZERO
 var touch_start_msec := 0
 var touch_active := false
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED and _campaign_runtime_active() and mode_session != null and mode_session.is_running():
+		paused = true
+		_save_campaign_checkpoint()
+		queue_redraw()
+
+func _save_campaign_checkpoint() -> bool:
+	if not _campaign_runtime_active() or mode_session == null or not mode_session.is_running() or campaign_completion_processed:
+		return false
+	var saved := CampaignRunStore.save_run(campaign_run_planet_id, campaign_piece_runtime, CampaignRunStore.DEFAULT_PATH, mode_session.elapsed_seconds)
+	if not saved:
+		push_warning("Campaign run checkpoint could not be saved.")
+	return saved
+
+func _clear_campaign_checkpoint() -> void:
+	if not CampaignRunStore.clear_run():
+		push_warning("Campaign run checkpoint could not be cleared.")
+	campaign_checkpoint_clock = 0.0
+
+func _try_restore_campaign_run() -> bool:
+	var state: Dictionary = CampaignRunStore.load_run_state(0)
+	if state.is_empty():
+		# Planet identity is part of the envelope; inspect the stored ID only via
+		# a dedicated safe lookup so normal progress data remains separate.
+		return false
+	return false
+
 func _ready() -> void:
 	randomize()
 	font = ThemeDB.fallback_font
@@ -91,6 +121,7 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_layout)
 	_layout()
 	set_process(true)
+	_try_restore_campaign_run()
 
 func _layout() -> void:
 	screen_size = get_viewport_rect().size
@@ -198,6 +229,11 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if game == null:
 		return
+	if _campaign_runtime_active() and not paused and mode_session != null and mode_session.is_running():
+		campaign_checkpoint_clock += delta
+		if campaign_checkpoint_clock >= CAMPAIGN_CHECKPOINT_INTERVAL:
+			campaign_checkpoint_clock = 0.0
+			_save_campaign_checkpoint()
 	if block_run_active:
 		_process_block_run_events()
 		_advance_block_run_clock(delta if not paused and not mode_select_visible and not home_visible and secondary_screen.is_empty() and campaign_screen.is_empty() else 0.0)
@@ -392,6 +428,8 @@ func _advance_block_run_clock(delta: float) -> void:
 
 
 func _restart_current_run() -> void:
+	if campaign_run_active:
+		_clear_campaign_checkpoint()
 	if not campaign_run_active:
 		game.reset()
 	# Campaign owns a separate board and piece lifecycle; the shared model stays untouched.
@@ -516,6 +554,10 @@ func _toggle_pause() -> void:
 	if game == null or _active_game_over() or _mode_finished() or mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty():
 		return
 	paused = not paused
+	if paused:
+		_save_campaign_checkpoint()
+	else:
+		campaign_checkpoint_clock = 0.0
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
@@ -844,6 +886,7 @@ func _start_campaign_planet() -> void:
 	mode_session.rules["target_survive_seconds"] = float(definition.get("target_survive_seconds", 0))
 	mode_session.rules["time_limit_seconds"] = float(definition.get("time_limit_seconds", 0))
 	campaign_run_planet_id = node_id
+	_clear_campaign_checkpoint()
 	if not _reset_campaign_piece_runtime():
 		push_error("Campaign piece runtime could not spawn the authored planet piece.")
 		campaign_piece_runtime = null
@@ -874,6 +917,7 @@ func _process_campaign_completion() -> void:
 		if not CampaignStore.save_progress(campaign_progress):
 			push_warning("Campaign progress could not be saved to user profile storage.")
 	campaign_completion_processed = true
+	_clear_campaign_checkpoint()
 	queue_redraw()
 
 func _return_to_campaign_route() -> void:
@@ -882,6 +926,7 @@ func _return_to_campaign_route() -> void:
 	campaign_universe = int((campaign_run_planet_id - 1) / CampaignProgress.PLANETS_PER_UNIVERSE)
 	campaign_planet = ((campaign_run_planet_id - 1) % CampaignProgress.PLANETS_PER_UNIVERSE) + 1
 	campaign_screen = "route"
+	_clear_campaign_checkpoint()
 	campaign_run_active = false
 	campaign_piece_runtime = null
 	campaign_completion_processed = false
