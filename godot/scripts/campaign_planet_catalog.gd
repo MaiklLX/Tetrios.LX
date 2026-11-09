@@ -17,10 +17,10 @@ const CHAPTERS := {
 		"planets": [
 			{"local_id":1,"title":"Первый сигнал","briefing":"Караван выходит на маршрут. Освой поле и найди спокойный ритм укладки.","mission_tag":"intro","event_id":"","event_status":"none"},
 			{"local_id":2,"title":"Первые контейнеры","briefing":"Собери линии без спешки: грузовой путь начинается с точности.","mission_tag":"practice","event_id":"","event_status":"none"},
-			{"local_id":3,"title":"Чистый коридор","briefing":"Освободи пространство для следующей партии фигур: начни с трёх грузовых рядов с открытыми коридорами.","mission_tag":"authored_layout","event_id":"cargo_corridor_layout","event_status":"none","layout_id":"cargo_corridor","starting_layout":["111111.111",".22222222.","333.333333"]},
+			{"local_id":3,"title":"Чистый коридор","briefing":"Освободи пространство для следующей партии фигур: начни с трёх грузовых рядов с открытыми коридорами.","mission_tag":"authored_layout","event_id":"cargo_corridor_layout","event_status":"none","layout_id":"cargo_corridor","starting_layout":["111111.111",".22222222.","333.333333"],"mission_definition":{"objective_type":"lines","target_lines":12,"target_score":0,"target_survive_seconds":0,"difficulty_band":"guided","expected_duration_seconds":[90,150],"event_schedule":[]}},
 			{"local_id":4,"title":"Дежурство на борту","briefing":"Удерживай поле в рабочем состоянии, пока караван проходит опасный сектор.","mission_tag":"survival","event_id":"","event_status":"none"},
 			{"local_id":5,"title":"Оплата за доставку","briefing":"Набери нужное количество очков за аккуратные очистки.","mission_tag":"score","event_id":"","event_status":"none"},
-			{"local_id":6,"title":"Узкий пролёт","briefing":"Планируй укладку заранее: три смещённых грузовых ряда оставляют узкие проходы.","mission_tag":"authored_layout","event_id":"offset_bay_layout","event_status":"none","layout_id":"offset_bay","starting_layout":["44.4444444","555555.555","66.6666666"]},
+			{"local_id":6,"title":"Узкий пролёт","briefing":"Планируй укладку заранее: три смещённых грузовых ряда оставляют узкие проходы.","mission_tag":"authored_layout","event_id":"offset_bay_layout","event_status":"none","layout_id":"offset_bay","starting_layout":["44.4444444","555555.555","66.6666666"],"mission_definition":{"objective_type":"lines","target_lines":12,"target_score":0,"target_survive_seconds":0,"difficulty_band":"standard","expected_duration_seconds":[120,180],"event_schedule":[]}},
 			{"local_id":7,"title":"Поток грузов","briefing":"Сохраняй темп и не заполняй верхние ряды.","mission_tag":"flow","event_id":"","event_status":"none"},
 			{"local_id":8,"title":"Маршрутный маяк","briefing":"Проверь стабильность укладки перед входом в сектор каравана.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":9,"title":"Проверка экипажа","briefing":"Последняя тренировка перед встречей с первым стражем маршрута.","mission_tag":"mastery","event_id":"","event_status":"none"},
@@ -30,7 +30,7 @@ const CHAPTERS := {
 			{"local_id":13,"title":"Точный расчёт","briefing":"Каждая очистка важна: не трать пространство впустую.","mission_tag":"precision","event_id":"","event_status":"none"},
 			{"local_id":14,"title":"Тихая вахта","briefing":"Продержись до конца опасного участка маршрута.","mission_tag":"survival","event_id":"","event_status":"none"},
 			{"local_id":15,"title":"Премия навигатора","briefing":"Докажи мастерство результатом, а не только количеством линий.","mission_tag":"score","event_id":"","event_status":"none"},
-			{"local_id":16,"title":"Сложный стык","briefing":"Собирай линии на подготовленном поле: чередующиеся проёмы требуют точного выбора фигуры.","mission_tag":"authored_layout","event_id":"staggered_joint_layout","event_status":"none","layout_id":"staggered_joint","starting_layout":["0.00000000","1111111.11","22.2222222"]},
+			{"local_id":16,"title":"Сложный стык","briefing":"Собирай линии на подготовленном поле: чередующиеся проёмы требуют точного выбора фигуры.","mission_tag":"authored_layout","event_id":"staggered_joint_layout","event_status":"none","layout_id":"staggered_joint","starting_layout":["0.00000000","1111111.11","22.2222222"],"mission_definition":{"objective_type":"lines","target_lines":13,"target_score":0,"target_survive_seconds":0,"difficulty_band":"standard","expected_duration_seconds":[150,210],"event_schedule":[]}},
 			{"local_id":17,"title":"Резервный отсек","briefing":"Подготовь свободный объём поля для неожиданного груза.","mission_tag":"setup","event_id":"","event_status":"none"},
 			{"local_id":18,"title":"Тяговый импульс","briefing":"Проверь устойчивость темпа на длинной серии очисток.","mission_tag":"tempo","event_id":"","event_status":"none"},
 			{"local_id":19,"title":"Передача смены","briefing":"Сохрани контроль над полем перед испытанием чемпиона.","mission_tag":"mastery","event_id":"","event_status":"none"},
@@ -96,6 +96,32 @@ static func validate_chapter(chapter: Dictionary) -> Dictionary:
 					return {"valid":false,"reason":"invalid_layout_row_density","local_id":index + 1}
 			if str(planet.get("layout_id", "")).strip_edges().is_empty():
 				return {"valid":false,"reason":"missing_layout_id","local_id":index + 1}
+		if planet.has("mission_definition"):
+			var mission: Variant = planet.get("mission_definition")
+			if typeof(mission) != TYPE_DICTIONARY:
+				return {"valid":false,"reason":"invalid_mission_definition","local_id":index + 1}
+			var objective_type := str(mission.get("objective_type", ""))
+			if not ["lines", "score", "survive", "boss_combo"].has(objective_type):
+				return {"valid":false,"reason":"invalid_mission_objective","local_id":index + 1}
+			var target_lines := int(mission.get("target_lines", -1))
+			var target_score := int(mission.get("target_score", -1))
+			var target_survive := int(mission.get("target_survive_seconds", -1))
+			if target_lines < 0 or target_score < 0 or target_survive < 0:
+				return {"valid":false,"reason":"negative_mission_target","local_id":index + 1}
+			if objective_type == "lines" and (target_lines <= 0 or target_score != 0 or target_survive != 0):
+				return {"valid":false,"reason":"invalid_lines_objective","local_id":index + 1}
+			if objective_type == "score" and (target_score <= 0 or target_lines != 0 or target_survive != 0):
+				return {"valid":false,"reason":"invalid_score_objective","local_id":index + 1}
+			if objective_type == "survive" and (target_survive <= 0 or target_lines != 0 or target_score != 0):
+				return {"valid":false,"reason":"invalid_survival_objective","local_id":index + 1}
+			if str(mission.get("difficulty_band", "")) not in ["guided", "standard", "advanced", "mastery"]:
+				return {"valid":false,"reason":"invalid_difficulty_band","local_id":index + 1}
+			var duration: Variant = mission.get("expected_duration_seconds")
+			if typeof(duration) != TYPE_ARRAY or duration.size() != 2 or int(duration[0]) < 30 or int(duration[1]) < int(duration[0]) or int(duration[1]) > 900:
+				return {"valid":false,"reason":"invalid_expected_duration","local_id":index + 1}
+			var schedule: Variant = mission.get("event_schedule")
+			if typeof(schedule) != TYPE_ARRAY:
+				return {"valid":false,"reason":"invalid_event_schedule","local_id":index + 1}
 		var event_status := str(planet.event_status)
 		if event_status != "none" and str(planet.get("event_id", "")).strip_edges().is_empty():
 			return {"valid":false,"reason":"missing_event_id","local_id":index + 1}
