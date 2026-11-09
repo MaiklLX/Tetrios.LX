@@ -14550,3 +14550,25 @@ body .app{background:transparent!important;background-color:transparent!importan
 </style>
 
 </body></html>
+
+<style id="bb-kt553-godot-press-feedback">
+/* KT-553: reproduce the short gold target highlight + cyan pulse from Godot
+   touch feedback, while retaining each button's existing shape and palette. */
+button:not(.board){
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .11s ease,filter .11s ease,box-shadow .11s ease,outline-color .11s ease;
+}
+button:not(.board):active{
+  transform:translateY(1px) scale(.985);
+  filter:brightness(1.14) saturate(1.08);
+  outline:2px solid rgba(255,240,185,.72);
+  outline-offset:1px;
+  box-shadow:0 0 0 2px rgba(85,221,255,.22),0 0 18px rgba(85,221,255,.34),inset 0 0 14px rgba(85,221,255,.12);
+}
+button:not(.board):focus-visible{
+  outline:2px solid #fff0b9;
+  outline-offset:3px;
+  box-shadow:0 0 0 4px rgba(85,221,255,.2),0 0 18px rgba(85,221,255,.24);
+}
+@media(prefers-reduced-motion:reduce){button:not(.board){transition:none}}
+</style>
