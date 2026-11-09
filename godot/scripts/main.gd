@@ -1021,7 +1021,10 @@ func _draw_tutorial_overlay() -> void:
 	var bubble := Rect2(Vector2((screen_size.x - bubble_width) * 0.5, bubble_y), Vector2(bubble_width, bubble_height))
 	_draw_soft_panel(bubble, Color("#102b58"), Color("#ffd05a"), 20, 14)
 	var pointer_x := clampf(target.get_center().x, bubble.position.x + 24.0, bubble.end.x - 24.0) if target.size.x > 0.0 else bubble.get_center().x
-	var pointer := PackedVector2Array([Vector2(pointer_x - 12.0, bubble.position.y + 1.0), Vector2(pointer_x + 12.0, bubble.position.y + 1.0), Vector2(pointer_x, bubble.position.y - 13.0)])
+	var pointer_down := target.size.y > 0.0 and target.get_center().y > bubble.get_center().y
+	var pointer_base_y := bubble.end.y - 1.0 if pointer_down else bubble.position.y + 1.0
+	var pointer_tip_y := bubble.end.y + 13.0 if pointer_down else bubble.position.y - 13.0
+	var pointer := PackedVector2Array([Vector2(pointer_x - 12.0, pointer_base_y), Vector2(pointer_x + 12.0, pointer_base_y), Vector2(pointer_x, pointer_tip_y)])
 	draw_colored_polygon(pointer, Color("#ffd05a"))
 	var copy := _tutorial_copy()
 	draw_string(font, bubble.position + Vector2(16.0, 30.0), str(copy.title), HORIZONTAL_ALIGNMENT_LEFT, bubble.size.x - 32.0, 15, Color("#fff0b9"))
