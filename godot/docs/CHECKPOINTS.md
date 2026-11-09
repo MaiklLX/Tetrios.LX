@@ -431,3 +431,13 @@
 - This is a presentation milestone, not a claim that boss phases or additional hazards are already playable. Gameplay objectives and Cargo Hook runtime remain unchanged.
 - No standard-mode, save, reward, progression or exit/restart behavior changes. No main merge, public deployment or APK release.
 - CI must be checked on the latest commit before this milestone is accepted.
+
+
+## KT-544B — Three-phase Star Caravan boss encounters (09.11.2026)
+- Added optional sequential phase support to the mode-session coordinator; it is enabled only when a campaign boss definition explicitly supplies phases.
+- Authored three distinct three-stage encounters for Planet 040 «Страж конвоя», Planet 050 «Чемпион каравана» and Planet 060 «Адмирал дальнего пути».
+- Phase progress uses fresh line/score baselines after each transition. The live campaign HUD identifies the active phase and its phase objective.
+- Campaign launch and retry load authored phases; catalog validation requires exactly three non-empty phases per boss milestone.
+- Added unit tests for phase transitions, per-phase baselines, near-miss rejection and final completion. Extended live integration to complete Planet 040 and verify its reward/unlock.
+- Phase system remains dormant in Classic, Sprint/Marathon and Block Run. No board, save schema, rewards, exit/restart behavior, main or public release changes.
+- CI result for the latest PR head is pending; no pass is claimed yet.
