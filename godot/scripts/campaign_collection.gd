@@ -38,6 +38,7 @@ static func get_collection_summary(progress: BlockBuddiesCampaignProgress) -> Di
 			"id": "universe_relic_%02d" % (universe_index + 1),
 			"kind": "universe_relic",
 			"universe_number": universe_index + 1,
+			"visual_variant": universe_index + 1,
 			"title": UNIVERSE_RELIC_TITLES[universe_index],
 			"description": UNIVERSE_RELIC_DESCRIPTIONS[universe_index],
 			"unlock_planet": (universe_index + 1) * Campaign.PLANETS_PER_UNIVERSE,
@@ -54,6 +55,7 @@ static func get_collection_summary(progress: BlockBuddiesCampaignProgress) -> Di
 				"kind": "boss_insignia",
 				"universe_number": universe_index + 1,
 				"planet_id": boss_node,
+				"visual_variant": boss_node,
 				"title": str(boss_definition.get("boss_name", "Знак командира")),
 				"description": "Знак за победу над командиром на планете %03d." % boss_node,
 				"unlock_planet": boss_node,
@@ -68,6 +70,7 @@ static func get_collection_summary(progress: BlockBuddiesCampaignProgress) -> Di
 		"title": "Корона дальнего пути",
 		"description": "Главная реликвия за завершение всех 360 планет.",
 		"unlock_planet": Campaign.TOTAL_PLANETS,
+		"visual_variant": 0,
 		"unlocked": campaign_crown_unlocked
 	})
 	return {
