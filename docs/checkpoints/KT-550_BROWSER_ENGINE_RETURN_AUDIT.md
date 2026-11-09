@@ -140,3 +140,26 @@ Status: implementation committed to the isolated browser-return branch; automate
 - Branch only: `web/kt550-browser-return-2026-11-09`; PR #85 remains Draft.
 - No merge, deployment, APK build, or APK release.
 - Next visual stages remain planet atlas and reward collection; each requires the same Godot-to-browser comparison and screenshot evidence.
+
+## KT-553 — tactile button feedback (2026-11-09)
+
+Status: implementation committed to the isolated browser-return branch; cross-platform verification is running.
+
+### Godot reference
+- `godot/scripts/main.gd` `_draw_touch_feedback()` draws a brief warm-gold target outline while a touch is held, then a cyan expanding ring and a small white center pulse.
+- Browser baseline previously relied mostly on a generic `button:active { transform: scale(.97) }`, without the same gold/cyan visual feedback.
+
+### Browser implementation
+- Added `bb-kt553-godot-press-feedback` at the end of `site/index.html`.
+- All non-board buttons now get a short press response: slight compression, brighter surface, warm-gold outline, cyan halo and restrained inner glow.
+- Keyboard focus gets a clear gold/cyan focus ring; reduced-motion preference disables the transition.
+- Existing button contents, actions, IDs, campaign progression, save keys, game logic and board gestures are unchanged.
+
+### Acceptance
+- Verify button feedback on touch emulation and desktop mouse/keyboard.
+- Verify no horizontal overflow, no layout shift after release, and no console/page errors.
+- Keep the Godot visual language; do not replace existing button variants with one generic style.
+
+### Safety
+- Isolated branch `web/kt550-browser-return-2026-11-09`; PR #85 remains Draft.
+- No merge, Pages deployment, APK build or APK release.
