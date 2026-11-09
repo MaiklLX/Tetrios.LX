@@ -24,6 +24,11 @@ func _run() -> void:
 	var first_relic: Dictionary = Collection.get_item(fresh, "universe_relic_01")
 	if not _check(not first_relic.is_empty() and not first_relic.unlocked and first_relic.unlock_planet == 30, "Universe relic must remain locked until all 30 planets are completed"):
 		return
+	if not _check(str(first_relic.get("kind", "")) == "universe_relic" and str(first_boss.get("kind", "")) == "boss_insignia", "Relics and boss insignias must expose distinct visual categories"):
+		return
+	var final_crown: Dictionary = Collection.get_item(fresh, "campaign_crown")
+	if not _check(str(final_crown.get("kind", "")) == "campaign_crown" and int(final_crown.get("unlock_planet", 0)) == Campaign.TOTAL_PLANETS, "Final crown must remain a distinct reward category tied to all 360 planets"):
+		return
 	var first_boss: Dictionary = Collection.get_item(fresh, "boss_insignia_010")
 	if not _check(not first_boss.is_empty() and not first_boss.unlocked and first_boss.planet_id == 10, "Boss insignia must be tied to its exact boss planet"):
 		return
