@@ -1,23 +1,15 @@
-# KT-540 — Campaign checkpoint lifecycle integration
+# KT-540 — Campaign run lifecycle decision
 
-## Behavior
-- Campaign runs checkpoint every 10 seconds of active play. Paused time is excluded.
-- Entering the in-game pause state writes a checkpoint immediately.
-- Godot's application-paused notification pauses the campaign and writes a checkpoint before suspension.
-- On next app launch, a valid checkpoint is restored into the campaign-owned runtime and the run opens paused, requiring an explicit Resume action.
-- The campaign timer is restored with the board/runtime snapshot, so elapsed objective time does not reset on resume.
-- A checkpoint is cleared when the player retries, completes the planet, returns to the route, or starts a different standard mode.
-- A checkpoint for a planet that is no longer the current unlocked planet is discarded rather than applied to a different run.
+## Final behavior (supersedes the earlier resume proposal)
+- A campaign level is a single-session attempt. Leaving the level or closing/restarting the app does not resume its board, active piece, Hold state, or objective timer.
+- A new app launch clears any legacy campaign-run checkpoint and opens the normal home screen. The player explicitly launches the current planet again; the run starts from its authored opening state.
+- Manual pause remains an in-session pause. If the app is backgrounded and the process survives, the OS pause notification pauses the live in-memory run; returning to the still-running app requires Resume.
+- If the process is terminated while backgrounded, the next launch starts the level from the beginning.
+- Retry, return to route, planet completion, and switching to a standard mode clear any campaign-run checkpoint file.
+- Campaign progression, completed planets, campaign marks, and reward receipts remain persistent in the separate campaign progression store. Only the transient level attempt restarts.
 
-## Integrity and reward safety
-- Restore uses the validated campaign-only envelope from KT-539 and binds the payload to its planet ID.
-- Only running sessions are checkpointed. Completed/failed sessions are not written as resumable runs.
-- Completion remains processed by the existing guarded `campaign_completion_processed` path; restored sessions start as running and cannot replay an already-completed reward receipt from a checkpoint.
-- Campaign progression/reward persistence remains in the existing campaign progression store. The new run checkpoint does not write to the standard game save.
-- Checkpoint writes are isolated to `user://campaign_run_v1.save`.
-
-## Validation boundary
-- The checkpoint store suite verifies the versioned runtime payload and elapsed-time/planet identity recovery.
-- CI also parses the live main scene and runs all Classic, Campaign, Block Run, visual capture and scene smoke suites.
-- Actual OS background/foreground suspension behavior still needs physical Android/iOS device testing. CI does not claim to simulate mobile lifecycle callbacks.
+## Implementation and validation boundary
+- The validated campaign-only checkpoint envelope/store remains available as an isolated utility and regression-tested format, but the live game no longer writes or restores it.
+- Startup explicitly removes a checkpoint left by an earlier build, preventing an obsolete resume from being applied.
+- OS-level background/foreground behavior still requires physical Android/iOS testing. CI can validate code paths and scene startup, not mobile process termination semantics.
 - No public deployment, main merge or APK release.
