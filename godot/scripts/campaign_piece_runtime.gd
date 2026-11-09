@@ -44,6 +44,37 @@ func reset(spawn_initial_standard: bool = true) -> void:
 	if spawn_initial_standard:
 		spawn_next_standard()
 
+func apply_authored_starting_layout(rows: Array) -> bool:
+	# KT-545: deterministic authored layouts are applied before the first piece spawns.
+	if active_piece_id != -1 or not active_cells.is_empty() or game_over:
+		return false
+	if rows.is_empty() or rows.size() > HEIGHT - 4:
+		return false
+	var candidate_grid: Array = []
+	for row in grid:
+		candidate_grid.append(row.duplicate())
+	for row_index in range(rows.size()):
+		if typeof(rows[row_index]) != TYPE_STRING:
+			return false
+		var pattern := str(rows[row_index])
+		if pattern.length() != WIDTH:
+			return false
+		var occupied := 0
+		var target_y := HEIGHT - rows.size() + row_index
+		for x in range(WIDTH):
+			var token := pattern.substr(x, 1)
+			if token == ".":
+				candidate_grid[target_y][x] = -1
+			elif token.is_valid_int() and int(token) >= 0 and int(token) < Model.SHAPES.size():
+				candidate_grid[target_y][x] = int(token)
+				occupied += 1
+			else:
+				return false
+		if occupied <= 0 or occupied >= WIDTH:
+			return false
+	grid = candidate_grid
+	return true
+
 func _refill_bag() -> void:
 	piece_bag.clear()
 	for index in range(Model.SHAPES.size()):
