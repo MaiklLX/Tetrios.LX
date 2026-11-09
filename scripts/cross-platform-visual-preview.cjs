@@ -214,12 +214,28 @@ const targets = [
     // Reload the isolated preview so the following mission test starts from
     // the same clean atlas state on Chromium and WebKit.
     await campaignPage.reload({waitUntil:'domcontentloaded'});
+    await campaignPage.locator('button.mode[data-mode="campaign"]').waitFor({state:'visible',timeout:15000});
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({state:'visible',timeout:15000});
-    await campaignPage.locator('#campaignStart').click({ force: true });
-    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
-    await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
+    await campaignPage.locator('#campaignStart').click();
+    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().waitFor({state:'visible',timeout:10000});
+    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
+    try {
+      await campaignPage.locator('#bbStartHeroChoose').waitFor({state:'visible',timeout:10000});
+    } catch (error) {
+      const heroDiagnostic=await campaignPage.evaluate(()=>({
+        modalVisible:!!document.querySelector('#modal.show'),
+        modalText:document.querySelector('#modal')?.innerText?.slice(0,1200)||'',
+        heroListCount:document.querySelectorAll('#bbStartHeroList [data-start-hero]').length,
+        chooseButton:!!document.querySelector('#bbStartHeroChoose'),
+        confirmButton:!!document.querySelector('#bbConfirmStartHero')
+      }));
+      failures.push(target.name+': campaign hero detail did not open ('+JSON.stringify({heroDiagnostic,pageErrors:pageErrors.slice(-5)})+')');
+      await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-hero-diagnostic.png',fullPage:false});
+      await campaignPage.close();
+      continue;
+    }
+    await campaignPage.locator('#bbStartHeroChoose').click();
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.waitForTimeout(900);
     const campaignMissionState = await campaignPage.evaluate(() => {
