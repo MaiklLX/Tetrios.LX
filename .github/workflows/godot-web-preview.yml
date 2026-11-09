@@ -127,11 +127,11 @@ jobs:
           godot --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/build/godot-web/index.html"
           test -s build/godot-web/index.html
           find build/godot-web -maxdepth 1 -type f -printf '%f %s bytes\\n' | sort
-          if ! find build/godot-web -maxdepth 1 -type f \\( -name '*.wasm' -o -name '*.wasm.br' \\) | grep -q .; then
+          if ! compgen -G "build/godot-web/*.wasm" >/dev/null && ! compgen -G "build/godot-web/*.wasm.br" >/dev/null; then
             echo "::error::Web export is missing its WebAssembly runtime"
             exit 1
           fi
-          if ! find build/godot-web -maxdepth 1 -type f \\( -name '*.pck' -o -name '*.pck.br' \\) | grep -q .; then
+          if ! compgen -G "build/godot-web/*.pck" >/dev/null && ! compgen -G "build/godot-web/*.pck.br" >/dev/null; then
             echo "::error::Web export is missing its game data package"
             exit 1
           fi
