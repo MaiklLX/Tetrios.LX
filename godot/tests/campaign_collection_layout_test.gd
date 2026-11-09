@@ -74,8 +74,21 @@ func _run() -> void:
 				return
 			if not _check(selected_offset >= -0.1 and selected_offset <= max_scroll + 0.1, "Selection scrolling must stay within scroll bounds at index %d on %s" % [item_index, viewport]):
 				return
+		var scroll_visual: Dictionary = CollectionLayout.scrollbar(layout, 0.0)
+		if bool(layout.get("scrollable", false)):
+			var track: Rect2 = scroll_visual.get("track", Rect2())
+			var thumb: Rect2 = scroll_visual.get("thumb", Rect2())
+			var end_visual: Dictionary = CollectionLayout.scrollbar(layout, max_scroll)
+			var end_thumb: Rect2 = end_visual.get("thumb", Rect2())
+			if not _check(not track.is_empty() and not thumb.is_empty() and track.position.x >= grid_viewport.end.x and track.end.y <= grid_viewport.end.y + 0.1, "Scroll indicator must stay in the grid gutter at %s" % [viewport]):
+				return
+			if not _check(thumb.position.y >= track.position.y - 0.1 and thumb.end.y <= track.end.y + 0.1 and end_thumb.end.y >= thumb.end.y, "Scroll thumb must remain on its track and move downward with scroll offset at %s" % [viewport]):
+				return
+		else:
+			if not _check(Rect2(scroll_visual.get("track", Rect2())).is_empty() and Rect2(scroll_visual.get("thumb", Rect2())).is_empty(), "Non-scrollable grid must not show a scroll indicator at %s" % [viewport]):
+				return
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
 			return
-	print("Campaign collection layout tests passed: responsive 4x13 / 5x10 / 6x9 / 7x7 grids, preserved reward emblem scale, row-snapped scrolling and 8 viewport sizes.")
+	print("Campaign collection layout tests passed: responsive 4x13 / 5x10 / 6x9 / 7x7 grids, preserved reward emblem scale, selection visibility, scrollbar geometry and 8 viewport sizes.")
 	quit(0)
