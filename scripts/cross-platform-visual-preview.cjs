@@ -151,7 +151,15 @@ const targets = [
     // collection without changing the existing 360-node campaign progression.
     await campaignPage.locator('#bbOpenCampaignCollection').waitFor({state:'visible',timeout:10000});
     await campaignPage.locator('#bbOpenCampaignCollection').click();
-    const collectionCount=await campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id]').count();
+    const emblemState=await campaignPage.locator('#bbCampaignCollectionRail').evaluate(rail=>({
+      cardCount:rail.querySelectorAll('.bb-collection-card').length,
+      vectorCount:rail.querySelectorAll('.bb-collection-card .bb-collection-emblem svg').length,
+      detailVectorCount:document.querySelectorAll('.bb-collection-detail-emblem svg').length
+    }));
+    if(emblemState.cardCount!==49||emblemState.vectorCount!==49||emblemState.detailVectorCount!==1){
+      failures.push(target.name+': KT-555.2 SVG emblem rendering mismatch ('+JSON.stringify(emblemState)+')');
+    }
+        const collectionCount=await campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id]').count();
     if(collectionCount!==49) failures.push(target.name+': KT-554 expected 49 reward cards, got '+collectionCount);
     const collectionFinal=campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id="campaign_crown"]');
     await collectionFinal.click();
@@ -447,6 +455,7 @@ const targets = [
           height: document.documentElement.scrollHeight
         },
         frame: rect(frame),
+        playfield: rect(document.querySelector('#game #board')),
         leftRail: rect(leftRail),
         controlRow: rect(controlRow),
         controlVisibility: controlRow ? {display:getComputedStyle(controlRow).display,visibility:getComputedStyle(controlRow).visibility,pointerEvents:getComputedStyle(controlRow).pointerEvents,buttons:Array.from(controlRow.querySelectorAll('.control')).map(node=>rect(node))} : null,
@@ -567,8 +576,8 @@ const targets = [
         failures.push(target.name + ': arena extends beyond the right viewport edge');
       }
       if (target.mobile && target.width < 600 && target.height > 600 &&
-          geometry.frame && geometry.frame.width < target.width * 0.53) {
-        failures.push(target.name + ': KT-552 portrait playfield did not reach the expanded 53vw minimum (' + geometry.frame.width + 'px)');
+          geometry.playfield && geometry.playfield.width < target.width * 0.53) {
+        failures.push(target.name + ': KT-552 portrait board did not reach the expanded 53vw minimum (' + geometry.playfield.width + 'px)');
       }
     } else if (geometry.frame && (geometry.frame.y < -2 || geometry.frame.bottom > target.height + 2)) {
       failures.push(target.name + ': desktop arena is not contained by the viewport');
