@@ -65,6 +65,16 @@ func _run() -> void:
 		return
 	if not _check(boss_40.boss_name == "Страж конвоя" and boss_60.boss_name == "Адмирал дальнего пути", "Star Caravan bosses must have authored identities"):
 		return
+	for boss_id in [40, 50, 60]:
+		var boss_definition := campaign.get_planet_definition(boss_id)
+		var phases: Array = boss_definition.get("boss_phases", [])
+		var phase_lines := 0
+		var phase_score := 0
+		for phase in phases:
+			phase_lines += int(phase.get("target_lines", 0))
+			phase_score += int(phase.get("target_score", 0))
+		if not _check(phase_lines == int(boss_definition.get("target_lines", 0)) and phase_score == int(boss_definition.get("target_score", 0)), "Boss phase quotas must add up exactly to the encounter-wide objective on planet %d" % boss_id):
+			return
 	var malformed_mission := chapter.duplicate(true)
 	malformed_mission.planets[2].mission_definition.target_lines = -1
 	if not _check(not Catalog.validate_chapter(malformed_mission).valid, "Catalog validator must reject negative authored mission targets"):
