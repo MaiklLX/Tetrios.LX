@@ -1,0 +1,125 @@
+name: Deploy isolated Block Buddies mobile test
+
+on:
+  push:
+    branches:
+      - ops/mobile-test-deploy-2026-11-09
+    paths:
+      - ".github/workflows/deploy-mobile-test.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      SOURCE_REF: 035cdb8cc325ce7088ecf7dc25bca9e97ae24a6e
+    steps:
+      - name: Checkout current public site from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: public-site
+
+      - name: Checkout KT-549 mobile build source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_REF }}
+          path: mobile-source
+
+      - name: Prepare existing public site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public-site/site/audio public-site/site/vendor
+          curl --fail --location --retry 3 --retry-delay 2 \
+            "https://opengameart.org/sites/default/files/01_holiznacc0_-_chills_0.mp3" \
+            --output "public-site/site/audio/chills.mp3"
+          test -s public-site/site/audio/chills.mp3
+          AUDIO_SIZE="$(stat -c%s public-site/site/audio/chills.mp3)"
+          if [ "$AUDIO_SIZE" -lt 1000000 ]; then
+            echo "::error::CC0 soundtrack download is unexpectedly small"
+            exit 1
+          fi
+          npm pack three@0.180.0 --pack-destination "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/three-package"
+          tar -xzf "$RUNNER_TEMP/three-0.180.0.tgz" -C "$RUNNER_TEMP/three-package"
+          rm -rf public-site/site/vendor/three
+          cp -a "$RUNNER_TEMP/three-package/package" public-site/site/vendor/three
+          test -s public-site/site/vendor/three/build/three.module.js
+          test -s public-site/site/vendor/three/examples/jsm/loaders/GLTFLoader.js
+          node public-site/site/validate-3d-runtime.mjs
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Setup Godot 4.4.1 with Web export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.4.1
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import mobile source and run regression suite
+        working-directory: mobile-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --headless --editor --path godot --quit
+          godot --headless --path godot --check-only --script res://scripts/main.gd
+          for test in \
+            game_model_test.gd web_save_migration_test.gd campaign_progress_test.gd \
+            campaign_collection_test.gd campaign_collection_layout_test.gd campaign_achievements_test.gd \
+            campaign_planet_catalog_test.gd campaign_mechanics_test.gd campaign_boss_session_test.gd \
+            campaign_effect_session_test.gd campaign_special_piece_test.gd campaign_piece_runtime_test.gd \
+            campaign_live_integration_test.gd campaign_piece_store_test.gd gesture_input_test.gd block_run_model_test.gd \
+            block_run_effects_test.gd block_run_board_test.gd block_run_session_test.gd \
+            block_run_bridge_test.gd block_run_live_integration_test.gd; do
+            echo "Running $test"
+            godot --headless --path godot --script "res://tests/$test"
+          done
+          godot --headless --path godot --quit-after 3
+
+      - name: Export KT-549 build to isolated mobile-test path
+        working-directory: mobile-source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$GITHUB_WORKSPACE/build/godot-web" "$GITHUB_WORKSPACE/public-site/site/mobile-test"
+          godot --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/build/godot-web/index.html"
+          test -s "$GITHUB_WORKSPACE/build/godot-web/index.html"
+          compgen -G "$GITHUB_WORKSPACE/build/godot-web/*.wasm" >/dev/null || compgen -G "$GITHUB_WORKSPACE/build/godot-web/*.wasm.br" >/dev/null
+          compgen -G "$GITHUB_WORKSPACE/build/godot-web/*.pck" >/dev/null || compgen -G "$GITHUB_WORKSPACE/build/godot-web/*.pck.br" >/dev/null
+          cp -a "$GITHUB_WORKSPACE/build/godot-web/." "$GITHUB_WORKSPACE/public-site/site/mobile-test/"
+          test -s "$GITHUB_WORKSPACE/public-site/site/mobile-test/index.html"
+
+      - name: Install Chromium smoke-test dependencies
+        working-directory: mobile-source
+        run: |
+          npm install --no-save --package-lock=false playwright
+          npx playwright install --with-deps chromium
+
+      - name: Verify mobile build in Chromium
+        working-directory: mobile-source
+        timeout-minutes: 5
+        run: node scripts/validate-godot-web.mjs
+
+      - name: Upload complete Pages site (legacy + current preview + mobile test)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public-site/site
+
+      - name: Deploy isolated mobile test preview
+        id: deployment
+        uses: actions/deploy-pages@v4
