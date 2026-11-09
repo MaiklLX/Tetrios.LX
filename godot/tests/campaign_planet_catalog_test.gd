@@ -44,7 +44,7 @@ func _run() -> void:
 	if not _check(not Catalog.validate_chapter(malformed).valid, "Catalog validator must reject non-sequential node IDs"):
 		return
 	malformed = chapter.duplicate(true)
-	malformed.planets[25].event_status = "implemented"
+	malformed.planets[25].event_status = "live_campaign_piece"
 	malformed.planets[25].erase("special_piece_id")
 	if not _check(not Catalog.validate_chapter(malformed).valid, "Catalog validator must reject unbound live special-piece events"):
 		return
