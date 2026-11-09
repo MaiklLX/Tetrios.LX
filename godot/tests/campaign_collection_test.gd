@@ -21,6 +21,21 @@ func _run() -> void:
 	var null_summary: Dictionary = Collection.get_collection_summary(null)
 	if not _check(null_summary.total_count == 49 and null_summary.unlocked_count == 0, "Collection summary must safely handle a missing progress model"):
 		return
+	var relic_visual_variants: Dictionary = {}
+	var boss_visual_variants: Dictionary = {}
+	for collection_item in empty.items:
+		var item_kind := str(collection_item.get("kind", ""))
+		var visual_variant := int(collection_item.get("visual_variant", -1))
+		if item_kind == "universe_relic":
+			if not _check(visual_variant >= 1 and visual_variant <= 12 and not relic_visual_variants.has(visual_variant), "Every universe relic must have its own stable visual variant"):
+				return
+			relic_visual_variants[visual_variant] = true
+		elif item_kind == "boss_insignia":
+			if not _check(visual_variant == int(collection_item.get("planet_id", 0)) and not boss_visual_variants.has(visual_variant), "Every boss insignia must have a unique visual variant tied to its boss planet"):
+				return
+			boss_visual_variants[visual_variant] = true
+	if not _check(relic_visual_variants.size() == 12 and boss_visual_variants.size() == 36, "All 12 relics and 36 boss insignias must have unique visual identities"):
+		return
 	var first_relic: Dictionary = Collection.get_item(fresh, "universe_relic_01")
 	if not _check(not first_relic.is_empty() and not first_relic.unlocked and first_relic.unlock_planet == 30, "Universe relic must remain locked until all 30 planets are completed"):
 		return
@@ -28,7 +43,7 @@ func _run() -> void:
 	if not _check(str(first_relic.get("kind", "")) == "universe_relic" and str(first_boss.get("kind", "")) == "boss_insignia", "Relics and boss insignias must expose distinct visual categories"):
 		return
 	var final_crown: Dictionary = Collection.get_item(fresh, "campaign_crown")
-	if not _check(str(final_crown.get("kind", "")) == "campaign_crown" and int(final_crown.get("unlock_planet", 0)) == Campaign.TOTAL_PLANETS, "Final crown must remain a distinct reward category tied to all 360 planets"):
+	if not _check(str(final_crown.get("kind", "")) == "campaign_crown" and int(final_crown.get("unlock_planet", 0)) == Campaign.TOTAL_PLANETS and int(final_crown.get("visual_variant", -1)) == 0, "Final crown must remain a distinct reward category tied to all 360 planets"):
 		return
 	if not _check(not first_boss.is_empty() and not first_boss.unlocked and first_boss.planet_id == 10, "Boss insignia must be tied to its exact boss planet"):
 		return
