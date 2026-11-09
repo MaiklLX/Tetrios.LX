@@ -7349,16 +7349,30 @@ function buildMap() {
     hint.className = 'bb-planet-hint';
     hint.textContent = 'ПУТЬ ПЕРВООТКРЫВАТЕЛЯ · ПРОДОЛЖАЙ ДВИЖЕНИЕ ПО ПУНКТИРУ';
     g.appendChild(hint);
+    let alignmentFrames = 0;
     const alignCurrentPlanet = () => {
       const active = track.querySelector('.is-current');
-      if (active) {
-        // offsetTop is relative to offsetParent, not necessarily this scroll
-        // viewport. Use viewport-relative geometry so the first unlocked
-        // planet is placed correctly on desktop, Chromium and iOS WebKit.
-        const activeRect = active.getBoundingClientRect();
-        const viewportRect = viewport.getBoundingClientRect();
-        const desiredTop = viewport.scrollTop + activeRect.top - viewportRect.top - viewport.clientHeight * .58;
-        viewport.scrollTop = Math.max(0, desiredTop);
+      const viewportHeight = viewport.clientHeight;
+      // buildMap can run while the campaign screen is still transitioning
+      // from display:none. Do not calculate a zero-height alignment.
+      if (active && viewportHeight > 0 && track.offsetHeight > 0) {
+        // Planet nodes are absolutely positioned against this relative track.
+        // Read their track-local offset, then scroll the actual vertical
+        // viewport. This avoids transformed/page-relative rect coordinates.
+        const nodeCenter = active.offsetTop + active.offsetHeight / 2;
+        const maxScroll = Math.max(0, viewport.scrollHeight - viewportHeight);
+        const desiredTop = Math.max(0, Math.min(maxScroll, nodeCenter - viewportHeight * .58));
+        viewport.scrollTop = desiredTop;
+        viewport.dataset.routeAlign = 'applied';
+        viewport.dataset.routeAlignTop = String(Math.round(desiredTop));
+        viewport.dataset.routeAlignNode = active.dataset.planetNumber || '';
+        if (Math.abs(viewport.scrollTop - desiredTop) > 2) {
+          active.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'});
+        }
+      } else if (alignmentFrames++ < 12) {
+        requestAnimationFrame(alignCurrentPlanet);
+      } else {
+        viewport.dataset.routeAlign = active ? 'zero-height-timeout' : 'missing-current-node';
       }
       if (bbCampaignArrivalNode === current) {
         const arrived = track.querySelector('.is-arrival');
@@ -7366,7 +7380,7 @@ function buildMap() {
         bbCampaignArrivalNode = 0;
       }
     };
-    // Wait for both the route layout and the viewport's final CSS sizing.
+    // Wait for layout, and retry briefly if the campaign screen is still hidden.
     requestAnimationFrame(() => requestAnimationFrame(alignCurrentPlanet));
   };
 
