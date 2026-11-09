@@ -814,7 +814,7 @@ func _select_mode(requested_mode_id: String) -> void:
 	clear_flash_count = 0
 	if is_instance_valid(buddy):
 		buddy.set_state("idle", 0.0)
-	if not tutorial_gameplay_completed:
+	if tutorial_home_completed and not tutorial_gameplay_completed:
 		tutorial_active = true
 		tutorial_context = "gameplay"
 		tutorial_step = 0
