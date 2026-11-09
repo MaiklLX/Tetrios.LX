@@ -178,6 +178,33 @@ const targets = [
     if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
       failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
     }
+    // KT-555: verify the Godot-style vertical, bottom-to-top route without
+    // changing the existing 30 planets per universe or their node identities.
+    await campaignPage.locator('#campaign .bb-galaxy-card').first().click();
+    await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({state:'visible',timeout:10000});
+    const routeState=await campaignPage.evaluate(()=>{
+      const track=document.querySelector('#campaign .bb-planet-track');
+      const viewport=document.querySelector('#campaign .bb-planet-viewport');
+      const nodes=Array.from(document.querySelectorAll('#campaign .bb-planet-node'));
+      const y=nodes.map(node=>Number.parseFloat(node.style.top)||0);
+      return {
+        orientation:track?.dataset.routeOrientation||'',
+        nodeCount:nodes.length,
+        bossCount:nodes.filter(node=>node.classList.contains('is-boss')).length,
+        verticalOverflow:!!viewport&&viewport.scrollHeight>viewport.clientHeight,
+        firstAtBottom:y.length>1&&y[0]>y[y.length-1],
+        bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber)
+      };
+    });
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom){
+      failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
+    }
+    await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
+    // Reload the isolated preview so the following mission test starts from
+    // the same clean atlas state on Chromium and WebKit.
+    await campaignPage.reload({waitUntil:'domcontentloaded'});
+    await campaignPage.locator('button.mode[data-mode="campaign"]').click();
+    await campaignPage.locator('#campaignStart').waitFor({state:'visible',timeout:15000});
     await campaignPage.locator('#campaignStart').click({ force: true });
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
     await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
