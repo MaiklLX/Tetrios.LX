@@ -19,7 +19,7 @@ permissions:
 jobs:
   export-web:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,8 +34,91 @@ jobs:
       - name: Import project
         run: godot --headless --editor --path godot --quit
 
+      - name: Parse main scene script
+        run: godot --headless --path godot --check-only --script res://scripts/main.gd
+
+      - name: Run model tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/game_model_test.gd
+
       - name: Run Web save migration tests
+        timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/web_save_migration_test.gd
+
+      - name: Run campaign progression tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_progress_test.gd
+
+      - name: Run campaign collection tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_collection_test.gd
+
+      - name: Run campaign collection layout tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_collection_layout_test.gd
+
+      - name: Run campaign achievement tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_achievements_test.gd
+
+      - name: Run campaign authored catalog tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_planet_catalog_test.gd
+
+      - name: Run Campaign mechanics registry tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_mechanics_test.gd
+
+      - name: Run campaign boss session tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_boss_session_test.gd
+
+      - name: Run isolated campaign effect session tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_effect_session_test.gd
+
+      - name: Run campaign special piece prototype tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_special_piece_test.gd
+
+      - name: Run isolated campaign piece runtime tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_piece_runtime_test.gd
+
+      - name: Run campaign live integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_live_integration_test.gd
+
+      - name: Run campaign run checkpoint store tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/campaign_piece_store_test.gd
+
+      - name: Run Block Run model tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_model_test.gd
+
+      - name: Run Block Run event effect tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_effects_test.gd
+
+      - name: Run Block Run board mutation tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_board_test.gd
+
+      - name: Run Block Run session integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_session_test.gd
+
+      - name: Run Block Run live-board bridge tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_bridge_test.gd
+
+      - name: Run Block Run live gameplay integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_live_integration_test.gd
+
+      - name: Run scene smoke test
+        run: godot --headless --path godot --quit-after 3
 
       - name: Export Web preview
         run: |
@@ -43,12 +126,12 @@ jobs:
           mkdir -p build/godot-web
           godot --headless --path godot --export-release "Web" "$GITHUB_WORKSPACE/build/godot-web/index.html"
           test -s build/godot-web/index.html
-          find build/godot-web -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          if ! find build/godot-web -maxdepth 1 -type f \( -name '*.wasm' -o -name '*.wasm.br' \) | grep -q .; then
+          find build/godot-web -maxdepth 1 -type f -printf '%f %s bytes\\n' | sort
+          if ! find build/godot-web -maxdepth 1 -type f \\( -name '*.wasm' -o -name '*.wasm.br' \\) | grep -q .; then
             echo "::error::Web export is missing its WebAssembly runtime"
             exit 1
           fi
-          if ! find build/godot-web -maxdepth 1 -type f \( -name '*.pck' -o -name '*.pck.br' \) | grep -q .; then
+          if ! find build/godot-web -maxdepth 1 -type f \\( -name '*.pck' -o -name '*.pck.br' \\) | grep -q .; then
             echo "::error::Web export is missing its game data package"
             exit 1
           fi
