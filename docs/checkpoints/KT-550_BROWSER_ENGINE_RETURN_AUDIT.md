@@ -299,3 +299,12 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Изменения: site commit `64dbf0202abb48e6b9550d1c93210c36a961f4c6`; preview diagnostics commit `3c6590af95907be9a54e80de5adf8dd2d6cfae05`.
 - **Статус: ожидает CI.** Проверка списка workflow runs на ветке пока не показала свежего запуска; отсутствие запуска не является прохождением теста.
 - Не менялись node IDs, unlock/progression, mission handlers, save keys, Godot preview, main, Pages или APK. PR #85 остаётся Draft; merge/deploy/release не выполнялись.
+
+
+## KT-561 — non-blocking campaign hero selection
+
+- CI run `42652164364` completed with failure. Desktop 1440×900 completed the full preview through final arena verification; desktop 1920×1080 stalled during the click on the first campaign hero. Playwright confirmed the button was visible, enabled and stable, but the click handler did not return within 15 seconds.
+- The campaign roster previously called `renderHeroCard()` synchronously inside the button click handler. The detail renderer replaces the modal DOM and triggers layout work for the hero showcase. This work is now deferred to the next animation frame with `requestAnimationFrame`, allowing the native click event to finish before the detail view is rendered.
+- Site commit: `ca72c10d2d57b0a31d531c274d855d2d46a06ec0`.
+- This is a targeted responsiveness change, not a confirmed fix. Await the next cross-platform preview run; verify the detail opens, hero selection starts the campaign, and all viewport route assertions pass.
+- Safety: PR #85 remains Draft; do not merge, deploy Pages, touch main, Godot preview, or build an APK without explicit approval. Do not post screenshots in chat.
