@@ -21,7 +21,7 @@ static func _validated_payload(planet_id: int, snapshot: Dictionary) -> Dictiona
 	}
 
 static func save_run(planet_id: int, runtime: Variant, path: String = DEFAULT_PATH) -> bool:
-	if runtime == null or not runtime is Runtime:
+	if runtime == null or not runtime is BlockBuddiesCampaignPieceRuntime:
 		return false
 	var payload := _validated_payload(planet_id, runtime.snapshot())
 	if payload.is_empty() or path.is_empty():
@@ -36,7 +36,7 @@ static func save_run(planet_id: int, runtime: Variant, path: String = DEFAULT_PA
 	return write_ok
 
 static func load_run(planet_id: int, runtime: Variant, path: String = DEFAULT_PATH) -> bool:
-	if runtime == null or not runtime is Runtime or path.is_empty() or not FileAccess.file_exists(path):
+	if runtime == null or not runtime is BlockBuddiesCampaignPieceRuntime or path.is_empty() or not FileAccess.file_exists(path):
 		return false
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
