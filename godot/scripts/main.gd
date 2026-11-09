@@ -1029,7 +1029,7 @@ func _draw_campaign_collection() -> void:
 	_center_text("ПОЛКА НАГРАД", 101.0, 22, Color("#fff0b9"))
 	_center_text("ТВОИ ДОСТИЖЕНИЯ  •  %02d / %02d" % [unlocked_count, total_count], 126.0, 10, Color("#c4edff"))
 	var legend_y := 145.0
-	var legend_start := screen_size.x * 0.5 - (108.0 if screen_size.x <= 480.0 else 142.0)
+	var legend_start := screen_size.x * 0.5 - 89.5
 	for legend in [
 		{"label": "РЕЛИКВИИ", "color": Color("#55ddcf"), "width": 64.0},
 		{"label": "БОССЫ", "color": Color("#ff91bd"), "width": 53.0},
@@ -1083,15 +1083,15 @@ func _draw_campaign_collection() -> void:
 	_draw_soft_panel(detail_rect, Color("#102f68"), Color("#55ddff"), 13, 5)
 	if not selected_item.is_empty():
 		var is_unlocked := bool(selected_item.get("unlocked", false))
-		var kind := str(selected_item.get("kind", ""))
-		var universe_number := int(selected_item.get("universe_number", 0))
-		var category := "РЕЛИКВИЯ ВСЕЛЕННОЙ %02d" % universe_number if kind == "universe_relic" else ("ЗНАК ПОБЕЖДЁННОГО БОССА" if kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА КАМПАНИИ")
+		var selected_kind := str(selected_item.get("kind", ""))
+		var selected_universe_number := int(selected_item.get("universe_number", 0))
+		var category := "РЕЛИКВИЯ ВСЕЛЕННОЙ %02d" % selected_universe_number if selected_kind == "universe_relic" else ("ЗНАК ПОБЕЖДЁННОГО БОССА" if selected_kind == "boss_insignia" else "ГЛАВНАЯ НАГРАДА КАМПАНИИ")
 		var status := category + ("  •  ПОЛУЧЕНО" if is_unlocked else "  •  ЕЩЁ ВПЕРЕДИ")
 		draw_string(font, detail_rect.position + Vector2(11.0, 16.0), status, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#8ef4d3") if is_unlocked else Color("#ffd05a"))
 		draw_string(font, detail_rect.position + Vector2(11.0, 34.0), str(selected_item.get("title", "НАГРАДА")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 11, Color("#ffffff"))
 		draw_string(font, detail_rect.position + Vector2(11.0, 50.0), str(selected_item.get("description", "")), HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 8, Color("#c4edff"))
 		var unlock_planet := int(selected_item.get("unlock_planet", 0))
-		var requirement := "УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 360 ПЛАНЕТ" if kind == "campaign_crown" else ("УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ" if kind == "universe_relic" else "УСЛОВИЕ: ПОБЕДИТЬ БОССА НА ПЛАНЕТЕ %03d" % unlock_planet)
+		var requirement := "УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 360 ПЛАНЕТ" if selected_kind == "campaign_crown" else ("УСЛОВИЕ: ЗАВЕРШИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ" if selected_kind == "universe_relic" else "УСЛОВИЕ: ПОБЕДИТЬ БОССА НА ПЛАНЕТЕ %03d" % unlock_planet)
 		draw_string(font, detail_rect.position + Vector2(11.0, 66.0), requirement, HORIZONTAL_ALIGNMENT_LEFT, detail_rect.size.x - 20.0, 7, Color("#ffd77a"))
 	_center_text("ВЫБЕРИ ЗНАК, ЧТОБЫ УЗНАТЬ ЕГО ИСТОРИЮ", screen_size.y - 8.0, 8, Color("#b9eaff"))
 
