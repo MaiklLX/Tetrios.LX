@@ -80,14 +80,14 @@ func _run() -> void:
 			var thumb: Rect2 = scroll_visual.get("thumb", Rect2())
 			var end_visual: Dictionary = CollectionLayout.scrollbar(layout, max_scroll)
 			var end_thumb: Rect2 = end_visual.get("thumb", Rect2())
-			if not _check(not track.is_empty() and not thumb.is_empty() and track.position.x >= grid_viewport.end.x and track.end.y <= grid_viewport.end.y + 0.1, "Scroll indicator must stay in the grid gutter at %s" % [viewport]):
+			if not _check(track.size.x > 0.0 and track.size.y > 0.0 and thumb.size.x > 0.0 and thumb.size.y > 0.0 and track.position.x >= grid_viewport.end.x and track.end.y <= grid_viewport.end.y + 0.1, "Scroll indicator must stay in the grid gutter at %s" % [viewport]):
 				return
 			if not _check(thumb.position.y >= track.position.y - 0.1 and thumb.end.y <= track.end.y + 0.1 and end_thumb.end.y >= thumb.end.y, "Scroll thumb must remain on its track and move downward with scroll offset at %s" % [viewport]):
 				return
 		else:
 			var empty_track: Rect2 = scroll_visual.get("track", Rect2())
 			var empty_thumb: Rect2 = scroll_visual.get("thumb", Rect2())
-			if not _check(empty_track.is_empty() and empty_thumb.is_empty(), "Non-scrollable grid must not show a scroll indicator at %s" % [viewport]):
+			if not _check(empty_track.size == Vector2.ZERO and empty_thumb.size == Vector2.ZERO, "Non-scrollable grid must not show a scroll indicator at %s" % [viewport]):
 				return
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
