@@ -45,6 +45,21 @@ static func collection(viewport: Vector2) -> Dictionary:
 		"footer_y": height - 8.0
 	}
 
+
+static func scroll_offset_for_index(layout: Dictionary, item_index: int, current_offset: float = 0.0) -> float:
+	var columns := int(layout.get("columns", 0))
+	var visible_rows := int(layout.get("visible_rows", 0))
+	var row_step := float(layout.get("cell_height", 0.0)) + float(layout.get("gap", 0.0))
+	if columns <= 0 or visible_rows <= 0 or row_step <= 0.0:
+		return 0.0
+	var target_row := maxi(0, item_index) / columns
+	var first_visible_row := maxi(0, roundi(current_offset / row_step))
+	if target_row < first_visible_row:
+		first_visible_row = target_row
+	elif target_row >= first_visible_row + visible_rows:
+		first_visible_row = target_row - visible_rows + 1
+	return clampf(float(first_visible_row) * row_step, 0.0, float(layout.get("max_scroll", 0.0)))
+
 static func reward_modal(viewport: Vector2) -> Rect2:
 	var width := minf(maxf(180.0, viewport.x - 24.0), 360.0)
 	var height := minf(maxf(240.0, viewport.y - 32.0), 356.0)
