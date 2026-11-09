@@ -1022,31 +1022,57 @@ func _draw_campaign_route() -> void:
 		draw_string(font, pos + Vector2(-10, node_radius + 12), "%02d" % (index + 1), HORIZONTAL_ALIGNMENT_CENTER, 22, 7 if compact else 9, Color("#d7eaff"))
 	_center_text("НАЖМИ НА ОТКРЫТУЮ ПЛАНЕТУ", screen_size.y - 7.0, 8, Color("#b9eaff"))
 
+func _campaign_briefing_lines(value: String, max_chars: int, max_lines: int) -> Array[String]:
+	var words := value.split(" ", false)
+	var result: Array[String] = []
+	var current := ""
+	for word in words:
+		var candidate := word if current.is_empty() else current + " " + word
+		if candidate.length() > max_chars and not current.is_empty():
+			result.append(current)
+			current = word
+			if result.size() >= max_lines:
+				break
+		else:
+			current = candidate
+	if result.size() < max_lines and not current.is_empty():
+		result.append(current)
+	return result
+
 func _draw_campaign_planet() -> void:
 	var node_id := _campaign_global_planet_id(campaign_universe, campaign_planet)
 	var definition: Dictionary = campaign_progress.get_planet_definition(node_id) if campaign_progress != null else {"target_lines": 8, "reward_marks": 1}
 	var planet_status := campaign_progress.get_planet_status(node_id) if campaign_progress != null else ("current" if node_id == 1 else "locked")
 	var unlocked := planet_status == "current"
 	var completed := planet_status == "completed"
-	_center_text("ПЛАНЕТА %03d" % node_id, 112.0, 24, Color("#fff0b9"))
-	_center_text(_campaign_universe_name(campaign_universe), 137.0, 10, Color("#c4edff"))
-	var center := Vector2(screen_size.x * 0.5, screen_size.y * 0.34)
-	draw_circle(center, 88.0, Color(0.25,0.72,1.0,0.08))
-	draw_arc(center, 73.0, 0.1, TAU + 0.1, 72, Color(0.72,0.9,1.0,0.62), 2.0, true)
-	draw_circle(center, 54.0, Color("#2a9ed1"))
-	draw_circle(center + Vector2(-17,-18), 16.0, Color(1,1,1,0.18))
-	draw_arc(center + Vector2(0,5), 51.0, 0.2, 2.7, 64, Color("#165b9b"), 7.0, true)
+	var compact := screen_size.x <= 480.0
+	var authored_title := str(definition.get("title", "ПЛАНЕТА %03d" % node_id))
+	var briefing := str(definition.get("briefing", "Выполни задание и продолжи путешествие."))
+	_center_text("ПЛАНЕТА %03d" % node_id, 96.0 if compact else 104.0, 20 if compact else 24, Color("#fff0b9"))
+	_center_text(authored_title, 124.0 if compact else 136.0, 13 if compact else 18, Color("#ffffff"))
+	_center_text(_campaign_universe_name(campaign_universe), 146.0 if compact else 160.0, 9 if compact else 10, Color("#c4edff"))
+	var center := Vector2(screen_size.x * 0.5, screen_size.y * 0.30)
+	draw_circle(center, 80.0 if compact else 88.0, Color(0.25,0.72,1.0,0.08))
+	draw_arc(center, 67.0 if compact else 73.0, 0.1, TAU + 0.1, 72, Color(0.72,0.9,1.0,0.62), 2.0, true)
+	draw_circle(center, 49.0 if compact else 54.0, Color("#2a9ed1"))
+	draw_circle(center + Vector2(-15,-16), 14.0, Color(1,1,1,0.18))
+	draw_arc(center + Vector2(0,5), 47.0, 0.2, 2.7, 64, Color("#165b9b"), 7.0, true)
 	for island in [Vector2(-22,-5),Vector2(16,13),Vector2(-4,30)]:
 		draw_circle(center + island, 9.0, Color("#8de5b5"))
-	var info := Rect2(20.0, screen_size.y * 0.52, screen_size.x - 40.0, 128.0)
+	var info_top := screen_size.y * (0.48 if compact else 0.49)
+	var info_height := 178.0 if compact else 184.0
+	var info := Rect2(16.0 if compact else 20.0, info_top, screen_size.x - (32.0 if compact else 40.0), info_height)
 	_draw_soft_panel(info, Color("#102f68"), Color("#55ddff"), 17, 7)
-	draw_string(font, info.position + Vector2(14,27), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#55ddff"))
+	draw_string(font, info.position + Vector2(13,21), "ЦЕЛЬ УРОВНЯ", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("#55ddff"))
 	var boss_type := str(definition.get("boss_type", "none"))
 	var objective_type := str(definition.get("objective_type", "lines"))
 	var objective_label := "БОСС • СОВМЕЩЁННОЕ ИСПЫТАНИЕ" if objective_type == "boss_combo" else ("ВЫЖИВИ ПОД НАПРЯЖЕНИЕМ" if objective_type == "survive" else ("НАБЕРИ ОЧКИ" if objective_type == "score" else "ОЧИСТИ ЛИНИИ"))
 	if boss_type == "final":
 		objective_label = "ФИНАЛЬНЫЙ БОСС • ИСПЫТАНИЕ МАСТЕРСТВА"
-	draw_string(font, info.position + Vector2(14,51), objective_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if boss_type != "none" else 10, Color("#ffb4d2") if boss_type != "none" else Color("#ffffff"))
+	draw_string(font, info.position + Vector2(13,43), objective_label, HORIZONTAL_ALIGNMENT_LEFT, -1, 9 if compact else 10, Color("#ffb4d2") if boss_type != "none" else Color("#ffffff"))
+	var briefing_lines := _campaign_briefing_lines(briefing, 43 if compact else 78, 3)
+	for index in range(briefing_lines.size()):
+		draw_string(font, info.position + Vector2(13,68.0 + index * 14.0), briefing_lines[index], HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 10, Color("#d9edff"))
 	var requirement := ""
 	if int(definition.get("target_lines", 0)) > 0:
 		requirement = "ЛИНИИ %d" % int(definition.target_lines)
@@ -1056,13 +1082,15 @@ func _draw_campaign_planet() -> void:
 		requirement = "ВЫЖИВИ %d СЕКУНД" % int(definition.target_survive_seconds)
 	if requirement.is_empty():
 		requirement = "ВЫПОЛНИ ЗАДАНИЕ"
-	draw_string(font, info.position + Vector2(14,75), requirement + "  •  +" + str(definition.get("reward_marks", 1)) + " МЕТОК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
-	if node_id == CARGO_HOOK_PLANET_ID:
-		draw_string(font, info.position + Vector2(14,101), "ОСОБАЯ ФИГУРА  •  ГРУЗОВОЙ КРЮК", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color("#ffd05a"))
-	campaign_start_rect = Rect2(26.0, screen_size.y * 0.72, screen_size.x - 52.0, 58.0)
+	draw_string(font, info.position + Vector2(13,info_height - 22.0), requirement + "  •  +" + str(definition.get("reward_marks", 1)) + " МЕТОК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8 if compact else 9, Color("#ffd05a"))
+	if str(definition.get("event_status", "none")) == "live_campaign_piece":
+		draw_string(font, info.position + Vector2(13,info_height - 6.0), "ОСОБАЯ ФИГУРА  •  ГРУЗОВОЙ КРЮК", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffd05a"))
+	elif boss_type != "none":
+		draw_string(font, info.position + Vector2(13,info_height - 6.0), "КОМАНДИР  •  " + str(definition.get("boss_name", "СТРАЖ")), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color("#ffb4d2"))
+	campaign_start_rect = Rect2(24.0, screen_size.y * 0.75, screen_size.x - 48.0, 54.0)
 	_draw_soft_panel(campaign_start_rect, Color("#1767c8") if unlocked else Color("#344c70"), Color("#55ddff") if unlocked else Color("#657c9a"), 17, 7)
 	_center_text_in_rect("НАЧАТЬ УРОВЕНЬ" if unlocked else ("УРОВЕНЬ ПРОЙДЕН" if completed else "УРОВЕНЬ ЗАКРЫТ"), campaign_start_rect, 12, Color("#ffffff"))
-	_center_text("ПРОГРЕСС ОТКРЫТИЯ БУДЕТ СОХРАНЯТЬСЯ", screen_size.y * 0.86, 8, Color("#b9eaff"))
+	_center_text("ПРОГРЕСС ОТКРЫТИЯ БУДЕТ СОХРАНЯТЬСЯ", screen_size.y * 0.87, 8, Color("#b9eaff"))
 
 
 func _draw_mode_select() -> void:
