@@ -8330,7 +8330,12 @@ cv.addEventListener('touchmove', e => {
   }
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
   if(!touch.axis&&(Math.abs(tx)>8||Math.abs(ty)>8)){
-    touch.axis=Math.abs(ty)>Math.abs(tx)*1.12?'y':Math.abs(tx)>Math.abs(ty)*1.12?'x':null;
+    const absX=Math.abs(tx),absY=Math.abs(ty);
+    // A thumb often travels diagonally while reaching across the board.
+    // Require a clear dominant axis; ambiguous travel must never become rotation.
+    if(absX>=absY*1.45) touch.axis='x';
+    else if(absY>=absX*1.45) touch.axis='y';
+    else { touch.axis='ambiguous'; touch.consumed=true; }
   }
   if(touch.axis==='x'){
     const dx=t.clientX-touch.lastX;
