@@ -1037,7 +1037,47 @@ func _draw_tutorial_overlay() -> void:
 	_center_text_in_rect("ДАЛЕЕ  ›", tutorial_next_rect, 10, Color("#ffffff"))
 
 
+func _touch_feedback_target_rect(point: Vector2) -> Rect2:
+	if home_visible:
+		for rect in [home_campaign_rect, home_block_run_rect, home_tasks_rect, home_collection_rect, home_heroes_rect, home_shop_rect, home_upgrades_rect]:
+			if rect.has_point(point):
+				return rect
+	elif not campaign_screen.is_empty():
+		if campaign_back_rect.has_point(point):
+			return campaign_back_rect
+		if campaign_screen == "collection":
+			if campaign_collection_inspect_rect.has_point(point):
+				return campaign_collection_inspect_rect
+			for rect in campaign_collection_item_rects:
+				if rect.has_point(point):
+					return rect
+		elif campaign_screen == "route":
+			for rect in campaign_node_rects:
+				if rect.has_point(point):
+					return rect
+		elif campaign_screen == "planet" and campaign_start_rect.has_point(point):
+			return campaign_start_rect
+	elif not secondary_screen.is_empty():
+		return secondary_back_rect if secondary_back_rect.has_point(point) else Rect2()
+	elif mode_select_visible:
+		for rect in [classic_mode_rect, sprint_mode_rect, marathon_mode_rect]:
+			if rect.has_point(point):
+				return rect
+	elif paused and resume_rect.has_point(point):
+		return resume_rect
+	else:
+		for rect in [mode_button_rect, pause_rect, hold_rect, drop_rect, block_run_skill_rect]:
+			if rect.size.x > 0.0 and rect.has_point(point):
+				return rect
+	return Rect2()
+
+
 func _draw_touch_feedback() -> void:
+	if touch_active:
+		var pressed_rect := _touch_feedback_target_rect(touch_start)
+		if pressed_rect.size.x > 0.0 and pressed_rect.size.y > 0.0:
+			draw_rect(pressed_rect.grow(3.0), Color("#fff0b9"), false, 3.0, true)
+			draw_rect(pressed_rect.grow(-1.0), Color(1.0, 1.0, 1.0, 0.06), true, 1.0, true)
 	if touch_feedback_time <= 0.0:
 		return
 	var progress := 1.0 - touch_feedback_time / 0.18
