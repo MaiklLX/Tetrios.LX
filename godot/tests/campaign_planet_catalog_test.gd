@@ -27,6 +27,17 @@ func _run() -> void:
 			return
 		seen[local_id] = true
 	var campaign := Campaign.new()
+	for local_id in range(1, 31):
+		var mission := campaign.get_planet_definition(30 + local_id)
+		var duration: Variant = mission.get("expected_duration_seconds", [])
+		if not _check(str(mission.get("objective_type", "")) in ["lines", "score", "survive", "boss_combo"], "Every Star Caravan planet must resolve a supported objective contract"):
+			return
+		if not _check(str(mission.get("difficulty_band", "")) in ["guided", "standard", "advanced", "mastery"], "Every Star Caravan planet must resolve an authored difficulty band"):
+			return
+		if not _check(typeof(duration) == TYPE_ARRAY and duration.size() == 2 and int(duration[0]) >= 30 and int(duration[1]) > int(duration[0]), "Every Star Caravan planet must resolve a valid expected duration range"):
+			return
+		if not _check(typeof(mission.get("event_schedule", null)) == TYPE_ARRAY, "Every Star Caravan planet must expose deterministic event schedule metadata"):
+			return
 	var planet_31 := campaign.get_planet_definition(31)
 	var planet_56 := campaign.get_planet_definition(56)
 	var boss_40 := campaign.get_planet_definition(40)
