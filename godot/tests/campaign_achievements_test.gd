@@ -24,7 +24,7 @@ func _run() -> void:
 	if not _check(Achievements.get_achievements(fresh, 12).is_empty(), "Out-of-range universe lookup must fail safely"):
 		return
 	var progress = Campaign.new()
-	if not _check(progress.import_legacy_progress(5, 0), "Fixture must import sequential progress through planet 004"):
+	if not _check(progress.import_legacy_progress(6, 0), "Fixture must import sequential progress through planet 004"):
 		return
 	var after_five: Dictionary = Achievements.get_summary(progress, 0)
 	if not _check(after_five.unlocked_count == 1 and after_five.achievements[0].unlocked and not after_five.achievements[1].unlocked, "Completing planet 005 must unlock only the first intermediate milestone"):
