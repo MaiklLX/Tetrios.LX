@@ -64,3 +64,12 @@ This slice proves the authored-layout runtime seam; it does not mean the full St
 - Existing authored bosses remain three sequential phases with per-phase progress baselines; the live HUD now displays both active quotas when a phase requires both.
 - This is a data-integrity and player-readability improvement. It does not add unimplemented attack patterns or claim new boss mechanics.
 - CI validation is required on the resulting branch head before this checkpoint is accepted.
+
+
+## KT-547.1 — campaign reward ledger and collection summary
+- Added a campaign-wide reward summary: marks earned, marks still available, total campaign planets, completion ratio and boss-mark contribution.
+- Universe progress now also reports marks earned and marks available within that 30-planet universe, so a future collection/reward screen can show meaningful local goals without recalculating economy rules in UI code.
+- Modern saves with reward receipts now validate the ledger as a whole: every completed planet must have exactly one receipt and the sum of receipt marks must match the saved campaign mark total. Partial ledgers and mismatched totals fail closed without mutating live progress.
+- Legacy imports remain compatible: they preserve the historic mark total and do not fabricate per-planet receipts. The summary uses the imported total as the source of truth.
+- Added tests for earned/available summaries, per-universe totals, duplicate-claim protection, partial-ledger rejection, mismatched totals and legacy mark preservation.
+- This checkpoint establishes reliable reward accounting and progression data. It does not yet introduce spendable currency, shop prices, or unapproved reward unlocks.
