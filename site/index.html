@@ -7469,7 +7469,7 @@ function bbChooseHeroBeforeStart() {
 
     document.getElementById('modal').classList.add('bb-hero-showcase-modal');
     document.querySelectorAll('#bbStartHeroList [data-start-hero]').forEach(btn=>{
-      btn.onclick=()=>renderHeroCard(btn.dataset.startHero);
+      btn.onclick=()=>{const heroId=btn.dataset.startHero;requestAnimationFrame(()=>renderHeroCard(heroId));};
     });
 
     document.getElementById('bbConfirmStartHero').onclick=()=>confirmHeroAndStart(chosenHero);
