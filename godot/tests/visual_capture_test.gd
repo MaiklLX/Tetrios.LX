@@ -426,6 +426,61 @@ func _run() -> void:
 	if not await _capture(viewport, "34-star-caravan-authored-layout-live-arena"):
 		quit(1)
 		return
+	# KT-545.2: capture both additional authored mission families in their real briefing and arena states.
+	scene.call("_return_to_campaign_route")
+	campaign_progress.import_legacy_progress(36, 0)
+	scene.set("campaign_universe", 1)
+	scene.set("campaign_planet", 6)
+	scene.set("campaign_screen", "planet")
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "35-star-caravan-offset-bay-planet-detail"):
+		quit(1)
+		return
+	scene.call("_start_campaign_planet")
+	await process_frame
+	await process_frame
+	layout_runtime = scene.get("campaign_piece_runtime")
+	occupied_layout_cells = 0
+	for row in layout_runtime.grid:
+		for value in row:
+			if int(value) >= 0:
+				occupied_layout_cells += 1
+	if occupied_layout_cells != 27 or int(layout_runtime.active_piece_id) < 0 or int(layout_runtime.active_piece_id) >= 7:
+		push_error("Planet 036 must launch with its 27-cell Offset Bay and a standard piece.")
+		quit(1)
+		return
+	if not await _capture(viewport, "36-star-caravan-offset-bay-live-arena"):
+		quit(1)
+		return
+	scene.call("_return_to_campaign_route")
+	campaign_progress.import_legacy_progress(46, 0)
+	scene.set("campaign_universe", 1)
+	scene.set("campaign_planet", 16)
+	scene.set("campaign_screen", "planet")
+	scene.queue_redraw()
+	await process_frame
+	await process_frame
+	if not await _capture(viewport, "37-star-caravan-staggered-joint-planet-detail"):
+		quit(1)
+		return
+	scene.call("_start_campaign_planet")
+	await process_frame
+	await process_frame
+	layout_runtime = scene.get("campaign_piece_runtime")
+	occupied_layout_cells = 0
+	for row in layout_runtime.grid:
+		for value in row:
+			if int(value) >= 0:
+				occupied_layout_cells += 1
+	if occupied_layout_cells != 27 or int(layout_runtime.active_piece_id) < 0 or int(layout_runtime.active_piece_id) >= 7:
+		push_error("Planet 046 must launch with its 27-cell Staggered Joint and a standard piece.")
+		quit(1)
+		return
+	if not await _capture(viewport, "38-star-caravan-staggered-joint-live-arena"):
+		quit(1)
+		return
 	scene.call("_handle_tap", scene.get("campaign_back_rect").get_center())
 	await process_frame
 	await process_frame
