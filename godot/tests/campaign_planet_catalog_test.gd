@@ -73,6 +73,15 @@ func _run() -> void:
 	malformed_mission.planets[5].mission_definition.expected_duration_seconds = [180, 90]
 	if not _check(not Catalog.validate_chapter(malformed_mission).valid, "Catalog validator must reject inverted mission duration bands"):
 		return
+	var malformed_boss := chapter.duplicate(true)
+	malformed_boss.planets[9].boss_phases[1].target_score = -1
+	if not _check(not Catalog.validate_chapter(malformed_boss).valid, "Catalog validator must reject negative boss phase quotas"):
+		return
+	malformed_boss = chapter.duplicate(true)
+	malformed_boss.planets[19].boss_phases[1].target_lines = 0
+	malformed_boss.planets[19].boss_phases[1].target_score = 0
+	if not _check(not Catalog.validate_chapter(malformed_boss).valid, "Catalog validator must reject a boss phase with no achievable objective"):
+		return
 	var malformed := chapter.duplicate(true)
 	malformed.planets[4].local_id = 99
 	if not _check(not Catalog.validate_chapter(malformed).valid, "Catalog validator must reject non-sequential node IDs"):
