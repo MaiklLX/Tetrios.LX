@@ -59,6 +59,28 @@ func _run() -> void:
 		return
 	if not _check(not Collection.get_item(first_universe, "universe_relic_02").unlocked, "Completing one universe must not unlock another universe's relic"):
 		return
+	var boss_unlock_progress = Campaign.new()
+	if not _check(boss_unlock_progress.import_legacy_progress(10, 9), "Boss reveal fixture must import progress immediately before planet 010"):
+		return
+	var before_boss_unlock: Dictionary = Collection.get_collection_summary(boss_unlock_progress)
+	var boss_definition: Dictionary = boss_unlock_progress.get_planet_definition(10)
+	var boss_result: Dictionary = boss_unlock_progress.complete_planet(10, int(boss_definition.get("target_lines", 0)), int(boss_definition.get("target_score", 0)), 0.0)
+	if not _check(bool(boss_result.get("accepted", false)), "Boss reveal fixture must complete planet 010"):
+		return
+	var boss_reveals: Array[String] = Collection.get_newly_unlocked_ids(before_boss_unlock, Collection.get_collection_summary(boss_unlock_progress))
+	if not _check(boss_reveals == ["boss_insignia_010"], "Defeating a boss must queue exactly its newly unlocked insignia"):
+		return
+	var universe_unlock_progress = Campaign.new()
+	if not _check(universe_unlock_progress.import_legacy_progress(30, 29), "Universe reveal fixture must import progress immediately before planet 030"):
+		return
+	var before_universe_unlock: Dictionary = Collection.get_collection_summary(universe_unlock_progress)
+	var universe_boss_definition: Dictionary = universe_unlock_progress.get_planet_definition(30)
+	var universe_result: Dictionary = universe_unlock_progress.complete_planet(30, int(universe_boss_definition.get("target_lines", 0)), int(universe_boss_definition.get("target_score", 0)), 0.0)
+	if not _check(bool(universe_result.get("accepted", false)), "Universe reveal fixture must complete planet 030"):
+		return
+	var universe_reveals: Array[String] = Collection.get_newly_unlocked_ids(before_universe_unlock, Collection.get_collection_summary(universe_unlock_progress))
+	if not _check(universe_reveals == ["universe_relic_01", "boss_insignia_030"], "Completing a universe must reveal both its relic and final boss insignia"):
+		return
 	var final_progress = Campaign.new()
 	if not _check(final_progress.import_legacy_progress(Campaign.TOTAL_PLANETS, 500), "Test fixture must import progress up to the final planet"):
 		return
