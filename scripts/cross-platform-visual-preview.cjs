@@ -230,6 +230,22 @@ const targets = [
     if(atlasTouchAction!=='pan-x'||atlasAfterNext<=atlasBefore+8||atlasAfterPrevious>=atlasAfterNext-8){
       failures.push(target.name+': KT-574 horizontal swipe/arrow navigation mismatch ('+JSON.stringify({atlasTouchAction,atlasBefore,atlasAfterNext,atlasAfterPrevious})+')');
     }
+    const atlasInputState=await atlasViewport.evaluate(el=>({
+      tabIndex:el.tabIndex,role:el.getAttribute('role'),
+      label:el.getAttribute('aria-label')
+    }));
+    await atlasViewport.focus();
+    await atlasViewport.evaluate(el=>el.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(120,el.clientWidth*.55),bubbles:true,cancelable:true})));
+    await campaignPage.waitForTimeout(180);
+    const atlasAfterWheel=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await atlasViewport.press('ArrowLeft');
+    await campaignPage.waitForTimeout(450);
+    const atlasAfterKeyboard=await atlasViewport.evaluate(el=>el.scrollLeft);
+    if(atlasInputState.tabIndex!==0||atlasInputState.role!=='region'||
+       !atlasInputState.label||atlasAfterWheel<=atlasAfterPrevious+8||
+       atlasAfterKeyboard>=atlasAfterWheel-8){
+      failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterPrevious,atlasAfterWheel,atlasAfterKeyboard})+')');
+    }
     await campaignPage.waitForTimeout(3000);
     // KT-554: verify the browser reward shelf reproduces the 49-item Godot
     // collection without changing the existing 360-node campaign progression.
