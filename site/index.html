@@ -9831,11 +9831,26 @@ if (resetProgressBtn) {
           auraOwned:boosts.includes('aura')
         };
       },
+      testDailyQuestProgress(){
+        const readQuests=()=>{
+          try{return JSON.parse(localStorage.getItem('bbDailyQuests')||'null')?.quests||[]}
+          catch{return []}
+        };
+        const before=readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)}));
+        bbDailyAddLines(1);
+        const after=readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)}));
+        return {before,after};
+      },
       finishRunForPersistenceSmoke(){
         const readNumber=(key,fallback=0)=>{
           try{const value=JSON.parse(localStorage.getItem(key));return Number(value??fallback)||0}
           catch{return Number(localStorage.getItem(key)||fallback)||0}
         };
+        const readQuests=()=>{
+          try{return JSON.parse(localStorage.getItem('bbDailyQuests')||'null')?.quests||[]}
+          catch{return []}
+        };
+        const beforeQuests=readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)}));
         const before={
           runs:readNumber('nrRuns'),
           coins:readNumber('bb_coins'),
@@ -9844,6 +9859,8 @@ if (resetProgressBtn) {
         endGame();
         return {
           before,
+          beforeQuests,
+          afterQuests:readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)})),
           after:{
             runs:readNumber('nrRuns'),
             coins:readNumber('bb_coins'),
