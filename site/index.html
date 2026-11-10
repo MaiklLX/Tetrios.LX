@@ -16880,4 +16880,74 @@ body .app{
 #menu:not([hidden]){background:transparent!important;background-image:none!important}
 </style>
 
+
+<script id="bb-kt608-interaction-and-daily-quest-guard">
+/* KT-608: resilient library activation and daily quest lifecycle guards. */
+(function(){
+  function openLibraryFromHome(event){
+    const button=event.target&&event.target.closest
+      ? event.target.closest('#bbOpenCardLibrary')
+      : null;
+    if(!button)return;
+    event.preventDefault();
+    event.stopPropagation();
+    try{
+      if(typeof window.bbOpenCardLibrary==='function')window.bbOpenCardLibrary();
+      else if(typeof bbOpenCardLibrary==='function')bbOpenCardLibrary();
+      else throw new Error('Upgrade library function is unavailable');
+    }catch(error){
+      console.error('Upgrade library launch failed:',error);
+      if(typeof toast==='function')toast('Библиотека пока недоступна. Перезагрузи игру.');
+    }
+  }
+  /* Capture phase survives parent handlers and late/overwritten onclick bindings. */
+  document.addEventListener('click',openLibraryFromHome,true);
+
+  /* Normalize legacy/corrupt quest snapshots without wiping their progress. */
+  const normalizeQuests=()=>{
+    if(typeof bbDailyQuests==='undefined'||!Array.isArray(bbDailyQuests))return;
+    bbDailyQuests=bbDailyQuests.map(q=>({
+      ...q,
+      progress:Math.max(0,Number(q.progress)||0),
+      target:Math.max(1,Number(q.target)||1),
+      reward:Math.max(0,Number(q.reward)||0),
+      claimed:Boolean(q.claimed)
+    }));
+  };
+  const oldLoad=window.bbLoadDailyQuests;
+  if(typeof oldLoad==='function'){
+    window.bbLoadDailyQuests=function(){
+      oldLoad();
+      normalizeQuests();
+      if(typeof bbSaveDailyQuests==='function')bbSaveDailyQuests();
+    };
+  }
+
+  /* A round can enter startGameNow directly after the hero/mode selection.
+     Reset the one-round guard there as well, not only in the menu wrapper. */
+  if(typeof window.startGameNow==='function'){
+    const oldStartNow=window.startGameNow;
+    window.startGameNow=function(){
+      if(typeof bbDailyRecordedThisGame!=='undefined')bbDailyRecordedThisGame=false;
+      return oldStartNow.apply(this,arguments);
+    };
+  }
+
+  /* Keep the quest panel synchronized after each completed round, including
+     direct game-over paths which may bypass an older endGame wrapper. */
+  if(typeof window.endGame==='function'&&!window.__bbKt608EndGameGuard){
+    window.__bbKt608EndGameGuard=true;
+    const oldEnd=window.endGame;
+    window.endGame=function(){
+      if(typeof bbDailyRecordedThisGame!=='undefined'&&!bbDailyRecordedThisGame){
+        bbDailyRecordedThisGame=true;
+        if(typeof bbDailyRecordGame==='function'&&!bbDailyReplayNoQuestReward){
+          bbDailyRecordGame();
+        }
+      }
+      return oldEnd.apply(this,arguments);
+    };
+  }
+})();
+</script>
 </body></html>
