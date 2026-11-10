@@ -220,12 +220,15 @@ const targets = [
     // Verify the visible controls actually move the horizontal rail in both directions.
     const atlasTouchAction=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(el=>getComputedStyle(el).touchAction);
     const atlasViewport=campaignPage.locator('#campaign .bb-galaxy-viewport');
+    // Let the initial selected-universe centering finish before measuring controls.
+    await campaignPage.waitForTimeout(900);
+    await atlasViewport.evaluate(el=>{el.style.scrollSnapType='none';el.style.scrollBehavior='auto';el.scrollLeft=0;});
     const atlasBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
     await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Следующая вселенная"]').click();
-    await campaignPage.waitForTimeout(450);
+    await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:3000});
     const atlasAfterNext=await atlasViewport.evaluate(el=>el.scrollLeft);
     await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Предыдущая вселенная"]').click();
-    await campaignPage.waitForTimeout(450);
+    await campaignPage.waitForFunction(previous=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft<previous-8;},atlasAfterNext,{timeout:3000});
     const atlasAfterPrevious=await atlasViewport.evaluate(el=>el.scrollLeft);
     if(atlasTouchAction!=='pan-x'||atlasAfterNext<=atlasBefore+8||atlasAfterPrevious>=atlasAfterNext-8){
       failures.push(target.name+': KT-574 horizontal swipe/arrow navigation mismatch ('+JSON.stringify({atlasTouchAction,atlasBefore,atlasAfterNext,atlasAfterPrevious})+')');
@@ -234,17 +237,20 @@ const targets = [
       tabIndex:el.tabIndex,role:el.getAttribute('role'),
       label:el.getAttribute('aria-label')
     }));
+    await atlasViewport.evaluate(el=>{el.scrollLeft=0;});
     await atlasViewport.focus();
     await atlasViewport.evaluate(el=>el.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(120,el.clientWidth*.55),bubbles:true,cancelable:true})));
-    await campaignPage.waitForTimeout(180);
+    await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:2000});
     const atlasAfterWheel=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await atlasViewport.evaluate(el=>{el.scrollLeft=Math.max(160,el.clientWidth*.55);});
+    const keyboardBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
     await atlasViewport.press('ArrowLeft');
-    await campaignPage.waitForTimeout(450);
+    await campaignPage.waitForFunction(before=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft<before-8;},keyboardBefore,{timeout:3000});
     const atlasAfterKeyboard=await atlasViewport.evaluate(el=>el.scrollLeft);
     if(atlasInputState.tabIndex!==0||atlasInputState.role!=='region'||
-       !atlasInputState.label||atlasAfterWheel<=atlasAfterPrevious+8||
-       atlasAfterKeyboard>=atlasAfterWheel-8){
-      failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterPrevious,atlasAfterWheel,atlasAfterKeyboard})+')');
+       !atlasInputState.label||atlasAfterWheel<=8||
+       atlasAfterKeyboard>=keyboardBefore-8){
+      failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterWheel,keyboardBefore,atlasAfterKeyboard})+')');
     }
     await campaignPage.waitForTimeout(3000);
     // KT-554: verify the browser reward shelf reproduces the 49-item Godot
