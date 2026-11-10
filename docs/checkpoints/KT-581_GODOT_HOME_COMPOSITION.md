@@ -105,3 +105,13 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Wired the smoke script into Cross-platform Visual Preview after screenshot capture and before artifact upload. This does not change game rules, rewards, storage schema or the normal UI.
 - Fresh Cross-platform run required on this exact head; do not mark KT-588 passed until CI logs show `KT-588 GAMEPLAY PERSISTENCE SMOKE PASSED`.
 - Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
+
+## KT-588 — validation completed: PASSED
+
+- Cross-platform Visual Preview #665 (run `42824061505`) completed successfully on exact head `900c2608374e35d41a175db76f05a06137a24511`.
+- The five-profile browser matrix completed: desktop Chromium, iOS WebKit portrait and landscape, Android Chromium portrait and landscape. Report contains no page errors, console errors or failed requests; no geometry or gameplay assertion failures.
+- Inspected the fresh artifact `13769320835` (41 files). Desktop home shows title → full-width pilot profile → Campaign → Block Run → Daily Challenge → Daily Tasks. iOS WebKit portrait confirms the profile remains directly below the hero and before the mode selector. Inspected desktop arena and tall-phone arena captures as well.
+- KT-588 persistence smoke explicitly passed in the workflow log: `KT-588 GAMEPLAY PERSISTENCE SMOKE PASSED`. In an isolated browser context, a real Block Run entry was followed by the existing wrapped `endGame()` path. Run count changed 0→1, wallet 80→88, Plush XP 0→10, and the reward line was `Награда: +8 🪙 · Капитан Плюш получил опыт ⭐`. After page reload, persisted values remained exactly 1 / 88 / 10. No page errors; disposable context discarded.
+- Mobile Arena Visual Preview #433 (run `42824061277`) also passed on the same head. Inspected artifact `13767019714`, including 375×812 and 412×915 arena captures; geometry report produced without failing assertions.
+- KT-588 is therefore closed as passed for automated browser preview and isolated reward persistence. Physical-device testing remains outstanding.
+- Current branch head: `900c2608374e35d41a175db76f05a06137a24511`. PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
