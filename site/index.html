@@ -15932,4 +15932,168 @@ html,body{background:#071b58!important;color:#fff8e8!important}
 #game .progressbar{background:#08265e!important}
 #game .progressfill{background:linear-gradient(90deg,#a77bff,#55ddff)!important}
 </style>
+
+<!-- KT-589.2: warmer, brighter Godot-inspired friendly blue skin -->
+<style id="bb-kt589-friendly-godot-ui-final">
+:root{
+  --bg:#174f9d;--panel:#2b70bd;--panel2:#367fc9;
+  --cyan:#8deaff;--violet:#b9a0ff;--gold:#ffdc78;
+  --ink:#fffdf5;--muted:#d0e4ff;--line:#70b9ed;
+}
+html,body{background:#174f9d!important;color:#fffdf5!important}
+.app{
+ background:
+  radial-gradient(ellipse at 50% 0%,#79d8ff55,transparent 42%),
+  radial-gradient(ellipse at 100% 55%,#b6a2ff35,transparent 36%),
+  linear-gradient(155deg,#347fca 0%,#245fae 48%,#174887 100%)!important;
+}
+.stars,.stars:before,.stars:after{opacity:.12!important}
+.topbar{
+ padding:10px 14px!important;border:1px solid #8edfff!important;
+ border-radius:22px!important;
+ background:linear-gradient(135deg,#347fc5,#245a9e)!important;
+ box-shadow:0 5px 0 #123d78, inset 0 1px #ffffff55!important;
+}
+.brandmark{background:linear-gradient(145deg,#baf5ff,#65cfff 55%,#8e9cff)!important;color:#174b87!important}
+.brandname{color:#fff!important;text-shadow:0 2px 3px #17447766}
+.edition,.eyebrow{color:#b9f4ff!important}
+.iconbtn,.back{
+ background:linear-gradient(145deg,#55a9e8,#2871bc)!important;
+ border:1px solid #a7eaff!important;color:#fff!important;
+ box-shadow:0 4px 0 #17477f,inset 0 1px #ffffff66!important;
+}
+#menu .hero{
+ background:
+  radial-gradient(ellipse at 50% 100%,#b5a4ff55,transparent 58%),
+  linear-gradient(145deg,#438fd1,#2864ad 70%)!important;
+ border:2px solid #8deaff!important;
+ box-shadow:0 6px 0 #16477f,0 10px 26px #123f7a44!important;
+}
+#menu .hero p{color:#e6f6ff!important}
+#menu .hero .eyebrow{color:#d4faff!important}
+#menu .sectionlabel{color:#d8f7ff!important}
+#menu .sectionlabel:after{background:linear-gradient(90deg,#a4eaff,transparent)!important}
+#menu .mode{
+ background:
+  radial-gradient(ellipse at 0% 50%,var(--glow),transparent 68%),
+  linear-gradient(145deg,#438ed0,#2865ae 78%)!important;
+ border:2px solid #8fe7ff!important;
+ box-shadow:0 5px 0 #17477e,inset 0 1px #ffffff66!important;
+}
+#menu .mode:nth-child(2){
+ background:linear-gradient(145deg,#9a83d6,#6955ae)!important;
+ border-color:#d2c1ff!important;
+}
+#menu .mode:nth-child(3){
+ background:linear-gradient(145deg,#e4b75e,#ba8642)!important;
+ border-color:#ffe6a0!important;
+}
+#menu .modeicon{
+ background:linear-gradient(145deg,#b4efff,#5e9fe0 65%,#8b8ce0)!important;
+ border:2px solid #d5f8ff!important;color:#fff!important;
+ box-shadow:inset 0 -4px #24568b55,0 3px 10px #17447744!important;
+}
+#menu .modetitle{color:#fff!important;text-shadow:0 2px 3px #17447755}
+#menu .modesub{color:#e4f4ff!important}
+#menu .modearrow{color:#fff2b7!important}
+#menu .tag{background:#174f91aa!important;border-color:#b2eaff!important;color:#fff!important}
+#menu #rpgPanel{
+ background:linear-gradient(145deg,#4388c9,#2861a8)!important;
+ border:2px solid #9deaff!important;
+ box-shadow:0 5px 0 #17477e!important;
+}
+#menu .bottomstats .stat{
+ background:linear-gradient(145deg,#3b7fc0,#245a9b)!important;
+ border-color:#85d8f7!important;
+}
+#menu .bottomstats .stat strong{color:#fff!important}
+#menu .bottomstats .stat span{color:#d6efff!important}
+#menu .daily,.daily-quests,.quest-panel,.quests-panel{
+ background:linear-gradient(145deg,#347bc0,#245b9f)!important;
+ border-color:#8deaff!important;
+}
+#game .screenhead h2{color:#fff!important;text-shadow:0 2px 3px #17447766}
+#game .screenhead p{color:#e0f1ff!important}
+#game .gamehud .hudbox{
+ background:linear-gradient(145deg,#3e86c8,#2864a9)!important;
+ border:1px solid #83d9f8!important;
+ box-shadow:0 3px 0 #17477e,inset 0 1px #ffffff55!important;
+}
+#game .hudbox span{color:#d8f1ff!important}
+#game .hudbox strong{color:#fff!important}
+#game .boardframe{
+ background:linear-gradient(145deg,#4b9bd7,#2c6cb0)!important;
+ border:2px solid #9ceaff!important;
+ box-shadow:0 6px 0 #17477e,0 0 20px #a6eaff33!important;
+}
+#game .board{background:#101e39!important}
+#game .sidecard{
+ background:linear-gradient(145deg,#4389ca,#2c67aa)!important;
+ border:1px solid #8cdefb!important;
+ color:#fff!important;
+ box-shadow:0 4px 0 #17477e,inset 0 1px #ffffff55!important;
+}
+#game .sidecard label{color:#e1f5ff!important}
+#game .chrono-card{
+ background:linear-gradient(145deg,#367fc0,#245b9d)!important;
+ border-color:#a4eaff!important;
+}
+#game .chrono-ring{background:conic-gradient(var(--chrono-color) var(--chrono-progress,100%),#b6d8f3 0)!important}
+#game .chrono-ring-inner{background:linear-gradient(145deg,#214f88,#173c70)!important;border-color:#a2e6ff!important}
+#game .chrono-ring-inner small{color:#d8edff!important}
+#game .boostname,#game .boostnum{color:#f1fbff!important}
+#game .smallbtn{
+ background:linear-gradient(145deg,#75bce9,#3e85c5)!important;
+ border:1px solid #b7edff!important;color:#fff!important;
+ box-shadow:0 3px 0 #17477e!important;
+}
+#game .progressmeta{color:#e1f3ff!important}
+#game .progressbar{background:#17477e!important}
+#game .progressfill{background:linear-gradient(90deg,#c0a8ff,#8deaff)!important}
+#game .control{
+ background:linear-gradient(145deg,#4b91d0,#2d69ae)!important;
+ border:1px solid #9ce8ff!important;color:#fff!important;
+ box-shadow:0 4px 0 #17477e!important;
+}
+#game .control.primary,#game .action{
+ background:linear-gradient(135deg,#a7edff,#65c6ee 58%,#b8adff)!important;
+ color:#174477!important;border:1px solid #e3fbff!important;
+ box-shadow:0 4px 0 #24588e!important;
+}
+#game .control.drop{
+ background:linear-gradient(135deg,#ffe18b,#f5b94f)!important;
+ border-color:#fff0bd!important;color:#76501d!important;
+}
+#game .hint{color:#d6edff!important}
+#game .rpgpanel,#game .challengebox,#game .heroCard{
+ background:linear-gradient(145deg,#3d80c0,#285e9f)!important;
+ border:1px solid #8bdfff!important;
+ box-shadow:0 4px 0 #17477e!important;
+ color:#fff!important;
+}
+#game .rpgpanel h3,#game .rpgpanel strong,#game .challengebox h3{color:#fff!important}
+#game .rpgpanel p,#game .challengebox p{color:#e0f2ff!important}
+#game .xpbar{background:#17477e!important}
+#game .xpbar i{background:linear-gradient(90deg,#c0a8ff,#8deaff)!important}
+#game .overlay{background:#123b70bb!important;backdrop-filter:blur(10px)}
+#game .modal{
+ background:linear-gradient(145deg,#438bc9,#245a9d)!important;
+ border:2px solid #9beaff!important;
+ box-shadow:0 12px 35px #12365d88!important;
+}
+#game .choice{
+ background:linear-gradient(145deg,#4a91ce,#2b67a8)!important;
+ border-color:#9be6ff!important;color:#fff!important;
+}
+#game .choiceicon{background:#9deaff44!important}
+#game .choicetext span{color:#e1f3ff!important}
+#game .action.secondary{background:linear-gradient(145deg,#397bbb,#245b9d)!important;color:#fff!important;border-color:#8bdfff!important}
+#game .toast{background:#2d6eaf!important;border-color:#9deaff!important;color:#fff!important}
+#campaign .screenhead h2{color:#fff!important;text-shadow:0 2px 3px #72569a55!important}
+@media(max-width:520px){
+ .topbar{padding:8px 10px!important;border-radius:17px!important}
+ #game .sidecard{background:linear-gradient(145deg,#4389ca,#2c67aa)!important}
+}
+</style>
+
 </body></html>
