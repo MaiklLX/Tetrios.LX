@@ -564,3 +564,9 @@ Status: first browser implementation and cross-platform assertions committed; CI
 ### Текущая контрольная фраза
 
 **BLOCK BUDDIES — KT-576/577 GODOT OVERLAYS + HOME MODE CARDS.** Продолжать в `web/kt550-browser-return-2026-11-09`, PR #85 Draft, HEAD `b16ac95c2ff5bf461a3715111c924ca1921ef46d` (последний test commit; code includes KT-576 pause/results and KT-577 mode cards). Атлас остаётся горизонтальным Godot-космосом; режимы на главном экране получили синие объёмные карточки с cyan/coral/gold accents. Проверить новый CI; исправлять тестовые/визуальные расхождения, не трогая gameplay, save keys, main/Pages, Godot Preview и APK.
+
+
+### КТ-577 — уточнение привязки CSS
+
+- При финальной сверке DOM обнаружено, что фактический экран называется `#menu`, а не `#home`. Селекторы нового Godot-оформления карточек режимов были исправлены на `#menu`; стили теперь попадают в реальные элементы меню.
+- Исправление: `dda33d25be2d451c584f2969eaf82a0f88140035`. Проверка computed styles остаётся на `#menu .modes .mode`; новый Cross-platform прогон нужен для подтверждения.
