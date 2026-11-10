@@ -5459,6 +5459,98 @@ body:has(#menu:not([hidden])) .app > .topbar {
 }
 </style>
 
+<style id="bb-kt595-touch-and-godot-visual">
+/* Reliable full-screen touch stream: keep the browser from stealing a drag. */
+.app:has(#game:not([hidden])){touch-action:none!important}
+#game,#game *{touch-action:none}
+#game button,#game [role="button"]{touch-action:manipulation}
+
+/* Friendly Godot-like sky-blue world; remove the old starfield completely. */
+html,body{background:#b9def8!important}
+.stars{display:none!important}
+.app{
+  background:linear-gradient(180deg,#d9f1ff 0%,#c1e3fb 48%,#a8d3f3 100%)!important;
+}
+#game .screenhead h2{color:#153b70!important}
+#game .screenhead p{color:#416b99!important}
+#game .gamehud .hudbox{
+  background:linear-gradient(155deg,#f2fbff,#d2eaff)!important;
+  border:1px solid #86bde9!important;
+  box-shadow:0 3px 0 #82b5df,0 7px 16px #397bb51c!important;
+}
+#game .gamehud .hudbox span{color:#4775a1!important}
+#game .gamehud .hudbox strong{color:#173f70!important}
+#game .sidecol .sidecard{
+  background:linear-gradient(155deg,#e8f7ff,#c6e3fb)!important;
+  border:1px solid #82b8e4!important;
+  box-shadow:0 3px 0 #82b5df,0 7px 14px #397bb51a!important;
+}
+#game .sidecol .sidecard label{color:#416f9e!important}
+#game .sidecol .boostname,#game .sidecol .boostnum{color:#244f7c!important}
+#game .boardframe{background:linear-gradient(145deg,#b4d9f7,#e4f5ff)!important}
+#game .board{background:#10264c!important}
+#game .control.drop{
+  background:linear-gradient(180deg,#66d9ff,#258bdc)!important;
+  border-color:#b6efff!important;color:#07365f!important;
+  box-shadow:0 4px 0 #1764a8,0 7px 15px #237fc933!important;
+}
+
+/* Campaign planets become illustrated 2D stickers; the WebGL model layer is off. */
+body>canvas.bb-galaxy-model-canvas{display:none!important}
+#campaign .bb-planet-sphere,
+#campaign .bb-planet-sphere.is-loaded{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  display:grid!important;place-items:center!important;
+  background:hsl(var(--planet-hue) 82% 72%)!important;
+  border:3px solid hsl(var(--planet-hue) 70% 48%)!important;
+  box-shadow:0 5px 0 hsl(var(--planet-hue) 60% 43%),0 8px 12px #174d7b22!important;
+  animation:bbPlanetStickerFloat 4.8s ease-in-out infinite!important;
+  animation-delay:var(--planet-delay)!important;
+}
+#campaign .bb-planet-sphere.is-loaded .bb-planet-fallback,
+#campaign .bb-planet-fallback{
+  opacity:1!important;visibility:visible!important;
+  position:relative!important;z-index:2!important;
+  display:grid!important;place-items:center!important;
+  font-size:30px!important;filter:drop-shadow(0 2px 0 #17436a35)!important;
+}
+#campaign .bb-planet-node.bb-planet-shape-0 .bb-planet-sphere{border-radius:48% 52% 46% 54%!important}
+#campaign .bb-planet-node.bb-planet-shape-1 .bb-planet-sphere{border-radius:36% 64% 57% 43%!important}
+#campaign .bb-planet-node.bb-planet-shape-2 .bb-planet-sphere{border-radius:50%!important}
+#campaign .bb-planet-node.bb-planet-shape-3 .bb-planet-sphere{border-radius:42% 58% 38% 62%!important}
+#campaign .bb-planet-node.bb-planet-shape-4 .bb-planet-sphere{border-radius:44% 56% 52% 48%!important}
+#campaign .bb-planet-node.bb-planet-shape-5 .bb-planet-sphere{border-radius:58% 42% 48% 52%!important}
+#campaign .bb-planet-sphere::before{
+  content:"";position:absolute;z-index:1;left:17%;top:18%;
+  width:22%;height:13%;border-radius:50%;
+  background:#ffffff80;transform:rotate(-28deg);
+  box-shadow:22px 24px 0 -3px #ffffff35;
+}
+#campaign .bb-planet-node:nth-child(5n) .bb-planet-sphere::after{
+  content:"";position:absolute;z-index:0;left:-18%;top:35%;
+  width:136%;height:28%;border:4px solid hsl(var(--planet-hue) 72% 43% / .78);
+  border-radius:50%;transform:rotate(-22deg);pointer-events:none;
+}
+#campaign .bb-planet-node.is-current .bb-planet-sphere{
+  box-shadow:0 0 0 4px #ffffffb5,0 6px 0 hsl(var(--planet-hue) 60% 43%),0 0 0 7px #54b9f577!important;
+}
+#campaign .bb-planet-node.is-locked .bb-planet-sphere{filter:grayscale(.35)!important}
+@keyframes bbPlanetStickerFloat{50%{transform:translateY(-4px) rotate(2deg)}}
+
+/* Let the 10×23 playfield use more of the phone's width and height. */
+@media(max-width:1200px) and (pointer:coarse){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) clamp(68px,16vw,88px)!important;gap:6px!important}
+  #game .boardframe{height:clamp(190px,calc(100dvh - 335px),660px)!important}
+  #game .board{aspect-ratio:10/23!important}
+  #game .sidecol .sidecard{padding:5px 3px!important}
+  #game .sidecol .sidecard label{font-size:clamp(7px,1.9vw,9px)!important}
+}
+@media(max-width:520px){
+  .app{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
+  #game .screenhead{margin-top:0!important}
+}
+</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -8594,111 +8686,97 @@ function canAcceptTouchDrop(now=performance.now()) {
 }
 const cv = $('game');
 
-// Gesture-first mobile input. The entire active game screen is the control surface.
-// Interactive UI elements remain tappable; every other area can steer the active piece.
-cv.addEventListener('touchstart', e => {
-  if (e.target.closest('button, input, select, textarea, a, [role="button"], [contenteditable="true"], [data-act], .overlay, .modal')) {
-    touch = null;
-    return;
-  }
-  if (e.touches.length !== 1) {
-    touch = null;
-    return;
-  }
-  if (!started || paused || gameOver || !piece) {
-    touch = null;
-    return;
-  }
-  const t = e.changedTouches[0];
-  const boardRect = $('board').getBoundingClientRect();
-  if (e.cancelable) e.preventDefault();
-  touch = {
-    x:t.clientX, y:t.clientY, lastX:t.clientX, lastY:t.clientY,
-    at:performance.now(), axis:null, pieceRef:piece,
-    horizontalRemainder:0, verticalRemainder:0,
-    cellWidth:boardRect.width/W, cellHeight:boardRect.height/H,
-    dropped:false, consumed:false
-  };
-  audioCtx();
-}, {passive:false});
-
-cv.addEventListener('touchmove', e => {
-  if (!touch || touch.consumed ||
-      !started || paused || gameOver || !piece) return;
-  if (e.cancelable) e.preventDefault();
-  if (e.touches.length !== 1) {
-    touch.consumed = true;
-    return;
-  }
-  const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
-  if(!touch.axis&&(Math.abs(tx)>8||Math.abs(ty)>8)){
-    const absX=Math.abs(tx),absY=Math.abs(ty);
-    // A thumb often travels diagonally while reaching across the board.
-    // Require a clear dominant axis; ambiguous travel must never become rotation.
-    if(absX>=absY*1.45) touch.axis='x';
-    else if(absY>=absX*1.45) touch.axis='y';
-    else { touch.axis='ambiguous'; touch.consumed=true; }
-  }
-  if(touch.axis==='x'){
-    const dx=t.clientX-touch.lastX;
-    touch.horizontalRemainder+=dx;
-    touch.lastX=t.clientX;
-    const threshold=Math.max(9,touch.cellWidth*0.62);
-    let steps=0;
-    while(Math.abs(touch.horizontalRemainder)>=threshold&&steps< W){
-      const direction=touch.horizontalRemainder>0?1:-1;
-      if(!move(direction,0)){
-        // Keep the gesture live: sliding back from an edge must respond immediately.
-        touch.horizontalRemainder=0;
-        break;
-      }
-      touch.horizontalRemainder-=direction*threshold;
-      steps++;
-    }
-  }else if(touch.axis==='y'&&ty>0){
-    const dy=t.clientY-touch.lastY;
-    touch.verticalRemainder+=dy;
-    touch.lastY=t.clientY;
-    const threshold=Math.max(10,touch.cellHeight*0.72);
-    while(touch.verticalRemainder>=threshold&&!touch.dropped){
-      touch.verticalRemainder-=threshold;
-      if(!move(0,1)){
-        touch.dropped=true;
-        touch.consumed=true;
-        break;
-      }
-      if(piece!==touch.pieceRef){
-        touch.dropped=true;
-        touch.consumed=true;
-        break;
-      }
-    }
-  }
-}, {passive:false});
-
-cv.addEventListener('touchend',e=>{
-  if(!touch)return;
+// KT-595: track a finger from the whole visible app, not only from the game
+// section. Pointer capture keeps the stream alive when the finger leaves the
+// arena, crosses the HUD, or moves outside the original hit target.
+function bbIsGestureUiTarget(target) {
+  return !!(target && target.closest &&
+    target.closest('button, input, select, textarea, a, [role="button"], [contenteditable="true"], [data-act], .overlay, .modal'));
+}
+function bbFinishTouchGesture(e, cancelled=false) {
+  if (!touch || (e && e.pointerId !== touch.pointerId)) return;
   const gesture=touch;
   touch=null;
-  if(gesture.consumed||!started||paused||gameOver||!piece||piece!==gesture.pieceRef)return;
-  const t=e.changedTouches[0],dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
+  if (cancelled || gesture.dropped || !started || paused || gameOver || !piece || piece!==gesture.pieceRef) return;
+  const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
   const elapsed=performance.now()-gesture.at;
   const tap=Math.abs(dx)<Math.max(12,gesture.cellWidth*.35)&&Math.abs(dy)<Math.max(12,gesture.cellHeight*.35)&&elapsed<300;
   const upwardSwipe=gesture.axis==='y'&&dy<=-Math.max(24,gesture.cellHeight*1.35)&&Math.abs(dy)>Math.abs(dx)*1.12;
   const downwardFlick=gesture.axis==='y'&&dy>=Math.max(90,gesture.cellHeight*4.8)&&elapsed<520&&dy>Math.abs(dx)*1.25;
-  if(tap||upwardSwipe){
-    rotatePiece();
-  }else if(downwardFlick&&canAcceptTouchDrop()){
+  if(tap||upwardSwipe) rotatePiece();
+  else if(downwardFlick&&canAcceptTouchDrop()){
     lastTouchDropAt=performance.now();
     hardDrop();
   }
-},{passive:true});
+}
+document.addEventListener('pointerdown', e => {
+  if(e.pointerType!=='touch') return;
+  if(touch) { touch=null; return; }
+  if(bbIsGestureUiTarget(e.target)) return;
+  if(!started||paused||gameOver||!piece) return;
+  const boardRect=$('board').getBoundingClientRect();
+  if(e.cancelable)e.preventDefault();
+  touch={
+    pointerId:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,
+    at:performance.now(),axis:null,pieceRef:piece,
+    horizontalRemainder:0,verticalRemainder:0,
+    cellWidth:boardRect.width/W,cellHeight:boardRect.height/H,
+    dropped:false
+  };
+  try { cv.setPointerCapture(e.pointerId); } catch(_) {}
+  audioCtx();
+}, {capture:true,passive:false});
 
-cv.addEventListener('touchcancel',()=>{
-  touch=null;
-  // Preserve the post-drop lock across WebView cancellation/re-delivery.
-},{passive:true});
+document.addEventListener('pointermove', e => {
+  if(!touch||e.pointerId!==touch.pointerId||!started||paused||gameOver||!piece) return;
+  if(e.cancelable)e.preventDefault();
+  if(piece!==touch.pieceRef){touch.dropped=true;return;}
+  const tx=e.clientX-touch.x,ty=e.clientY-touch.y;
+  if(!touch.axis&&(Math.abs(tx)>8||Math.abs(ty)>8)){
+    const absX=Math.abs(tx),absY=Math.abs(ty);
+    // Do not cancel diagonal gestures. Wait briefly for intent, then choose
+    // the dominant axis so a thumb can travel naturally across the screen.
+    if(absX>=absY*1.2||Math.max(absX,absY)>24&&absX>absY) {
+      touch.axis='x';touch.horizontalRemainder=tx;touch.lastX=e.clientX;
+    } else if(absY>=absX*1.2||Math.max(absX,absY)>24&&absY>absX) {
+      touch.axis='y';touch.verticalRemainder=ty;touch.lastY=e.clientY;
+    }
+  } else if(touch.axis==='x') {
+    touch.horizontalRemainder+=e.clientX-touch.lastX;
+    touch.lastX=e.clientX;
+  } else if(touch.axis==='y') {
+    touch.verticalRemainder+=e.clientY-touch.lastY;
+    touch.lastY=e.clientY;
+  }
+  if(touch.axis==='x'){
+    const threshold=Math.max(9,touch.cellWidth*.56);
+    let steps=0;
+    while(Math.abs(touch.horizontalRemainder)>=threshold&&steps<W){
+      const direction=touch.horizontalRemainder>0?1:-1;
+      if(!move(direction,0)){
+        // At an edge, discard only the blocked distance; the same held
+        // gesture remains active and responds immediately when reversed.
+        touch.horizontalRemainder=0;break;
+      }
+      touch.horizontalRemainder-=direction*threshold;
+      steps++;
+      if(piece!==touch.pieceRef){touch.dropped=true;break;}
+    }
+  } else if(touch.axis==='y'&&touch.verticalRemainder>0&&!touch.dropped){
+    const threshold=Math.max(10,touch.cellHeight*.72);
+    while(touch.verticalRemainder>=threshold&&!touch.dropped){
+      touch.verticalRemainder-=threshold;
+      if(!move(0,1)){touch.dropped=true;break;}
+      if(piece!==touch.pieceRef)touch.dropped=true;
+    }
+  }
+}, {capture:true,passive:false});
 
+document.addEventListener('pointerup',e=>bbFinishTouchGesture(e,false),{capture:true,passive:true});
+document.addEventListener('pointercancel',e=>bbFinishTouchGesture(e,true),{capture:true,passive:true});
+document.addEventListener('lostpointercapture',e=>{
+  if(touch&&e.pointerId===touch.pointerId) bbFinishTouchGesture(e,true);
+},{capture:true,passive:true});
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='p'||e.key==='P'){pauseGame();return}if(!started||paused)return;if(['ArrowLeft','ArrowRight','ArrowDown','ArrowUp',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key==='ArrowDown'||e.key==='s')move(0,1);if(e.key==='ArrowUp'||e.key==='w')rotatePiece();if(e.key===' ')hardDrop()});$('overlay').addEventListener('click',e=>{if(e.target===$('overlay')&&paused)pauseGame()});updateStats();setupDaily();
 
