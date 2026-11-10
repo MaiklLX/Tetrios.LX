@@ -376,3 +376,16 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Вместе с успешным cross-platform run `42685337133` это закрывает автоматизированную проверку КТ-565/566 по текущему HEAD: карта кампании и мобильная арена прошли Playwright Chromium/WebKit preview. Это не физическое тестирование на реальных iPhone/Android.
 - PR #85 остаётся open + Draft, не merged. Никаких изменений в main, Pages, Godot Preview или APK не сделано.
 - Следующий шаг — КТ-568: финальный аудит PR diff и статусов обязательных checks, без merge/deploy/release. Любые изменения игрового кода — только при обнаружении конкретного дефекта и отдельным небольшим коммитом.
+
+
+## КТ-568 — завершение cross-platform и mobile visual preview (2026-11-10)
+
+- Cross-platform Visual Preview run `42763840016` завершился `success` на HEAD `2df324f39b79eb0462da564acc61f6933e897d48`; job `129655572862`. Успешно завершены подготовка окружения, установка Playwright, локальный preview, capture desktop Chromium/iOS WebKit и загрузка отчёта.
+- Матрица cross-platform отчёта: desktop Chromium `1440×900`, `1920×1080`; iOS WebKit `375×812`, `390×844`, `412×915`, `430×932`; Android Chromium `393×873`; landscape iOS WebKit `844×390`, `915×412` и Android Chromium `873×393` проверили orientation guard.
+- В 7 portrait игровых targets подтверждены `boardVisible=true`, `toggleCount=0`, `overlayCanvasCount=0`; все 10 targets отчёта имеют `pageErrors=[]` и `consoleErrors=[]`. Общий список `failures=[]`.
+- В одном iOS WebKit сценарии `390×844` зафиксированы три отменённых запроса `audio/chills.mp3` (`Load request cancelled`) при переходе между страницами/сценариями. Это не сопровождалось page/console errors и не было отмечено тестом как failure; не маскируем это под полностью пустой список сетевых отмен.
+- Mobile Arena Visual Preview run `42763840012` также завершился `success` на том же HEAD `2df324f39b79eb0462da564acc61f6933e897d48`; job `129655625707`. Геометрия portrait-арены и отсутствие лишнего overlay renderer подтверждены; артефакт мобильной проверки загружен.
+- Cross-platform артефакт `tetrios-cross-platform-visual-preview`, artifact ID `13739417811`; отчёт `report.json` содержит `failures=[]`. Визуальные файлы сохранены в CI artifact, скриншоты в чат не публикуются.
+- Эти результаты подтверждают автоматизированные Playwright previews, а не физическое тестирование на реальных iPhone/Android.
+- PR #85 остаётся open + Draft, не merged; HEAD на момент фиксации `2df324f39b79eb0462da564acc61f6933e897d48`. Main, публичный Pages, Godot Preview и APK не менялись; merge/deploy/release не выполнялись.
+- Итог КТ-568: текущая браузерная ветка прошла оба обязательных визуальных CI workflow. Следующий этап — не автоматическое слияние, а отдельное решение о финальном ручном просмотре/готовности PR; до явного разрешения PR #85 остаётся Draft.
