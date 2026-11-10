@@ -66,3 +66,13 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Added an explicit `grid-column:1 / -1` span, plus `min-width:0`, to the profile grid item. This is a narrowly scoped home-layout CSS correction; profile content, mobile hierarchy, game runtime, progression and saves are unchanged.
 - Fresh Cross-platform and Mobile Arena runs are required on KT-585. Do not close the visual stage until the desktop and mobile screenshots are inspected.
 - Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
+
+
+## KT-586 — desktop pilot profile row lock
+
+- KT-585 Cross-platform #656 failed its desktop ordering assertion. The artifact showed the profile at full content width, but below daily quests rather than immediately below the title; mobile home and Mobile Arena remained visually healthy.
+- Root cause narrowed to legacy dashboard layout resets conflicting with the named grid-area placement. KT-586 replaces the named-area placement for this one item with an explicit second grid row and full-width span. This keeps the pilot profile directly under the title on desktop while preserving the already-correct mobile natural-flow order.
+- CSS-only; profile data, modes, gameplay, controls, saves, campaign and Block Run behavior are unchanged.
+- Implementation commit: `0dec8e35796f1f46662a3c33cb3bfb23bcbb147e`.
+- Fresh Cross-platform and Mobile Arena runs on KT-586 are required. Inspect actual desktop and phone screenshots; a green workflow alone is not sufficient.
+- Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
