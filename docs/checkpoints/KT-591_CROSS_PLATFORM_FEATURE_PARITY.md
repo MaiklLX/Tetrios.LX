@@ -6,16 +6,16 @@ Date: 2026-11-10
 
 The user clarified the order of work: first bring the visual design on all platforms to a convincing shared style; only after visual approval begin the full mode/feature parity pass.
 
-The game remains one coherent product across mobile, tablet, and desktop. Mobile and desktop are both first-class targets; neither should be visually neglected.
+The game remains one coherent product, but the user has clarified that desktop is allowed (and expected) to use a different composition because it has more screen space. All mobile devices must share one consistent mobile layout and visual structure. Desktop is a separate responsive composition within the same design language.
 
 Allowed platform differences:
-- Responsive layout and information density.
-- Touch gestures and touch target sizing on phones/tablets.
-- Mouse, keyboard, and wider-space composition on desktop.
+- One unified layout and visual hierarchy across all mobile devices, including phones and tablets in mobile mode.
+- Desktop may use a distinct composition and take advantage of wider screen space.
+- Touch gestures and touch target sizing on mobile; mouse and keyboard affordances on desktop.
 
 Not allowed:
-- Different visual identities between platforms.
-- Platform-specific visual compromises that make one build feel like a different game.
+- Inconsistent layouts between mobile devices.
+- Different visual identities or unrelated design systems; desktop composition may differ, but must remain recognizably the same game.
 - Publishing or merging without the user's explicit approval.
 
 ## Updated work phases
@@ -49,7 +49,7 @@ Do not let feature parity work displace the current visual-first priority. The K
 
 ## Work completed in this checkpoint
 
-6. KT-592 added a shared grid-light texture to the home hero across desktop and mobile, tightened the same rounded card treatment, and improved desktop mode-card proportions (icon scale, typography, padding). This is presentation-only; gameplay logic and mode behavior were not changed.
+6. KT-592 added a shared grid-light texture to the home hero across desktop and mobile, tightened the same rounded card treatment, and improved desktop mode-card proportions (icon scale, typography, padding). Desktop may have its own wider composition; the mobile composition must remain consistent across all mobile devices. This is presentation-only; gameplay logic and mode behavior were not changed.
 7. KT-592 implementation commit: `14c810967e42daa5427c042defe8374cb451eead`. Screenshot QA for this new commit is still pending; do not mark it visually verified until a fresh preview is captured.
 
 1. KT-590 safe-area support is in the branch for iPhone notches and home-indicator spacing.
@@ -63,7 +63,7 @@ Do not let feature parity work displace the current visual-first priority. The K
 - All three modes appear and can be entered on desktop, iOS WebKit, and Android Chromium.
 - Campaign missions, Block Run encounter/upgrade flow, and Daily Challenge objective are present on every supported platform.
 - Shared profile, rewards, coins, hero progression, and saved progress behave consistently across platforms.
-- Shared blue/Godot-inspired visual language is recognizable on all platforms; only layout and input affordances adapt.
+- All mobile devices share the same mobile layout and visual hierarchy; desktop may use a distinct wide-screen composition while retaining the same design language.
 - No page errors, clipped controls, hidden objectives, or horizontal overflow at supported phone/tablet/desktop viewports.
 - Desktop keyboard/mouse and mobile touch/gesture inputs both remain functional.
 - Any unsupported orientation behavior is explicit and tested.
@@ -71,8 +71,9 @@ Do not let feature parity work displace the current visual-first priority. The K
 
 ## Next actions — visual first
 
-1. Review desktop, iOS, and Android screenshots side by side for shared palette, panel treatment, typography, icons, button language, depth, and spacing.
-2. Fix the most visible visual mismatches across home screen and arena, keeping the same design tokens and visual components wherever possible.
+1. Review phone screenshots across iOS and Android sizes first, ensuring the mobile layout is consistent regardless of device.
+2. Review desktop separately as a wide-screen composition; do not force desktop panel placement to mimic mobile.
+3. Fix mobile inconsistencies and desktop-specific visual issues while retaining the same design language.
 3. Extend the same visual treatment to mode selection, pause/results, rewards, and settings.
 4. Run screenshot/geometry QA at phone, tablet, and desktop breakpoints after each visual batch.
 5. Ask the user to approve the shared visual direction before beginning Phase B feature-parity work.
