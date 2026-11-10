@@ -44,8 +44,8 @@ const { chromium } = require('playwright');
     await page.reload({ waitUntil: 'domcontentloaded' });
     const persisted = await page.evaluate(() => ({
       runs: Number(localStorage.getItem('nrRuns') || 0),
-      coins: Number(localStorage.getItem('coins') || 0),
-      xp: Number(localStorage.getItem('xp_plush') || 0)
+      coins: Number(JSON.parse(localStorage.getItem('bb_coins') || '0')),
+      xp: Number(JSON.parse(localStorage.getItem('bb_xp_plush') || '0'))
     }));
     if (JSON.stringify(persisted) !== JSON.stringify(result.after)) {
       throw new Error('Profile reward did not survive reload: ' +
