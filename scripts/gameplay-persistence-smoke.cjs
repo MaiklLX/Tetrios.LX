@@ -33,6 +33,14 @@ const { chromium } = require('playwright');
       throw new Error('Line quest did not advance and persist: ' + JSON.stringify(dailyProgress));
     }
 
+    const scoreProgress = await page.evaluate(() => window.__TETRIOS_QA__?.testDailyScoreProgress?.() || null);
+    if (!scoreProgress) throw new Error('QA daily score progress hook is missing');
+    const scoreBefore = scoreProgress.before.find(q => q.id === 'score');
+    const scoreAfter = scoreProgress.after.find(q => q.id === 'score');
+    if (!scoreBefore || !scoreAfter || scoreAfter.progress !== scoreAfter.target || !scoreAfter.claimed) {
+      throw new Error('Score quest did not advance live and claim its reward: ' + JSON.stringify(scoreProgress));
+    }
+
     const result = await page.evaluate(() =>
       window.__TETRIOS_QA__?.finishRunForPersistenceSmoke?.() || null
     );
@@ -68,8 +76,8 @@ const { chromium } = require('playwright');
     }
     if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));
 
-    console.log('KT-588 GAMEPLAY PERSISTENCE SMOKE PASSED');
-    console.log(JSON.stringify({ result, persisted, pageErrors }, null, 2));
+    console.log('KT-619 DAILY SCORE + GAMEPLAY PERSISTENCE SMOKE PASSED');
+    console.log(JSON.stringify({ dailyProgress, scoreProgress, result, persisted, pageErrors }, null, 2));
   } finally {
     await context.close();
     await browser.close();
