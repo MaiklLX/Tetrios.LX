@@ -15857,5 +15857,79 @@ html,body{background:#071b58!important;color:#fff8e8!important}
 #campaign .bb-planet-viewport{background:linear-gradient(180deg,#174d9b,#102b69 72%,#0b245f)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff33!important}
 @media(max-width:700px){.app{padding:10px 10px 24px!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Higher-specificity arena and dashboard overrides: later legacy rules used #game/#menu IDs. */
+#menu.home-dashboard>.modes>.mode{
+  background:linear-gradient(145deg,#174d9b,#123e82 72%,#102d68)!important;
+  border:1px solid #55ddff!important;
+  box-shadow:0 5px 0 #08265e,0 10px 22px #04184666,inset 0 1px #ffffff33!important;
+}
+#menu.home-dashboard>.modes>.mode .modeicon{
+  background:linear-gradient(145deg,#267bd1,#123e91)!important;
+  border:1px solid #8beaff!important;color:#fff0b9!important;
+}
+#menu.home-dashboard>.modes>.mode .modetitle{color:#fff8e8!important}
+#menu.home-dashboard>.modes>.mode .modesub{color:#c4edff!important}
+#menu.home-dashboard>#bbHomeProfile,
+#menu.home-dashboard>#dailyQuestsPanel{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff!important;
+}
+#menu.home-dashboard>#bbHomeProfile .bb-home-profile-copy strong{color:#fff8e8!important}
+#menu.home-dashboard>#bbHomeProfile .bb-home-profile-copy small{color:#c4edff!important}
+#game .screenhead{
+  background:linear-gradient(110deg,#1454a5,#102b69)!important;
+  border:1px solid #55ddff88!important;border-radius:14px!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff33!important;
+  padding:7px 9px!important;
+}
+#game .screenhead h2{color:#fff0b9!important}
+#game .screenhead p{color:#c4edff!important}
+#game .screenhead .back,#game .screenhead .iconbtn{
+  background:linear-gradient(145deg,#267bd7,#1454a5)!important;
+  border:1px solid #8beaff!important;color:#fff8e8!important;
+}
+#game .gamehud .hudbox{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border:1px solid #55ddff!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff33!important;
+}
+#game .gamehud .hudbox span{color:#c4edff!important}
+#game .gamehud .hudbox strong{color:#fff8e8!important}
+#game .boardframe{
+  border:2px solid #8beaff!important;border-radius:17px!important;
+  background:linear-gradient(145deg,#267bd7,#1454a5 62%,#0b2d78)!important;
+  box-shadow:0 6px 0 #08265e,0 12px 25px #04184677,inset 0 1px #ffffff66!important;
+}
+#game .boardframe:before{box-shadow:inset 0 0 22px #55ddff22,0 0 0 1px #8beaff44!important}
+#game .sidecol .sidecard,#game #bbHeroSkillCard{
+  border:1px solid #55ddff!important;
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff33!important;
+}
+#game .sidecol .sidecard label,#game #bbHeroSkillCard .bb-hero-skill-copy small{color:#c4edff!important}
+#game .sidecol .drop-card{background:linear-gradient(145deg,#155c9c,#103b78)!important;border-color:#8beaff!important}
+#game .sidecol .side-drop{
+  background:linear-gradient(145deg,#ffe18a,#ffad45)!important;
+  color:#59340b!important;border:1px solid #fff0b9!important;
+  box-shadow:0 4px 0 #9b5b20,inset 0 1px #ffffffaa!important;
+}
+#game .gameleftcol,#game #rogueGoals,#game #campaignGoals{
+  border-color:#55ddff!important;
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff33!important;
+}
+#game #rogueGoals>div,#game #campaignGoals>div{color:#fff8e8!important}
+#game .control,#game .smallbtn{
+  background:linear-gradient(145deg,#267bd7,#1454a5)!important;
+  color:#fff8e8!important;border-color:#8beaff!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
+}
+#game .control.primary,#game .action{
+  background:linear-gradient(135deg,#8beaff,#55ddff 58%,#8ef4d3)!important;
+  color:#08265e!important;border-color:#d8fbff!important;
+}
+#game .progressbar{background:#08265e!important}
+#game .progressfill{background:linear-gradient(90deg,#a77bff,#55ddff)!important}
 </style>
 </body></html>
