@@ -5337,7 +5337,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 </style>
 <link rel="stylesheet" href="./kt417-mobile-landscape-arena.css?v=20261106-kt417-v1">
 </head>
-<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
+<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
     <div class="modeicon" aria-hidden="true">🗺️</div>
     <div class="modetext">
@@ -8720,12 +8720,24 @@ document.getElementById('confirmHero')?.addEventListener('click', () => {
   bbApplyHero();
   show('menu');
 });
+function bbRenderHomeProfile() {
+  const profile = document.getElementById('bbHomeProfile');
+  if (!profile) return;
+  const hero = bbHeroes.find(item => item.id === bbSelectedHero) || bbHeroes[0];
+  const progress = bbGetHeroProgress(hero.id);
+  profile.innerHTML =
+    '<span class="bb-home-profile-avatar" style="--hero-color:'+hero.color+'">'+bbHeroEmblem(hero.id,'roster')+'</span>' +
+    '<span class="bb-home-profile-copy"><strong>'+hero.name+'</strong><small>ПИЛОТ · УРОВЕНЬ '+progress.level+'</small></span>' +
+    '<span class="bb-home-profile-wallet"><b>🪙</b><strong>'+bbCoins+'</strong></span>';
+}
+
 function bbApplyHero() {
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
   bbSelectedHero = hero.id;
 
   const panel = document.getElementById('rpgPanel');
   if (!panel) return;
+  bbRenderHomeProfile();
 
   const avatar = document.querySelector('#menu .avatar');
   const name = document.querySelector('#menu .rpgname');
@@ -8770,6 +8782,7 @@ bbApplyHero();
 function bbRefresh() {
   if ($('coins')) $('coins').textContent = bbCoins;
   if ($('gems')) $('gems').textContent = bbGems;
+  bbRenderHomeProfile();
 
   const hero = bbHeroes.find(h => h.id === bbSelectedHero) || bbHeroes[0];
   const heroProgress=bbGetHeroProgress(hero.id);
@@ -15038,6 +15051,39 @@ button:not(.board):focus-visible{
 }
 @media(prefers-reduced-motion:reduce){
   #campaign .bb-galaxy-art *,#campaign .bb-galaxy-card{animation:none!important;transition:none!important}
+}
+</style>
+
+
+<style id="bb-kt571-home-pilot-profile">
+#menu.home-dashboard > .bb-home-profile{
+  display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:center;gap:11px;
+  min-height:54px;margin:0 0 13px;padding:6px 13px;box-sizing:border-box;
+  border:1px solid rgba(118,220,255,.58);border-radius:17px;
+  background:
+    radial-gradient(circle at 7% 50%,color-mix(in srgb,var(--hero-color,#55ddff) 24%,transparent),transparent 28%),
+    linear-gradient(105deg,#174d9b 0%,#12366e 58%,#10264d 100%);
+  box-shadow:0 9px 22px #0004,inset 0 1px #ffffff1c;
+}
+.bb-home-profile-avatar{
+  display:grid;place-items:center;width:42px;height:42px;border-radius:13px;
+  background:color-mix(in srgb,var(--hero-color,#55ddff) 28%,#102b56);
+  border:1px solid color-mix(in srgb,var(--hero-color,#55ddff) 70%,#ffffff);
+  box-shadow:0 0 17px color-mix(in srgb,var(--hero-color,#55ddff) 24%,transparent);
+}
+.bb-home-profile-avatar svg{display:block;width:38px;height:38px;overflow:visible}
+.bb-home-profile-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.bb-home-profile-copy strong{font-size:13px;line-height:1.1;color:#fff!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bb-home-profile-copy small{font-size:8px;letter-spacing:.13em;font-weight:900;color:#c4edff!important}
+.bb-home-profile-wallet{display:flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #ffd05a66;border-radius:12px;background:#2e2a3a99;color:#fff0b9}
+.bb-home-profile-wallet b{font-size:15px}
+.bb-home-profile-wallet strong{font-size:13px;font-variant-numeric:tabular-nums;color:#fff0b9}
+@media(max-width:380px){
+  #menu.home-dashboard > .bb-home-profile{grid-template-columns:40px minmax(0,1fr) auto;gap:8px;padding:6px 9px}
+  .bb-home-profile-avatar{width:38px;height:38px}
+  .bb-home-profile-avatar svg{width:34px;height:34px}
+  .bb-home-profile-copy strong{font-size:12px}
+  .bb-home-profile-wallet{padding:6px 8px}
 }
 </style>
 
