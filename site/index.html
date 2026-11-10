@@ -15638,11 +15638,13 @@ html,body{background:#07152b!important}
 
 
 
-<style id="bb-kt585-home-profile-grid-span">
-/* Explicitly span the complete dashboard grid: width alone did not override the
-   desktop grid item's intrinsic track placement in the KT-584 screenshot. */
-#menu.home-dashboard > #bbHomeProfile{
-  grid-area:profile!important;grid-column:1 / -1!important;
+<style id="bb-kt586-home-profile-explicit-row">
+/* KT-586: legacy dashboard resets neutralize named grid areas on desktop.
+   Pin the pilot strip to the second grid row so it stays directly under the title. */
+#menu.home-dashboard.home-dashboard > #bbHomeProfile{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:2!important;
   width:100%!important;min-width:0!important;max-width:none!important;
   justify-self:stretch;align-self:stretch;box-sizing:border-box;
 }
