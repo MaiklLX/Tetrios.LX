@@ -185,27 +185,33 @@ const targets = [
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
-    // KT-570: the browser atlas follows Godot's compact 2-col / desktop 3-col grid.
-    const atlasGridState=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(viewport=>{
+    // KT-574: classic horizontal universe carousel with Godot's cosmic art direction.
+    const atlasCarouselState=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(viewport=>{
       const track=viewport.querySelector('.bb-galaxy-track');
       const cards=track?[...track.querySelectorAll('.bb-galaxy-card')]:[];
-      const columns=track?getComputedStyle(track).gridTemplateColumns.trim().split(/\s+/).length:0;
-      const compact=innerWidth<=480;
+      const first=cards[0],art=first?.querySelector('.bb-galaxy-art');
+      const rect=first?.getBoundingClientRect(),artRect=art?.getBoundingClientRect();
       return {
-        cardCount:cards.length,columns,expectedColumns:compact?2:3,
+        cardCount:cards.length,
         display:track?getComputedStyle(track).display:'',
-        verticalOverflow:viewport.scrollHeight>viewport.clientHeight,
+        flexDirection:track?getComputedStyle(track).flexDirection:'',
         horizontalOverflow:!!track&&track.scrollWidth>viewport.clientWidth+2,
-        cardHeight:cards[0]?Math.round(cards[0].getBoundingClientRect().height):0,
-        artVisible:!!cards[0]?.querySelector('.bb-galaxy-art')
+        verticalOverflow:viewport.scrollHeight>viewport.clientHeight+2,
+        overflowX:getComputedStyle(viewport).overflowX,
+        overflowY:getComputedStyle(viewport).overflowY,
+        cardWidth:rect?Math.round(rect.width):0,
+        cardHeight:rect?Math.round(rect.height):0,
+        artWidth:artRect?Math.round(artRect.width):0,
+        artVisible:!!art&&artRect.width>100
       };
     });
-    if(atlasGridState.cardCount!==12||atlasGridState.columns!==atlasGridState.expectedColumns||
-       atlasGridState.display!=='grid'||!atlasGridState.verticalOverflow||
-       atlasGridState.horizontalOverflow||!atlasGridState.artVisible||
-       (atlasGridState.expectedColumns===2&&atlasGridState.cardHeight>86)||
-       (atlasGridState.expectedColumns===3&&atlasGridState.cardHeight<150)){
-      failures.push(target.name+': KT-570 Godot atlas grid mismatch ('+JSON.stringify(atlasGridState)+')');
+    if(atlasCarouselState.cardCount!==12||atlasCarouselState.display!=='flex'||
+       atlasCarouselState.flexDirection!=='row'||!atlasCarouselState.horizontalOverflow||
+       atlasCarouselState.verticalOverflow||atlasCarouselState.overflowX!=='auto'||
+       atlasCarouselState.overflowY!=='hidden'||atlasCarouselState.cardWidth<210||
+       atlasCarouselState.cardHeight<290||atlasCarouselState.artWidth<150||
+       !atlasCarouselState.artVisible){
+      failures.push(target.name+': KT-574 horizontal Godot atlas carousel mismatch ('+JSON.stringify(atlasCarouselState)+')');
     }
     await campaignPage.waitForTimeout(3000);
     // KT-554: verify the browser reward shelf reproduces the 49-item Godot
