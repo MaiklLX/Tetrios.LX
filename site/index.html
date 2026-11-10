@@ -5404,7 +5404,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 <style id="bb-kt593-mobile-layout-unification">
 /* KT-593 — one mobile composition for phones and tablets; desktop stays wide-screen. */
-@media (max-width:900px) and (pointer:coarse){
+@media (max-width:1200px) and (pointer:coarse){
   .app{padding-left:max(10px,env(safe-area-inset-left))!important;padding-right:max(10px,env(safe-area-inset-right))!important;padding-top:max(10px,env(safe-area-inset-top))!important;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
   .topbar{width:100%;max-width:620px;margin:0 auto 8px!important}
   .screen{width:100%;max-width:620px;margin-inline:auto}
@@ -5427,15 +5427,14 @@ body:has(#menu:not([hidden])) .app > .topbar {
   #game .sidecol .boosticon{font-size:clamp(17px,4.5vw,21px)!important;margin:4px 0 2px!important}
   #game .sidecol .boostname{font-size:clamp(8px,2vw,9px)!important;overflow-wrap:anywhere!important}
   #game .sidecol .smallbtn{font-size:clamp(8px,2vw,9px)!important;padding:7px 2px!important}
-  #game .controls{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(5px,1.5vw,8px)!important;margin-top:7px!important}
+  #game .controls{display:none!important;visibility:hidden!important;pointer-events:none!important}
   #game .control{height:clamp(40px,10vw,48px)!important;min-width:0!important;border-radius:12px!important}
   #game .control.drop{font-size:clamp(10px,2.8vw,12px)!important}
   #game .hint{font-size:9px!important;margin-top:6px!important}
 }
-@media (max-width:900px) and (pointer:coarse) and (orientation:landscape){
+@media (max-width:1200px) and (pointer:coarse) and (orientation:landscape){
   #game .boardframe{height:clamp(170px,calc(100dvh - 210px),480px)!important}
   #game .gamehud{margin-bottom:4px!important}
-  #game .controls{margin-top:4px!important}
   #game .control{height:clamp(34px,7vh,42px)!important}
 }
 </style>
