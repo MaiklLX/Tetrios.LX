@@ -49,6 +49,10 @@ Do not let feature parity work displace the current visual-first priority. The K
 
 ## Work completed in this checkpoint
 
+9. KT-593.1 follow-up: expanded the shared coarse-pointer mobile breakpoint through 1200 CSS px so tablet-sized touch screens are included. Preserved the established gesture-first mobile arena by keeping the legacy bottom control deck hidden; the first KT-593 draft had overridden this and has been corrected. Commit: `0190848fe79f719060465642fe70f7414441ab1e`. Fresh browser screenshots and geometry report are still pending.
+
+## Work completed in this checkpoint
+
 8. KT-593 unifies the mobile composition for coarse-pointer devices up to 900 CSS px, covering phones and tablets: same three-column HUD, board-plus-side-rail structure, four-button control row, responsive side rail, safe-area padding, and consistent home-mode card sizing. Desktop pointer/large-screen composition is not targeted by this override. Implementation commit: `e8fa7d2dbebbf7a232dc60fdc7401326a019841a`. Fresh visual QA is pending.
 
 6. KT-592 added a shared grid-light texture to the home hero across desktop and mobile, tightened the same rounded card treatment, and improved desktop mode-card proportions (icon scale, typography, padding). Desktop may have its own wider composition; the mobile composition must remain consistent across all mobile devices. This is presentation-only; gameplay logic and mode behavior were not changed.
