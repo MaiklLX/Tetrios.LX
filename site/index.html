@@ -5315,15 +5315,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 /* KT-407.11: target the unique skill-card ID directly; the card is not reliably
    nested under #game in every runtime layout. */
 @media (max-width:520px) and (orientation:portrait){
-  #bbHeroSkillCard .bb-hero-skill-copy{display:none!important}
-  #bbHeroSkillCard{
-    display:flex!important;align-items:center!important;justify-content:center!important;
-    min-height:54px!important;height:54px!important;padding:5px!important;gap:0!important;
-  }
-  #bbHeroSkillCard .bb-hero-skill-art{
-    display:grid!important;place-items:center!important;flex:0 0 36px!important;width:36px!important;height:36px!important;
-  }
-  #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;right:5px!important;top:4px!important}
+  #bbHeroSkillCard .bb-hero-skill-copy{display:flex!important}
 }
 </style>
 
@@ -16464,36 +16456,106 @@ html body .app section#menu.screen .quest-item *{color:#f2fbff}
   }
 }
 </style>
-<style id="bb-kt597-hud-hold-polish">
-/* KT-597: friendlier preview, readable counters and explicit action affordances. */
-#game .gamehud{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 11px}
-#game .hudbox{position:relative;overflow:hidden;min-width:0;padding:9px 10px 10px;border:1px solid #6b9be6;background:linear-gradient(150deg,#eaf5ff 0%,#cfe4ff 58%,#b8d5ff 100%);border-radius:15px;box-shadow:0 4px 0 #7fa9e0,0 8px 18px #174b9a24;color:#17386e}
-#game .hudbox:after{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#69c9ff,#8c8bff,#ffc96e)}
-#game .hudbox span{font-size:9px;font-weight:900;letter-spacing:.1em;color:#496b9f}
-#game .hudbox strong{font-size:clamp(17px,4vw,22px);line-height:1.15;color:#17386e;text-shadow:0 1px #fff;font-weight:950}
-#game #next{width:100%;height:auto;max-width:100%;min-height:76px;margin:7px auto 0;border-radius:12px;background:linear-gradient(145deg,#f4fbff,#c9e5ff 58%,#b8d5ff);box-shadow:inset 0 1px 0 #fff,0 3px 0 #7fa9e0}
-#game .sidecard:has(#next){border-color:#8bb9ef;background:linear-gradient(145deg,#eaf5ff,#c5e0ff);color:#17386e;box-shadow:0 4px 0 #7fa9e0,0 8px 16px #174b9a1a}
-#game .sidecard:has(#next) label{color:#3e659c;font-weight:950}
-#game .hold-card{position:relative;border-color:#8bb9ef;background:linear-gradient(145deg,#f0f8ff,#d4e8ff);color:#17386e;box-shadow:0 4px 0 #7fa9e0,0 8px 16px #174b9a1a}
-#game .hold-card label{color:#3e659c}
-#game #holdPreview{display:block;width:100%;height:58px;margin:3px auto 0}
-#game .hold-empty{position:absolute;top:42px;left:0;right:0;text-align:center;color:#7692b8;font-size:9px;font-weight:900;letter-spacing:.14em;pointer-events:none}
-#game .hold-card .smallbtn{margin-top:2px;min-height:30px;background:linear-gradient(180deg,#3987ed,#1760c7)!important;border:1px solid #80baff!important;color:#fff!important;box-shadow:0 3px 0 #104a9b!important;font-size:9px;font-weight:950}
-#game .run-timer{margin-top:5px!important;font-size:11px!important;color:#5a78a4}
-#game #boostCard[hidden]{display:none!important}
-#bbHeroSkillCard{position:relative;min-height:58px;border:1px solid #91b8f0!important;border-radius:14px!important;background:linear-gradient(145deg,#f1f7ff,#c9ddff)!important;color:#234c89!important;box-shadow:0 4px 0 #83a9df,0 8px 16px #174b9a22!important}
-#bbHeroSkillCard:after{content:"АКТИВИРОВАТЬ";display:block;position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:7px;font-weight:1000;letter-spacing:.06em;color:#3865a0;pointer-events:none}
-#bbHeroSkillCard .bb-hero-skill-copy em{color:#3865a0!important}
+<style id="bb-kt598-arena-ui-system">
+/* One coherent arena HUD system shared by campaign, daily, classic and rogue. */
+#game .gamehud{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:8px!important;margin:0 0 11px!important;align-items:stretch;
+}
+#game .gamehud .hudbox{
+ min-width:0!important;min-height:62px;position:relative;overflow:hidden;
+ display:flex;flex-direction:column;justify-content:center;gap:4px;
+ padding:9px 11px!important;border:1px solid #a8cff2!important;border-radius:15px!important;
+ background:linear-gradient(145deg,#f8fcff 0%,#e2f1ff 58%,#d1e6ff 100%)!important;
+ box-shadow:0 3px 0 #a4c7e9,0 7px 15px #24588b18!important;color:#244c78!important;
+}
+#game .gamehud .hudbox:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#69caff,#568be9);opacity:.9}
+#game .gamehud .hudbox span{font-size:9px!important;line-height:1.1;letter-spacing:.09em!important;font-weight:900;color:#6284a8!important}
+#game .gamehud .hudbox strong{font-size:clamp(17px,3.8vw,22px)!important;line-height:1.05;margin:0!important;font-weight:950;color:#173e70!important;font-variant-numeric:tabular-nums;text-shadow:0 1px #fff}
+#game .gamehud .bb-coins-hud:before{background:linear-gradient(180deg,#ffd46d,#f3a83e)}
+#game .gamehud .bb-coins-hud strong{color:#98601b!important}
+#game .playlayout{align-items:start!important}
+#game .sidecol{min-width:0!important;gap:8px!important;align-content:start}
+#game .sidecol>.sidecard{
+ min-width:0!important;overflow:hidden;border:1px solid #a8cff2!important;border-radius:15px!important;
+ padding:9px 7px!important;text-align:center;
+ background:linear-gradient(150deg,#f7fbff 0%,#e5f2ff 60%,#d5e8ff 100%)!important;
+ color:#244c78!important;box-shadow:0 3px 0 #a4c7e9,0 7px 14px #24588b16!important;
+}
+#game .sidecol>.sidecard>label{display:block;color:#6284a8!important;font-size:8px!important;font-weight:950!important;letter-spacing:.1em!important;line-height:1.2}
+#game .sidecol .charge-card{background:linear-gradient(150deg,#f7fbff,#e5f2ff 60%,#d5e8ff)!important}
+#game .sidecol .charge-ring{margin:8px auto 6px}
+#game .sidecol .charge-caption{color:#6484a6}
+#game .sidecol #next{
+ display:block;width:100%;height:76px;max-width:100%;min-height:0;margin:7px auto 0;
+ border-radius:11px;background:linear-gradient(145deg,#ffffff,#e5f3ff 60%,#cfe5ff);
+ box-shadow:inset 0 1px 0 #fff,0 2px 0 #b4d2ef;
+}
+#game .sidecol .hold-card{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+#game .sidecol #holdPreview{
+ display:block;width:100%;height:58px;margin:1px auto 0;border-radius:10px;
+ background:linear-gradient(145deg,#fff,#e7f4ff);border:1px solid #c2ddf5;
+}
+#game .sidecol .hold-empty{position:static;display:block;margin:-39px 0 20px;color:#8aa7c5;font-size:8px;font-weight:950;letter-spacing:.15em;pointer-events:none}
+#game .sidecol .hold-empty[hidden]{display:none}
+#game .sidecol .hold-card .smallbtn{
+ width:100%;min-width:0;min-height:32px;margin:0!important;padding:6px 3px!important;
+ border:1px solid #75a9e3!important;border-radius:9px!important;
+ background:linear-gradient(180deg,#438fe9,#286acb)!important;color:#fff!important;
+ box-shadow:0 2px 0 #1e58a9!important;font-size:8px!important;font-weight:950!important;letter-spacing:.02em;
+}
+#game .sidecol .hold-card .smallbtn:disabled{opacity:.5}
+#game .sidecol .run-timer{margin:0!important;padding-top:3px;border-top:1px solid #c5ddf3;color:#6484a6;font-size:10px!important}
+#game .sidecol #boostCard[hidden],#game .sidecol .chrono-card[hidden]{display:none!important}
+#game #bbHeroSkillCard{
+ position:relative!important;display:grid!important;grid-template-columns:36px minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;align-items:center!important;column-gap:7px!important;row-gap:2px!important;
+ width:100%!important;min-width:0!important;min-height:76px!important;height:auto!important;
+ margin:0!important;padding:8px 7px 9px!important;overflow:hidden!important;
+ border:1px solid #a8cff2!important;border-radius:15px!important;
+ background:linear-gradient(150deg,#f7fbff,#e5f2ff 60%,#d5e8ff)!important;
+ color:#244c78!important;text-align:left!important;
+ box-shadow:0 3px 0 #a4c7e9,0 7px 14px #24588b16!important;
+}
+#game #bbHeroSkillCard:before{display:none!important}
+#game #bbHeroSkillCard .bb-hero-skill-art{
+ grid-column:1;grid-row:1/3;width:36px!important;height:36px!important;flex:none!important;
+ border:1px solid #b7d5f1!important;border-radius:11px!important;
+ background:linear-gradient(145deg,#fff,#d9edff)!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-art svg{width:31px!important;height:30px!important;filter:drop-shadow(0 2px 2px #32689b30)!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy{grid-column:2;grid-row:1/3;display:flex!important;min-width:0;gap:3px!important;flex-direction:column}
+#game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:8px!important;color:#315d8e!important;letter-spacing:.06em}
+#game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:8px!important;line-height:1.25;color:#54799f!important;white-space:normal}
+#game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:7px!important;color:#2872bd!important;line-height:1.2;letter-spacing:.03em}
+#game #bbHeroSkillCard .bb-hero-skill-pulse{position:absolute!important;top:5px;right:6px;font-size:10px;color:#e7a63b!important;text-shadow:none!important}
+#game #bbHeroSkillCard:after{content:"✦ СПОСОБНОСТЬ";grid-column:1/-1;grid-row:3;display:block;text-align:center;font-size:7px;font-weight:950;letter-spacing:.09em;color:#4778a8;line-height:1.1}
+#game #bbHeroSkillCard:disabled{opacity:.76!important}
+#game #bbHeroSkillCard:not(:disabled){border-color:#70b5e9!important;box-shadow:0 3px 0 #83b9e4,0 0 0 2px #b5e1ff!important}
 @media(max-width:520px){
- #game .gamehud{gap:5px;margin-bottom:7px}
- #game .hudbox{padding:7px 4px 8px;border-radius:11px}
- #game .hudbox span{font-size:7px;letter-spacing:.04em}
- #game .hudbox strong{font-size:clamp(14px,4vw,18px)}
- #game #next{min-height:68px}
- #game #holdPreview{height:48px}
- #game .hold-card .smallbtn{font-size:8px;padding:5px 2px}
- #bbHeroSkillCard{padding-bottom:17px!important;min-height:58px!important;height:58px!important}
- #bbHeroSkillCard:after{font-size:6px;bottom:3px}
+ #game .gamehud{gap:5px!important;margin-bottom:8px!important}
+ #game .gamehud .hudbox{min-height:54px;padding:7px 5px 7px 8px!important;border-radius:12px!important}
+ #game .gamehud .hudbox span{font-size:7px!important;letter-spacing:.04em!important}
+ #game .gamehud .hudbox strong{font-size:clamp(14px,4vw,18px)!important}
+ #game .sidecol{gap:6px!important}
+ #game .sidecol>.sidecard{padding:7px 5px!important;border-radius:12px!important}
+ #game .sidecol>.sidecard>label{font-size:7px!important}
+ #game .sidecol #next{height:65px}
+ #game .sidecol #holdPreview{height:48px}
+ #game .sidecol .hold-empty{margin-top:-34px;margin-bottom:17px;font-size:7px}
+ #game .sidecol .hold-card .smallbtn{min-height:29px;font-size:7px!important}
+ #game #bbHeroSkillCard{grid-template-columns:31px minmax(0,1fr)!important;min-height:70px!important;padding:6px 5px 8px!important;column-gap:5px!important;border-radius:12px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-art{width:31px!important;height:31px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-art svg{width:27px!important;height:27px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:7px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:7px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:6px!important}
+}
+@media(max-width:370px){
+ #game .gamehud{gap:4px!important}
+ #game .gamehud .hudbox{padding-left:6px!important}
+ #game .gamehud .hudbox span{font-size:6px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:6px!important}
 }
 </style>
 </body></html>
