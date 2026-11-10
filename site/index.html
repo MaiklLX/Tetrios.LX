@@ -5348,7 +5348,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
     <div class="modearrow">›</div>
   </button>
 
-  <button class="mode" style="--glow:#9d7cff;--iconbg:#9d7cff20" data-mode="rogue">
+  <button class="mode" style="--glow:#ff8b79;--iconbg:#ff8b791c" data-mode="rogue">
     <div class="modeicon" aria-hidden="true"><span class="tetromino-mark"><i></i><i></i><i></i><i></i></span></div>
     <div class="modetext">
       <div class="modetitle">Блок-ран</div>
@@ -9975,6 +9975,52 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 }
 </style>
 
+
+<style id="bb-kt577-godot-mode-cards">
+/* Home mode cards: Godot's blue glass panels with distinct cyan, coral and gold accents. */
+#home .modes{gap:12px!important}
+#home .mode{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  min-height:100px;padding:16px 17px!important;gap:15px!important;
+  border:1px solid color-mix(in srgb,var(--glow) 54%,#28466e)!important;border-radius:21px!important;
+  background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--glow) 20%,transparent),transparent 52%),linear-gradient(145deg,#173d6d 0%,#102b50 54%,#0b1b34 100%)!important;
+  box-shadow:inset 0 1px #ffffff1c,0 6px 0 #07152a,0 12px 25px #020a1888,0 0 22px color-mix(in srgb,var(--glow) 12%,transparent)!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#home .mode:before{
+  inset:0 auto 0 0!important;width:4px!important;opacity:.95!important;
+  background:linear-gradient(180deg,transparent,var(--glow),#ffffffaa,var(--glow),transparent)!important;
+}
+#home .mode:after{
+  content:"";position:absolute;z-index:-1;right:-35px;top:-54px;width:145px;height:145px;border:1px solid color-mix(in srgb,var(--glow) 35%,transparent);border-radius:50%;
+  box-shadow:0 0 0 12px color-mix(in srgb,var(--glow) 5%,transparent),0 0 0 27px color-mix(in srgb,var(--glow) 3%,transparent);pointer-events:none;
+}
+#home .mode:hover,#home .mode:focus-visible{
+  transform:translateY(-2px)!important;border-color:color-mix(in srgb,var(--glow) 90%,#ffffff)!important;
+  box-shadow:inset 0 1px #ffffff28,0 8px 0 #07152a,0 15px 30px #020a18aa,0 0 28px color-mix(in srgb,var(--glow) 22%,transparent)!important;
+}
+#home .mode:active{transform:translateY(3px)!important;box-shadow:inset 0 1px #ffffff18,0 2px 0 #07152a,0 6px 14px #020a1866!important}
+#home .modeicon{
+  position:relative;z-index:1;width:54px!important;height:54px!important;flex:0 0 54px!important;border-radius:17px!important;
+  border:1px solid color-mix(in srgb,var(--glow) 58%,#ffffff22)!important;
+  background:radial-gradient(circle at 30% 20%,color-mix(in srgb,var(--glow) 55%,#ffffff),color-mix(in srgb,var(--glow) 24%,#142b4a) 58%,#0a1a30)!important;
+  box-shadow:inset 0 1px #ffffff55,inset 0 -5px #06152b66,0 5px 14px #020a1866,0 0 18px color-mix(in srgb,var(--glow) 22%,transparent)!important;
+}
+#home .modetitle{color:#f7fbff!important;font-size:16px!important;font-weight:950!important;letter-spacing:-.025em!important;text-shadow:0 1px 0 #07182d}
+#home .modesub{color:#c4edff!important;font-size:11px!important;line-height:1.45!important}
+#home .tag{color:#fff0b9!important;background:linear-gradient(100deg,#8e6a2d66,#3e352766)!important;border:1px solid #e5c16a88!important;border-radius:7px!important}
+#home .modearrow{color:var(--glow)!important;font-size:28px!important;font-weight:900!important;text-shadow:0 0 14px color-mix(in srgb,var(--glow) 65%,transparent)}
+#home .mode:focus-visible{outline:2px solid #b9efff!important;outline-offset:4px!important}
+@media(max-width:520px){
+ #home .modes{gap:10px!important}
+ #home .mode{min-height:88px;padding:12px 13px!important;gap:11px!important;border-radius:17px!important}
+ #home .modeicon{width:46px!important;height:46px!important;flex-basis:46px!important;border-radius:14px!important;font-size:22px!important}
+ #home .modetitle{font-size:14px!important}
+ #home .modesub{font-size:10px!important}
+ #home .tag{font-size:7px!important;letter-spacing:.09em!important}
+}
+@media(prefers-reduced-motion:reduce){#home .mode{transition:none!important}#home .mode:hover{transform:none!important}}
+</style>
 <style id="bb-kt576-godot-pause-results">
 /* Godot visual language for gameplay overlays only; other dialogs keep their existing layouts. */
 #overlay.bb-godot-pause-overlay,#overlay.bb-godot-result-overlay{
