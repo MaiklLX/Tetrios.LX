@@ -249,12 +249,20 @@ const targets = [
     await campaignPage.waitForTimeout(900);
     await atlasViewport.evaluate(el=>{el.style.scrollSnapType='none';el.style.scrollBehavior='auto';el.scrollLeft=0;});
     const atlasBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
+    const waitForAtlasScrollSettle=()=>atlasViewport.evaluate(el=>new Promise(resolve=>{
+      let last=el.scrollLeft,stable=0,frames=0;
+      const tick=()=>{
+        frames++;
+        if(Math.abs(el.scrollLeft-last)<0.5)stable++;else stable=0;
+        last=el.scrollLeft;
+        if(stable>=8||frames>=180)resolve(el.scrollLeft);else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }));
     await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Следующая вселенная"]').click();
-    await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:3000});
-    const atlasAfterNext=await atlasViewport.evaluate(el=>el.scrollLeft);
+    const atlasAfterNext=await waitForAtlasScrollSettle();
     await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Предыдущая вселенная"]').click();
-    await campaignPage.waitForFunction(previous=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft<previous-8;},atlasAfterNext,{timeout:3000});
-    const atlasAfterPrevious=await atlasViewport.evaluate(el=>el.scrollLeft);
+    const atlasAfterPrevious=await waitForAtlasScrollSettle();
     if(atlasTouchAction!=='pan-x'||atlasAfterNext<=atlasBefore+8||atlasAfterPrevious>=atlasAfterNext-8){
       failures.push(target.name+': KT-574 horizontal swipe/arrow navigation mismatch ('+JSON.stringify({atlasTouchAction,atlasBefore,atlasAfterNext,atlasAfterPrevious})+')');
     }
