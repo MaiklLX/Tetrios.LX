@@ -274,6 +274,7 @@ const targets = [
         bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber),
         trackDisplay:track?getComputedStyle(track).display:null,
         nodePosition:nodes[0]?getComputedStyle(nodes[0]).position:null,
+        nodeSpread:(()=>{const xs=nodes.map(node=>node.getBoundingClientRect().left);return xs.length?Math.round(Math.max(...xs)-Math.min(...xs)):0})(),
         viewportOverflowY:viewport?getComputedStyle(viewport).overflowY:null,
         viewportClientHeight:viewport?.clientHeight||0,
         viewportScrollHeight:viewport?.scrollHeight||0,
@@ -282,10 +283,10 @@ const targets = [
         alignmentNode:viewport?.dataset.routeAlignNode||null,
         trackOffsetHeight:track?.offsetHeight||0,
         currentOffsetTop:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));return active?.offsetTop??null})(),
-        currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),height:Math.round(r.height)}})()
+        currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),left:Math.round(r.left),right:Math.round(r.right),height:Math.round(r.height)}})()
       };
     });
-    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbWidth<60||!routeState.headingOrbBackground.includes('radial-gradient')||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'){
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbWidth<60||!routeState.headingOrbBackground.includes('radial-gradient')||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientHeight*0.2){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
