@@ -15087,4 +15087,64 @@ button:not(.board):focus-visible{
 }
 </style>
 
+
+<style id="bb-kt572-godot-planet-route-header">
+/* KT-572: reproduce the large planet landmark and framed ascent panel from Godot. */
+#campaign .bb-planet-heading{
+  position:relative!important;isolation:isolate;box-sizing:border-box;
+  min-height:136px!important;padding:16px 126px 15px 16px!important;
+  justify-content:center!important;gap:6px!important;overflow:hidden!important;
+  border:1px solid color-mix(in srgb,var(--biome-color) 56%,#55ddff)!important;
+  border-left:3px solid var(--biome-color)!important;border-radius:19px!important;
+  background:
+    radial-gradient(ellipse at 88% 48%,color-mix(in srgb,var(--biome-color) 23%,transparent),transparent 42%),
+    linear-gradient(110deg,#102f68 0%,#10264d 66%,#09172f 100%)!important;
+  box-shadow:0 12px 28px #0005,inset 0 1px #ffffff16!important;
+}
+#campaign .bb-planet-heading::after{
+  content:"";position:absolute;z-index:-1;right:22px;top:50%;
+  width:88px;height:88px;transform:translateY(-50%);border-radius:50%;
+  background:
+    radial-gradient(circle at 29% 24%,#ffffff 0 1.5%,#bdeeff 3%,color-mix(in srgb,var(--biome-color) 88%,#ffffff) 12%,color-mix(in srgb,var(--biome-color) 72%,#123e91) 46%,#07152f 100%);
+  border:1px solid color-mix(in srgb,var(--biome-color) 72%,#c4edff);
+  box-shadow:inset -15px -17px 20px #020817aa,0 0 0 7px color-mix(in srgb,var(--biome-color) 12%,transparent),0 0 28px color-mix(in srgb,var(--biome-color) 48%,transparent);
+}
+#campaign .bb-planet-heading::before{
+  content:"";position:absolute;z-index:0;right:4px;top:50%;
+  width:126px;height:39px;transform:translateY(-50%) rotate(-23deg);
+  border:2px solid color-mix(in srgb,var(--biome-color) 74%,#d8f5ff);
+  border-radius:50%;box-shadow:0 0 13px color-mix(in srgb,var(--biome-color) 36%,transparent);
+  pointer-events:none;
+}
+#campaign .bb-planet-heading>*{position:relative;z-index:1}
+#campaign .bb-planet-heading .bb-planet-kicker{color:#8beaff!important;font-size:8px!important;letter-spacing:.18em!important}
+#campaign .bb-planet-heading strong{font-size:18px!important;line-height:1.12!important;color:#fff0b9!important;text-shadow:0 2px 9px #0008}
+#campaign .bb-planet-heading small{font-size:9px!important;line-height:1.35!important;color:#d7eaff!important}
+#campaign .bb-planet-heading>span:not(.bb-planet-kicker){font-size:8px!important;color:#c4edff!important}
+#campaign .bb-planet-heading .bb-atlas-status-legend{gap:5px!important;flex-wrap:wrap!important}
+#campaign .bb-planet-heading .bb-atlas-status-legend span{font-size:6px!important;letter-spacing:.04em!important}
+#campaign .bb-planet-viewport{
+  box-sizing:border-box!important;width:100%!important;margin:10px 0 0!important;
+  border:1px solid #55ddff66!important;border-radius:18px!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,#174b8033,transparent 60%),
+    linear-gradient(180deg,#0d2348,#08152e 72%,#0b1b39)!important;
+  box-shadow:0 12px 28px #0005,inset 0 1px #ffffff12!important;
+}
+#campaign .bb-planet-hint{
+  margin:8px 0 2px!important;text-align:center!important;
+  color:#8beaff!important;font-size:7px!important;letter-spacing:.12em!important;
+}
+@media(max-width:420px){
+  #campaign .bb-planet-heading{min-height:118px!important;padding:12px 98px 12px 12px!important;gap:5px!important}
+  #campaign .bb-planet-heading::after{right:15px;width:68px;height:68px}
+  #campaign .bb-planet-heading::before{right:0;width:100px;height:30px}
+  #campaign .bb-planet-heading strong{font-size:15px!important}
+  #campaign .bb-planet-heading small{font-size:8px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #campaign .bb-planet-heading::after,#campaign .bb-planet-heading::before{animation:none!important}
+}
+</style>
+
 </body></html>
