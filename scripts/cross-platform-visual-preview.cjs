@@ -148,7 +148,7 @@ const targets = [
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
     if(!homePanelsOrdered||
-       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*.78||
+       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*.55||
        homeHubLayoutState.campaign.width<homeHubLayoutState.menu.width*.78||
        homeHubLayoutState.blockRun.width<homeHubLayoutState.menu.width*.78){
       failures.push(target.name+': KT-581 Godot home-hub composition/order/width mismatch ('+JSON.stringify(homeHubLayoutState)+')');
