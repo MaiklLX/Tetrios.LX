@@ -15452,4 +15452,61 @@ button:not(.board):focus-visible{
   #game .bb-hero-skill-slot:before{animation:none!important}
 }
 </style>
+<style id="bb-kt580-godot-blue-palette">
+/* KT-580: carry the softer Godot KT-549 blue-glass palette into the browser arena.
+   Keep piece colors, gameplay state, geometry and reward semantics untouched. */
+:root{
+  --bg:#07152b;--panel:#0d2342;--panel2:#12315a;--cyan:#55ddff;
+  --violet:#82aaff;--gold:#ffd05a;--ink:#f4f8ff;--muted:#a9c8e3;--line:#315b86;
+}
+html,body{background:#07152b!important}
+.app{
+  background:radial-gradient(ellipse at 50% -12%,#1b5790 0,transparent 48%),
+    radial-gradient(ellipse at 8% 48%,#123a6533,transparent 42%),
+    linear-gradient(160deg,#07152b 0%,#0a1e39 56%,#071329 100%)!important;
+}
+.stars,.stars:before,.stars:after{
+  background-image:radial-gradient(1px 1px at 15% 25%,#c4edff 80%,transparent),
+    radial-gradient(1px 1px at 78% 18%,#fff 80%,transparent),
+    radial-gradient(2px 2px at 62% 72%,#8abaff 80%,transparent),
+    radial-gradient(1px 1px at 29% 84%,#fff 80%,transparent),
+    radial-gradient(1px 1px at 88% 56%,#55ddff 80%,transparent)!important;
+}
+#game .gamehud-top{
+  border-color:#37658f!important;background:linear-gradient(105deg,#12315a,#0c2445 56%,#142d50)!important;
+  box-shadow:inset 0 1px #ffffff16,0 7px 20px #020b1b66!important;
+}
+#game .gamehud-top .hudbox{
+  border-color:#477ba7!important;background:linear-gradient(150deg,#194477,#102d54 74%)!important;
+  box-shadow:inset 0 1px #ffffff20,0 4px 10px #020b1b55!important;
+}
+#game .gamehud-top .hudbox span{color:#b9d9f2!important}
+#game .gamehud-top .hudbox strong{color:#f5fbff!important}
+#game .boardframe{
+  border-color:#4eaaff!important;background:linear-gradient(145deg,#123c70,#0b2448 72%,#081b38)!important;
+  box-shadow:0 14px 42px #020b1c88,0 0 24px #4eaaff20,inset 0 1px #ffffff1c!important;
+}
+#game .boardframe:before{box-shadow:inset 0 0 22px #66cfff12,0 0 0 1px #9aeaff18!important}
+#game .board{background:#071b45!important;box-shadow:inset 0 0 22px #020d25aa,0 0 0 1px #174276!important}
+#game .sidecol .sidecard,#game #bbHeroSkillCard{
+  border-color:#35638f!important;
+  background:radial-gradient(ellipse at 50% 0%,#2d75ad24,transparent 68%),linear-gradient(145deg,#12345d,#0b2140 78%)!important;
+  box-shadow:inset 0 1px #ffffff16,0 6px 16px #020b1b66!important;
+}
+#game .sidecol .sidecard label,#game #bbHeroSkillCard .bb-hero-skill-copy small{color:#b9d9f2!important}
+#game .sidecol .charge-ring,#game .sidecol .chrono-ring{filter:drop-shadow(0 0 8px #55ddff22)}
+#game .sidecol .nextcanvas{filter:drop-shadow(0 2px 7px #55ddff22)}
+#game .sidecol .drop-card{border-color:#6a9dc0!important;background:linear-gradient(145deg,#183e66,#102b4c)!important}
+#game .sidecol .side-drop{
+  border:1px solid #ffe09a!important;background:linear-gradient(145deg,#d58a31,#a95e20)!important;
+  box-shadow:inset 0 1px #fff2c8aa,0 4px 12px #020b1b66!important;
+}
+#game #campaignGoals,#game #rogueGoals{
+  border-color:#37658f!important;background:linear-gradient(145deg,#102e55,#0b2140)!important;
+  box-shadow:inset 0 1px #ffffff12,0 6px 16px #020b1b55!important;
+}
+#game #campaignGoals>strong,#game #rogueGoals>strong{color:#d9f4ff!important}
+#game #campaignGoals>div,#game #rogueGoals>div{color:#d9edff!important}
+@media(prefers-reduced-motion:reduce){.stars,.stars:before,.stars:after{animation:none!important}}
+</style>
 </body></html>
