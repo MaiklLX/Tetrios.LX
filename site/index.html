@@ -5926,6 +5926,8 @@ function bbOpenCardLibrary(){
   document.querySelectorAll('[data-bb-lib-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbLibFilter)));
   $('bbCloseCardLibrary').onclick=closeOverlay;
 }
+$('bbOpenCardLibrary').onclick=()=>{try{bbOpenCardLibrary()}catch(error){console.error('Upgrade library failed:',error);toast('Не удалось открыть библиотеку. Попробуй ещё раз.')}};
+
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
@@ -16864,6 +16866,18 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
 .bb-library-footer button{min-height:38px;padding:0 15px;border:0;border-radius:9px;background:#31576a;color:#fff4dc;font-size:9px;font-weight:1000;letter-spacing:.06em}
 @media(max-width:560px){#modal.bb-upgrade-library-modal{width:96vw;max-height:92dvh;border-width:2px;border-radius:16px}#modal.bb-upgrade-library-modal .bb-upgrade-library{max-height:92dvh}.bb-library-heading{padding:14px 13px 11px}.bb-library-title-row h3{font-size:20px}.bb-library-title-row p{font-size:10px}.bb-library-seal{width:40px;height:40px;flex-basis:40px;font-size:22px}.bb-library-summary{gap:5px;margin-top:10px}.bb-library-summary span{padding:5px 6px;font-size:7px}.bb-library-filters{justify-content:flex-start;padding:9px 9px 8px}.bb-library-filters button{flex:0 0 auto;min-height:33px;padding:6px 8px;font-size:7px}.bb-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:9px}.bb-library-card{min-height:178px;padding:9px 7px}.bb-library-card>strong{font-size:11px}.bb-library-card>p{font-size:8px}.bb-library-effect{font-size:8px}.bb-library-footer{padding:9px}.bb-library-footer>span{font-size:7px;max-width:55%}.bb-library-footer button{padding:0 11px;font-size:8px}}
 @media(max-width:360px){.bb-library-grid{gap:6px;padding:7px}.bb-library-card{min-height:172px;padding:8px 6px}.bb-library-category{font-size:6px}}
+</style>
+
+
+<style id="bb-kt607-menu-background-and-library-fix">
+/* KT-607: remove the old cosmic page backdrop from the home/loading surface. */
+html,body{background:#b9def8!important;background-image:none!important;background-color:#b9def8!important}
+body .app{
+ background:linear-gradient(180deg,#d9f1ff 0%,#c1e3fb 52%,#a8d3f3 100%)!important;
+ background-image:linear-gradient(180deg,#d9f1ff 0%,#c1e3fb 52%,#a8d3f3 100%)!important;
+}
+.stars,.stars:before,.stars:after{display:none!important;opacity:0!important;background-image:none!important;animation:none!important}
+#menu:not([hidden]){background:transparent!important;background-image:none!important}
 </style>
 
 </body></html>
