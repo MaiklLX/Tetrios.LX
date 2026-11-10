@@ -219,6 +219,16 @@ const targets = [
     if (!libraryHeading.includes('Все карты относятся к рогалик-системе и работают только в режиме Block Run')) {
       failures.push(target.name + ': Block Run-only archive scope is not explained in the library');
     }
+    const libraryLayout = await page.locator('#modal.bb-upgrade-library-modal').evaluate(modal => {
+      const grid=modal.querySelector('.bb-library-grid'),cards=[...modal.querySelectorAll('.bb-library-card')];
+      const r=grid?.getBoundingClientRect(),first=cards[0]?.getBoundingClientRect(),styles=grid?getComputedStyle(grid):null;
+      return {visible:!!r&&r.width>0&&r.height>0,columns:styles?.gridTemplateColumns||'',scrollable:!!grid&&grid.scrollHeight>=grid.clientHeight,cardCount:cards.length,cardWidth:first?.width||0,cardHeight:first?.height||0};
+    });
+    if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.scrollable){
+      failures.push(target.name+': library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
+    }
+    const pageBackdrop=await page.locator('body .app').evaluate(el=>getComputedStyle(el).backgroundImage);
+    if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')) failures.push(target.name+': friendly page backdrop is missing ('+pageBackdrop+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-lib-filter="all"]').click();
     const allFilteredCards = await page.locator('#bbCardLibraryList article').count();
@@ -795,11 +805,11 @@ const targets = [
         hold: rect(hold),
         goals: rect(goals),
         playlayout: rect(playlayout),
-        frameRatio: frame ? frame.getBoundingClientRect().width / frame.getBoundingClientRect().height : 0
+        playfieldRatio: (() => { const board=document.querySelector('#game #board'),r=board?.getBoundingClientRect(); return r&&r.height>0?r.width/r.height:0; })()
       };
     });
 
-    const ratio = geometry.frameRatio;
+    const ratio = geometry.playfieldRatio;
     if (!geometry.frame || ratio < 0.42 || ratio > 0.45) {
       failures.push(target.name + ': arena frame ratio is outside the 10:23 tolerance (' + ratio + ')');
     }
