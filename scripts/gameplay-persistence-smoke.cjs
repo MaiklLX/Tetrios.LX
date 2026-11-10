@@ -50,6 +50,7 @@ const { chromium } = require('playwright');
     if (!gamesBefore || !gamesAfter || gamesAfter.progress !== Math.min(gamesBefore.target, gamesBefore.progress + 1)) {
       throw new Error('Completed game did not advance the daily games quest: ' + JSON.stringify({before:result.beforeQuests,after:result.afterQuests}));
     }
+    if (result.dailyRecordedBefore !== false) throw new Error('New run retained a stale daily-completion guard: ' + JSON.stringify(result));
     if (!result.gameOver) throw new Error('Real endGame() did not set gameOver');
     if (result.after.runs !== result.before.runs + 1) {
       throw new Error('Run counter did not increment: ' + JSON.stringify(result));
