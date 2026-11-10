@@ -16096,4 +16096,66 @@ html,body{background:#174f9d!important;color:#fffdf5!important}
 }
 </style>
 
+
+<!-- KT-589.3: high-specificity polish for legacy arena and generated mission panels -->
+<style id="bb-kt589-arena-specificity-polish">
+html body .app section#game.screen .playlayout > div .boardframe{
+ background:linear-gradient(145deg,#4b9bd7,#2c6cb0)!important;
+ border:2px solid #a5efff!important;
+ box-shadow:0 6px 0 #17477e,0 0 22px #a6eaff44!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard{
+ background:linear-gradient(145deg,#438fd0,#2d6eb4)!important;
+ border:1.5px solid #9be7ff!important;
+ color:#fff!important;
+ box-shadow:0 4px 0 #17477e,inset 0 1px #ffffff66!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard label{
+ color:#e8f8ff!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boostname,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boostnum,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .chrono-caption{
+ color:#fff!important;
+}
+html body .app section#game.screen .gamehud > .hudbox{
+ background:linear-gradient(145deg,#438fd0,#2d6eb4)!important;
+ border:1px solid #9be7ff!important;
+ color:#fff!important;
+ box-shadow:0 3px 0 #17477e!important;
+}
+html body .app section#game.screen .gamehud > .hudbox span{color:#e1f5ff!important}
+html body .app section#game.screen .gamehud > .hudbox strong{color:#fff!important}
+html body .app section#game.screen #rogueGoals{
+ background:linear-gradient(145deg,#438bc9,#285f9f)!important;
+ border:1.5px solid #a0eaff!important;
+ color:#fff!important;
+ box-shadow:0 5px 0 #17477e!important;
+}
+html body .app section#game.screen #rogueGoals strong,
+html body .app section#game.screen #rogueGoals span{color:#fff!important}
+html body .app section#game.screen .bb-hero-skill-slot{
+ background:linear-gradient(145deg,#8c79d1,#6653aa)!important;
+ border:1.5px solid #d4c6ff!important;
+ color:#fff!important;
+ box-shadow:0 4px 0 #3b347d!important;
+}
+html body .app section#game.screen .smallbtn{
+ background:linear-gradient(145deg,#75bce9,#3e85c5)!important;
+ border:1px solid #c0efff!important;color:#fff!important;
+ box-shadow:0 3px 0 #17477e!important;
+}
+html body .app section#menu.screen .daily-quest,
+html body .app section#menu.screen .daily-task,
+html body .app section#menu.screen .quest-card,
+html body .app section#menu.screen .quest-item{
+ background:linear-gradient(145deg,#3b82c4,#285f9f)!important;
+ border-color:#8edfff!important;color:#fff!important;
+}
+html body .app section#menu.screen .daily-quest *,
+html body .app section#menu.screen .daily-task *,
+html body .app section#menu.screen .quest-card *,
+html body .app section#menu.screen .quest-item *{color:#f2fbff}
+</style>
+
 </body></html>
