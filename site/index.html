@@ -9881,6 +9881,7 @@ if (resetProgressBtn) {
           catch{return []}
         };
         const beforeQuests=readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)}));
+        const dailyRecordedBefore=bbDailyRecordedThisGame;
         const before={
           runs:readNumber('nrRuns'),
           coins:readNumber('bb_coins'),
@@ -9890,6 +9891,7 @@ if (resetProgressBtn) {
         return {
           before,
           beforeQuests,
+          dailyRecordedBefore,
           afterQuests:readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)})),
           after:{
             runs:readNumber('nrRuns'),
