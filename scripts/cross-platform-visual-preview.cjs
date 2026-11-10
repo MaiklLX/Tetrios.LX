@@ -228,11 +228,20 @@ const targets = [
       failures.push(target.name+': library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
     }
     const pageBackdrop=await page.locator('body .app').evaluate(el=>getComputedStyle(el).backgroundImage);
-    if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')) failures.push(target.name+': friendly page backdrop is missing ('+pageBackdrop+')');
+    const pageSurface=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
+    if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': friendly teal page backdrop is missing or washed out ('+JSON.stringify({pageBackdrop,pageSurface})+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-lib-filter="all"]').click();
     const allFilteredCards = await page.locator('#bbCardLibraryList article').count();
     if (allFilteredCards !== 35) failures.push(target.name + ': the All category must retain all 35 cards, got ' + allFilteredCards);
+    const categoryCounts={};
+    for (const [filter,expected] of [['attack',12],['defense',7],['control',11],['anomaly',5]]) {
+      await page.locator('[data-bb-lib-filter="'+filter+'"]').click();
+      const count=await page.locator('#bbCardLibraryList article').count();
+      categoryCounts[filter]=count;
+      if(count!==expected) failures.push(target.name+': '+filter+' archive should contain '+expected+' unique cards, got '+count);
+    }
+    await page.locator('[data-bb-lib-filter="all"]').click();
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library-all.png', fullPage: false });
     if (await page.locator('[data-bb-card-filter="standard"], [data-bb-lib-filter="standard"]').count() !== 0) {
       failures.push(target.name + ': shared/standard card filter must not exist');
