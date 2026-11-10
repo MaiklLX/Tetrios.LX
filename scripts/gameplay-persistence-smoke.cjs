@@ -16,6 +16,27 @@ const { chromium } = require('playwright');
       waitUntil: 'domcontentloaded',
       timeout: 30000
     });
+    // Simulate an older same-day save that contains only the lines quest.
+    // The loader must restore score + games without wiping existing line progress.
+    const migration = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('bbDailyQuests') || 'null');
+      if (!saved?.date || !Array.isArray(saved.quests)) throw new Error('Daily quest seed is missing');
+      const lines = saved.quests.find(q => q.id === 'lines');
+      if (!lines) throw new Error('Daily lines quest is missing before migration test');
+      lines.progress = Math.min(lines.target, 2);
+      localStorage.setItem('bbDailyQuests', JSON.stringify({ date: saved.date, quests: [lines] }));
+      return { date: saved.date, progress: lines.progress };
+    });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    const migrated = await page.evaluate(() => JSON.parse(localStorage.getItem('bbDailyQuests') || 'null'));
+    const migratedIds = (migrated?.quests || []).map(q => q.id).sort();
+    if (JSON.stringify(migratedIds) !== JSON.stringify(['games','lines','score'])) {
+      throw new Error('Legacy daily quest save was not repaired: ' + JSON.stringify(migrated));
+    }
+    if (migrated.quests.find(q => q.id === 'lines')?.progress !== migration.progress) {
+      throw new Error('Legacy line progress was not preserved: ' + JSON.stringify(migrated));
+    }
+
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible' });
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible' });
@@ -77,7 +98,7 @@ const { chromium } = require('playwright');
     }
     if (pageErrors.length) throw new Error('Page errors: ' + pageErrors.join(' | '));
 
-    console.log('KT-619 DAILY SCORE + GAMEPLAY PERSISTENCE SMOKE PASSED');
+    console.log('KT-622 DAILY QUEST MIGRATION + SCORE + GAMEPLAY PERSISTENCE SMOKE PASSED');
     console.log(JSON.stringify({ dailyProgress, scoreProgress, result, persisted, pageErrors }, null, 2));
   } finally {
     await context.close();
