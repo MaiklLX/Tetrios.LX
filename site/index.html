@@ -5338,6 +5338,108 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <link rel="stylesheet" href="./kt417-mobile-landscape-arena.css?v=20261106-kt417-v1">
 
 
+<style id="bb-kt592-shared-home-surface-polish">
+/* KT-592 — unify the home-screen hero texture and desktop card rhythm.
+   Responsive composition may change, but the visual materials stay shared. */
+#menu .hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background-image:
+    linear-gradient(rgba(190,239,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(190,239,255,.055) 1px,transparent 1px),
+    radial-gradient(ellipse at 50% 100%,#b5a4ff55,transparent 58%),
+    linear-gradient(145deg,#438fd1,#2864ad 70%)!important;
+  background-size:28px 28px,28px 28px,auto,auto!important;
+  background-position:center center!important;
+}
+#menu .hero:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  background:radial-gradient(circle at 50% 45%,#8deaff18,transparent 58%)!important;
+}
+#menu .hero h1,
+#menu .hero p,
+#menu .hero .orb,
+#menu .hero .relic{position:relative;z-index:1}
+#menu .mode{
+  border-radius:22px!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#menu .mode:focus-visible,
+#menu .iconbtn:focus-visible,
+#menu .back:focus-visible{
+  outline:3px solid #fff0b9!important;
+  outline-offset:3px!important;
+}
+@media(min-width:900px){
+  #menu .hero{
+    min-height:180px!important;
+    padding:30px 26px 26px!important;
+  }
+  #menu .mode{
+    min-height:112px!important;
+    padding:18px 20px!important;
+  }
+  #menu .modeicon{
+    width:56px!important;height:56px!important;
+    border-radius:17px!important;font-size:27px!important;
+  }
+  #menu .modetitle{font-size:18px!important}
+  #menu .modesub{font-size:12px!important;line-height:1.45!important}
+  #menu .tag{font-size:9px!important;padding:4px 8px!important}
+  #menu .sectionlabel{font-size:12px!important;margin:14px 2px 14px!important}
+}
+@media(max-width:520px){
+  #menu .hero{
+    background-size:24px 24px,24px 24px,auto,auto!important;
+  }
+  #menu .mode{border-radius:22px!important}
+}
+</style>
+
+
+<style id="bb-kt593-mobile-layout-unification">
+/* KT-593 — one mobile composition for phones and tablets; desktop stays wide-screen. */
+@media (max-width:900px) and (pointer:coarse){
+  .app{padding-left:max(10px,env(safe-area-inset-left))!important;padding-right:max(10px,env(safe-area-inset-right))!important;padding-top:max(10px,env(safe-area-inset-top))!important;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
+  .topbar{width:100%;max-width:620px;margin:0 auto 8px!important}
+  .screen{width:100%;max-width:620px;margin-inline:auto}
+  #menu .hero{padding:clamp(14px,3.5vw,22px) 12px!important}
+  #menu .mode{min-height:76px!important;padding:clamp(11px,2.5vw,15px)!important;gap:clamp(10px,2.4vw,14px)!important;border-radius:20px!important}
+  #menu .modeicon{width:clamp(44px,11vw,50px)!important;height:clamp(44px,11vw,50px)!important;flex:0 0 auto!important;border-radius:15px!important;font-size:23px!important}
+  #menu .modetitle{font-size:clamp(14px,3.8vw,16px)!important}
+  #menu .modesub{font-size:clamp(10px,2.8vw,11px)!important}
+  #game .screenhead{margin:2px 0 8px!important}
+  #game .gamehud{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:clamp(5px,1.5vw,8px)!important;margin-bottom:7px!important}
+  #game .gamehud .hudbox{min-width:0!important;padding:clamp(6px,1.8vw,9px)!important;border-radius:12px!important}
+  #game .gamehud .hudbox span{font-size:clamp(8px,2vw,9px)!important;white-space:nowrap!important}
+  #game .gamehud .hudbox strong{font-size:clamp(15px,4vw,19px)!important}
+  #game .playlayout{display:grid!important;grid-template-columns:minmax(0,1fr) clamp(76px,18vw,96px)!important;gap:clamp(6px,1.8vw,10px)!important;align-items:start!important}
+  #game .boardframe{height:clamp(190px,calc(100dvh - 370px),620px)!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:4px!important;overflow:hidden!important;border-radius:15px!important}
+  #game .board{width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:1/2!important;object-fit:contain!important;flex:0 1 auto!important}
+  #game .sidecol{display:grid!important;gap:clamp(5px,1.5vw,8px)!important;min-width:0!important}
+  #game .sidecol .sidecard{min-width:0!important;padding:clamp(5px,1.5vw,8px) 4px!important;border-radius:12px!important}
+  #game .sidecol .sidecard label{font-size:clamp(7px,1.8vw,8px)!important;letter-spacing:.04em!important}
+  #game .sidecol .boosticon{font-size:clamp(17px,4.5vw,21px)!important;margin:4px 0 2px!important}
+  #game .sidecol .boostname{font-size:clamp(8px,2vw,9px)!important;overflow-wrap:anywhere!important}
+  #game .sidecol .smallbtn{font-size:clamp(8px,2vw,9px)!important;padding:7px 2px!important}
+  #game .controls{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:clamp(5px,1.5vw,8px)!important;margin-top:7px!important}
+  #game .control{height:clamp(40px,10vw,48px)!important;min-width:0!important;border-radius:12px!important}
+  #game .control.drop{font-size:clamp(10px,2.8vw,12px)!important}
+  #game .hint{font-size:9px!important;margin-top:6px!important}
+}
+@media (max-width:900px) and (pointer:coarse) and (orientation:landscape){
+  #game .boardframe{height:clamp(170px,calc(100dvh - 210px),480px)!important}
+  #game .gamehud{margin-bottom:4px!important}
+  #game .controls{margin-top:4px!important}
+  #game .control{height:clamp(34px,7vh,42px)!important}
+}
+</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -16199,67 +16301,3 @@ html body .app section#menu.screen .quest-item *{color:#f2fbff}
 }
 </style>
 </body></html>
-
-
-<style id="bb-kt592-shared-home-surface-polish">
-/* KT-592 — unify the home-screen hero texture and desktop card rhythm.
-   Responsive composition may change, but the visual materials stay shared. */
-#menu .hero{
-  position:relative!important;
-  isolation:isolate!important;
-  overflow:hidden!important;
-  background-image:
-    linear-gradient(rgba(190,239,255,.055) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(190,239,255,.055) 1px,transparent 1px),
-    radial-gradient(ellipse at 50% 100%,#b5a4ff55,transparent 58%),
-    linear-gradient(145deg,#438fd1,#2864ad 70%)!important;
-  background-size:28px 28px,28px 28px,auto,auto!important;
-  background-position:center center!important;
-}
-#menu .hero:before{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  z-index:-1!important;
-  pointer-events:none!important;
-  background:radial-gradient(circle at 50% 45%,#8deaff18,transparent 58%)!important;
-}
-#menu .hero h1,
-#menu .hero p,
-#menu .hero .orb,
-#menu .hero .relic{position:relative;z-index:1}
-#menu .mode{
-  border-radius:22px!important;
-  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
-}
-#menu .mode:focus-visible,
-#menu .iconbtn:focus-visible,
-#menu .back:focus-visible{
-  outline:3px solid #fff0b9!important;
-  outline-offset:3px!important;
-}
-@media(min-width:900px){
-  #menu .hero{
-    min-height:180px!important;
-    padding:30px 26px 26px!important;
-  }
-  #menu .mode{
-    min-height:112px!important;
-    padding:18px 20px!important;
-  }
-  #menu .modeicon{
-    width:56px!important;height:56px!important;
-    border-radius:17px!important;font-size:27px!important;
-  }
-  #menu .modetitle{font-size:18px!important}
-  #menu .modesub{font-size:12px!important;line-height:1.45!important}
-  #menu .tag{font-size:9px!important;padding:4px 8px!important}
-  #menu .sectionlabel{font-size:12px!important;margin:14px 2px 14px!important}
-}
-@media(max-width:520px){
-  #menu .hero{
-    background-size:24px 24px,24px 24px,auto,auto!important;
-  }
-  #menu .mode{border-radius:22px!important}
-}
-</style>
