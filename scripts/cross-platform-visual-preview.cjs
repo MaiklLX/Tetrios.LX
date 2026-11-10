@@ -214,13 +214,17 @@ const targets = [
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
-    // All 35 cards now belong exclusively to the Block Run roguelike system.
+    // The live archive uses thematic category tabs; every card is Block Run-only.
+    const libraryHeading = await page.locator('.bb-library-heading').innerText();
+    if (!libraryHeading.includes('Все карты относятся к рогалик-системе и работают только в режиме Block Run')) {
+      failures.push(target.name + ': Block Run-only archive scope is not explained in the library');
+    }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
-    await page.locator('[data-bb-card-filter="rogue"]').click();
-    const rogueCards = await page.locator('#bbCardLibraryList article').count();
-    if (rogueCards !== 35) failures.push(target.name + ': expected all 35 cards to be Block Run-only, got ' + rogueCards);
-    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library-block-run.png', fullPage: false });
-    if (await page.locator('[data-bb-card-filter="standard"]').count() !== 0) {
+    await page.locator('[data-bb-lib-filter="all"]').click();
+    const allFilteredCards = await page.locator('#bbCardLibraryList article').count();
+    if (allFilteredCards !== 35) failures.push(target.name + ': the All category must retain all 35 cards, got ' + allFilteredCards);
+    await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library-all.png', fullPage: false });
+    if (await page.locator('[data-bb-card-filter="standard"], [data-bb-lib-filter="standard"]').count() !== 0) {
       failures.push(target.name + ': shared/standard card filter must not exist');
     }
     await page.locator('#bbCloseCardLibrary').click();
