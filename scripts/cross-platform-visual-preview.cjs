@@ -102,6 +102,31 @@ const targets = [
        !pilotProfileState.hasLevel||!pilotProfileState.walletMatches){
       failures.push(target.name+': KT-571 live Buddy pilot profile mismatch ('+JSON.stringify(pilotProfileState)+')');
     }
+    const modeCardVisualState=await page.evaluate(()=>{
+      const cards=[...document.querySelectorAll('#menu .modes .mode')];
+      return {
+        count:cards.length,
+        cards:cards.map(card=>{
+          const style=getComputedStyle(card),icon=card.querySelector('.modeicon');
+          const iconStyle=icon?getComputedStyle(icon):null;
+          return {
+            radius:parseFloat(style.borderTopLeftRadius)||0,
+            borderWidth:parseFloat(style.borderTopWidth)||0,
+            background:style.backgroundImage||'',
+            accent:style.getPropertyValue('--glow').trim(),
+            iconWidth:icon?.getBoundingClientRect().width||0,
+            iconBorder:iconStyle?.borderTopColor||'',
+            titleColor:getComputedStyle(card.querySelector('.modetitle')).color
+          };
+        })
+      };
+    });
+    if(modeCardVisualState.count!==3||modeCardVisualState.cards.some(card=>
+      card.radius<16||card.borderWidth<1||!card.background.includes('radial-gradient')||
+      !card.background.includes('linear-gradient')||!card.accent||card.iconWidth<40||
+      card.iconBorder==='rgba(0, 0, 0, 0)')){
+      failures.push(target.name+': KT-577 Godot home mode-card styling mismatch ('+JSON.stringify(modeCardVisualState)+')');
+    }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
     // KT-418: landscape phone view is intentionally blocked before the menu
