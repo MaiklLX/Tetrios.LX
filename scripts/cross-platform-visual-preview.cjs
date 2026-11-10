@@ -334,6 +334,43 @@ const targets = [
       }
     }
 
+    // KT-429: exercise the visible pause, resume, Hold and Drop controls on every playable viewport.
+    const controlState = await page.evaluate(() => {
+      const qa = window.__TETRIOS_QA__;
+      const prepared = qa?.prepareGestureTest?.();
+      const before = qa?.getPieceState?.();
+      if (!prepared?.ready || !before?.piece) return { supported:false, reason:'deterministic piece unavailable' };
+      const hold = document.querySelector('#holdBtn');
+      const pause = document.querySelector('#pauseBtn');
+      const drop = document.querySelector('#game .side-drop');
+      if (!hold || !pause || !drop) return { supported:false, reason:'one or more visible controls missing' };
+      hold.click();
+      const afterHold = qa.getPieceState();
+      pause.click();
+      const afterPause = qa.getPieceState();
+      const resume = document.querySelector('#resume');
+      const resumeVisible = !!resume && getComputedStyle(resume).display !== 'none';
+      resume?.click();
+      const afterResume = qa.getPieceState();
+      drop.click();
+      const afterDrop = qa.getPieceState();
+      return {
+        supported:true,
+        held:!!afterHold?.piece && JSON.stringify(afterHold.piece)!==JSON.stringify(before.piece),
+        paused:!!afterPause?.paused && !!afterPause?.started,
+        resumeVisible,
+        resumed:!!afterResume?.started && !afterResume?.paused && !afterResume?.gameOver,
+        dropAccepted:!!afterDrop?.started && !afterDrop?.paused && !afterDrop?.gameOver,
+        dropPerformed:!!afterDrop?.piece && JSON.stringify(afterDrop.piece)!==JSON.stringify(afterResume?.piece),
+        holdRect:(()=>{const r=hold.getBoundingClientRect();return {width:r.width,height:r.height}})(),
+        dropRect:(()=>{const r=drop.getBoundingClientRect();return {width:r.width,height:r.height}})()
+      };
+    });
+    if (!controlState.supported || !controlState.held || !controlState.paused ||
+        !controlState.resumeVisible || !controlState.resumed || !controlState.dropAccepted || !controlState.dropPerformed) {
+      failures.push(target.name + ': visible arena control interaction failed (' + JSON.stringify(controlState) + ')');
+    }
+
     const visualBoostState = await page.evaluate(() => window.__TETRIOS_QA__?.activatePrismAura?.() || null);
     if (!visualBoostState || !visualBoostState.activePiece || !visualBoostState.boosts.includes('prism') || !visualBoostState.auraOwned) {
       failures.push(target.name + ': Prism/Aura QA activation failed (' + JSON.stringify(visualBoostState) + ')');
@@ -362,6 +399,11 @@ const targets = [
       };
       const frame = document.querySelector('#game .boardframe');
       const side = document.querySelector('#game .sidecol');
+      const sideMetrics = side ? {
+        naturalHeight: side.offsetHeight,
+        scaleY: getComputedStyle(side).getPropertyValue('--bb-side-scale-y').trim(),
+        transform: getComputedStyle(side).transform
+      } : null;
       const drop = document.querySelector('#game .side-drop');
       const hold = document.querySelector('#game #holdBtn');
       const goals = document.querySelector('#game #rogueGoals');
@@ -382,6 +424,7 @@ const targets = [
         controlVisibility: controlRow ? {display:getComputedStyle(controlRow).display,visibility:getComputedStyle(controlRow).visibility,pointerEvents:getComputedStyle(controlRow).pointerEvents,buttons:Array.from(controlRow.querySelectorAll('.control')).map(node=>rect(node))} : null,
         hint: rect(hint),
         side: rect(side),
+        sideMetrics,
         gameGrid: game ? { gridTemplateRows: getComputedStyle(game).gridTemplateRows, gridTemplateColumns: getComputedStyle(game).gridTemplateColumns, rowGap: getComputedStyle(game).rowGap } : null,
         sideScroll: side ? {
           overflowY: getComputedStyle(side).overflowY,
@@ -436,6 +479,23 @@ const targets = [
     const ratio = geometry.frameRatio;
     if (!geometry.frame || ratio < 0.42 || ratio > 0.45) {
       failures.push(target.name + ': arena frame ratio is outside the 10:23 tolerance (' + ratio + ')');
+    }
+    // KT-427.6: protect the measured 375x812 side-rail/frame alignment in the
+    // full application preview, not only in the lightweight mobile fixture.
+    if (target.name === 'ios-webkit-375x812' && geometry.frame && geometry.side) {
+      const heightDelta = Math.abs(geometry.side.height - geometry.frame.height);
+      const frameCenter = geometry.frame.y + geometry.frame.height / 2;
+      const sideCenter = geometry.side.y + geometry.side.height / 2;
+      const centerDelta = Math.abs(sideCenter - frameCenter);
+      if (heightDelta > 2 || centerDelta > 2) {
+        failures.push(target.name + ': side rail must align with the arena frame (height delta ' +
+          heightDelta.toFixed(2) + 'px, center delta ' + centerDelta.toFixed(2) +
+          'px; natural height ' + (geometry.sideMetrics?.naturalHeight ?? 'n/a') +
+          'px; measured scale ' + (geometry.sideMetrics?.scaleY || 'missing') + ')');
+      }
+      if (!geometry.sideMetrics?.scaleY) {
+        failures.push(target.name + ': 375x812 rail did not receive an explicit measured scale');
+      }
     }
     if (geometry.document.width > target.width + 2) {
       failures.push(target.name + ': horizontal document overflow (' + geometry.document.width + 'px)');
