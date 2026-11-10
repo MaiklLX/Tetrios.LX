@@ -16199,3 +16199,67 @@ html body .app section#menu.screen .quest-item *{color:#f2fbff}
 }
 </style>
 </body></html>
+
+
+<style id="bb-kt592-shared-home-surface-polish">
+/* KT-592 — unify the home-screen hero texture and desktop card rhythm.
+   Responsive composition may change, but the visual materials stay shared. */
+#menu .hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background-image:
+    linear-gradient(rgba(190,239,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(190,239,255,.055) 1px,transparent 1px),
+    radial-gradient(ellipse at 50% 100%,#b5a4ff55,transparent 58%),
+    linear-gradient(145deg,#438fd1,#2864ad 70%)!important;
+  background-size:28px 28px,28px 28px,auto,auto!important;
+  background-position:center center!important;
+}
+#menu .hero:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  background:radial-gradient(circle at 50% 45%,#8deaff18,transparent 58%)!important;
+}
+#menu .hero h1,
+#menu .hero p,
+#menu .hero .orb,
+#menu .hero .relic{position:relative;z-index:1}
+#menu .mode{
+  border-radius:22px!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#menu .mode:focus-visible,
+#menu .iconbtn:focus-visible,
+#menu .back:focus-visible{
+  outline:3px solid #fff0b9!important;
+  outline-offset:3px!important;
+}
+@media(min-width:900px){
+  #menu .hero{
+    min-height:180px!important;
+    padding:30px 26px 26px!important;
+  }
+  #menu .mode{
+    min-height:112px!important;
+    padding:18px 20px!important;
+  }
+  #menu .modeicon{
+    width:56px!important;height:56px!important;
+    border-radius:17px!important;font-size:27px!important;
+  }
+  #menu .modetitle{font-size:18px!important}
+  #menu .modesub{font-size:12px!important;line-height:1.45!important}
+  #menu .tag{font-size:9px!important;padding:4px 8px!important}
+  #menu .sectionlabel{font-size:12px!important;margin:14px 2px 14px!important}
+}
+@media(max-width:520px){
+  #menu .hero{
+    background-size:24px 24px,24px 24px,auto,auto!important;
+  }
+  #menu .mode{border-radius:22px!important}
+}
+</style>
