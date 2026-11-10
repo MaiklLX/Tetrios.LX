@@ -15638,10 +15638,13 @@ html,body{background:#07152b!important}
 
 
 
-<style id="bb-kt584-home-profile-full-width">
-/* Keep the pilot strip aligned with the featured mode panels on desktop as well as mobile. */
+<style id="bb-kt585-home-profile-grid-span">
+/* Explicitly span the complete dashboard grid: width alone did not override the
+   desktop grid item's intrinsic track placement in the KT-584 screenshot. */
 #menu.home-dashboard > #bbHomeProfile{
-  width:100%!important;max-width:none!important;justify-self:stretch;box-sizing:border-box;
+  grid-area:profile!important;grid-column:1 / -1!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  justify-self:stretch;align-self:stretch;box-sizing:border-box;
 }
 </style>
 </body></html>
