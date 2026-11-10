@@ -7203,7 +7203,7 @@ function buildMap() {
     viewport.addEventListener('keydown', event => {
       if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
         event.preventDefault();
-        viewport.scrollBy({left:(event.key === 'ArrowRight' ? 1 : -1) * viewport.clientWidth * .72,behavior:'smooth'});
+        viewport.scrollBy({left:(event.key === 'ArrowRight' ? 1 : -1) * viewport.clientWidth * .72,behavior:'auto'});
       }
     });
     const track = document.createElement('div');
@@ -15078,7 +15078,8 @@ button:not(.board):focus-visible{
     linear-gradient(110deg,#59451f,#3b3150 65%,#17233d)!important;
 }
 #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modeicon{
-  flex:0 0 40px!important;width:40px!important;height:40px!important;
+  flex:0 0 44px!important;min-width:44px!important;width:44px!important;height:44px!important;
+  box-sizing:border-box!important;flex-shrink:0!important;
 }
 #menu.home-dashboard > .modes > .mode[data-mode="daily"]::after{display:none!important}
 #menu.home-dashboard > #dailyQuestsPanel{
