@@ -477,7 +477,12 @@ const targets = [
     console.log('[stage:gameplay-ready] ' + target.name);
 
     // KT-576: pause and result overlays must use the Godot cosmic panel language.
-    await page.locator('#pauseBtn').click();
+    const pauseButton = page.locator('#pauseBtn');
+    await pauseButton.waitFor({ state: 'visible', timeout: 10000 });
+    // Mobile WebKit may scroll the fixed HUD button while Playwright is trying
+    // to synthesize a pointer click. Trigger the real DOM click handler directly;
+    // the following overlay assertion still verifies that the control works.
+    await pauseButton.evaluate(element => element.click());
     await page.locator('#overlay.show #resume').waitFor({state:'visible',timeout:8000});
     const pauseOverlayState=await page.evaluate(()=>{
       const root=document.querySelector('#overlay'),modal=document.querySelector('#modal');
