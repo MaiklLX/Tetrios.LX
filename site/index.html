@@ -15509,4 +15509,64 @@ html,body{background:#07152b!important}
 #game #campaignGoals>div,#game #rogueGoals>div{color:#d9edff!important}
 @media(prefers-reduced-motion:reduce){.stars,.stars:before,.stars:after{animation:none!important}}
 </style>
+
+<style id="bb-kt581-godot-home-composition">
+/* KT-581: rebuild the browser home screen around Godot KT-549's cosmic cockpit composition.
+   Existing controls, IDs, data hooks and game state remain intact. */
+.app{max-width:none!important;padding:14px 16px 34px!important}
+.topbar{max-width:1040px!important;margin:0 auto 12px!important;padding:7px 4px 12px;border-bottom:1px solid #2b5682}
+.brandmark{width:42px;height:42px;border:1px solid #8adfff88;border-radius:14px;background:linear-gradient(145deg,#4eaaff,#174b83 68%,#102b50)!important;color:#eafaff!important;box-shadow:0 0 22px #4eaaff35,inset 0 1px #ffffff66!important;transform:none!important}
+.brandname{letter-spacing:.16em!important}
+.edition{color:#8ddfff!important}
+.screen{max-width:1040px!important}
+#menu.home-dashboard{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);grid-template-areas:"hero profile" "modes quests" "modes streak" "extras extras";gap:14px 18px;align-items:start}
+#menu.home-dashboard>.hero{grid-area:hero;min-height:270px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;overflow:hidden;isolation:isolate;position:relative;padding:30px 28px!important;border:1px solid #4eaaff66;border-radius:26px;background:radial-gradient(ellipse at 78% 44%,#267bc955,transparent 42%),radial-gradient(ellipse at 15% 0%,#55ddff20,transparent 60%),linear-gradient(145deg,#173e70 0%,#102b52 52%,#091a35 100%);box-shadow:inset 0 1px #ffffff2a,0 18px 38px #020b1d77}
+#menu.home-dashboard>.hero:before{content:"";position:absolute;z-index:-1;width:240px;height:240px;right:4%;top:50%;transform:translateY(-50%);border-radius:50%;border:1px solid #7bdfff55;box-shadow:0 0 0 18px #55ddff08,0 0 0 42px #55ddff06,0 0 70px #4eaaff33,inset 0 0 50px #4eaaff22}
+#menu.home-dashboard>.hero:after{content:"";position:absolute;z-index:-1;width:280px;height:90px;right:2%;top:34%;border:1px solid #9cdfff66;border-radius:50%;transform:rotate(-24deg);box-shadow:0 0 18px #55ddff22}
+#menu .hero-arena-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;opacity:.38;pointer-events:none}
+#menu .hero .eyebrow{color:#9ceaff!important;font-size:10px;letter-spacing:.2em!important}
+#menu .hero-brand-lockup{display:flex;align-items:center;gap:14px;margin:14px 0 10px}
+#menu .hero h1{font-size:clamp(34px,5.2vw,58px)!important;line-height:.98!important;letter-spacing:-.06em!important;margin:0!important;background:linear-gradient(115deg,#fff 8%,#d9efff 54%,#70dfff 100%)!important;-webkit-background-clip:text!important;background-clip:text!important}
+#menu .hero-app-mark{width:48px;height:48px;flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;padding:7px;border:1px solid #9ceaff88;border-radius:15px;background:linear-gradient(145deg,#4eaaff55,#0c2448);box-shadow:0 0 22px #55ddff25}
+#menu .hero-app-mark i{display:block;border-radius:4px;background:linear-gradient(145deg,#c9f3ff,#4eaaff);box-shadow:inset 0 1px #fff}
+#menu .hero-app-mark i:nth-child(2){opacity:.65}#menu .hero-app-mark i:nth-child(3){opacity:.8}
+#menu .hero p{margin:0!important;color:#c4e4fa!important;font-size:14px!important;max-width:320px}
+#bbHomeProfile{grid-area:profile;min-height:270px;margin:0!important;padding:18px!important;border:1px solid #4274a2!important;border-radius:24px!important;background:radial-gradient(ellipse at 90% 0%,#55ddff20,transparent 56%),linear-gradient(145deg,#153964,#0b2140 78%)!important;box-shadow:inset 0 1px #ffffff20,0 16px 34px #020b1d66}
+#menu .sectionlabel{grid-area:modes;color:#c8e9ff!important;font-size:11px!important;letter-spacing:.17em!important;margin:0 0 -2px!important;align-self:end}
+#menu .sectionlabel:after{background:linear-gradient(90deg,#4eaaff88,transparent)!important}
+#menu .modes{grid-area:modes;display:grid;grid-template-columns:1fr;gap:10px;align-self:stretch;padding-top:24px}
+#menu .mode{min-height:96px;padding:15px 17px!important;border:1px solid #3b6d9d!important;border-radius:19px!important;background:radial-gradient(ellipse at 0% 0%,#55ddff18,transparent 58%),linear-gradient(145deg,#153963,#0b2140 76%)!important;box-shadow:inset 0 1px #ffffff20,0 8px 18px #020b1d55!important;transition:transform .18s,border-color .18s,box-shadow .18s}
+#menu .mode:before{background:linear-gradient(105deg,#55ddff22,transparent 72%)!important;opacity:.6!important}
+#menu .mode:hover{transform:translateY(-2px);border-color:#8ce8ff!important;box-shadow:inset 0 1px #ffffff35,0 12px 26px #020b1d88,0 0 20px #4eaaff20!important}
+#menu .modeicon{width:54px!important;height:54px!important;border:1px solid #6ab8e866;border-radius:16px!important;background:linear-gradient(145deg,#23639a88,#102c50)!important;box-shadow:inset 0 1px #ffffff2b,0 5px 12px #020b1d66!important}
+#menu .modetitle{font-size:16px!important;color:#f3f9ff!important}
+#menu .modesub{color:#b6d2eb!important}
+#menu .tag{background:#55ddff20!important;color:#a9eaff!important;border:1px solid #55ddff36}
+#menu .modearrow{color:#8adfff!important;font-size:28px!important}
+#dailyQuestsPanel{grid-area:quests;margin:0!important;padding:18px!important;border:1px solid #4274a2!important;border-radius:22px!important;background:radial-gradient(ellipse at 100% 0%,#55ddff18,transparent 60%),linear-gradient(145deg,#153964,#0b2140 78%)!important;box-shadow:inset 0 1px #ffffff1c,0 12px 24px #020b1d55}
+#dailyQuestsPanel>div:first-child strong{color:#d9f4ff!important;letter-spacing:.1em}
+#dailyQuestsPanel>div:first-child span{color:#9bbbd8!important}
+#dailyQuestsList>div{background:linear-gradient(145deg,#1b4773,#123157)!important;border:1px solid #477ba4!important;border-radius:13px!important;box-shadow:inset 0 1px #ffffff18}
+#dailyQuestsList>div>div:first-child{color:#f2f8ff!important}
+#dailyQuestsList>div>div:nth-child(2){color:#b9d9f2!important}
+#dailyQuestsList>div>div:nth-child(3){background:#071a34!important}
+#bbVisitStreak{grid-area:streak;margin:0!important;border:1px solid #9b8757!important;border-radius:20px!important;background:radial-gradient(ellipse at 0% 0%,#ffd05a20,transparent 58%),linear-gradient(145deg,#3b3a54,#182c4b 80%)!important;box-shadow:inset 0 1px #ffffff20,0 10px 22px #020b1d55!important}
+#bbVisitStreak [style*="color:#ffc86b"]{color:#ffe09a!important}
+#menu>.sectionlabel:not(:first-of-type){margin-top:16px!important}
+#menu>.mode,#menu>button.mode{grid-area:extras}
+@media(max-width:760px){
+ .app{padding:10px 10px 26px!important}
+ #menu.home-dashboard{grid-template-columns:minmax(0,1fr);grid-template-areas:"hero" "profile" "modes" "quests" "streak" "extras";gap:12px}
+ #menu.home-dashboard>.hero{min-height:210px;padding:24px 19px!important;border-radius:21px}
+ #menu.home-dashboard>.hero:before{width:170px;height:170px;right:-4%}
+ #menu.home-dashboard>.hero:after{width:190px;right:-5%}
+ #bbHomeProfile{min-height:unset}
+ #menu .modes{padding-top:0}
+ #menu .mode{min-height:84px;padding:12px!important}
+ #menu .modeicon{width:46px!important;height:46px!important}
+ #dailyQuestsPanel{padding:14px!important}
+}
+@media(prefers-reduced-motion:reduce){#menu .mode{transition:none!important}}
+</style>
+
 </body></html>
