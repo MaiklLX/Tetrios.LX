@@ -275,15 +275,19 @@ const targets = [
     await atlasViewport.evaluate(el=>el.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(120,el.clientWidth*.55),bubbles:true,cancelable:true})));
     await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:2000});
     const atlasAfterWheel=await atlasViewport.evaluate(el=>el.scrollLeft);
-    await atlasViewport.evaluate(el=>{el.scrollLeft=Math.max(160,el.clientWidth*.55);});
+    await atlasViewport.evaluate(el=>{el.scrollLeft=Math.min(el.scrollWidth-el.clientWidth,el.clientWidth*.8);});
     const keyboardBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
-    await atlasViewport.press('ArrowLeft');
-    await campaignPage.waitForFunction(before=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft<before-8;},keyboardBefore,{timeout:3000});
-    const atlasAfterKeyboard=await atlasViewport.evaluate(el=>el.scrollLeft);
+    const keyboardEventState=await atlasViewport.evaluate(el=>{
+      const event=new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true});
+      el.dispatchEvent(event);
+      return {prevented:event.defaultPrevented,focused:document.activeElement===el};
+    });
+    const atlasAfterKeyboard=await waitForAtlasScrollSettle();
     if(atlasInputState.tabIndex!==0||atlasInputState.role!=='region'||
        !atlasInputState.label||atlasAfterWheel<=8||
+       !keyboardEventState.prevented||!keyboardEventState.focused||
        atlasAfterKeyboard>=keyboardBefore-8){
-      failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterWheel,keyboardBefore,atlasAfterKeyboard})+')');
+      failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterWheel,keyboardBefore,atlasAfterKeyboard,keyboardEventState})+')');
     }
     await campaignPage.waitForTimeout(3000);
     // KT-554: verify the browser reward shelf reproduces the 49-item Godot
