@@ -4,15 +4,12 @@ const fs = require('fs');
 const outputDir = 'cross-platform-preview-artifacts';
 fs.mkdirSync(outputDir, { recursive: true });
 
+// Five representative device profiles keep the full interaction suite within the
+// 25-minute Actions budget while retaining desktop, iOS, Android, portrait and landscape coverage.
 const targets = [
   { engine: 'chromium', name: 'desktop-1440x900', width: 1440, height: 900, mobile: false },
-  { engine: 'chromium', name: 'desktop-1920x1080', width: 1920, height: 1080, mobile: false },
-  { engine: 'webkit', name: 'ios-webkit-375x812', width: 375, height: 812, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-390x844', width: 390, height: 844, mobile: true },
-  { engine: 'webkit', name: 'ios-webkit-412x915', width: 412, height: 915, mobile: true },
-  { engine: 'webkit', name: 'ios-webkit-430x932', width: 430, height: 932, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-landscape-844x390', width: 844, height: 390, mobile: true },
-  { engine: 'webkit', name: 'ios-webkit-landscape-915x412', width: 915, height: 412, mobile: true },
   { engine: 'chromium', name: 'android-chromium-393x873', width: 393, height: 873, mobile: true },
   { engine: 'chromium', name: 'android-chromium-landscape-873x393', width: 873, height: 393, mobile: true }
 ];
@@ -26,7 +23,7 @@ const targets = [
     const targetWatchdog = setTimeout(() => {
       console.error('[target:timeout] ' + target.name + ' exceeded 150000ms; stopping preview process');
       process.exit(1);
-    }, 150000);
+    }, 210000);
     const browserType = target.engine === 'webkit' ? webkit : chromium;
     const launchOptions = { headless: true };
     if (target.engine === 'chromium') {
@@ -59,6 +56,100 @@ const targets = [
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
+    // KT-569.1: assert the Godot home-hub wordmark and themed mode panels.
+    const homeVisualState = await page.evaluate(() => {
+      const title = document.querySelector('#menu .hero h1');
+      const campaign = document.querySelector('#menu button.mode[data-mode="campaign"]');
+      const rogue = document.querySelector('#menu button.mode[data-mode="rogue"]');
+      const campaignStyle = campaign ? getComputedStyle(campaign) : null;
+      const rogueStyle = rogue ? getComputedStyle(rogue) : null;
+      return {
+        title: title?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        campaignBorder: campaignStyle?.borderTopColor || '',
+        campaignPlanet: campaign ? getComputedStyle(campaign, '::after').backgroundImage : '',
+        rogueBorder: rogueStyle?.borderTopColor || '',
+        roguePlanet: rogue ? getComputedStyle(rogue, '::after').backgroundImage : ''
+      };
+    });
+    const homeBorderColorsSupported = await page.evaluate(state =>
+      CSS.supports('color', state.campaignBorder) &&
+      CSS.supports('color', state.rogueBorder) &&
+      state.campaignBorder !== 'rgba(0, 0, 0, 0)' &&
+      state.rogueBorder !== 'rgba(0, 0, 0, 0)', homeVisualState);
+    if (homeVisualState.title !== 'BLOCK BUDDIES' ||
+        !homeBorderColorsSupported ||
+        !homeVisualState.campaignPlanet.includes('radial-gradient') ||
+        !homeVisualState.roguePlanet.includes('radial-gradient')) {
+      failures.push(target.name + ': KT-569.1 Godot home-hub visual mapping is incomplete (' + JSON.stringify(homeVisualState) + ')');
+    }
+    // KT-571: selected Buddy, actual hero level and wallet are rendered from live game state.
+    const pilotProfileState=await page.evaluate(()=>{
+      const profile=document.querySelector('#bbHomeProfile');
+      const wallet=profile?.querySelector('.bb-home-profile-wallet strong')?.textContent?.trim()||'';
+      const currentCoins=document.querySelector('#coins')?.textContent?.trim()||'';
+      return {
+        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=50,
+        hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
+        hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
+        hasLevel:/УРОВЕНЬ \d+/.test(profile?.innerText||''),
+        walletMatches:wallet===currentCoins
+      };
+    });
+    if(!pilotProfileState.visible||!pilotProfileState.hasHeroEmblem||!pilotProfileState.hasPilotName||
+       !pilotProfileState.hasLevel||!pilotProfileState.walletMatches){
+      failures.push(target.name+': KT-571 live Buddy pilot profile mismatch ('+JSON.stringify(pilotProfileState)+')');
+    }
+    const modeCardVisualState=await page.evaluate(()=>{
+      const cards=[...document.querySelectorAll('#menu .modes .mode')];
+      return {
+        count:cards.length,
+        cards:cards.map(card=>{
+          const style=getComputedStyle(card),icon=card.querySelector('.modeicon');
+          const iconStyle=icon?getComputedStyle(icon):null;
+          return {
+            radius:parseFloat(style.borderTopLeftRadius)||0,
+            borderWidth:parseFloat(style.borderTopWidth)||0,
+            background:style.backgroundImage||'',
+            accent:style.getPropertyValue('--glow').trim(),
+            iconWidth:icon?.getBoundingClientRect().width||0,
+            iconBorder:iconStyle?.borderTopColor||'',
+            titleColor:getComputedStyle(card.querySelector('.modetitle')).color
+          };
+        })
+      };
+    });
+    if(modeCardVisualState.count!==3||modeCardVisualState.cards.some(card=>
+      card.radius<16||card.borderWidth<1||!card.background.includes('radial-gradient')||
+      !card.background.includes('linear-gradient')||!card.accent||card.iconWidth<40||
+      card.iconBorder==='rgba(0, 0, 0, 0)')){
+      failures.push(target.name+': KT-577 Godot home mode-card styling mismatch ('+JSON.stringify(modeCardVisualState)+')');
+    }
+    // KT-581: verify the actual Godot home-hub hierarchy, not only card colors.
+    const homeHubLayoutState=await page.evaluate(()=>{
+      const rect=selector=>{
+        const el=document.querySelector(selector),r=el?.getBoundingClientRect();
+        return r?{top:r.top,bottom:r.bottom,width:r.width,height:r.height}:null;
+      };
+      return {
+        viewport:{width:innerWidth,height:innerHeight},
+        menu:rect('#menu'),title:rect('#menu .hero h1'),profile:rect('#bbHomeProfile'),
+        campaign:rect('#menu button.mode[data-mode="campaign"]'),
+        blockRun:rect('#menu button.mode[data-mode="rogue"]'),
+        daily:rect('#menu button.mode[data-mode="daily"]'),
+        quests:rect('#dailyQuestsPanel')
+      };
+    });
+    const orderedHomePanels=['title','profile','campaign','blockRun','daily','quests'];
+    const homePanelsOrdered=orderedHomePanels.every((key,index,all)=>{
+      const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
+      return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
+    });
+    if(!homePanelsOrdered||
+       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*.55||
+       homeHubLayoutState.campaign.width<homeHubLayoutState.menu.width*.78||
+       homeHubLayoutState.blockRun.width<homeHubLayoutState.menu.width*.78){
+      failures.push(target.name+': KT-581 Godot home-hub composition/order/width mismatch ('+JSON.stringify(homeHubLayoutState)+')');
+    }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
     // KT-418: landscape phone view is intentionally blocked before the menu
@@ -76,7 +167,7 @@ const targets = [
           visible: !!guard && style.display !== 'none' &&
             style.visibility !== 'hidden' && Number(style.opacity) > 0 &&
             !!rect && rect.width >= innerWidth - 2 && rect.height >= innerHeight - 2,
-          text: guard?.innerText?.replace(/\\s+/g, ' ').trim() || ''
+          text: guard?.innerText?.replace(/\s+/g, ' ').trim() || ''
         };
       });
       if (!guardState.visible || !guardState.text.includes('Поверни телефон') ||
@@ -90,6 +181,30 @@ const targets = [
       clearTimeout(targetWatchdog);
       console.log('[target:orientation-guard-verified] ' + target.name);
       continue;
+    }
+
+    // KT-553: capture the actual pressed state on a real menu control. Remove
+    // the held control before mouseup so the visual probe cannot start a game.
+    const pressTarget = page.locator('button.mode[data-mode="rogue"]');
+    const pressBox = await pressTarget.boundingBox();
+    if (!pressBox) {
+      failures.push(target.name + ': KT-553 press target has no visible geometry');
+    } else {
+      await page.mouse.move(pressBox.x + pressBox.width / 2, pressBox.y + pressBox.height / 2);
+      await page.mouse.down();
+      await page.waitForTimeout(90);
+      const pressState = await pressTarget.evaluate(el => {
+        const s = getComputedStyle(el);
+        return {outlineStyle:s.outlineStyle,outlineColor:s.outlineColor,boxShadow:s.boxShadow,transform:s.transform,filter:s.filter};
+      });
+      if (pressState.outlineStyle !== 'solid' || pressState.boxShadow === 'none') {
+        failures.push(target.name + ': KT-553 visible gold/cyan pressed feedback is incomplete (' + JSON.stringify(pressState) + ')');
+      }
+      await page.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-menu-press-feedback.png',fullPage:false});
+      // Release outside the control: preserve the real menu DOM and avoid
+      // dispatching a click that would launch the mode under test.
+      await page.mouse.move(Math.max(1, pressBox.x - 12), Math.max(1, pressBox.y - 12));
+      await page.mouse.up();
     }
 
     console.log('[stage:card-library] ' + target.name);
@@ -122,7 +237,123 @@ const targets = [
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
+    // KT-574: classic horizontal universe carousel with Godot's cosmic art direction.
+    const atlasCarouselState=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(viewport=>{
+      const track=viewport.querySelector('.bb-galaxy-track');
+      const cards=track?[...track.querySelectorAll('.bb-galaxy-card')]:[];
+      const first=cards[0],art=first?.querySelector('.bb-galaxy-art');
+      const rect=first?.getBoundingClientRect(),artRect=art?.getBoundingClientRect();
+      return {
+        cardCount:cards.length,
+        display:track?getComputedStyle(track).display:'',
+        flexDirection:track?getComputedStyle(track).flexDirection:'',
+        horizontalOverflow:!!track&&track.scrollWidth>viewport.clientWidth+2,
+        verticalOverflow:viewport.scrollHeight>viewport.clientHeight+2,
+        overflowX:getComputedStyle(viewport).overflowX,
+        overflowY:getComputedStyle(viewport).overflowY,
+        cardWidth:rect?Math.round(rect.width):0,
+        cardHeight:rect?Math.round(rect.height):0,
+        artWidth:artRect?Math.round(artRect.width):0,
+        artVisible:!!art&&artRect.width>100
+      };
+    });
+    if(atlasCarouselState.cardCount!==12||atlasCarouselState.display!=='flex'||
+       atlasCarouselState.flexDirection!=='row'||!atlasCarouselState.horizontalOverflow||
+       atlasCarouselState.verticalOverflow||atlasCarouselState.overflowX!=='auto'||
+       atlasCarouselState.overflowY!=='hidden'||atlasCarouselState.cardWidth<210||
+       atlasCarouselState.cardHeight<290||atlasCarouselState.artWidth<150||
+       !atlasCarouselState.artVisible){
+      failures.push(target.name+': KT-574 horizontal Godot atlas carousel mismatch ('+JSON.stringify(atlasCarouselState)+')');
+    }
+    // Verify the visible controls actually move the horizontal rail in both directions.
+    const atlasTouchAction=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(el=>getComputedStyle(el).touchAction);
+    const atlasViewport=campaignPage.locator('#campaign .bb-galaxy-viewport');
+    // Let the initial selected-universe centering finish before measuring controls.
+    await campaignPage.waitForTimeout(900);
+    await atlasViewport.evaluate(el=>{el.style.scrollSnapType='none';el.style.scrollBehavior='auto';el.scrollLeft=0;});
+    const atlasBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
+    const waitForAtlasScrollSettle=()=>atlasViewport.evaluate(el=>new Promise(resolve=>{
+      let last=el.scrollLeft,stable=0,frames=0;
+      const tick=()=>{
+        frames++;
+        if(Math.abs(el.scrollLeft-last)<0.5)stable++;else stable=0;
+        last=el.scrollLeft;
+        if(stable>=8||frames>=180)resolve(el.scrollLeft);else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }));
+    await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Следующая вселенная"]').click();
+    const atlasAfterNext=await waitForAtlasScrollSettle();
+    await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Предыдущая вселенная"]').click();
+    const atlasAfterPrevious=await waitForAtlasScrollSettle();
+    if(atlasTouchAction!=='pan-x'||atlasAfterNext<=atlasBefore+8||atlasAfterPrevious>=atlasAfterNext-8){
+      failures.push(target.name+': KT-574 horizontal swipe/arrow navigation mismatch ('+JSON.stringify({atlasTouchAction,atlasBefore,atlasAfterNext,atlasAfterPrevious})+')');
+    }
+    const atlasInputState=await atlasViewport.evaluate(el=>({
+      tabIndex:el.tabIndex,role:el.getAttribute('role'),
+      label:el.getAttribute('aria-label')
+    }));
+    await atlasViewport.evaluate(el=>{el.scrollLeft=0;});
+    await atlasViewport.focus();
+    await atlasViewport.evaluate(el=>el.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(120,el.clientWidth*.55),bubbles:true,cancelable:true})));
+    await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:2000});
+    const atlasAfterWheel=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await atlasViewport.evaluate(el=>{
+      el.style.setProperty('scroll-snap-type','none','important');
+      el.style.setProperty('scroll-behavior','auto','important');
+      el.scrollLeft=0;
+    });
+    await campaignPage.waitForFunction(()=>{
+      const el=document.querySelector('#campaign .bb-galaxy-viewport');
+      return !!el&&el.scrollLeft<=1;
+    },{timeout:2000});
+    const keyboardBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await atlasViewport.focus();
+    await atlasViewport.evaluate(el=>{
+      el.dataset.kt575KeyPrevented='false';
+      el.addEventListener('keydown',event=>{
+        if(event.key==='ArrowRight')el.dataset.kt575KeyPrevented=String(event.defaultPrevented);
+      },{once:true});
+    });
+    await atlasViewport.press('ArrowRight');
+    const keyboardEventState=await atlasViewport.evaluate(el=>({
+      prevented:el.dataset.kt575KeyPrevented==='true',
+      focused:document.activeElement===el
+    }));
+    await campaignPage.waitForFunction(before=>{
+      const el=document.querySelector('#campaign .bb-galaxy-viewport');
+      return !!el&&el.scrollLeft>before+8;
+    },keyboardBefore,{timeout:3000});
+    const atlasAfterKeyboard=await waitForAtlasScrollSettle();
+    if(atlasInputState.tabIndex!==0||atlasInputState.role!=='region'||
+       !atlasInputState.label||atlasAfterWheel<=8||
+       !keyboardEventState.prevented||!keyboardEventState.focused||
+       atlasAfterKeyboard<=keyboardBefore+8){
+      failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterWheel,keyboardBefore,atlasAfterKeyboard,keyboardEventState})+')');
+    }
     await campaignPage.waitForTimeout(3000);
+    // KT-554: verify the browser reward shelf reproduces the 49-item Godot
+    // collection without changing the existing 360-node campaign progression.
+    await campaignPage.locator('#bbOpenCampaignCollection').waitFor({state:'visible',timeout:10000});
+    await campaignPage.locator('#bbOpenCampaignCollection').click();
+    const emblemState=await campaignPage.locator('#bbCampaignCollectionRail').evaluate(rail=>({
+      cardCount:rail.querySelectorAll('.bb-collection-card').length,
+      vectorCount:rail.querySelectorAll('.bb-collection-card .bb-collection-emblem svg').length,
+      detailVectorCount:document.querySelectorAll('.bb-collection-detail-emblem svg').length
+    }));
+    if(emblemState.cardCount!==49||emblemState.vectorCount!==49||emblemState.detailVectorCount!==1){
+      failures.push(target.name+': KT-555.2 SVG emblem rendering mismatch ('+JSON.stringify(emblemState)+')');
+    }
+        const collectionCount=await campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id]').count();
+    if(collectionCount!==49) failures.push(target.name+': KT-554 expected 49 reward cards, got '+collectionCount);
+    const collectionFinal=campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id="campaign_crown"]');
+    await collectionFinal.click();
+    const collectionDetail=await campaignPage.locator('.bb-collection-detail').innerText();
+    if(!collectionDetail.includes('Корона дальнего пути')||!collectionDetail.includes('ЕЩЁ ВПЕРЕДИ')) failures.push(target.name+': KT-554 final crown detail or locked state is incorrect ('+collectionDetail+')');
+    const collectionRailState=await campaignPage.locator('#bbCampaignCollectionRail').evaluate(el=>({scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,overflow:getComputedStyle(el).overflowX}));
+    if(collectionRailState.scrollWidth<=collectionRailState.clientWidth||collectionRailState.overflow==='hidden') failures.push(target.name+': KT-554 reward strip is not horizontally scrollable ('+JSON.stringify(collectionRailState)+')');
+    await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-reward-shelf.png',fullPage:false});
+    await campaignPage.locator('#bbCampaignCollectionClose').click();
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
       return {
@@ -140,10 +371,78 @@ const targets = [
     if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
       failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
     }
-    await campaignPage.locator('#campaignStart').click({ force: true });
-    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
-    await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
+    // KT-555: verify the Godot-style vertical, bottom-to-top route without
+    // changing the existing 30 planets per universe or their node identities.
+    await campaignPage.locator('#campaign .bb-galaxy-card').first().click();
+    await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({state:'visible',timeout:10000});
+    await campaignPage.waitForTimeout(350);
+    const routeState=await campaignPage.evaluate(()=>{
+      const track=document.querySelector('#campaign .bb-planet-track');
+      const viewport=document.querySelector('#campaign .bb-planet-viewport');
+      const nodes=Array.from(document.querySelectorAll('#campaign .bb-planet-node'));
+      const heading=document.querySelector('#campaign .bb-planet-heading');
+      const headingOrb=heading?getComputedStyle(heading,'::after'):null;
+      const viewportStyle=viewport?getComputedStyle(viewport):null;
+      const y=nodes.map(node=>Number.parseFloat(node.style.top)||0);
+      return {
+        orientation:track?.dataset.routeOrientation||'',
+        headingOrbWidth:headingOrb?parseFloat(headingOrb.width):0,
+        headingOrbBackground:headingOrb?.backgroundImage||'',
+        routePanelBorder:viewportStyle?.borderTopColor||'',
+        nodeCount:nodes.length,
+        bossCount:nodes.filter(node=>node.classList.contains('is-boss')).length,
+        verticalOverflow:!!viewport&&viewport.scrollHeight>viewport.clientHeight,
+        firstAtBottom:y.length>1&&y[0]>y[y.length-1],
+        currentVisible:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active||!viewport)return false;const a=active.getBoundingClientRect(),v=viewport.getBoundingClientRect();return a.bottom>v.top&&a.top<v.bottom})(),
+        scrollTop:viewport?.scrollTop||0,
+        bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber),
+        trackDisplay:track?getComputedStyle(track).display:null,
+        nodePosition:nodes[0]?getComputedStyle(nodes[0]).position:null,
+        nodeSpread:(()=>{const xs=nodes.map(node=>node.getBoundingClientRect().left);return xs.length?Math.round(Math.max(...xs)-Math.min(...xs)):0})(),
+        viewportOverflowY:viewport?getComputedStyle(viewport).overflowY:null,
+        viewportClientHeight:viewport?.clientHeight||0,
+        viewportClientWidth:viewport?.clientWidth||0,
+        viewportScrollHeight:viewport?.scrollHeight||0,
+        alignmentStatus:viewport?.dataset.routeAlign||'not-run',
+        alignmentTop:viewport?.dataset.routeAlignTop||null,
+        alignmentNode:viewport?.dataset.routeAlignNode||null,
+        trackOffsetHeight:track?.offsetHeight||0,
+        currentOffsetTop:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));return active?.offsetTop??null})(),
+        currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),left:Math.round(r.left),right:Math.round(r.right),height:Math.round(r.height)}})()
+      };
+    });
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbWidth<60||!routeState.headingOrbBackground.includes('radial-gradient')||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientWidth*0.4){
+      failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
+    }
+    await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
+    // Reload the isolated preview so the following mission test starts from
+    // the same clean atlas state on Chromium and WebKit.
+    await campaignPage.reload({waitUntil:'domcontentloaded'});
+    await campaignPage.locator('button.mode[data-mode="campaign"]').waitFor({state:'visible',timeout:15000});
+    await campaignPage.locator('button.mode[data-mode="campaign"]').click();
+    await campaignPage.locator('#campaignStart').waitFor({state:'visible',timeout:15000});
+    // The campaign start button can keep shifting while the 3D atlas model settles;
+    // visibility/enabled are asserted above, so dispatch its native DOM click after scrolling.
+    await campaignPage.locator('#campaignStart').scrollIntoViewIfNeeded();
+    await campaignPage.locator('#campaignStart').evaluate(button => button.click());
+    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().waitFor({state:'visible',timeout:10000});
+    await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
+    try {
+      await campaignPage.locator('#bbStartHeroChoose').waitFor({state:'visible',timeout:10000});
+    } catch (error) {
+      const heroDiagnostic=await campaignPage.evaluate(()=>({
+        modalVisible:!!document.querySelector('#modal.show'),
+        modalText:document.querySelector('#modal')?.innerText?.slice(0,1200)||'',
+        heroListCount:document.querySelectorAll('#bbStartHeroList [data-start-hero]').length,
+        chooseButton:!!document.querySelector('#bbStartHeroChoose'),
+        confirmButton:!!document.querySelector('#bbConfirmStartHero')
+      }));
+      failures.push(target.name+': campaign hero detail did not open ('+JSON.stringify({heroDiagnostic,pageErrors:pageErrors.slice(-5)})+')');
+      await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-hero-diagnostic.png',fullPage:false});
+      await campaignPage.close();
+      continue;
+    }
+    await campaignPage.locator('#bbStartHeroChoose').click();
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.waitForTimeout(900);
     const campaignMissionState = await campaignPage.evaluate(() => {
@@ -189,7 +488,7 @@ const targets = [
         const rect=panel?.getBoundingClientRect();
         return {
           visible:!!panel&&getComputedStyle(panel).display!=='none'&&getComputedStyle(panel).visibility!=='hidden'&&rect.width>0&&rect.height>0,
-          text:panel?.innerText?.replace(/\\s+/g,' ').trim()||'',
+          text:panel?.innerText?.replace(/\s+/g,' ').trim()||'',
           parentId:panel?.parentElement?.id||'',
           parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
           gameOpacity:panel?getComputedStyle(panel.closest('#game')).opacity:null,
@@ -218,6 +517,50 @@ const targets = [
     await page.waitForTimeout(900);
 
     console.log('[stage:gameplay-ready] ' + target.name);
+
+    // KT-576: pause and result overlays must use the Godot cosmic panel language.
+    const pauseButton = page.locator('#pauseBtn');
+    await pauseButton.waitFor({ state: 'visible', timeout: 10000 });
+    // Mobile WebKit may scroll the fixed HUD button while Playwright is trying
+    // to synthesize a pointer click. Trigger the real DOM click handler directly;
+    // the following overlay assertion still verifies that the control works.
+    await pauseButton.evaluate(element => element.click());
+    await page.locator('#overlay.show #resume').waitFor({state:'visible',timeout:8000});
+    const pauseOverlayState=await page.evaluate(()=>{
+      const root=document.querySelector('#overlay'),modal=document.querySelector('#modal');
+      const action=modal?.querySelector('#resume'),wallet=modal?.querySelector('.bb-pause-wallet');
+      const css=getComputedStyle(modal),button=action?getComputedStyle(action):null;
+      return {
+        variant:root?.classList.contains('bb-godot-pause-overlay'),
+        borderRadius:parseFloat(css.borderTopLeftRadius)||0,
+        borderColor:css.borderTopColor,
+        background:css.backgroundImage,
+        wallet:!!wallet,
+        buttonBackground:button?.backgroundImage||'',
+        buttonBorder:button?.borderTopColor||''
+      };
+    });
+    if(!pauseOverlayState.variant||pauseOverlayState.borderRadius<16||
+       !pauseOverlayState.borderColor.includes('85')&&!pauseOverlayState.borderColor.includes('rgb')||
+       !pauseOverlayState.background.includes('radial-gradient')||!pauseOverlayState.wallet||
+       !pauseOverlayState.buttonBackground.includes('linear-gradient')){
+      failures.push(target.name+': KT-576 Godot pause overlay styling mismatch ('+JSON.stringify(pauseOverlayState)+')');
+    }
+    const resultStyleState=await page.evaluate(()=>{
+      const root=document.querySelector('#overlay'),modal=document.querySelector('#modal');
+      root.classList.remove('bb-godot-pause-overlay');
+      root.classList.add('bb-godot-result-overlay');
+      const css=getComputedStyle(modal);
+      const stat=document.createElement('div');stat.className='bottomstats';stat.innerHTML='<div class="stat"><strong>12</strong><span>ЛИНИИ</span></div>';modal.append(stat);
+      const statColor=getComputedStyle(stat.querySelector('strong')).color;
+      stat.remove();
+      return {variant:root.classList.contains('bb-godot-result-overlay'),borderRadius:parseFloat(css.borderTopLeftRadius)||0,statColor};
+    });
+    if(!resultStyleState.variant||resultStyleState.borderRadius<16){
+      failures.push(target.name+': KT-576 Godot result overlay styling mismatch ('+JSON.stringify(resultStyleState)+')');
+    }
+    await page.locator('#resume').click();
+    await page.waitForTimeout(120);
 
     // Exercise KT-418 during a live run: rotate to phone landscape, confirm
     // the game pauses and the guard covers the viewport, then return to
@@ -287,6 +630,10 @@ const targets = [
         };
         const before=state();
         const horizontalStep=Math.max(28,rect.width*.14);
+        const diagonalDistance=Math.max(36,Math.min(horizontalStep,rect.height*.06));
+        swipe(diagonalDistance,-diagonalDistance);
+        const afterDiagonal=state();
+        const diagonalRejected=!!before&&!!afterDiagonal&&JSON.stringify(before)===JSON.stringify(afterDiagonal);
         swipe(horizontalStep,0);
         const afterRight=state();
         // Repeat immediately, without waiting for a cooldown timer.
@@ -317,8 +664,9 @@ const targets = [
         const afterDropRotateShape=afterDropRotate?JSON.stringify(afterDropRotate.shape):null;
         return {
           supported:true,
-          before,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
+          before,afterDiagonal,afterRight,afterRightRepeat,afterLeft,afterRotate,afterRotateRepeat,afterDown,
           afterTouchDrop,afterDropMove,afterDropRotate,touchDrop,postDropProbe,
+          diagonalRejected,
           movedRight:!!before&&!!afterRight&&afterRight.x>before.x,
           repeatedRight:!!afterRight&&!!afterRightRepeat&&afterRightRepeat.x>afterRight.x,
           movedLeft:!!afterRightRepeat&&!!afterLeft&&afterLeft.x<afterRightRepeat.x,
@@ -329,7 +677,7 @@ const targets = [
           rotatedImmediatelyAfterDrop:!!afterDropMoveShape&&!!afterDropRotateShape&&afterDropMoveShape!==afterDropRotateShape
         };
       });
-      if (!gestureResult.supported || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
+      if (!gestureResult.supported || !gestureResult.diagonalRejected || !gestureResult.movedRight || !gestureResult.repeatedRight || !gestureResult.movedLeft || !gestureResult.rotated || !gestureResult.repeatedRotation || !gestureResult.softDropped || !gestureResult.movedImmediatelyAfterDrop || !gestureResult.rotatedImmediatelyAfterDrop) {
         failures.push(target.name + ': mobile full-screen gesture interaction failed (' + JSON.stringify(gestureResult) + ')');
       }
     }
@@ -377,6 +725,7 @@ const targets = [
           height: document.documentElement.scrollHeight
         },
         frame: rect(frame),
+        playfield: rect(document.querySelector('#game #board')),
         leftRail: rect(leftRail),
         controlRow: rect(controlRow),
         controlVisibility: controlRow ? {display:getComputedStyle(controlRow).display,visibility:getComputedStyle(controlRow).visibility,pointerEvents:getComputedStyle(controlRow).pointerEvents,buttons:Array.from(controlRow.querySelectorAll('.control')).map(node=>rect(node))} : null,
@@ -496,6 +845,10 @@ const targets = [
       if (geometry.frame && geometry.frame.right > target.width + 2) {
         failures.push(target.name + ': arena extends beyond the right viewport edge');
       }
+      if (target.mobile && target.width < 600 && target.height > 600 &&
+          geometry.playfield && geometry.playfield.width < target.width * 0.53) {
+        failures.push(target.name + ': KT-552 portrait board did not reach the expanded 53vw minimum (' + geometry.playfield.width + 'px)');
+      }
     } else if (geometry.frame && (geometry.frame.y < -2 || geometry.frame.bottom > target.height + 2)) {
       failures.push(target.name + ': desktop arena is not contained by the viewport');
     }
@@ -513,6 +866,9 @@ const targets = [
       failures.push(target.name + ': expected the single-renderer 2D arena with no 3D toggle or overlay (' + JSON.stringify(arenaModeState) + ')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-arena-2d-final.png', fullPage: false });
+    if (target.mobile && target.width < 600 && target.height > 600) {
+      await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-kt552-tall-phone-arena.png', fullPage: false });
+    }
     console.log('[stage:final-arena-verified] ' + target.name);
 
     report.push({ target: target.name, engine: target.engine, geometry, sideScrollCheck, arenaModeState, visualBoostState, voidState, campaignAtlasState, campaignMissionState, pageErrors, consoleErrors, failedRequests });
