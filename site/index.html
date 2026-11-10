@@ -6177,7 +6177,7 @@ function show(id){
   if(typeof bbSyncMusic==='function')bbSyncMusic()
 }
 
-function overlay(html){$('modal').classList.remove('bb-hero-showcase-modal');$('modal').innerHTML=html;$('overlay').classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
+function overlay(html,variant=''){const root=$('overlay'),modal=$('modal');root.classList.remove('bb-godot-pause-overlay','bb-godot-result-overlay');modal.classList.remove('bb-hero-showcase-modal');if(variant==='pause')root.classList.add('bb-godot-pause-overlay');if(variant==='result')root.classList.add('bb-godot-result-overlay');modal.innerHTML=html;root.classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay','bb-godot-pause-overlay','bb-godot-result-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function setupDaily(){let d=new Date(),today=bbGetTodayKey(),rule=bbDailyRuleForDate(today),completed=localStorage.getItem('bbDailyChallengeCompletedDate')===today;$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+(completed?' Испытание уже пройдено — награда получена.':' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.');$('dailyStart').textContent=completed?'✓ ВЫЗОВ УЖЕ ПРОЙДЕН':'НАЧАТЬ ИСПЫТАНИЕ';$('dailyStart').disabled=completed;$('dailyStart').style.opacity=completed?'.65':'1';bbUpdateVisitStreak()}
@@ -8112,7 +8112,7 @@ if(mode==='campaign'){
     localStorage.nrNode=campaignNode;
   }
 }
-if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();const rewardSummary=mode==='daily'&&bbDailyRewardsForEnd?'<div class="reward-summary" style="margin:16px 0;padding:14px 16px;border:1px solid #bda0ff;border-radius:14px;background:linear-gradient(135deg,#302044,#201b31);color:#f1e7ff;text-align:center;font-weight:800;line-height:1.5">'+bbDailyRewardsForEnd+'</div>':'';bbDailyRewardsForEnd=null;const retryLabel=mode==='daily'?'ВЕРНУТЬСЯ К ЕЖЕДНЕВНЫМ ВЫЗОВАМ':'ПОПРОБОВАТЬ СНОВА';overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div>${rewardSummary}<div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">${retryLabel}</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`);$('retry').onclick=()=>{closeOverlay();if(mode==='daily'){show('daily');setupDaily();toast('Награда за сегодняшний вызов уже получена.')}else startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
+if(mode==='daily') {dailyDone=dateKey();localStorage.nrDailyDone=dailyDone}updateStats();const rewardSummary=mode==='daily'&&bbDailyRewardsForEnd?'<div class="reward-summary" style="margin:16px 0;padding:14px 16px;border:1px solid #bda0ff;border-radius:14px;background:linear-gradient(135deg,#302044,#201b31);color:#f1e7ff;text-align:center;font-weight:800;line-height:1.5">'+bbDailyRewardsForEnd+'</div>':'';bbDailyRewardsForEnd=null;const retryLabel=mode==='daily'?'ВЕРНУТЬСЯ К ЕЖЕДНЕВНЫМ ВЫЗОВАМ':'ПОПРОБОВАТЬ СНОВА';overlay(`<div class="modalhead"><div class="bigicon">${score>best-1?'✧':'◈'}</div><div class="eyebrow">ЗАБЕГ ЗАВЕРШЁН</div><h3>${score.toLocaleString('ru-RU')} очков</h3><p>Очищено ${lines} линий · Достигнут уровень ${level}. Пустота запомнит твой путь.</p></div>${rewardSummary}<div class="bottomstats"><div class="stat"><strong>${lines}</strong><span>ЛИНИИ</span></div><div class="stat"><strong>${level}</strong><span>УРОВЕНЬ</span></div><div class="stat"><strong>${fmt(runSeconds)}</strong><span>ВРЕМЯ</span></div></div><button class="action" id="retry">${retryLabel}</button><button class="action secondary" id="toMenu">В ГЛАВНОЕ МЕНЮ</button>`,'result');$('retry').onclick=()=>{closeOverlay();if(mode==='daily'){show('daily');setupDaily();toast('Награда за сегодняшний вызов уже получена.')}else startGame()};$('toMenu').onclick=()=>{closeOverlay();show('menu');updateStats()};tone(120,.4,'sawtooth',.04)}
 function bbDailyGlitchColor(index){
   const glitchColors=[
     '#ff3155',
@@ -8355,7 +8355,7 @@ if(window.matchMedia){
   bbPhoneOrientationQuery.addEventListener?.('change',bbSyncPhoneOrientation);
 }
 
-function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><div class="eyebrow">ПЕРЕДЫШКА</div><h3>Пауза</h3><p>Партия на паузе. Можно спокойно проверить баланс и вернуться в игру.</p></div><div class="bb-pause-wallet"><span>🪙 <small>ТВОИ МОНЕТЫ</small></span><strong>${bbCoins.toLocaleString('ru-RU')}</strong><em>Баланс аккаунта</em></div><button class="action" id="resume">▶ ПРОДОЛЖИТЬ ИГРУ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
+function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><div class="eyebrow">ПЕРЕДЫШКА</div><h3>Пауза</h3><p>Партия на паузе. Можно спокойно проверить баланс и вернуться в игру.</p></div><div class="bb-pause-wallet"><span>🪙 <small>ТВОИ МОНЕТЫ</small></span><strong>${bbCoins.toLocaleString('ru-RU')}</strong><em>Баланс аккаунта</em></div><button class="action" id="resume">▶ ПРОДОЛЖИТЬ ИГРУ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`,'pause');$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
 /* Просмотр активных бустов с паузой */
 const boostCard = $('boostIcon')?.closest('.sidecard');
@@ -9973,6 +9973,68 @@ body>canvas.bb-galaxy-model-canvas{position:fixed!important;z-index:9999!importa
 @media(prefers-reduced-motion:reduce){
  #campaign .bb-galaxy-model-fallback{animation:none!important}
 }
+</style>
+
+<style id="bb-kt576-godot-pause-results">
+/* Godot visual language for gameplay overlays only; other dialogs keep their existing layouts. */
+#overlay.bb-godot-pause-overlay,#overlay.bb-godot-result-overlay{
+  padding:16px!important;background:rgba(3,9,22,.84)!important;
+  backdrop-filter:blur(8px) saturate(.82)!important;
+}
+#overlay.bb-godot-pause-overlay .modal,#overlay.bb-godot-result-overlay .modal{
+  position:relative!important;isolation:isolate!important;overflow:hidden!important;
+  width:min(100%,420px)!important;max-height:min(88dvh,760px)!important;overflow-y:auto!important;
+  padding:26px 24px 22px!important;border:1px solid #55ddffb8!important;border-radius:23px!important;
+  color:#f4f8ff!important;
+  background:radial-gradient(ellipse at 50% -8%,#2865a0 0%,#153d70 34%,#102b50 68%,#0a1930 100%)!important;
+  box-shadow:inset 0 1px #ffffff24,0 0 0 3px #102f6844,0 18px 58px #000b,0 0 30px #55ddff1c!important;
+}
+#overlay.bb-godot-pause-overlay .modal:before,#overlay.bb-godot-result-overlay .modal:before{
+  content:"";position:absolute;z-index:-1;left:7%;right:7%;top:10px;height:4px;border-radius:9px;
+  background:linear-gradient(90deg,transparent,#b9efff99,#fff0b9aa,#b9efff99,transparent);opacity:.7;
+}
+#overlay.bb-godot-pause-overlay .modalhead,#overlay.bb-godot-result-overlay .modalhead{position:relative;text-align:center;padding:5px 4px 12px}
+#overlay.bb-godot-pause-overlay .modalhead .bigicon,#overlay.bb-godot-result-overlay .modalhead .bigicon{
+  display:grid;place-items:center;width:58px;height:58px;margin:0 auto 12px;border:1px solid #8beaffaa;border-radius:18px;
+  color:#d9f7ff;font-size:30px;background:radial-gradient(circle at 35% 25%,#55ddff55,#102f68 72%);
+  filter:drop-shadow(0 0 14px #55ddff66)!important;box-shadow:inset 0 1px #ffffff33,0 8px 22px #030b1b88;
+}
+#overlay.bb-godot-pause-overlay .modalhead .eyebrow,#overlay.bb-godot-result-overlay .modalhead .eyebrow{
+  color:#9cecff;font-size:9px;font-weight:950;letter-spacing:.2em;text-transform:uppercase;
+}
+#overlay.bb-godot-pause-overlay .modalhead h3,#overlay.bb-godot-result-overlay .modalhead h3{
+  margin:7px 0 7px;color:#f7fbff;font-size:clamp(24px,6vw,31px);font-weight:1000;letter-spacing:-.035em;
+  text-shadow:0 2px 0 #06172c,0 0 20px #55ddff22;
+}
+#overlay.bb-godot-pause-overlay .modalhead p,#overlay.bb-godot-result-overlay .modalhead p{
+  max-width:330px;margin:0 auto 8px;color:#c4d9ed;font-size:12px;line-height:1.55;
+}
+#overlay.bb-godot-pause-overlay .action,#overlay.bb-godot-result-overlay .action{
+  position:relative;min-height:48px;margin-top:12px;padding:13px 16px;border:1px solid #a6efff!important;border-radius:13px!important;
+  color:#07172a!important;font-size:11px;font-weight:1000;letter-spacing:.1em;
+  background:linear-gradient(110deg,#55ddff,#b9efff 55%,#7ebdff)!important;
+  box-shadow:inset 0 1px #ffffffaa,0 5px 0 #0a2747,0 9px 20px #030b1b66!important;
+}
+#overlay.bb-godot-pause-overlay .action.secondary,#overlay.bb-godot-result-overlay .action.secondary{
+  color:#e5f4ff!important;border:1px solid #83bde888!important;
+  background:linear-gradient(145deg,#183b63,#102746)!important;box-shadow:inset 0 1px #ffffff18,0 4px 0 #07182d!important;
+}
+#overlay.bb-godot-pause-overlay .action:active,#overlay.bb-godot-result-overlay .action:active{transform:translateY(2px);filter:brightness(1.08)}
+#overlay.bb-godot-pause-overlay .bb-pause-wallet{
+  margin:12px 0 16px;padding:14px 16px;border:1px solid #f3d17b88;border-radius:15px;
+  background:linear-gradient(115deg,#4b391fbb,#1b2b45 78%);box-shadow:inset 0 1px #ffffff20,0 7px 18px #030b1b55;
+}
+#overlay.bb-godot-pause-overlay .bb-pause-wallet>span{color:#ffe0a0}
+#overlay.bb-godot-pause-overlay .bb-pause-wallet strong{color:#fff0b9;text-shadow:0 0 15px #ffd05a55}
+#overlay.bb-godot-result-overlay .bottomstats{margin:12px 0 4px;padding:12px 5px;border-top:1px solid #8bc8ef44;border-bottom:1px solid #8bc8ef44;background:linear-gradient(90deg,#102b5000,#0a1d35aa,#102b5000)}
+#overlay.bb-godot-result-overlay .bottomstats .stat strong{color:#8beaff;text-shadow:0 0 14px #55ddff44}
+#overlay.bb-godot-result-overlay .bottomstats .stat span{color:#a9c8e2}
+@media(max-width:420px){
+ #overlay.bb-godot-pause-overlay,#overlay.bb-godot-result-overlay{padding:10px!important}
+ #overlay.bb-godot-pause-overlay .modal,#overlay.bb-godot-result-overlay .modal{padding:22px 17px 18px!important;border-radius:19px!important}
+ #overlay.bb-godot-pause-overlay .modalhead .bigicon,#overlay.bb-godot-result-overlay .modalhead .bigicon{width:50px;height:50px;font-size:26px}
+}
+@media(prefers-reduced-motion:reduce){#overlay.bb-godot-pause-overlay .modal,#overlay.bb-godot-result-overlay .modal{animation:none!important}}
 </style>
 <script type="module" src="./universes-3d.js?v=20261103-silhouette-no-ghost-2"></script>
 
