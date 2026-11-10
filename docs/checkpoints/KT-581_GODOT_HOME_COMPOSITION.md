@@ -47,3 +47,13 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Kept the complete interaction/assertion suite on each representative profile; no game runtime, CSS, layout or progression behavior changed.
 - Fresh Cross-platform run required on this checkpoint. Inspect screenshots and report before marking the home redesign passed. Mobile Arena success on KT-582 remains separate evidence only.
 - Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
+
+
+## KT-584 — home pilot profile alignment
+
+- Reviewed the completed KT-582 cross-platform preview artifact `13754597669` (65 MB, 90 screenshots plus report).
+- `report.json` contains an empty failures array across 10 viewports; desktop Chromium, iOS WebKit portrait/landscape and Android Chromium portrait/landscape completed with no page errors or console errors.
+- Visual review found one real desktop composition inconsistency: the pilot profile strip was capped at roughly two-thirds of the home content width while the campaign and Block Run panels span the full width.
+- Added a narrow CSS-only override to stretch the profile strip to the same content width. Mobile sizing, profile data, and game behavior remain unchanged.
+- Cross-platform #652: Passed; artifact inspected. Mobile Arena #426 on KT-582: Passed. These checks precede KT-584, so a fresh run on KT-584 is still required.
+- Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
