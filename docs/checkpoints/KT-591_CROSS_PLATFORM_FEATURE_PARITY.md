@@ -49,6 +49,8 @@ Do not let feature parity work displace the current visual-first priority. The K
 
 ## Work completed in this checkpoint
 
+8. KT-593 unifies the mobile composition for coarse-pointer devices up to 900 CSS px, covering phones and tablets: same three-column HUD, board-plus-side-rail structure, four-button control row, responsive side rail, safe-area padding, and consistent home-mode card sizing. Desktop pointer/large-screen composition is not targeted by this override. Implementation commit: `e8fa7d2dbebbf7a232dc60fdc7401326a019841a`. Fresh visual QA is pending.
+
 6. KT-592 added a shared grid-light texture to the home hero across desktop and mobile, tightened the same rounded card treatment, and improved desktop mode-card proportions (icon scale, typography, padding). Desktop may have its own wider composition; the mobile composition must remain consistent across all mobile devices. This is presentation-only; gameplay logic and mode behavior were not changed.
 7. KT-592 implementation commit: `14c810967e42daa5427c042defe8374cb451eead`. Screenshot QA for this new commit is still pending; do not mark it visually verified until a fresh preview is captured.
 
