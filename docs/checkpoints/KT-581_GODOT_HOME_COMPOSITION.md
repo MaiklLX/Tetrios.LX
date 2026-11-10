@@ -26,3 +26,14 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Fresh preview runs on the KT-581 head are required. Do not mark this stage passed until the new desktop Chromium and iOS WebKit captures are inspected, and the mobile preview completes.
 - Physical-device testing remains outstanding.
 \n\n## Current implementation head\n`2cf52f36dbc5451f96ca9d43bc055c655808e903` — latest implementation and layout-regression test. Fresh automated previews for this exact head are required; earlier run results from intermediate commits are not evidence for this revision.\n
+
+## KT-582 — calibrated home-profile regression threshold
+
+- Inspected the actual desktop Chromium and iOS WebKit screenshots from Cross-platform #650 (artifact `13755240368`, 90 files).
+- The redesigned home hierarchy is visibly present in desktop and narrow portrait captures: title/brand, pilot profile, featured campaign, Block Run, daily challenge and daily quests.
+- The first KT-581 regression run completed all captures but exited non-zero on three viewports because the profile-width assertion incorrectly required 78% of the full menu width. Measured profile widths were about 63% on desktop and 61% on iOS landscape; the other home panels meet the 78% threshold.
+- KT-582 changes only the profile-width assertion to a 55% minimum. No visual CSS, gameplay or layout was changed to satisfy the test.
+- Cross-platform #650: **Failed only on the over-strict profile width assertion**; screenshots uploaded and inspected. This is not a Passed result.
+- Mobile Arena #424: Passed on the KT-581 implementation head; this validates the arena smoke path, not the home redesign.
+- Next: run a fresh Cross-platform preview on KT-582 and inspect the new screenshots/report before closing the stage. Physical-device testing remains outstanding.
+- Current implementation head before the KT-582 follow-up: `6e21b610a4165ddb06f1de3fc48e7269a9f3a47a`.
