@@ -15,6 +15,7 @@ on:
     paths:
       - 'site/**'
       - 'scripts/cross-platform-visual-preview.cjs'
+      - 'scripts/gameplay-persistence-smoke.cjs'
       - '.github/workflows/cross-platform-visual-preview.yml'
   pull_request:
     paths:
