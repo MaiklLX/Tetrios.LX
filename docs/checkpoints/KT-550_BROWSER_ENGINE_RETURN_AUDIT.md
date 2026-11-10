@@ -512,3 +512,17 @@ Status: first browser implementation and cross-platform assertions committed; CI
 ### Текущая контрольная фраза
 
 **BLOCK BUDDIES — KT-574 HORIZONTAL GODOT ATLAS.** Продолжать в `web/kt550-browser-return-2026-11-09`, PR #85 Draft. Атлас 12 вселенных — горизонтальная карусель как в старой браузерной версии, но с Godot-палитрой, 3D-отрисовкой миров, орбитами, крупными карточками, бирюзовыми и золотыми акцентами; свайп на телефоне, горизонтальная прокрутка и стрелки на desktop. Выбранная вселенная центрируется автоматически. Вертикальный маршрут из 30 планет/3 боссов остаётся без изменений. Сохранения — позже, локально на устройстве. Не менять main/Pages, не сливать PR #85, не трогать Godot Preview и APK без отдельного разрешения.
+
+
+## КТ-575 — доступная горизонтальная навигация атласа (2026-11-10)
+
+- Поверх горизонтальной Godot-карусели добавлены способы управления без изменения логики выбора вселенной: вертикальное колесо мыши над атласом преобразуется в горизонтальный ход; клавиши ←/→ листают ленту; кнопки-стрелки остаются доступны.
+- Область атласа получила `tabIndex=0`, роль `region`, понятную русскую подпись для скринридеров и заметный focus-visible контур. На остальных участках страницы колесо мыши не перехватывается.
+- Код: `9ce0c4066b5d04d6a7ae0a3c753d912b2366a25d`; регрессионные проверки: `981f744fb1cf04f765a3a6bbfd10046e0eb49fe4`.
+- КТ-575 ожидает Cross-platform Visual Preview на актуальном HEAD. Проверка колесом/клавиатурой добавлена, но до зелёного CI не считается подтверждённой.
+- КТ-574: горизонтальная компоновка и Godot-оформление проверены предыдущим полным прогоном Cross-platform Visual Preview `42776408203` (SHA `4536adf9e28384f9408fd3ec602768bbcf5d49dc`): `failures=[]`, нет page/console/network ошибок; матрица desktop Chromium, iOS WebKit и Android Chromium. Отдельная проверка обеих стрелок включена в более новый прогон `42776867515`, который на момент записи ещё выполняется.
+- PR #85 остаётся Draft и не слит. Main, Pages, Godot Preview и APK не затронуты.
+
+### Текущая контрольная фраза
+
+**BLOCK BUDDIES — KT-574/575 HORIZONTAL GODOT ATLAS + ACCESSIBLE NAV.** Продолжать в `web/kt550-browser-return-2026-11-09`, PR #85 Draft. Атлас 12 вселенных — горизонтальная карусель, Godot palette/art, 3D planets, large cards, orbit glow, swipe and arrows. Дополнительно wheel-to-horizontal, keyboard arrows, focus-visible and screen-reader region. КТ-574 layout проверена run `42776408203`; KT-574 arrows and KT-575 input methods still require current HEAD CI. Preserve vertical 30-planet route, campaign IDs, saves, gameplay. No merge/publish, no APK/Godot Preview changes.
