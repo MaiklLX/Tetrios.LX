@@ -7066,25 +7066,27 @@ return bbDailyRuleForDate(bbGetTodayKey());
 
 function bbLoadDailyQuests() {
   const today = bbGetTodayKey();
+  let savedQuests = null;
 
   try {
     const saved = JSON.parse(localStorage.getItem('bbDailyQuests') || 'null');
-
-
-if (saved && saved.date === today && Array.isArray(saved.quests)) {
-  // Normalize older snapshots before progress arithmetic; legacy strings or
-  // missing fields must never turn counters into concatenated text or NaN.
-  bbDailyQuests = saved.quests.map(q => ({
-    ...q,
-    progress: Math.max(0, Number(q.progress) || 0),
-    target: Math.max(1, Number(q.target) || 1),
-    reward: Math.max(0, Number(q.reward) || 0),
-    claimed: Boolean(q.claimed)
-  }));
-  bbDailyQuestDate = today;
-  bbSaveDailyQuests();
-  return;
-}
+    if (saved && saved.date === today && Array.isArray(saved.quests)) {
+      savedQuests = saved.quests.map(q => ({
+        ...q,
+        id: String(q.id || ''),
+        progress: Math.max(0, Number(q.progress) || 0),
+        target: Math.max(1, Number(q.target) || 1),
+        reward: Math.max(0, Number(q.reward) || 0),
+        claimed: Boolean(q.claimed)
+      }));
+      // Older saves can be incomplete. Preserve known progress and restore missing quest types.
+      if (['lines','score','games'].every(id => savedQuests.some(q => q.id === id))) {
+        bbDailyQuests = savedQuests;
+        bbDailyQuestDate = today;
+        bbSaveDailyQuests();
+        return;
+      }
+    }
   } catch (e) {}
 
   bbDailyQuestDate = today;
@@ -7129,26 +7131,18 @@ if (saved && saved.date === today && Array.isArray(saved.quests)) {
   const score = pick(scoreTasks, 2);
   const games = pick(gameTasks, 4);
 
-  bbDailyQuests = [
-    {
-      id: 'lines',
-      ...lines,
-      progress: 0,
-      claimed: false
-    },
-    {
-      id: 'score',
-      ...score,
-      progress: 0,
-      claimed: false
-    },
-    {
-      id: 'games',
-      ...games,
-      progress: 0,
-      claimed: false
-    }
+  const freshQuests = [
+    { id: 'lines', ...lines, progress: 0, claimed: false },
+    { id: 'score', ...score, progress: 0, claimed: false },
+    { id: 'games', ...games, progress: 0, claimed: false }
   ];
+  const previousById = new Map((savedQuests || []).map(q => [q.id, q]));
+  bbDailyQuests = freshQuests.map(q => {
+    const previous = previousById.get(q.id);
+    if (!previous) return q;
+    const progress = Math.min(q.target, Math.max(0, Number(previous.progress) || 0));
+    return { ...q, progress, claimed: Boolean(previous.claimed) || progress >= q.target };
+  });
 
   bbSaveDailyQuests();
 }
@@ -8380,8 +8374,13 @@ function showUpgrade(){
     closeOverlay();modal.classList.remove('bb-rogue-draft-modal');paused=false;updateHud();render();tone(880,.2,'sine',.04);restartDrop();
   });
 }
-function endGame(){if(typeof bbDailyRecordGame==='function'&&!bbDailyRecordedThisGame){bbDailyRecordedThisGame=true;bbDailyRecordGame()}
-gameOver=true;paused=true;started=false;clearInterval(dropTimer);clearInterval(tickTimer);
+function endGame(){
+  if (typeof bbDailyRecordGame === 'function' && started && !gameOver && !bbDailyRecordedThisGame) {
+    bbDailyRecordedThisGame = true;
+    if (!bbDailyReplayNoQuestReward) bbDailyRecordGame();
+    bbDailyReplayNoQuestReward = false;
+  }
+  gameOver=true;paused=true;started=false;clearInterval(dropTimer);clearInterval(tickTimer);
 
 if (bbDailyReplayDate) {
   bbDailyReplayDate = null;
@@ -9550,25 +9549,6 @@ function bbDailyRecordGame() {
   bbRefresh();
   bbRenderDailyQuests();
 }
-
-const bbDailyOldEnd = endGame;
-endGame = function() {
-  const shouldRecord = !bbDailyRecordedThisGame;
-
-  if (shouldRecord) {
-    bbDailyRecordedThisGame = true;
-
-    // Повторное прохождение пропущенного вызова не продвигает
-    // ежедневные задания и не может косвенно приносить монеты.
-    if (!bbDailyReplayNoQuestReward) {
-      bbDailyRecordGame();
-    }
-
-    bbDailyReplayNoQuestReward = false;
-  }
-
-  bbDailyOldEnd();
-};
 
 const bbOldStart=startGame;
 startGame=function(){
@@ -16996,5 +16976,35 @@ body .app{background:radial-gradient(ellipse at 12% 8%,#4d9a9a55 0,transparent 3
 #modal.bb-upgrade-library-modal .bb-library-card>strong{display:block;width:100%;min-height:2.5em}
 #modal.bb-upgrade-library-modal .bb-library-card>p{width:100%;overflow-wrap:anywhere}
 @media(max-width:560px){#modal.bb-upgrade-library-modal .bb-library-grid{grid-auto-rows:minmax(184px,auto)}#modal.bb-upgrade-library-modal .bb-library-card{min-height:184px}}
+</style>
+<style id="bb-kt622-daily-quests-library-and-world-polish">
+/* Calm teal-blue world; prevent legacy white surfaces from washing out the game. */
+html,body{min-height:100%;background:#1d4052!important;background-color:#1d4052!important;color:#f3f8f5!important}
+body .app{min-height:100dvh;background:radial-gradient(ellipse at 14% 7%,#65b8aa2b 0,transparent 38%),radial-gradient(ellipse at 88% 16%,#a9a1d32b 0,transparent 34%),linear-gradient(155deg,#1e4659 0%,#28566a 52%,#21495c 100%)!important;background-color:#21495c!important}
+#menu.screen:not([hidden]),#game.screen:not([hidden]),#daily.screen:not([hidden]),#campaign.screen:not([hidden]){background:transparent!important;background-color:transparent!important}
+#menu:not([hidden]){background:transparent!important;background-color:transparent!important}
+/* Codex cards use natural heights and aligned content; descriptions are never clipped. */
+#modal.bb-upgrade-library-modal{width:min(820px,96vw)!important;height:min(850px,92dvh)!important;max-height:92dvh!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;padding:0!important;border:1px solid #78a9a3!important;border-radius:22px!important;background:linear-gradient(155deg,#193b4d,#163447 72%,#1b4050)!important;color:#eff8f4!important;box-shadow:0 22px 70px #061c2c99,0 0 0 4px #b8e5d51a!important}
+#modal.bb-upgrade-library-modal .bb-upgrade-library{display:flex!important;flex:1 1 auto!important;min-height:0!important;flex-direction:column!important;overflow:hidden!important;background:transparent!important}
+#modal.bb-upgrade-library-modal .bb-library-heading{padding:17px 20px 13px!important;background:linear-gradient(115deg,#285d70,#24465f 58%,#394d70)!important;border-bottom:1px solid #8bb9ad66!important;color:#f4fbf7!important}
+#modal.bb-upgrade-library-modal .bb-library-title-row h3{color:#fff8e8!important}
+#modal.bb-upgrade-library-modal .bb-library-title-row p{color:#c5dedb!important}
+#modal.bb-upgrade-library-modal .bb-library-summary span{background:#102f3d77!important;color:#d2e9e3!important}
+#modal.bb-upgrade-library-modal .bb-library-filters{flex:0 0 auto!important;display:flex!important;gap:7px!important;overflow-x:auto!important;padding:10px 14px!important;background:#173749!important;border-bottom:1px solid #719b9a55!important}
+#modal.bb-upgrade-library-modal .bb-library-filters button{flex:1 0 auto!important;min-height:38px!important;padding:7px 11px!important;border:1px solid #547c83!important;border-radius:11px!important;background:#24495b!important;color:#d8e9e5!important}
+#modal.bb-upgrade-library-modal .bb-library-filters button[aria-pressed="true"]{background:#75b9aa!important;color:#123344!important;border-color:#b5e2d0!important}
+#modal.bb-upgrade-library-modal .bb-library-grid{flex:1 1 auto!important;min-height:0!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:auto!important;align-content:start!important;align-items:stretch!important;gap:11px!important;padding:13px 15px 17px!important;overflow-x:hidden!important;overflow-y:auto!important}
+#modal.bb-upgrade-library-modal .bb-library-card{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:0!important;height:auto!important;min-height:218px!important;overflow:visible!important;overflow-wrap:anywhere!important;padding:12px 11px!important;border:1px solid #557e89!important;border-top:3px solid var(--lib-accent)!important;border-radius:15px!important;background:linear-gradient(155deg,#244b5d,#1b3d50)!important;box-shadow:0 4px 0 #102d3c,0 8px 16px #071d2b40!important;color:#eaf5f1!important}
+#modal.bb-upgrade-library-modal .bb-library-card-top{width:100%!important;display:flex!important;justify-content:space-between!important;gap:4px!important}
+#modal.bb-upgrade-library-modal .bb-library-emblem{flex:0 0 44px!important;width:44px!important;height:44px!important;margin:9px 0 8px!important}
+#modal.bb-upgrade-library-modal .bb-library-card>strong{display:block!important;width:100%!important;min-height:0!important;color:#f7fbf7!important;font-size:12px!important;line-height:1.3!important}
+#modal.bb-upgrade-library-modal .bb-library-card>p{width:100%!important;margin:6px 0 9px!important;color:#bfd4d0!important;font-size:10px!important;line-height:1.4!important;overflow-wrap:anywhere!important}
+#modal.bb-upgrade-library-modal .bb-library-effect{width:100%!important;margin-top:auto!important;padding:8px 7px!important;border:1px solid #729b9660!important;border-radius:9px!important;background:#102f3c!important;color:#dcebe5!important;font-size:9px!important;line-height:1.35!important}
+#modal.bb-upgrade-library-modal .bb-library-effect span{color:#f0cf8c!important}
+#modal.bb-upgrade-library-modal .bb-library-footer{flex:0 0 auto!important;padding:10px 14px!important;background:#173749!important;border-top:1px solid #719b9a55!important}
+#modal.bb-upgrade-library-modal .bb-library-footer>span{color:#a9c9c4!important}
+#modal.bb-upgrade-library-modal .bb-library-footer button{min-height:40px!important;border:1px solid #a1d5c4!important;border-radius:11px!important;background:#75b9aa!important;color:#102f3c!important}
+@media(max-width:760px){#modal.bb-upgrade-library-modal .bb-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;padding:10px!important}#modal.bb-upgrade-library-modal .bb-library-card{min-height:204px!important;padding:10px 9px!important}}
+@media(max-width:380px){#modal.bb-upgrade-library-modal .bb-library-card{min-height:196px!important;padding:9px 7px!important}#modal.bb-upgrade-library-modal .bb-library-card>strong{font-size:11px!important}#modal.bb-upgrade-library-modal .bb-library-card>p{font-size:9px!important}}
 </style>
 </body></html>
