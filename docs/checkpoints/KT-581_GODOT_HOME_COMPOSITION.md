@@ -57,3 +57,12 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Added a narrow CSS-only override to stretch the profile strip to the same content width. Mobile sizing, profile data, and game behavior remain unchanged.
 - Cross-platform #652: Passed; artifact inspected. Mobile Arena #426 on KT-582: Passed. These checks precede KT-584, so a fresh run on KT-584 is still required.
 - Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
+
+
+## KT-585 — explicit desktop profile grid span
+
+- KT-584 Cross-platform #654 completed successfully and Mobile Arena #428 completed successfully on commit `b8586ccb3879c5be7aebc1520365ad7eb85237a4`.
+- Inspected the fresh 5-profile cross-platform artifact `13755169748`: report had an empty failures array and no page/console errors, but the desktop screenshot still showed the pilot profile at only about 63% of the content width. The CSS width-only override did not achieve the intended desktop alignment, so KT-584 is not considered visually passed.
+- Added an explicit `grid-column:1 / -1` span, plus `min-width:0`, to the profile grid item. This is a narrowly scoped home-layout CSS correction; profile content, mobile hierarchy, game runtime, progression and saves are unchanged.
+- Fresh Cross-platform and Mobile Arena runs are required on KT-585. Do not close the visual stage until the desktop and mobile screenshots are inspected.
+- Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
