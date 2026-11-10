@@ -11,6 +11,7 @@ const targets = [
   { engine: 'webkit', name: 'ios-webkit-390x844', width: 390, height: 844, mobile: true },
   { engine: 'webkit', name: 'ios-webkit-landscape-844x390', width: 844, height: 390, mobile: true },
   { engine: 'chromium', name: 'android-chromium-393x873', width: 393, height: 873, mobile: true },
+  { engine: 'chromium', name: 'android-tablet-chromium-768x1024', width: 768, height: 1024, mobile: true },
   { engine: 'chromium', name: 'android-chromium-landscape-873x393', width: 873, height: 393, mobile: true }
 ];
 
@@ -722,6 +723,10 @@ const targets = [
       const hint = document.querySelector('#game>.hint');
       return {
         viewport: { width: innerWidth, height: innerHeight },
+        typography: (() => {
+          const sample = selector => { const el=document.querySelector(selector); if(!el)return null; const cs=getComputedStyle(el); return {fontSize:cs.fontSize,lineHeight:cs.lineHeight,letterSpacing:cs.letterSpacing,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight}; };
+          return {hudLabel:sample('#game .gamehud .hudbox span'),sideLabel:sample('#game .sidecol .sidecard label'),boostName:sample('#game .sidecol .boostname'),goals:sample('#game #rogueGoals'),dailyGoal:sample('#game #dailyMissionGoal .daily-mission-label')};
+        })(),
         document: {
           width: document.documentElement.scrollWidth,
           height: document.documentElement.scrollHeight
