@@ -7250,6 +7250,11 @@ function buildMap() {
     requestAnimationFrame(() => {
       const target = track.children[Math.max(0,currentIndex)];
       if (target) {
+        // Give the first and last universe enough leading/trailing space to
+        // sit in the same centered focus position as every middle universe.
+        const sidePadding = Math.max(18,(viewport.clientWidth - target.offsetWidth) / 2);
+        track.style.setProperty('padding-left',sidePadding+'px','important');
+        track.style.setProperty('padding-right',sidePadding+'px','important');
         const left = Math.max(0,target.offsetLeft - (viewport.clientWidth - target.offsetWidth) / 2);
         viewport.scrollTo({left,behavior:'smooth'});
       }
