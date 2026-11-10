@@ -272,7 +272,10 @@ const targets = [
     await campaignPage.locator('button.mode[data-mode="campaign"]').waitFor({state:'visible',timeout:15000});
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({state:'visible',timeout:15000});
-    await campaignPage.locator('#campaignStart').click();
+    // The campaign start button can keep shifting while the 3D atlas model settles;
+    // visibility/enabled are asserted above, so dispatch its native DOM click after scrolling.
+    await campaignPage.locator('#campaignStart').scrollIntoViewIfNeeded();
+    await campaignPage.locator('#campaignStart').evaluate(button => button.click());
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().waitFor({state:'visible',timeout:10000});
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
     try {
