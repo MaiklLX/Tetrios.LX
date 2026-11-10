@@ -37,3 +37,13 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Mobile Arena #424: Passed on the KT-581 implementation head; this validates the arena smoke path, not the home redesign.
 - Next: run a fresh Cross-platform preview on KT-582 and inspect the new screenshots/report before closing the stage. Physical-device testing remains outstanding.
 - Current implementation head before the KT-582 follow-up: `6e21b610a4165ddb06f1de3fc48e7269a9f3a47a`.
+
+
+## KT-583 — cross-platform preview runtime
+
+- The previous Cross-platform #652 run on KT-582 remained stuck at the browser capture step; GitHub's job-log endpoint returned BlobNotFound and no screenshots/artifact were produced. This run is not Passed.
+- The previous matrix ran the full multi-stage campaign, rewards, daily challenge and Block Run interaction suite across 10 viewports. That repeated expensive gameplay/campaign work for near-duplicate dimensions and risked exceeding the workflow's 25-minute limit.
+- Reduced the matrix to five representative profiles while retaining coverage of desktop Chromium, iOS WebKit, Android Chromium, portrait and phone-landscape orientation guards.
+- Kept the complete interaction/assertion suite on each representative profile; no game runtime, CSS, layout or progression behavior changed.
+- Fresh Cross-platform run required on this checkpoint. Inspect screenshots and report before marking the home redesign passed. Mobile Arena success on KT-582 remains separate evidence only.
+- Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
