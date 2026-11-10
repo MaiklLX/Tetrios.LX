@@ -7189,6 +7189,23 @@ function buildMap() {
 
     const viewport = document.createElement('div');
     viewport.className = 'bb-galaxy-viewport';
+    viewport.tabIndex = 0;
+    viewport.setAttribute('role','region');
+    viewport.setAttribute('aria-label','Атлас вселенных. Горизонтальная прокрутка');
+    // Mouse wheels usually emit vertical deltas; over the atlas, translate them
+    // into horizontal travel while preserving ordinary page scrolling elsewhere.
+    viewport.addEventListener('wheel', event => {
+      if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+        event.preventDefault();
+        viewport.scrollBy({left:event.deltaY,behavior:'auto'});
+      }
+    }, {passive:false});
+    viewport.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        viewport.scrollBy({left:(event.key === 'ArrowRight' ? 1 : -1) * viewport.clientWidth * .72,behavior:'smooth'});
+      }
+    });
     const track = document.createElement('div');
     track.className = 'bb-galaxy-track';
 
@@ -14998,6 +15015,7 @@ button:not(.board):focus-visible{
   border-top:1px solid #9bb8e012!important;border-bottom:1px solid #9bb8e012!important;
 }
 #campaign .bb-galaxy-viewport::-webkit-scrollbar{display:none}
+#campaign .bb-galaxy-viewport:focus-visible{outline:2px solid #8beaff!important;outline-offset:3px!important}
 #campaign .bb-galaxy-track{
   display:flex!important;flex-direction:row!important;align-items:stretch!important;
   gap:0!important;width:max-content!important;min-width:0!important;
