@@ -114,3 +114,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Large offline-first assets can keep Pages in syncing_files longer than the default 10 minutes.
+          timeout: 1200000
