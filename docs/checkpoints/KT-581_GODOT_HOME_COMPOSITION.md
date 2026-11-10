@@ -87,3 +87,12 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - KT-586 implementation commit: `0dec8e35796f1f46662a3c33cb3bfb23bcbb147e`; checkpoint evidence commit follows.
 - Home composition stage is visually passed. Next gate is a focused gameplay smoke test (start, input, game over, save/progression, campaign and Block Run), then prepare a reversible public test release for explicit user approval.
 - Draft only; no merge, main update, Pages deployment, Godot Preview change or APK build/release.
+
+
+## KT-587 — gameplay smoke coverage audit
+
+- Audited the successful Cross-platform #659 script path on the same head. It starts a real daily run (hero selection → arena), starts the standard gameplay preview, verifies pause/resume behavior, checks the live portrait↔landscape guard without losing the run, and exercises actual mobile touch listeners: repeated left/right, repeated rotation, soft drop, and immediate movement/rotation after hard drop.
+- It also enters campaign missions and checks that mission objectives are visible and no Block Run card-pick UI leaks into Campaign/Daily. Block Run visuals, upgrade/encounter states, Prism/Aura, Void board invariants and campaign atlas/reward shelf are covered by the cross-platform suite. `site/validate-gameplay-modes.mjs` and `site/validate-3d-runtime.mjs` run in the workflow before capture.
+- Important limit: the existing browser preview does **not** yet prove a naturally reached game-over settlement or a real earned reward surviving a page reload. The result-overlay check currently validates presentation styling, not a complete game-over event. Do not describe save persistence or full end-to-end settlement as passed.
+- KT-587 therefore records a focused remaining gate: add/run a deterministic, isolated end-of-run + persisted-profile smoke check without mutating real user data, then inspect the exact diff and rerun both visual workflows. Physical-device testing remains a separate user-side check after a preview release.
+- No gameplay/runtime changes in this audit. PR #85 remains Draft; no merge, main update, public Pages deployment, Godot Preview change or APK build/release.
