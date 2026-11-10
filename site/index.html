@@ -6887,17 +6887,22 @@ function bbGetCampaignCollectionItems() {
   items.push({id:'campaign_crown',kind:'crown',title:'Корона дальнего пути',description:'Главная реликвия за завершение всех 360 планет.',requirement:360,accent:'#ffd05a',symbol:'♕',unlocked:completed>=360});
   return items;
 }
-function bbOpenCampaignCollection(selectedId) {
+function bbOpenCampaignCollection(selectedId, pageIndex=0) {
   const items=bbGetCampaignCollectionItems();
   const unlocked=items.filter(item=>item.unlocked).length;
+  const pageSize=9;
+  const pageCount=Math.ceil(items.length/pageSize);
+  let page=Math.max(0,Math.min(pageCount-1,Number(pageIndex)||0));
   const selected=items.find(item=>item.id===selectedId)||items.find(item=>item.unlocked)||items[0];
-  const cards=items.map((item,index)=>'<button type="button" class="bb-collection-card'+(item.id===selected.id?' is-selected':'')+(item.unlocked?' is-unlocked':' is-locked')+'" data-bb-collection-id="'+item.id+'" aria-label="'+(item.unlocked?'Получено: ':'Заблокировано: ')+item.title+'"><span class="bb-collection-emblem" style="--relic-accent:'+item.accent+'">'+bbCampaignCollectionEmblem(item)+'</span><span class="bb-collection-card-label">'+(item.kind==='relic'?'РЕЛИКВИЯ '+String(item.universe).padStart(2,'0'):item.kind==='boss'?'БОСС '+String(item.planet).padStart(3,'0'):'ГЛАВНЫЙ ТРОФЕЙ')+'</span><span class="bb-collection-lock">'+(item.unlocked?'ПОЛУЧЕНО':'ЗАКРЫТО')+'</span></button>').join('');
-  const detail='<div class="bb-collection-detail" style="--relic-accent:'+selected.accent+'"><div class="bb-collection-detail-emblem">'+bbCampaignCollectionEmblem(selected)+'</div><div class="bb-collection-detail-copy"><small>'+(selected.kind==='relic'?'РЕЛИКВИЯ ВСЕЛЕННОЙ '+String(selected.universe).padStart(2,'0'):selected.kind==='boss'?'ЗНАК ПОБЕДЫ НАД БОССОМ':'ГЛАВНАЯ НАГРАДА')+' · '+(selected.unlocked?'ПОЛУЧЕНО':'ЕЩЁ ВПЕРЕДИ')+'</small><strong>'+selected.title+'</strong><span>'+selected.description+'</span><em>УСЛОВИЕ: '+(selected.kind==='crown'?'ПОКОРИТЬ ВСЕ 360 ПЛАНЕТ':selected.kind==='relic'?'ПОКОРИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ':'ПОБЕДИТЬ НА ПЛАНЕТЕ '+String(selected.requirement).padStart(3,'0'))+'</em></div></div>';
-  bbModal('<section class="bb-collection-modal"><header><div class="eyebrow">АТЛАС ДОСТИЖЕНИЙ</div><h3>★ ПОЛКА НАГРАД</h3><p>ТВОИ ДОСТИЖЕНИЯ · '+String(unlocked).padStart(2,'0')+' / 49 ПОЛУЧЕНО</p><div class="bb-collection-legend"><span>● РЕЛИКВИИ</span><span>● БОССЫ</span><span>● КОРОНА</span></div></header><div class="bb-collection-rail" id="bbCampaignCollectionRail">'+cards+'</div>'+detail+'<button type="button" class="action secondary" id="bbCampaignCollectionClose">ЗАКРЫТЬ</button></section>');
-  const rail=$('bbCampaignCollectionRail');
+  page=Math.floor(items.indexOf(selected)/pageSize);
+  const visible=items.slice(page*pageSize,(page+1)*pageSize);
+  const shelves=[0,1,2].map(row=>'<div class="bb-real-shelf-row"><div class="bb-real-shelf-items">'+visible.slice(row*3,row*3+3).map(item=>'<button type="button" class="bb-shelf-item '+(item.id===selected.id?'is-selected ':'')+(item.unlocked?'is-unlocked':'is-locked')+'" data-bb-collection-id="'+item.id+'" aria-label="'+(item.unlocked?'Получено: ':'Заблокировано: ')+item.title+'"><span class="bb-shelf-art" style="--relic-accent:'+item.accent+'">'+bbCampaignCollectionEmblem(item)+'</span><span class="bb-shelf-name">'+(item.kind==='relic'?'РЕЛИКВИЯ':item.kind==='boss'?'БОСС':'ТРОФЕЙ')+'</span><span class="bb-shelf-state">'+(item.unlocked?'✓':'🔒')+'</span></button>').join('')+'</div><div class="bb-real-shelf-plank"></div></div>').join('');
+  const detail='<div class="bb-shelf-detail" style="--relic-accent:'+selected.accent+'"><div class="bb-shelf-detail-art">'+bbCampaignCollectionEmblem(selected)+'</div><div><small>'+(selected.kind==='relic'?'РЕЛИКВИЯ ВСЕЛЕННОЙ '+String(selected.universe).padStart(2,'0'):selected.kind==='boss'?'ЗНАК ПОБЕДЫ НАД БОССОМ':'ГЛАВНАЯ НАГРАДА')+' · '+(selected.unlocked?'ПОЛУЧЕНО':'ЕЩЁ ВПЕРЕДИ')+'</small><strong>'+selected.title+'</strong><span>'+selected.description+'</span><em>УСЛОВИЕ: '+(selected.kind==='crown'?'ПОКОРИТЬ ВСЕ 360 ПЛАНЕТ':selected.kind==='relic'?'ПОКОРИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ':'ПОБЕДИТЬ НА ПЛАНЕТЕ '+String(selected.requirement).padStart(3,'0'))+'</em></div></div>';
+  bbModal('<section class="bb-collection-modal bb-shelf-modal"><header><div class="eyebrow">АТЛАС ДОСТИЖЕНИЙ</div><h3>★ ПОЛКА НАГРАД</h3><p>СОБРАНО · '+String(unlocked).padStart(2,'0')+' / 49</p><div class="bb-collection-legend"><span>● РЕЛИКВИИ</span><span>● БОССЫ</span><span>● КОРОНА</span></div></header><div class="bb-shelf-stage"><div class="bb-shelf-page">'+shelves+'</div></div><nav class="bb-shelf-nav" aria-label="Полки наград"><button type="button" id="bbShelfPrev" '+(page===0?'disabled':'')+' aria-label="Предыдущие полки">‹</button><span>ПОЛКИ '+(page+1)+' / '+pageCount+' <small>· листай по горизонтали</small></span><button type="button" id="bbShelfNext" '+(page>=pageCount-1?'disabled':'')+' aria-label="Следующие полки">›</button></nav>'+detail+'<button type="button" class="action secondary" id="bbCampaignCollectionClose">ЗАКРЫТЬ</button></section>');
+  const rail=$('modal');
   rail.querySelectorAll('[data-bb-collection-id]').forEach(button=>button.addEventListener('click',()=>bbOpenCampaignCollection(button.dataset.bbCollectionId)));
-  const active=rail.querySelector('.is-selected');
-  if(active) active.scrollIntoView({block:'nearest',inline:'center'});
+  $('bbShelfPrev').onclick=()=>bbOpenCampaignCollection(items[ Math.max(0,page*pageSize-1) ].id);
+  $('bbShelfNext').onclick=()=>bbOpenCampaignCollection(items[Math.min(items.length-1,(page+1)*pageSize)].id);
   $('bbCampaignCollectionClose').onclick=closeOverlay;
 }
 const bbCampaignStartButton=$('campaignStart');
@@ -8328,30 +8333,33 @@ function updateHud(){bbRenderHeroSkillSlot();const boostCard=$('boostCard');if(b
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
   if(mode!=='rogue'){paused=false;restartDrop();return;}
-  const rogue=true;
-  let pool=bbGetModeUpgradePool('rogue');
+  const pool=bbGetModeUpgradePool('rogue').slice();
   if(!pool.length){paused=false;restartDrop();return;}
   pool.sort(()=>Math.random()-.5);
   const picks=pool.slice(0,3);
-  const stage=rogue?Math.max(1,Math.floor((level-1)/3)+1):0;
-  const synergyMarkup=rogue?bbRogueHasSynergy().map(x=>'<div class="rarity">✦ '+x.name+' · '+x.desc+'</div>').join('')+(bbRogueHasSynergy().length?'':'<div class="rarity">СОБИРАЙ ПАРЫ КАРТ — ОТКРОЮТСЯ СИНЕРГИИ</div>') : '';
-  overlay(`<div class="modalhead"><div class="bigicon">✧</div><div class="eyebrow">${rogue?'ЭВОЛЮЦИЯ КАРТ · ЭТАП '+stage:'УРОВЕНЬ '+level+' ДОСТИГНУТ'}</div><h3>${rogue?'Усиль свой билд':'Выбери реликвию'}</h3><p>${rogue?'Повторный выбор карты повышает её звёздность и усиливает эффект. Чем дальше забег, тем выше потенциал карт.':'Время замерло. Какую силу ты заберёшь с собой в следующий сектор?'}</p>${synergyMarkup}</div><div class="choices">${picks.map((u,i)=>{const rank=bbGetRogueCardRank(u[3]);const nextRank=Math.min(5,rank+1);const rarity=rogue?(nextRank>=5?'◆◆◆◆◆ МАКСИМАЛЬНАЯ':nextRank>=4?'◆◆◆◆ ЛЕГЕНДАРНАЯ':nextRank>=3?'◆◆◆ ЭПИЧЕСКАЯ':nextRank>=2?'◆◆ РЕДКАЯ':'◆ ОБЫЧНАЯ'):(i===0?'◆ НЕОБЫЧНАЯ':i===1?'◆◆ РЕДКАЯ':'◆◆◆ ЭПИЧЕСКАЯ');return `<button class="choice" data-up="${u[3]}"><div class="choiceicon">${u[0]}</div><div class="choicetext"><strong>${u[1]}</strong><span>${rogue?bbGetUpgradeEffectDescription(u[3],nextRank):u[2]}</span><div class="rarity">${rogue?'ТЕКУЩИЙ УРОВЕНЬ: '+(rank?rank+'★':'НЕТ')+' → '+nextRank+'★':rarity}</div></div><span>›</span></button>`}).join('')}</div>`);
-  $('modal').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{
-    const id=b.dataset.up;
-    if(rogue){
-      const previous=bbGetRogueCardRank(id);
-      bbRogueCardRanks[id]=Math.min(5,previous+1);
-      if(!boosts.includes(id))boosts.push(id);
-      const synergies=bbRogueHasSynergy();
-      toast(previous>=5?'✦ Карта достигла максимальной звёздности!':previous>0?'✦ Карта эволюционировала: '+(previous+1)+'★':'✦ Новая карта добавлена в билд');
-      if(synergies.length)toast('СИНЕРГИЯ АКТИВНА: '+synergies[synergies.length-1].name);
-    }else{boosts.push(id);}
+  const stage=Math.max(1,Math.floor((level-1)/3)+1);
+  const synergy=bbRogueHasSynergy();
+  const cardMarkup=(u,i)=>{
+    const rank=bbGetRogueCardRank(u[3]),nextRank=Math.min(5,rank+1);
+    const rarity=nextRank>=5?'МИФИЧЕСКАЯ':nextRank>=4?'ЛЕГЕНДАРНАЯ':nextRank>=3?'ЭПИЧЕСКАЯ':nextRank>=2?'РЕДКАЯ':'ОБЫЧНАЯ';
+    return '<button class="bb-rogue-pick-card bb-rogue-pick-'+i+'" data-up="'+u[3]+'" style="--pick-index:'+i+'"><span class="bb-pick-rarity">'+rarity+'</span><span class="bb-pick-icon">'+u[0]+'</span><strong>'+u[1]+'</strong><span class="bb-pick-desc">'+bbGetUpgradeEffectDescription(u[3],nextRank)+'</span><span class="bb-pick-rank">'+(rank?'ТЕКУЩИЙ РАНГ '+rank+' ★':'НОВАЯ КАРТА')+' <b>→ '+nextRank+' ★</b></span><span class="bb-pick-choose">ВЫБРАТЬ КАРТУ</span></button>';
+  };
+  overlay('<section class="bb-rogue-draft"><header class="bb-draft-heading"><span class="bb-draft-kicker">BLOCK RUN · ЭТАП '+stage+'</span><h3>НОВЫЙ ЗАРЯД!</h3><p>Выбери одну карту, чтобы усилить свой билд</p><div class="bb-draft-charge"><i></i><i></i><i></i><i></i><i></i></div></header><div class="bb-rogue-pyramid">'+picks.map(cardMarkup).join('')+'</div>'+(synergy.length?'<div class="bb-draft-synergy">✦ СИНЕРГИИ АКТИВНЫ · '+synergy.map(x=>x.name).join(' · ')+'</div>':'<div class="bb-draft-hint">Собирай пары карт, чтобы открывать синергии</div>')+'</section>');
+  const modal=$('modal');
+  modal.classList.add('bb-rogue-draft-modal');
+  modal.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{
+    const id=b.dataset.up,previous=bbGetRogueCardRank(id);
+    bbRogueCardRanks[id]=Math.min(5,previous+1);
+    if(!boosts.includes(id))boosts.push(id);
+    const synergies=bbRogueHasSynergy();
+    toast(previous>=5?'✦ Карта достигла максимальной звёздности!':previous>0?'✦ Карта эволюционировала: '+(previous+1)+'★':'✦ Новая карта добавлена в билд');
+    if(synergies.length)toast('СИНЕРГИЯ АКТИВНА: '+synergies[synergies.length-1].name);
     if(id==='hold')holdUsed=0;
-    if(rogue&&id==='reserve')bbRogueReserveCharges=bbGetRogueCardRank('reserve');
-    if(rogue&&(id==='shield'||id==='armor')){if(!boosts.includes('shield'))boosts.push('shield');bbRogueShieldCharges=bbGetRogueCardRank('shield')+bbGetRogueCardRank('armor');}
+    if(id==='reserve')bbRogueReserveCharges=bbGetRogueCardRank('reserve');
+    if(id==='shield'||id==='armor'){if(!boosts.includes('shield'))boosts.push('shield');bbRogueShieldCharges=bbGetRogueCardRank('shield')+bbGetRogueCardRank('armor');}
     if(id==='loop')needLines=Math.max(3,needLines-1);
     if(id==='slow')dropMs=Math.max(150,dropMs-30);
-    closeOverlay();paused=false;updateHud();render();tone(880,.2,'sine',.04);restartDrop();
+    closeOverlay();modal.classList.remove('bb-rogue-draft-modal');paused=false;updateHud();render();tone(880,.2,'sine',.04);restartDrop();
   });
 }
 function endGame(){if(typeof bbDailyRecordGame==='function'&&!bbDailyRecordedThisGame){bbDailyRecordedThisGame=true;bbDailyRecordGame()}
@@ -16779,5 +16787,16 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
  #game .chrono-card{min-height:116px!important}
  #game .chrono-ring{width:78px!important}
 }
+</style>
+
+<style id="bb-kt601-rogue-shelf-visual">
+/* KT-601: tangible reward shelves and animated rogue card draft. */
+#modal.bb-rogue-draft-modal{width:min(94vw,680px)!important;max-width:680px!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important}
+.bb-rogue-draft{padding:18px 14px 16px;border-radius:24px;background:linear-gradient(180deg,#eaf7ff,#c8e8fb);border:4px solid #75b9e5;box-shadow:0 8px 0 #3475a9,0 18px 36px #071c3b88;color:#19466d;text-align:center;overflow:hidden}
+.bb-draft-heading{padding:4px 4px 10px}.bb-draft-kicker{display:inline-block;padding:6px 12px;border-radius:99px;background:#d5eaff;color:#3476a5;font-size:10px;font-weight:1000;letter-spacing:.12em}.bb-draft-heading h3{margin:8px 0 3px;font-size:clamp(22px,6vw,30px);color:#174b78}.bb-draft-heading p{margin:0;color:#47799e;font-size:13px;font-weight:700}
+.bb-draft-charge{display:flex;justify-content:center;gap:6px;margin:12px auto 0}.bb-draft-charge i{width:22px;height:7px;border-radius:9px;background:#8cc7e9;box-shadow:inset 0 1px 1px #fff}
+.bb-rogue-pyramid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto auto;gap:10px 12px;max-width:520px;margin:8px auto 12px;align-items:stretch}.bb-rogue-pick-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;min-height:190px;padding:12px 10px 10px;border:3px solid #8bc5e9;border-radius:18px;background:linear-gradient(160deg,#fff,#e2f3ff);color:#214e73;box-shadow:0 5px 0 #8dbbd9,0 8px 14px #1b5b8a22;cursor:pointer;animation:bbPickArrive .48s cubic-bezier(.2,.9,.25,1.2) both;animation-delay:calc(var(--pick-index)*.13s);transition:transform .16s,box-shadow .16s,border-color .16s}.bb-rogue-pick-0{grid-column:1/3;justify-self:center;width:min(68%,280px);min-height:174px;border-color:#e9bd58;background:linear-gradient(160deg,#fff9e6,#fff0c7);box-shadow:0 5px 0 #c99b3e,0 8px 16px #9a702222}.bb-rogue-pick-card:active{transform:translateY(3px) scale(.98)}.bb-pick-rarity{font-size:9px;font-weight:1000;letter-spacing:.13em;color:#8c6b25}.bb-pick-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:#d7edff;color:#3978a7;font-size:30px;box-shadow:inset 0 2px 0 #fff}.bb-rogue-pick-0 .bb-pick-icon{background:#ffe2a0;color:#8b621a}.bb-pick-desc{font-size:11px;line-height:1.35;color:#52738c}.bb-rogue-pick-card strong{font-size:14px;line-height:1.2}.bb-pick-rank{font-size:9px;color:#66859b;font-weight:800}.bb-pick-rank b{color:#a56f16}.bb-pick-choose{margin-top:auto;padding:6px 12px;border-radius:99px;background:#3b8bc1;color:white;font-size:9px;font-weight:1000;letter-spacing:.08em}.bb-rogue-pick-0 .bb-pick-choose{background:#e4ad3f;color:#553c12}@keyframes bbPickArrive{from{opacity:0;transform:translateY(28px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}.bb-draft-synergy,.bb-draft-hint{padding:8px 10px;border-radius:12px;background:#d9effb;color:#47718d;font-size:10px;font-weight:800}.bb-draft-synergy{background:#fff0c7;color:#8b641d}
+.bb-shelf-modal{background:linear-gradient(180deg,#eaf6ff,#c9e5f7)!important;border:4px solid #78b9df!important;border-radius:24px!important;color:#214d70!important;box-shadow:0 8px 0 #326b98,0 18px 40px #061a3580!important}.bb-shelf-modal header h3{color:#194e79!important}.bb-shelf-modal header p{color:#47799d!important}.bb-shelf-modal .bb-collection-legend{color:#47799d!important}.bb-shelf-stage{padding:12px 10px 8px;border-radius:18px;background:linear-gradient(180deg,#d6eafa,#b8d8ed);border:2px solid #9bc9e5;box-shadow:inset 0 2px 4px #fff}.bb-shelf-page{display:grid;gap:12px}.bb-real-shelf-row{position:relative;padding:0 3px 9px}.bb-real-shelf-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end}.bb-real-shelf-plank{height:11px;border-radius:4px;background:linear-gradient(180deg,#c88d4d,#9a602e 55%,#78451f);border-bottom:3px solid #6f401f;box-shadow:0 4px 0 #8d572d,0 6px 7px #21476530}.bb-shelf-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;min-width:0;min-height:100px;padding:7px 3px 8px;border:2px solid #b6d5e8;border-radius:13px 13px 5px 5px;background:linear-gradient(150deg,#f8fcff,#dceef9);color:#52728a;cursor:pointer;box-shadow:0 3px 0 #a8c6d9}.bb-shelf-item.is-selected{border-color:#e2ad42;box-shadow:0 0 0 2px #ffe4a0,0 3px 0 #b17c28;transform:translateY(-4px)}.bb-shelf-item.is-locked{opacity:.62;filter:saturate(.55)}.bb-shelf-art{display:grid;place-items:center;width:50px;height:50px;border-radius:50%;background:color-mix(in srgb,var(--relic-accent) 18%,white);color:var(--relic-accent)}.bb-shelf-art svg{width:42px;height:42px}.bb-shelf-name{font-size:8px;font-weight:1000;letter-spacing:.06em}.bb-shelf-state{font-size:10px}.bb-shelf-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}.bb-shelf-nav button{width:42px;height:38px;border:0;border-radius:12px;background:#3d83b5;color:white;font-size:27px;font-weight:900;box-shadow:0 3px 0 #245c88}.bb-shelf-nav button:disabled{opacity:.35}.bb-shelf-nav span{font-size:10px;font-weight:1000;color:#356b91;letter-spacing:.06em;text-align:center}.bb-shelf-nav small{display:block;font-size:9px;font-weight:700;letter-spacing:0;color:#7194ac}.bb-shelf-detail{display:grid;grid-template-columns:62px minmax(0,1fr);gap:12px;align-items:center;padding:12px;border:2px solid #a9d2e9;border-radius:15px;background:#f2f9fe;color:#315f80}.bb-shelf-detail-art{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:color-mix(in srgb,var(--relic-accent) 18%,white);color:var(--relic-accent)}.bb-shelf-detail-art svg{width:52px;height:52px}.bb-shelf-detail small,.bb-shelf-detail em{display:block;font-size:8px;font-style:normal;font-weight:900;color:#7191a7}.bb-shelf-detail strong{display:block;margin:3px 0;font-size:14px;color:#204f74}.bb-shelf-detail span{display:block;font-size:10px;line-height:1.35;color:#557991}.bb-shelf-detail em{margin-top:5px;color:#a16e20}
+@media(max-width:420px){.bb-rogue-draft{padding:14px 9px}.bb-rogue-pick-card{min-height:174px;padding:9px 7px}.bb-rogue-pick-0{min-height:158px}.bb-pick-icon{width:42px;height:42px}.bb-shelf-item{min-height:90px}.bb-shelf-art{width:42px;height:42px}.bb-shelf-art svg{width:36px;height:36px}}
 </style>
 </body></html>
