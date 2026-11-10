@@ -612,24 +612,24 @@ const targets = [
         const surfaceRect=surface.getBoundingClientRect();
         const centerX=surfaceRect.left+surfaceRect.width*.5,centerY=surfaceRect.top+surfaceRect.height*.5;
         let identifier=71;
-        const send=(type,x,y,active=true)=>{
-          // Dispatch from the HUD, deliberately outside #board, to verify that
-          // the entire game screen receives gestures rather than only the arena.
-          const touch={identifier,target:surface,clientX:x,clientY:y,pageX:x,pageY:y,screenX:x,screenY:y};
-          const event=new Event(type,{bubbles:true,cancelable:true});
-          Object.defineProperties(event,{
-            touches:{value:active?[touch]:[]},
-            targetTouches:{value:active?[touch]:[]},
-            changedTouches:{value:[touch]}
+        const send=(type,x,y,target=surface)=>{
+          // Start on the HUD, outside #board, then move/release on body. This
+          // verifies document-level pointer tracking beyond the original hit
+          // target and across the arena boundary.
+          const event=new PointerEvent(type,{
+            bubbles:true,cancelable:true,pointerId:identifier,
+            pointerType:'touch',isPrimary:true,clientX:x,clientY:y,
+            width:8,height:8,pressure:type==='pointerup'?0:.5
           });
-          surface.dispatchEvent(event);
+          target.dispatchEvent(event);
         };
         const state=()=>qa.getPieceState().piece;
         const swipe=(dx,dy)=>{
           const x=centerX,y=centerY;
-          send('touchstart',x,y,true);
-          send('touchmove',x+dx,y+dy,true);
-          send('touchend',x+dx,y+dy,false);
+          identifier++;
+          send('pointerdown',x,y,surface);
+          send('pointermove',x+dx,y+dy,document.body);
+          send('pointerup',x+dx,y+dy,document.body);
         };
         const before=state();
         const horizontalStep=Math.max(28,rect.width*.14);
