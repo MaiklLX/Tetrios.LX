@@ -256,9 +256,15 @@ const targets = [
       const track=document.querySelector('#campaign .bb-planet-track');
       const viewport=document.querySelector('#campaign .bb-planet-viewport');
       const nodes=Array.from(document.querySelectorAll('#campaign .bb-planet-node'));
+      const heading=document.querySelector('#campaign .bb-planet-heading');
+      const headingOrb=heading?getComputedStyle(heading,'::after'):null;
+      const viewportStyle=viewport?getComputedStyle(viewport):null;
       const y=nodes.map(node=>Number.parseFloat(node.style.top)||0);
       return {
         orientation:track?.dataset.routeOrientation||'',
+        headingOrbWidth:headingOrb?parseFloat(headingOrb.width):0,
+        headingOrbBackground:headingOrb?.backgroundImage||'',
+        routePanelBorder:viewportStyle?.borderTopColor||'',
         nodeCount:nodes.length,
         bossCount:nodes.filter(node=>node.classList.contains('is-boss')).length,
         verticalOverflow:!!viewport&&viewport.scrollHeight>viewport.clientHeight,
@@ -279,7 +285,7 @@ const targets = [
         currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),height:Math.round(r.height)}})()
       };
     });
-    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'){
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbWidth<60||!routeState.headingOrbBackground.includes('radial-gradient')||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
