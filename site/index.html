@@ -16491,12 +16491,12 @@ html body .app section#menu.screen .quest-item *{color:#f2fbff}
  border-radius:11px;background:linear-gradient(145deg,#ffffff,#e5f3ff 60%,#cfe5ff);
  box-shadow:inset 0 1px 0 #fff,0 2px 0 #b4d2ef;
 }
-#game .sidecol .hold-card{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+#game .sidecol .hold-card{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:5px}
 #game .sidecol #holdPreview{
  display:block;width:100%;height:58px;margin:1px auto 0;border-radius:10px;
  background:linear-gradient(145deg,#fff,#e7f4ff);border:1px solid #c2ddf5;
 }
-#game .sidecol .hold-empty{position:static;display:block;margin:-39px 0 20px;color:#8aa7c5;font-size:8px;font-weight:950;letter-spacing:.15em;pointer-events:none}
+#game .sidecol .hold-empty{position:absolute;top:47px;left:5px;right:5px;display:block;margin:0;color:#8aa7c5;font-size:8px;font-weight:950;letter-spacing:.15em;line-height:1;pointer-events:none;text-align:center}
 #game .sidecol .hold-empty[hidden]{display:none}
 #game .sidecol .hold-card .smallbtn{
  width:100%;min-width:0;min-height:32px;margin:0!important;padding:6px 3px!important;
@@ -16542,7 +16542,7 @@ html body .app section#menu.screen .quest-item *{color:#f2fbff}
  #game .sidecol>.sidecard>label{font-size:7px!important}
  #game .sidecol #next{height:65px}
  #game .sidecol #holdPreview{height:48px}
- #game .sidecol .hold-empty{margin-top:-34px;margin-bottom:17px;font-size:7px}
+ #game .sidecol .hold-empty{top:43px;font-size:7px}
  #game .sidecol .hold-card .smallbtn{min-height:29px;font-size:7px!important}
  #game #bbHeroSkillCard{grid-template-columns:31px minmax(0,1fr)!important;min-height:70px!important;padding:6px 5px 8px!important;column-gap:5px!important;border-radius:12px!important}
  #game #bbHeroSkillCard .bb-hero-skill-art{width:31px!important;height:31px!important}
