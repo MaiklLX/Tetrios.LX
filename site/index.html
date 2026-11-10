@@ -8668,36 +8668,27 @@ if (boostCard) {
 
     paused = true;
 
-    const activeBoosts = boosts.map(id=>{
-      const item=upgrades.find(u=>u[3]===id);if(!item)return '';
-      const rank=mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):1;
-      const stars=mode==='rogue'?'★'.repeat(rank)+'☆'.repeat(5-rank):'АКТИВНО';
+    const activeBoosts = upgrades.map(item=>{
+      const id=item[3],owned=boosts.includes(id),rank=mode==='rogue'?bbGetRogueCardRank(id):(owned?1:0);
       const effects={
-        shield:'Запас спасений: '+(bbRogueShieldCharges||rank)+' атаки',
-        armor:'Броня добавляет +1 заряд щита и усиливает защиту',
-        slow:'Падение медленнее на '+(20+rank*5)+'%',
-        mult:'Множитель очков ×'+(1+rank*.5).toFixed(2),
-        score:'Комбо усиливает очки на '+(15*rank)+'% за шаг',
-        hold:'Удержание доступно '+(1+rank)+' раза',
-        memory:'Порог уровня снижен на '+rank+' линию(и)',
-        fortress:'Скорость роста угрозы снижена на '+(rank*8)+'%',
-        nova:'Аварийное спасение: очищает '+rank+' нижн. линию(и)'
+        shield:'Запас спасений и защита от опасных ситуаций',
+        armor:'Дополнительный заряд щита и усиленная защита',
+        slow:'Замедляет падение фигур',
+        mult:'Повышает множитель набранных очков',
+        score:'Усиливает очки за последовательные действия',
+        hold:'Даёт дополнительные возможности удержания',
+        memory:'Снижает порог линий для повышения уровня',
+        fortress:'Замедляет рост угрозы',
+        nova:'Аварийное очищение нижних линий'
       };
-      return `<div class="choice"><div class="choiceicon">${item[0]}</div><div class="choicetext"><strong>${item[1]}</strong><span>${stars}</span><span>${bbGetUpgradeEffectDescription(id,rank)}</span></div></div>`;
-    }).filter(Boolean);
-
+      const stars=rank?'★'.repeat(Math.min(5,rank))+'☆'.repeat(Math.max(0,5-rank)):'☆☆☆☆☆';
+      return '<article class="bb-rogue-album-card '+(owned?'is-owned':'is-undiscovered')+'" style="--rarity-color:'+(rank>=5?'#b56be8':rank>=4?'#e3a53e':rank>=3?'#5b91df':rank>=2?'#48ad91':'#91a9b9')+'"><span class="bb-album-icon">'+item[0]+'</span><strong>'+item[1]+'</strong><small>'+(owned?'В ТЕКУЩЕМ ЗАБЕГЕ':'ЕЩЁ НЕ ПОЛУЧЕНО')+'</small><span class="bb-album-stars">'+stars+'</span><p>'+bbGetUpgradeEffectDescription(id,Math.max(1,rank))+'</p></article>';
+    });
     overlay(`
-      <div class="modalhead">
-        <div class="bigicon">✧</div>
-        <div class="eyebrow">ТВОИ УСИЛЕНИЯ</div>
-        <h3>Активные бусты: ${activeBoosts.length}</h3>
-        <p>Здесь собраны все усиления текущего забега.</p>
-      </div>
-      <div class="choices">
-        ${activeBoosts.length
-          ? activeBoosts.join('')
-          : '<p style="text-align:center;padding:12px">Пока нет активных усилений. Новые можно получить при повышении уровня.</p>'}
-      </div>
+      <section class="bb-rogue-album">
+        <header><span>BLOCK RUN · КОЛЛЕКЦИЯ</span><h3>АЛЬБОМ КАРТ</h3><p>Все доступные усиления · ${boosts.length} в текущем забеге</p></header>
+        <div class="bb-rogue-album-grid">${activeBoosts.join('')}</div>
+      </section>
       <button class="action" id="closeBoostList">ПРОДОЛЖИТЬ</button>
     `);
 
@@ -16821,5 +16812,10 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
 #modal.bb-rogue-draft-modal .bb-draft-synergy,#modal.bb-rogue-draft-modal .bb-draft-hint{background:#163a57e8;color:#e1f0fb;border:1px solid #ffffff20}
 #modal.bb-rogue-draft-modal .bb-draft-synergy{color:#ffe6a7;border-color:#d7a84a66}
 @media(max-width:420px){#modal.bb-rogue-draft-modal .bb-pick-desc{font-size:11px}#modal.bb-rogue-draft-modal .bb-rogue-pick-card strong{font-size:13px}}
+</style>
+
+<style id="bb-kt603-rogue-card-album">
+/* KT-603: actual roguelike card album, not a vertical text list. */
+.bb-rogue-album{padding:14px;border-radius:20px;background:linear-gradient(160deg,#193d5b,#102b44);border:2px solid #467da2;color:#edf7ff}.bb-rogue-album header{text-align:center;margin-bottom:12px}.bb-rogue-album header>span{font-size:9px;letter-spacing:.14em;font-weight:1000;color:#9fc9e3}.bb-rogue-album header h3{margin:5px 0;color:#fff;font-size:22px}.bb-rogue-album header p{margin:0;color:#bdd5e6;font-size:11px}.bb-rogue-album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;max-height:min(52vh,430px);overflow:auto;padding:4px}.bb-rogue-album-card{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;padding:11px 8px;border:2px solid var(--rarity-color);border-radius:15px;background:#214765;box-shadow:0 0 10px color-mix(in srgb,var(--rarity-color) 25%,transparent);text-align:center}.bb-rogue-album-card.is-undiscovered{filter:saturate(.55);opacity:.72;background:#1a354c}.bb-album-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:color-mix(in srgb,var(--rarity-color) 26%,#16334d);font-size:25px}.bb-rogue-album-card strong{font-size:12px;color:#fff;line-height:1.2}.bb-rogue-album-card small{font-size:8px;font-weight:1000;color:#b8d2e4;letter-spacing:.06em}.bb-album-stars{font-size:11px;letter-spacing:2px;color:var(--rarity-color)}.bb-rogue-album-card p{margin:0;color:#d6e6f1;font-size:10px;line-height:1.35}
 </style>
 </body></html>
