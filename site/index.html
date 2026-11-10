@@ -8817,9 +8817,9 @@ document.addEventListener('pointermove', e => {
     touch.lastY=e.clientY;
   }
   if(touch.axis==='x'){
-    // A deliberate near-cell drag is easier to control than the old half-cell trigger.
-    // Keep a small pixel floor on narrow phones so thumb jitter does not shift the piece.
-    const threshold=Math.max(14,touch.cellWidth*.78);
+    // Require almost a full cell of intentional travel for each horizontal step.
+    // This reduces accidental shifts while keeping long swipes responsive.
+    const threshold=Math.max(16,touch.cellWidth*.86);
     let steps=0;
     while(Math.abs(touch.horizontalRemainder)>=threshold&&steps<W){
       const direction=touch.horizontalRemainder>0?1:-1;
