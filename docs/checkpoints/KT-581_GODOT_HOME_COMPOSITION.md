@@ -76,3 +76,14 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Implementation commit: `0dec8e35796f1f46662a3c33cb3bfb23bcbb147e`.
 - Fresh Cross-platform and Mobile Arena runs on KT-586 are required. Inspect actual desktop and phone screenshots; a green workflow alone is not sufficient.
 - Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
+
+
+## KT-586 — desktop profile row lock: PASSED
+
+- Explicit second-row placement corrected the desktop order. Fresh Cross-platform #659 (run `42814368416`, artifact `13762849423`) screenshots inspected: desktop now reads title → pilot profile → campaign → Block Run → daily challenge → daily quests; profile spans the full content width.
+- iOS WebKit portrait screenshot also inspected: profile remains directly below the hero and above the mode selector; mobile hierarchy and card sizing remain intact.
+- Cross-platform report: all five representative profiles completed; no page errors, console errors or failed network requests except one cancelled iOS audio request during navigation (`/audio/chills.mp3`). Geometry, campaign/reward/daily/Block Run assertions completed.
+- Mobile Arena #433 (run `42814368319`, artifact `13763538165`) passed on the same head.
+- KT-586 implementation commit: `0dec8e35796f1f46662a3c33cb3bfb23bcbb147e`; checkpoint evidence commit follows.
+- Home composition stage is visually passed. Next gate is a focused gameplay smoke test (start, input, game over, save/progression, campaign and Block Run), then prepare a reversible public test release for explicit user approval.
+- Draft only; no merge, main update, Pages deployment, Godot Preview change or APK build/release.
