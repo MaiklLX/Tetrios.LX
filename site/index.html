@@ -9543,6 +9543,24 @@ if (resetProgressBtn) {
           auraOwned:boosts.includes('aura')
         };
       },
+      finishRunForPersistenceSmoke(){
+        const before={
+          runs:Number(localStorage.getItem('nrRuns')||0),
+          coins:Number(localStorage.getItem('coins')||0),
+          xp:Number(localStorage.getItem('xp_plush')||0)
+        };
+        endGame();
+        return {
+          before,
+          after:{
+            runs:Number(localStorage.getItem('nrRuns')||0),
+            coins:Number(localStorage.getItem('coins')||0),
+            xp:Number(localStorage.getItem('xp_plush')||0)
+          },
+          gameOver:!!gameOver,
+          rewardLine:document.querySelector('#modal .rewardline')?.textContent?.trim()||''
+        };
+      },
       testVoidCompression(){
         const previous={mode,boosts,board,piece,level,voidLevel:bbVoidLastAppliedLevel,toast};
         const count=rows=>rows.reduce((sum,row)=>sum+row.filter(Boolean).length,0);
