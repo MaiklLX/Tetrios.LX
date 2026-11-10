@@ -59,6 +59,28 @@ const targets = [
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
+    // KT-569.1: assert the Godot home-hub wordmark and themed mode panels.
+    const homeVisualState = await page.evaluate(() => {
+      const title = document.querySelector('#menu .hero h1');
+      const campaign = document.querySelector('#menu button.mode[data-mode="campaign"]');
+      const rogue = document.querySelector('#menu button.mode[data-mode="rogue"]');
+      const campaignStyle = campaign ? getComputedStyle(campaign) : null;
+      const rogueStyle = rogue ? getComputedStyle(rogue) : null;
+      return {
+        title: title?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        campaignBorder: campaignStyle?.borderTopColor || '',
+        campaignPlanet: campaign ? getComputedStyle(campaign, '::after').backgroundImage : '',
+        rogueBorder: rogueStyle?.borderTopColor || '',
+        roguePlanet: rogue ? getComputedStyle(rogue, '::after').backgroundImage : ''
+      };
+    });
+    if (homeVisualState.title !== 'BLOCK BUDDIES' ||
+        homeVisualState.campaignBorder !== 'rgb(100, 226, 255)' ||
+        !homeVisualState.campaignPlanet.includes('radial-gradient') ||
+        homeVisualState.rogueBorder !== 'rgb(255, 202, 104)' ||
+        !homeVisualState.roguePlanet.includes('radial-gradient')) {
+      failures.push(target.name + ': KT-569.1 Godot home-hub visual mapping is incomplete (' + JSON.stringify(homeVisualState) + ')');
+    }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
     // KT-418: landscape phone view is intentionally blocked before the menu
