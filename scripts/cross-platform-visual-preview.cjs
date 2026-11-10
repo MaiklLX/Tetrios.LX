@@ -433,6 +433,45 @@ const targets = [
 
     console.log('[stage:gameplay-ready] ' + target.name);
 
+    // KT-576: pause and result overlays must use the Godot cosmic panel language.
+    await page.locator('#pauseBtn').click();
+    await page.locator('#overlay.show #resume').waitFor({state:'visible',timeout:8000});
+    const pauseOverlayState=await page.evaluate(()=>{
+      const root=document.querySelector('#overlay'),modal=document.querySelector('#modal');
+      const action=modal?.querySelector('#resume'),wallet=modal?.querySelector('.bb-pause-wallet');
+      const css=getComputedStyle(modal),button=action?getComputedStyle(action):null;
+      return {
+        variant:root?.classList.contains('bb-godot-pause-overlay'),
+        borderRadius:parseFloat(css.borderTopLeftRadius)||0,
+        borderColor:css.borderTopColor,
+        background:css.backgroundImage,
+        wallet:!!wallet,
+        buttonBackground:button?.backgroundImage||'',
+        buttonBorder:button?.borderTopColor||''
+      };
+    });
+    if(!pauseOverlayState.variant||pauseOverlayState.borderRadius<16||
+       !pauseOverlayState.borderColor.includes('85')&&!pauseOverlayState.borderColor.includes('rgb')||
+       !pauseOverlayState.background.includes('radial-gradient')||!pauseOverlayState.wallet||
+       !pauseOverlayState.buttonBackground.includes('linear-gradient')){
+      failures.push(target.name+': KT-576 Godot pause overlay styling mismatch ('+JSON.stringify(pauseOverlayState)+')');
+    }
+    const resultStyleState=await page.evaluate(()=>{
+      const root=document.querySelector('#overlay'),modal=document.querySelector('#modal');
+      root.classList.remove('bb-godot-pause-overlay');
+      root.classList.add('bb-godot-result-overlay');
+      const css=getComputedStyle(modal);
+      const stat=document.createElement('div');stat.className='bottomstats';stat.innerHTML='<div class="stat"><strong>12</strong><span>ЛИНИИ</span></div>';modal.append(stat);
+      const statColor=getComputedStyle(stat.querySelector('strong')).color;
+      stat.remove();
+      return {variant:root.classList.contains('bb-godot-result-overlay'),borderRadius:parseFloat(css.borderTopLeftRadius)||0,statColor};
+    });
+    if(!resultStyleState.variant||resultStyleState.borderRadius<16){
+      failures.push(target.name+': KT-576 Godot result overlay styling mismatch ('+JSON.stringify(resultStyleState)+')');
+    }
+    await page.locator('#resume').click();
+    await page.waitForTimeout(120);
+
     // Exercise KT-418 during a live run: rotate to phone landscape, confirm
     // the game pauses and the guard covers the viewport, then return to
     // portrait and confirm the same run resumes automatically.
