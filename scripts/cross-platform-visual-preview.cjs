@@ -466,7 +466,9 @@ const targets = [
     console.log('[stage:campaign-missions] ' + target.name);
     await campaignPage.close();
 
-    if (target.name === 'desktop-1440x900') {
+    {
+      // KT-591: run the same daily-challenge entry and objective checks on
+      // desktop, iOS WebKit, and Android Chromium — not desktop only.
       console.log('[stage:daily-challenge] ' + target.name);
       // Daily challenge objective must remain visible after the player enters the arena.
       const dailyPage = await context.newPage();

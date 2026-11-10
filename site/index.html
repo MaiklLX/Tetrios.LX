@@ -7,7 +7,7 @@
   const bbForcePageTop=()=>{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body&&(document.body.scrollTop=0);};
   window.addEventListener('pageshow',()=>{bbForcePageTop();requestAnimationFrame(bbForcePageTop);},{passive:true});
   window.addEventListener('load',()=>{bbForcePageTop();requestAnimationFrame(bbForcePageTop);},{once:true,passive:true});
-</script><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#080b18"><title>BLOCK BUDDIES — Космическая головоломка</title>
+</script><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#071b58"><title>BLOCK BUDDIES — Дружелюбная головоломка</title>
 <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <style>
 :root{--bg:#080b18;--panel:#11172a;--panel2:#171f37;--cyan:#5cf5e8;--violet:#9d7cff;--gold:#ffc86b;--ink:#f4f5ff;--muted:#8e9ab9;--line:#2b3655}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;overscroll-behavior:none}body{overflow-x:hidden}.app{min-height:100dvh;position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% -10%,#27305b 0,transparent 48%),linear-gradient(160deg,#080b18,#0b1021 60%,#090b17);padding:18px 14px 28px}.stars,.stars:before,.stars:after{position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:radial-gradient(1px 1px at 15% 25%,#9dfbf4 80%,transparent),radial-gradient(1px 1px at 78% 18%,#fff 80%,transparent),radial-gradient(2px 2px at 62% 72%,#9d7cff 80%,transparent),radial-gradient(1px 1px at 29% 84%,#fff 80%,transparent),radial-gradient(1px 1px at 88% 56%,#5cf5e8 80%,transparent);opacity:.48;animation:drift 26s linear infinite}.stars:before,.stars:after{content:"";opacity:.45;transform:scale(1.4);animation:drift 42s linear infinite reverse}.stars:after{transform:scale(1.8);opacity:.24;animation-duration:60s}@keyframes drift{to{transform:translate3d(10px,-28px,0) scale(1.2)}}button{font:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:active{transform:scale(.97)}.topbar{max-width:620px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:10px;align-items:center}.brandmark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),#6f81ff 70%);box-shadow:0 0 28px #5cf5e83b;display:grid;place-items:center;color:#08101e;font-size:20px;font-weight:1000;transform:rotate(-5deg)}.brandname{font-size:15px;letter-spacing:.18em;font-weight:900}.edition{font-size:9px;letter-spacing:.2em;color:var(--cyan);margin-top:3px}.iconbtn{width:40px;height:40px;border:1px solid #303b5a;background:#11182b;border-radius:13px;font-size:18px;transition:.18s}.screen{max-width:620px;margin:auto;animation:appear .35s ease both}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.eyebrow{font-size:10px;letter-spacing:.23em;color:var(--cyan);font-weight:800}.hero{text-align:center;padding:22px 4px 20px}.hero h1{font-size:clamp(40px,10vw,64px);line-height:.93;margin:12px 0 14px;letter-spacing:-.055em;font-weight:1000;background:linear-gradient(120deg,#fff 5%,#b9c8ff 40%,var(--cyan) 82%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 38px #5cf5e81c}.hero p{max-width:330px;margin:0 auto;color:#a8b2ce;font-size:13px;line-height:1.65}.orb{height:120px;width:160px;margin:16px auto 0;position:relative;display:grid;place-items:center}.orb:before{content:"";position:absolute;width:112px;height:112px;border:1px solid #5cf5e847;border-radius:50%;box-shadow:0 0 44px #5cf5e81a,inset 0 0 36px #9d7cff18;animation:orb 9s linear infinite}.orb:after{content:"";position:absolute;width:140px;height:52px;border:1px solid #9d7cff55;border-radius:50%;transform:rotate(-24deg);animation:orb 12s linear infinite reverse}.relic{font-size:52px;filter:drop-shadow(0 0 20px #5cf5e899);animation:float 3.5s ease-in-out infinite}@keyframes orb{to{transform:rotate(360deg)}}@keyframes float{50%{transform:translateY(-7px) scale(1.04)}}.apk-download{max-width:420px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid #5cf5e86b;border-radius:16px;background:linear-gradient(110deg,#12333be8,#171b37f2);box-shadow:0 8px 28px #5cf5e80c,inset 0 1px #ffffff0b;text-decoration:none;color:var(--ink);transition:transform .18s,border-color .2s,box-shadow .2s}.apk-download:hover{border-color:var(--cyan);box-shadow:0 8px 30px #5cf5e81c}.apk-download:active{transform:scale(.98)}.apk-download-icon{width:38px;height:38px;display:grid;place-items:center;flex-shrink:0;border-radius:12px;background:#5cf5e81c;color:var(--cyan);font-size:25px;font-weight:900}.apk-download-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}.apk-download-copy strong{font-size:12px;letter-spacing:.12em;color:var(--cyan)}.apk-download-copy small{font-size:10px;color:#a8b2ce}.apk-download-arrow{font-size:18px;color:#a4afcc}.sectionlabel{display:flex;align-items:center;gap:10px;color:#a4afcc;font-size:10px;font-weight:800;letter-spacing:.18em;margin:10px 2px 12px}.sectionlabel:after{content:"";height:1px;background:linear-gradient(90deg,#33405f,transparent);flex:1}.modes{display:grid;gap:10px}.mode{position:relative;display:flex;align-items:center;text-align:left;gap:14px;width:100%;padding:15px;border:1px solid #2a3554;border-radius:19px;background:linear-gradient(120deg,#141c32ee,#101629ee);overflow:hidden;transition:transform .18s,border-color .2s,box-shadow .2s}.mode:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,var(--glow),transparent 68%);opacity:.13;pointer-events:none}.mode:hover{border-color:#5cf5e88a;box-shadow:0 8px 30px #0003}.modeicon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;flex-shrink:0;background:var(--iconbg);font-size:24px;box-shadow:inset 0 0 20px #fff1}.modetext{flex:1;min-width:0;position:relative}.modetitle{font-size:15px;font-weight:850;letter-spacing:-.02em}.modesub{font-size:11px;color:#9ba7c5;margin-top:4px;line-height:1.4}.modearrow{color:#7785a8;font-size:23px;position:relative}.tag{display:inline-block;margin-top:7px;padding:3px 7px;border-radius:6px;font-size:8px;letter-spacing:.12em;font-weight:900;background:#5cf5e81b;color:var(--cyan)}.bottomstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.stat{border:1px solid #202b47;border-radius:13px;background:#101629a8;padding:11px 8px;text-align:center}.stat strong{display:block;font-size:16px}.stat span{font-size:9px;letter-spacing:.13em;color:#8491b2}.screenhead{display:flex;align-items:center;gap:12px;margin:4px 0 16px}.back{height:38px;width:38px;border:1px solid #2c3858;background:#11182b;border-radius:12px;font-size:20px}.screenhead h2{font-size:20px;margin:0;letter-spacing:-.03em}.screenhead p{font-size:11px;color:var(--muted);margin:4px 0 0}.gamehud{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}.hudbox{border:1px solid #293554;background:linear-gradient(145deg,#151d33,#0e1426);border-radius:13px;padding:9px 10px}.hudbox span{display:block;font-size:9px;color:#8997b9;letter-spacing:.13em}.hudbox strong{display:block;font-size:20px;margin-top:2px;font-variant-numeric:tabular-nums}.playlayout{display:grid;grid-template-columns:minmax(0,1fr) 94px;gap:10px;align-items:start}.boardframe{padding:7px;border:1px solid #354363;border-radius:16px;background:linear-gradient(145deg,#17213b,#0d1427);box-shadow:0 15px 45px #0004,0 0 25px #5cf5e80b;position:relative}.boardframe:before{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;box-shadow:inset 0 0 20px #5cf5e808}.board{width:100%;display:block;aspect-ratio:10/20;border-radius:9px;background:#080d1b;touch-action:none}.sidecol{display:grid;gap:9px}.sidecard{border:1px solid #293554;background:linear-gradient(145deg,#151d33,#0e1426);border-radius:13px;padding:9px 7px;text-align:center;min-width:0}.chrono-card{--chrono-color:#39a9ff;border-color:#398dff88;background:radial-gradient(circle at 50% 35%,#163c7566,transparent 58%),linear-gradient(145deg,#101d3b,#080e20);box-shadow:inset 0 0 18px #237aff12,0 0 18px #237aff12}.chrono-card[hidden]{display:none}.chrono-card label{color:#9ccaff}.chrono-ring{width:min(100%,112px);aspect-ratio:1;margin:10px auto 8px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--chrono-color) var(--chrono-progress,100%),#25304d 0);position:relative;box-shadow:0 0 0 3px #0b1327,0 0 0 5px color-mix(in srgb,var(--chrono-color) 65%,transparent),0 0 20px color-mix(in srgb,var(--chrono-color) 28%,transparent);transition:background .2s,box-shadow .2s}.chrono-ring:before{content:"";position:absolute;inset:5px;border-radius:50%;border:1px dashed #ffffff26}.chrono-ring-inner{position:relative;z-index:1;width:calc(100% - 13px);height:calc(100% - 13px);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,#111d38,#080e1d 78%);border:1px solid #ffffff12}.chrono-hourglass{font-size:19px;line-height:1.2;filter:drop-shadow(0 0 7px var(--chrono-color))}.chrono-ring-inner strong{font-size:29px;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.04em}.chrono-ring-inner small{font-size:7px;letter-spacing:.18em;color:#a9b8da;margin-top:3px}.chrono-caption{font-size:8px;font-weight:900;letter-spacing:.08em;color:var(--chrono-color);margin:4px 0 8px}.chrono-track{height:4px;border-radius:8px;background:#252f49;overflow:hidden}.chrono-track i{display:block;height:100%;width:100%;background:var(--chrono-color);box-shadow:0 0 10px var(--chrono-color);transition:width .25s linear}.chrono-card.chrono-warning{--chrono-color:#ffb629;border-color:#ffb62999;animation:chronoPulse .8s ease-in-out infinite alternate}.chrono-card.chrono-danger{--chrono-color:#ff456a;border-color:#ff456a99;animation:chronoPulse .35s ease-in-out infinite alternate}@keyframes chronoPulse{to{box-shadow:inset 0 0 24px #ff456a20,0 0 20px color-mix(in srgb,var(--chrono-color) 35%,transparent)}}.sidecard label{display:block;font-size:8px;letter-spacing:.13em;color:#8f9bbc;font-weight:800}.nextcanvas{width:100%;display:block;margin-top:7px}.boosticon{font-size:22px;margin:8px 0 3px;filter:drop-shadow(0 0 8px #9d7cff77)}.boostname{font-size:9px;color:#c4cce5;line-height:1.35}.boostnum{font-size:10px;color:var(--cyan);margin-top:4px}.smallbtn{width:100%;padding:9px 4px;margin-top:8px;border-radius:9px;background:#252e4a;border:1px solid #3c496d;font-size:10px;font-weight:800}.progresswrap{margin:11px 0 12px}.progressmeta{display:flex;justify-content:space-between;font-size:10px;color:#98a5c5;margin-bottom:6px}.progressbar{height:5px;border-radius:20px;background:#202a44;overflow:hidden}.progressfill{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan));box-shadow:0 0 12px #5cf5e866;transition:width .25s}.controls{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;margin-top:11px}.control{height:48px;border:1px solid #303d5d;border-radius:13px;background:linear-gradient(145deg,#1a2440,#10172a);font-size:20px;box-shadow:0 4px 0 #080d1b;transition:.12s}.control.primary{background:linear-gradient(135deg,#5cf5e8,#70baff);color:#091321;border-color:#7cfff4;font-weight:900}.control.drop{font-size:12px;font-weight:900;letter-spacing:.05em}.hint{text-align:center;font-size:10px;color:#7280a2;margin:11px 0 0}.overlay{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:18px;background:#050713d9;backdrop-filter:blur(12px)}.overlay.show{display:flex;animation:appear .2s ease}.modal{width:min(100%,440px);border:1px solid #3b496b;border-radius:24px;padding:22px;background:radial-gradient(ellipse at 50% 0,#28335a,#121a30 58%,#0e1426);box-shadow:0 25px 80px #0009}.modalhead{text-align:center}.modalhead .bigicon{font-size:38px;filter:drop-shadow(0 0 15px #9d7cff77)}.modalhead h3{font-size:23px;margin:8px 0 6px}.modalhead p{font-size:12px;color:#a5b0cc;line-height:1.5;margin:0 auto 18px;max-width:310px}.choices{display:grid;gap:9px}.choice{display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border:1px solid #364363;border-radius:14px;background:#17213a;transition:.15s}.choice:hover{border-color:var(--cyan);background:#1a2b42}.choiceicon{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:#5cf5e817;font-size:21px}.choicetext{flex:1}.choicetext strong{display:block;font-size:12px}.choicetext span{display:block;font-size:10px;line-height:1.4;color:#a1adca;margin-top:4px}.rarity{font-size:8px;color:var(--gold);letter-spacing:.12em;margin-top:5px}.action{width:100%;padding:14px;border-radius:13px;margin-top:15px;font-weight:900;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(100deg,var(--cyan),#7c9dff);color:#07111e;box-shadow:0 6px 20px #5cf5e82a}.action.secondary{background:#202b48;color:#e6ebff;border:1px solid #3b496b;box-shadow:none}.mapgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.node{aspect-ratio:1;border:1px solid #334263;background:#131c32;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;position:relative;overflow:hidden}.node.locked{opacity:.48;filter:saturate(.5)}.node.active{border-color:var(--cyan);box-shadow:inset 0 0 22px #5cf5e817,0 0 18px #5cf5e81c}.node span{font-size:23px}.node strong{font-size:11px}.node small{font-size:8px;color:#9aa7c6}.challengebox{border:1px solid #354363;border-radius:19px;background:linear-gradient(145deg,#17213b,#101629);padding:17px;margin-bottom:11px}.challengehero{display:flex;align-items:center;gap:14px}.challengehero .symbol{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;background:#9d7cff20;font-size:29px}.challengehero h3{margin:0 0 5px;font-size:16px}.challengehero p{margin:0;font-size:11px;color:#9eabc8;line-height:1.45}.challengegoal{margin-top:16px;padding-top:14px;border-top:1px solid #303b59;display:flex;justify-content:space-between;font-size:11px;color:#b5c0dc}.toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1b2842;border:1px solid #4c6387;padding:10px 15px;border-radius:12px;font-size:11px;z-index:30;transition:.25s;box-shadow:0 10px 35px #0006;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}.muted{color:var(--muted)}@media(min-width:520px){.app{padding-top:24px}.hero{padding-top:30px}.playlayout{grid-template-columns:minmax(0,1fr) 112px}.sidecard{padding:12px 9px}.controls{gap:10px}.control{height:54px}}@media(max-height:740px){.hero{padding-top:8px;padding-bottom:12px}.orb{height:90px;margin-top:8px}.orb:before{width:82px;height:82px}.orb:after{width:112px}.relic{font-size:40px}.mode{padding:11px}.modeicon{width:42px;height:42px}.topbar{margin-bottom:12px}}
@@ -5336,6 +5336,129 @@ body:has(#menu:not([hidden])) .app > .topbar {
 }
 </style>
 <link rel="stylesheet" href="./kt417-mobile-landscape-arena.css?v=20261106-kt417-v1">
+
+
+<style id="bb-kt592-shared-home-surface-polish">
+/* KT-592 — unify the home-screen hero texture and desktop card rhythm.
+   Responsive composition may change, but the visual materials stay shared. */
+#menu .hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background-image:
+    linear-gradient(rgba(190,239,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(190,239,255,.055) 1px,transparent 1px),
+    radial-gradient(ellipse at 50% 100%,#b5a4ff55,transparent 58%),
+    linear-gradient(145deg,#438fd1,#2864ad 70%)!important;
+  background-size:28px 28px,28px 28px,auto,auto!important;
+  background-position:center center!important;
+}
+#menu .hero:before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  pointer-events:none!important;
+  background:radial-gradient(circle at 50% 45%,#8deaff18,transparent 58%)!important;
+}
+#menu .hero h1,
+#menu .hero p,
+#menu .hero .orb,
+#menu .hero .relic{position:relative;z-index:1}
+#menu .mode{
+  border-radius:22px!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+#menu .mode:focus-visible,
+#menu .iconbtn:focus-visible,
+#menu .back:focus-visible{
+  outline:3px solid #fff0b9!important;
+  outline-offset:3px!important;
+}
+@media(min-width:900px){
+  #menu .hero{
+    min-height:180px!important;
+    padding:30px 26px 26px!important;
+  }
+  #menu .mode{
+    min-height:112px!important;
+    padding:18px 20px!important;
+  }
+  #menu .modeicon{
+    width:56px!important;height:56px!important;
+    border-radius:17px!important;font-size:27px!important;
+  }
+  #menu .modetitle{font-size:18px!important}
+  #menu .modesub{font-size:12px!important;line-height:1.45!important}
+  #menu .tag{font-size:9px!important;padding:4px 8px!important}
+  #menu .sectionlabel{font-size:12px!important;margin:14px 2px 14px!important}
+}
+@media(max-width:520px){
+  #menu .hero{
+    background-size:24px 24px,24px 24px,auto,auto!important;
+  }
+  #menu .mode{border-radius:22px!important}
+}
+</style>
+
+
+<style id="bb-kt593-mobile-layout-unification">
+/* KT-593.2 QA anchor: shared touch layout covers phone and tablet widths up to 1200px. */
+/* KT-593 — one mobile composition for phones and tablets; desktop stays wide-screen. */
+@media (max-width:1200px) and (pointer:coarse){
+  .app{padding-left:max(10px,env(safe-area-inset-left))!important;padding-right:max(10px,env(safe-area-inset-right))!important;padding-top:max(10px,env(safe-area-inset-top))!important;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
+  .topbar{width:100%;max-width:620px;margin:0 auto 8px!important}
+  .screen{width:100%;max-width:620px;margin-inline:auto}
+  #menu .hero{padding:clamp(14px,3.5vw,22px) 12px!important}
+  #menu .mode{min-height:76px!important;padding:clamp(11px,2.5vw,15px)!important;gap:clamp(10px,2.4vw,14px)!important;border-radius:20px!important}
+  #menu .modeicon{width:clamp(44px,11vw,50px)!important;height:clamp(44px,11vw,50px)!important;flex:0 0 auto!important;border-radius:15px!important;font-size:23px!important}
+  #menu .modetitle{font-size:clamp(14px,3.8vw,16px)!important}
+  #menu .modesub{font-size:clamp(10px,2.8vw,11px)!important}
+  #game .screenhead{margin:2px 0 8px!important}
+  #game .gamehud{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:clamp(5px,1.5vw,8px)!important;margin-bottom:7px!important}
+  #game .gamehud .hudbox{min-width:0!important;padding:clamp(6px,1.8vw,9px)!important;border-radius:12px!important}
+  #game .gamehud .hudbox span{font-size:clamp(8px,2vw,9px)!important;white-space:nowrap!important}
+  #game .gamehud .hudbox strong{font-size:clamp(15px,4vw,19px)!important}
+  #game .playlayout{display:grid!important;grid-template-columns:minmax(0,1fr) clamp(76px,18vw,96px)!important;gap:clamp(6px,1.8vw,10px)!important;align-items:start!important}
+  #game .boardframe{height:clamp(190px,calc(100dvh - 370px),620px)!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:4px!important;overflow:hidden!important;border-radius:15px!important}
+  #game .board{width:auto!important;height:100%!important;max-width:100%!important;aspect-ratio:1/2!important;object-fit:contain!important;flex:0 1 auto!important}
+  #game .sidecol{display:grid!important;gap:clamp(5px,1.5vw,8px)!important;min-width:0!important}
+  #game .sidecol .sidecard{min-width:0!important;padding:clamp(5px,1.5vw,8px) 4px!important;border-radius:12px!important}
+  #game .sidecol .sidecard label{font-size:clamp(7px,1.8vw,8px)!important;letter-spacing:.04em!important}
+  #game .sidecol .boosticon{font-size:clamp(17px,4.5vw,21px)!important;margin:4px 0 2px!important}
+  #game .sidecol .boostname{font-size:clamp(8px,2vw,9px)!important;overflow-wrap:anywhere!important}
+  #game .sidecol .smallbtn{font-size:clamp(8px,2vw,9px)!important;padding:7px 2px!important}
+  #game .controls{display:none!important;visibility:hidden!important;pointer-events:none!important}
+  #game .control{height:clamp(40px,10vw,48px)!important;min-width:0!important;border-radius:12px!important}
+  #game .control.drop{font-size:clamp(10px,2.8vw,12px)!important}
+  #game .hint{font-size:9px!important;margin-top:6px!important}
+}
+@media (max-width:1200px) and (pointer:coarse) and (orientation:landscape){
+  #game .boardframe{height:clamp(170px,calc(100dvh - 210px),480px)!important}
+  #game .gamehud{margin-bottom:4px!important}
+  #game .control{height:clamp(34px,7vh,42px)!important}
+}
+</style>
+
+
+<style id="bb-kt594-readable-hud">
+/* KT-594 — improve HUD legibility without changing the shared mobile composition or board footprint. */
+@media (max-width:1200px) and (pointer:coarse){
+  #game .gamehud .hudbox span{font-size:clamp(9px,2.2vw,10px)!important;letter-spacing:.02em!important}
+  #game .sidecol .sidecard label{font-size:clamp(8px,2vw,9px)!important;letter-spacing:.025em!important;line-height:1.35!important}
+  #game .sidecol .boostname{font-size:clamp(9px,2.2vw,10px)!important;line-height:1.3!important}
+  #game .sidecol .boostnum{font-size:9px!important}
+  #game #rogueGoals,#game #campaignGoals{font-size:11px!important;line-height:1.35!important}
+  #game #rogueGoals label,#game #campaignGoals label,
+  #game #rogueGoals button,#game #campaignGoals button{font-size:11px!important;line-height:1.35!important}
+}
+@media (min-width:1201px){
+  #game .sidecol .sidecard label{font-size:9px!important}
+  #game .sidecol .boostname{font-size:10px!important;line-height:1.35!important}
+  #game .gamehud .hudbox span{font-size:10px!important}
+}
+</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -15669,6 +15792,531 @@ html,body{background:#07152b!important}
   grid-row:2!important;
   width:100%!important;min-width:0!important;max-width:none!important;
   justify-self:stretch;align-self:stretch;box-sizing:border-box;
+}
+</style>
+<style id="bb-kt589-friendly-godot-ui">
+/* KT-589.2 — align browser UI with the actual Godot palette (KT-549):
+   vivid royal-blue world, saturated friendly panels, cyan edges, warm gold,
+   violet accents and soft ambient light. Keep game state and controls intact. */
+:root{
+  color-scheme:dark;
+  --bg:#071b58;--panel:#123e91;--panel2:#174d9b;
+  --cyan:#55ddff;--violet:#a77bff;--gold:#ffd05a;
+  --ink:#fff8e8;--muted:#c4edff;--line:#397cae;
+}
+html,body{background:#071b58!important;color:#fff8e8!important}
+.app{
+  background:
+    radial-gradient(ellipse at 18% 29%,#1f80ff30 0,transparent 36%),
+    radial-gradient(ellipse at 82% 56%,#9e49ff24 0,transparent 39%),
+    radial-gradient(ellipse at 50% 96%,#00c7e922 0,transparent 42%),
+    linear-gradient(160deg,#123e91 0%,#0b2d78 48%,#071b58 100%)!important;
+}
+.stars,.stars:before,.stars:after{opacity:.18!important;animation:none!important}
+.brandmark{
+  border:2px solid #8beaff!important;border-radius:13px!important;
+  background:linear-gradient(145deg,#55ddff,#1767c8 68%,#74469d)!important;
+  color:#fff8e8!important;box-shadow:0 5px 0 #08265e,0 0 22px #55ddff35,inset 0 1px #ffffff88!important;
+  transform:none!important;
+}
+.brandname{color:#fff0b9!important;text-shadow:0 2px 10px #061c55}
+.edition,.eyebrow{color:#8beaff!important}
+.iconbtn,.back{
+  color:#fff!important;background:linear-gradient(145deg,#247bd7,#124d9f)!important;
+  border:1px solid #8beaff!important;border-radius:13px!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
+}
+.hero h1{
+  background:linear-gradient(115deg,#fff0b9 4%,#ffffff 42%,#55ddff 92%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  color:transparent!important;text-shadow:0 3px 18px #55ddff35!important;
+}
+.hero p,.modesub,.screenhead p,.hint,.wallet{color:#c4edff!important}
+.orb:before{border-color:#55ddff88!important;box-shadow:0 0 30px #55ddff30,inset 0 0 24px #55ddff18!important}
+.orb:after{border-color:#a77bff88!important}
+.relic,.boosticon{filter:drop-shadow(0 4px 10px #55ddff66)!important}
+.apk-download{
+  color:#fff8e8!important;border:1px solid #8beaff!important;
+  background:linear-gradient(110deg,#1454a5,#102b69)!important;
+  box-shadow:0 5px 0 #08265e,0 9px 20px #061b4c66,inset 0 1px #ffffff33!important;
+}
+.apk-download-copy strong,.apk-download-icon{color:#8beaff!important}
+.apk-download-copy small{color:#c4edff!important}
+.apk-download-icon{background:#55ddff22!important;border:1px solid #55ddff88}
+.apk-download-arrow{color:#fff0b9!important}
+.sectionlabel{color:#c4edff!important}
+.sectionlabel:after{background:linear-gradient(90deg,#55ddff88,transparent)!important}
+.mode,.hudbox,.sidecard,.boardframe,.stat,.challengebox,.node,.modal,.choice,
+.rpgpanel,.shopbutton,.shopitem,.heroCard,#dailyQuestsPanel,#bbHomeProfile,
+#bbVisitStreak,.currency-panel,.bb-hero-skill-slot{
+  border-color:#55ddff88!important;
+  box-shadow:0 5px 0 #08265e,0 10px 22px #04184655,inset 0 1px #ffffff22!important;
+}
+.mode{
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#174d9b 0%,#123e82 72%,#102d68 100%)!important;
+}
+.mode:before{background:linear-gradient(110deg,#55ddff33,transparent 68%)!important;opacity:.7!important}
+.mode:hover{border-color:#fff0b9!important;box-shadow:0 6px 0 #08265e,0 13px 24px #04184677,inset 0 1px #fff5!important}
+.modeicon,.challengehero .symbol,.choiceicon{
+  border:1px solid #8beaff!important;border-radius:16px!important;
+  background:linear-gradient(145deg,#267bd1,#123e91)!important;
+  color:#fff0b9!important;box-shadow:inset 0 1px #ffffff66,0 4px 9px #04184666!important;
+}
+.modetitle,.screenhead h2,.stat strong,.hudbox strong{color:#fff8e8!important}
+.modesub{color:#c4edff!important}
+.modearrow{color:#fff0b9!important}
+.tag{color:#fff0b9!important;background:#ffd05a22!important;border:1px solid #ffd05a88!important}
+.bottomstats .stat,.stat{background:linear-gradient(145deg,#174d9b,#102b69)!important}
+.stat span,.hudbox span,.sidecard label{color:#b9eaff!important}
+.screenhead h2{color:#fff0b9!important}
+.gamehud .hudbox{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff88!important;border-radius:13px!important;
+}
+.hudbox strong{color:#fff8e8!important}
+.playlayout{border-color:#55ddff44!important;background:#071b5833!important}
+.boardframe{
+  background:linear-gradient(145deg,#267bd7,#123e91 70%,#0b2d78)!important;
+  border:2px solid #8beaff!important;border-radius:17px!important;
+  box-shadow:0 6px 0 #08265e,0 12px 25px #04184677,inset 0 1px #ffffff66!important;
+}
+.board{background:#07132f!important;border:1px solid #55ddff88;box-shadow:inset 0 0 18px #03102c!important}
+.sidecol .sidecard{background:linear-gradient(145deg,#174d9b,#102b69)!important;border-color:#55ddff77!important}
+.sidecard label{color:#b9eaff!important}
+.chrono-card{background:radial-gradient(circle at 50% 30%,#2876c8,transparent 62%),linear-gradient(145deg,#174d9b,#102b69)!important}
+.chrono-ring-inner{background:linear-gradient(145deg,#174d9b,#071b58)!important}
+.chrono-ring-inner strong{color:#fff8e8!important}
+.chrono-ring-inner small{color:#c4edff!important}
+.chrono-track,.progressbar,.xpbar{background:#08265e!important}
+.boostname{color:#d7f5ff!important}
+.boostnum{color:#55ddff!important}
+.smallbtn,.action.secondary{
+  color:#fff8e8!important;background:linear-gradient(180deg,#247bd7,#1454a5)!important;
+  border:1px solid #8beaff!important;border-radius:11px!important;
+  box-shadow:0 3px 0 #08265e!important;
+}
+.progressfill{background:linear-gradient(90deg,#a77bff,#55ddff)!important;box-shadow:0 0 10px #55ddff77!important}
+.control{
+  color:#fff8e8!important;background:linear-gradient(180deg,#267bd7,#1454a5)!important;
+  border:1px solid #8beaff!important;border-radius:14px!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
+}
+.control.primary,.action{
+  color:#08265e!important;background:linear-gradient(135deg,#8beaff,#55ddff 58%,#8ef4d3)!important;
+  border:1px solid #d8fbff!important;border-radius:14px!important;
+  box-shadow:0 5px 0 #0b397a,0 8px 16px #04184666,inset 0 1px #ffffffaa!important;
+}
+.control.drop,.side-drop{background:linear-gradient(145deg,#ffe18a,#ffad45)!important;color:#59340b!important;border-color:#fff0b9!important}
+.overlay{background:#04143dcc!important;backdrop-filter:blur(8px)!important}
+.modal{
+  color:#fff8e8!important;background:radial-gradient(ellipse at 50% 0,#2670bd,#123e82 58%,#0b245f)!important;
+  border:1px solid #8beaff!important;border-radius:23px!important;
+  box-shadow:0 18px 45px #04143dcc,inset 0 1px #ffffff44!important;
+}
+.modalhead h3{color:#fff0b9!important}
+.modalhead p{color:#c4edff!important}
+.choice{
+  color:#fff8e8!important;background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff88!important;border-radius:15px!important;
+}
+.choice:hover{border-color:#fff0b9!important;background:#1c62b4!important}
+.choicetext strong{color:#fff8e8!important}
+.choicetext span{color:#c4edff!important}
+.rarity{color:#ffd05a!important}
+.action{color:#08265e!important}
+.mapgrid .node{
+  color:#fff8e8!important;background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff88!important;
+}
+.node.active{border-color:#fff0b9!important;box-shadow:inset 0 0 18px #55ddff33,0 0 0 2px #8beaff!important}
+.node.locked{opacity:.62;filter:saturate(.72)}
+.challengebox{background:linear-gradient(145deg,#174d9b,#102b69)!important}
+.challengehero h3{color:#fff0b9!important}
+.challengehero p{color:#c4edff!important}
+.challengegoal{color:#d7f5ff!important;border-color:#55ddff55!important}
+.toast{
+  color:#fff8e8!important;background:linear-gradient(145deg,#2670bd,#123e82)!important;
+  border:1px solid #8beaff!important;box-shadow:0 7px 18px #04184688!important;
+}
+.rpgpanel{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.avatar{background:linear-gradient(145deg,#55ddff,#1767c8)!important;box-shadow:inset 0 -4px #0b397a!important}
+.rpgname span{color:#ffd05a!important}
+.xpbar i{background:linear-gradient(90deg,#a77bff,#55ddff)!important}
+.shopbutton{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.shopbutton.chest{background:linear-gradient(145deg,#a66b22,#704218)!important;border-color:#ffd05a!important;box-shadow:0 4px 0 #47280d!important}
+.shopitem{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.shopitem p{color:#c4edff!important}
+.shopitem button{background:linear-gradient(145deg,#25b7a8,#087c85)!important;color:#fff!important;border:1px solid #8ef4d3!important;box-shadow:0 3px 0 #075b6b!important}
+.heroCard{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.bb-home-profile-avatar{background:linear-gradient(145deg,#55ddff,#1767c8)!important;border-color:#8beaff!important}
+.bb-home-profile-wallet{background:linear-gradient(145deg,#ffe18a,#c98b2c)!important;border-color:#ffd05a!important;color:#56360d!important}
+#bbHomeProfile,#dailyQuestsPanel{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important;
+  border-color:#55ddff88!important;
+}
+#bbHomeProfile .bb-home-profile-copy strong{color:#fff8e8!important}
+#bbHomeProfile .bb-home-profile-copy small{color:#c4edff!important}
+#dailyQuestsPanel>div:first-child strong{color:#fff0b9!important}
+#dailyQuestsPanel>div:first-child span{color:#c4edff!important}
+#dailyQuestsList>div{background:linear-gradient(145deg,#1a58a5,#123a7a)!important;border-color:#55ddff66!important;box-shadow:inset 0 1px #ffffff22!important}
+#dailyQuestsList>div>div:first-child{color:#fff8e8!important}
+#dailyQuestsList>div>div:nth-child(2){color:#c4edff!important}
+#dailyQuestsList>div>div:nth-child(3){background:#08265e!important}
+#bbVisitStreak{background:linear-gradient(145deg,#59451f,#362d38)!important;border-color:#ffd05a!important;color:#fff0b9!important}
+#bbVisitStreak *{color:#fff0b9}
+#menu .mode[data-mode="campaign"]{background:linear-gradient(115deg,#1268b5,#0c478d 62%,#0b3675)!important;border-color:#64e2ff!important}
+#menu .mode[data-mode="rogue"]{background:linear-gradient(115deg,#74469d,#573783 62%,#3b286d)!important;border-color:#d2aaff!important}
+#menu .mode[data-mode="daily"]{background:linear-gradient(115deg,#14548d,#0f4775 62%,#0a3565)!important;border-color:#79e5db!important}
+#menu .mode[data-mode="campaign"] .modetitle,#menu .mode[data-mode="rogue"] .modetitle,#menu .mode[data-mode="daily"] .modetitle{color:#fff8e8!important}
+#menu .mode[data-mode="campaign"] .modesub,#menu .mode[data-mode="rogue"] .modesub,#menu .mode[data-mode="daily"] .modesub{color:#f0f8ff!important}
+#menu .mode[data-mode="campaign"] .modeicon,#menu .mode[data-mode="rogue"] .modeicon,#menu .mode[data-mode="daily"] .modeicon{background:linear-gradient(145deg,#ffffff44,#8beaff22)!important;color:#fff0b9!important;border-color:#ffffff77!important}
+#campaign .bb-planet-heading{background:linear-gradient(110deg,#1454a5,#1268b5 65%,#3c4e9b)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff55!important}
+#campaign .bb-planet-heading strong{color:#fff0b9!important;text-shadow:none!important}
+#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span:not(.bb-planet-kicker){color:#d7f5ff!important}
+#campaign .bb-planet-heading .bb-planet-kicker{color:#8beaff!important}
+#campaign .bb-planet-viewport{background:linear-gradient(180deg,#174d9b,#102b69 72%,#0b245f)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff33!important}
+@media(max-width:700px){.app{padding:10px 10px 24px!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Higher-specificity arena and dashboard overrides: later legacy rules used #game/#menu IDs. */
+#menu.home-dashboard>.modes>.mode{
+  background:linear-gradient(145deg,#174d9b,#123e82 72%,#102d68)!important;
+  border:1px solid #55ddff!important;
+  box-shadow:0 5px 0 #08265e,0 10px 22px #04184666,inset 0 1px #ffffff33!important;
+}
+#menu.home-dashboard>.modes>.mode .modeicon{
+  background:linear-gradient(145deg,#267bd1,#123e91)!important;
+  border:1px solid #8beaff!important;color:#fff0b9!important;
+}
+#menu.home-dashboard>.modes>.mode .modetitle{color:#fff8e8!important}
+#menu.home-dashboard>.modes>.mode .modesub{color:#c4edff!important}
+#menu.home-dashboard>#bbHomeProfile,
+#menu.home-dashboard>#dailyQuestsPanel{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff!important;
+}
+#menu.home-dashboard>#bbHomeProfile .bb-home-profile-copy strong{color:#fff8e8!important}
+#menu.home-dashboard>#bbHomeProfile .bb-home-profile-copy small{color:#c4edff!important}
+#game .screenhead{
+  background:linear-gradient(110deg,#1454a5,#102b69)!important;
+  border:1px solid #55ddff88!important;border-radius:14px!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff33!important;
+  padding:7px 9px!important;
+}
+#game .screenhead h2{color:#fff0b9!important}
+#game .screenhead p{color:#c4edff!important}
+#game .screenhead .back,#game .screenhead .iconbtn{
+  background:linear-gradient(145deg,#267bd7,#1454a5)!important;
+  border:1px solid #8beaff!important;color:#fff8e8!important;
+}
+#game .gamehud .hudbox{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border:1px solid #55ddff!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff33!important;
+}
+#game .gamehud .hudbox span{color:#c4edff!important}
+#game .gamehud .hudbox strong{color:#fff8e8!important}
+#game .boardframe{
+  border:2px solid #8beaff!important;border-radius:17px!important;
+  background:linear-gradient(145deg,#267bd7,#1454a5 62%,#0b2d78)!important;
+  box-shadow:0 6px 0 #08265e,0 12px 25px #04184677,inset 0 1px #ffffff66!important;
+}
+#game .boardframe:before{box-shadow:inset 0 0 22px #55ddff22,0 0 0 1px #8beaff44!important}
+#game .sidecol .sidecard,#game #bbHeroSkillCard{
+  border:1px solid #55ddff!important;
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff33!important;
+}
+#game .sidecol .sidecard label,#game #bbHeroSkillCard .bb-hero-skill-copy small{color:#c4edff!important}
+#game .sidecol .drop-card{background:linear-gradient(145deg,#155c9c,#103b78)!important;border-color:#8beaff!important}
+#game .sidecol .side-drop{
+  background:linear-gradient(145deg,#ffe18a,#ffad45)!important;
+  color:#59340b!important;border:1px solid #fff0b9!important;
+  box-shadow:0 4px 0 #9b5b20,inset 0 1px #ffffffaa!important;
+}
+#game .gameleftcol,#game #rogueGoals,#game #campaignGoals{
+  border-color:#55ddff!important;
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff33!important;
+}
+#game #rogueGoals>div,#game #campaignGoals>div{color:#fff8e8!important}
+#game .control,#game .smallbtn{
+  background:linear-gradient(145deg,#267bd7,#1454a5)!important;
+  color:#fff8e8!important;border-color:#8beaff!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
+}
+#game .control.primary,#game .action{
+  background:linear-gradient(135deg,#8beaff,#55ddff 58%,#8ef4d3)!important;
+  color:#08265e!important;border-color:#d8fbff!important;
+}
+#game .progressbar{background:#08265e!important}
+#game .progressfill{background:linear-gradient(90deg,#a77bff,#55ddff)!important}
+</style>
+
+<!-- KT-589.2: warmer, brighter Godot-inspired friendly blue skin -->
+<style id="bb-kt589-friendly-godot-ui-final">
+:root{
+  --bg:#174f9d;--panel:#2b70bd;--panel2:#367fc9;
+  --cyan:#8deaff;--violet:#b9a0ff;--gold:#ffdc78;
+  --ink:#fffdf5;--muted:#d0e4ff;--line:#70b9ed;
+}
+html,body{background:#174f9d!important;color:#fffdf5!important}
+.app{
+ background:
+  radial-gradient(ellipse at 50% 0%,#79d8ff55,transparent 42%),
+  radial-gradient(ellipse at 100% 55%,#b6a2ff35,transparent 36%),
+  linear-gradient(155deg,#347fca 0%,#245fae 48%,#174887 100%)!important;
+}
+.stars,.stars:before,.stars:after{opacity:.12!important}
+.topbar{
+ padding:10px 14px!important;border:1px solid #8edfff!important;
+ border-radius:22px!important;
+ background:linear-gradient(135deg,#347fc5,#245a9e)!important;
+ box-shadow:0 5px 0 #123d78, inset 0 1px #ffffff55!important;
+}
+.brandmark{background:linear-gradient(145deg,#baf5ff,#65cfff 55%,#8e9cff)!important;color:#174b87!important}
+.brandname{color:#fff!important;text-shadow:0 2px 3px #17447766}
+.edition,.eyebrow{color:#b9f4ff!important}
+.iconbtn,.back{
+ background:linear-gradient(145deg,#55a9e8,#2871bc)!important;
+ border:1px solid #a7eaff!important;color:#fff!important;
+ box-shadow:0 4px 0 #17477f,inset 0 1px #ffffff66!important;
+}
+#menu .hero{
+ background:
+  radial-gradient(ellipse at 50% 100%,#b5a4ff55,transparent 58%),
+  linear-gradient(145deg,#438fd1,#2864ad 70%)!important;
+ border:2px solid #8deaff!important;
+ box-shadow:0 6px 0 #16477f,0 10px 26px #123f7a44!important;
+}
+#menu .hero p{color:#e6f6ff!important}
+#menu .hero .eyebrow{color:#d4faff!important}
+#menu .sectionlabel{color:#d8f7ff!important}
+#menu .sectionlabel:after{background:linear-gradient(90deg,#a4eaff,transparent)!important}
+#menu .mode{
+ background:
+  radial-gradient(ellipse at 0% 50%,var(--glow),transparent 68%),
+  linear-gradient(145deg,#438ed0,#2865ae 78%)!important;
+ border:2px solid #8fe7ff!important;
+ box-shadow:0 5px 0 #17477e,inset 0 1px #ffffff66!important;
+}
+#menu .mode:nth-child(2){
+ background:linear-gradient(145deg,#9a83d6,#6955ae)!important;
+ border-color:#d2c1ff!important;
+}
+#menu .mode:nth-child(3){
+ background:linear-gradient(145deg,#e4b75e,#ba8642)!important;
+ border-color:#ffe6a0!important;
+}
+#menu .modeicon{
+ background:linear-gradient(145deg,#b4efff,#5e9fe0 65%,#8b8ce0)!important;
+ border:2px solid #d5f8ff!important;color:#fff!important;
+ box-shadow:inset 0 -4px #24568b55,0 3px 10px #17447744!important;
+}
+#menu .modetitle{color:#fff!important;text-shadow:0 2px 3px #17447755}
+#menu .modesub{color:#e4f4ff!important}
+#menu .modearrow{color:#fff2b7!important}
+#menu .tag{background:#174f91aa!important;border-color:#b2eaff!important;color:#fff!important}
+#menu #rpgPanel{
+ background:linear-gradient(145deg,#4388c9,#2861a8)!important;
+ border:2px solid #9deaff!important;
+ box-shadow:0 5px 0 #17477e!important;
+}
+#menu .bottomstats .stat{
+ background:linear-gradient(145deg,#3b7fc0,#245a9b)!important;
+ border-color:#85d8f7!important;
+}
+#menu .bottomstats .stat strong{color:#fff!important}
+#menu .bottomstats .stat span{color:#d6efff!important}
+#menu .daily,.daily-quests,.quest-panel,.quests-panel{
+ background:linear-gradient(145deg,#347bc0,#245b9f)!important;
+ border-color:#8deaff!important;
+}
+#game .screenhead h2{color:#fff!important;text-shadow:0 2px 3px #17447766}
+#game .screenhead p{color:#e0f1ff!important}
+#game .gamehud .hudbox{
+ background:linear-gradient(145deg,#3e86c8,#2864a9)!important;
+ border:1px solid #83d9f8!important;
+ box-shadow:0 3px 0 #17477e,inset 0 1px #ffffff55!important;
+}
+#game .hudbox span{color:#d8f1ff!important}
+#game .hudbox strong{color:#fff!important}
+#game .boardframe{
+ background:linear-gradient(145deg,#4b9bd7,#2c6cb0)!important;
+ border:2px solid #9ceaff!important;
+ box-shadow:0 6px 0 #17477e,0 0 20px #a6eaff33!important;
+}
+#game .board{background:#101e39!important}
+#game .sidecard{
+ background:linear-gradient(145deg,#4389ca,#2c67aa)!important;
+ border:1px solid #8cdefb!important;
+ color:#fff!important;
+ box-shadow:0 4px 0 #17477e,inset 0 1px #ffffff55!important;
+}
+#game .sidecard label{color:#e1f5ff!important}
+#game .chrono-card{
+ background:linear-gradient(145deg,#367fc0,#245b9d)!important;
+ border-color:#a4eaff!important;
+}
+#game .chrono-ring{background:conic-gradient(var(--chrono-color) var(--chrono-progress,100%),#b6d8f3 0)!important}
+#game .chrono-ring-inner{background:linear-gradient(145deg,#214f88,#173c70)!important;border-color:#a2e6ff!important}
+#game .chrono-ring-inner small{color:#d8edff!important}
+#game .boostname,#game .boostnum{color:#f1fbff!important}
+#game .smallbtn{
+ background:linear-gradient(145deg,#75bce9,#3e85c5)!important;
+ border:1px solid #b7edff!important;color:#fff!important;
+ box-shadow:0 3px 0 #17477e!important;
+}
+#game .progressmeta{color:#e1f3ff!important}
+#game .progressbar{background:#17477e!important}
+#game .progressfill{background:linear-gradient(90deg,#c0a8ff,#8deaff)!important}
+#game .control{
+ background:linear-gradient(145deg,#4b91d0,#2d69ae)!important;
+ border:1px solid #9ce8ff!important;color:#fff!important;
+ box-shadow:0 4px 0 #17477e!important;
+}
+#game .control.primary,#game .action{
+ background:linear-gradient(135deg,#a7edff,#65c6ee 58%,#b8adff)!important;
+ color:#174477!important;border:1px solid #e3fbff!important;
+ box-shadow:0 4px 0 #24588e!important;
+}
+#game .control.drop{
+ background:linear-gradient(135deg,#ffe18b,#f5b94f)!important;
+ border-color:#fff0bd!important;color:#76501d!important;
+}
+#game .hint{color:#d6edff!important}
+#game .rpgpanel,#game .challengebox,#game .heroCard{
+ background:linear-gradient(145deg,#3d80c0,#285e9f)!important;
+ border:1px solid #8bdfff!important;
+ box-shadow:0 4px 0 #17477e!important;
+ color:#fff!important;
+}
+#game .rpgpanel h3,#game .rpgpanel strong,#game .challengebox h3{color:#fff!important}
+#game .rpgpanel p,#game .challengebox p{color:#e0f2ff!important}
+#game .xpbar{background:#17477e!important}
+#game .xpbar i{background:linear-gradient(90deg,#c0a8ff,#8deaff)!important}
+#game .overlay{background:#123b70bb!important;backdrop-filter:blur(10px)}
+#game .modal{
+ background:linear-gradient(145deg,#438bc9,#245a9d)!important;
+ border:2px solid #9beaff!important;
+ box-shadow:0 12px 35px #12365d88!important;
+}
+#game .choice{
+ background:linear-gradient(145deg,#4a91ce,#2b67a8)!important;
+ border-color:#9be6ff!important;color:#fff!important;
+}
+#game .choiceicon{background:#9deaff44!important}
+#game .choicetext span{color:#e1f3ff!important}
+#game .action.secondary{background:linear-gradient(145deg,#397bbb,#245b9d)!important;color:#fff!important;border-color:#8bdfff!important}
+#game .toast{background:#2d6eaf!important;border-color:#9deaff!important;color:#fff!important}
+#campaign .screenhead h2{color:#fff!important;text-shadow:0 2px 3px #72569a55!important}
+@media(max-width:520px){
+ .topbar{padding:8px 10px!important;border-radius:17px!important}
+ #game .sidecard{background:linear-gradient(145deg,#4389ca,#2c67aa)!important}
+}
+</style>
+
+
+<!-- KT-589.3: high-specificity polish for legacy arena and generated mission panels -->
+<style id="bb-kt589-arena-specificity-polish">
+html body .app section#game.screen .playlayout > div .boardframe{
+ background:linear-gradient(145deg,#4b9bd7,#2c6cb0)!important;
+ border:2px solid #a5efff!important;
+ box-shadow:0 6px 0 #17477e,0 0 22px #a6eaff44!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard{
+ background:linear-gradient(145deg,#438fd0,#2d6eb4)!important;
+ border:1.5px solid #9be7ff!important;
+ color:#fff!important;
+ box-shadow:0 4px 0 #17477e,inset 0 1px #ffffff66!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard label{
+ color:#e8f8ff!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boostname,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boostnum,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .chrono-caption{
+ color:#fff!important;
+}
+html body .app section#game.screen .gamehud > .hudbox{
+ background:linear-gradient(145deg,#438fd0,#2d6eb4)!important;
+ border:1px solid #9be7ff!important;
+ color:#fff!important;
+ box-shadow:0 3px 0 #17477e!important;
+}
+html body .app section#game.screen .gamehud > .hudbox span{color:#e1f5ff!important}
+html body .app section#game.screen .gamehud > .hudbox strong{color:#fff!important}
+html body .app section#game.screen #rogueGoals{
+ background:linear-gradient(145deg,#438bc9,#285f9f)!important;
+ border:1.5px solid #a0eaff!important;
+ color:#fff!important;
+ box-shadow:0 5px 0 #17477e!important;
+}
+html body .app section#game.screen #rogueGoals strong,
+html body .app section#game.screen #rogueGoals span{color:#fff!important}
+html body .app section#game.screen .bb-hero-skill-slot{
+ background:linear-gradient(145deg,#8c79d1,#6653aa)!important;
+ border:1.5px solid #d4c6ff!important;
+ color:#fff!important;
+ box-shadow:0 4px 0 #3b347d!important;
+}
+html body .app section#game.screen .smallbtn{
+ background:linear-gradient(145deg,#75bce9,#3e85c5)!important;
+ border:1px solid #c0efff!important;color:#fff!important;
+ box-shadow:0 3px 0 #17477e!important;
+}
+html body .app section#menu.screen .daily-quest,
+html body .app section#menu.screen .daily-task,
+html body .app section#menu.screen .quest-card,
+html body .app section#menu.screen .quest-item{
+ background:linear-gradient(145deg,#3b82c4,#285f9f)!important;
+ border-color:#8edfff!important;color:#fff!important;
+}
+html body .app section#menu.screen .daily-quest *,
+html body .app section#menu.screen .daily-task *,
+html body .app section#menu.screen .quest-card *,
+html body .app section#menu.screen .quest-item *{color:#f2fbff}
+</style>
+
+
+<style id="bb-kt589-mobile-hero-card-fit">
+/* Keep the narrow portrait hero slot intentional: show its character emblem,
+   not clipped multi-line copy competing with the playfield. Desktop keeps full copy. */
+@media (max-width:520px) and (orientation:portrait){
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard{
+    min-height:58px!important;height:58px!important;padding:6px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    gap:0!important;border-radius:13px!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-copy{
+    display:none!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{
+    display:grid!important;place-items:center!important;
+    flex:0 0 42px!important;width:42px!important;height:42px!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art svg{
+    width:38px!important;height:36px!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-pulse{
+    right:5px!important;top:4px!important;font-size:11px!important;
+  }
+}
+</style>
+
+
+<style id="bb-kt590-mobile-safe-area">
+/* KT-590 — use the full iPhone canvas without letting the notch or home
+   indicator overlap the game, controls, or bottom mission panel. */
+@media (max-width:700px){
+  html,body{min-height:100%;min-height:100dvh}
+  .app{
+    padding-top:max(10px,env(safe-area-inset-top))!important;
+    padding-right:max(10px,env(safe-area-inset-right))!important;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom))!important;
+    padding-left:max(10px,env(safe-area-inset-left))!important;
+  }
 }
 </style>
 </body></html>
