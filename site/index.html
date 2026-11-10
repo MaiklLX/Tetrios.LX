@@ -7872,7 +7872,7 @@ function bbSyncDailyGoalPlacement(){
 }
 window.addEventListener('resize',bbSyncDailyGoalPlacement,{passive:true});
 
-function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;bbVoidLastAppliedLevel=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
+function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;bbDailyScoreCheckpoint=0;lines=0;level=1;bbVoidLastAppliedLevel=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
 if(mode==='rogue'&&bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
@@ -8346,7 +8346,7 @@ function levelUp(){
   if(mode==='rogue'){paused=true;showUpgrade()}
   else{paused=false;if(mode==='campaign')toast('✦ УРОВЕНЬ ПОВЫШЕН · ЭКСПЕДИЦИЯ ПРОДОЛЖАЕТСЯ');restartDrop()}
 }
-function updateHud(){bbRenderHeroSkillSlot();const boostCard=$('boostCard');if(boostCard)boostCard.hidden=mode==='campaign';$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=mode==='rogue'&&boosts.length?'✧':'◇';$('boostName').textContent=mode==='rogue'?(boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления'):'Только в Block Run';$('boostNum').textContent=mode==='rogue'?(boosts.length?boosts.length+' карт':'Карты не выбраны'):'Обычные правила';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
+function updateHud(){if(typeof bbDailySyncScore==='function')bbDailySyncScore();bbRenderHeroSkillSlot();const boostCard=$('boostCard');if(boostCard)boostCard.hidden=mode==='campaign';$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=mode==='rogue'&&boosts.length?'✧':'◇';$('boostName').textContent=mode==='rogue'?(boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления'):'Только в Block Run';$('boostNum').textContent=mode==='rogue'?(boosts.length?boosts.length+' карт':'Карты не выбраны'):'Обычные правила';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
   if(mode!=='rogue'){paused=false;restartDrop();return;}
@@ -9474,7 +9474,28 @@ while (heroXp >= 200 + (heroLevel - 1) * 100) {
 };
 
 let bbDailyRecordedThisGame = false;
+var bbDailyScoreCheckpoint = 0;
 
+function bbDailySyncScore() {
+  if (!started || gameOver || bbDailyReplayNoQuestReward) return;
+  if (bbDailyQuestDate !== bbGetTodayKey()) bbLoadDailyQuests();
+  const current = Math.max(0, Number(score) || 0);
+  const delta = current - bbDailyScoreCheckpoint;
+  if (delta <= 0) return;
+  bbDailyScoreCheckpoint = current;
+  const q = bbDailyQuests.find(item => item.id === 'score');
+  if (!q || q.claimed) return;
+  q.progress = Math.min(q.target, q.progress + delta);
+  if (q.progress >= q.target) {
+    q.claimed = true;
+    bbCoins += q.reward;
+    bbPut('coins', bbCoins);
+    toast('Ежедневное задание выполнено! +' + q.reward + ' 🪙');
+  }
+  bbSaveDailyQuests();
+  bbRefresh();
+  bbRenderDailyQuests();
+}
 
 function bbDailyAddLines(cleared) {
   if (bbDailyQuestDate !== bbGetTodayKey()) {
@@ -9510,12 +9531,9 @@ function bbDailyRecordGame() {
   if (bbDailyQuestDate !== bbGetTodayKey()) {
     bbLoadDailyQuests();
   }
+  bbDailySyncScore();
 
   bbDailyQuests.forEach(q => {
-    if (q.id === 'score') {
-      q.progress += Math.max(0, Number(score) || 0);
-    }
-
     if (q.id === 'games') {
       q.progress += 1;
     }
@@ -9830,6 +9848,18 @@ if (resetProgressBtn) {
           prismColor:typeof bbPrismColor==='function'?bbPrismColor(piece?.t||0,performance.now()):null,
           auraOwned:boosts.includes('aura')
         };
+      },
+      testDailyScoreProgress(){
+        const readQuests=()=>{
+          try{return JSON.parse(localStorage.getItem('bbDailyQuests')||'null')?.quests||[]}
+          catch{return []}
+        };
+        const before=readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)}));
+        const target=before.find(q=>q.id==='score')?.target||1000;
+        score+=target;
+        updateHud();
+        const after=readQuests().map(q=>({id:q.id,progress:Number(q.progress)||0,target:Number(q.target)||1,claimed:Boolean(q.claimed)}));
+        return {before,after};
       },
       testDailyQuestProgress(){
         const readQuests=()=>{
@@ -16909,4 +16939,35 @@ body .app{
 
 
 
+<style id="bb-kt619-friendly-background-and-library">
+html,body{background:#24465a!important;background-color:#24465a!important;color:#f4f7f5}
+body .app{background:radial-gradient(ellipse at 12% 8%,#4d9a9a55 0,transparent 38%),radial-gradient(ellipse at 88% 18%,#8b83c655 0,transparent 34%),radial-gradient(ellipse at 50% 100%,#4d9b8b33 0,transparent 48%),linear-gradient(155deg,#24465a 0%,#315d70 48%,#274d60 100%)!important;background-image:radial-gradient(ellipse at 12% 8%,#4d9a9a55 0,transparent 38%),radial-gradient(ellipse at 88% 18%,#8b83c655 0,transparent 34%),radial-gradient(ellipse at 50% 100%,#4d9b8b33 0,transparent 48%),linear-gradient(155deg,#24465a 0%,#315d70 48%,#274d60 100%)!important}
+.stars,.stars:before,.stars:after{display:none!important;opacity:0!important;background-image:none!important;animation:none!important}
+#menu:not([hidden]){background:transparent!important;background-image:none!important}
+#modal.bb-upgrade-library-modal{display:flex;flex-direction:column;width:min(780px,96vw);height:min(820px,92dvh);max-height:92dvh;overflow:hidden;padding:0;color:#edf7f5;background:linear-gradient(150deg,#19394b,#142f40 70%,#173849);border:1px solid #6c9a9a;border-radius:22px;box-shadow:0 22px 70px #061c2c99,0 0 0 4px #a8d8d31a}
+#modal.bb-upgrade-library-modal .bb-upgrade-library{display:flex;flex:1;min-height:0;flex-direction:column;overflow:hidden;background:linear-gradient(160deg,#1c4052,#173648 70%,#18384a)}
+.bb-library-heading{flex:0 0 auto;padding:17px 20px 13px;background:linear-gradient(115deg,#285d70,#24465f 58%,#394d70);color:#f4fbf7;border-bottom:1px solid #8bb9ad66}
+.bb-library-heading:after{border-color:#d9f5e522;box-shadow:0 0 0 15px #d9f5e510,0 0 0 31px #d9f5e508}
+.bb-library-kicker{color:#b7ded5}.bb-library-kicker i{color:#ffda91}.bb-library-title-row h3{color:#fff8e8}.bb-library-title-row p{color:#c5dedb}.bb-library-seal{border-color:#f2cd83;color:#ffe1a5}
+.bb-library-summary span{background:#102f3d77;color:#d2e9e3}.bb-library-summary b{color:#ffda91}
+.bb-library-filters{flex:0 0 auto;display:flex;gap:7px;overflow-x:auto;padding:10px 14px;background:#173749;border-bottom:1px solid #719b9a55}
+.bb-library-filters button{flex:1 0 auto;min-height:36px;padding:7px 10px;border:1px solid #547c83;border-radius:11px;background:#24495b;color:#d8e9e5;font-size:9px}
+.bb-library-filters button[aria-pressed="true"]{background:#5c9d98;color:#102f3c;border-color:#9ad7c9;box-shadow:inset 0 -2px 0 #e7cf91}
+.bb-library-grid{flex:1 1 auto;min-height:0;min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:10px;padding:12px 14px 16px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
+.bb-library-card{min-width:0;min-height:196px;padding:10px 9px 11px;border:1px solid #557e89;border-top:3px solid var(--lib-accent);border-radius:15px;background:linear-gradient(155deg,#244b5d,#1b3d50);box-shadow:0 4px 0 #102d3c,0 8px 16px #071d2b40;color:#eaf5f1}
+.bb-library-card:before{inset:5px;border-color:#d2e9e21c;border-radius:10px}.bb-library-card-top{color:#a9c8c6}.bb-library-index{color:#a9c8c6}.bb-library-category{font-size:8px;color:var(--lib-accent)}
+.bb-library-emblem{width:48px;height:48px;margin:9px 0 7px;border-radius:15px;background:color-mix(in srgb,var(--lib-accent) 22%,#173b4d);border:1px solid color-mix(in srgb,var(--lib-accent) 65%,#547c83);color:#fff8e9;box-shadow:0 3px 0 #102f3e}
+.bb-library-card>strong{color:#f7fbf7;font-size:12px;line-height:1.25}.bb-library-card>p{margin:6px 0 8px;color:#bfd4d0;font-size:10px;line-height:1.4}
+.bb-library-effect{width:100%;padding:8px 7px;border:1px solid #729b9660;border-radius:9px;background:#102f3c;color:#dcebe5;font-size:9px;line-height:1.35}.bb-library-effect span{color:#f0cf8c;font-size:7px}
+.bb-library-footer{flex:0 0 auto;padding:10px 14px;background:#173749;border-top:1px solid #719b9a55}.bb-library-footer>span{color:#a9c9c4}
+.bb-library-footer button{min-height:40px;padding:0 15px;border:1px solid #a1d5c4;border-radius:11px;background:#5c9d98;color:#102f3c}
+@media(max-width:560px){#modal.bb-upgrade-library-modal{width:96vw;height:min(90dvh,820px);max-height:90dvh;border-radius:18px}#modal.bb-upgrade-library-modal .bb-upgrade-library{max-height:90dvh}.bb-library-heading{padding:13px 13px 10px}.bb-library-title-row{gap:8px}.bb-library-title-row h3{font-size:19px}.bb-library-title-row p{font-size:10px}.bb-library-seal{width:38px;height:38px;flex-basis:38px;font-size:21px}.bb-library-summary{gap:5px;margin-top:9px}.bb-library-summary span{padding:5px 6px;font-size:7px}.bb-library-filters{justify-content:flex-start;gap:6px;padding:8px 9px}.bb-library-filters button{flex:0 0 auto;min-height:34px;padding:6px 9px;font-size:8px}.bb-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:9px}.bb-library-card{min-height:184px;padding:9px 7px}.bb-library-card>strong{font-size:11px}.bb-library-card>p{font-size:9px}.bb-library-effect{font-size:8px;padding:7px 6px}.bb-library-footer{gap:8px;padding:9px}.bb-library-footer>span{font-size:7px;max-width:55%}.bb-library-footer button{padding:0 10px;font-size:8px}}
+@media(max-width:360px){.bb-library-grid{gap:6px;padding:7px}.bb-library-card{min-height:176px;padding:8px 6px}.bb-library-category{font-size:7px}}
+</style>
+<style id="bb-kt620-daily-quest-visual-fix">
+#dailyQuestsPanel{border-color:#6aa9a1!important;background:linear-gradient(145deg,#193c4d,#1d4856)!important;box-shadow:0 10px 28px #0b263733,inset 0 1px #d9f5e211!important}
+#dailyQuestsPanel>div:first-child strong{color:#9ce4d3!important}#dailyQuestsPanel>div:first-child span{color:#b5cbc8!important}#dailyQuestsPanel>div:nth-child(2){color:#c3d9d4!important}
+#dailyQuestsList>div{padding:12px!important;margin-top:9px!important;border:1px solid #557d85!important;border-radius:13px!important;background:linear-gradient(135deg,#24495a,#1b3c4d)!important;box-shadow:0 3px 0 #102e3d!important;color:#edf7f3!important}
+#dailyQuestsList>div>div:first-child{color:#f6fbf6!important;font-size:12px;font-weight:900}#dailyQuestsList>div>div:nth-child(2){color:#b8d1cc!important}#dailyQuestsList>div>div:nth-child(3){background:#102e3d!important}#dailyQuestsList>div>div:nth-child(3)>div{background:linear-gradient(90deg,#a78be8,#69d6b6)!important}#dailyQuestsList>div>div:nth-child(4){color:#f0cf8c!important}
+</style>
 </body></html>
