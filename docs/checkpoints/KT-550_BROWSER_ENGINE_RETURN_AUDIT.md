@@ -526,3 +526,19 @@ Status: first browser implementation and cross-platform assertions committed; CI
 ### Текущая контрольная фраза
 
 **BLOCK BUDDIES — KT-574/575 HORIZONTAL GODOT ATLAS + ACCESSIBLE NAV.** Продолжать в `web/kt550-browser-return-2026-11-09`, PR #85 Draft. Атлас 12 вселенных — горизонтальная карусель, Godot palette/art, 3D planets, large cards, orbit glow, swipe and arrows. Дополнительно wheel-to-horizontal, keyboard arrows, focus-visible and screen-reader region. КТ-574 layout проверена run `42776408203`; KT-574 arrows and KT-575 input methods still require current HEAD CI. Preserve vertical 30-planet route, campaign IDs, saves, gameplay. No merge/publish, no APK/Godot Preview changes.
+
+
+## КТ-576 — Godot-оформление паузы и результатов (2026-11-10)
+
+- Игровые оверлеи паузы и завершения забега получили отдельные визуальные варианты, не меняющие содержимое и бизнес-логику остальных диалогов.
+- Перенесена стилистика Godot `_draw_overlay_panel`, `_draw_pause_overlay`, `_draw_mode_complete`, `_draw_game_over`, `_draw_block_run_results`: глубокий синий градиент, бирюзовая рамка/подсветка, верхний световой кант, контрастная типографика и тактильные кнопки; кошелёк паузы сохраняет золотой акцент.
+- В результатах выделены показатели линий/уровня/времени и очки бирюзовым; на узких экранах модалка ограничена высотой viewport и прокручивается внутри.
+- Реализация: `ad9456b9213b5ac24a32a080f6f7249cd6fb9825`.
+- Добавлен кросс-платформенный тест: открытие реальной паузы из активной партии, проверка variant-класса, панели, кошелька и кнопки; отдельно проверяется стиль панели результата. Тест: `00602bc7e94dd62c80c319d35ec8280c159504cd`.
+- На момент записи тестовый workflow для HEAD `00602bc7e94dd62c80c319d35ec8280c159504cd` ещё не появился в commit workflow list; старый Cross-platform run `42778296472` остаётся в статусе in_progress на шаге capture. Не считать КТ-576 проверенной до нового зелёного прогона.
+- Mobile Arena Visual Preview `42778296470` завершился success на HEAD `5cf394bc090a754606bad239b834c1d8ee305b66`; это подтверждает мобильную геометрию арены, но не новую стилизацию модалок.
+- PR #85 остаётся Draft; main/Pages, Godot Preview и APK не менялись.
+
+### Текущая контрольная фраза
+
+**BLOCK BUDDIES — KT-576 GODOT GAMEPLAY OVERLAYS.** Продолжать в `web/kt550-browser-return-2026-11-09`, PR #85 Draft, HEAD `00602bc7e94dd62c80c319d35ec8280c159504cd`. Атлас остаётся горизонтальным, Godot style. Пауза и результаты забега получили Godot panel styling: navy/blue gradient, cyan border/glow, gold wallet accent, readable mobile layout. Новый cross-platform test пока ожидает workflow; проверить CI и исправить найденное. Не менять механику, save keys, main/Pages, Godot Preview, APK.
