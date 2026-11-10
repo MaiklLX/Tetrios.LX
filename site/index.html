@@ -7072,7 +7072,15 @@ function bbLoadDailyQuests() {
 
 
 if (saved && saved.date === today && Array.isArray(saved.quests)) {
-  bbDailyQuests = saved.quests;
+  // Normalize older snapshots before progress arithmetic; legacy strings or
+  // missing fields must never turn counters into concatenated text or NaN.
+  bbDailyQuests = saved.quests.map(q => ({
+    ...q,
+    progress: Math.max(0, Number(q.progress) || 0),
+    target: Math.max(1, Number(q.target) || 1),
+    reward: Math.max(0, Number(q.reward) || 0),
+    claimed: Boolean(q.claimed)
+  }));
   bbDailyQuestDate = today;
   bbSaveDailyQuests();
   return;
