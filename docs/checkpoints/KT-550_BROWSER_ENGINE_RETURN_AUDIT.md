@@ -352,3 +352,14 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Уточнение KT-564: один cross-platform прогон `42677137996` был успешным; повторный прогон `42677181285` выявил Android-флейк. Поэтому выравнивание пока не считается закрытым.
 - Мобильный отдельный прогон `42677181203` завершился успешно. Это автоматизированный прогон, не физическое устройство.
 - PR #85 остаётся Draft; main, Pages, Godot Preview и APK не менялись.
+
+
+## КТ-566 — повторная проверка ResizeObserver и cross-platform (2026-11-10)
+
+- Cross-platform Visual Preview run `42685337133` завершился `success` на кодовом SHA `fdeb914b8f1a85fa983d0b33009bde89f988e9c9`.
+- Матрица отчёта включает desktop Chromium (1440×900 и 1920×1080), iOS WebKit (375×812, 390×844, 412×915, 430×932) и Android Chromium (393×873). Landscape targets подтвердили показ orientation guard.
+- Итоговый отчёт: `failures: []`; для завершённых игровых сценариев `pageErrors: []`, `consoleErrors: []`, `failedRequests: []`. Android 393×873 прошёл в этом прогоне после KT-565 ResizeObserver.
+- Cross-platform run подтвердил успешное прохождение сценария кампании и выхода к финальной проверке арены. Это автоматизированный Playwright preview, не физическое тестирование телефонов.
+- Mobile Arena Visual Preview run `42685336631` был отменён; job `129390503666` успешно поставлена на повторный запуск (attempt 2), на момент фиксации находится в очереди. До результата отдельный мобильный тест арены остаётся неподтверждённым.
+- PR #85 проверен: открыт, Draft, не объединён; head `cf4aa90988bcd173d45185e9a8278482e8f54e64`. Рабочая ветка остаётся `web/kt550-browser-return-2026-11-09`.
+- Не менялись main, Pages, Godot Preview и APK; merge/deploy/release не выполнялись. Скриншоты в чат не публиковать.
