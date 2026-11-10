@@ -16158,4 +16158,30 @@ html body .app section#menu.screen .quest-card *,
 html body .app section#menu.screen .quest-item *{color:#f2fbff}
 </style>
 
+
+<style id="bb-kt589-mobile-hero-card-fit">
+/* Keep the narrow portrait hero slot intentional: show its character emblem,
+   not clipped multi-line copy competing with the playfield. Desktop keeps full copy. */
+@media (max-width:520px) and (orientation:portrait){
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard{
+    min-height:58px!important;height:58px!important;padding:6px!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    gap:0!important;border-radius:13px!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-copy{
+    display:none!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{
+    display:grid!important;place-items:center!important;
+    flex:0 0 42px!important;width:42px!important;height:42px!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art svg{
+    width:38px!important;height:36px!important;
+  }
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-pulse{
+    right:5px!important;top:4px!important;font-size:11px!important;
+  }
+}
+</style>
+
 </body></html>
