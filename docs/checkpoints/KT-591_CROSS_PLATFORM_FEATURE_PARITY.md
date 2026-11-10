@@ -21,7 +21,8 @@ Not allowed:
 - Repository: `MaiklLX/Tetrios.LX`
 - Branch: `web/kt589-godot-friendly-visual-refresh-2026-11-10`
 - PR: #86 (open, draft, base `main`)
-- Latest commit at checkpoint: `35276f4431d31313c1a610122ab8dc231b3332dd`
+- Parity-test implementation commit: `35276f4431d31313c1a610122ab8dc231b3332dd`
+- Checkpoint document commit: `3ce96c4fe57e2ffa605d910292092daa3710ef1e`
 - Public/main branch and deployment remain untouched.
 - Current browser product exposes three modes: Campaign, Block Run, Daily Challenge.
 - The same responsive `site/index.html` runtime serves desktop and mobile; desktop and mobile CSS may rearrange the same components but must not fork game functionality.
