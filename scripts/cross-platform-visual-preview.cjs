@@ -67,7 +67,7 @@ const targets = [
       const campaignStyle = campaign ? getComputedStyle(campaign) : null;
       const rogueStyle = rogue ? getComputedStyle(rogue) : null;
       return {
-        title: title?.textContent?.replace(/\\s+/g, ' ').trim() || '',
+        title: title?.textContent?.replace(/\s+/g, ' ').trim() || '',
         campaignBorder: campaignStyle?.borderTopColor || '',
         campaignPlanet: campaign ? getComputedStyle(campaign, '::after').backgroundImage : '',
         rogueBorder: rogueStyle?.borderTopColor || '',
@@ -90,7 +90,7 @@ const targets = [
         visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=50,
         hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
         hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
-        hasLevel:/УРОВЕНЬ \\d+/.test(profile?.innerText||''),
+        hasLevel:/УРОВЕНЬ \d+/.test(profile?.innerText||''),
         walletMatches:wallet===currentCoins
       };
     });
@@ -115,7 +115,7 @@ const targets = [
           visible: !!guard && style.display !== 'none' &&
             style.visibility !== 'hidden' && Number(style.opacity) > 0 &&
             !!rect && rect.width >= innerWidth - 2 && rect.height >= innerHeight - 2,
-          text: guard?.innerText?.replace(/\\s+/g, ' ').trim() || ''
+          text: guard?.innerText?.replace(/\s+/g, ' ').trim() || ''
         };
       });
       if (!guardState.visible || !guardState.text.includes('Поверни телефон') ||
@@ -189,7 +189,7 @@ const targets = [
     const atlasGridState=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(viewport=>{
       const track=viewport.querySelector('.bb-galaxy-track');
       const cards=track?[...track.querySelectorAll('.bb-galaxy-card')]:[];
-      const columns=track?getComputedStyle(track).gridTemplateColumns.trim().split(/\\s+/).length:0;
+      const columns=track?getComputedStyle(track).gridTemplateColumns.trim().split(/\s+/).length:0;
       const compact=innerWidth<=480;
       return {
         cardCount:cards.length,columns,expectedColumns:compact?2:3,
@@ -356,7 +356,7 @@ const targets = [
         const rect=panel?.getBoundingClientRect();
         return {
           visible:!!panel&&getComputedStyle(panel).display!=='none'&&getComputedStyle(panel).visibility!=='hidden'&&rect.width>0&&rect.height>0,
-          text:panel?.innerText?.replace(/\\s+/g,' ').trim()||'',
+          text:panel?.innerText?.replace(/\s+/g,' ').trim()||'',
           parentId:panel?.parentElement?.id||'',
           parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
           gameOpacity:panel?getComputedStyle(panel.closest('#game')).opacity:null,
