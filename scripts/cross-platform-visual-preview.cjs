@@ -275,18 +275,22 @@ const targets = [
     await atlasViewport.evaluate(el=>el.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(120,el.clientWidth*.55),bubbles:true,cancelable:true})));
     await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:2000});
     const atlasAfterWheel=await atlasViewport.evaluate(el=>el.scrollLeft);
-    await atlasViewport.evaluate(el=>{el.scrollLeft=Math.min(el.scrollWidth-el.clientWidth,el.clientWidth*.8);});
+    await atlasViewport.evaluate(el=>{el.scrollLeft=0;});
     const keyboardBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
     const keyboardEventState=await atlasViewport.evaluate(el=>{
-      const event=new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true});
+      const event=new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true});
       el.dispatchEvent(event);
       return {prevented:event.defaultPrevented,focused:document.activeElement===el};
     });
+    await campaignPage.waitForFunction(before=>{
+      const el=document.querySelector('#campaign .bb-galaxy-viewport');
+      return !!el&&el.scrollLeft>before+8;
+    },keyboardBefore,{timeout:3000});
     const atlasAfterKeyboard=await waitForAtlasScrollSettle();
     if(atlasInputState.tabIndex!==0||atlasInputState.role!=='region'||
        !atlasInputState.label||atlasAfterWheel<=8||
        !keyboardEventState.prevented||!keyboardEventState.focused||
-       atlasAfterKeyboard>=keyboardBefore-8){
+       atlasAfterKeyboard<=keyboardBefore+8){
       failures.push(target.name+': KT-575 atlas mousewheel/keyboard access mismatch ('+JSON.stringify({atlasInputState,atlasAfterWheel,keyboardBefore,atlasAfterKeyboard,keyboardEventState})+')');
     }
     await campaignPage.waitForTimeout(3000);
