@@ -341,22 +341,28 @@ const targets = [
     // collection without changing the existing 360-node campaign progression.
     await campaignPage.locator('#bbOpenCampaignCollection').waitFor({state:'visible',timeout:10000});
     await campaignPage.locator('#bbOpenCampaignCollection').click();
-    const emblemState=await campaignPage.locator('#bbCampaignCollectionRail').evaluate(rail=>({
-      cardCount:rail.querySelectorAll('.bb-collection-card').length,
-      vectorCount:rail.querySelectorAll('.bb-collection-card .bb-collection-emblem svg').length,
-      detailVectorCount:document.querySelectorAll('.bb-collection-detail-emblem svg').length
+    const shelfModal=campaignPage.locator('.bb-collection-modal');
+    const emblemState=await shelfModal.evaluate(rail=>({
+      cardCount:rail.querySelectorAll('.bb-shelf-item').length,
+      vectorCount:rail.querySelectorAll('.bb-shelf-item .bb-shelf-art svg').length,
+      detailVectorCount:rail.querySelectorAll('.bb-shelf-detail-art svg').length,
+      shelfRows:rail.querySelectorAll('.bb-real-shelf-row').length
     }));
-    if(emblemState.cardCount!==49||emblemState.vectorCount!==49||emblemState.detailVectorCount!==1){
-      failures.push(target.name+': KT-555.2 SVG emblem rendering mismatch ('+JSON.stringify(emblemState)+')');
+    if(emblemState.cardCount!==9||emblemState.vectorCount!==9||emblemState.detailVectorCount!==1||emblemState.shelfRows!==3){
+      failures.push(target.name+': KT-555.2 paged shelf SVG/row rendering mismatch ('+JSON.stringify(emblemState)+')');
     }
-        const collectionCount=await campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id]').count();
-    if(collectionCount!==49) failures.push(target.name+': KT-554 expected 49 reward cards, got '+collectionCount);
-    const collectionFinal=campaignPage.locator('#bbCampaignCollectionRail [data-bb-collection-id="campaign_crown"]');
+    const collectionCount=await shelfModal.locator('[data-bb-collection-id]').count();
+    if(collectionCount!==9) failures.push(target.name+': KT-554 expected 9 visible reward cards per shelf page, got '+collectionCount);
+    // The current shelf is paginated 3×3 (49 total), not one long 49-card rail.
+    for(let page=1;page<6;page++) await campaignPage.locator('#bbShelfNext').click();
+    const lastPageCount=await shelfModal.locator('[data-bb-collection-id]').count();
+    if(lastPageCount!==4||!(await campaignPage.locator('#bbShelfNext').isDisabled())){
+      failures.push(target.name+': KT-554 final reward shelf page should contain 4 cards and disable Next, got '+lastPageCount);
+    }
+    const collectionFinal=shelfModal.locator('[data-bb-collection-id="campaign_crown"]');
     await collectionFinal.click();
-    const collectionDetail=await campaignPage.locator('.bb-collection-detail').innerText();
+    const collectionDetail=await shelfModal.locator('.bb-shelf-detail').innerText();
     if(!collectionDetail.includes('Корона дальнего пути')||!collectionDetail.includes('ЕЩЁ ВПЕРЕДИ')) failures.push(target.name+': KT-554 final crown detail or locked state is incorrect ('+collectionDetail+')');
-    const collectionRailState=await campaignPage.locator('#bbCampaignCollectionRail').evaluate(el=>({scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,overflow:getComputedStyle(el).overflowX}));
-    if(collectionRailState.scrollWidth<=collectionRailState.clientWidth||collectionRailState.overflow==='hidden') failures.push(target.name+': KT-554 reward strip is not horizontally scrollable ('+JSON.stringify(collectionRailState)+')');
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-reward-shelf.png',fullPage:false});
     await campaignPage.locator('#bbCampaignCollectionClose').click();
     const campaignAtlasState = await campaignPage.evaluate(() => {
