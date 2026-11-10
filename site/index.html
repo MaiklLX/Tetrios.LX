@@ -5335,7 +5335,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 </style>
 <link rel="stylesheet" href="./kt417-mobile-landscape-arena.css?v=20261106-kt417-v1">
 </head>
-<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
+<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
     <div class="modeicon" aria-hidden="true">🗺️</div>
     <div class="modetext">
@@ -14836,6 +14836,124 @@ button:not(.board):focus-visible{
 }
 #campaign .bb-planet-track{width:100%!important;min-width:100%!important;}
 @media(max-width:520px){#campaign .bb-planet-viewport{height:min(58vh,560px)!important;min-height:300px!important;}}
+</style>
+
+
+<style id="bb-kt569-home-visual">
+/* KT-569 / Phase 1 — translate the Godot home-hub art direction into the browser UI.
+   Existing buttons, IDs, data-mode hooks and progression handlers remain untouched. */
+#menu.home-dashboard > .hero{
+  border:1px solid rgba(118,220,255,.48)!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(ellipse at 82% 12%,rgba(104,77,214,.28),transparent 42%),
+    radial-gradient(ellipse at 12% 100%,rgba(31,198,225,.22),transparent 48%),
+    linear-gradient(155deg,#123e91 0%,#102c68 48%,#071b58 100%)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.16),inset 0 -18px 36px rgba(2,10,39,.2)!important;
+}
+#menu.home-dashboard > .hero .hero-app-mark{
+  border:2px solid #8beaff!important;
+  background:linear-gradient(145deg,#1767c8,#15346f)!important;
+  box-shadow:0 0 24px rgba(92,225,255,.28),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#menu.home-dashboard > .hero h1{
+  font-size:clamp(28px,7.2vw,46px)!important;
+  letter-spacing:-.045em!important;
+  font-weight:1000!important;
+  background:linear-gradient(110deg,#fff0b9 0%,#ffe18a 42%,#c4edff 78%,#8beaff 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;color:transparent!important;
+  filter:drop-shadow(0 3px 0 rgba(5,18,58,.8)) drop-shadow(0 0 16px rgba(255,208,90,.14))!important;
+}
+#menu.home-dashboard > .hero .eyebrow{
+  color:#8beaff!important;text-shadow:0 0 10px rgba(92,225,255,.4)!important;
+  letter-spacing:.16em!important;
+}
+#menu.home-dashboard > .hero p{color:#e4f5ff!important;text-shadow:0 1px 3px #071b58!important}
+#menu.home-dashboard > .sectionlabel{
+  color:#c4edff!important;letter-spacing:.16em!important;
+}
+#menu.home-dashboard > .modes > .mode{
+  border:2px solid rgba(139,234,255,.66)!important;
+  border-radius:21px!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.16)!important;
+  background:linear-gradient(115deg,#1268b5 0%,#174d9b 56%,#10295d 100%)!important;
+  min-height:clamp(92px,12.2dvh,116px)!important;height:auto!important;
+  padding:14px 16px!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="campaign"]{
+  border-color:#64e2ff!important;
+  background:
+    radial-gradient(circle at 88% 50%,rgba(100,226,255,.22),transparent 25%),
+    linear-gradient(115deg,#1268b5 0%,#174d9b 58%,#10295d 100%)!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="rogue"]{
+  border-color:#ffca68!important;
+  background:
+    radial-gradient(circle at 88% 50%,rgba(255,202,104,.2),transparent 25%),
+    linear-gradient(115deg,#74469d 0%,#553b88 58%,#251d52 100%)!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="campaign"]::after,
+#menu.home-dashboard > .modes > .mode[data-mode="rogue"]::after{
+  content:"";position:absolute;right:34px;top:50%;width:58px;height:58px;
+  transform:translateY(-50%);border-radius:50%;pointer-events:none;opacity:.62;
+  border:1px solid rgba(196,237,255,.58);
+  box-shadow:0 0 22px rgba(92,225,255,.2),inset 0 0 18px rgba(196,237,255,.12);
+}
+#menu.home-dashboard > .modes > .mode[data-mode="campaign"]::after{
+  background:radial-gradient(circle at 34% 30%,#c4edff 0 3%,#5bbbe9 10%,#1b5ba8 42%,#0a235a 76%);
+}
+#menu.home-dashboard > .modes > .mode[data-mode="rogue"]::after{
+  background:radial-gradient(circle at 34% 30%,#fff0b9 0 3%,#e9a95e 12%,#8151b5 48%,#2a1e64 78%);
+  border-color:rgba(255,208,90,.66);
+}
+#menu.home-dashboard > .modes > .mode .modeicon{
+  position:relative;z-index:1;border:1px solid rgba(196,237,255,.28);
+  background:rgba(5,20,55,.3)!important;box-shadow:inset 0 0 18px rgba(255,255,255,.08)!important;
+}
+#menu.home-dashboard > .modes > .mode .modetext,
+#menu.home-dashboard > .modes > .mode .modearrow{position:relative;z-index:2}
+#menu.home-dashboard > .modes > .mode .modetitle{font-size:17px!important;color:#fff!important}
+#menu.home-dashboard > .modes > .mode .modesub{color:#e0f3ff!important;font-size:11px!important}
+#menu.home-dashboard > .modes > .mode .tag{
+  color:#fff0b9!important;background:rgba(5,20,55,.34)!important;
+  border:1px solid rgba(255,240,185,.25)!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="daily"]{
+  min-height:68px!important;height:68px!important;
+  border:1.5px solid #ffd05a!important;border-radius:17px!important;
+  background:linear-gradient(110deg,#59451f,#3b3150 65%,#17233d)!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="daily"]::after{display:none!important}
+#menu.home-dashboard > #dailyQuestsPanel{
+  border:1px solid rgba(121,229,219,.48)!important;border-radius:19px!important;
+  background:linear-gradient(145deg,rgba(20,84,141,.82),rgba(12,27,62,.96))!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.1)!important;
+}
+#menu.home-dashboard > #bbVisitStreak,
+#menu.home-dashboard > .currency-panel{
+  border-color:rgba(255,208,90,.42)!important;
+  background:linear-gradient(145deg,rgba(38,49,83,.94),rgba(13,22,49,.98))!important;
+}
+#menu.home-dashboard > .bottomstats .stat{
+  border-color:rgba(139,234,255,.3)!important;
+  background:linear-gradient(145deg,#174d89,#10234e)!important;
+}
+#menu.home-dashboard > .bottomstats .stat span{color:#c4edff!important}
+#menu.home-dashboard .apk-download{
+  border-color:rgba(255,208,90,.58)!important;
+  background:linear-gradient(110deg,#174d89,#59451f)!important;
+}
+@media(max-width:520px){
+  #menu.home-dashboard > .hero{padding:15px 10px 13px!important}
+  #menu.home-dashboard > .modes > .mode[data-mode="campaign"]::after,
+  #menu.home-dashboard > .modes > .mode[data-mode="rogue"]::after{right:26px;width:48px;height:48px}
+  #menu.home-dashboard > .modes > .mode .modetext{max-width:calc(100% - 82px)}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard > .hero *,
+  #menu.home-dashboard > .modes > .mode{animation:none!important;transition:none!important}
+}
 </style>
 
 </body></html>
