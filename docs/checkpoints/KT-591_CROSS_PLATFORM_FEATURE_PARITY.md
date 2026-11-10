@@ -49,6 +49,9 @@ Do not let feature parity work displace the current visual-first priority. The K
 
 ## Work completed in this checkpoint
 
+6. KT-592 added a shared grid-light texture to the home hero across desktop and mobile, tightened the same rounded card treatment, and improved desktop mode-card proportions (icon scale, typography, padding). This is presentation-only; gameplay logic and mode behavior were not changed.
+7. KT-592 implementation commit: `14c810967e42daa5427c042defe8374cb451eead`. Screenshot QA for this new commit is still pending; do not mark it visually verified until a fresh preview is captured.
+
 1. KT-590 safe-area support is in the branch for iPhone notches and home-indicator spacing.
 2. Mobile arena preview passed on 375×812 and 412×915. No page errors or horizontal document overflow were reported; arena, utility rail, and mission goals remain in their intended regions.
 3. Cross-platform preview previously passed for desktop Chromium, iOS WebKit, and Android Chromium, including campaign and Block Run checks.
