@@ -25,7 +25,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: cross-platform-visual-preview-${{ github.event.pull_request.head.sha || github.sha }}
+  # One active visual capture per PR/branch: newer checkpoints supersede stale captures.
+  group: cross-platform-visual-preview-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
