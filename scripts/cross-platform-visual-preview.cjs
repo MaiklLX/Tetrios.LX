@@ -217,6 +217,19 @@ const targets = [
        !atlasCarouselState.artVisible){
       failures.push(target.name+': KT-574 horizontal Godot atlas carousel mismatch ('+JSON.stringify(atlasCarouselState)+')');
     }
+    // Verify the visible controls actually move the horizontal rail in both directions.
+    const atlasTouchAction=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(el=>getComputedStyle(el).touchAction);
+    const atlasViewport=campaignPage.locator('#campaign .bb-galaxy-viewport');
+    const atlasBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Следующая вселенная"]').click();
+    await campaignPage.waitForTimeout(450);
+    const atlasAfterNext=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await campaignPage.locator('#campaign .bb-atlas-controls button[aria-label="Предыдущая вселенная"]').click();
+    await campaignPage.waitForTimeout(450);
+    const atlasAfterPrevious=await atlasViewport.evaluate(el=>el.scrollLeft);
+    if(atlasTouchAction!=='pan-x'||atlasAfterNext<=atlasBefore+8||atlasAfterPrevious>=atlasAfterNext-8){
+      failures.push(target.name+': KT-574 horizontal swipe/arrow navigation mismatch ('+JSON.stringify({atlasTouchAction,atlasBefore,atlasAfterNext,atlasAfterPrevious})+')');
+    }
     await campaignPage.waitForTimeout(3000);
     // KT-554: verify the browser reward shelf reproduces the 49-item Godot
     // collection without changing the existing 360-node campaign progression.
