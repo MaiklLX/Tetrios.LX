@@ -127,6 +127,32 @@ const targets = [
       card.iconBorder==='rgba(0, 0, 0, 0)')){
       failures.push(target.name+': KT-577 Godot home mode-card styling mismatch ('+JSON.stringify(modeCardVisualState)+')');
     }
+    // KT-581: verify the actual Godot home-hub hierarchy, not only card colors.
+    const homeHubLayoutState=await page.evaluate(()=>{
+      const rect=selector=>{
+        const el=document.querySelector(selector),r=el?.getBoundingClientRect();
+        return r?{top:r.top,bottom:r.bottom,width:r.width,height:r.height}:null;
+      };
+      return {
+        viewport:{width:innerWidth,height:innerHeight},
+        menu:rect('#menu'),title:rect('#menu .hero h1'),profile:rect('#bbHomeProfile'),
+        campaign:rect('#menu button.mode[data-mode="campaign"]'),
+        blockRun:rect('#menu button.mode[data-mode="rogue"]'),
+        daily:rect('#menu button.mode[data-mode="daily"]'),
+        quests:rect('#dailyQuestsPanel')
+      };
+    });
+    const orderedHomePanels=['title','profile','campaign','blockRun','daily','quests'];
+    const homePanelsOrdered=orderedHomePanels.every((key,index,all)=>{
+      const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
+      return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
+    });
+    if(!homePanelsOrdered||
+       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*.78||
+       homeHubLayoutState.campaign.width<homeHubLayoutState.menu.width*.78||
+       homeHubLayoutState.blockRun.width<homeHubLayoutState.menu.width*.78){
+      failures.push(target.name+': KT-581 Godot home-hub composition/order/width mismatch ('+JSON.stringify(homeHubLayoutState)+')');
+    }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
     // KT-418: landscape phone view is intentionally blocked before the menu
