@@ -96,3 +96,12 @@ KT-580 changed the palette, but the resulting screenshots still showed the old b
 - Important limit: the existing browser preview does **not** yet prove a naturally reached game-over settlement or a real earned reward surviving a page reload. The result-overlay check currently validates presentation styling, not a complete game-over event. Do not describe save persistence or full end-to-end settlement as passed.
 - KT-587 therefore records a focused remaining gate: add/run a deterministic, isolated end-of-run + persisted-profile smoke check without mutating real user data, then inspect the exact diff and rerun both visual workflows. Physical-device testing remains a separate user-side check after a preview release.
 - No gameplay/runtime changes in this audit. PR #85 remains Draft; no merge, main update, public Pages deployment, Godot Preview change or APK build/release.
+
+
+## KT-588 — isolated game-over reward persistence smoke
+
+- Added a QA-only hook behind the existing `?qaVisual=1` gate to invoke the real wrapped `endGame()` path and snapshot run count, coins, Plush XP and the result reward line. It does not exist in normal sessions.
+- Added `scripts/gameplay-persistence-smoke.cjs`: launches an isolated Playwright Chromium context, enters Block Run through the real start UI, invokes the QA-only deterministic end-of-run trigger, asserts run count +1, earned coins, earned XP and reward summary, reloads the page, then verifies all three persisted values exactly match. The isolated context is discarded after the run; no real profile data is touched.
+- Wired the smoke script into Cross-platform Visual Preview after screenshot capture and before artifact upload. This does not change game rules, rewards, storage schema or the normal UI.
+- Fresh Cross-platform run required on this exact head; do not mark KT-588 passed until CI logs show `KT-588 GAMEPLAY PERSISTENCE SMOKE PASSED`.
+- Branch only; PR #85 remains Draft. No merge, main update, Pages deployment, Godot Preview change or APK build/release.
