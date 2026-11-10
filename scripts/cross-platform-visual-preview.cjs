@@ -81,6 +81,23 @@ const targets = [
         !homeVisualState.roguePlanet.includes('radial-gradient')) {
       failures.push(target.name + ': KT-569.1 Godot home-hub visual mapping is incomplete (' + JSON.stringify(homeVisualState) + ')');
     }
+    // KT-571: selected Buddy, actual hero level and wallet are rendered from live game state.
+    const pilotProfileState=await page.evaluate(()=>{
+      const profile=document.querySelector('#bbHomeProfile');
+      const wallet=profile?.querySelector('.bb-home-profile-wallet strong')?.textContent?.trim()||'';
+      const currentCoins=document.querySelector('#coins')?.textContent?.trim()||'';
+      return {
+        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=50,
+        hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
+        hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
+        hasLevel:/УРОВЕНЬ \\d+/.test(profile?.innerText||''),
+        walletMatches:wallet===currentCoins
+      };
+    });
+    if(!pilotProfileState.visible||!pilotProfileState.hasHeroEmblem||!pilotProfileState.hasPilotName||
+       !pilotProfileState.hasLevel||!pilotProfileState.walletMatches){
+      failures.push(target.name+': KT-571 live Buddy pilot profile mismatch ('+JSON.stringify(pilotProfileState)+')');
+    }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
     // KT-418: landscape phone view is intentionally blocked before the menu
