@@ -8201,6 +8201,20 @@ function bbScheduleNarrowPortraitRailSync(){
 window.addEventListener('resize',bbScheduleNarrowPortraitRailSync,{passive:true});
 window.addEventListener('orientationchange',bbScheduleNarrowPortraitRailSync,{passive:true});
 
+// WebKit can report a zero/early layout during the first frame after the game
+// screen is revealed. Re-measure when the arena frame or utility rail obtains
+// its final box size; transforms do not affect ResizeObserver's layout box.
+const bbNarrowPortraitRailObserver = typeof ResizeObserver === 'function'
+  ? new ResizeObserver(() => bbScheduleNarrowPortraitRailSync())
+  : null;
+if (bbNarrowPortraitRailObserver) {
+  const bbRailGame = $('game');
+  const bbRailFrame = bbRailGame?.querySelector('.playlayout>.boardframe');
+  const bbRailSide = bbRailGame?.querySelector('.playlayout>.sidecol');
+  if (bbRailFrame) bbNarrowPortraitRailObserver.observe(bbRailFrame);
+  if (bbRailSide) bbNarrowPortraitRailObserver.observe(bbRailSide);
+}
+
 function pauseGame(){if(!started||gameOver)return;paused=!paused;if(paused){bbSyncMusic();overlay(`<div class="modalhead"><div class="bigicon">Ⅱ</div><div class="eyebrow">ПЕРЕДЫШКА</div><h3>Пауза</h3><p>Партия на паузе. Можно спокойно проверить баланс и вернуться в игру.</p></div><div class="bb-pause-wallet"><span>🪙 <small>ТВОИ МОНЕТЫ</small></span><strong>${bbCoins.toLocaleString('ru-RU')}</strong><em>Баланс аккаунта</em></div><button class="action" id="resume">▶ ПРОДОЛЖИТЬ ИГРУ</button><button class="action secondary" id="quit">ЗАВЕРШИТЬ ЗАБЕГ</button>`);$('resume').onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};$('quit').onclick=()=>{closeOverlay();started=false;clearInterval(dropTimer);clearInterval(tickTimer);show('menu');updateStats()}}else{closeOverlay();bbSyncMusic()}}
 
 /* Просмотр активных бустов с паузой */

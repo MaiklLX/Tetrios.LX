@@ -41,3 +41,12 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - Mobile Arena Visual Preview [run 42611289452](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42611289452): **SUCCESS** on the code HEAD above. Artifact [13669359759](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42611289452/artifacts/13669359759) downloaded and inspected. At 375×812, frame height is 494.75px and side-rail height is 494.7478px (top delta −0.007px, bottom delta −0.009px); Hold and Drop remain visible and usable. At 412×915 the intended inset rail remains unchanged.
 - Cross-platform Visual Preview [run 42611289275](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42611289275) was still **in progress** when this checkpoint was written. No pass is claimed for that run.
 - Browser previews are not physical-device validation. No changes to `main`, no deployment, no APK build/release, and no user-data mutation.
+
+
+## 2026-11-10 — KT-427.7: WebKit first-layout rail measurement
+
+- Rechecked PR #76 at HEAD `b56552ba0a9604d9a1227a889c9a86f630c68cc7`. Mobile Arena Visual Preview run [42612052920](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42612052920) passed, but Cross-platform Visual Preview run [42612052903](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42612052903) failed only at iOS WebKit 375×812: frame height 494.75px, rail height 483.32px (11.43px delta). The other target checks, orientation guard, page errors and console errors produced no additional failures.
+- The failure is consistent with the one-shot animation-frame measurement running before WebKit has its final non-zero layout; the CSS fallback `.9533` remains active. The Chromium-only mobile preview does not cover this engine-specific path.
+- Added a `ResizeObserver` for the arena frame and utility rail so the measured scale is recalculated when the hidden game screen becomes measurable or its layout changes. The observer does not alter gameplay, persistence or user data.
+- Extended the cross-platform geometry report to record the rail's untransformed height, explicit measured scale and computed transform. The 375×812 regression now also requires an explicit measured scale, in addition to the existing 2px alignment tolerance.
+- Fresh Mobile Arena and Cross-platform runs on the new commit are required before this checkpoint can be marked passed. Browser previews remain distinct from physical-device validation; no merge, deployment, APK build/release or user-data mutation.

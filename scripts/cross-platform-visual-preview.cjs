@@ -399,6 +399,11 @@ const targets = [
       };
       const frame = document.querySelector('#game .boardframe');
       const side = document.querySelector('#game .sidecol');
+      const sideMetrics = side ? {
+        naturalHeight: side.offsetHeight,
+        scaleY: getComputedStyle(side).getPropertyValue('--bb-side-scale-y').trim(),
+        transform: getComputedStyle(side).transform
+      } : null;
       const drop = document.querySelector('#game .side-drop');
       const hold = document.querySelector('#game #holdBtn');
       const goals = document.querySelector('#game #rogueGoals');
@@ -419,6 +424,7 @@ const targets = [
         controlVisibility: controlRow ? {display:getComputedStyle(controlRow).display,visibility:getComputedStyle(controlRow).visibility,pointerEvents:getComputedStyle(controlRow).pointerEvents,buttons:Array.from(controlRow.querySelectorAll('.control')).map(node=>rect(node))} : null,
         hint: rect(hint),
         side: rect(side),
+        sideMetrics,
         gameGrid: game ? { gridTemplateRows: getComputedStyle(game).gridTemplateRows, gridTemplateColumns: getComputedStyle(game).gridTemplateColumns, rowGap: getComputedStyle(game).rowGap } : null,
         sideScroll: side ? {
           overflowY: getComputedStyle(side).overflowY,
@@ -483,7 +489,12 @@ const targets = [
       const centerDelta = Math.abs(sideCenter - frameCenter);
       if (heightDelta > 2 || centerDelta > 2) {
         failures.push(target.name + ': side rail must align with the arena frame (height delta ' +
-          heightDelta.toFixed(2) + 'px, center delta ' + centerDelta.toFixed(2) + 'px)');
+          heightDelta.toFixed(2) + 'px, center delta ' + centerDelta.toFixed(2) +
+          'px; natural height ' + (geometry.sideMetrics?.naturalHeight ?? 'n/a') +
+          'px; measured scale ' + (geometry.sideMetrics?.scaleY || 'missing') + ')');
+      }
+      if (!geometry.sideMetrics?.scaleY) {
+        failures.push(target.name + ': 375x812 rail did not receive an explicit measured scale');
       }
     }
     if (geometry.document.width > target.width + 2) {
