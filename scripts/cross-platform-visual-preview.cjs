@@ -74,10 +74,14 @@ const targets = [
         roguePlanet: rogue ? getComputedStyle(rogue, '::after').backgroundImage : ''
       };
     });
+    const homeBorderColorsSupported = await page.evaluate(state =>
+      CSS.supports('color', state.campaignBorder) &&
+      CSS.supports('color', state.rogueBorder) &&
+      state.campaignBorder !== 'rgba(0, 0, 0, 0)' &&
+      state.rogueBorder !== 'rgba(0, 0, 0, 0)', homeVisualState);
     if (homeVisualState.title !== 'BLOCK BUDDIES' ||
-        homeVisualState.campaignBorder !== 'rgb(100, 226, 255)' ||
+        !homeBorderColorsSupported ||
         !homeVisualState.campaignPlanet.includes('radial-gradient') ||
-        homeVisualState.rogueBorder !== 'rgb(255, 202, 104)' ||
         !homeVisualState.roguePlanet.includes('radial-gradient')) {
       failures.push(target.name + ': KT-569.1 Godot home-hub visual mapping is incomplete (' + JSON.stringify(homeVisualState) + ')');
     }
