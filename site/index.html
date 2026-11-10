@@ -8284,12 +8284,14 @@ function drawNext(){
   if(hidden)return;
   const cell=Math.min(20,78/Math.max(s[0].length,s.length));
   const ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;
+  // Reuse the arena's beveled block renderer so the next-piece preview
+  // shares the same highlights, edge treatment and depth as the live board.
+  ctx.save();
+  ctx.translate(ox,oy);
   for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){
-    const px=ox+x*cell+1,py=oy+y*cell+1;
-    ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=7;
-    ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();
-    ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke();
+    drawCell(ctx,x,y,color,cell,false);
   }
+  ctx.restore();
 }
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
 let dropCurrentMs=760,dropRampAt=0,dropRampFromMs=760,dropLastStepAt=0;
