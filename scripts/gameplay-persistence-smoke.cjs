@@ -23,10 +23,25 @@ const { chromium } = require('playwright');
     await page.locator('#game:not([hidden])').waitFor({ state: 'visible' });
     await page.locator('#game .boardframe').waitFor({ state: 'visible' });
 
+    const dailyProgress = await page.evaluate(() =>
+      window.__TETRIOS_QA__?.testDailyQuestProgress?.() || null
+    );
+    if (!dailyProgress) throw new Error('QA daily quest progress hook is missing');
+    const linesBefore = dailyProgress.before.find(q => q.id === 'lines');
+    const linesAfter = dailyProgress.after.find(q => q.id === 'lines');
+    if (!linesBefore || !linesAfter || linesAfter.progress !== Math.min(linesBefore.target, linesBefore.progress + 1)) {
+      throw new Error('Line quest did not advance and persist: ' + JSON.stringify(dailyProgress));
+    }
+
     const result = await page.evaluate(() =>
       window.__TETRIOS_QA__?.finishRunForPersistenceSmoke?.() || null
     );
     if (!result) throw new Error('QA game-over hook is missing');
+    const gamesBefore = result.beforeQuests?.find(q => q.id === 'games');
+    const gamesAfter = result.afterQuests?.find(q => q.id === 'games');
+    if (!gamesBefore || !gamesAfter || gamesAfter.progress !== Math.min(gamesBefore.target, gamesBefore.progress + 1)) {
+      throw new Error('Completed game did not advance the daily games quest: ' + JSON.stringify({before:result.beforeQuests,after:result.afterQuests}));
+    }
     if (!result.gameOver) throw new Error('Real endGame() did not set gameOver');
     if (result.after.runs !== result.before.runs + 1) {
       throw new Error('Run counter did not increment: ' + JSON.stringify(result));
