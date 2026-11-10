@@ -15569,4 +15569,71 @@ html,body{background:#07152b!important}
 @media(prefers-reduced-motion:reduce){#menu .mode{transition:none!important}}
 </style>
 
+
+<style id="bb-kt581-godot-hub-layout-correction">
+/* Match the actual Godot _draw_home_hub hierarchy: title, profile, two featured
+   adventure panels, compact secondary actions, then the supporting systems. */
+#menu.home-dashboard{
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ grid-template-areas:"hero" "profile" "campaign" "rogue" "daily" "quests" "streak" "heroes" "rpg" "currency" "stats" "library" "apk" "shop" "reset";
+ gap:12px;
+}
+#menu.home-dashboard>.hero{
+ min-height:unset;height:auto;padding:8px 4px 12px!important;
+ display:flex;align-items:center;justify-content:center;text-align:center;
+ border:0;border-radius:0;background:transparent!important;box-shadow:none!important;
+}
+#menu.home-dashboard>.hero:before,#menu.home-dashboard>.hero:after{display:none}
+#menu .hero-arena-canvas{display:none}
+#menu .hero .eyebrow{display:none}
+#menu .hero-brand-lockup{justify-content:center;margin:0 0 5px;gap:10px}
+#menu .hero-app-mark{width:34px;height:34px;padding:5px;border-radius:10px}
+#menu .hero h1{font-size:clamp(25px,6vw,34px)!important;letter-spacing:-.045em!important}
+#menu .hero p{font-size:10px!important;color:#c4edff!important}
+#bbHomeProfile{grid-area:profile;min-height:54px;padding:10px 15px!important;border-radius:16px!important}
+#menu .sectionlabel{display:none}
+#menu .modes{display:contents}
+#menu .mode[data-mode="campaign"]{grid-area:campaign;min-height:104px}
+#menu .mode[data-mode="rogue"]{grid-area:rogue;min-height:104px}
+#menu .mode[data-mode="daily"]{grid-area:daily;min-height:78px}
+#dailyQuestsPanel{grid-area:quests}
+#bbVisitStreak{grid-area:streak}
+#menu>#openHeroes{grid-area:heroes}
+#menu>#rpgPanel{grid-area:rpg}
+#menu>.currency-panel{grid-area:currency}
+#menu>.bottomstats{grid-area:stats}
+#menu>#bbOpenCardLibrary{grid-area:library}
+#menu>.apk-download{grid-area:apk}
+#menu>.shopbuttons{grid-area:shop}
+#menu>.home-reset{grid-area:reset}
+#menu .mode[data-mode="campaign"]{
+ background:radial-gradient(ellipse at 92% 45%,#55ddff22,transparent 40%),linear-gradient(115deg,#1268b5,#174d88 58%,#102b52)!important;
+ border-color:#64e2ff!important;
+}
+#menu .mode[data-mode="rogue"]{
+ background:radial-gradient(ellipse at 92% 45%,#c69aff22,transparent 40%),linear-gradient(115deg,#74469d,#493b78 58%,#182b50)!important;
+ border-color:#b99bff!important;
+}
+#menu .mode[data-mode="daily"]{
+ background:linear-gradient(110deg,#14548d,#12345f)!important;
+ border-color:#79e5db!important;
+}
+#menu .mode[data-mode="campaign"] .modetitle,#menu .mode[data-mode="rogue"] .modetitle{font-size:18px!important}
+#menu .mode[data-mode="campaign"] .modeicon,#menu .mode[data-mode="rogue"] .modeicon{width:58px!important;height:58px!important}
+#menu .mode[data-mode="daily"] .modeicon{width:44px!important;height:44px!important}
+#menu .mode[data-mode="daily"] .tag{display:none}
+#menu .mode[data-mode="daily"] .modesub{font-size:10px!important}
+#dailyQuestsPanel{padding:14px!important}
+#dailyQuestsList{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#dailyQuestsList>div{margin-top:0!important;padding:10px!important}
+@media(max-width:560px){
+ #dailyQuestsList{grid-template-columns:1fr}
+ #menu .mode[data-mode="campaign"],#menu .mode[data-mode="rogue"]{min-height:92px}
+ #menu .hero-brand-lockup{margin-bottom:3px}
+ #menu .hero-app-mark{width:30px;height:30px}
+ #menu .hero h1{font-size:25px!important}
+}
+</style>
+
 </body></html>
