@@ -9544,18 +9544,22 @@ if (resetProgressBtn) {
         };
       },
       finishRunForPersistenceSmoke(){
+        const readNumber=(key,fallback=0)=>{
+          try{const value=JSON.parse(localStorage.getItem(key));return Number(value??fallback)||0}
+          catch{return Number(localStorage.getItem(key)||fallback)||0}
+        };
         const before={
-          runs:Number(localStorage.getItem('nrRuns')||0),
-          coins:Number(localStorage.getItem('coins')||0),
-          xp:Number(localStorage.getItem('xp_plush')||0)
+          runs:readNumber('nrRuns'),
+          coins:readNumber('bb_coins'),
+          xp:readNumber('bb_xp_plush')
         };
         endGame();
         return {
           before,
           after:{
-            runs:Number(localStorage.getItem('nrRuns')||0),
-            coins:Number(localStorage.getItem('coins')||0),
-            xp:Number(localStorage.getItem('xp_plush')||0)
+            runs:readNumber('nrRuns'),
+            coins:readNumber('bb_coins'),
+            xp:readNumber('bb_xp_plush')
           },
           gameOver:!!gameOver,
           rewardLine:document.querySelector('#modal .rewardline')?.textContent?.trim()||''
