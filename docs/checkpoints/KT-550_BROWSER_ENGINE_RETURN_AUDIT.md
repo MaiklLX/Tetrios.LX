@@ -363,3 +363,16 @@ Status: first browser implementation and cross-platform assertions committed; CI
 - Mobile Arena Visual Preview run `42685336631` был отменён; job `129390503666` успешно поставлена на повторный запуск (attempt 2), на момент фиксации находится в очереди. До результата отдельный мобильный тест арены остаётся неподтверждённым.
 - PR #85 проверен: открыт, Draft, не объединён; head `cf4aa90988bcd173d45185e9a8278482e8f54e64`. Рабочая ветка остаётся `web/kt550-browser-return-2026-11-09`.
 - Не менялись main, Pages, Godot Preview и APK; merge/deploy/release не выполнялись. Скриншоты в чат не публиковать.
+
+
+## КТ-567 — подтверждение мобильной 2D-арены (2026-11-10)
+
+- Mobile Arena Visual Preview run `42762887481` завершился `success` на актуальном PR HEAD `7f2eb4992dccd771ac276d31edd77aab436f8c80`; job `129652595421`.
+- Успешно выполнены все шаги: подготовка offline soundtrack/Three.js assets, lightweight 2D arena preview, установка Playwright Chromium, запуск игры в portrait viewport и проверка геометрии, загрузка артефактов.
+- Viewport 375×812: arena frame 210×483 px, отношение сторон 0.4348 (ожидаемый диапазон 0.42–0.45), utility rail остаётся справа; hard-drop и hold входят в rail, цели под ареной.
+- Viewport 412×915: arena frame 242.25×557.17 px, отношение сторон 0.4348; utility rail справа, цели под ареной и внутри viewport.
+- В обоих viewport подтверждён единственный 2D renderer: `toggleCount=0`, `overlayCanvasCount=0`, `boardVisible=true`; `pageErrors=[]`.
+- Финальный отчёт: `failures: []`, `browserWarnings: []`. Артефакт `tetrios-mobile-arena-preview` загружен, artifact ID `13739195041` (срок хранения 7 дней). Скриншоты не публикуются в чат.
+- Вместе с успешным cross-platform run `42685337133` это закрывает автоматизированную проверку КТ-565/566 по текущему HEAD: карта кампании и мобильная арена прошли Playwright Chromium/WebKit preview. Это не физическое тестирование на реальных iPhone/Android.
+- PR #85 остаётся open + Draft, не merged. Никаких изменений в main, Pages, Godot Preview или APK не сделано.
+- Следующий шаг — КТ-568: финальный аудит PR diff и статусов обязательных checks, без merge/deploy/release. Любые изменения игрового кода — только при обнаружении конкретного дефекта и отдельным небольшим коммитом.
