@@ -15073,7 +15073,12 @@ button:not(.board):focus-visible{
 #menu.home-dashboard > .modes > .mode[data-mode="daily"]{
   min-height:68px!important;height:68px!important;
   border:1.5px solid #ffd05a!important;border-radius:17px!important;
-  background:linear-gradient(110deg,#59451f,#3b3150 65%,#17233d)!important;
+  background:
+    radial-gradient(circle at 92% 50%,rgba(255,208,90,.2),transparent 26%),
+    linear-gradient(110deg,#59451f,#3b3150 65%,#17233d)!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="daily"] .modeicon{
+  flex:0 0 40px!important;width:40px!important;height:40px!important;
 }
 #menu.home-dashboard > .modes > .mode[data-mode="daily"]::after{display:none!important}
 #menu.home-dashboard > #dailyQuestsPanel{
