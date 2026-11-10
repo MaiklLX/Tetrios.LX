@@ -834,8 +834,12 @@ const targets = [
       if (geometry.goals && geometry.goals.bottom > target.height + 2) {
         failures.push(target.name + ': Block Run goals extend beyond the viewport');
       }
-      if (geometry.frame && geometry.goals && geometry.goals.y < geometry.frame.bottom + 3) {
-        failures.push(target.name + ': goals overlap the 10:23 arena cabinet (' + geometry.goals.y + ' < ' + geometry.frame.bottom + ' + 3px)');
+      if (geometry.frame && geometry.goals) {
+        const overlapsHorizontally = geometry.goals.x < geometry.frame.right && geometry.goals.right > geometry.frame.x;
+        const overlapsVertically = geometry.goals.y < geometry.frame.bottom + 3 && geometry.goals.bottom > geometry.frame.y;
+        if (overlapsHorizontally && overlapsVertically) {
+          failures.push(target.name + ': goals overlap the 10:23 arena cabinet');
+        }
       }
       if (geometry.sideScroll && geometry.sideScroll.maxScroll > 2) {
         failures.push(target.name + ': utility HUD requires scrolling (' + geometry.sideScroll.maxScroll + 'px overflow)');
