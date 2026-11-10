@@ -5970,7 +5970,7 @@ function bbRenderHeroSkillSlot(){
   if(art)art.innerHTML=bbHeroEmblem(hero.id);
   if(name)name.textContent=hero.name.toUpperCase();
   if(ability)ability.textContent=hero.skill;
-  if(state)state.textContent=level<5?'РАЗБЛОКИРОВКА · УР. 5':remaining?'ПЕРЕЗАРЯДКА · '+remaining+' С':'НАЖМИ ДЛЯ АКТИВАЦИИ';
+  if(state)state.textContent=level<5?'ОТКРОЕТСЯ НА УР. 5':remaining?'ПЕРЕЗАРЯДКА · '+remaining+' С':'АКТИВИРОВАТЬ ✦';
   button.disabled=!started||paused||gameOver||level<5||remaining>0;
   button.style.setProperty('--hero-accent',hero.color);
   button.setAttribute('aria-label',hero.name+' — способность: '+hero.skill+(level<5?' (откроется на 5 уровне)':remaining?' (перезарядка '+remaining+' секунд)':' — нажми, чтобы применить'));button.title=hero.name+' · '+hero.skill+(level<5?' · откроется на 5 уровне':remaining?' · перезарядка '+remaining+' сек.':' · нажми для активации');
@@ -6106,7 +6106,8 @@ function bbRenderChronoTimer() {
   if (!active) return;
 
   const waiting = remaining === 0;
-  seconds.textContent = waiting ? '—' : String(remaining);
+  /* Keep the 20-second clock visible before the first clear. */
+  seconds.textContent = waiting ? '20' : String(remaining);
   const progress = waiting ? 100 : remaining / 20 * 100;
   ring.style.setProperty('--chrono-progress', progress + '%');
   fill.style.width = progress + '%';
@@ -6114,8 +6115,8 @@ function bbRenderChronoTimer() {
   card.classList.toggle('chrono-warning', remaining > 0 && remaining <= 5);
   card.classList.toggle('chrono-danger', remaining > 0 && remaining <= 2);
   caption.textContent = waiting
-    ? 'ЖДЁТ ПЕРВОЙ ОЧИСТКИ'
-    : remaining <= 5 ? 'ВРЕМЯ НА ИСХОДЕ' : 'ОЧИСТИ ЛИНИЮ';
+    ? 'СТАРТ ПОСЛЕ ОЧИСТКИ'
+    : remaining <= 5 ? 'ВРЕМЯ НА ИСХОДЕ' : 'ДО СЛЕДУЮЩЕЙ ОЧИСТКИ';
 }
 
 function bbIsDailyMechanic(mod) {
@@ -16654,6 +16655,129 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
  #game #bbHeroSkillCard .bb-hero-skill-art,html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{width:32px!important;height:32px!important}
  #game #bbHeroSkillCard .bb-hero-skill-art svg{width:28px!important;height:28px!important}
  #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:8px!important}
+}
+</style>
+
+<style id="bb-kt600-flat2d-arena">
+/* KT-600: friendly, flat 2D arena language — less glass, less neon, clearer play. */
+#game .playlayout{
+ background:#204f80!important;border:2px solid #397db4!important;border-radius:18px!important;
+ box-shadow:0 5px 0 #173e68!important;
+}
+#game .boardframe{
+ background:#2e73aa!important;border:2px solid #78bde9!important;border-radius:17px!important;
+ padding:5px!important;box-shadow:0 4px 0 #1b5688!important;
+}
+#game .boardframe:before{box-shadow:inset 0 0 0 1px #ffffff18!important}
+#game .board{border-radius:9px!important;box-shadow:inset 0 0 0 1px #5d88b2!important}
+#game .gamehud .hudbox{
+ background:#3d8bc4!important;border:2px solid #76bde8!important;
+ border-radius:12px!important;box-shadow:0 3px 0 #245d91!important;
+}
+#game .gamehud .hudbox:before{display:none!important}
+#game .sidecol>.sidecard{
+ background:#3d86bd!important;border:2px solid #77b9e3!important;
+ border-radius:13px!important;box-shadow:0 3px 0 #245c8c!important;
+}
+#game .sidecol>.sidecard label{color:#f1f9ff!important;text-shadow:none!important}
+#game .sidecol #next,#game .sidecol #holdPreview{
+ background:#f3f9ff!important;border:2px solid #a9d5f1!important;
+ border-radius:10px!important;box-shadow:0 2px 0 #8bb9dc!important;
+}
+#game .sidecol .hold-card{padding:7px 6px!important}
+#game .sidecol .hold-card .smallbtn{
+ background:#f2c75e!important;color:#563c16!important;
+ border:2px solid #ffe39a!important;box-shadow:0 3px 0 #b78332!important;
+ border-radius:9px!important;font-weight:900!important;
+}
+#game .sidecol .hold-card .smallbtn:disabled{opacity:.58!important}
+#game #bbHeroSkillCard,
+html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard{
+ position:relative!important;display:grid!important;
+ grid-template-columns:36px minmax(0,1fr)!important;
+ min-height:78px!important;padding:8px!important;gap:3px 8px!important;
+ border:2px solid #f6d47d!important;border-radius:13px!important;
+ background:#f6d77e!important;color:#553d19!important;
+ box-shadow:0 4px 0 #b78639!important;
+}
+#game #bbHeroSkillCard:before{display:none!important}
+#game #bbHeroSkillCard .bb-hero-skill-art,
+html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{
+ width:36px!important;height:36px!important;border-radius:10px!important;
+ background:#fff1c6!important;border:2px solid #e8bd58!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-art svg{filter:none!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy,
+html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-copy{
+ display:flex!important;flex-direction:column!important;gap:3px!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:8px!important;color:#74501e!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:9px!important;line-height:1.2!important;color:#493515!important;font-weight:900!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy em{
+ display:inline-flex!important;align-self:flex-start!important;
+ padding:3px 6px!important;border-radius:6px!important;
+ background:#fff4d5!important;color:#6a4b1d!important;
+ font-size:7px!important;letter-spacing:0!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-pulse{color:#a96d19!important;text-shadow:none!important}
+#game #bbHeroSkillCard:disabled{
+ opacity:1!important;filter:none!important;background:#dce8f0!important;
+ border-color:#a8c4d8!important;box-shadow:0 4px 0 #8ba8bc!important;
+}
+#game #bbHeroSkillCard:disabled .bb-hero-skill-art{background:#edf5fa!important;border-color:#b5cbd9!important}
+#game #bbHeroSkillCard:disabled .bb-hero-skill-copy strong,
+#game #bbHeroSkillCard:disabled .bb-hero-skill-copy small,
+#game #bbHeroSkillCard:disabled .bb-hero-skill-copy em{color:#45647b!important}
+#game .chrono-card{
+ min-height:126px!important;padding:8px 6px!important;
+ background:#327db7!important;border:2px solid #8ed9f4!important;
+ box-shadow:0 4px 0 #205783!important;
+}
+#game .chrono-card label{color:#f3fbff!important;font-size:9px!important}
+#game .chrono-ring{
+ width:min(100%,86px)!important;margin:7px auto 5px!important;
+ background:conic-gradient(#ffe17c var(--chrono-progress,100%),#235783 0)!important;
+ box-shadow:none!important;border:3px solid #f8d77a!important;
+}
+#game .chrono-ring:before{display:none!important}
+#game .chrono-ring-inner{
+ background:#173e68!important;border:2px solid #8ed9f4!important;
+}
+#game .chrono-hourglass{font-size:12px!important;line-height:1!important}
+#game .chrono-ring-inner strong{font-size:25px!important;color:#fff!important}
+#game .chrono-ring-inner small{font-size:7px!important;color:#d9efff!important}
+#game .chrono-caption{font-size:7px!important;letter-spacing:.02em!important;color:#fff!important;margin:4px 0 6px!important}
+#game .chrono-track{height:5px!important;background:#1d5683!important}
+#game .chrono-track i{background:#ffe17c!important;box-shadow:none!important}
+#game .chrono-card.chrono-waiting .chrono-ring{animation:bbChronoReadyFlat 2s ease-in-out infinite!important}
+@keyframes bbChronoReadyFlat{50%{transform:scale(1.035)}}
+#game[data-daily-mechanic] .boardframe:after{
+ inset:-2px!important;border-radius:17px!important;box-shadow:none!important;
+ border:2px solid #a4e5ff!important;opacity:.35!important;
+}
+#game[data-daily-mechanic="chronoRift"] .boardframe:after{border-color:#ffe17c!important;opacity:.55!important}
+#game[data-daily-mechanic="glitchReactor"] .boardframe:after{border-color:#d9a2ff!important;opacity:.65!important}
+#game .sidecol .drop-card .side-drop{
+ min-height:42px!important;border-radius:10px!important;
+ background:#f2c75e!important;color:#573c17!important;
+ border:2px solid #ffe39a!important;box-shadow:0 3px 0 #b78332!important;
+}
+@media(min-width:600px) and (max-width:1200px) and (orientation:portrait){
+ #game .boardframe{
+  height:clamp(390px,calc((100vw - 570px)*2.3),520px)!important;
+  max-height:520px!important;aspect-ratio:10/23!important;
+ }
+ #game .sidecol .drop-card .side-drop{min-height:44px!important}
+}
+@media(max-width:520px){
+ #game #bbHeroSkillCard,html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard{
+  min-height:74px!important;grid-template-columns:32px minmax(0,1fr)!important;padding:6px!important;
+ }
+ #game #bbHeroSkillCard .bb-hero-skill-art,
+ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{width:32px!important;height:32px!important}
+ #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:8px!important}
+ #game .chrono-card{min-height:116px!important}
+ #game .chrono-ring{width:78px!important}
 }
 </style>
 </body></html>
