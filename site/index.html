@@ -7277,7 +7277,8 @@ function buildMap() {
     track.className = 'bb-planet-track';
     const positions = [];
     const planetCount = b.end - b.start + 1;
-    const trackWidth = Math.max(300, viewport.clientWidth - 28);
+    // The viewport is appended after the track is built; use the attached campaign host width on this first layout pass.
+    const trackWidth = Math.max(300, (viewport.clientWidth || g.clientWidth) - 28);
     const stepY = 78;
     const trackHeight = 150 + (planetCount - 1) * stepY;
     for (let i = 0; i < planetCount; i++) {
