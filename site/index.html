@@ -5902,23 +5902,30 @@ function bbGetUpgradeEffectDescription(id,rank=1){
   return descriptions[id]||upgrades.find(u=>u[3]===id)?.[2]||'Усиление ранга '+r;
 }
 function bbOpenCardLibrary(){
+  const groups=[
+    {id:'all',label:'ВСЕ КАРТЫ',icon:'✧',tone:'#75c9d7'},
+    {id:'attack',label:'АТАКА',icon:'⚡',tone:'#f0a45d',ids:['score','mult','magnet','glow','dust','burst','comet','luck','gear','flash','neuron','hunter','plasma']},
+    {id:'defense',label:'ЗАЩИТА',icon:'⛨',tone:'#70c6a2',ids:['shield','armor','hold','fortress','reserve','nova','stable']},
+    {id:'control',label:'КОНТРОЛЬ',icon:'◷',tone:'#83a9ec',ids:['slow','memory','resonance','echo','reactor','rift','void','loop','tide','shift','mirror']},
+    {id:'anomaly',label:'АНОМАЛИИ',icon:'✦',tone:'#bd91e8',ids:['unstable','prism','infinity','aura','plasma']}
+  ];
+  const categoryFor=id=>groups.find(group=>group.ids?.includes(id))||groups[0];
   const renderCards=(filter='all')=>{
-    const cards=upgrades.filter(item=>filter==='all'||(filter==='rogue'&&bbRogueOnlyUpgradeIds.has(item[3])));
-    $('bbCardLibraryList').innerHTML=cards.map(item=>{
-      const rogueOnly=bbRogueOnlyUpgradeIds.has(item[3]);
-      const rank=1;
-      return '<article style="display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid '+(rogueOnly?'#9d7cff55':'#5cf5e833')+';border-radius:13px;background:linear-gradient(135deg,#ffffff08,#ffffff03)"><div style="width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:'+(rogueOnly?'#9d7cff20':'#5cf5e818')+';font-size:22px">'+item[0]+'</div><div style="min-width:0;flex:1"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><strong style="font-size:13px">'+item[1]+'</strong>'+'<span style="font-size:8px;font-weight:900;color:#c5b4ff;background:#9d7cff20;padding:3px 6px;border-radius:99px">ТОЛЬКО BLOCK RUN</span>'+'</div><div style="font-size:11px;color:#b9c5dc;line-height:1.45;margin-top:5px">'+item[2]+'</div><div style="font-size:10px;color:#8fe9df;margin-top:6px">'+bbGetUpgradeEffectDescription(item[3],rank)+'</div></div></article>';
+    const cards=upgrades.filter(item=>filter==='all'||categoryFor(item[3]).id===filter);
+    $('bbCardLibraryList').innerHTML=cards.map((item,index)=>{
+      const group=categoryFor(item[3]);
+      const title=item[1],desc=item[2];
+      return '<article class="bb-library-card" style="--lib-accent:'+group.tone+'"><div class="bb-library-card-top"><span class="bb-library-index">'+String(upgrades.indexOf(item)+1).padStart(2,'0')+'</span><span class="bb-library-category">'+group.icon+' '+group.label+'</span></div><div class="bb-library-emblem">'+item[0]+'</div><strong>'+title+'</strong><p>'+desc+'</p><div class="bb-library-effect"><span>ПАССИВНЫЙ ЭФФЕКТ</span>'+bbGetUpgradeEffectDescription(item[3],1)+'</div></article>';
     }).join('');
-    $('bbCardLibraryCount').textContent=cards.length+' / '+upgrades.length+' КАРТ';
-    document.querySelectorAll('[data-bb-card-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.bbCardFilter===filter)));
+    $('bbCardLibraryCount').textContent=cards.length+' / '+upgrades.length;
+    document.querySelectorAll('[data-bb-lib-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.bbLibFilter===filter)));
   };
-  overlay('<div class="modalhead"><div class="bigicon">▤</div><div class="eyebrow">АРХИВ ТАКТИЧЕСКИХ СИСТЕМ</div><h3>Библиотека усилений</h3><p>Изучи назначение карт до старта. Все карты относятся к рогалик-системе и работают только в режиме Block Run. В кампании и ежедневном вызове карточных усилений нет.</p></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin:0 0 10px"><button class="smallbtn" data-bb-card-filter="all" aria-pressed="true">ВСЕ 35</button><button class="smallbtn" data-bb-card-filter="rogue" aria-pressed="false">BLOCK RUN</button><span id="bbCardLibraryCount" style="margin-left:auto;align-self:center;font-size:9px;color:#9eacc8;font-weight:900"></span></div><div id="bbCardLibraryList" style="display:grid;gap:8px;max-height:min(55vh,560px);overflow:auto;padding:2px 3px 8px"></div><button class="action" id="bbCloseCardLibrary" style="margin-top:10px">ЗАКРЫТЬ БИБЛИОТЕКУ</button>');
+  overlay('<section class="bb-upgrade-library"><header class="bb-library-heading"><div class="bb-library-kicker"><span>BLOCK BUDDIES</span><i>АРХИВ · 01</i></div><div class="bb-library-title-row"><div><h3>КОДЕКС УСИЛЕНИЙ</h3><p>Собрание модулей, реликвий и тактических систем Block Run</p></div><div class="bb-library-seal">✧</div></div><div class="bb-library-summary"><span><b>35</b> КАРТ В АРХИВЕ</span><span><b>05</b> КЛАССОВ СИСТЕМ</span><span id="bbCardLibraryCount">35 / 35</span></div></header><nav class="bb-library-filters" aria-label="Категории карт">'+groups.map(group=>'<button type="button" data-bb-lib-filter="'+group.id+'" style="--lib-accent:'+group.tone+'" aria-pressed="'+(group.id==='all')+'"><span>'+group.icon+'</span>'+group.label+'</button>').join('')+'</nav><div id="bbCardLibraryList" class="bb-library-grid"></div><footer class="bb-library-footer"><span>✦ КАЖДАЯ КАРТА МЕНЯЕТ ХОД ЗАБЕГА</span><button type="button" id="bbCloseCardLibrary">ЗАКРЫТЬ КОДЕКС</button></footer></section>');
+  $('modal').classList.add('bb-upgrade-library-modal');
   renderCards('all');
-  document.querySelectorAll('[data-bb-card-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbCardFilter)));
+  document.querySelectorAll('[data-bb-lib-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbLibFilter)));
   $('bbCloseCardLibrary').onclick=closeOverlay;
 }
-$('bbOpenCardLibrary')?.addEventListener('click',bbOpenCardLibrary);
-
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
@@ -6439,7 +6446,7 @@ function show(id){
   if(typeof bbSyncMusic==='function')bbSyncMusic()
 }
 
-function overlay(html,variant=''){const root=$('overlay'),modal=$('modal');root.classList.remove('bb-godot-pause-overlay','bb-godot-result-overlay');modal.classList.remove('bb-hero-showcase-modal');if(variant==='pause')root.classList.add('bb-godot-pause-overlay');if(variant==='result')root.classList.add('bb-godot-result-overlay');modal.innerHTML=html;root.classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay','bb-godot-pause-overlay','bb-godot-result-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
+function overlay(html,variant=''){const root=$('overlay'),modal=$('modal');root.classList.remove('bb-godot-pause-overlay','bb-godot-result-overlay');modal.classList.remove('bb-hero-showcase-modal');if(variant==='pause')root.classList.add('bb-godot-pause-overlay');if(variant==='result')root.classList.add('bb-godot-result-overlay');modal.innerHTML=html;root.classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay','bb-godot-pause-overlay','bb-godot-result-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal','bb-upgrade-library-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
 function dateKey(){let d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function setupDaily(){let d=new Date(),today=bbGetTodayKey(),rule=bbDailyRuleForDate(today),completed=localStorage.getItem('bbDailyChallengeCompletedDate')===today;$('daydate').textContent=d.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();$('dailySymbol').textContent=rule.symbol;$('dailyTitle').textContent=rule.title;$('dailyDesc').textContent=rule.desc;$('dailyGoal').textContent=rule.goal;$('dailyRule').textContent=rule.rule+(completed?' Испытание уже пройдено — награда получена.':' Награда за победу: +'+bbDailyRelicReward(rule)+' ✧ реликвий и +500 монет.');$('dailyStart').textContent=completed?'✓ ВЫЗОВ УЖЕ ПРОЙДЕН':'НАЧАТЬ ИСПЫТАНИЕ';$('dailyStart').disabled=completed;$('dailyStart').style.opacity=completed?'.65':'1';bbUpdateVisitStreak()}
@@ -16820,4 +16827,43 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
 /* KT-603: actual roguelike card album, not a vertical text list. */
 .bb-rogue-album{padding:14px;border-radius:20px;background:linear-gradient(160deg,#193d5b,#102b44);border:2px solid #467da2;color:#edf7ff}.bb-rogue-album header{text-align:center;margin-bottom:12px}.bb-rogue-album header>span{font-size:9px;letter-spacing:.14em;font-weight:1000;color:#9fc9e3}.bb-rogue-album header h3{margin:5px 0;color:#fff;font-size:22px}.bb-rogue-album header p{margin:0;color:#bdd5e6;font-size:11px}.bb-rogue-album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;max-height:min(52vh,430px);overflow:auto;padding:4px}.bb-rogue-album-card{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0;padding:11px 8px;border:2px solid var(--rarity-color);border-radius:15px;background:#214765;box-shadow:0 0 10px color-mix(in srgb,var(--rarity-color) 25%,transparent);text-align:center}.bb-rogue-album-card.is-undiscovered{filter:saturate(.55);opacity:.72;background:#1a354c}.bb-album-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:color-mix(in srgb,var(--rarity-color) 26%,#16334d);font-size:25px}.bb-rogue-album-card strong{font-size:12px;color:#fff;line-height:1.2}.bb-rogue-album-card small{font-size:8px;font-weight:1000;color:#b8d2e4;letter-spacing:.06em}.bb-album-stars{font-size:11px;letter-spacing:2px;color:var(--rarity-color)}.bb-rogue-album-card p{margin:0;color:#d6e6f1;font-size:10px;line-height:1.35}
 </style>
+
+<style id="bb-kt606-upgrade-codex">
+/* KT-606: themed collectible codex for the roguelike upgrade library. */
+#modal.bb-upgrade-library-modal{width:min(760px,96vw);max-height:90dvh;overflow:hidden;padding:0;background:#f2ead8;color:#263746;border:3px solid #c7a66c;border-radius:22px;box-shadow:0 18px 55px #07182b88}
+#modal.bb-upgrade-library-modal .bb-upgrade-library{display:flex;flex-direction:column;max-height:90dvh;overflow:hidden;background:radial-gradient(ellipse at 50% -20%,#fff9e9 0,#f2ead8 55%,#e9dfca 100%)}
+.bb-library-heading{padding:18px 20px 13px;background:linear-gradient(135deg,#234b60,#17394c);color:#f9f1df;border-bottom:4px solid #c8a568;position:relative;overflow:hidden}
+.bb-library-heading:after{content:"";position:absolute;width:190px;height:190px;border:1px solid #ffffff18;border-radius:50%;right:-62px;top:-110px;box-shadow:0 0 0 15px #ffffff08,0 0 0 31px #ffffff06}
+.bb-library-kicker{display:flex;justify-content:space-between;gap:10px;color:#b8d5d8;font-size:9px;font-weight:1000;letter-spacing:.16em}
+.bb-library-kicker i{font-style:normal;color:#e8c98c}
+.bb-library-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.bb-library-title-row h3{margin:0;color:#fff4dc;font-size:clamp(20px,4vw,28px);letter-spacing:.045em;font-weight:1000}
+.bb-library-title-row p{margin:5px 0 0;color:#c5d8d8;font-size:11px;line-height:1.4;max-width:460px}
+.bb-library-seal{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border:2px solid #d8b878;border-radius:50%;color:#f1d391;font-size:27px;box-shadow:inset 0 0 0 4px #ffffff12}
+.bb-library-summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.bb-library-summary span{padding:6px 9px;border-radius:7px;background:#ffffff12;color:#c7d9d7;font-size:8px;font-weight:900;letter-spacing:.07em}
+.bb-library-summary b{color:#f2d49a;font-size:11px;margin-right:3px}
+.bb-library-filters{display:flex;gap:6px;overflow-x:auto;padding:11px 14px 9px;background:#e7dcc5;border-bottom:1px solid #d1c3a8;scrollbar-width:none}
+.bb-library-filters::-webkit-scrollbar{display:none}
+.bb-library-filters button{display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;flex:1;min-height:34px;padding:6px 9px;border:1px solid #c9bea8;border-radius:9px;background:#f8f2e5;color:#52616a;font-size:8px;font-weight:1000;letter-spacing:.04em}
+.bb-library-filters button span{font-size:13px;color:var(--lib-accent)}
+.bb-library-filters button[aria-pressed="true"]{background:#31576a;color:#fff4dc;border-color:#31576a;box-shadow:inset 0 -2px 0 #d6b678}
+.bb-library-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 14px 16px;overflow:auto;overscroll-behavior:contain}
+.bb-library-card{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0;min-height:190px;padding:10px 9px 11px;border:1px solid #c9bda5;border-top:3px solid var(--lib-accent);border-radius:12px;background:linear-gradient(155deg,#fffdf5,#f1e8d6);box-shadow:0 3px 0 #d9cdb6,0 5px 12px #6c59401a;text-align:center;color:#304451}
+.bb-library-card:before{content:"";position:absolute;inset:5px;border:1px solid #d9cdb8;border-radius:8px;pointer-events:none}
+.bb-library-card-top{position:relative;z-index:1;width:100%;display:flex;align-items:center;justify-content:space-between;gap:4px;color:#7c817c}
+.bb-library-index{font-size:8px;font-weight:1000;letter-spacing:.1em}
+.bb-library-category{font-size:7px;font-weight:1000;color:var(--lib-accent);letter-spacing:.04em}
+.bb-library-emblem{position:relative;display:grid;place-items:center;width:48px;height:48px;margin:9px 0 7px;border-radius:14px;background:color-mix(in srgb,var(--lib-accent) 17%,#fff9eb);border:1px solid color-mix(in srgb,var(--lib-accent) 50%,#d7cbb5);color:#315267;font-size:27px;box-shadow:0 3px 0 color-mix(in srgb,var(--lib-accent) 28%,#d8cbb4)}
+.bb-library-card>strong{position:relative;color:#263e4b;font-size:12px;line-height:1.2}
+.bb-library-card>p{position:relative;margin:6px 0 8px;color:#68747a;font-size:9px;line-height:1.35;flex:1}
+.bb-library-effect{position:relative;width:100%;padding:7px 6px;border-radius:7px;background:#e7e0d1;color:#3e5c68;font-size:9px;line-height:1.3}
+.bb-library-effect span{display:block;margin-bottom:3px;color:#8c7956;font-size:7px;font-weight:1000;letter-spacing:.08em}
+.bb-library-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#e7dcc5;border-top:1px solid #d1c3a8}
+.bb-library-footer>span{color:#718078;font-size:8px;font-weight:1000;letter-spacing:.07em}
+.bb-library-footer button{min-height:38px;padding:0 15px;border:0;border-radius:9px;background:#31576a;color:#fff4dc;font-size:9px;font-weight:1000;letter-spacing:.06em}
+@media(max-width:560px){#modal.bb-upgrade-library-modal{width:96vw;max-height:92dvh;border-width:2px;border-radius:16px}#modal.bb-upgrade-library-modal .bb-upgrade-library{max-height:92dvh}.bb-library-heading{padding:14px 13px 11px}.bb-library-title-row h3{font-size:20px}.bb-library-title-row p{font-size:10px}.bb-library-seal{width:40px;height:40px;flex-basis:40px;font-size:22px}.bb-library-summary{gap:5px;margin-top:10px}.bb-library-summary span{padding:5px 6px;font-size:7px}.bb-library-filters{justify-content:flex-start;padding:9px 9px 8px}.bb-library-filters button{flex:0 0 auto;min-height:33px;padding:6px 8px;font-size:7px}.bb-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:9px}.bb-library-card{min-height:178px;padding:9px 7px}.bb-library-card>strong{font-size:11px}.bb-library-card>p{font-size:8px}.bb-library-effect{font-size:8px}.bb-library-footer{padding:9px}.bb-library-footer>span{font-size:7px;max-width:55%}.bb-library-footer button{padding:0 11px;font-size:8px}}
+@media(max-width:360px){.bb-library-grid{gap:6px;padding:7px}.bb-library-card{min-height:172px;padding:8px 6px}.bb-library-category{font-size:6px}}
+</style>
+
 </body></html>
