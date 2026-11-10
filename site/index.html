@@ -5337,191 +5337,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 </style>
 <link rel="stylesheet" href="./kt417-mobile-landscape-arena.css?v=20261106-kt417-v1">
 
-<style id="bb-kt589-friendly-godot-ui">
-/* KT-589.2 — align browser UI with the actual Godot palette (KT-549):
-   vivid royal-blue world, saturated friendly panels, cyan edges, warm gold,
-   violet accents and soft ambient light. Keep game state and controls intact. */
-:root{
-  color-scheme:dark;
-  --bg:#071b58;--panel:#123e91;--panel2:#174d9b;
-  --cyan:#55ddff;--violet:#a77bff;--gold:#ffd05a;
-  --ink:#fff8e8;--muted:#c4edff;--line:#397cae;
-}
-html,body{background:#071b58!important;color:#fff8e8!important}
-.app{
-  background:
-    radial-gradient(ellipse at 18% 29%,#1f80ff30 0,transparent 36%),
-    radial-gradient(ellipse at 82% 56%,#9e49ff24 0,transparent 39%),
-    radial-gradient(ellipse at 50% 96%,#00c7e922 0,transparent 42%),
-    linear-gradient(160deg,#123e91 0%,#0b2d78 48%,#071b58 100%)!important;
-}
-.stars,.stars:before,.stars:after{opacity:.18!important;animation:none!important}
-.brandmark{
-  border:2px solid #8beaff!important;border-radius:13px!important;
-  background:linear-gradient(145deg,#55ddff,#1767c8 68%,#74469d)!important;
-  color:#fff8e8!important;box-shadow:0 5px 0 #08265e,0 0 22px #55ddff35,inset 0 1px #ffffff88!important;
-  transform:none!important;
-}
-.brandname{color:#fff0b9!important;text-shadow:0 2px 10px #061c55}
-.edition,.eyebrow{color:#8beaff!important}
-.iconbtn,.back{
-  color:#fff!important;background:linear-gradient(145deg,#247bd7,#124d9f)!important;
-  border:1px solid #8beaff!important;border-radius:13px!important;
-  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
-}
-.hero h1{
-  background:linear-gradient(115deg,#fff0b9 4%,#ffffff 42%,#55ddff 92%)!important;
-  -webkit-background-clip:text!important;background-clip:text!important;
-  color:transparent!important;text-shadow:0 3px 18px #55ddff35!important;
-}
-.hero p,.modesub,.screenhead p,.hint,.wallet{color:#c4edff!important}
-.orb:before{border-color:#55ddff88!important;box-shadow:0 0 30px #55ddff30,inset 0 0 24px #55ddff18!important}
-.orb:after{border-color:#a77bff88!important}
-.relic,.boosticon{filter:drop-shadow(0 4px 10px #55ddff66)!important}
-.apk-download{
-  color:#fff8e8!important;border:1px solid #8beaff!important;
-  background:linear-gradient(110deg,#1454a5,#102b69)!important;
-  box-shadow:0 5px 0 #08265e,0 9px 20px #061b4c66,inset 0 1px #ffffff33!important;
-}
-.apk-download-copy strong,.apk-download-icon{color:#8beaff!important}
-.apk-download-copy small{color:#c4edff!important}
-.apk-download-icon{background:#55ddff22!important;border:1px solid #55ddff88}
-.apk-download-arrow{color:#fff0b9!important}
-.sectionlabel{color:#c4edff!important}
-.sectionlabel:after{background:linear-gradient(90deg,#55ddff88,transparent)!important}
-.mode,.hudbox,.sidecard,.boardframe,.stat,.challengebox,.node,.modal,.choice,
-.rpgpanel,.shopbutton,.shopitem,.heroCard,#dailyQuestsPanel,#bbHomeProfile,
-#bbVisitStreak,.currency-panel,.bb-hero-skill-slot{
-  border-color:#55ddff88!important;
-  box-shadow:0 5px 0 #08265e,0 10px 22px #04184655,inset 0 1px #ffffff22!important;
-}
-.mode{
-  border-radius:20px!important;
-  background:linear-gradient(145deg,#174d9b 0%,#123e82 72%,#102d68 100%)!important;
-}
-.mode:before{background:linear-gradient(110deg,#55ddff33,transparent 68%)!important;opacity:.7!important}
-.mode:hover{border-color:#fff0b9!important;box-shadow:0 6px 0 #08265e,0 13px 24px #04184677,inset 0 1px #fff5!important}
-.modeicon,.challengehero .symbol,.choiceicon{
-  border:1px solid #8beaff!important;border-radius:16px!important;
-  background:linear-gradient(145deg,#267bd1,#123e91)!important;
-  color:#fff0b9!important;box-shadow:inset 0 1px #ffffff66,0 4px 9px #04184666!important;
-}
-.modetitle,.screenhead h2,.stat strong,.hudbox strong{color:#fff8e8!important}
-.modesub{color:#c4edff!important}
-.modearrow{color:#fff0b9!important}
-.tag{color:#fff0b9!important;background:#ffd05a22!important;border:1px solid #ffd05a88!important}
-.bottomstats .stat,.stat{background:linear-gradient(145deg,#174d9b,#102b69)!important}
-.stat span,.hudbox span,.sidecard label{color:#b9eaff!important}
-.screenhead h2{color:#fff0b9!important}
-.gamehud .hudbox{
-  background:linear-gradient(145deg,#174d9b,#102b69)!important;
-  border-color:#55ddff88!important;border-radius:13px!important;
-}
-.hudbox strong{color:#fff8e8!important}
-.playlayout{border-color:#55ddff44!important;background:#071b5833!important}
-.boardframe{
-  background:linear-gradient(145deg,#267bd7,#123e91 70%,#0b2d78)!important;
-  border:2px solid #8beaff!important;border-radius:17px!important;
-  box-shadow:0 6px 0 #08265e,0 12px 25px #04184677,inset 0 1px #ffffff66!important;
-}
-.board{background:#07132f!important;border:1px solid #55ddff88;box-shadow:inset 0 0 18px #03102c!important}
-.sidecol .sidecard{background:linear-gradient(145deg,#174d9b,#102b69)!important;border-color:#55ddff77!important}
-.sidecard label{color:#b9eaff!important}
-.chrono-card{background:radial-gradient(circle at 50% 30%,#2876c8,transparent 62%),linear-gradient(145deg,#174d9b,#102b69)!important}
-.chrono-ring-inner{background:linear-gradient(145deg,#174d9b,#071b58)!important}
-.chrono-ring-inner strong{color:#fff8e8!important}
-.chrono-ring-inner small{color:#c4edff!important}
-.chrono-track,.progressbar,.xpbar{background:#08265e!important}
-.boostname{color:#d7f5ff!important}
-.boostnum{color:#55ddff!important}
-.smallbtn,.action.secondary{
-  color:#fff8e8!important;background:linear-gradient(180deg,#247bd7,#1454a5)!important;
-  border:1px solid #8beaff!important;border-radius:11px!important;
-  box-shadow:0 3px 0 #08265e!important;
-}
-.progressfill{background:linear-gradient(90deg,#a77bff,#55ddff)!important;box-shadow:0 0 10px #55ddff77!important}
-.control{
-  color:#fff8e8!important;background:linear-gradient(180deg,#267bd7,#1454a5)!important;
-  border:1px solid #8beaff!important;border-radius:14px!important;
-  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
-}
-.control.primary,.action{
-  color:#08265e!important;background:linear-gradient(135deg,#8beaff,#55ddff 58%,#8ef4d3)!important;
-  border:1px solid #d8fbff!important;border-radius:14px!important;
-  box-shadow:0 5px 0 #0b397a,0 8px 16px #04184666,inset 0 1px #ffffffaa!important;
-}
-.control.drop,.side-drop{background:linear-gradient(145deg,#ffe18a,#ffad45)!important;color:#59340b!important;border-color:#fff0b9!important}
-.overlay{background:#04143dcc!important;backdrop-filter:blur(8px)!important}
-.modal{
-  color:#fff8e8!important;background:radial-gradient(ellipse at 50% 0,#2670bd,#123e82 58%,#0b245f)!important;
-  border:1px solid #8beaff!important;border-radius:23px!important;
-  box-shadow:0 18px 45px #04143dcc,inset 0 1px #ffffff44!important;
-}
-.modalhead h3{color:#fff0b9!important}
-.modalhead p{color:#c4edff!important}
-.choice{
-  color:#fff8e8!important;background:linear-gradient(145deg,#174d9b,#102b69)!important;
-  border-color:#55ddff88!important;border-radius:15px!important;
-}
-.choice:hover{border-color:#fff0b9!important;background:#1c62b4!important}
-.choicetext strong{color:#fff8e8!important}
-.choicetext span{color:#c4edff!important}
-.rarity{color:#ffd05a!important}
-.action{color:#08265e!important}
-.mapgrid .node{
-  color:#fff8e8!important;background:linear-gradient(145deg,#174d9b,#102b69)!important;
-  border-color:#55ddff88!important;
-}
-.node.active{border-color:#fff0b9!important;box-shadow:inset 0 0 18px #55ddff33,0 0 0 2px #8beaff!important}
-.node.locked{opacity:.62;filter:saturate(.72)}
-.challengebox{background:linear-gradient(145deg,#174d9b,#102b69)!important}
-.challengehero h3{color:#fff0b9!important}
-.challengehero p{color:#c4edff!important}
-.challengegoal{color:#d7f5ff!important;border-color:#55ddff55!important}
-.toast{
-  color:#fff8e8!important;background:linear-gradient(145deg,#2670bd,#123e82)!important;
-  border:1px solid #8beaff!important;box-shadow:0 7px 18px #04184688!important;
-}
-.rpgpanel{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
-.avatar{background:linear-gradient(145deg,#55ddff,#1767c8)!important;box-shadow:inset 0 -4px #0b397a!important}
-.rpgname span{color:#ffd05a!important}
-.xpbar i{background:linear-gradient(90deg,#a77bff,#55ddff)!important}
-.shopbutton{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
-.shopbutton.chest{background:linear-gradient(145deg,#a66b22,#704218)!important;border-color:#ffd05a!important;box-shadow:0 4px 0 #47280d!important}
-.shopitem{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
-.shopitem p{color:#c4edff!important}
-.shopitem button{background:linear-gradient(145deg,#25b7a8,#087c85)!important;color:#fff!important;border:1px solid #8ef4d3!important;box-shadow:0 3px 0 #075b6b!important}
-.heroCard{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
-.bb-home-profile-avatar{background:linear-gradient(145deg,#55ddff,#1767c8)!important;border-color:#8beaff!important}
-.bb-home-profile-wallet{background:linear-gradient(145deg,#ffe18a,#c98b2c)!important;border-color:#ffd05a!important;color:#56360d!important}
-#bbHomeProfile,#dailyQuestsPanel{
-  background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important;
-  border-color:#55ddff88!important;
-}
-#bbHomeProfile .bb-home-profile-copy strong{color:#fff8e8!important}
-#bbHomeProfile .bb-home-profile-copy small{color:#c4edff!important}
-#dailyQuestsPanel>div:first-child strong{color:#fff0b9!important}
-#dailyQuestsPanel>div:first-child span{color:#c4edff!important}
-#dailyQuestsList>div{background:linear-gradient(145deg,#1a58a5,#123a7a)!important;border-color:#55ddff66!important;box-shadow:inset 0 1px #ffffff22!important}
-#dailyQuestsList>div>div:first-child{color:#fff8e8!important}
-#dailyQuestsList>div>div:nth-child(2){color:#c4edff!important}
-#dailyQuestsList>div>div:nth-child(3){background:#08265e!important}
-#bbVisitStreak{background:linear-gradient(145deg,#59451f,#362d38)!important;border-color:#ffd05a!important;color:#fff0b9!important}
-#bbVisitStreak *{color:#fff0b9}
-#menu .mode[data-mode="campaign"]{background:linear-gradient(115deg,#1268b5,#0c478d 62%,#0b3675)!important;border-color:#64e2ff!important}
-#menu .mode[data-mode="rogue"]{background:linear-gradient(115deg,#74469d,#573783 62%,#3b286d)!important;border-color:#d2aaff!important}
-#menu .mode[data-mode="daily"]{background:linear-gradient(115deg,#14548d,#0f4775 62%,#0a3565)!important;border-color:#79e5db!important}
-#menu .mode[data-mode="campaign"] .modetitle,#menu .mode[data-mode="rogue"] .modetitle,#menu .mode[data-mode="daily"] .modetitle{color:#fff8e8!important}
-#menu .mode[data-mode="campaign"] .modesub,#menu .mode[data-mode="rogue"] .modesub,#menu .mode[data-mode="daily"] .modesub{color:#f0f8ff!important}
-#menu .mode[data-mode="campaign"] .modeicon,#menu .mode[data-mode="rogue"] .modeicon,#menu .mode[data-mode="daily"] .modeicon{background:linear-gradient(145deg,#ffffff44,#8beaff22)!important;color:#fff0b9!important;border-color:#ffffff77!important}
-#campaign .bb-planet-heading{background:linear-gradient(110deg,#1454a5,#1268b5 65%,#3c4e9b)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff55!important}
-#campaign .bb-planet-heading strong{color:#fff0b9!important;text-shadow:none!important}
-#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span:not(.bb-planet-kicker){color:#d7f5ff!important}
-#campaign .bb-planet-heading .bb-planet-kicker{color:#8beaff!important}
-#campaign .bb-planet-viewport{background:linear-gradient(180deg,#174d9b,#102b69 72%,#0b245f)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff33!important}
-@media(max-width:700px){.app{padding:10px 10px 24px!important}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -15856,5 +15672,190 @@ html,body{background:#07152b!important}
   width:100%!important;min-width:0!important;max-width:none!important;
   justify-self:stretch;align-self:stretch;box-sizing:border-box;
 }
+</style>
+<style id="bb-kt589-friendly-godot-ui">
+/* KT-589.2 — align browser UI with the actual Godot palette (KT-549):
+   vivid royal-blue world, saturated friendly panels, cyan edges, warm gold,
+   violet accents and soft ambient light. Keep game state and controls intact. */
+:root{
+  color-scheme:dark;
+  --bg:#071b58;--panel:#123e91;--panel2:#174d9b;
+  --cyan:#55ddff;--violet:#a77bff;--gold:#ffd05a;
+  --ink:#fff8e8;--muted:#c4edff;--line:#397cae;
+}
+html,body{background:#071b58!important;color:#fff8e8!important}
+.app{
+  background:
+    radial-gradient(ellipse at 18% 29%,#1f80ff30 0,transparent 36%),
+    radial-gradient(ellipse at 82% 56%,#9e49ff24 0,transparent 39%),
+    radial-gradient(ellipse at 50% 96%,#00c7e922 0,transparent 42%),
+    linear-gradient(160deg,#123e91 0%,#0b2d78 48%,#071b58 100%)!important;
+}
+.stars,.stars:before,.stars:after{opacity:.18!important;animation:none!important}
+.brandmark{
+  border:2px solid #8beaff!important;border-radius:13px!important;
+  background:linear-gradient(145deg,#55ddff,#1767c8 68%,#74469d)!important;
+  color:#fff8e8!important;box-shadow:0 5px 0 #08265e,0 0 22px #55ddff35,inset 0 1px #ffffff88!important;
+  transform:none!important;
+}
+.brandname{color:#fff0b9!important;text-shadow:0 2px 10px #061c55}
+.edition,.eyebrow{color:#8beaff!important}
+.iconbtn,.back{
+  color:#fff!important;background:linear-gradient(145deg,#247bd7,#124d9f)!important;
+  border:1px solid #8beaff!important;border-radius:13px!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
+}
+.hero h1{
+  background:linear-gradient(115deg,#fff0b9 4%,#ffffff 42%,#55ddff 92%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  color:transparent!important;text-shadow:0 3px 18px #55ddff35!important;
+}
+.hero p,.modesub,.screenhead p,.hint,.wallet{color:#c4edff!important}
+.orb:before{border-color:#55ddff88!important;box-shadow:0 0 30px #55ddff30,inset 0 0 24px #55ddff18!important}
+.orb:after{border-color:#a77bff88!important}
+.relic,.boosticon{filter:drop-shadow(0 4px 10px #55ddff66)!important}
+.apk-download{
+  color:#fff8e8!important;border:1px solid #8beaff!important;
+  background:linear-gradient(110deg,#1454a5,#102b69)!important;
+  box-shadow:0 5px 0 #08265e,0 9px 20px #061b4c66,inset 0 1px #ffffff33!important;
+}
+.apk-download-copy strong,.apk-download-icon{color:#8beaff!important}
+.apk-download-copy small{color:#c4edff!important}
+.apk-download-icon{background:#55ddff22!important;border:1px solid #55ddff88}
+.apk-download-arrow{color:#fff0b9!important}
+.sectionlabel{color:#c4edff!important}
+.sectionlabel:after{background:linear-gradient(90deg,#55ddff88,transparent)!important}
+.mode,.hudbox,.sidecard,.boardframe,.stat,.challengebox,.node,.modal,.choice,
+.rpgpanel,.shopbutton,.shopitem,.heroCard,#dailyQuestsPanel,#bbHomeProfile,
+#bbVisitStreak,.currency-panel,.bb-hero-skill-slot{
+  border-color:#55ddff88!important;
+  box-shadow:0 5px 0 #08265e,0 10px 22px #04184655,inset 0 1px #ffffff22!important;
+}
+.mode{
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#174d9b 0%,#123e82 72%,#102d68 100%)!important;
+}
+.mode:before{background:linear-gradient(110deg,#55ddff33,transparent 68%)!important;opacity:.7!important}
+.mode:hover{border-color:#fff0b9!important;box-shadow:0 6px 0 #08265e,0 13px 24px #04184677,inset 0 1px #fff5!important}
+.modeicon,.challengehero .symbol,.choiceicon{
+  border:1px solid #8beaff!important;border-radius:16px!important;
+  background:linear-gradient(145deg,#267bd1,#123e91)!important;
+  color:#fff0b9!important;box-shadow:inset 0 1px #ffffff66,0 4px 9px #04184666!important;
+}
+.modetitle,.screenhead h2,.stat strong,.hudbox strong{color:#fff8e8!important}
+.modesub{color:#c4edff!important}
+.modearrow{color:#fff0b9!important}
+.tag{color:#fff0b9!important;background:#ffd05a22!important;border:1px solid #ffd05a88!important}
+.bottomstats .stat,.stat{background:linear-gradient(145deg,#174d9b,#102b69)!important}
+.stat span,.hudbox span,.sidecard label{color:#b9eaff!important}
+.screenhead h2{color:#fff0b9!important}
+.gamehud .hudbox{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff88!important;border-radius:13px!important;
+}
+.hudbox strong{color:#fff8e8!important}
+.playlayout{border-color:#55ddff44!important;background:#071b5833!important}
+.boardframe{
+  background:linear-gradient(145deg,#267bd7,#123e91 70%,#0b2d78)!important;
+  border:2px solid #8beaff!important;border-radius:17px!important;
+  box-shadow:0 6px 0 #08265e,0 12px 25px #04184677,inset 0 1px #ffffff66!important;
+}
+.board{background:#07132f!important;border:1px solid #55ddff88;box-shadow:inset 0 0 18px #03102c!important}
+.sidecol .sidecard{background:linear-gradient(145deg,#174d9b,#102b69)!important;border-color:#55ddff77!important}
+.sidecard label{color:#b9eaff!important}
+.chrono-card{background:radial-gradient(circle at 50% 30%,#2876c8,transparent 62%),linear-gradient(145deg,#174d9b,#102b69)!important}
+.chrono-ring-inner{background:linear-gradient(145deg,#174d9b,#071b58)!important}
+.chrono-ring-inner strong{color:#fff8e8!important}
+.chrono-ring-inner small{color:#c4edff!important}
+.chrono-track,.progressbar,.xpbar{background:#08265e!important}
+.boostname{color:#d7f5ff!important}
+.boostnum{color:#55ddff!important}
+.smallbtn,.action.secondary{
+  color:#fff8e8!important;background:linear-gradient(180deg,#247bd7,#1454a5)!important;
+  border:1px solid #8beaff!important;border-radius:11px!important;
+  box-shadow:0 3px 0 #08265e!important;
+}
+.progressfill{background:linear-gradient(90deg,#a77bff,#55ddff)!important;box-shadow:0 0 10px #55ddff77!important}
+.control{
+  color:#fff8e8!important;background:linear-gradient(180deg,#267bd7,#1454a5)!important;
+  border:1px solid #8beaff!important;border-radius:14px!important;
+  box-shadow:0 4px 0 #08265e,inset 0 1px #ffffff55!important;
+}
+.control.primary,.action{
+  color:#08265e!important;background:linear-gradient(135deg,#8beaff,#55ddff 58%,#8ef4d3)!important;
+  border:1px solid #d8fbff!important;border-radius:14px!important;
+  box-shadow:0 5px 0 #0b397a,0 8px 16px #04184666,inset 0 1px #ffffffaa!important;
+}
+.control.drop,.side-drop{background:linear-gradient(145deg,#ffe18a,#ffad45)!important;color:#59340b!important;border-color:#fff0b9!important}
+.overlay{background:#04143dcc!important;backdrop-filter:blur(8px)!important}
+.modal{
+  color:#fff8e8!important;background:radial-gradient(ellipse at 50% 0,#2670bd,#123e82 58%,#0b245f)!important;
+  border:1px solid #8beaff!important;border-radius:23px!important;
+  box-shadow:0 18px 45px #04143dcc,inset 0 1px #ffffff44!important;
+}
+.modalhead h3{color:#fff0b9!important}
+.modalhead p{color:#c4edff!important}
+.choice{
+  color:#fff8e8!important;background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff88!important;border-radius:15px!important;
+}
+.choice:hover{border-color:#fff0b9!important;background:#1c62b4!important}
+.choicetext strong{color:#fff8e8!important}
+.choicetext span{color:#c4edff!important}
+.rarity{color:#ffd05a!important}
+.action{color:#08265e!important}
+.mapgrid .node{
+  color:#fff8e8!important;background:linear-gradient(145deg,#174d9b,#102b69)!important;
+  border-color:#55ddff88!important;
+}
+.node.active{border-color:#fff0b9!important;box-shadow:inset 0 0 18px #55ddff33,0 0 0 2px #8beaff!important}
+.node.locked{opacity:.62;filter:saturate(.72)}
+.challengebox{background:linear-gradient(145deg,#174d9b,#102b69)!important}
+.challengehero h3{color:#fff0b9!important}
+.challengehero p{color:#c4edff!important}
+.challengegoal{color:#d7f5ff!important;border-color:#55ddff55!important}
+.toast{
+  color:#fff8e8!important;background:linear-gradient(145deg,#2670bd,#123e82)!important;
+  border:1px solid #8beaff!important;box-shadow:0 7px 18px #04184688!important;
+}
+.rpgpanel{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.avatar{background:linear-gradient(145deg,#55ddff,#1767c8)!important;box-shadow:inset 0 -4px #0b397a!important}
+.rpgname span{color:#ffd05a!important}
+.xpbar i{background:linear-gradient(90deg,#a77bff,#55ddff)!important}
+.shopbutton{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.shopbutton.chest{background:linear-gradient(145deg,#a66b22,#704218)!important;border-color:#ffd05a!important;box-shadow:0 4px 0 #47280d!important}
+.shopitem{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.shopitem p{color:#c4edff!important}
+.shopitem button{background:linear-gradient(145deg,#25b7a8,#087c85)!important;color:#fff!important;border:1px solid #8ef4d3!important;box-shadow:0 3px 0 #075b6b!important}
+.heroCard{background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important}
+.bb-home-profile-avatar{background:linear-gradient(145deg,#55ddff,#1767c8)!important;border-color:#8beaff!important}
+.bb-home-profile-wallet{background:linear-gradient(145deg,#ffe18a,#c98b2c)!important;border-color:#ffd05a!important;color:#56360d!important}
+#bbHomeProfile,#dailyQuestsPanel{
+  background:linear-gradient(145deg,#174d9b,#102b69)!important;color:#fff8e8!important;
+  border-color:#55ddff88!important;
+}
+#bbHomeProfile .bb-home-profile-copy strong{color:#fff8e8!important}
+#bbHomeProfile .bb-home-profile-copy small{color:#c4edff!important}
+#dailyQuestsPanel>div:first-child strong{color:#fff0b9!important}
+#dailyQuestsPanel>div:first-child span{color:#c4edff!important}
+#dailyQuestsList>div{background:linear-gradient(145deg,#1a58a5,#123a7a)!important;border-color:#55ddff66!important;box-shadow:inset 0 1px #ffffff22!important}
+#dailyQuestsList>div>div:first-child{color:#fff8e8!important}
+#dailyQuestsList>div>div:nth-child(2){color:#c4edff!important}
+#dailyQuestsList>div>div:nth-child(3){background:#08265e!important}
+#bbVisitStreak{background:linear-gradient(145deg,#59451f,#362d38)!important;border-color:#ffd05a!important;color:#fff0b9!important}
+#bbVisitStreak *{color:#fff0b9}
+#menu .mode[data-mode="campaign"]{background:linear-gradient(115deg,#1268b5,#0c478d 62%,#0b3675)!important;border-color:#64e2ff!important}
+#menu .mode[data-mode="rogue"]{background:linear-gradient(115deg,#74469d,#573783 62%,#3b286d)!important;border-color:#d2aaff!important}
+#menu .mode[data-mode="daily"]{background:linear-gradient(115deg,#14548d,#0f4775 62%,#0a3565)!important;border-color:#79e5db!important}
+#menu .mode[data-mode="campaign"] .modetitle,#menu .mode[data-mode="rogue"] .modetitle,#menu .mode[data-mode="daily"] .modetitle{color:#fff8e8!important}
+#menu .mode[data-mode="campaign"] .modesub,#menu .mode[data-mode="rogue"] .modesub,#menu .mode[data-mode="daily"] .modesub{color:#f0f8ff!important}
+#menu .mode[data-mode="campaign"] .modeicon,#menu .mode[data-mode="rogue"] .modeicon,#menu .mode[data-mode="daily"] .modeicon{background:linear-gradient(145deg,#ffffff44,#8beaff22)!important;color:#fff0b9!important;border-color:#ffffff77!important}
+#campaign .bb-planet-heading{background:linear-gradient(110deg,#1454a5,#1268b5 65%,#3c4e9b)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff55!important}
+#campaign .bb-planet-heading strong{color:#fff0b9!important;text-shadow:none!important}
+#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span:not(.bb-planet-kicker){color:#d7f5ff!important}
+#campaign .bb-planet-heading .bb-planet-kicker{color:#8beaff!important}
+#campaign .bb-planet-viewport{background:linear-gradient(180deg,#174d9b,#102b69 72%,#0b245f)!important;border-color:#64e2ff!important;box-shadow:0 5px 0 #08265e,inset 0 1px #ffffff33!important}
+@media(max-width:700px){.app{padding:10px 10px 24px!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </body></html>
