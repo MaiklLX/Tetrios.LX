@@ -5403,6 +5403,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 
 <style id="bb-kt593-mobile-layout-unification">
+/* KT-593.2 QA anchor: shared touch layout covers phone and tablet widths up to 1200px. */
 /* KT-593 — one mobile composition for phones and tablets; desktop stays wide-screen. */
 @media (max-width:1200px) and (pointer:coarse){
   .app{padding-left:max(10px,env(safe-area-inset-left))!important;padding-right:max(10px,env(safe-area-inset-right))!important;padding-top:max(10px,env(safe-area-inset-top))!important;padding-bottom:calc(20px + env(safe-area-inset-bottom))!important}
