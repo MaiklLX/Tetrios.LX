@@ -5587,6 +5587,19 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
   #game .sidecol .sidecard:has(#next){min-height:90px!important;padding:5px 4px!important}
   #game #next.nextcanvas{height:58px!important}
 }
+
+@media(min-width:600px) and (max-width:1200px) and (pointer:coarse){
+  /* Keep the tablet board at the true 10:23 cabinet ratio. */
+  #game .boardframe{
+    height:clamp(390px,calc((100vw - 570px)*2.3),520px)!important;
+    aspect-ratio:10/23!important;
+  }
+}
+#game .drop-card .side-drop{
+  min-height:42px!important;
+  font-size:clamp(12px,2vw,15px)!important;
+  font-weight:900!important;
+}
 </style>
 
 </head>
