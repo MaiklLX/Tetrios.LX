@@ -434,3 +434,13 @@ Status: first browser implementation and cross-platform assertions committed; CI
 ### Контрольная фраза
 
 **BLOCK BUDDIES — KT-569: VISUAL-FIRST.** Продолжать в web/kt550-browser-return-2026-11-09, PR #85 (Draft). Сначала полностью перенести и принять визуал Godot KT-549 на браузерный HTML/JS + 2D Canvas runtime, затем переходить к механике и программной части. KT-569.1 — первое оформление главного меню, ожидает автоматической проверки. Далее пройти кампанию/карту, 49 наград, арену, дополнительные экраны, анимации и responsive polish. Сохранения пока отложены; позднее — локально на устройстве (IndexedDB + localStorage, экспорт/импорт), без обязательного сервера. Не менять main/Pages, не мерджить PR #85, не трогать Godot Preview и APK без отдельного разрешения.
+
+
+### КТ-569.1 — уточнение реализации и проверки (2026-11-10)
+
+- Дополнительно синхронизированы browser title и верхняя шапка: BLOCK BUDDIES / «ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ»; старый TETRIOS.LX wordmark больше не используется на стартовом экране.
+- Последовательность изменений: home visual CSS `7b707247b041cf89a6aea6c4939f406f83fae75b`; checkpoint `5d8b72cd8897090b8b9710731e0f51e74ca6b605`; визуальные regression assertions `63527304800c4db24170d5817b5c8ee8ec370462`; синхронизация browser title/header `b069e69a07ae3f61cdd5f3b25f91baf49f5727bb`; исправление CSS форматирования `53ce0eb96afe0a1883cd61ab84e79a20d613cb8a`.
+- В `scripts/cross-platform-visual-preview.cjs` добавлена проверка точного заголовка, cyan-обводки и планетарных pseudo-elements для карточек кампании и Block Run.
+- Mobile Arena Visual Preview на HEAD `53ce0eb96afe0a1883cd61ab84e79a20d613cb8a` завершился `success` (run `42770870350`). Cross-platform Visual Preview на этом же HEAD на момент записи ещё выполняется (run `42770870463`); поэтому KT-569.1 пока не закрыта.
+- Отдельный более ранний прогон `42770380613` завершился ошибкой в сценарии кампании на desktop 1920×1080: после reload Playwright не смог стабилизировать клик по `#campaignStart`. Это не ошибка нового меню; повторный прогон актуального HEAD обязателен.
+- Текущий рабочий HEAD на момент фиксации: `53ce0eb96afe0a1883cd61ab84e79a20d613cb8a`. PR #85 остаётся open + Draft + unmerged. Main, Pages, Godot Preview и APK не затронуты.
