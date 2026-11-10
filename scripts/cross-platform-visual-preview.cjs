@@ -275,13 +275,28 @@ const targets = [
     await atlasViewport.evaluate(el=>el.dispatchEvent(new WheelEvent('wheel',{deltaY:Math.max(120,el.clientWidth*.55),bubbles:true,cancelable:true})));
     await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign .bb-galaxy-viewport');return !!el&&el.scrollLeft>8;},{timeout:2000});
     const atlasAfterWheel=await atlasViewport.evaluate(el=>el.scrollLeft);
-    await atlasViewport.evaluate(el=>{el.scrollLeft=0;});
-    const keyboardBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
-    const keyboardEventState=await atlasViewport.evaluate(el=>{
-      const event=new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true});
-      el.dispatchEvent(event);
-      return {prevented:event.defaultPrevented,focused:document.activeElement===el};
+    await atlasViewport.evaluate(el=>{
+      el.style.setProperty('scroll-snap-type','none','important');
+      el.style.setProperty('scroll-behavior','auto','important');
+      el.scrollLeft=0;
     });
+    await campaignPage.waitForFunction(()=>{
+      const el=document.querySelector('#campaign .bb-galaxy-viewport');
+      return !!el&&el.scrollLeft<=1;
+    },{timeout:2000});
+    const keyboardBefore=await atlasViewport.evaluate(el=>el.scrollLeft);
+    await atlasViewport.focus();
+    await atlasViewport.evaluate(el=>{
+      el.dataset.kt575KeyPrevented='false';
+      el.addEventListener('keydown',event=>{
+        if(event.key==='ArrowRight')el.dataset.kt575KeyPrevented=String(event.defaultPrevented);
+      },{once:true});
+    });
+    await atlasViewport.press('ArrowRight');
+    const keyboardEventState=await atlasViewport.evaluate(el=>({
+      prevented:el.dataset.kt575KeyPrevented==='true',
+      focused:document.activeElement===el
+    }));
     await campaignPage.waitForFunction(before=>{
       const el=document.querySelector('#campaign .bb-galaxy-viewport');
       return !!el&&el.scrollLeft>before+8;
