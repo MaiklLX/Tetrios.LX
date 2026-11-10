@@ -542,3 +542,11 @@ Status: first browser implementation and cross-platform assertions committed; CI
 ### Текущая контрольная фраза
 
 **BLOCK BUDDIES — KT-576 GODOT GAMEPLAY OVERLAYS.** Продолжать в `web/kt550-browser-return-2026-11-09`, PR #85 Draft, HEAD `00602bc7e94dd62c80c319d35ec8280c159504cd`. Атлас остаётся горизонтальным, Godot style. Пауза и результаты забега получили Godot panel styling: navy/blue gradient, cyan border/glow, gold wallet accent, readable mobile layout. Новый cross-platform test пока ожидает workflow; проверить CI и исправить найденное. Не менять механику, save keys, main/Pages, Godot Preview, APK.
+
+
+### KT-574/575 — уточнение тестовой диагностики
+
+- Артефакт Cross-platform run `42778231125` (test SHA `981f744fb1cf04f765a3a6bbfd10046e0eb49fe4`) изучен по `report.json`: 10 целевых viewport прошли без page errors и console errors; 5 замечаний относились только к измерению навигации атласа на desktop и одному iOS viewport.
+- Причина — тест снимал `scrollLeft` во время плавной прокрутки и после предыдущего действия, когда лента уже находилась у края. Проверка колеса пыталась прокрутить её дальше правой границы. Это нестабильная синхронизация теста, а не подтверждённая ошибка рендеринга.
+- Регрессионный тест обновлён: ждёт фактического изменения `scrollLeft`, отключает snap только в тестовой измерительной фазе и возвращает ленту в известную стартовую позицию перед проверкой колеса/клавиатуры.
+- Новый test SHA `9719d9b0182d01ac036e6f4ce0f0c9e7675dc5a1`; Cross-platform run `42780014082` и Mobile Arena run `42780014123` поставлены в очередь. До завершения не объявлять КТ-574/575 окончательно закрытыми.
