@@ -575,7 +575,7 @@ const targets = [
     console.log('[stage:block-run-start] ' + target.name);
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#bbConfirmStartHero').evaluate(element => element.click());
+    await page.locator('#bbConfirmStartHero').click();
     await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
