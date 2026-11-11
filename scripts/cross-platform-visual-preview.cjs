@@ -427,7 +427,7 @@ const targets = [
         currentVisible:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active||!viewport)return false;const a=active.getBoundingClientRect(),v=viewport.getBoundingClientRect();return a.bottom>v.top&&a.top<v.bottom})(),
         scrollTop:viewport?.scrollTop||0,
         bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber),
-        flatMapState:(()=>{const sphere=document.querySelector('#campaign .bb-planet-node .bb-planet-sphere');const style=sphere?getComputedStyle(sphere):null;const canvas=document.querySelector('body>canvas.bb-galaxy-model-canvas');return {modelSlots:document.querySelectorAll('#campaign .bb-planet-node [data-universe-model]').length,sphereRadius:style?.borderRadius||null,sphereShadow:style?.boxShadow||null,canvasDisplay:canvas?getComputedStyle(canvas).display:'absent'}})(),
+        flatMapState:(()=>{const sphere=document.querySelector('#campaign .bb-planet-node .bb-planet-sphere');const style=sphere?getComputedStyle(sphere):null;const canvas=document.querySelector('body>canvas.bb-galaxy-model-canvas');const trail=document.querySelector('#campaign .bb-route-star-dots');const map=viewport?getComputedStyle(viewport):null;return {modelSlots:document.querySelectorAll('#campaign .bb-planet-node [data-universe-model]').length,sphereRadius:style?.borderRadius||null,sphereShadow:style?.boxShadow||null,canvasDisplay:canvas?getComputedStyle(canvas).display:'absent',starDots:trail?.querySelectorAll('circle').length||0,continuousRoad:!!trail?.querySelector('path'),mapBackground:map?.backgroundImage||''}})(),
         trackDisplay:track?getComputedStyle(track).display:null,
         nodePosition:nodes[0]?getComputedStyle(nodes[0]).position:null,
         nodeSpread:(()=>{const xs=nodes.map(node=>node.getBoundingClientRect().left);return xs.length?Math.round(Math.max(...xs)-Math.min(...xs)):0})(),
@@ -446,7 +446,7 @@ const targets = [
     if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbDisplay!=='none'||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientWidth*0.4){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
-    if(routeState.flatMapState.modelSlots!==0||routeState.flatMapState.canvasDisplay!=='none'||routeState.flatMapState.sphereShadow.includes('inset')){
+    if(routeState.flatMapState.modelSlots!==0||routeState.flatMapState.canvasDisplay!=='none'||routeState.flatMapState.sphereShadow.includes('inset')||routeState.flatMapState.starDots<100||routeState.flatMapState.continuousRoad||!routeState.flatMapState.mapBackground.includes('linear-gradient')){
       failures.push(target.name+': KT-632 planet route is not fully flat 2D ('+JSON.stringify(routeState.flatMapState)+')');
     }
     const bootState=await campaignPage.evaluate(()=>({ready:document.documentElement.classList.contains('bb-ui-ready'),visibility:getComputedStyle(document.body).visibility}));
