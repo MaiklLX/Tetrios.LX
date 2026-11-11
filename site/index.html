@@ -17370,3 +17370,36 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
   #game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em{font-size:7px!important}
 }
 </style>
+
+
+<style id="bb-kt640-final-sidecard-cascade">
+/* KT-640: beat legacy :has() theme rules that still paint preview cards pale. */
+#game.screen .sidecol>.sidecard:has(>#next),
+#game.screen .sidecol>.sidecard.hold-card{
+  background:linear-gradient(145deg,#173f55 0%,#12344b 62%,#0d293e 100%)!important;
+  border:1px solid #559aa4!important;
+  color:#eaf7f1!important;
+  box-shadow:inset 0 1px #d9f5e51c,0 3px 0 #092538!important;
+}
+#game.screen .sidecol>.sidecard:has(>#next)>label,
+#game.screen .sidecol>.sidecard.hold-card>label{
+  color:#bce8dd!important;
+}
+#game.screen .sidecol>.sidecard:has(>#next) #next,
+#game.screen .sidecol>.sidecard.hold-card #holdPreview{
+  background:linear-gradient(145deg,#0b2639,#102f45)!important;
+  border:1px solid #4d91a0!important;
+  box-shadow:inset 0 2px 8px #061b2b99,0 2px 0 #092638!important;
+}
+#game.screen .sidecol>.sidecard.hold-card .hold-empty{color:#b5dfd8!important}
+#game.screen .sidecol>.sidecard.hold-card #holdBtn{
+  background:linear-gradient(180deg,#347f91,#22596f)!important;
+  border-color:#80c5c3!important;color:#effaf6!important;
+  box-shadow:0 2px 0 #12394a!important;
+}
+@media(max-width:520px){
+  #game.screen .gamehud .hudbox span{font-size:8px!important;letter-spacing:.02em!important}
+  #game.screen .sidecol #boostName,
+  #game.screen .sidecol #boostNum{font-size:8px!important;line-height:1.2!important}
+}
+</style>
