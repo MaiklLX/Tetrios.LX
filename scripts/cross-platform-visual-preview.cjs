@@ -446,7 +446,7 @@ const targets = [
     if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbDisplay!=='none'||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientWidth*0.4){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
-    if(routeState.flatMapState.modelSlots!==0||routeState.flatMapState.canvasDisplay!=='none'||routeState.flatMapState.sphereShadow.includes('inset')||routeState.flatMapState.starDots<100||routeState.flatMapState.continuousRoad||!routeState.flatMapState.mapBackground.includes('linear-gradient')){
+    if(routeState.flatMapState.modelSlots!==0||!(routeState.flatMapState.canvasDisplay==='none'||routeState.flatMapState.canvasDisplay==='absent')||routeState.flatMapState.sphereShadow.includes('inset')||routeState.flatMapState.starDots<100||routeState.flatMapState.continuousRoad||!routeState.flatMapState.mapBackground.includes('linear-gradient')){
       failures.push(target.name+': KT-632 planet route is not fully flat 2D ('+JSON.stringify(routeState.flatMapState)+')');
     }
     const bootState=await campaignPage.evaluate(()=>({ready:document.documentElement.classList.contains('bb-ui-ready'),visibility:getComputedStyle(document.body).visibility}));
