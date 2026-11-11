@@ -317,3 +317,14 @@
 - Текущий HEAD PR #77: `ca592f3b4fc6deeae41d0946097e33f63c4d0d61`. CI [run 42481294873](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481294873): **SUCCESS** — Godot 4.4.1 import, parse, Classic/model, Web-save migration, все Block Run suites, visual capture/upload и scene smoke.
 - Артефакт [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481294873/artifacts/13617996102) скачан и просмотрен: `08-mobile-360-arena.png` показывает Buddy в левом безопасном поле рядом с неизменённой 2D-ареной 10×23 и видимую кнопку Drop вне рамки поля.
 - Физическое Android-тестирование, портрет/альбом на устройстве, реальные touch-жесты и регрессия постоянных сохранений не подтверждены. APK не собирался; main, публикация и пользовательские данные не затронуты.
+
+
+## 2026-11-11 — KT-428 status audit and visual artifact review
+
+- Current PR #77 code HEAD: `0b942612a063b7f4d1d741999d875c254f5c9314`; PR remains Draft/open and targets `godot/android-native-foundation-2026-11-05` at `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Latest workflow associated with that exact code HEAD: [Godot Native Project Check #562](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42609082893) — **SUCCESS**. Verified step summaries: Godot 4.4.1 setup/import, main scene script parse, gameplay/model tests, Web save migration tests, all Block Run model/effect/board/session/bridge/live integration suites, visual screenshot capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [block-buddies-visual-checks, ID 13670120832](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42609082893/artifacts/13670120832). Nine captures are present. The 360×800 arena capture shows the procedural pixel Buddy in the left safe gutter, the unchanged 2D 10×23 board, and a visible Drop control outside the board. The results capture correctly hides Buddy behind the modal.
+- The viewport artifact is Godot/Xvfb output, not a physical Android device. Touch feel, safe-area behavior, portrait/landscape pause-resume and installed-device scaling remain unverified. APK was not built; no persistent user data was read or changed.
+- Open migration/parity task [#52 — KT-GODOT-002](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open.
+- Stacked-branch audit: PR #78 is based on this branch but has diverged (4 commits ahead / 3 behind from merge base `dc1802f663f48c930025a6ac177ed7d9128c9379`); PR #81 is based exactly on PR #78 HEAD `1eb08ff22803293f409fe93067e97198aa2c4a38`. Do not mechanically rebase or merge the stack; reconcile the Buddy and main-scene edits first.
+- No code change was necessary in PR #77 during this audit. Next safe work is to keep the current Buddy foundation stable while the visual stack is reconciled and the read-only Web save migration contract advances; persistent storage remains gated.
