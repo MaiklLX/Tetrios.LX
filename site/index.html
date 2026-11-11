@@ -18064,3 +18064,40 @@ body>canvas.bb-galaxy-model-canvas,
  #menu.home-dashboard.home-dashboard.home-dashboard>.hero{height:126px!important;min-height:126px!important}
 }
 </style>
+\n
+<style id="bb-kt656-final-home-arena-layer">
+/* KT-656: final override after all legacy home styles. The old KT-647 rule
+   re-applied display:none/absolute stacking after KT-650 was injected. */
+@media(max-width:600px){
+  #menu.home-dashboard{isolation:isolate!important;position:relative!important;background:transparent!important}
+  #menu.home-dashboard>.hero{
+    position:static!important;isolation:auto!important;z-index:auto!important;
+    overflow:visible!important;background:transparent!important;
+  }
+  #menu.home-dashboard>.hero .hero-arena-canvas{
+    display:block!important;visibility:visible!important;
+    position:fixed!important;inset:0!important;
+    width:100vw!important;height:100dvh!important;
+    z-index:0!important;opacity:.56!important;
+    pointer-events:none!important;
+  }
+  #menu.home-dashboard>.hero>*:not(.hero-arena-canvas),
+  #menu.home-dashboard>#bbHomeProfile,
+  #menu.home-dashboard>.sectionlabel,
+  #menu.home-dashboard>.modes,
+  #menu.home-dashboard>.bb-home-collection,
+  #menu.home-dashboard>#dailyQuestsPanel,
+  #menu.home-dashboard>#bbVisitStreak,
+  #menu.home-dashboard>.currency-panel,
+  #menu.home-dashboard>.bottomstats,
+  #menu.home-dashboard>button,
+  #menu.home-dashboard>div:not(.hero){
+    position:relative!important;z-index:1!important;
+  }
+  #menu.home-dashboard .mode,
+  #menu.home-dashboard button,
+  #menu.home-dashboard a{
+    pointer-events:auto!important;touch-action:manipulation!important;
+  }
+}
+</style>
