@@ -7580,16 +7580,16 @@ function buildMap() {
     track.className = 'bb-planet-track';
     const positions = [];
     const planetCount = b.end - b.start + 1;
-    // The viewport is appended after the track is built; use the attached campaign host width on this first layout pass.
+    // Organic expedition layout: every planet gets a deterministic but irregular
+    // offset, so the route feels discovered rather than laid out on a rigid grid.
     const trackWidth = Math.max(300, (viewport.clientWidth || g.clientWidth) - 28);
-    const stepY = 78;
-    const trackHeight = 150 + (planetCount - 1) * stepY;
+    const stepY = 88;
+    const trackHeight = 176 + (planetCount - 1) * stepY;
     for (let i = 0; i < planetCount; i++) {
-      // KT-555: vertical serpentine ascent, matching Godot's bottom-to-top route.
-      const side = i % 2 === 0 ? 0.30 : 0.70;
-      const sway = Math.sin(i * 1.04 + b.id * .73) * 12;
-      const x = trackWidth * side + sway;
-      const y = trackHeight - 82 - i * stepY;
+      const waveA = Math.sin(i * 1.71 + b.id * .73) * .245;
+      const waveB = Math.sin(i * .79 + b.id * 1.37) * .105;
+      const x = Math.max(54, Math.min(trackWidth - 54, trackWidth * (.5 + waveA + waveB)));
+      const y = trackHeight - 88 - i * stepY + Math.sin(i * 1.23 + b.id * .61) * 13;
       positions.push({x,y});
     }
     const path = document.createElementNS('http://www.w3.org/2000/svg','svg');
@@ -7598,17 +7598,33 @@ function buildMap() {
     path.setAttribute('width',trackWidth);
     path.setAttribute('height',String(trackHeight));
     path.setAttribute('aria-hidden','true');
-    let d = '';
+    // A constellation of tiny stars follows a loose cubic curve between planets.
+    // There is deliberately no continuous stroke, lane, or road marking.
+    let stars = '';
     positions.forEach((p,i) => {
-      if (!i) d = 'M '+p.x+' '+p.y;
-      else {
-        const prev = positions[i-1];
-        const dx = p.x - prev.x;
-        const dy = p.y - prev.y;
-        d += ' C '+(prev.x+dx*.38)+' '+(prev.y+dy*.04)+' '+(prev.x+dx*.72)+' '+(p.y-dy*.04)+' '+p.x+' '+p.y;
+      if (!i) return;
+      const prev = positions[i-1];
+      const dx = p.x - prev.x;
+      const dy = p.y - prev.y;
+      const bend = Math.sin(i * 2.17 + b.id * .91) * Math.min(42, Math.abs(dx) * .22 + 16);
+      const c1x = prev.x + dx * .28 + bend;
+      const c1y = prev.y + dy * .28;
+      const c2x = prev.x + dx * .72 - bend * .72;
+      const c2y = prev.y + dy * .72;
+      for (let j = 1; j <= 13; j++) {
+        const t = j / 14, mt = 1 - t;
+        const x = mt*mt*mt*prev.x + 3*mt*mt*t*c1x + 3*mt*t*t*c2x + t*t*t*p.x;
+        const y = mt*mt*mt*prev.y + 3*mt*mt*t*c1y + 3*mt*t*t*c2y + t*t*t*p.y;
+        const wobble = Math.sin((j + i * 3) * 1.83 + b.id) * 4;
+        const xx = x + wobble;
+        const yy = y + Math.cos((j + i * 2) * 1.47 + b.id) * 3;
+        const r = j % 4 === 0 ? 2.15 : (j % 3 === 0 ? 1.55 : 1.15);
+        const opacity = .42 + ((j * 7 + i * 3) % 6) * .085;
+        stars += '<circle cx="'+xx.toFixed(1)+'" cy="'+yy.toFixed(1)+'" r="'+r+'" opacity="'+opacity.toFixed(2)+'"/>';
+        if (j % 5 === 0) stars += '<path d="M '+xx.toFixed(1)+' '+(yy-3.1).toFixed(1)+' L '+(xx+.8).toFixed(1)+' '+(yy-.8).toFixed(1)+' L '+(xx+3.1).toFixed(1)+' '+yy.toFixed(1)+' L '+(xx+.8).toFixed(1)+' '+(yy+.8).toFixed(1)+' L '+xx.toFixed(1)+' '+(yy+3.1).toFixed(1)+' L '+(xx-.8).toFixed(1)+' '+(yy+.8).toFixed(1)+' L '+(xx-3.1).toFixed(1)+' '+yy.toFixed(1)+' L '+(xx-.8).toFixed(1)+' '+(yy-.8).toFixed(1)+' Z" opacity="'+Math.min(1,opacity+.12).toFixed(2)+'"/>';
       }
     });
-    path.innerHTML = '<path class="bb-trail-glow" d="'+d+'"/><path class="bb-trail-shadow" d="'+d+'"/><path class="bb-trail-dashes" d="'+d+'"/>';
+    path.innerHTML = '<g class="bb-route-star-dots">'+stars+'</g>';
     track.appendChild(path);
 
     for (let n = b.start; n <= b.end; n++) {
@@ -17039,25 +17055,29 @@ body .app{min-height:100dvh;background:radial-gradient(ellipse at 14% 7%,#65b8aa
 }
 </style>
 
-<style id="bb-kt632-flat-planet-map">
-/* Schematic expedition map: flat symbols, crisp route, no simulated 3D. */
+<style id="bb-kt633-constellation-planet-map">
+/* A calm, deep teal atlas with a scattered constellation route — never a road. */
 body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!important;opacity:0!important}
 #campaign .bb-planet-viewport{
-  background:linear-gradient(180deg,#eaf7f4 0%,#e3f1f5 52%,#edf6f0 100%)!important;
-  border:1px solid #b5d2d4!important;border-radius:20px!important;
-  box-shadow:inset 0 0 0 1px #ffffffb8,0 7px 18px #244f6120!important;
+  background:
+    radial-gradient(ellipse at 18% 12%,#477d8050 0,transparent 38%),
+    radial-gradient(ellipse at 84% 72%,#526b9250 0,transparent 42%),
+    linear-gradient(160deg,#183b4b 0%,#20495a 48%,#193b4a 100%)!important;
+  border:1px solid #527b7d!important;border-radius:20px!important;
+  box-shadow:inset 0 1px #b9e1d51c,0 8px 22px #071d2a55!important;
 }
 #campaign .bb-planet-track{isolation:isolate!important}
-#campaign .bb-treasure-trail .bb-trail-glow{stroke:#9fc9c9!important;stroke-width:13!important;opacity:.28!important;filter:none!important}
-#campaign .bb-treasure-trail .bb-trail-shadow{stroke:#6f9fa8!important;stroke-width:3!important;opacity:.75!important;filter:none!important}
-#campaign .bb-treasure-trail .bb-trail-dashes{stroke:#f8ffff!important;stroke-width:2!important;stroke-dasharray:3 9!important;opacity:.9!important;filter:none!important}
+#campaign .bb-treasure-trail{overflow:visible!important;pointer-events:none!important}
+#campaign .bb-route-star-dots{fill:#b9eadb;filter:drop-shadow(0 0 3px #8ce5d4a8)}
+#campaign .bb-route-star-dots circle:nth-child(3n){fill:#f2d99a}
+#campaign .bb-route-star-dots path{fill:#f5e5b4;filter:drop-shadow(0 0 4px #f4d995a8)}
 #campaign .bb-planet-node{
   width:84px!important;height:96px!important;min-width:84px!important;
   display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
   gap:3px!important;padding:0!important;overflow:visible!important;
   border:0!important;border-radius:0!important;background:transparent!important;
   box-shadow:none!important;filter:none!important;animation:none!important;
-  color:#31576b!important;scroll-snap-align:center!important;
+  color:#e4f2e9!important;scroll-snap-align:center!important;
 }
 #campaign .bb-planet-node:hover{transform:translateY(-2px)!important}
 #campaign .bb-planet-orbit{display:none!important}
@@ -17065,56 +17085,55 @@ body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!impo
 #campaign .bb-planet-node .bb-planet-sphere.is-loaded{
   width:42px!important;height:42px!important;flex:0 0 42px!important;
   display:grid!important;place-items:center!important;overflow:visible!important;
-  border:2px solid #6c9eaa!important;border-radius:50%!important;
-  background:#c4e7e4!important;box-shadow:0 3px 0 #83b6b5!important;
+  border:2px solid #80b9ad!important;border-radius:50%!important;
+  background:linear-gradient(145deg,#356f76,#285565)!important;
+  box-shadow:0 3px 0 #163d4b,0 0 0 1px #a8d6c51c!important;
   transform:none!important;filter:none!important;animation:none!important;
 }
 #campaign .bb-planet-node .bb-planet-fallback{
-  display:grid!important;place-items:center!important;
-  width:100%!important;height:100%!important;font-size:19px!important;
-  line-height:1!important;filter:none!important;text-shadow:none!important;
+  display:grid!important;place-items:center!important;width:100%!important;height:100%!important;
+  font-size:19px!important;line-height:1!important;filter:none!important;text-shadow:none!important;
 }
 #campaign .bb-planet-node strong{
-  margin-top:1px!important;color:#31576b!important;
-  font-size:10px!important;line-height:1.1!important;letter-spacing:.1em!important;
-  text-shadow:none!important;font-weight:900!important;
+  margin-top:1px!important;color:#e5f2e9!important;font-size:10px!important;
+  line-height:1.1!important;letter-spacing:.1em!important;text-shadow:0 1px 3px #0a2634!important;font-weight:900!important;
 }
 #campaign .bb-planet-node small{
-  color:#66858d!important;font-size:7px!important;line-height:1.1!important;
-  letter-spacing:.08em!important;text-shadow:none!important;font-weight:800!important;
+  color:#a8c9c3!important;font-size:7px!important;line-height:1.1!important;
+  letter-spacing:.08em!important;text-shadow:0 1px 3px #0a2634!important;font-weight:800!important;
 }
 #campaign .bb-planet-node.is-current .bb-planet-sphere{
-  border:3px solid #278f9d!important;background:#b7e8df!important;
-  box-shadow:0 0 0 4px #ffffff,0 0 0 6px #64b9b3,0 3px 0 #4c9998!important;
+  border:3px solid #9de5d0!important;background:linear-gradient(145deg,#4a9b91,#327d80)!important;
+  box-shadow:0 0 0 3px #183f4b,0 0 0 5px #9de5d088,0 3px 0 #1a4b58!important;
 }
-#campaign .bb-planet-node.is-current strong{color:#167a82!important}
+#campaign .bb-planet-node.is-current strong{color:#b5f0d9!important}
 #campaign .bb-planet-node.is-cleared .bb-planet-sphere{
-  background:#d8efd2!important;border-color:#77b58c!important;
-  box-shadow:0 3px 0 #8ebc9b!important;
+  background:linear-gradient(145deg,#668f78,#426f68)!important;border-color:#9bc6a0!important;
+  box-shadow:0 3px 0 #234c4b!important;
 }
-#campaign .bb-planet-node.is-locked{opacity:.68!important;filter:none!important}
+#campaign .bb-planet-node.is-locked{opacity:.66!important;filter:none!important}
 #campaign .bb-planet-node.is-locked .bb-planet-sphere{
-  background:#e1e9e9!important;border-color:#b5c8c9!important;
-  box-shadow:0 3px 0 #bdcecf!important;
+  background:linear-gradient(145deg,#405b68,#344f60)!important;border-color:#6e8990!important;
+  box-shadow:0 3px 0 #203f50!important;
 }
 #campaign .bb-planet-node.is-boss .bb-planet-sphere{
-  border:3px solid #d78a72!important;border-radius:13px!important;
-  background:#f6d9ca!important;box-shadow:0 3px 0 #c98772!important;
+  border:3px solid #e1a18b!important;border-radius:13px!important;
+  background:linear-gradient(145deg,#986b68,#704f60)!important;box-shadow:0 3px 0 #4d3c50!important;
 }
-#campaign .bb-planet-node.is-boss strong{color:#a95f53!important}
+#campaign .bb-planet-node.is-boss strong{color:#f1b8a2!important}
 #campaign .bb-planet-node.is-milestone .bb-planet-sphere{
-  border-color:#d2a84e!important;background:#fae9b9!important;
-  box-shadow:0 3px 0 #c5a25a!important;
+  border-color:#e3c17b!important;background:linear-gradient(145deg,#8f8058,#6e694e)!important;
+  box-shadow:0 3px 0 #4a4c40!important;
 }
 #campaign .bb-planet-heading::before,#campaign .bb-planet-heading::after{display:none!important;content:none!important}
 #campaign .bb-planet-heading{
-  background:linear-gradient(110deg,#e8f5ef,#e6f1f8)!important;
-  border:1px solid #bfd9d6!important;border-radius:17px!important;
-  box-shadow:none!important;color:#31576b!important;
+  background:linear-gradient(115deg,#214b59,#294d64 58%,#334d69)!important;
+  border:1px solid #587e83!important;border-radius:17px!important;
+  box-shadow:0 5px 16px #071d2a35!important;color:#e8f3eb!important;
 }
-#campaign .bb-planet-heading strong{color:#28566a!important;text-shadow:none!important}
-#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span{color:#66858d!important}
-#campaign .bb-planet-heading .bb-atlas-status-legend{color:#547982!important}
+#campaign .bb-planet-heading strong{color:#f2f2d9!important;text-shadow:none!important}
+#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span{color:#b7d2ca!important}
+#campaign .bb-planet-heading .bb-atlas-status-legend{color:#c3d9cf!important}
 @media(max-width:520px){
   #campaign .bb-planet-node{width:78px!important;height:90px!important;min-width:78px!important}
   #campaign .bb-planet-node .bb-planet-sphere{width:38px!important;height:38px!important;flex-basis:38px!important}
