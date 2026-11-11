@@ -364,7 +364,6 @@ const targets = [
     await campaignPage.locator('#campaignBack').click();
     await campaignPage.locator('#bbHomeCollectionCard').waitFor({state:'visible',timeout:10000});
     await campaignPage.locator('#bbHomeCollectionCard').click();
-    await campaignPage.evaluate(()=>{bbCollectionReturnScreen='campaign';});
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
       cardCount:rail.querySelectorAll('.bb-shelf-item').length,
@@ -389,6 +388,10 @@ const targets = [
     if(!collectionDetail.includes('Корона дальнего пути')||!collectionDetail.includes('ЕЩЁ ВПЕРЕДИ')) failures.push(target.name+': KT-554 final crown detail or locked state is incorrect ('+collectionDetail+')');
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-reward-shelf.png',fullPage:false});
     await campaignPage.locator('#bbCampaignCollectionClose').click();
+    // The shelf correctly returns to the home hub. Re-enter the campaign through
+    // its real mode tile so the following atlas checks exercise the normal flow.
+    await campaignPage.locator('button.mode[data-mode="campaign"]').click();
+    await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
       return {
