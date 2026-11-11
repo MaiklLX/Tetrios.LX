@@ -7618,8 +7618,8 @@ function buildMap() {
       const planet = document.createElement('button');
       planet.type = 'button';
       planet.className = 'bb-planet-node' + (n === current ? ' is-current' : '') + (n === bbCampaignArrivalNode ? ' is-arrival' : '') + (done ? ' is-cleared' : '') + (!open ? ' is-locked' : '');
-      planet.style.left = positions[local].x - 48 + 'px';
-      planet.style.top = positions[local].y - 61 + 'px';
+      planet.style.left = positions[local].x - 42 + 'px';
+      planet.style.top = positions[local].y - 48 + 'px';
       planet.style.setProperty('--planet-size', [88,96,82,92,104,86,98][local % 7] + 'px');
       planet.dataset.planetNumber = String(n);
       if (local % 10 === 9) planet.classList.add('is-boss');
@@ -17106,6 +17106,7 @@ body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!impo
   border-color:#d2a84e!important;background:#fae9b9!important;
   box-shadow:0 3px 0 #c5a25a!important;
 }
+#campaign .bb-planet-heading::before,#campaign .bb-planet-heading::after{display:none!important;content:none!important}
 #campaign .bb-planet-heading{
   background:linear-gradient(110deg,#e8f5ef,#e6f1f8)!important;
   border:1px solid #bfd9d6!important;border-radius:17px!important;
