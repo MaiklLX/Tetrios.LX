@@ -418,6 +418,7 @@ const targets = [
         orientation:track?.dataset.routeOrientation||'',
         headingOrbWidth:headingOrb?parseFloat(headingOrb.width):0,
         headingOrbBackground:headingOrb?.backgroundImage||'',
+        headingOrbDisplay:headingOrb?.display||'none',
         routePanelBorder:viewportStyle?.borderTopColor||'',
         nodeCount:nodes.length,
         bossCount:nodes.filter(node=>node.classList.contains('is-boss')).length,
@@ -442,7 +443,7 @@ const targets = [
         currentRect:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active)return null;const r=active.getBoundingClientRect();return {top:Math.round(r.top),bottom:Math.round(r.bottom),left:Math.round(r.left),right:Math.round(r.right),height:Math.round(r.height)}})()
       };
     });
-    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbWidth<60||!routeState.headingOrbBackground.includes('radial-gradient')||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientWidth*0.4){
+    if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbDisplay!=='none'||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientWidth*0.4){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
     if(routeState.flatMapState.modelSlots!==0||routeState.flatMapState.canvasDisplay!=='none'||routeState.flatMapState.sphereShadow.includes('inset')){
