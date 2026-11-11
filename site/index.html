@@ -5864,6 +5864,142 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
  #menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak{margin-top:5px!important}
 }
 </style>
+
+<style id="bb-kt648-fullscreen-home-arena">
+/* KT-648 — mobile home becomes one continuous arena scene. The canvas is
+   viewport-sized; all menu controls float above it instead of sitting in cards. */
+@media(max-width:600px){
+  .app{
+    min-height:100dvh!important;
+    padding:calc(9px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom))!important;
+    background:
+      linear-gradient(180deg,rgba(5,12,29,.42) 0%,rgba(5,12,29,.12) 38%,rgba(5,12,29,.76) 100%),
+      radial-gradient(ellipse at 50% 38%,#163e6755 0%,transparent 58%),
+      linear-gradient(160deg,#080d1c,#091426 65%,#080d18)!important;
+  }
+  .topbar{
+    position:relative!important;z-index:4!important;
+    max-width:none!important;margin:0 auto 7px!important;
+    padding:0 1px!important;
+  }
+  .brandmark{width:34px!important;height:34px!important;border-radius:11px!important}
+  .brandname{font-size:13px!important}
+  .edition{font-size:8px!important}
+  #menu.home-dashboard{
+    position:relative!important;isolation:isolate!important;
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:"hero" "profile" "modeTitle" "campaign" "rogue" "daily" "quests" "streak" "heroes" "rpg" "currency" "stats" "library" "apk" "shop" "reset"!important;
+    align-content:start!important;gap:8px!important;
+    width:100%!important;max-width:none!important;margin:0!important;
+    min-height:calc(100dvh - 62px)!important;
+    padding:0 0 16px!important;overflow:visible!important;
+    background:transparent!important;
+  }
+  #menu.home-dashboard>.hero{
+    grid-area:hero!important;position:relative!important;isolation:auto!important;
+    height:72px!important;min-height:72px!important;
+    display:flex!important;align-items:flex-start!important;justify-content:center!important;
+    text-align:left!important;overflow:visible!important;
+    margin:0!important;padding:3px 2px 4px!important;
+    border:0!important;border-radius:0!important;
+    background:transparent!important;box-shadow:none!important;
+  }
+  #menu.home-dashboard>.hero:before,#menu.home-dashboard>.hero:after{display:none!important}
+  #menu.home-dashboard>.hero .hero-arena-canvas{
+    display:block!important;position:fixed!important;inset:0!important;
+    width:100vw!important;height:100dvh!important;max-width:none!important;
+    z-index:-1!important;opacity:.72!important;pointer-events:none!important;
+  }
+  #menu.home-dashboard>.hero .eyebrow{
+    display:block!important;font-size:7px!important;letter-spacing:.17em!important;
+    color:#a9e9f4!important;margin:0 0 3px!important;
+  }
+  #menu.home-dashboard>.hero .hero-brand-lockup{
+    justify-content:flex-start!important;gap:8px!important;margin:1px 0 2px!important;
+  }
+  #menu.home-dashboard>.hero .hero-app-mark{
+    width:29px!important;height:29px!important;flex:0 0 29px!important;
+    padding:4px!important;border-radius:9px!important;
+  }
+  #menu.home-dashboard>.hero h1{
+    font-size:clamp(21px,6vw,27px)!important;line-height:1!important;
+    letter-spacing:-.05em!important;
+  }
+  #menu.home-dashboard>.hero p{font-size:9px!important;line-height:1.1!important;margin:0!important}
+  #bbHomeProfile{
+    grid-area:profile!important;min-height:46px!important;margin:0!important;
+    padding:8px 10px!important;border-radius:14px!important;
+    background:linear-gradient(110deg,rgba(13,43,68,.78),rgba(12,29,52,.62))!important;
+    border:1px solid #68c8db66!important;box-shadow:0 5px 18px #02091655,inset 0 1px #ffffff18!important;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  }
+  #menu .sectionlabel{
+    grid-area:modeTitle!important;display:flex!important;
+    margin:2px 2px 0!important;padding:0!important;
+    color:#c9eff4!important;font-size:8px!important;letter-spacing:.19em!important;
+  }
+  #menu .sectionlabel:after{background:linear-gradient(90deg,#6ccbdc88,transparent)!important}
+  #menu .modes{display:contents!important}
+  #menu .mode{
+    position:relative!important;display:flex!important;flex-direction:column!important;
+    align-items:flex-start!important;justify-content:flex-start!important;
+    gap:5px!important;width:100%!important;height:102px!important;min-height:102px!important;
+    padding:9px 8px 8px!important;border-radius:15px!important;overflow:hidden!important;
+    background:linear-gradient(155deg,rgba(18,62,91,.88),rgba(9,27,49,.83))!important;
+    border:1px solid #5a9fb488!important;box-shadow:0 5px 14px #020a1855,inset 0 1px #ffffff20!important;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  #menu .mode:before{opacity:.45!important}
+  #menu .mode[data-mode="campaign"]{grid-area:campaign!important}
+  #menu .mode[data-mode="rogue"]{grid-area:rogue!important}
+  #menu .mode[data-mode="daily"]{grid-area:daily!important}
+  #menu .modeicon{
+    width:31px!important;height:31px!important;flex:0 0 31px!important;
+    border-radius:10px!important;font-size:17px!important;
+  }
+  #menu .mode .modetext{min-width:0;width:100%!important}
+  #menu .mode .modetitle{font-size:10px!important;line-height:1.15!important;white-space:normal!important}
+  #menu .mode .modesub{display:none!important}
+  #menu .mode .tag{display:none!important}
+  #menu .mode .modearrow{display:none!important}
+  #menu .mode[data-mode="daily"]{height:72px!important;min-height:72px!important;flex-direction:row!important;align-items:center!important;gap:9px!important;padding:8px 11px!important}
+  #menu .mode[data-mode="daily"] .modetext{width:auto!important;flex:1!important}
+  #menu .mode[data-mode="daily"] .modeicon{width:38px!important;height:38px!important;flex-basis:38px!important}
+  #dailyQuestsPanel{
+    grid-area:quests!important;margin:2px 0 0!important;padding:11px!important;
+    border:1px solid #4c91a477!important;border-radius:15px!important;
+    background:linear-gradient(145deg,rgba(12,37,60,.78),rgba(8,24,43,.74))!important;
+    box-shadow:0 7px 20px #02091644!important;
+    backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  }
+  #dailyQuestsPanel>div:first-child strong{font-size:10px!important}
+  #dailyQuestsPanel>div:first-child span{font-size:7px!important}
+  #dailyQuestsPanel>div:nth-child(2){font-size:9px!important;line-height:1.35!important}
+  #dailyQuestsList{margin-top:7px!important;display:grid!important;grid-template-columns:1fr!important;gap:5px!important}
+  #dailyQuestsList>div{
+    margin:0!important;padding:7px 9px!important;border-radius:10px!important;
+    background:rgba(19,48,69,.84)!important;border:1px solid #477b8b66!important;
+    color:#d9edf1!important;
+  }
+  #bbVisitStreak{grid-area:streak!important;margin-top:0!important}
+  #menu>#openHeroes,#menu>#rpgPanel,#menu>.currency-panel,#menu>.bottomstats,
+  #menu>#bbOpenCardLibrary,#menu>.apk-download,#menu>.shopbuttons,#menu>.home-reset{margin-top:0!important}
+}
+@media(max-width:600px) and (max-height:740px){
+  #menu.home-dashboard>.hero{height:62px!important;min-height:62px!important}
+  #menu .mode{height:88px!important;min-height:88px!important}
+  #menu .mode[data-mode="daily"]{height:62px!important;min-height:62px!important}
+  #menu.home-dashboard{gap:6px!important}
+  #dailyQuestsPanel{padding:8px!important}
+}
+@media(min-width:601px){
+  #menu.home-dashboard>.hero .hero-arena-canvas{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard>.hero .hero-arena-canvas{opacity:.42!important}
+}
+</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
