@@ -17604,6 +17604,26 @@ document.addEventListener('click',event=>{
   bbNavigateBack();
 },true);
 </script>
+
+<style id="bb-kt660-home-arena-transparent-hero">
+/* KT-660: keep the hero artwork transparent so the full-screen decorative arena
+   can actually be seen behind the home screen without intercepting input. */
+@media(max-width:600px){
+ #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero{
+  background:transparent!important;
+  box-shadow:none!important;
+ }
+ #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero .hero-arena-canvas{
+  display:block!important;visibility:visible!important;
+  position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;
+  z-index:0!important;opacity:.78!important;pointer-events:none!important;
+ }
+ #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero>*:not(.hero-arena-canvas){
+  position:relative!important;z-index:1!important;
+ }
+}
+</style>
+
 </body></html>
 
 <style id="bb-kt634-arena-unification">
