@@ -445,29 +445,19 @@ const targets = [
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
     }
     const routeControls=campaignPage.locator('#campaign .bb-planet-controls');
-    if(await routeControls.count()!==1){
-      failures.push(target.name+': KT-629 vertical route controls are missing');
-    }else{
-      const routeViewport=campaignPage.locator('#campaign .bb-planet-viewport');
-      const initialTop=await routeViewport.evaluate(node=>node.scrollTop);
-      const up=routeControls.locator('[data-route-step="-1"]');
-      const down=routeControls.locator('[data-route-step="1"]');
-      const jump=routeControls.locator('.bb-planet-route-current');
-      if(await jump.isDisabled()) failures.push(target.name+': KT-629 jump-to-current control is disabled');
-      if(await up.isDisabled()) failures.push(target.name+': KT-629 upward route control should be enabled at the starting planet');
-      await up.click();
-      await campaignPage.waitForTimeout(350);
-      const movedTop=await routeViewport.evaluate(node=>node.scrollTop);
-      if(!(movedTop<initialTop-10)) failures.push(target.name+': KT-629 upward route control did not scroll the vertical route ('+JSON.stringify({initialTop,movedTop})+')');
-      await jump.click();
-      await campaignPage.waitForTimeout(350);
-      const returnedTop=await routeViewport.evaluate(node=>node.scrollTop);
-      if(Math.abs(returnedTop-initialTop)>8) failures.push(target.name+': KT-629 jump-to-current did not restore the available planet ('+JSON.stringify({initialTop,returnedTop})+')');
-      if(await down.isDisabled()!==true && returnedTop>=initialTop-8) {
-        // At the first planet the viewport is already aligned at the lower edge;
-        // the downward control must not claim there is more route below it.
-        failures.push(target.name+': KT-629 downward control remained active at the route end');
-      }
+    const routeViewport=campaignPage.locator('#campaign .bb-planet-viewport');
+    const nativeRouteState=await routeViewport.evaluate(node=>({
+      overflowY:getComputedStyle(node).overflowY,
+      touchAction:getComputedStyle(node).touchAction,
+      scrollHeight:node.scrollHeight,
+      clientHeight:node.clientHeight,
+      controlsVisible:Array.from(document.querySelectorAll('#campaign .bb-planet-controls')).some(el=>getComputedStyle(el).display!=='none')
+    }));
+    if(await routeControls.count()!==0||nativeRouteState.controlsVisible){
+      failures.push(target.name+': KT-631 route should not render a separate arrow toolbar');
+    }
+    if(nativeRouteState.overflowY!=='auto'||nativeRouteState.touchAction!=='pan-y'||nativeRouteState.scrollHeight<=nativeRouteState.clientHeight){
+      failures.push(target.name+': KT-631 planet map is not a usable native vertical scroll surface ('+JSON.stringify(nativeRouteState)+')');
     }
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-vertical-route.png',fullPage:false});
     // Reload the isolated preview so the following mission test starts from
