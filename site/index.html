@@ -17403,3 +17403,50 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
   #game.screen .sidecol #boostNum{font-size:8px!important;line-height:1.2!important}
 }
 </style>
+
+
+<style id="bb-kt641-flat-atlas-icons">
+/* KT-641: replace the oversized pseudo-3D universe balls with compact, flat biome emblems. */
+body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!important;opacity:0!important}
+#campaign .bb-galaxy-card .bb-galaxy-art{
+  width:132px!important;height:116px!important;flex:0 0 116px!important;
+  margin:0 auto 4px!important;filter:none!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-orbit{display:none!important}
+#campaign .bb-galaxy-card .bb-galaxy-model-slot{
+  position:relative!important;inset:auto!important;display:grid!important;
+  place-items:center!important;width:100%!important;height:100%!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-model-fallback{
+  display:grid!important;place-items:center!important;
+  width:76px!important;height:76px!important;
+  border:2px solid color-mix(in srgb,var(--biome-color) 70%,#b7d9c9)!important;
+  border-radius:23px!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--biome-color) 48%,#234d5b),#183747)!important;
+  box-shadow:0 4px 0 #102c3b,0 0 0 5px color-mix(in srgb,var(--biome-color) 13%,transparent),inset 0 1px #ffffff24!important;
+  font-size:35px!important;line-height:1!important;
+  animation:bbAtlasEmblemFloat 4.5s ease-in-out infinite!important;
+}
+#campaign .bb-galaxy-card.is-current .bb-galaxy-model-fallback{
+  border-color:#b4e5d2!important;
+  box-shadow:0 4px 0 #102c3b,0 0 0 5px #9de5d044,0 0 22px color-mix(in srgb,var(--biome-color) 32%,transparent),inset 0 1px #ffffff30!important;
+}
+#campaign .bb-galaxy-card.is-locked .bb-galaxy-model-fallback{
+  filter:grayscale(.45)!important;opacity:.78!important;
+}
+#campaign .bb-galaxy-card .bb-galaxy-star{opacity:.8!important;text-shadow:none!important}
+#campaign .bb-galaxy-card{
+  min-height:320px!important;gap:8px!important;
+  background:linear-gradient(155deg,#1b4050,#173344 78%)!important;
+  box-shadow:0 12px 28px #071d2a55,inset 0 1px #ffffff13!important;
+}
+#campaign .bb-galaxy-card.is-current{
+  border-color:#8dcdb9!important;
+  background:linear-gradient(155deg,#214b59,#19394a 78%)!important;
+}
+@keyframes bbAtlasEmblemFloat{50%{transform:translateY(-4px) rotate(2deg)}}
+@media(max-width:380px){
+  #campaign .bb-galaxy-card .bb-galaxy-art{height:104px!important;flex-basis:104px!important}
+  #campaign .bb-galaxy-card .bb-galaxy-model-fallback{width:68px!important;height:68px!important;font-size:31px!important}
+}
+</style>
