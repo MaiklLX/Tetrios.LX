@@ -1,6 +1,6 @@
 /* TETRIOS.LX — self-playing decorative arena. Independent from the real game. */
 (() => {
- const canvas=document.querySelector('#menu .hero-arena-canvas'),host=canvas?.parentElement;
+ const canvas=document.querySelector('#menu .hero-arena-canvas'),host=canvas?.closest('#menu')||canvas?.parentElement;
  if(!canvas||!host)return;
  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
@@ -80,7 +80,7 @@
   piece=p;
  };
  const reset=()=>{grid=Array.from({length:rows},()=>Array(cols).fill(null));piece=null;makePiece()};
- const resize=()=>{const r=host.getBoundingClientRect();if(!r.width||!r.height)return;w=r.width;h=r.height;dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);cell=Math.max(19,Math.min(34,Math.round(w/Math.max(16,Math.floor(w/27)))));const nc=Math.max(12,Math.ceil(w/cell)),nr=Math.max(7,Math.ceil(h/cell));if(nc!==cols||nr!==rows){cols=nc;rows=nr;reset()}};
+ const resize=()=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;w=r.width;h=r.height;dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);cell=Math.max(19,Math.min(34,Math.round(w/Math.max(16,Math.floor(w/27)))));const nc=Math.max(12,Math.ceil(w/cell)),nr=Math.max(7,Math.ceil(h/cell));if(nc!==cols||nr!==rows){cols=nc;rows=nr;reset()}};
  const lock=()=>{
   let top=false;
   piece.shape.forEach(([x,y])=>{const X=piece.x+x,Y=piece.y+y;if(Y<0)top=true;else if(grid[Y])grid[Y][X]=piece.color});
@@ -137,7 +137,7 @@
  const frame=now=>{raf=0;if(paused||reduce.matches)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
  const start=()=>{if(paused||reduce.matches||raf)return;last=0;raf=requestAnimationFrame(frame)};
  const stop=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
- const observer=new ResizeObserver(resize);observer.observe(host);
+ const observer=new ResizeObserver(resize);observer.observe(host);window.addEventListener('resize',resize,{passive:true});window.visualViewport?.addEventListener('resize',resize,{passive:true});
  const io=new IntersectionObserver(entries=>{if(entries[0]?.isIntersecting)start();else stop()},{threshold:.02});io.observe(host);
  document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)stop();else start()});
  reduce.addEventListener?.('change',()=>{if(reduce.matches){stop();render()}else start()});
