@@ -8835,7 +8835,7 @@ document.addEventListener('pointermove', e => {
     const absX=Math.abs(tx),absY=Math.abs(ty);
     // Do not cancel diagonal gestures. Wait briefly for intent, then choose
     // the dominant axis so a thumb can travel naturally across the screen.
-    if(absX>=absY*1.2||Math.max(absX,absY)>24&&absX>absY) {
+    if(absX>=absY*1.2) {
       touch.axis='x';touch.horizontalRemainder=tx;touch.lastX=e.clientX;
     } else if(absY>=absX*1.2||Math.max(absX,absY)>24&&absY>absX) {
       touch.axis='y';touch.verticalRemainder=ty;touch.lastY=e.clientY;
