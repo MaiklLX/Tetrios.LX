@@ -6604,9 +6604,10 @@ function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');cle
 
 let bbLastShownScreen = null;
 const bbScreenHistory = [];
+let bbNavigatingBack = false;
 function show(id){
   const changed = bbLastShownScreen !== id;
-  if (changed && bbLastShownScreen && id !== 'menu') {
+  if (changed && bbLastShownScreen && id !== 'menu' && !bbNavigatingBack) {
     bbScreenHistory.push(bbLastShownScreen);
     if (bbScreenHistory.length > 12) bbScreenHistory.shift();
   }
@@ -6620,7 +6621,9 @@ function show(id){
 }
 function bbNavigateBack(){
   const previous=bbScreenHistory.pop()||'menu';
+  bbNavigatingBack=true;
   show(previous);
+  bbNavigatingBack=false;
 }
 
 function overlay(html,variant=''){const root=$('overlay'),modal=$('modal');root.classList.remove('bb-godot-pause-overlay','bb-godot-result-overlay');modal.classList.remove('bb-hero-showcase-modal');if(variant==='pause')root.classList.add('bb-godot-pause-overlay');if(variant==='result')root.classList.add('bb-godot-result-overlay');modal.innerHTML=html;root.classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay','bb-godot-pause-overlay','bb-godot-result-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal','bb-upgrade-library-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
@@ -17321,7 +17324,7 @@ body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!impo
 <script id="bb-kt632-ui-ready">document.documentElement.classList.add('bb-ui-ready');
 // KT-645: one predictable back gesture for every internal screen.
 document.addEventListener('click',event=>{
-  const back=event.target.closest('.screenhead .back, .screenhead [data-home]');
+  const back=event.target.closest('.back, [data-home]');
   if(!back)return;
   event.preventDefault();
   event.stopImmediatePropagation();
