@@ -5753,6 +5753,117 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
   #menu.home-dashboard>#dailyQuestsPanel{margin-top:5px!important}
 }
 </style>
+
+<style id="bb-kt646-mobile-home-composition">
+/* KT-646: override legacy dashboard rules with a deliberate compact tile composition. */
+#menu.home-dashboard.home-dashboard.home-dashboard{
+  display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  align-content:start!important;gap:0 12px!important;padding:0 0 6px!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.hero{
+  grid-column:1/-1!important;height:88px!important;min-height:88px!important;
+  padding:8px 8px 6px!important;margin:0 0 8px!important;border-radius:16px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.hero .eyebrow{font-size:7px!important;line-height:1!important;margin:0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.hero .hero-brand-lockup{gap:7px!important;margin:1px 0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.hero .hero-app-mark{width:30px!important;height:30px!important;flex:0 0 30px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.hero h1{font-size:clamp(23px,7vw,32px)!important;line-height:1!important;margin:0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.hero p{font-size:9px!important;line-height:1!important;margin:0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbHomeProfile,
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection{
+  grid-column:auto!important;min-width:0!important;width:100%!important;height:48px!important;min-height:48px!important;
+  margin:0 0 7px!important;padding:4px 7px!important;gap:6px!important;border-radius:12px!important;
+  box-shadow:0 3px 0 #091d30!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbHomeProfile{grid-template-columns:30px minmax(0,1fr) auto!important}
+#menu.home-dashboard.home-dashboard.home-dashboard #bbHomeProfile .bb-home-profile-avatar{width:28px!important;height:28px!important;border-radius:9px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard #bbHomeProfile .bb-home-profile-avatar svg{width:26px!important;height:26px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard #bbHomeProfile .bb-home-profile-copy{gap:1px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard #bbHomeProfile .bb-home-profile-copy strong{font-size:9px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard #bbHomeProfile .bb-home-profile-copy small{font-size:6px!important;letter-spacing:.06em!important}
+#menu.home-dashboard.home-dashboard.home-dashboard #bbHomeProfile .bb-home-profile-wallet{font-size:8px!important;padding:4px 5px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection{display:flex!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection .bb-home-collection-icon{width:27px!important;height:27px!important;flex:0 0 27px!important;font-size:15px!important;border-radius:8px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection .bb-home-collection-copy{min-width:0!important;gap:1px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection .bb-home-collection-copy strong{font-size:8px!important;letter-spacing:.07em!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection .bb-home-collection-copy small{font-size:6px!important;line-height:1.1!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection .bb-home-collection-count{font-size:8px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection .bb-home-collection-arrow{font-size:17px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.sectionlabel{
+  grid-column:1/-1!important;margin:1px 2px 6px!important;font-size:8px!important;letter-spacing:.14em!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes{
+  grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-auto-flow:row!important;gap:7px!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode{
+  grid-column:auto!important;position:relative!important;inset:auto!important;transform:none!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;
+  text-align:center!important;gap:5px!important;width:100%!important;height:104px!important;min-height:104px!important;
+  padding:8px 5px!important;border-radius:15px!important;overflow:hidden!important;
+  border:1px solid color-mix(in srgb,var(--glow) 62%,#314363)!important;
+  background:linear-gradient(155deg,color-mix(in srgb,var(--glow) 19%,#1a2d4b),#101b32 78%)!important;
+  box-shadow:0 4px 0 #091526,0 8px 16px #02091455,inset 0 1px #ffffff18!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode:before{
+  opacity:.28!important;background:radial-gradient(circle at 50% 0%,var(--glow),transparent 70%)!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modeicon{
+  width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:11px!important;
+  display:grid!important;place-items:center!important;font-size:20px!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modetext{flex:0 0 auto!important;width:100%!important;min-width:0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modetitle{font-size:10px!important;line-height:1.1!important;white-space:normal!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modesub{display:none!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .tag{font-size:6px!important;margin-top:4px!important;padding:2px 4px!important;letter-spacing:.04em!important;white-space:nowrap!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modearrow{position:absolute!important;right:6px!important;top:4px!important;font-size:13px!important;opacity:.7!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel{
+  grid-column:1/-1!important;margin:9px 0 0!important;padding:9px 10px!important;border-radius:14px!important;
+  box-shadow:0 4px 12px #02091444!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel>div:first-child{margin-bottom:4px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel>div:first-child strong{font-size:10px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel>div:first-child span{font-size:7px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel>div:nth-child(2){font-size:8px!important;line-height:1.2!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel #dailyQuestsList{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin-top:6px!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{
+  min-width:0!important;margin:0!important;padding:6px!important;border-radius:9px!important;
+  background:linear-gradient(145deg,#1b2c4c,#14213b)!important;border:1px solid #40567a!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:first-child{font-size:8px!important;line-height:1.15!important;min-height:18px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(2){font-size:7px!important;margin-top:2px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(3){height:3px!important;margin-top:4px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{font-size:7px!important;margin-top:3px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak{
+  grid-column:1/-1!important;display:flex!important;align-items:center!important;gap:9px!important;
+  margin:7px 0 0!important;padding:7px 10px!important;min-height:46px!important;border-radius:12px!important;
+}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak>div:first-child{gap:8px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak>div:first-child>div:first-child{width:30px!important;height:30px!important;flex-basis:30px!important;font-size:18px!important;border-radius:9px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak #bbStreakCount{font-size:12px!important;margin:0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak #bbStreakBest{font-size:8px!important;margin:1px 0 0!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak #bbStreakMessage{font-size:8px!important;line-height:1.2!important;margin:0 0 0 auto!important;max-width:42%!important;text-align:right!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bottomstats{grid-column:1/-1!important;margin-top:7px!important;gap:6px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bottomstats .stat{padding:5px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bottomstats .stat strong{font-size:11px!important}
+#menu.home-dashboard.home-dashboard.home-dashboard>.bottomstats .stat span{font-size:7px!important}
+@media(max-width:390px){
+ #menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode{height:96px!important;min-height:96px!important;padding:6px 3px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modeicon{width:32px!important;height:32px!important;flex-basis:32px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .modetitle{font-size:9px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode .tag{font-size:5px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>#bbHomeProfile .bb-home-profile-wallet{display:none!important}
+}
+@media(max-height:740px){
+ #menu.home-dashboard.home-dashboard.home-dashboard>.hero{height:72px!important;min-height:72px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>.modes>.mode{height:88px!important;min-height:88px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel{margin-top:6px!important}
+ #menu.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak{margin-top:5px!important}
+}
+</style>
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
