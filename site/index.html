@@ -17141,3 +17141,83 @@ body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!impo
 </style>
 <script id="bb-kt632-ui-ready">document.documentElement.classList.add('bb-ui-ready');</script>
 </body></html>
+
+<style id="bb-kt634-arena-unification">
+/* KT-634: one calm, dark arena language across phone, tablet and desktop. */
+#game .sidecol #next,
+#game .sidecol #holdPreview{
+  box-sizing:border-box!important;
+  background:linear-gradient(145deg,#183f5b 0%,#12334d 58%,#0e293f 100%)!important;
+  border:1px solid #5c9eaa!important;
+  border-radius:11px!important;
+  box-shadow:inset 0 1px #d9f5e51c,0 3px 0 #0a2235!important;
+}
+#game .sidecol #next canvas,
+#game .sidecol #holdPreview canvas{filter:drop-shadow(0 2px 5px #5de0d655)!important}
+#game .sidecol .hold-empty{color:#a9d5d1!important;text-shadow:none!important}
+#game .sidecol .hold-card .smallbtn{
+  background:linear-gradient(180deg,#347f91,#22596f)!important;
+  color:#effaf6!important;border:1px solid #80c5c3!important;
+  box-shadow:0 2px 0 #12394a!important;
+}
+#game .sidecol>.sidecard>label{
+  color:#b9e8df!important;font-size:9px!important;letter-spacing:.08em!important;
+}
+#game #bbHeroSkillCard,
+html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard{
+  box-sizing:border-box!important;min-height:86px!important;height:auto!important;
+  grid-template-columns:40px minmax(0,1fr)!important;
+  gap:4px 9px!important;padding:9px!important;overflow:visible!important;
+  border:1px solid #d2b875!important;border-radius:13px!important;
+  background:linear-gradient(145deg,#244d60 0%,#1a3e52 65%,#163447 100%)!important;
+  color:#f4f6e9!important;box-shadow:0 3px 0 #102b3b,inset 0 1px #ffffff18!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-art,
+html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{
+  width:40px!important;height:40px!important;border:1px solid #9ac9bd!important;
+  border-radius:11px!important;background:linear-gradient(145deg,#356d79,#214b60)!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-art svg{filter:drop-shadow(0 2px 3px #071d2b88)!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy,
+html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-copy{
+  min-width:0!important;display:flex!important;flex-direction:column!important;gap:4px!important;
+}
+#game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:9px!important;color:#e9d49a!important;letter-spacing:.08em!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:10px!important;line-height:1.3!important;color:#f1f7ed!important;font-weight:800!important;white-space:normal!important;overflow-wrap:anywhere!important}
+#game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:8px!important;line-height:1.25!important;color:#a9ddd2!important;font-style:normal!important}
+#game #bbHeroSkillCard:after{content:none!important}
+#game #bbHeroSkillCard:disabled{opacity:1!important;filter:saturate(.72)!important;background:linear-gradient(145deg,#244354,#1a3748)!important}
+#game #bbHeroSkillCard:disabled .bb-hero-skill-copy strong{color:#d6c89e!important}
+#game #bbHeroSkillCard:disabled .bb-hero-skill-copy small{color:#d5e4df!important}
+#game #bbHeroSkillCard:disabled .bb-hero-skill-copy em{color:#9bbeb9!important}
+#game .gamehud .hudbox span{font-size:9px!important;letter-spacing:.06em!important}
+@media(min-width:600px) and (max-width:900px) and (orientation:portrait){
+  #game .playlayout{grid-template-columns:minmax(0,1fr) 190px!important;align-items:stretch!important}
+  #game .playlayout>div:first-child{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;overflow:visible!important}
+  #game .playlayout>div:first-child>.boardframe{
+    box-sizing:border-box!important;flex:0 0 auto!important;
+    width:min(100%,calc(70dvh * 10 / 23))!important;
+    height:auto!important;min-height:0!important;max-height:70dvh!important;
+    aspect-ratio:10/23!important;
+  }
+  #game .playlayout>div:first-child>.boardframe>.board,
+  #game .boardframe>.board{
+    width:100%!important;height:100%!important;aspect-ratio:10/23!important;
+  }
+}
+@media(max-width:520px){
+  #game .sidecol #next,#game .sidecol #holdPreview{border-radius:9px!important}
+  #game #bbHeroSkillCard,
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard{
+    min-height:78px!important;grid-template-columns:34px minmax(0,1fr)!important;
+    padding:7px!important;gap:3px 7px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art,
+  html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .bb-hero-skill-art{
+    width:34px!important;height:34px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:8px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small{font-size:9px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:7px!important}
+}
+</style>
