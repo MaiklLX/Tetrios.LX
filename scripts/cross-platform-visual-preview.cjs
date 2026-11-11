@@ -413,7 +413,9 @@ const targets = [
     }
     // KT-555: verify the Godot-style vertical, bottom-to-top route without
     // changing the existing 30 planets per universe or their node identities.
-    await campaignPage.locator('#campaign .bb-galaxy-card').first().click();
+    // The atlas intentionally centers the currently active galaxy; the first
+    // galaxy may be outside the horizontal viewport. Click the visible current one.
+    await campaignPage.locator('#campaign .bb-galaxy-card.is-current').click();
     await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({state:'visible',timeout:10000});
     await campaignPage.waitForTimeout(350);
     const routeState=await campaignPage.evaluate(()=>{
