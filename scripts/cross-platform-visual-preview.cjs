@@ -426,6 +426,7 @@ const targets = [
         currentVisible:(()=>{const active=nodes.find(node=>node.classList.contains('is-current'));if(!active||!viewport)return false;const a=active.getBoundingClientRect(),v=viewport.getBoundingClientRect();return a.bottom>v.top&&a.top<v.bottom})(),
         scrollTop:viewport?.scrollTop||0,
         bossNumbers:nodes.filter(node=>node.classList.contains('is-boss')).map(node=>node.dataset.planetNumber),
+        flatMapState:(()=>{const sphere=document.querySelector('#campaign .bb-planet-node .bb-planet-sphere');const style=sphere?getComputedStyle(sphere):null;const canvas=document.querySelector('body>canvas.bb-galaxy-model-canvas');return {modelSlots:document.querySelectorAll('#campaign .bb-planet-node [data-universe-model]').length,sphereRadius:style?.borderRadius||null,sphereShadow:style?.boxShadow||null,canvasDisplay:canvas?getComputedStyle(canvas).display:'absent'}})(),
         trackDisplay:track?getComputedStyle(track).display:null,
         nodePosition:nodes[0]?getComputedStyle(nodes[0]).position:null,
         nodeSpread:(()=>{const xs=nodes.map(node=>node.getBoundingClientRect().left);return xs.length?Math.round(Math.max(...xs)-Math.min(...xs)):0})(),
@@ -443,6 +444,13 @@ const targets = [
     });
     if(routeState.orientation!=='vertical'||routeState.nodeCount!==30||routeState.bossCount!==3||!routeState.verticalOverflow||!routeState.firstAtBottom||!routeState.currentVisible||routeState.alignmentStatus!=='applied'||routeState.headingOrbWidth<60||!routeState.headingOrbBackground.includes('radial-gradient')||routeState.routePanelBorder==='rgba(0, 0, 0, 0)'||routeState.nodeSpread<routeState.viewportClientWidth*0.4){
       failures.push(target.name+': KT-555 vertical campaign route geometry/progression mismatch ('+JSON.stringify(routeState)+')');
+    }
+    if(routeState.flatMapState.modelSlots!==0||routeState.flatMapState.canvasDisplay!=='none'||routeState.flatMapState.sphereShadow.includes('inset')){
+      failures.push(target.name+': KT-632 planet route is not fully flat 2D ('+JSON.stringify(routeState.flatMapState)+')');
+    }
+    const bootState=await campaignPage.evaluate(()=>({ready:document.documentElement.classList.contains('bb-ui-ready'),visibility:getComputedStyle(document.body).visibility}));
+    if(!bootState.ready||bootState.visibility!=='visible'){
+      failures.push(target.name+': KT-632 initial UI boot gate did not release after styles loaded ('+JSON.stringify(bootState)+')');
     }
     const routeControls=campaignPage.locator('#campaign .bb-planet-controls');
     const routeViewport=campaignPage.locator('#campaign .bb-planet-viewport');
