@@ -17221,3 +17221,30 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
   #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:7px!important}
 }
 </style>
+
+
+<style id="bb-kt635-tablet-three-column-arena">
+/* KT-635: reserve real width for the board instead of squeezing it between oversized rails. */
+@media(min-width:600px) and (max-width:900px) and (orientation:portrait){
+  #game .playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(230px,1.1fr) minmax(140px,.7fr)!important;
+    column-gap:8px!important;
+  }
+  #game .playlayout>.gameleftcol{min-width:0!important;width:auto!important}
+  #game .playlayout>div:not(.gameleftcol):not(.sidecol){
+    min-width:0!important;display:flex!important;align-items:center!important;
+    justify-content:center!important;overflow:visible!important;
+  }
+  #game .playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    box-sizing:border-box!important;flex:0 0 auto!important;
+    width:min(100%,calc(70dvh * 10 / 23))!important;
+    height:auto!important;min-height:0!important;max-height:70dvh!important;
+    aspect-ratio:10/23!important;
+  }
+  #game .playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>.board{
+    width:100%!important;height:100%!important;aspect-ratio:10/23!important;
+  }
+  #game .playlayout>.sidecol{min-width:0!important;width:auto!important}
+}
+</style>
