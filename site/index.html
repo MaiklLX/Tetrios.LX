@@ -17248,3 +17248,28 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
   #game .playlayout>.sidecol{min-width:0!important;width:auto!important}
 }
 </style>
+
+
+<style id="bb-kt636-tablet-arena-grid-specificity">
+@media(min-width:600px) and (max-width:900px) and (orientation:portrait){
+  #game.unified-game-layout .playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(180px,.85fr) minmax(250px,1.1fr) minmax(140px,.65fr)!important;
+    column-gap:8px!important;
+  }
+  #game.unified-game-layout .playlayout>.gameleftcol{width:auto!important;min-width:0!important;max-width:none!important}
+  #game.unified-game-layout .playlayout>div:not(.gameleftcol):not(.sidecol){
+    min-width:0!important;width:auto!important;display:flex!important;
+    align-items:center!important;justify-content:center!important;
+  }
+  #game.unified-game-layout .playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(70dvh * 10 / 23))!important;
+    height:auto!important;max-height:70dvh!important;aspect-ratio:10/23!important;
+  }
+  #game.unified-game-layout .playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>#board,
+  #game.unified-game-layout #board{
+    width:100%!important;height:auto!important;aspect-ratio:10/23!important;
+  }
+  #game.unified-game-layout .playlayout>.sidecol{width:auto!important;min-width:0!important}
+}
+</style>
