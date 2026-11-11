@@ -7220,6 +7220,35 @@ function buildMap() {
     viewport.appendChild(track);
     g.appendChild(viewport);
 
+    // KT-627 · Clear, one-step navigation across the long planet route.
+    const controls = document.createElement('div');
+    controls.className = 'bb-planet-controls';
+    controls.innerHTML =
+      '<button type="button" class="bb-planet-step" data-step="-1" aria-label="Предыдущие планеты" title="Назад по маршруту">‹</button>' +
+      '<span class="bb-planet-range-label">ПЛАНЕТЫ ' + b.start + '–' + b.end + '</span>' +
+      '<button type="button" class="bb-planet-current" aria-label="Перейти к доступной планете">К ДОСТУПНОЙ</button>' +
+      '<button type="button" class="bb-planet-step" data-step="1" aria-label="Следующие планеты" title="Вперёд по маршруту">›</button>';
+    const stepButtons = controls.querySelectorAll('[data-step]');
+    const currentButton = controls.querySelector('.bb-planet-current');
+    const activePlanet = track.querySelector('.is-current');
+    currentButton.disabled = !activePlanet;
+    currentButton.addEventListener('click', () => {
+      if (!activePlanet) return;
+      const left = activePlanet.offsetLeft - Math.max(0, (viewport.clientWidth - activePlanet.offsetWidth) / 2);
+      viewport.scrollTo({ left, behavior: 'smooth' });
+    });
+    stepButtons.forEach(button => button.addEventListener('click', () => {
+      viewport.scrollBy({ left: Number(button.dataset.step) * Math.max(174, viewport.clientWidth * .72), behavior: 'smooth' });
+    }));
+    const updatePlanetControls = () => {
+      const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      controls.querySelector('[data-step="-1"]').disabled = viewport.scrollLeft <= 2;
+      controls.querySelector('[data-step="1"]').disabled = viewport.scrollLeft >= maxScroll - 2;
+    };
+    viewport.addEventListener('scroll', updatePlanetControls, { passive: true });
+    g.appendChild(controls);
+    requestAnimationFrame(updatePlanetControls);
+
     const hint = document.createElement('div');
     hint.className = 'bb-planet-hint';
     hint.textContent = 'ТВОЙ МАРШРУТ · ОТКРЫВАЙ НОВЫЕ ОСТРОВА И МИРЫ';
@@ -13532,6 +13561,13 @@ body .app{background:transparent!important;background-color:transparent!importan
 #campaign .bb-planet-node.is-locked{opacity:.62!important;filter:saturate(.48)!important}
 #campaign .bb-planet-hint{padding:9px 12px!important;border:1px solid #8bd8ca33!important;border-radius:13px!important;background:#173c4eaa!important;color:#b7ddd6!important;font-size:8px!important;letter-spacing:.1em!important}
 @media(max-width:520px){#campaign .bb-galaxy-card{width:min(78vw,270px)!important;min-height:310px!important;padding:13px!important}#campaign .bb-galaxy-art{height:158px!important}#campaign .bb-galaxy-model-slot{width:100px!important;height:100px!important}#campaign .bb-planet-node{width:96px!important;min-width:96px!important}#campaign .bb-planet-sphere{width:66px!important;height:66px!important}}
+#campaign .bb-planet-controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;flex-wrap:wrap!important;padding:3px 0 5px!important}
+#campaign .bb-planet-controls button{min-height:38px!important;padding:0 13px!important;border:1px solid #8ed9cd66!important;border-radius:13px!important;background:linear-gradient(145deg,#2b6170,#1b4358)!important;color:#f4fffa!important;font-size:10px!important;font-weight:900!important;letter-spacing:.06em!important;box-shadow:0 4px 0 #0b2a3c!important}
+#campaign .bb-planet-controls button:disabled{opacity:.34!important;cursor:default!important;box-shadow:none!important}
+#campaign .bb-planet-controls button:focus-visible{outline:3px solid #ffe09a!important;outline-offset:3px!important}
+#campaign .bb-planet-range-label{flex:1 1 100%!important;text-align:center!important;color:#b8d9d6!important;font-size:8px!important;font-weight:900!important;letter-spacing:.14em!important}
+#campaign .bb-planet-current{background:linear-gradient(145deg,#f6dda0,#e6b85f)!important;border-color:#ffe7b2!important;color:#284657!important}
+@media(max-width:520px){#campaign .bb-planet-controls{gap:7px!important}#campaign .bb-planet-controls button{min-height:40px!important;padding:0 11px!important}#campaign .bb-planet-range-label{order:-1}}
 @media(prefers-reduced-motion:reduce){#campaign .bb-planet-sphere{animation:none!important}}
 </style>
 
