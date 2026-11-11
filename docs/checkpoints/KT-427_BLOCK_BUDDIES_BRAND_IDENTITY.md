@@ -50,3 +50,14 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - Added a `ResizeObserver` for the arena frame and utility rail so the measured scale is recalculated when the hidden game screen becomes measurable or its layout changes. The observer does not alter gameplay, persistence or user data.
 - Extended the cross-platform geometry report to record the rail's untransformed height, explicit measured scale and computed transform. The 375×812 regression now also requires an explicit measured scale, in addition to the existing 2px alignment tolerance.
 - Fresh Mobile Arena and Cross-platform runs on the new commit are required before this checkpoint can be marked passed. Browser previews remain distinct from physical-device validation; no merge, deployment, APK build/release or user-data mutation.
+
+
+## 2026-11-11 — KT-427.8: correct nested arena-frame selector
+
+- Rechecked PR #76 at code HEAD `67bf06715cf6566ec3f6360b257062d05163b1be`. Mobile Arena Visual Preview run [42812588276](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42812588276) passed. Cross-platform Visual Preview run [42812588271](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42812588271) failed only at iOS WebKit 375×812: arena frame 494.75px, side rail 483.32px, measured scale missing. The report had no page or console errors; phone landscape guard was visible.
+- Downloaded and inspected artifact [13763762991](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42812588271/artifacts/13763762991), including 375×812 and 412×915 arena screenshots, the geometry report, and the Android Chromium landscape guard. The 375px frame is nested inside an extra wrapper: `.playlayout > div > .boardframe`, while the measurement and ResizeObserver used the incorrect direct-child selector `.playlayout > .boardframe`. As a result, the frame lookup returned null and the measured-scale assignment never ran; the CSS fallback `.9533` remained active.
+- Fixed both the live measurement and ResizeObserver target selectors to `.playlayout .boardframe` in `site/index.html`. This is a selector-only fix; it does not change gameplay, layout dimensions, controls, orientation behavior, persistence or user data.
+- Code fix commit: `969439e69f4ef7f660ca5b4be484e680467ba8cf`.
+- At checkpoint time, no workflow run or combined status was yet returned for the new code SHA. **Do not mark KT-427.8 passed until a fresh Mobile Arena and Cross-platform run for the exact SHA is green.**
+- PR #76 remains Draft/open. Its base has advanced substantially: compare against current `main` reports 51 commits ahead and 73 behind, with mergeability false. Do not merge or mechanically rebase this branch; reconcile the stacked history and overlapping `site/index.html` work separately.
+- Browser previews remain distinct from physical-device validation. No merge, deployment, APK build/release or user-data mutation.
