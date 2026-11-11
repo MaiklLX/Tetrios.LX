@@ -17312,3 +17312,61 @@ html body .app section#game.screen .playlayout aside.sidecol #bbHeroSkillCard .b
   #game.unified-game-layout .sidecol>.drop-card{border-radius:10px!important}
 }
 </style>
+
+
+<style id="bb-kt639-arena-hud-specificity-fix">
+/* KT-639: target the real #game.screen root; the legacy unified-game-layout
+   class is not present in the live DOM and therefore cannot style these cards. */
+#game.screen .playlayout>.sidecol>.sidecard,
+#game.screen .playlayout>.sidecol>.drop-card{
+  background:linear-gradient(145deg,#1b4960 0%,#153b53 58%,#102f46 100%)!important;
+  border:1px solid #4d99a7!important;
+  border-radius:13px!important;
+  color:#eaf7f1!important;
+  box-shadow:inset 0 1px #d9f5e51c,0 3px 0 #0a2638!important;
+}
+#game.screen .playlayout>.sidecol>.sidecard>label,
+#game.screen .playlayout>.sidecol>.drop-card>label{
+  color:#bce8dd!important;font-size:9px!important;letter-spacing:.08em!important;
+}
+#game.screen .playlayout>.sidecol>.sidecard.charge-card{
+  background:linear-gradient(145deg,#1d5263,#173d55 62%,#102f46)!important;
+  border-color:#6aaeb0!important;
+}
+#game.screen .playlayout>.sidecol>.sidecard #next,
+#game.screen .playlayout>.sidecol>.sidecard.hold-card #holdPreview{
+  background:linear-gradient(145deg,#0d2b40,#102f45)!important;
+  border:1px solid #4d91a0!important;border-radius:12px!important;
+  box-shadow:inset 0 2px 8px #061b2b99,0 2px 0 #092638!important;
+}
+#game.screen .playlayout>.sidecol>.sidecard.hold-card .hold-empty{
+  color:#a9d8d1!important;text-shadow:none!important;
+}
+#game.screen .playlayout>.sidecol>.sidecard.hold-card #holdBtn{
+  background:linear-gradient(180deg,#347f91,#22596f)!important;
+  color:#effaf6!important;border:1px solid #80c5c3!important;
+  box-shadow:0 2px 0 #12394a!important;
+}
+#game.screen .playlayout>.sidecol>.sidecard .boosticon{color:#f0d99c!important}
+#game.screen .playlayout>.sidecol>.sidecard .boostname{color:#e8f4e9!important}
+#game.screen .playlayout>.sidecol>.sidecard .boostnum{color:#a9ddd2!important}
+#game.screen .playlayout>.sidecol>.sidecard .charge-caption,
+#game.screen .playlayout>.sidecol>.sidecard .run-timer{color:#c6e8e2!important}
+#game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy strong,
+#game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy small,
+#game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em{
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
+  overflow-wrap:anywhere!important;
+}
+#game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy strong{font-size:9px!important}
+#game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy small{font-size:10px!important;line-height:1.25!important}
+#game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em{font-size:8px!important}
+@media(max-width:520px){
+  #game.screen .playlayout>.sidecol>.sidecard,
+  #game.screen .playlayout>.sidecol>.drop-card{border-radius:10px!important}
+  #game.screen .playlayout>.sidecol>#bbHeroSkillCard{min-height:88px!important}
+  #game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy strong{font-size:8px!important}
+  #game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy small{font-size:9px!important}
+  #game.screen .playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em{font-size:7px!important}
+}
+</style>
