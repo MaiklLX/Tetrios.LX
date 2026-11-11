@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><script>
+<meta charset="utf-8"><style id="bb-kt632-critical-boot">html:not(.bb-ui-ready) body{visibility:hidden!important}</style><script>
   // Always start a fresh/reloaded page at the top instead of restoring an old scroll offset.
   if('scrollRestoration' in history) history.scrollRestoration='manual';
   const bbForcePageTop=()=>{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body&&(document.body.scrollTop=0);};
@@ -7628,8 +7628,8 @@ function buildMap() {
       planet.style.setProperty('--planet-hue', String((b.id * 31 + local * 13) % 360));
       planet.style.setProperty('--planet-delay', (local % 9) * -0.23 + 's');
       planet.innerHTML =
-        '<span class="bb-planet-orbit"></span>' +
-        '<span class="bb-planet-sphere" data-universe-model="planet" data-universe-variant="' + (b.id * planetCount + local + 1) + '"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '♛' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
+        '<span class="bb-planet-orbit" aria-hidden="true"></span>' +
+        '<span class="bb-planet-sphere"><span class="bb-planet-fallback">' + (open ? (done ? '✓' : (local % 10 === 9 ? '♛' : planetEmojis[(b.id + local) % planetEmojis.length])) : '🔒') + '</span></span>' +
         '<strong>' + String(n).padStart(3,'0') + '</strong>' +
         '<small>' + (done ? 'ПРОЙДЕНА' : n === current ? 'ДОСТУПНА' : 'ЗАКРЫТА') + '</small>';
       planet.onclick = () => {
@@ -17038,4 +17038,86 @@ body .app{min-height:100dvh;background:radial-gradient(ellipse at 14% 7%,#65b8aa
   #campaign .bb-planet-viewport{height:min(56dvh,520px)!important;min-height:280px!important}
 }
 </style>
+
+<style id="bb-kt632-flat-planet-map">
+/* Schematic expedition map: flat symbols, crisp route, no simulated 3D. */
+body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!important;opacity:0!important}
+#campaign .bb-planet-viewport{
+  background:linear-gradient(180deg,#eaf7f4 0%,#e3f1f5 52%,#edf6f0 100%)!important;
+  border:1px solid #b5d2d4!important;border-radius:20px!important;
+  box-shadow:inset 0 0 0 1px #ffffffb8,0 7px 18px #244f6120!important;
+}
+#campaign .bb-planet-track{isolation:isolate!important}
+#campaign .bb-treasure-trail .bb-trail-glow{stroke:#9fc9c9!important;stroke-width:13!important;opacity:.28!important;filter:none!important}
+#campaign .bb-treasure-trail .bb-trail-shadow{stroke:#6f9fa8!important;stroke-width:3!important;opacity:.75!important;filter:none!important}
+#campaign .bb-treasure-trail .bb-trail-dashes{stroke:#f8ffff!important;stroke-width:2!important;stroke-dasharray:3 9!important;opacity:.9!important;filter:none!important}
+#campaign .bb-planet-node{
+  width:84px!important;height:96px!important;min-width:84px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:3px!important;padding:0!important;overflow:visible!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;filter:none!important;animation:none!important;
+  color:#31576b!important;scroll-snap-align:center!important;
+}
+#campaign .bb-planet-node:hover{transform:translateY(-2px)!important}
+#campaign .bb-planet-orbit{display:none!important}
+#campaign .bb-planet-node .bb-planet-sphere,
+#campaign .bb-planet-node .bb-planet-sphere.is-loaded{
+  width:42px!important;height:42px!important;flex:0 0 42px!important;
+  display:grid!important;place-items:center!important;overflow:visible!important;
+  border:2px solid #6c9eaa!important;border-radius:50%!important;
+  background:#c4e7e4!important;box-shadow:0 3px 0 #83b6b5!important;
+  transform:none!important;filter:none!important;animation:none!important;
+}
+#campaign .bb-planet-node .bb-planet-fallback{
+  display:grid!important;place-items:center!important;
+  width:100%!important;height:100%!important;font-size:19px!important;
+  line-height:1!important;filter:none!important;text-shadow:none!important;
+}
+#campaign .bb-planet-node strong{
+  margin-top:1px!important;color:#31576b!important;
+  font-size:10px!important;line-height:1.1!important;letter-spacing:.1em!important;
+  text-shadow:none!important;font-weight:900!important;
+}
+#campaign .bb-planet-node small{
+  color:#66858d!important;font-size:7px!important;line-height:1.1!important;
+  letter-spacing:.08em!important;text-shadow:none!important;font-weight:800!important;
+}
+#campaign .bb-planet-node.is-current .bb-planet-sphere{
+  border:3px solid #278f9d!important;background:#b7e8df!important;
+  box-shadow:0 0 0 4px #ffffff,0 0 0 6px #64b9b3,0 3px 0 #4c9998!important;
+}
+#campaign .bb-planet-node.is-current strong{color:#167a82!important}
+#campaign .bb-planet-node.is-cleared .bb-planet-sphere{
+  background:#d8efd2!important;border-color:#77b58c!important;
+  box-shadow:0 3px 0 #8ebc9b!important;
+}
+#campaign .bb-planet-node.is-locked{opacity:.68!important;filter:none!important}
+#campaign .bb-planet-node.is-locked .bb-planet-sphere{
+  background:#e1e9e9!important;border-color:#b5c8c9!important;
+  box-shadow:0 3px 0 #bdcecf!important;
+}
+#campaign .bb-planet-node.is-boss .bb-planet-sphere{
+  border:3px solid #d78a72!important;border-radius:13px!important;
+  background:#f6d9ca!important;box-shadow:0 3px 0 #c98772!important;
+}
+#campaign .bb-planet-node.is-boss strong{color:#a95f53!important}
+#campaign .bb-planet-node.is-milestone .bb-planet-sphere{
+  border-color:#d2a84e!important;background:#fae9b9!important;
+  box-shadow:0 3px 0 #c5a25a!important;
+}
+#campaign .bb-planet-heading{
+  background:linear-gradient(110deg,#e8f5ef,#e6f1f8)!important;
+  border:1px solid #bfd9d6!important;border-radius:17px!important;
+  box-shadow:none!important;color:#31576b!important;
+}
+#campaign .bb-planet-heading strong{color:#28566a!important;text-shadow:none!important}
+#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span{color:#66858d!important}
+#campaign .bb-planet-heading .bb-atlas-status-legend{color:#547982!important}
+@media(max-width:520px){
+  #campaign .bb-planet-node{width:78px!important;height:90px!important;min-width:78px!important}
+  #campaign .bb-planet-node .bb-planet-sphere{width:38px!important;height:38px!important;flex-basis:38px!important}
+}
+</style>
+<script id="bb-kt632-ui-ready">document.documentElement.classList.add('bb-ui-ready');</script>
 </body></html>
