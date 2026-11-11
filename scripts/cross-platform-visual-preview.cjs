@@ -7,8 +7,10 @@ fs.mkdirSync(outputDir, { recursive: true });
 // Five representative device profiles keep the full interaction suite within the
 // 25-minute Actions budget while retaining desktop, iOS, Android, portrait and landscape coverage.
 const targets = [
-  { engine: 'chromium', name: 'desktop-1440x900', width: 1440, height: 900, mobile: false },
+  // Run the primary phone profile first so a desktop-only layout regression
+  // cannot prevent us from capturing the mobile menu and arena interaction.
   { engine: 'webkit', name: 'ios-webkit-390x844', width: 390, height: 844, mobile: true },
+  { engine: 'chromium', name: 'desktop-1440x900', width: 1440, height: 900, mobile: false },
   { engine: 'webkit', name: 'ios-webkit-landscape-844x390', width: 844, height: 390, mobile: true },
   { engine: 'chromium', name: 'android-chromium-393x873', width: 393, height: 873, mobile: true },
   { engine: 'chromium', name: 'android-tablet-chromium-768x1024', width: 768, height: 1024, mobile: true },
