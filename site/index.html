@@ -18101,3 +18101,40 @@ body>canvas.bb-galaxy-model-canvas,
   }
 }
 </style>
+\n
+<style id="bb-kt659-final-specificity-override">
+/* KT-659: out-rank the later KT-647 triple-dashboard selectors that clipped
+   the canvas to the hero card and forced absolute positioning. */
+@media(max-width:600px){
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard{
+    isolation:isolate!important;position:relative!important;background:transparent!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero{
+    position:static!important;isolation:auto!important;z-index:auto!important;
+    overflow:visible!important;background:transparent!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero .hero-arena-canvas{
+    display:block!important;visibility:visible!important;
+    position:fixed!important;inset:0!important;
+    width:100vw!important;height:100dvh!important;
+    z-index:0!important;opacity:.58!important;pointer-events:none!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero>*:not(.hero-arena-canvas),
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>#bbHomeProfile,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.sectionlabel,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.modes,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.bb-home-collection,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>#dailyQuestsPanel,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>#bbVisitStreak,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.currency-panel,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.bottomstats,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>button,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>div:not(.hero){
+    position:relative!important;z-index:1!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard button,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard a{
+    pointer-events:auto!important;touch-action:manipulation!important;
+  }
+}
+</style>
