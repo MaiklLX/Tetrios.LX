@@ -7651,40 +7651,9 @@ function buildMap() {
     viewport.appendChild(track);
     g.appendChild(viewport);
 
-    // KT-629 · Accessible controls for the vertical expedition route.
-    const routeControls = document.createElement('div');
-    routeControls.className = 'bb-planet-controls';
-    routeControls.innerHTML =
-      '<button type="button" data-route-step="-1" aria-label="Подняться выше по маршруту" title="Выше">↑</button>' +
-      '<span class="bb-planet-route-progress">ПЛАНЕТА ' + String(current).padStart(3,'0') + ' / ' + String(bbTotalNodes).padStart(3,'0') + '</span>' +
-      '<button type="button" class="bb-planet-route-current" aria-label="Вернуться к доступной планете">К ДОСТУПНОЙ</button>' +
-      '<button type="button" data-route-step="1" aria-label="Спуститься ниже по маршруту" title="Ниже">↓</button>';
-    const routeActive = track.querySelector('.is-current');
-    const routeUp = routeControls.querySelector('[data-route-step="-1"]');
-    const routeDown = routeControls.querySelector('[data-route-step="1"]');
-    const routeCurrent = routeControls.querySelector('.bb-planet-route-current');
-    const updateRouteControls = () => {
-      const maxTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-      routeUp.disabled = viewport.scrollTop <= 2;
-      routeDown.disabled = viewport.scrollTop >= maxTop - 2;
-    };
-    routeUp.addEventListener('click', () => viewport.scrollBy({top:-Math.max(150, viewport.clientHeight * .72),behavior:'smooth'}));
-    routeDown.addEventListener('click', () => viewport.scrollBy({top:Math.max(150, viewport.clientHeight * .72),behavior:'smooth'}));
-    routeCurrent.disabled = !routeActive;
-    routeCurrent.addEventListener('click', () => {
-      if (!routeActive) return;
-      const maxTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-      const targetTop = Math.max(0, Math.min(maxTop, routeActive.offsetTop + routeActive.offsetHeight / 2 - viewport.clientHeight * .58));
-      viewport.scrollTo({top:targetTop,behavior:'smooth'});
-    });
-    viewport.addEventListener('scroll', updateRouteControls, {passive:true});
-    g.appendChild(routeControls);
-    requestAnimationFrame(updateRouteControls);
+    // KT-631 · The route itself is the navigation surface.
+    // Keep native vertical scrolling (wheel, trackpad and touch); no arrow toolbar.
 
-    const hint = document.createElement('div');
-    hint.className = 'bb-planet-hint';
-    hint.textContent = 'ПУТЬ ПЕРВООТКРЫВАТЕЛЯ · ПРОДОЛЖАЙ ДВИЖЕНИЕ ПО ПУНКТИРУ';
-    g.appendChild(hint);
     let alignmentFrames = 0;
     const alignCurrentPlanet = () => {
       const active = track.querySelector('.is-current');
@@ -17045,5 +17014,28 @@ body .app{min-height:100dvh;background:radial-gradient(ellipse at 14% 7%,#65b8aa
 #campaign .bb-planet-controls .bb-planet-route-current{background:linear-gradient(145deg,#ffe6a7,#e8b85d)!important;border-color:#fff0c7!important;color:#274866!important}
 #campaign .bb-planet-route-progress{flex:1 1 100%!important;text-align:center!important;color:#c8f0ff!important;font-size:8px!important;font-weight:900!important;letter-spacing:.15em!important}
 @media(max-width:520px){#campaign .bb-planet-controls{gap:7px!important;padding:5px!important}#campaign .bb-planet-controls button{min-height:40px!important;padding:0 11px!important}}
+</style>
+
+<style id="bb-kt631-unified-planet-navigation">
+/* The expedition map is one continuous surface, not a toolbar plus a map. */
+#campaign .bb-planet-controls{display:none!important}
+#campaign .bb-planet-viewport{
+  height:min(58dvh,560px)!important;
+  min-height:300px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  scroll-snap-type:y proximity!important;
+  scroll-behavior:smooth!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#8fe8ff55 transparent!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  touch-action:pan-y!important;
+}
+#campaign .bb-planet-track{width:100%!important;min-width:100%!important}
+#campaign .bb-planet-node{touch-action:pan-y!important}
+@media(max-width:420px){
+  #campaign .bb-planet-viewport{height:min(56dvh,520px)!important;min-height:280px!important}
+}
 </style>
 </body></html>
