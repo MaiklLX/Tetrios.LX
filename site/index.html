@@ -1,7 +1,37 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><style id="bb-kt632-critical-boot">html:not(.bb-ui-ready) body{visibility:hidden!important}</style><script>
+<meta charset="utf-8"><style id="bb-kt632-critical-boot">html:not(.bb-ui-ready) body{visibility:hidden!important}
+/* KT-643: collection is a first-class screen, not a modal over the campaign map. */
+#collection{max-width:760px!important;padding-bottom:24px}
+#collection .bb-collection-modal{width:100%;max-width:none;margin:0!important;max-height:none;overflow:visible}
+#collection .bb-shelf-stage{max-height:none}
+#collection .bb-shelf-modal>.action{width:100%}
+.bb-home-collection{
+ display:flex;align-items:center;gap:12px;width:100%;margin:12px 0 18px;padding:13px 14px;
+ text-align:left;border:1px solid #579b9a;border-radius:17px;
+ background:linear-gradient(120deg,#1c4855,#123444 72%,#102b3a);
+ color:#eaf6ef;box-shadow:0 4px 0 #092638,inset 0 1px #ffffff18;
+}
+.bb-home-collection-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;
+ border-radius:13px;background:#e4c47720;border:1px solid #d7b66b66;color:#f5d78c;font-size:25px}
+.bb-home-collection-copy{display:grid;gap:4px;min-width:0;flex:1}
+.bb-home-collection-copy strong{font-size:12px;letter-spacing:.12em;color:#ffe3a0}
+.bb-home-collection-copy small{font-size:10px;line-height:1.35;color:#b9d8d6}
+.bb-home-collection-count{font-size:12px;font-weight:900;white-space:nowrap;color:#8fe0d1;font-variant-numeric:tabular-nums}
+.bb-home-collection-arrow{font-size:25px;color:#9bd8d0}
+#collection .screenhead{margin-bottom:14px}
+#collection .bb-shelf-modal header h3{font-size:clamp(22px,5vw,30px)}
+#collection .bb-shelf-stage{overflow:hidden}
+@media(max-width:420px){
+ #collection .bb-shelf-modal{padding:14px!important}
+ #collection .bb-shelf-item{min-height:112px}
+ .bb-home-collection{gap:9px;padding:11px}
+ .bb-home-collection-copy strong{font-size:11px}
+ .bb-home-collection-copy small{font-size:9px}
+ .bb-home-collection-count{font-size:10px}
+}
+</style><script>
   // Always start a fresh/reloaded page at the top instead of restoring an old scroll offset.
   if('scrollRestoration' in history) history.scrollRestoration='manual';
   const bbForcePageTop=()=>{window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body&&(document.body.scrollTop=0);};
@@ -5793,7 +5823,13 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
     Выбрать этого героя
   </button>
 </section>
-<section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" id="campaignBack" aria-label="Назад">‹</button><div><h2>Атлас вселенных</h2><p>Спираль миров · исследуй галактики и планеты</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждая покорённая планета открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ ПЛАНЕТЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div>
+<section id="campaign" class="screen" hidden><div class="screenhead"><button class="back" id="campaignBack" aria-label="Назад">‹</button><div><h2>Атлас вселенных</h2><p>Спираль миров · исследуй галактики и планеты</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol">🌌</div><div><h3>Пояс забытого света</h3><p>Каждая покорённая планета открывает путь глубже в пустоту.</p></div></div><div class="challengegoal"><span>ОТКРЫТЫЕ ПЛАНЕТЫ</span><strong id="campaignProgress">1 / ∞</strong></div></div><div class="mapgrid" id="mapgrid"></div><button class="action" id="campaignStart">Войти в сектор</button></section><section id="collection" class="screen" hidden>
+  <div class="screenhead">
+    <button class="back" id="bbCollectionBack" aria-label="Назад">‹</button>
+    <div><h2>Моя коллекция</h2><p>Реликвии, трофеи и знаки побед</p></div>
+  </div>
+  <div id="bbCollectionScreenContent"></div>
+</section><section id="daily" class="screen" hidden><div class="screenhead"><button class="back" data-home>‹</button><div><h2>Ежедневный вызов</h2><p id="daydate">Сигнал обновлён</p></div></div><div class="challengebox"><div class="challengehero"><div class="symbol" id="dailySymbol">☼</div><div><h3 id="dailyTitle">Солнечный резонанс</h3><p id="dailyDesc">Очисти линии и удержи ритм.</p></div></div><div class="challengegoal"><span>ЦЕЛЬ ДНЯ</span><strong id="dailyGoal">12 линий</strong></div></div><div class="challengebox"><div class="eyebrow">ПРАВИЛО ДНЯ</div><p id="dailyRule" style="font-size:13px;line-height:1.6;color:#b6c2df;margin-bottom:0">Каждая четвёртая линия даёт дополнительный заряд.</p></div>
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
@@ -6442,7 +6478,7 @@ function show(id){
   const changed = bbLastShownScreen !== id;
   bbLastShownScreen = id;
   if (changed && id !== 'game' && typeof bbRestartMenuMusic === 'function') bbRestartMenuMusic();
-  ['menu','shopScreen','heroes','campaign','daily','game'].forEach(x=>$(x).hidden=x!==id);
+  ['menu','shopScreen','heroes','campaign','collection','daily','game'].forEach(x=>$(x).hidden=x!==id);
   $(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');
   if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
   if(typeof bbSyncMusic==='function')bbSyncMusic()
@@ -6896,6 +6932,7 @@ function bbGetCampaignCollectionItems() {
   items.push({id:'campaign_crown',kind:'crown',title:'Корона дальнего пути',description:'Главная реликвия за завершение всех 360 планет.',requirement:360,accent:'#ffd05a',symbol:'♕',unlocked:completed>=360});
   return items;
 }
+let bbCollectionReturnScreen='menu';
 function bbOpenCampaignCollection(selectedId, pageIndex=0) {
   const items=bbGetCampaignCollectionItems();
   const unlocked=items.filter(item=>item.unlocked).length;
@@ -6907,23 +6944,26 @@ function bbOpenCampaignCollection(selectedId, pageIndex=0) {
   const visible=items.slice(page*pageSize,(page+1)*pageSize);
   const shelves=[0,1,2].map(row=>'<div class="bb-real-shelf-row"><div class="bb-real-shelf-items">'+visible.slice(row*3,row*3+3).map(item=>'<button type="button" class="bb-shelf-item '+(item.id===selected.id?'is-selected ':'')+(item.unlocked?'is-unlocked':'is-locked')+'" data-bb-collection-id="'+item.id+'" aria-label="'+(item.unlocked?'Получено: ':'Заблокировано: ')+item.title+'"><span class="bb-shelf-art" style="--relic-accent:'+item.accent+'">'+bbCampaignCollectionEmblem(item)+'</span><span class="bb-shelf-name">'+(item.kind==='relic'?'РЕЛИКВИЯ':item.kind==='boss'?'БОСС':'ТРОФЕЙ')+'</span><span class="bb-shelf-state">'+(item.unlocked?'✓':'🔒')+'</span></button>').join('')+'</div><div class="bb-real-shelf-plank"></div></div>').join('');
   const detail='<div class="bb-shelf-detail" style="--relic-accent:'+selected.accent+'"><div class="bb-shelf-detail-art">'+bbCampaignCollectionEmblem(selected)+'</div><div><small>'+(selected.kind==='relic'?'РЕЛИКВИЯ ВСЕЛЕННОЙ '+String(selected.universe).padStart(2,'0'):selected.kind==='boss'?'ЗНАК ПОБЕДЫ НАД БОССОМ':'ГЛАВНАЯ НАГРАДА')+' · '+(selected.unlocked?'ПОЛУЧЕНО':'ЕЩЁ ВПЕРЕДИ')+'</small><strong>'+selected.title+'</strong><span>'+selected.description+'</span><em>УСЛОВИЕ: '+(selected.kind==='crown'?'ПОКОРИТЬ ВСЕ 360 ПЛАНЕТ':selected.kind==='relic'?'ПОКОРИТЬ ВСЕ 30 ПЛАНЕТ ВСЕЛЕННОЙ':'ПОБЕДИТЬ НА ПЛАНЕТЕ '+String(selected.requirement).padStart(3,'0'))+'</em></div></div>';
-  bbModal('<section class="bb-collection-modal bb-shelf-modal"><header><div class="eyebrow">АТЛАС ДОСТИЖЕНИЙ</div><h3>★ ПОЛКА НАГРАД</h3><p>СОБРАНО · '+String(unlocked).padStart(2,'0')+' / 49</p><div class="bb-collection-legend"><span>● РЕЛИКВИИ</span><span>● БОССЫ</span><span>● КОРОНА</span></div></header><div class="bb-shelf-stage"><div class="bb-shelf-page">'+shelves+'</div></div><nav class="bb-shelf-nav" aria-label="Полки наград"><button type="button" id="bbShelfPrev" '+(page===0?'disabled':'')+' aria-label="Предыдущие полки">‹</button><span>ПОЛКИ '+(page+1)+' / '+pageCount+' <small>· листай по горизонтали</small></span><button type="button" id="bbShelfNext" '+(page>=pageCount-1?'disabled':'')+' aria-label="Следующие полки">›</button></nav>'+detail+'<button type="button" class="action secondary" id="bbCampaignCollectionClose">ЗАКРЫТЬ</button></section>');
-  const rail=$('modal');
+  $('bbCollectionScreenContent').innerHTML='<section class="bb-collection-modal bb-shelf-modal"><header><div class="eyebrow">АТЛАС ДОСТИЖЕНИЙ</div><h3>★ ПОЛКА НАГРАД</h3><p>СОБРАНО · '+String(unlocked).padStart(2,'0')+' / 49</p><div class="bb-collection-legend"><span>● РЕЛИКВИИ</span><span>● БОССЫ</span><span>● КОРОНА</span></div></header><div class="bb-shelf-stage"><div class="bb-shelf-page">'+shelves+'</div></div><nav class="bb-shelf-nav" aria-label="Полки наград"><button type="button" id="bbShelfPrev" '+(page===0?'disabled':'')+' aria-label="Предыдущие полки">‹</button><span>ПОЛКИ '+(page+1)+' / '+pageCount+' <small>· листай по горизонтали</small></span><button type="button" id="bbShelfNext" '+(page>=pageCount-1?'disabled':'')+' aria-label="Следующие полки">›</button></nav>'+detail+'<button type="button" class="action secondary" id="bbCampaignCollectionClose">ЗАКРЫТЬ</button></section>');
+  const rail=$('bbCollectionScreenContent');
+  show('collection');
   rail.querySelectorAll('[data-bb-collection-id]').forEach(button=>button.addEventListener('click',()=>bbOpenCampaignCollection(button.dataset.bbCollectionId)));
   $('bbShelfPrev').onclick=()=>bbOpenCampaignCollection(items[ Math.max(0,page*pageSize-1) ].id);
   $('bbShelfNext').onclick=()=>bbOpenCampaignCollection(items[Math.min(items.length-1,(page+1)*pageSize)].id);
-  $('bbCampaignCollectionClose').onclick=closeOverlay;
+  $('bbCampaignCollectionClose').onclick=()=>show(bbCollectionReturnScreen);
 }
-const bbCampaignStartButton=$('campaignStart');
-if(bbCampaignStartButton&&!$('bbOpenCampaignCollection')){
-  bbCampaignStartButton.insertAdjacentHTML('afterend','<button type="button" class="action secondary" id="bbOpenCampaignCollection">★ ПОЛКА НАГРАД · 00 / 49</button>');
-  $('bbOpenCampaignCollection').onclick=()=>bbOpenCampaignCollection();
+const bbHomeProfileNode=$('bbHomeProfile');
+if(bbHomeProfileNode&&!$('bbHomeCollectionCard')){
+  bbHomeProfileNode.insertAdjacentHTML('afterend',
+    '<button type="button" class="bb-home-collection" id="bbHomeCollectionCard"><span class="bb-home-collection-icon">✦</span><span class="bb-home-collection-copy"><strong>МОЯ КОЛЛЕКЦИЯ</strong><small>Реликвии, трофеи и награды за победы</small></span><span class="bb-home-collection-count" id="bbHomeCollectionCount">00 / 49</span><span class="bb-home-collection-arrow">›</span></button>');
+  $('bbHomeCollectionCard').onclick=()=>{bbCollectionReturnScreen='menu';bbOpenCampaignCollection();};
 }
+$('bbCollectionBack').onclick=()=>show(bbCollectionReturnScreen);
 function bbUpdateCampaignCollectionButton(){
-  const button=$('bbOpenCampaignCollection');
-  if(!button)return;
   const count=bbGetCampaignCollectionItems().filter(item=>item.unlocked).length;
-  button.textContent='★ ПОЛКА НАГРАД · '+String(count).padStart(2,'0')+' / 49';
+  const label=String(count).padStart(2,'0')+' / 49';
+  const homeCount=$('bbHomeCollectionCount');
+  if(homeCount)homeCount.textContent=label;
 }
 bbUpdateCampaignCollectionButton();
 
