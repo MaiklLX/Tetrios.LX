@@ -7087,15 +7087,15 @@ function buildMap() {
           '<div class="bb-galaxy-model-slot" data-universe-model="' + universeModelId + '"><span class="bb-galaxy-model-fallback">' + (unlocked ? b.icon : '🔒') + '</span></div>' +
           '<i class="bb-galaxy-star star-a">✦</i><i class="bb-galaxy-star star-b">·</i><i class="bb-galaxy-star star-c">✧</i>' +
         '</div>' +
-        '<span class="bb-galaxy-index">UNIVERSE ' + String(index + 1).padStart(2,'0') + '</span>' +
+        '<span class="bb-galaxy-index">МИР · ' + String(index + 1).padStart(2,'0') + '</span>' +
         '<strong>' + b.name + '</strong>' +
         '<small>' + biomeAtmospheres[index] + '</small>' +
         '<span class="bb-galaxy-range">ПЛАНЕТЫ ' + b.start + '–' + b.end + '</span>' +
         '<span class="bb-galaxy-progress"><i style="width:' + percent + '%"></i></span>' +
-        '<span class="bb-galaxy-status">' + (active ? '● ВАШ ТЕКУЩИЙ МИР' : cleared ? '✓ ВСЕЛЕННАЯ ПРОЙДЕНА' : unlocked ? 'ОТКРЫТА ДЛЯ ПУТЕШЕСТВИЯ' : 'ЗАПЕРТА') + '</span>';
+        '<span class="bb-galaxy-status">' + (active ? '● ТВОЙ ТЕКУЩИЙ МИР' : cleared ? '✓ МИР ПРОЙДЕН' : unlocked ? 'МОЖНО ИССЛЕДОВАТЬ' : 'ПОКА ЗАКРЫТ') + '</span>';
       card.addEventListener('click', () => {
         if (!unlocked) {
-          toast('Эта вселенная откроется после прохождения предыдущих миров');
+          toast('Этот мир откроется после прохождения предыдущего');
           return;
         }
         viewedBiomeId = b.id;
