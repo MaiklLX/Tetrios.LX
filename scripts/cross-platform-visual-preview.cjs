@@ -98,6 +98,33 @@ const targets = [
     if (campaignAtlasState.slots > 0 && campaignAtlasState.visibleFallbacks < 1) {
       failures.push(target.name + ': campaign atlas has model slots but no visible procedural fallback (' + JSON.stringify(campaignAtlasState) + ')');
     }
+
+    // Open the first world and validate the actual planet route, not just the galaxy cards.
+    await campaignPage.locator('#campaign .bb-galaxy-card').first().click();
+    await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({ state: 'visible', timeout: 10000 });
+    await campaignPage.waitForTimeout(250);
+    const planetAtlasState = await campaignPage.evaluate(() => {
+      const nodes = Array.from(document.querySelectorAll('#campaign .bb-planet-node'));
+      const current = nodes.filter(node => node.classList.contains('is-current'));
+      const cleared = nodes.filter(node => node.classList.contains('is-cleared'));
+      const locked = nodes.filter(node => node.classList.contains('is-locked'));
+      return {
+        total: nodes.length,
+        current: current.length,
+        cleared: cleared.length,
+        locked: locked.length,
+        currentLabel: current[0]?.querySelector('small')?.textContent?.trim() || '',
+        lockedLabels: [...new Set(locked.map(node => node.querySelector('small')?.textContent?.trim() || ''))],
+        hues: [...new Set(nodes.map(node => node.style.getPropertyValue('--planet-hue')).filter(Boolean))],
+        routeVisible: (() => { const route=document.querySelector('#campaign .bb-treasure-trail'); const r=route?.getBoundingClientRect(); return !!route&&!!r&&r.width>0&&r.height>0; })()
+      };
+    });
+    await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-planets.png', fullPage: false });
+    if (planetAtlasState.total < 2) failures.push(target.name + ': planet route did not render enough nodes (' + JSON.stringify(planetAtlasState) + ')');
+    if (planetAtlasState.current !== 1 || planetAtlasState.currentLabel !== 'ДОСТУПНА') failures.push(target.name + ': current planet state is inconsistent (' + JSON.stringify(planetAtlasState) + ')');
+    if (planetAtlasState.cleared !== 0 || planetAtlasState.locked < 1 || planetAtlasState.lockedLabels.some(label => label !== 'ЗАКРЫТА')) failures.push(target.name + ': locked/cleared planet states are inconsistent (' + JSON.stringify(planetAtlasState) + ')');
+    if (planetAtlasState.hues.length < 2) failures.push(target.name + ': planets do not receive distinct palette hues (' + JSON.stringify(planetAtlasState.hues) + ')');
+    if (!planetAtlasState.routeVisible) failures.push(target.name + ': golden planet route is missing');
     await campaignPage.locator('#campaignStart').click({ force: true });
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
     await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
