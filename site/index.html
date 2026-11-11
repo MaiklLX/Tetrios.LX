@@ -7651,6 +7651,36 @@ function buildMap() {
     viewport.appendChild(track);
     g.appendChild(viewport);
 
+    // KT-629 · Accessible controls for the vertical expedition route.
+    const routeControls = document.createElement('div');
+    routeControls.className = 'bb-planet-controls';
+    routeControls.innerHTML =
+      '<button type="button" data-route-step="-1" aria-label="Подняться выше по маршруту" title="Выше">↑</button>' +
+      '<span class="bb-planet-route-progress">ПЛАНЕТА ' + String(current).padStart(3,'0') + ' / ' + String(bbTotalNodes).padStart(3,'0') + '</span>' +
+      '<button type="button" class="bb-planet-route-current" aria-label="Вернуться к доступной планете">К ДОСТУПНОЙ</button>' +
+      '<button type="button" data-route-step="1" aria-label="Спуститься ниже по маршруту" title="Ниже">↓</button>';
+    const routeActive = track.querySelector('.is-current');
+    const routeUp = routeControls.querySelector('[data-route-step="-1"]');
+    const routeDown = routeControls.querySelector('[data-route-step="1"]');
+    const routeCurrent = routeControls.querySelector('.bb-planet-route-current');
+    const updateRouteControls = () => {
+      const maxTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+      routeUp.disabled = viewport.scrollTop <= 2;
+      routeDown.disabled = viewport.scrollTop >= maxTop - 2;
+    };
+    routeUp.addEventListener('click', () => viewport.scrollBy({top:-Math.max(150, viewport.clientHeight * .72),behavior:'smooth'}));
+    routeDown.addEventListener('click', () => viewport.scrollBy({top:Math.max(150, viewport.clientHeight * .72),behavior:'smooth'}));
+    routeCurrent.disabled = !routeActive;
+    routeCurrent.addEventListener('click', () => {
+      if (!routeActive) return;
+      const maxTop = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+      const targetTop = Math.max(0, Math.min(maxTop, routeActive.offsetTop + routeActive.offsetHeight / 2 - viewport.clientHeight * .58));
+      viewport.scrollTo({top:targetTop,behavior:'smooth'});
+    });
+    viewport.addEventListener('scroll', updateRouteControls, {passive:true});
+    g.appendChild(routeControls);
+    requestAnimationFrame(updateRouteControls);
+
     const hint = document.createElement('div');
     hint.className = 'bb-planet-hint';
     hint.textContent = 'ПУТЬ ПЕРВООТКРЫВАТЕЛЯ · ПРОДОЛЖАЙ ДВИЖЕНИЕ ПО ПУНКТИРУ';
@@ -17006,5 +17036,14 @@ body .app{min-height:100dvh;background:radial-gradient(ellipse at 14% 7%,#65b8aa
 #modal.bb-upgrade-library-modal .bb-library-footer button{min-height:40px!important;border:1px solid #a1d5c4!important;border-radius:11px!important;background:#75b9aa!important;color:#102f3c!important}
 @media(max-width:760px){#modal.bb-upgrade-library-modal .bb-library-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;padding:10px!important}#modal.bb-upgrade-library-modal .bb-library-card{min-height:204px!important;padding:10px 9px!important}}
 @media(max-width:380px){#modal.bb-upgrade-library-modal .bb-library-card{min-height:196px!important;padding:9px 7px!important}#modal.bb-upgrade-library-modal .bb-library-card>strong{font-size:11px!important}#modal.bb-upgrade-library-modal .bb-library-card>p{font-size:9px!important}}
+</style>
+<style id="bb-kt629-planet-route-controls">
+#campaign .bb-planet-controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;flex-wrap:wrap!important;margin:5px auto 2px!important;padding:5px 8px!important;max-width:560px!important;border:1px solid #76cce755!important;border-radius:17px!important;background:linear-gradient(145deg,#123f70e8,#174e7be8)!important;box-shadow:0 5px 0 #082c54,inset 0 1px #ffffff20!important}
+#campaign .bb-planet-controls button{min-width:40px!important;min-height:38px!important;padding:0 13px!important;border:1px solid #8bdfff88!important;border-radius:12px!important;background:linear-gradient(145deg,#2d80b4,#195a91)!important;color:#f5fdff!important;font-size:10px!important;font-weight:900!important;letter-spacing:.06em!important;box-shadow:0 3px 0 #092f58!important}
+#campaign .bb-planet-controls button:disabled{opacity:.34!important;cursor:default!important;box-shadow:none!important}
+#campaign .bb-planet-controls button:focus-visible{outline:3px solid #ffe29b!important;outline-offset:3px!important}
+#campaign .bb-planet-controls .bb-planet-route-current{background:linear-gradient(145deg,#ffe6a7,#e8b85d)!important;border-color:#fff0c7!important;color:#274866!important}
+#campaign .bb-planet-route-progress{flex:1 1 100%!important;text-align:center!important;color:#c8f0ff!important;font-size:8px!important;font-weight:900!important;letter-spacing:.15em!important}
+@media(max-width:520px){#campaign .bb-planet-controls{gap:7px!important;padding:5px!important}#campaign .bb-planet-controls button{min-height:40px!important;padding:0 11px!important}}
 </style>
 </body></html>
