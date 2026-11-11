@@ -17450,3 +17450,108 @@ body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!impo
   #campaign .bb-galaxy-card .bb-galaxy-model-fallback{width:68px!important;height:68px!important;font-size:31px!important}
 }
 </style>
+
+
+<style id="bb-kt642-atlas-and-reward-shelf">
+/* KT-642: remove the remaining WebGL layer and restore the atlas to the game's flat teal visual language. */
+#campaign canvas.bb-galaxy-model-canvas,
+body>canvas.bb-galaxy-model-canvas,
+#campaign .bb-galaxy-model-slot canvas{
+ display:none!important;visibility:hidden!important;opacity:0!important;
+}
+#campaign .bb-galaxy-model-slot.is-loaded .bb-galaxy-model-fallback,
+#campaign .bb-galaxy-model-fallback{
+ opacity:1!important;visibility:visible!important;
+}
+#campaign .bb-galaxy-model-slot{background:transparent!important}
+#campaign .bb-galaxy-viewport{
+ background:#15394a!important;background-image:none!important;
+ box-shadow:inset 0 1px #ffffff10,inset 0 -1px #ffffff10!important;
+}
+#campaign .bb-galaxy-viewport:before,
+#campaign .bb-galaxy-viewport:after{
+ display:none!important;content:none!important;animation:none!important;
+}
+#campaign .bb-galaxy-track:before{display:none!important}
+#campaign .bb-galaxy-card .bb-galaxy-model-fallback{
+ width:76px!important;height:76px!important;border-radius:22px!important;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--biome-color) 45%,#285668),#153849)!important;
+ border:2px solid color-mix(in srgb,var(--biome-color) 68%,#a8d7c8)!important;
+ box-shadow:0 4px 0 #0b2939,0 0 0 5px color-mix(in srgb,var(--biome-color) 12%,transparent),inset 0 1px #ffffff22!important;
+}
+#campaign .bb-galaxy-card.is-locked .bb-galaxy-model-fallback{filter:grayscale(.25)!important;opacity:.86!important}
+#campaign .bb-galaxy-card{
+ background:linear-gradient(155deg,#1b4050,#153345 82%)!important;
+ border:1px solid #477d89!important;border-radius:20px!important;
+ box-shadow:0 8px 22px #061b2a55,inset 0 1px #ffffff12!important;
+}
+#campaign .bb-galaxy-card.is-current{
+ background:linear-gradient(155deg,#214b59,#19394a 82%)!important;
+ border-color:#82c9b6!important;
+}
+#campaign .bb-galaxy-card.is-locked{opacity:.82!important;filter:none!important}
+#campaign .bb-galaxy-card .bb-galaxy-index{color:#9edbd2!important}
+#campaign .bb-galaxy-card>strong{color:#ffe6a5!important}
+#campaign .bb-galaxy-card>small{color:#c1dce0!important}
+#campaign .bb-galaxy-card .bb-galaxy-range{color:#91b9c1!important}
+#campaign .bb-galaxy-card .bb-galaxy-status{color:#9dd9cb!important}
+
+/* The collection is a warm, dark teal display case; gold is reserved for the shelf edges and rare items. */
+#modal:has(.bb-shelf-modal){
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#modal .bb-shelf-modal{
+ background:linear-gradient(155deg,#1b4654 0%,#123544 56%,#0c2939 100%)!important;
+ border:2px solid #5d9b9b!important;border-radius:23px!important;
+ color:#e8f4ed!important;
+ box-shadow:0 8px 0 #092638,0 18px 40px #020e18aa,inset 0 1px #ffffff20!important;
+}
+#modal .bb-shelf-modal header .eyebrow{color:#8dd9c9!important}
+#modal .bb-shelf-modal header h3{color:#ffe3a0!important}
+#modal .bb-shelf-modal header p,
+#modal .bb-shelf-modal .bb-collection-legend{color:#b9d8d6!important}
+#modal .bb-shelf-stage{
+ background:linear-gradient(155deg,#102f40,#153b4a)!important;
+ border:1px solid #477d89!important;border-radius:17px!important;
+ box-shadow:inset 0 2px 12px #061d2b99!important;
+}
+#modal .bb-real-shelf-plank{
+ background:linear-gradient(180deg,#d3a35c,#a8733c 55%,#704522)!important;
+ border-bottom:3px solid #5b381e!important;
+ box-shadow:0 4px 0 #714725,0 6px 8px #061b2a88!important;
+}
+#modal .bb-shelf-item{
+ background:linear-gradient(155deg,#21495a,#173647)!important;
+ border:1px solid #527f89!important;border-radius:12px 12px 5px 5px!important;
+ color:#d9ece7!important;box-shadow:0 3px 0 #0b2939!important;
+}
+#modal .bb-shelf-item.is-selected{
+ border-color:#e4c477!important;
+ box-shadow:0 0 0 2px #e4c47733,0 3px 0 #8b6332!important;
+}
+#modal .bb-shelf-item.is-locked{opacity:.68!important;filter:saturate(.65)!important}
+#modal .bb-shelf-art,
+#modal .bb-shelf-detail-art{
+ background:color-mix(in srgb,var(--relic-accent) 20%,#173b4b)!important;
+}
+#modal .bb-shelf-detail{
+ background:linear-gradient(145deg,#173b4b,#102e3e)!important;
+ border:1px solid #4b7f89!important;color:#d9ece7!important;
+}
+#modal .bb-shelf-detail small{color:#91c8c1!important}
+#modal .bb-shelf-detail strong{color:#ffe3a0!important}
+#modal .bb-shelf-detail span{color:#c0d9d8!important}
+#modal .bb-shelf-detail em{color:#e3bf72!important}
+#modal .bb-shelf-nav span{color:#d9eee8!important}
+#modal .bb-shelf-nav small{color:#9fc4c4!important}
+#modal .bb-shelf-nav button{
+ background:linear-gradient(180deg,#347f91,#20566c)!important;
+ border:1px solid #78b9b8!important;color:#f0faf5!important;
+ box-shadow:0 3px 0 #0b2939!important;
+}
+#modal .bb-shelf-modal>.action{
+ background:linear-gradient(180deg,#347f91,#20566c)!important;
+ border:1px solid #78b9b8!important;color:#f0faf5!important;
+ box-shadow:0 4px 0 #0b2939!important;
+}
+</style>
