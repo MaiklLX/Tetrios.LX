@@ -581,6 +581,7 @@ const targets = [
     } catch (error) {
       const launchState = await page.evaluate(() => ({
         gameHidden:document.querySelector('#game')?.hidden,
+        gameStyle:(()=>{const el=document.querySelector('#game'),s=el?getComputedStyle(el):null,r=el?.getBoundingClientRect();return s?{display:s.display,visibility:s.visibility,opacity:s.opacity,width:r?.width,height:r?.height,classes:el.className}:null})(),
         modalVisible:document.querySelector('#overlay')?.classList.contains('show'),
         modalText:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
         selectedMode:document.querySelector('#game')?.dataset.mode||'',
