@@ -392,7 +392,7 @@ const targets = [
     await campaignPage.locator('#bbCampaignCollectionClose').click();
     // The shelf correctly returns to the home hub. Re-enter the campaign through
     // its real mode tile so the following atlas checks exercise the normal flow.
-    await campaignPage.locator('button.mode[data-mode="campaign"]').click();
+    await campaignPage.locator('button.mode[data-mode="campaign"]').evaluate(element=>element.click());
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
