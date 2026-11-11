@@ -358,8 +358,12 @@ const targets = [
     await campaignPage.waitForTimeout(3000);
     // KT-554: verify the browser reward shelf reproduces the 49-item Godot
     // collection without changing the existing 360-node campaign progression.
-    await campaignPage.locator('#bbOpenCampaignCollection').waitFor({state:'visible',timeout:10000});
-    await campaignPage.locator('#bbOpenCampaignCollection').click();
+    // The campaign relic shelf now opens from the dedicated home collection tile.
+    // Return to the home hub for the real entry point, while preserving campaign as
+    // the shelf's return destination so the atlas assertions below remain meaningful.
+    await campaignPage.evaluate(()=>{bbCollectionReturnScreen='campaign';show('menu');});
+    await campaignPage.locator('#bbHomeCollectionCard').waitFor({state:'visible',timeout:10000});
+    await campaignPage.locator('#bbHomeCollectionCard').click();
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
       cardCount:rail.querySelectorAll('.bb-shelf-item').length,
