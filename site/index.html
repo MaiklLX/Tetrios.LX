@@ -8183,7 +8183,7 @@ if(window.matchMedia){
 // both Chromium and WebKit despite their different text metrics.
 function bbSyncNarrowPortraitRail(){
   const game=$('game');
-  const frame=game?.querySelector('.playlayout>.boardframe');
+  const frame=game?.querySelector('.playlayout .boardframe');
   const side=game?.querySelector('.playlayout>.sidecol');
   if(!game||game.hidden||!frame||!side)return;
   const narrowPortrait=window.matchMedia('(min-width:361px) and (max-width:380px) and (orientation:portrait)').matches;
@@ -8209,7 +8209,7 @@ const bbNarrowPortraitRailObserver = typeof ResizeObserver === 'function'
   : null;
 if (bbNarrowPortraitRailObserver) {
   const bbRailGame = $('game');
-  const bbRailFrame = bbRailGame?.querySelector('.playlayout>.boardframe');
+  const bbRailFrame = bbRailGame?.querySelector('.playlayout .boardframe');
   const bbRailSide = bbRailGame?.querySelector('.playlayout>.sidecol');
   if (bbRailFrame) bbNarrowPortraitRailObserver.observe(bbRailFrame);
   if (bbRailSide) bbNarrowPortraitRailObserver.observe(bbRailSide);
