@@ -576,7 +576,18 @@ const targets = [
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
     await page.locator('#bbConfirmStartHero').click();
-    await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
+    try {
+      await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
+    } catch (error) {
+      const launchState = await page.evaluate(() => ({
+        gameHidden:document.querySelector('#game')?.hidden,
+        modalVisible:document.querySelector('#overlay')?.classList.contains('show'),
+        modalText:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
+        selectedMode:document.querySelector('#game')?.dataset.mode||'',
+        errorText:document.querySelector('#toast')?.innerText||''
+      }));
+      throw new Error('Block Run hero confirmation did not open the arena: '+JSON.stringify({launchState,pageErrors:pageErrors.slice(-5),consoleErrors:consoleErrors.slice(-5),cause:error.message}));
+    }
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(900);
 
