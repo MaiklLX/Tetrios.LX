@@ -125,6 +125,26 @@ const targets = [
     if (planetAtlasState.cleared !== 0 || planetAtlasState.locked < 1 || planetAtlasState.lockedLabels.some(label => label !== 'ЗАКРЫТА')) failures.push(target.name + ': locked/cleared planet states are inconsistent (' + JSON.stringify(planetAtlasState) + ')');
     if (planetAtlasState.hues.length < 2) failures.push(target.name + ': planets do not receive distinct palette hues (' + JSON.stringify(planetAtlasState.hues) + ')');
     if (!planetAtlasState.routeVisible) failures.push(target.name + ': golden planet route is missing');
+
+    const planetControls = campaignPage.locator('#campaign .bb-planet-controls');
+    if (await planetControls.count() !== 1) {
+      failures.push(target.name + ': planet route navigation controls are missing');
+    } else {
+      const previous = planetControls.locator('[data-step="-1"]');
+      const next = planetControls.locator('[data-step="1"]');
+      const currentButton = planetControls.locator('.bb-planet-current');
+      if (!(await previous.isDisabled())) failures.push(target.name + ': previous route control should be disabled at the beginning');
+      if (await currentButton.isDisabled()) failures.push(target.name + ': jump-to-current planet control should be enabled');
+      await next.click();
+      await campaignPage.waitForTimeout(420);
+      const advanced = await campaignPage.locator('#campaign .bb-planet-viewport').evaluate(node => node.scrollLeft > 10);
+      if (!advanced) failures.push(target.name + ': next route control did not advance the planet map');
+      await currentButton.click();
+      await campaignPage.waitForTimeout(420);
+      const returned = await campaignPage.locator('#campaign .bb-planet-viewport').evaluate(node => node.scrollLeft < 8);
+      if (!returned) failures.push(target.name + ': jump-to-current control did not return to the available planet');
+      await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-planets-navigation.png', fullPage: false });
+    }
     await campaignPage.locator('#campaignStart').click({ force: true });
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().evaluate(element => element.click());
     await campaignPage.locator('#bbStartHeroChoose').waitFor({ state: 'visible', timeout: 15000 });
