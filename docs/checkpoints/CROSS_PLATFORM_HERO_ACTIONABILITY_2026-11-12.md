@@ -69,3 +69,12 @@ The first hidden-screen guard did not outrank the older triple-`.home-dashboard`
 The guard now uses the same four-class specificity pattern already present in the legacy cascade, plus the `[hidden]` state, so it wins over the triple-class display rule. The mobile regression assertion remains strict; the next exact-SHA run must prove `display:none`, zero menu height, and an arena frame near the top of the viewport.
 
 Corrected CSS commit: `71cfaa677f17f0b874a8899fc5342a3c54f179a3`.
+
+
+## Mobile regression validation — run 43213975247
+
+- [Mobile Arena Visual Preview #43213975247](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43213975247) completed **SUCCESS** on branch code/test SHA `cb3345e52e821b44d39d1b0b3fc1b29a14d0ddab`.
+- Downloaded and inspected artifact [13943345402](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43213975247/artifacts/13943345402), including 375×812 and 412×915 screenshots and geometry reports.
+- At 375×812: menu `hidden=true`, computed `display:none`, height 0; document height 812; frame y=129.05px, 210×483px; Hold 93.86×30px; Drop 97.86×42px; objective panel bottom 764.94px; 10:23 ratio 0.43478; no page errors.
+- At 412×915: menu `hidden=true`, computed `display:none`, height 0; document height 915; frame y=137.59px, 238.17×547.78px; Hold 97.83×30px; Drop 101.83×42px; objective panel bottom 856.39px; 10:23 ratio 0.43479; no page errors.
+- This confirms the hidden-menu CSS guard on browser preview only. Physical iPhone/Android behavior remains unverified.
