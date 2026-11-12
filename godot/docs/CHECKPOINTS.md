@@ -339,3 +339,14 @@
 - Open migration/parity task [#52 — KT-GODOT-002](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open. No persistent user data was read or mutated; no APK build/release, merge, or deployment.
 - PR #78 and #81 remain stacked on this branch. Their last inspected Godot Native Project Check runs [42481365011](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481365011) and [42591587500](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42591587500) both succeeded, but their branch divergence still requires explicit reconciliation before integration.
 - This entry is documentation-only; the successful workflow above validates the unchanged code HEAD `6a28d5e`.
+
+
+## 2026-11-12 — Read-only Web save-key parity re-audit against current main
+
+- Re-read current browser source at `main@20d66e3171522feb010a81522dc3f5cf4334d936` (`site/index.html`, blob `9107542b0613a63b6cfd01654de58febcf9e184f`) and compared all direct `localStorage` calls plus the `bbGet`/`bbPut` helper key families against `web_save_migration.gd`.
+- No new durable key family was found beyond the existing migration parser's recognized inventory. Confirmed families remain: wallet `bb_coins` plus legacy aliases `coins`/`bbCoins`; gems, inventory, perks, chest cosmetics and fragments; selected hero and per-hero XP/levels/campaign perks; campaign node/marks; Block Run relics; daily quests/archive/catalog signature/assignments/history/completion/replay/reward markers/visit streak; best score, run count, legacy daily marker and haptics.
+- The current Home reward-collection screen derives its unlock state from existing campaign/relic values; it does not introduce a separate persistent collection key. Daily mechanic state and campaign run counters remain in-memory in the inspected source.
+- The parser's special cases still match the source: helper-expanded `bb_bbCampaignPerks_<heroId>`, `bb_equippedChestCosmetics` plus the legacy single-cosmetic key, date-suffixed `bbDailyRewardClaimed:<date>`, and the three coin aliases. Reset flows contain dynamic `removeItem(key)` loops; migration must continue preserving the original snapshot and must not emulate reset behavior.
+- This was a read-only source audit. No browser storage was accessed, no migration was executed, no `user://` writes were added, and no user data was read or changed.
+- Existing code validation remains [Godot Native Project Check #43015952545](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545) on code HEAD `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67` — **SUCCESS**. This documentation update should receive its own PR CI run; do not infer that result before it completes.
+- Remaining migration gates: full value-range/semantics audit for every mode and reward path, conflict/recovery fixtures, source export contract, atomic persistent storage, real Android migration acceptance. Keep persistent writes disabled.
