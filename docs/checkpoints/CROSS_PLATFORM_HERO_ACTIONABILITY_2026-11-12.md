@@ -78,3 +78,14 @@ Corrected CSS commit: `71cfaa677f17f0b874a8899fc5342a3c54f179a3`.
 - At 375×812: menu `hidden=true`, computed `display:none`, height 0; document height 812; frame y=129.05px, 210×483px; Hold 93.86×30px; Drop 97.86×42px; objective panel bottom 764.94px; 10:23 ratio 0.43478; no page errors.
 - At 412×915: menu `hidden=true`, computed `display:none`, height 0; document height 915; frame y=137.59px, 238.17×547.78px; Hold 97.83×30px; Drop 101.83×42px; objective panel bottom 856.39px; 10:23 ratio 0.43479; no page errors.
 - This confirms the hidden-menu CSS guard on browser preview only. Physical iPhone/Android behavior remains unverified.
+
+
+## Cross-platform rerun diagnosis and watchdog cleanup — 12 Nov 2026
+
+- Re-ran the cancelled Cross-platform Visual Preview job [43213975313](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43213975313) on the unchanged code/test SHA `cb3345e52e821b44d39d1b0b3fc1b29a14d0ddab`. The run reached iOS WebKit arena capture and desktop/Android campaign captures, then failed with `[target:timeout] desktop-1440x900 exceeded 240000ms`; this was not a gameplay assertion or browser page exception.
+- Downloaded and inspected partial artifact [13942624793](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43213975313/artifacts/13942624793) (28 files). It contains the iOS WebKit 390×844 arena, desktop menu/card-library/campaign-atlas and hero diagnostic captures, Android menu/card-library/campaign captures, and the iOS landscape guard.
+- Root cause in the test harness: when the campaign hero-detail wait timed out, its catch block captured diagnostics and used `continue` before the per-target watchdog was cleared and before the viewport context/browser were closed. The loop advanced to later targets, but the abandoned desktop watchdog remained armed and terminated the whole process after its deadline. This masked the remaining target checks.
+- Fixed in script commit `f27a4209e8b540da3507f1253a357b37cbb86c18`: the hero-detail failure is now recorded and logged, the campaign mission-only assertions are skipped without abandoning the viewport, and the campaign page is closed before the remaining daily/arena checks continue. The hero-detail visibility wait is extended from 10s to 20s to accommodate the observed desktop showcase settling delay.
+- This is test-harness-only; no UI/gameplay/persistence code changed. A fresh Cross-platform run on the new exact SHA is required. The earlier run remains **FAIL**; no pass is claimed. Mobile Preview [43213975247](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43213975247) remains **SUCCESS** on `cb3345e`.
+- The diagnostic capture showed the hero detail card and its selected-state action visible after the timeout; the new run will log computed display/visibility/rect and the caught timeout cause so any remaining timing or selector issue is explicit.
+- No main edit, merge, deployment, APK build/release, user-data change, image generation or external agent.
