@@ -112,6 +112,13 @@ jobs:
                 const hold = document.querySelector('#game #holdBtn');
                 const left = document.querySelector('#game .gameleftcol');
                 const goals = document.querySelector('#game #rogueGoals, #game #campaignGoals');
+                const menu = document.querySelector('#menu');
+                const menuRect = rect(menu);
+                const menuState = menu ? {
+                  hidden: menu.hidden,
+                  display: getComputedStyle(menu).display,
+                  height: menuRect?.height || 0
+                } : null;
                 const sideChildren = side ? Array.from(side.children).map((element,index) => ({
                   index, id:element.id || '', className:typeof element.className === 'string' ? element.className : '',
                   rect:rect(element), scrollWidth:element.scrollWidth, clientWidth:element.clientWidth,
@@ -121,6 +128,8 @@ jobs:
                 const ratio = frame ? frame.getBoundingClientRect().width / frame.getBoundingClientRect().height : 0;
                 return {
                   viewport: { width: innerWidth, height: innerHeight },
+                  documentHeight: document.documentElement.scrollHeight,
+                  menuState,
                   frame: rect(frame), board: rect(board), side: rect(side), sideChildren, drop: rect(drop), hold: rect(hold), left: rect(left),
                   goals: rect(goals),
                   goalChildren: goals ? Array.from(goals.children).map((element,index) => ({index,tag:element.tagName,rect:rect(element),scrollHeight:element.scrollHeight,clientHeight:element.clientHeight})) : [],
@@ -147,6 +156,12 @@ jobs:
               }
               if (geometry.documentWidth > viewport.width + 2) {
                 failures.push('Unexpected horizontal page overflow at ' + viewport.name + ': ' + geometry.documentWidth);
+              }
+              if (!geometry.menuState || geometry.menuState.hidden !== true ||
+                  geometry.menuState.display !== 'none' || geometry.menuState.height > 1 ||
+                  geometry.frame.y > 300 || geometry.documentHeight > viewport.height + 2) {
+                failures.push('The home menu must be removed from layout before the full-screen arena opens at ' +
+                  viewport.name + ': ' + JSON.stringify({menuState:geometry.menuState,frame:geometry.frame,documentHeight:geometry.documentHeight}));
               }
               if (!geometry.left || !geometry.goals ||
                   geometry.left.y < geometry.frame.bottom + 2 ||
