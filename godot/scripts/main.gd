@@ -537,13 +537,23 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_handle_tap(event.position)
 
+func _arena_gesture_start_is_valid(point: Vector2) -> bool:
+	if not Rect2(Vector2.ZERO, screen_size).has_point(point):
+		return false
+	# Keep explicit controls as tap targets. The remaining active play surface,
+	# including the gutters around the 10x23 board, can steer the falling piece.
+	for control_rect in [mode_button_rect, pause_rect, hold_rect, drop_rect, block_run_skill_rect]:
+		if control_rect.size.x > 0.0 and control_rect.size.y > 0.0 and control_rect.has_point(point):
+			return false
+	return true
+
 func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) -> bool:
 	if campaign_screen == "collection" and not campaign_collection_reveal_active and not campaign_collection_preview_active:
 		var collection_delta := finish - start
 		if campaign_collection_grid_viewport_rect.has_point(start) and absf(collection_delta.y) >= 28.0 and absf(collection_delta.y) > absf(collection_delta.x):
 			_scroll_campaign_collection_rows(1 if collection_delta.y < 0.0 else -1)
 			return true
-	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or _active_game_over() or paused or _mode_finished() or _block_run_draft_is_open() or not board_rect.has_point(start):
+	if mode_select_visible or home_visible or not secondary_screen.is_empty() or not campaign_screen.is_empty() or game == null or _active_game_over() or paused or _mode_finished() or _block_run_draft_is_open() or not _arena_gesture_start_is_valid(start):
 		return false
 	var delta := finish - start
 	var threshold := 36.0
