@@ -6898,6 +6898,8 @@ function bbNavigateBack(){
   show(previous);
   bbNavigatingBack=false;
 }
+// Expose the scoped navigation helper for the later standalone UI-ready bridge.
+window.bbNavigateBack = bbNavigateBack;
 
 function overlay(html,variant=''){const root=$('overlay'),modal=$('modal');root.classList.remove('bb-godot-pause-overlay','bb-godot-result-overlay');modal.classList.remove('bb-hero-showcase-modal');if(variant==='pause')root.classList.add('bb-godot-pause-overlay');if(variant==='result')root.classList.add('bb-godot-result-overlay');modal.innerHTML=html;root.classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay','bb-godot-pause-overlay','bb-godot-result-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal','bb-upgrade-library-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
@@ -11943,7 +11945,9 @@ body .app{background:transparent!important;background-color:transparent!importan
     min-height:0!important;height:auto!important;max-height:100%!important;
     margin:0 auto!important;padding:0!important;
     grid-template-columns:minmax(0,1fr)!important;
-    grid-template-rows:auto auto auto minmax(0,1fr)!important;
+    /* The daily objective is moved into .screenhead on desktop. The direct
+       children are heading, HUD, and playlayout, so the arena must occupy row 3. */
+    grid-template-rows:auto auto minmax(0,1fr)!important;
     gap:clamp(5px,.65vh,8px)!important;overflow:hidden!important;
   }
   #game>.screenhead{min-height:36px!important;margin:0!important;padding:2px 12px!important}
@@ -17601,7 +17605,7 @@ document.addEventListener('click',event=>{
   if(!back)return;
   event.preventDefault();
   event.stopImmediatePropagation();
-  bbNavigateBack();
+  window.bbNavigateBack();
 },true);
 </script>
 
