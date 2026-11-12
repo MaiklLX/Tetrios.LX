@@ -4130,6 +4130,15 @@ font-weight: 900 !important;
   }
 }
 
+/* Короткий экран: оставляем нижнюю панель целей целиком в видимой области. */
+@media (max-width: 400px) and (max-height: 840px) {
+  #game #campaignGoals,
+  #game #rogueGoals {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+}
+
 /* Очень узкие телефоны */
 @media (max-width: 370px) {
   #game .playlayout {
@@ -5300,12 +5309,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 
 <link rel="stylesheet" href="././././desktop-shell.css?v=20261103-desktop-arena-v12">
 </head>
-<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
-  <span class="apk-download-icon">↓</span>
-  <span class="apk-download-copy"><strong>СКАЧАТЬ APK</strong><small>Установить на Android · бесплатно</small></span>
-  <span class="apk-download-arrow">↗</span>
-</a>
-<div class="sectionlabel">ВЫБЕРИ СВОЙ ПУТЬ</div><div class="modes">
+<body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">TETRIOS.LX</div><div class="edition">NEON BLOCK ARENA · ARCADE RPG</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="TETRIOS.LX — живая арена тетриса"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="TETRIOS.LX"><span>T</span><span>E</span><span>T</span><span>R</span><span>I</span><span>O</span><span>S</span><span class="brand-dot">.</span><span>L</span><span>X</span></h1></div><p>Собирай фигуры. Побеждай.</p></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
     <div class="modeicon" aria-hidden="true">🗺️</div>
     <div class="modetext">
@@ -5335,6 +5339,34 @@ body:has(#menu:not([hidden])) .app > .topbar {
     </div>
     <div class="modearrow">›</div>
   </button>
+</div>
+<div id="dailyQuestsPanel" style="margin:14px 0;padding:16px;border:1px solid #5cf5e855;border-radius:16px;background:linear-gradient(135deg,#11172a,#152438)">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
+    <strong style="color:#5cf5e8;font-size:15px">📋 ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</strong>
+    <span style="font-size:11px;color:#8e9ab9">ОБНОВЛЯЮТСЯ ЕЖЕДНЕВНО</span>
+  </div>
+  <div style="font-size:13px;color:#aebbd6">Выполняй задания, зарабатывай монеты и развивай своего героя.</div>
+
+<div id="dailyQuestsList" style="margin-top:12px">
+  <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
+    <div style="font-size:12px;font-weight:900;">Очистить 10 линий</div>
+    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 10</div>
+    <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
+    <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 25 🪙</div>
+  </div>
+  <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
+    <div style="font-size:12px;font-weight:900;color:#f4f5ff">Набрать 1500 очков</div>
+    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 1500</div>
+    <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
+    <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 30 🪙</div>
+  </div>
+  <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
+    <div style="font-size:12px;font-weight:900;color:#f4f5ff">Сыграть 2 партии</div>
+    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 2</div>
+    <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
+    <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 20 🪙</div>
+  </div>
+</div>
 </div>
 
 <section id="bbVisitStreak" aria-label="Серия ежедневных посещений" style="margin-top:14px;padding:16px;border:1px solid #ffc86b55;border-radius:18px;background:linear-gradient(135deg,#29213aee,#141b30f5);box-shadow:inset 0 1px #ffffff0b">
@@ -5388,42 +5420,17 @@ body:has(#menu:not([hidden])) .app > .topbar {
     </div>
   </div>
 </div>
-<div class="home-reset" style="margin-top:16px">
+<div class="bottomstats"><div class="stat"><strong id="bestScore">0</strong><span>РЕКОРД</span></div><div class="stat"><strong id="runsCount">0</strong><span>ЗАБЕГИ</span></div><div class="stat"><strong id="relicCount">0</strong><span>РЕЛИКВИИ</span></div></div><button type="button" class="mode" id="bbOpenCardLibrary" style="--glow:#5cf5e8;--iconbg:#5cf5e81c;width:100%;margin-top:12px;box-sizing:border-box">
+  <div class="modeicon" aria-hidden="true">▤</div>
+  <div class="modetext"><div class="modetitle">Библиотека усилений</div><div class="modesub">Изучи эффекты и синергии карт до начала забега</div><span class="tag">35 КАРТ · СПРАВОЧНИК</span></div>
+  <div class="modearrow">›</div>
+</button>
 
-  <button class="action" id="resetProgressBtn" style="width:100%;background:linear-gradient(135deg,#ff4d4f,#b5122b);color:#ffffff;border:1px solid #ff7779;box-shadow:0 4px 14px rgba(255,45,65,.28);font-weight:800">
-
-    ↻ СБРОСИТЬ ВЕСЬ ПРОГРЕСС
-  </button>
-</div>
-<div id="dailyQuestsPanel" style="margin:14px 0;padding:16px;border:1px solid #5cf5e855;border-radius:16px;background:linear-gradient(135deg,#11172a,#152438)">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px">
-    <strong style="color:#5cf5e8;font-size:15px">📋 ЕЖЕДНЕВНЫЕ ЗАДАНИЯ</strong>
-    <span style="font-size:11px;color:#8e9ab9">ОБНОВЛЯЮТСЯ ЕЖЕДНЕВНО</span>
-  </div>
-  <div style="font-size:13px;color:#aebbd6">Выполняй задания, зарабатывай монеты и развивай своего героя.</div>
-
-<div id="dailyQuestsList" style="margin-top:12px">
-  <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
-    <div style="font-size:12px;font-weight:900;">Очистить 10 линий</div>
-    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 10</div>
-    <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
-    <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 25 🪙</div>
-  </div>
-  <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
-    <div style="font-size:12px;font-weight:900;color:#f4f5ff">Набрать 1500 очков</div>
-    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 1500</div>
-    <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
-    <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 30 🪙</div>
-  </div>
-  <div style="padding:11px;margin-top:8px;border-radius:12px;background:#ffffffa8;border:1px solid #efd8c4">
-    <div style="font-size:12px;font-weight:900;color:#f4f5ff">Сыграть 2 партии</div>
-    <div style="font-size:11px;color:#a8b2ce;margin-top:5px">0 / 2</div>
-    <div style="height:6px;background:#eaddec;border-radius:8px;overflow:hidden;margin-top:7px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#a786ed,#68d9c6)"></div></div>
-    <div style="font-size:10px;font-weight:800;color:#8b6db5;margin-top:7px">Награда: 20 🪙</div>
-  </div>
-</div>
-</div>
-
+<a class="apk-download" href="https://maikllx.github.io/Tetrios.LX/download/Block-Buddies.apk" aria-label="Скачать APK Block Buddies для Android">
+  <span class="apk-download-icon">↓</span>
+  <span class="apk-download-copy"><strong>СКАЧАТЬ APK</strong><small>Установить на Android · бесплатно</small></span>
+  <span class="apk-download-arrow">↗</span>
+</a>
 <div class="shopbuttons">
   <button class="shopbutton main-shop-button" id="openShop">
     <span class="shop-main-icon">🛍️</span>
@@ -5434,7 +5441,14 @@ body:has(#menu:not([hidden])) .app > .topbar {
     <span class="shop-main-arrow">›</span>
   </button>
 </div>
-<div class="bottomstats"><div class="stat"><strong id="bestScore">0</strong><span>РЕКОРД</span></div><div class="stat"><strong id="runsCount">0</strong><span>ЗАБЕГИ</span></div><div class="stat"><strong id="relicCount">0</strong><span>РЕЛИКВИИ</span></div></div></section>
+<div class="home-reset" style="margin-top:16px">
+
+  <button class="action" id="resetProgressBtn" style="width:100%;background:linear-gradient(135deg,#ff4d4f,#b5122b);color:#ffffff;border:1px solid #ff7779;box-shadow:0 4px 14px rgba(255,45,65,.28);font-weight:800">
+
+    ↻ СБРОСИТЬ ВЕСЬ ПРОГРЕСС
+  </button>
+</div>
+</section>
 
 <section id="shopScreen" class="screen" hidden>
   <div class="screenhead">
@@ -5506,7 +5520,7 @@ body:has(#menu:not([hidden])) .app > .topbar {
 <audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
-const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0,hapticsOn=localStorage.bb_haptics!=='0';
+const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,combo=0,lastClear=0,modeStart=0,hapticsOn=localStorage.bb_haptics!=='0';let bbVoidLastAppliedLevel=1;
 // Раннее подключение кнопки сброса прогресса
 document.addEventListener('click', function(event) {
 const button = event.target.closest('#resetProgressBtn');
@@ -5577,10 +5591,13 @@ location.reload();
 });
 const W=10,H=23,colors=['#5cf5e8','#9d7cff','#ffc86b','#ff6f9e','#6ca8ff','#b6f27c','#ff9868'];const shapes=[[[1,1,1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1],[1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]]];const names=['Призма','Пульсар','Гравитация','Фантом','Кубит','Хронос','Сингулярность'];
 const upgrades=[
-['✦','Ядро комбо','За каждую линию подряд +15% очков.','score',1],['◈','Квантовый щит','Один раз спасает от проигрыша.','shield',1],['⚡','Ускоритель мысли','Падение деталей быстрее, очки ×1.5.','mult',1],['⟲','Хроно-импульс','Замедляет падение на 20%.','slow',1],['✧','Резонанс','Каждая 4-я очищенная линия добавляет заряд уровня.','resonance',1],['⬡','Магнит линий','За двойную очистку +250 очков.','magnet',1],['☼','Солнечный заряд','Мягкое свечение деталей даёт бонус +10%.','glow',1],['◉','Эхо пустоты','Каждая пятая линия добавляет заряд уровня.','echo',1],['⌁','Нестабильный блок','Каждые 90 секунд +500 очков.','unstable',1],['✹','Звёздная пыль','За одиночную линию +100 очков.','dust',1],['⛨','Обшивка титана','Усиливает щит и добавляет заряд спасения.','armor',1],['↯','Двойной разряд','При очистке 3+ линий наносит монстру дополнительный урон и даёт +600 очков.','burst',1],['♢','Призма цвета','Новые детали переливаются разными оттенками.','prism',1],['⌬','Кристалл памяти','Порог следующего уровня растёт медленнее.','memory',1],['◌','Грави-якорь','Удержание детали доступно дважды.','hold',2],['✺','Реактор','Каждые 10 линий +1 уровень бонусом.','reactor',1],['☄','Кометный след','За быстрый уровень +300 очков.','comet',1],['⟁','Разлом','После победы над монстром очищает нижний ряд.','rift',1],['⊹','Стабилизатор','Поворот деталей становится точнее.','stable',1],['❖','Артефакт удачи','Редкие детали приносят +20% очков.','luck',1],['◍','Тихая сингулярность','Раз в уровень поле слегка сжимает пустые промежутки.','void',1],['⚙','Механизм повторения','Каждый 5-й ход даёт +25 очков.','gear',1],['✴','Фотонный клинок','Очистка 2+ линий добавляет эффект вспышки.','flash',1],['⌘','Нейронный импульс','Первые 30 секунд уровня очки ×1.25.','neuron',1],['⟡','Код бесконечности','За каждую 10-ю линию +1 реликвия.','infinity',1],['⦿','Лунный прилив','Каждые 45 секунд +1 заряд уровня.','tide',1],['♜','Крепость данных','Уменьшает скорость роста сложности.','fortress',1],['✣','Сдвиг измерений','Поворот иногда даёт очки без очистки.','shift',1],['☷','Энергетический запас','Поглощает одну атаку монстра без мусорного ряда.','reserve',1],['✵','Сверхновая','При проигрыше один раз очищает нижнюю линию.','nova',1],['♧','Живой кристалл','Усиления дают визуальную ауру детали.','aura',1],['⌖','Охотник за линиями','Очистка 2+ линий наносит дополнительный урон монстру.','hunter',1],['◐','Зеркальная матрица','Каждые 7 линий зеркалит следующий блок.','mirror',1],['⚛','Квантовая петля','Порог уровня −1 линия (минимум 3).','loop',1],['❂','Плазменная волна','Сбрасывает задержку падения при очистке.','plasma',1]];
+['✦','Ядро комбо','За каждую линию подряд +15% очков.','score',1],['◈','Квантовый щит','Один раз спасает от проигрыша.','shield',1],['⚡','Ускоритель мысли','Падение деталей быстрее, очки ×1.5.','mult',1],['⟲','Хроно-импульс','Замедляет падение на 20%.','slow',1],['✧','Резонанс','Каждая 4-я очищенная линия добавляет заряд уровня.','resonance',1],['⬡','Магнит линий','За двойную очистку +250 очков.','magnet',1],['☼','Солнечный заряд','Мягкое свечение деталей даёт бонус +10%.','glow',1],['◉','Эхо пустоты','Каждая пятая линия добавляет заряд уровня.','echo',1],['⌁','Нестабильный блок','Каждые 90 секунд +500 очков.','unstable',1],['✹','Звёздная пыль','За одиночную линию +100 очков.','dust',1],['⛨','Обшивка титана','Усиливает щит и добавляет заряд спасения.','armor',1],['↯','Двойной разряд','При очистке 3+ линий наносит монстру дополнительный урон и даёт +600 очков.','burst',1],['♢','Призма цвета','Новые детали переливаются разными оттенками.','prism',1],['⌬','Кристалл памяти','Порог следующего уровня растёт медленнее.','memory',1],['◌','Грави-якорь','Удержание детали доступно дважды.','hold',2],['✺','Реактор','Каждые 10 линий +1 уровень бонусом.','reactor',1],['☄','Кометный след','За быстрый уровень +300 очков.','comet',1],['⟁','Разлом','После победы над монстром очищает нижний ряд.','rift',1],['⊹','Стабилизатор','Поворот деталей становится точнее.','stable',1],['❖','Артефакт удачи','Редкие детали приносят +20% очков.','luck',1],['◍','Тихая сингулярность','Раз в уровень сжимает один полностью пустой ряд между блоками, не теряя детали.','void',1],['⚙','Механизм повторения','Каждый 5-й ход даёт +25 очков.','gear',1],['✴','Фотонный клинок','Очистка 2+ линий добавляет эффект вспышки.','flash',1],['⌘','Нейронный импульс','Первые 30 секунд уровня очки ×1.25.','neuron',1],['⟡','Код бесконечности','За каждую 10-ю линию +1 реликвия.','infinity',1],['⦿','Лунный прилив','Каждые 45 секунд +1 заряд уровня.','tide',1],['♜','Крепость данных','Уменьшает скорость роста сложности.','fortress',1],['✣','Сдвиг измерений','Успешный поворот с шансом 25% даёт +25 очков; в Block Run бонус растёт с рангом.','shift',1],['☷','Энергетический запас','Поглощает одну атаку монстра без мусорного ряда.','reserve',1],['✵','Сверхновая','При проигрыше один раз очищает нижнюю линию.','nova',1],['♧','Живой кристалл','Активные усиления создают светящуюся ауру вокруг падающей детали.','aura',1],['⌖','Охотник за линиями','Очистка 2+ линий наносит дополнительный урон монстру.','hunter',1],['◐','Зеркальная матрица','Каждые 7 линий зеркалит следующий блок.','mirror',1],['⚛','Квантовая петля','Порог уровня −1 линия (минимум 3).','loop',1],['❂','Плазменная волна','Сбрасывает задержку падения при очистке.','plasma',1]];
+// Все карты усилений относятся к рогалик-системе и доступны только в Block Run.
+const bbRogueOnlyUpgradeIds = new Set(upgrades.map(upgrade=>upgrade[3]));
+function bbGetModeUpgradePool(targetMode=mode){return targetMode==='rogue'?upgrades.slice():[];}
 let bbRogueCardRanks={};
 function bbGetRogueCardRank(id){return mode==='rogue'?Math.max(0,Number(bbRogueCardRanks[id])||0):0;}
-function bbGetUpgradeRank(id){return mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):1;}
+function bbGetUpgradeRank(id){return mode==='rogue'?Math.max(1,bbGetRogueCardRank(id)):0;}
 function bbGetUpgradeEffectDescription(id,rank=1){
   const r=Math.max(1,Math.min(5,Number(rank)||1));
   const descriptions={
@@ -5594,10 +5611,28 @@ function bbGetUpgradeEffectDescription(id,rank=1){
     reactor:'Бонус уровня усиливается ×'+r,nova:'Аварийное спасение очищает '+r+' нижн. линию(и)',
     tide:'Каждые 45 секунд +'+r+' заряд(а) уровня',fortress:'Замедляет рост сложности на '+(8*r)+'%',
     rift:'При победе над монстром очищает '+r+' нижн. линию(и)',loop:'Порог уровня −'+r+' линию(и)',
-    comet:'Быстрый уровень приносит +'+(300*r)+' очков'
+    comet:'Быстрый уровень приносит +'+(300*r)+' очков',gear:'Каждая 5-я установленная фигура: +'+(25*r)+' очков',plasma:'Сбрасывает задержку следующего падения при очистке линии',stable:'Точность поворота: до '+(1+r)+' клеток бокового смещения'
   };
   return descriptions[id]||upgrades.find(u=>u[3]===id)?.[2]||'Усиление ранга '+r;
 }
+function bbOpenCardLibrary(){
+  const renderCards=(filter='all')=>{
+    const cards=upgrades.filter(item=>filter==='all'||(filter==='rogue'&&bbRogueOnlyUpgradeIds.has(item[3])));
+    $('bbCardLibraryList').innerHTML=cards.map(item=>{
+      const rogueOnly=bbRogueOnlyUpgradeIds.has(item[3]);
+      const rank=1;
+      return '<article style="display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid '+(rogueOnly?'#9d7cff55':'#5cf5e833')+';border-radius:13px;background:linear-gradient(135deg,#ffffff08,#ffffff03)"><div style="width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:'+(rogueOnly?'#9d7cff20':'#5cf5e818')+';font-size:22px">'+item[0]+'</div><div style="min-width:0;flex:1"><div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><strong style="font-size:13px">'+item[1]+'</strong>'+'<span style="font-size:8px;font-weight:900;color:#c5b4ff;background:#9d7cff20;padding:3px 6px;border-radius:99px">ТОЛЬКО BLOCK RUN</span>'+'</div><div style="font-size:11px;color:#b9c5dc;line-height:1.45;margin-top:5px">'+item[2]+'</div><div style="font-size:10px;color:#8fe9df;margin-top:6px">'+bbGetUpgradeEffectDescription(item[3],rank)+'</div></div></article>';
+    }).join('');
+    $('bbCardLibraryCount').textContent=cards.length+' / '+upgrades.length+' КАРТ';
+    document.querySelectorAll('[data-bb-card-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.bbCardFilter===filter)));
+  };
+  overlay('<div class="modalhead"><div class="bigicon">▤</div><div class="eyebrow">АРХИВ ТАКТИЧЕСКИХ СИСТЕМ</div><h3>Библиотека усилений</h3><p>Изучи назначение карт до старта. Все карты относятся к рогалик-системе и работают только в режиме Block Run. В кампании и ежедневном вызове карточных усилений нет.</p></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin:0 0 10px"><button class="smallbtn" data-bb-card-filter="all" aria-pressed="true">ВСЕ 35</button><button class="smallbtn" data-bb-card-filter="rogue" aria-pressed="false">BLOCK RUN</button><span id="bbCardLibraryCount" style="margin-left:auto;align-self:center;font-size:9px;color:#9eacc8;font-weight:900"></span></div><div id="bbCardLibraryList" style="display:grid;gap:8px;max-height:min(55vh,560px);overflow:auto;padding:2px 3px 8px"></div><button class="action" id="bbCloseCardLibrary" style="margin-top:10px">ЗАКРЫТЬ БИБЛИОТЕКУ</button>');
+  renderCards('all');
+  document.querySelectorAll('[data-bb-card-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbCardFilter)));
+  $('bbCloseCardLibrary').onclick=closeOverlay;
+}
+$('bbOpenCardLibrary')?.addEventListener('click',bbOpenCardLibrary);
+
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
   return [
@@ -5606,19 +5641,37 @@ function bbRogueHasSynergy(){
     {ids:['slow','memory'],name:'ХРОНОКОНТРОЛЬ',desc:'атаки монстров приходят реже'}
   ].filter(combo=>combo.ids.every(id=>(Number(r[id])||0)>0));
 }
-let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};let bbRogueShieldCharges=0,bbRogueReserveCharges=0,bbRogueSkillReadyAt=0,bbCampaignGuardianUsed=false;
+let bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0,attackIndex:0};
+let bbRogueShieldCharges=0,bbRogueReserveCharges=0,bbRogueSkillReadyAt=0,bbCampaignGuardianUsed=false;
+function bbRogueGetAttackProfile(){
+  const e=bbRogueEncounter;
+  const cycle=e.boss?['siege','crossfire']:['breach','crossfire'];
+  const id=cycle[Math.max(0,Number(e.attackIndex)||0)%cycle.length];
+  const profiles={
+    breach:{id:'breach',label:'БРЕШЬ · 1 РЯД',description:'Один мусорный ряд · один проход',rows:1,holes:1,toast:'👾 МОНСТР ПРОРВАЛ ОБОРОНУ! +1 мусорный ряд.'},
+    crossfire:{id:'crossfire',label:'ПЕРЕКРЁСТНЫЙ ЗАЛП · 2 РЯДА',description:'Два ряда · по два смещённых прохода',rows:2,holes:2,toast:'⚡ ПЕРЕКРЁСТНЫЙ ЗАЛП! На поле обрушились два ряда.'},
+    siege:{id:'siege',label:'ОСАДА БОССА · 2 РЯДА',description:'Два ряда · узкий проход в каждом',rows:2,holes:1,toast:'💥 ОСАДА БОССА! Два плотных мусорных ряда.'}
+  };
+  return profiles[id];
+}
+function bbRogueBuildGarbageRow(profile,rowIndex){
+  const e=bbRogueEncounter,row=Array(W).fill(7);
+  const seed=(e.room*3+e.attackIndex*5+rowIndex*2)%W;
+  for(let hole=0;hole<profile.holes;hole++)row[(seed+hole*4)%W]=0;
+  return row;
+}
 function bbRogueStartRoom(){
   const e=bbRogueEncounter,floor=Math.floor((e.room-1)/5)+1,boss=e.room%5===0;
   const hp=boss?18+floor*7+e.room*2:5+floor*2+Math.floor(e.room/2);
-  e.floor=floor;e.boss=boss;e.hp=hp;e.maxHp=hp;e.nextAttack=boss?20:Math.max(23,34-floor*2);
+  e.floor=floor;e.boss=boss;e.hp=hp;e.maxHp=hp;e.attackIndex=0;e.nextAttack=boss?20:Math.max(23,34-floor*2);
   bbRogueRenderEncounter();
 }
 function bbRogueRenderEncounter(){
   if(mode!=='rogue')return '';
-  const e=bbRogueEncounter,pct=Math.max(0,Math.min(100,e.hp/Math.max(1,e.maxHp)*100)),heroLevel=bbGetHeroProgress(bbSelectedHero).level,skillReady=Date.now()>=bbRogueSkillReadyAt;
-  return '<div style="display:flex;align-items:center;gap:9px;padding:7px 9px;margin:5px 0 8px;border:1px solid '+(e.boss?'#ff6b75':'#9d7cff')+'66;border-radius:11px;background:linear-gradient(100deg,#17172d,#111a30);color:#f5f2ff;min-height:42px;box-sizing:border-box">'+
+  const e=bbRogueEncounter,attack=bbRogueGetAttackProfile(),pct=Math.max(0,Math.min(100,e.hp/Math.max(1,e.maxHp)*100)),heroLevel=bbGetHeroProgress(bbSelectedHero).level,warning=e.nextAttack<=5;
+  return '<div style="display:flex;align-items:center;gap:9px;padding:7px 9px;margin:5px 0 8px;border:1px solid '+(warning?'#ffbd59':e.boss?'#ff6b75':'#9d7cff')+'88;border-radius:11px;background:linear-gradient(100deg,'+(warning?'#38251a':'#17172d')+',#111a30);color:#f5f2ff;min-height:42px;box-sizing:border-box">'+
     '<div style="font-size:20px">'+(e.boss?'👹':'👾')+'</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;gap:5px;font-size:10px;font-weight:900"><span>'+(e.boss?'БОСС':'КОМНАТА '+e.room)+' · ЭТАЖ '+e.floor+'</span><span>HP '+e.hp+'/'+e.maxHp+'</span></div>'+
-    '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="font-size:9px;color:#b9c1d9">АТАКА ЧЕРЕЗ '+e.nextAttack+'с</div></div>'+(heroLevel>=5?'<span style="font-size:9px;color:#5cf5e8;font-weight:900;white-space:nowrap">НАВЫК · ПРАВЫЙ СЛОТ</span>':'<span style="font-size:9px;color:#9ca8c4">Навык: ур. 5</span>')+'</div>';
+    '<div style="height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:8px;overflow:hidden"><i style="display:block;width:'+pct+'%;height:100%;background:'+(e.boss?'#ff6879':'#9d7cff')+'"></i></div><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:9px;color:'+(warning?'#ffd18a':'#b9c1d9')+'"><strong>'+(warning?'⚠ ':'')+attack.label+'</strong><span>АТАКА ЧЕРЕЗ '+e.nextAttack+'с</span></div><div style="font-size:8px;color:#8795b4;margin-top:2px">'+attack.description+'</div></div>'+(heroLevel>=5?'<span style="font-size:9px;color:#5cf5e8;font-weight:900;white-space:nowrap">НАВЫК · ПРАВЫЙ СЛОТ</span>':'<span style="font-size:9px;color:#9ca8c4">Навык: ур. 5</span>')+'</div>';
 }
 function bbRogueClearBottomRows(count){for(let n=0;n<count;n++){board.pop();board.unshift(Array(W).fill(0));}}
 function bbRenderHeroSkillSlot(){
@@ -5651,9 +5704,8 @@ function bbUseHeroActiveSkill(){
     else{const damage=12+tier*5;bbRogueDamageEnemy(damage);flash();toast('⚡ ЭЛЕКТРОРАЗРЯД! '+damage+' урона монстру.')}
   }else{
     if(bbSelectedHero==='plush'){
-      if(!boosts.includes('shield'))boosts.push('shield');
-      else bbRogueClearBottomRows(1);
-      toast('🐻 МЕДВЕЖИЙ ЩИТ! Защита активирована.');
+      for(let y=0;y<Math.min(H,2+tier);y++)board[y].fill(0);
+      toast('🐻 МЕДВЕЖИЙ ЩИТ! Верхние '+Math.min(H,2+tier)+' ряда очищены.');
     }else if(bbSelectedHero==='prism'){
       const bonus=300*tier;score+=bonus;toast('💎 КРИСТАЛЛЬНЫЙ РАСЧЁТ! +'+bonus+' очков.');
     }else if(bbSelectedHero==='blip'){
@@ -5685,14 +5737,20 @@ function bbRogueDamageEnemy(amount){
 }
 function bbRogueEnemyAttack(){
   if(mode!=='rogue'||!started||paused||gameOver)return;
-  const e=bbRogueEncounter,chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
-  if(boosts.includes('reserve')&&bbRogueReserveCharges>0){bbRogueReserveCharges--;e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2);toast('🛡️ РЕЗЕРВ ПОГЛОТИЛ АТАКУ! Осталось зарядов: '+bbRogueReserveCharges);bbRogueRenderEncounter();return;}
-  for(let n=0;n<(e.boss?2:1);n++){
-    if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
-    board.shift();const hole=Math.floor(Math.random()*W),garbage=Array(W).fill(7);garbage[hole]=0;board.push(garbage);
+  const e=bbRogueEncounter,attack=bbRogueGetAttackProfile(),chrono=bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
+  if(boosts.includes('reserve')&&bbRogueReserveCharges>0){
+    bbRogueReserveCharges--;e.attackIndex++;
+    e.nextAttack=Math.max(e.boss?12:17,(e.boss?20:34-e.floor*2)-(chrono?8:0));
+    toast('🛡️ РЕЗЕРВ ПОГЛОТИЛ АТАКУ! Осталось зарядов: '+bbRogueReserveCharges);
+    bbRogueRenderEncounter();return;
   }
-  e.nextAttack=e.boss?Math.max(12,20-e.floor):Math.max(17,34-e.floor*2)-(chrono?8:0);
-  toast(e.boss?'💥 БОСС ОБРУШИЛ ДВА РЯДА!':'👾 АТАКА МОНСТРА! На поле добавлен мусорный ряд.');
+  for(let n=0;n<attack.rows;n++){
+    if(board[0]&&board[0].some(Boolean)){endGame();toast('👾 Монстр прорвал оборону!');return;}
+    board.shift();board.push(bbRogueBuildGarbageRow(attack,n));
+  }
+  e.attackIndex++;
+  e.nextAttack=Math.max(e.boss?12:17,(e.boss?20:34-e.floor*2)-(chrono?8:0));
+  toast(attack.toast);
   render();bbRogueRenderEncounter();
 }
 
@@ -6497,59 +6555,30 @@ function bbGetUnlockedNode() {
 }
 
 
-let bbCampaignRun = { maxClear: 0, passed: false };function bbGetNodeGoals(node) {
-  const info = bbGetNodeInfo(node);
-  const local = info.localNumber;
-  const difficulty = Math.floor((node - 1) / 30);
-  const count = Math.min(5, 1 + Math.floor((node - 1) / 72));
-  const goals = [];
-
-  const pool = [
-    {
-      id: 'lines',
-      label: 'Очистить линии',
-      target: 3 + difficulty * 2 + (local % 4),
-      value: () => lines
-    },
-    {
-      id: 'score',
-      label: 'Набрать очки',
-      target: 700 + node * 95,
-      value: () => score
-    },
-    {
-      id: 'level',
-      label: 'Достичь уровня',
-      target: 2 + Math.floor(node / 45),
-      value: () => level
-    },
-    {
-      id: 'time',
-      label: 'Продержаться, секунд',
-      target: 35 + difficulty * 8 + (local % 5) * 5,
-      value: () => runSeconds
-    },
-    {
-      id: 'combo',
-      label: 'Очистить линии в одном ходе',
-      target: local % 10 === 0 ? 3 : 2,
-      value: () => bbCampaignRun.maxClear
-    }
-  ];
-
-  const offset = (node * 7 + info.biome.id * 3) % pool.length;
-
-  for (let i = 0; i < count; i++) {
-    const goal = pool[(offset + i * 2) % pool.length];
-    goals.push({
-      id: goal.id,
-      label: goal.label,
-      target: goal.target,
-      value: goal.value
-    });
-  }
-
-  return goals;
+let bbCampaignRun = {maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};
+function bbGetNodeGoals(node) {
+  const info=bbGetNodeInfo(node),local=info.localNumber,difficulty=Math.floor((node-1)/30);
+  const count=Math.min(5,2+Math.floor((node-1)/24));
+  const pool=[
+    {id:'lines',label:'Очистить линии',target:3+difficulty*2+(local%4),value:()=>lines},
+    {id:'score',label:'Набрать очки',target:700+node*95,value:()=>score},
+    {id:'level',label:'Достичь уровня',target:2+Math.floor(node/45),value:()=>level},
+    {id:'time',label:'Продержаться, секунд',target:35+difficulty*8+(local%5)*5,value:()=>runSeconds},
+    {id:'single',label:'Выполнить одиночную очистку',target:1,value:()=>bbCampaignRun.singleClears},
+    {id:'pieces',label:'Установить фигур',target:8+difficulty*2+(local%3),value:()=>bbCampaignRun.piecesPlaced},
+    {id:'rotations',label:'Повернуть фигуры',target:2+(local%4)+Math.floor(difficulty/2),value:()=>bbCampaignRun.rotations},
+    {id:'hold',label:'Использовать удержание',target:1,value:()=>bbCampaignRun.holdUses},
+    {id:'doubles',label:'Выполнить двойную очистку',target:1+Math.floor(difficulty/3),value:()=>bbCampaignRun.doubleClears},
+    {id:'triple',label:'Выполнить тройную очистку',target:1,value:()=>bbCampaignRun.tripleClears,bossOnly:true},
+    {id:'tetris',label:'Очистить 4 линии одним ходом',target:1,value:()=>bbCampaignRun.tetrisClears,bossOnly:true},
+    {id:'noHardDrop',label:'Установить 8 фигур без жёсткого сброса',target:8,value:()=>bbCampaignRun.hardDrops===0?bbCampaignRun.piecesPlaced:0,failed:()=>bbCampaignRun.hardDrops>0},
+    {id:'noHold',label:'Установить 8 фигур, не используя удержание',target:8,value:()=>bbCampaignRun.holdUses===0?bbCampaignRun.piecesPlaced:0,failed:()=>bbCampaignRun.holdUses>0},
+    {id:'streak',label:'Собрать серию из очисток подряд',target:local%10===0?3:2,value:()=>bbCampaignRun.maxCombo}
+  ].filter(goal=>!goal.bossOnly||info.boss);
+  const offset=(node*7+info.biome.id*3)%pool.length,goals=[];
+  for(let i=0;i<pool.length&&goals.length<count;i++)goals.push(pool[(offset+i*5)%pool.length]);
+  if(goals.some(goal=>goal.id==='hold')&&goals.some(goal=>goal.id==='noHold'))goals.splice(goals.findIndex(goal=>goal.id==='noHold'),1);
+  return goals.map(goal=>({id:goal.id,label:goal.label,target:goal.target,value:goal.value,failed:goal.failed}));
 }
 
 
@@ -6978,10 +7007,11 @@ toast('Цель выполнена! +' + g.reward + ' монет');
     goals.map(g => {
       const value = g.value();
       const complete = value >= g.target;
+      const failed = typeof g.failed === 'function' && g.failed();
       return '<div style="margin:6px 0">' +
         '<div style="display:flex;justify-content:space-between;gap:8px">' +
-        '<span>' + (complete ? '✅ ' : '◯ ') + g.label + '</span>' +
-        '<strong>' + Math.min(value, g.target) + '/' + g.target + '</strong>' +
+        '<span>' + (failed?'✕ ':complete ? '✅ ' : '◯ ') + g.label + '</span>' +
+        '<strong>' + (failed?'УСЛОВИЕ НАРУШЕНО':Math.min(value, g.target) + '/' + g.target) + '</strong>' +
         '</div><div style="height:4px;background:#293550;border-radius:4px;overflow:hidden">' +
         '<div style="height:100%;width:' +
         Math.min(100, value / g.target * 100) +
@@ -7028,9 +7058,9 @@ function buildMap() {
     const intro = document.createElement('div');
     intro.className = 'bb-atlas-intro';
     intro.innerHTML =
-      '<span>КАРТА ИЗВЕСТНОЙ ВСЕЛЕННОЙ</span>' +
-      '<strong>Спираль миров</strong>' +
-      '<small>Листай галактики по горизонтали и выбирай открытый биом</small>' +
+      '<span>АТЛАС ПРИКЛЮЧЕНИЙ</span>' +
+      '<strong>Миры Block Buddies</strong>' +
+      '<small>Выбирай мир и продолжай своё путешествие</small>' +
       '<div class="bb-atlas-status-legend" aria-label="Обозначения статусов">' +
         '<span class="available">● ДОСТУПНО</span><span class="cleared">✓ ПРОЙДЕНО</span><span class="locked">▣ ЗАКРЫТО</span>' +
       '</div>';
@@ -7057,15 +7087,15 @@ function buildMap() {
           '<div class="bb-galaxy-model-slot" data-universe-model="' + universeModelId + '"><span class="bb-galaxy-model-fallback">' + (unlocked ? b.icon : '🔒') + '</span></div>' +
           '<i class="bb-galaxy-star star-a">✦</i><i class="bb-galaxy-star star-b">·</i><i class="bb-galaxy-star star-c">✧</i>' +
         '</div>' +
-        '<span class="bb-galaxy-index">UNIVERSE ' + String(index + 1).padStart(2,'0') + '</span>' +
+        '<span class="bb-galaxy-index">МИР · ' + String(index + 1).padStart(2,'0') + '</span>' +
         '<strong>' + b.name + '</strong>' +
         '<small>' + biomeAtmospheres[index] + '</small>' +
         '<span class="bb-galaxy-range">ПЛАНЕТЫ ' + b.start + '–' + b.end + '</span>' +
         '<span class="bb-galaxy-progress"><i style="width:' + percent + '%"></i></span>' +
-        '<span class="bb-galaxy-status">' + (active ? '● ВАШ ТЕКУЩИЙ МИР' : cleared ? '✓ ВСЕЛЕННАЯ ПРОЙДЕНА' : unlocked ? 'ОТКРЫТА ДЛЯ ПУТЕШЕСТВИЯ' : 'ЗАПЕРТА') + '</span>';
+        '<span class="bb-galaxy-status">' + (active ? '● ТВОЙ ТЕКУЩИЙ МИР' : cleared ? '✓ МИР ПРОЙДЕН' : unlocked ? 'МОЖНО ИССЛЕДОВАТЬ' : 'ПОКА ЗАКРЫТ') + '</span>';
       card.addEventListener('click', () => {
         if (!unlocked) {
-          toast('Эта вселенная откроется после прохождения предыдущих миров');
+          toast('Этот мир откроется после прохождения предыдущего');
           return;
         }
         viewedBiomeId = b.id;
@@ -7111,7 +7141,7 @@ function buildMap() {
     hero.className = 'bb-planet-heading';
     hero.style.setProperty('--biome-color',b.color);
     hero.innerHTML =
-      '<span class="bb-planet-kicker">СИСТЕМА · ' + String(b.id + 1).padStart(2,'0') + '</span>' +
+      '<span class="bb-planet-kicker">МИР · ' + String(b.id + 1).padStart(2,'0') + '</span>' +
       '<strong>' + b.icon + ' ' + b.name + '</strong>' +
       '<small>' + (biomeAtmospheres[b.id] || 'Неизведанный мир') + '</small>' +
       '<span>Открыто до планеты ' + current + ' из ' + b.end + '</span>' +
@@ -7190,9 +7220,38 @@ function buildMap() {
     viewport.appendChild(track);
     g.appendChild(viewport);
 
+    // KT-627 · Clear, one-step navigation across the long planet route.
+    const controls = document.createElement('div');
+    controls.className = 'bb-planet-controls';
+    controls.innerHTML =
+      '<button type="button" class="bb-planet-step" data-step="-1" aria-label="Предыдущие планеты" title="Назад по маршруту">‹</button>' +
+      '<span class="bb-planet-range-label">ПЛАНЕТЫ ' + b.start + '–' + b.end + '</span>' +
+      '<button type="button" class="bb-planet-current" aria-label="Перейти к доступной планете">К ДОСТУПНОЙ</button>' +
+      '<button type="button" class="bb-planet-step" data-step="1" aria-label="Следующие планеты" title="Вперёд по маршруту">›</button>';
+    const stepButtons = controls.querySelectorAll('[data-step]');
+    const currentButton = controls.querySelector('.bb-planet-current');
+    const activePlanet = track.querySelector('.is-current');
+    currentButton.disabled = !activePlanet;
+    currentButton.addEventListener('click', () => {
+      if (!activePlanet) return;
+      const left = activePlanet.offsetLeft - Math.max(0, (viewport.clientWidth - activePlanet.offsetWidth) / 2);
+      viewport.scrollTo({ left, behavior: 'smooth' });
+    });
+    stepButtons.forEach(button => button.addEventListener('click', () => {
+      viewport.scrollBy({ left: Number(button.dataset.step) * Math.max(174, viewport.clientWidth * .72), behavior: 'smooth' });
+    }));
+    const updatePlanetControls = () => {
+      const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+      controls.querySelector('[data-step="-1"]').disabled = viewport.scrollLeft <= 2;
+      controls.querySelector('[data-step="1"]').disabled = viewport.scrollLeft >= maxScroll - 2;
+    };
+    viewport.addEventListener('scroll', updatePlanetControls, { passive: true });
+    g.appendChild(controls);
+    requestAnimationFrame(updatePlanetControls);
+
     const hint = document.createElement('div');
     hint.className = 'bb-planet-hint';
-    hint.textContent = 'ПУТЬ ПЕРВООТКРЫВАТЕЛЯ · ПРОДОЛЖАЙ ДВИЖЕНИЕ ПО ПУНКТИРУ';
+    hint.textContent = 'ТВОЙ МАРШРУТ · ОТКРЫВАЙ НОВЫЕ ОСТРОВА И МИРЫ';
     g.appendChild(hint);
     requestAnimationFrame(() => {
       const active = track.querySelector('.is-current');
@@ -7341,9 +7400,9 @@ localStorage.getItem('bbDailyChallengeCompletedDate') === bbGetTodayKey()
   bbChooseHeroBeforeStart();
 }
 
-function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];
+function startGameNow(){if(mode==='daily'&&!bbDailyReplayDate&&localStorage.getItem('bbDailyChallengeCompletedDate')===bbGetTodayKey()){show('daily');setupDaily();toast('✅ Ежедневный вызов уже пройден. Награда за сегодня получена.');return;}bbResetGameplayTrack();bbRestartMenuMusic();bbApplyDailyChronoLayout();bbNodeCompleted=false;bbCampaignRun={maxClear:0,piecesPlaced:0,rotations:0,holdUses:0,hardDrops:0,singleClears:0,doubleClears:0,tripleClears:0,tetrisClears:0,maxCombo:0};bbRogueSkillReadyAt=0;bbCampaignGuardianUsed=false;if(mode==='rogue'){bbRogueCardRanks={};bbRogueEncounter={floor:1,room:1,boss:false,hp:0,maxHp:0,nextAttack:32,defeated:0};bbRogueShieldCharges=0;bbRogueReserveCharges=0;bbRogueStartRoom();bbRogueGoals=[];bbRogueGoalId=0;for(let i=0;i<3;i++)bbRogueGoals.push(bbCreateRogueGoal())}modeStart=Date.now();score=0;lines=0;level=1;bbVoidLastAppliedLevel=1;levelLines=0;needLines=mode==='rogue'?5:6;runSeconds=0;paused=false;gameOver=false;started=true;bbArrangeModeHud();bbPlushSaved=false;boosts=[];bbGearMoveCount=0;
                      $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ (2)':'УДЕРЖАТЬ';
-if(bbSelectedHero==='blip'&&upgrades.length){
+if(mode==='rogue'&&bbSelectedHero==='blip'&&upgrades.length){
   const heroLevel=bbGetHeroProgress('blip').level;
   const available=upgrades.slice();
   const starter=available.splice(Math.floor(Math.random()*available.length),1)[0];
@@ -7378,7 +7437,6 @@ if (mode === 'daily') {
   }
 
   if (mode === 'campaign') {
-    if(bbHasCampaignPerk('scout')){const starter=upgrades.find(u=>u[3]==='shield');if(starter)boosts.push(starter[3]);}
     $('gameTitle').textContent = 'Узел ' + String(campaignNode).padStart(2, '0');
     $('gameSub').textContent = 'Кампания · Сектор ' + Math.ceil(campaignNode / 3);
   } else {
@@ -7474,8 +7532,27 @@ function randomType() {
 function rotate(m){return m[0].map((_,i)=>m.map(r=>r[i]).reverse())}function newPiece(t){let s=shapes[t].map(r=>r.slice());if(boosts.includes('mirror')&&lines>0&&lines%7===0)s=s.map(r=>r.slice().reverse());return {t,shape:s,x:Math.floor((W-s[0].length)/2),y:0}}
 function collides(p,dx=0,dy=0,shape=p.shape){for(let y=0;y<shape.length;y++)for(let x=0;x<shape[y].length;x++)if(shape[y][x]){let nx=p.x+x+dx,ny=p.y+y+dy;if(nx<0||nx>=W||ny>=H)return true;if(ny>=0&&board[ny][nx])return true}return false}
 function move(dx,dy=0){if(!started||paused||gameOver)return;if(mode==='daily'&&bbGetActiveDailyRule().mod==='mirror')dx=-dx;if(!collides(piece,dx,dy)){piece.x+=dx;piece.y+=dy;render();if(dy)tone(170,.025,'sine',.009);return true}if(dy>0)lockPiece();return false}
-function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;if(!collides(piece,0,0,s)){piece.shape=s;rotated=true}else if(!collides(piece,-1,0,s)){piece.x--;piece.shape=s;rotated=true}else if(!collides(piece,1,0,s)){piece.x++;piece.shape=s;rotated=true}if(rotated){bbHaptic(9);chime();render()}}
-function hardDrop(){if(!started||paused||gameOver)return;let dist=0;while(!collides(piece,0,1)){piece.y++;dist++}score+=dist*2;bbHaptic(16);lockPiece()}
+// Stable card extends horizontal wall-kicks by rank, only inside Block Run.
+function rotatePiece(){if(!started||paused||gameOver)return;let s=rotate(piece.shape),rotated=false;const rank=mode==='rogue'?bbGetRogueCardRank('stable'):0,maxKick=rank?Math.min(4,1+rank):1,kicks=[0,-1,1];for(let distance=2;distance<=maxKick;distance++)kicks.push(-distance,distance);for(const dx of kicks){if(!collides(piece,dx,0,s)){piece.x+=dx;piece.shape=s;rotated=true;break}}if(rotated){if(mode==='campaign')bbCampaignRun.rotations++;if(boosts.includes('shift')&&Math.random()<0.25){score+=25*bbGetUpgradeRank('shift');updateHud()}bbHaptic(9);chime();render();if(mode==='campaign')bbRenderGoals()}}
+let bbHardDropAcceptedAt=0;
+let bbHardDropInProgress=false;
+function hardDrop(){
+  if(!started||paused||gameOver||!piece||bbHardDropInProgress)return;
+  const now=performance.now();
+  // Brief cross-input guard filters duplicate events without making
+  // the controls feel unresponsive between deliberate drops.
+  if(now-bbHardDropAcceptedAt<160)return;
+  bbHardDropAcceptedAt=now;
+  bbHardDropInProgress=true;
+  if(typeof touch!=='undefined')touch=null;
+  if(typeof lockTouchDrop==='function')lockTouchDrop(140);
+  if(mode==='campaign')bbCampaignRun.hardDrops++;
+  let dist=0;
+  while(!collides(piece,0,1)){piece.y++;dist++}
+  score+=dist*2;bbHaptic(16);lockPiece();
+  // lockPiece() is synchronous; release the re-entry guard after its stack.
+  queueMicrotask(()=>{bbHardDropInProgress=false;});
+}
 
 
 
@@ -7601,7 +7678,7 @@ if (isReplay) {
   return true;
 }
 
-function lockPiece(){if(!piece)return;piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));const bbBoardBeforeClear=board.map(row=>row.slice());
+function lockPiece(){if(!piece)return;if(mode==='campaign')bbCampaignRun.piecesPlaced++;if(boosts.includes('gear')){bbGearMoveCount++;if(bbGearMoveCount%5===0){const bonus=25*bbGetUpgradeRank('gear');score+=bonus;toast('⚙ МЕХАНИЗМ: +'+bonus+' очков');updateHud();}}piece.shape.forEach((r,y)=>r.forEach((v,x)=>{if(v&&piece.y+y>=0)board[piece.y+y][piece.x+x]=piece.t+1}));const bbBoardBeforeClear=board.map(row=>row.slice());
 const bbClearedRows=[];
 let cleared=0;
 for(let y=H-1;y>=0;y--){
@@ -7619,6 +7696,12 @@ if(cleared){
   };
 }
 
+// Plasma restarts the next automatic fall interval after a successful line clear.
+if(cleared&&boosts.includes('plasma')){
+  if(mode==='rogue')dropLastStepAt=performance.now();
+  else restartDrop();
+}
+
 if(
   mode==='daily' &&
   bbIsDailyMechanic('redZone') &&
@@ -7631,6 +7714,7 @@ if(
 }
 
 if(cleared){
+if(mode==='campaign'){if(cleared===1)bbCampaignRun.singleClears++;if(cleared===2)bbCampaignRun.doubleClears++;if(cleared===3)bbCampaignRun.tripleClears++;if(cleared>=4)bbCampaignRun.tetrisClears++;}
 bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16);
 if(bbIsDailyMechanic('chronoRift')){
   bbDailyMechanicState.chronoRemaining=20;
@@ -7658,7 +7742,7 @@ if(mode==='daily'&&bbGetActiveDailyRule().mod==='gravityFlip'){
   restartDrop();
 }
 bbCampaignRun.maxClear=Math.max(bbCampaignRun.maxClear,cleared);if(mode==='rogue')bbRogueDamageEnemy(cleared*(1+Math.floor(bbGetRogueCardRank('score')/3))+(cleared>=3?bbGetRogueCardRank('burst')*2:0)+(cleared>=2?bbGetRogueCardRank('hunter'):0));lines+=cleared;if(boosts.includes('resonance')&&lines%4<cleared){levelLines+=bbGetUpgradeRank('resonance');toast('✧ РЕЗОНАНС: дополнительный заряд уровня!')}bbDailyAddLines(cleared);levelLines+=cleared;
-combo++;
+combo++;if(mode==='campaign')bbCampaignRun.maxCombo=Math.max(bbCampaignRun.maxCombo,combo);
 
 if(bbIsDailyMechanic('echoCombo')){
   bbDailyMechanicState.echoCombo+=cleared;
@@ -7742,13 +7826,60 @@ if(dailySpawnCollision){
 
 bbCheckCampaignCompletion();
 }
-function levelUp(){level++;levelLines-=needLines;let t0=runSeconds;const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');needLines=Math.min(8,Math.max(3,Math.ceil(needLines*1.12+(level-1)*.12)-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)+(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));restartDrop();if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;updateProgress();paused=true;render();showUpgrade()}
-function updateHud(){bbRenderHeroSkillSlot();$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=boosts.length?'✧':'◇';$('boostName').textContent=boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления';$('boostNum').textContent=boosts.length?boosts.length+' усил.':'Выбери реликвию';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
+function bbBuildVoidCompressedBoard(source){
+  if(!Array.isArray(source)||source.length!==H||source.some(row=>!Array.isArray(row)||row.length!==W))return null;
+  const firstOccupied=source.findIndex(row=>row.some(Boolean));
+  let lastOccupied=-1;
+  for(let y=H-1;y>=0;y--)if(source[y].some(Boolean)){lastOccupied=y;break;}
+  // Keep the spawn corridor untouched: the upper four rows must be empty before compression.
+  if(firstOccupied<4||lastOccupied<=firstOccupied+1)return null;
+  for(let y=lastOccupied-1;y>firstOccupied;y--){
+    if(source[y].every(cell=>!cell)){
+      const compressed=source.map(row=>row.slice());
+      compressed.splice(y,1);
+      compressed.unshift(Array(W).fill(0));
+      return {board:compressed,collapsedRow:y};
+    }
+  }
+  return null;
+}
+function bbApplyVoidCompression(){
+  if(mode!=='rogue'||!boosts.includes('void')||bbVoidLastAppliedLevel===level)return false;
+  bbVoidLastAppliedLevel=level;
+  const result=bbBuildVoidCompressedBoard(board);
+  if(!result){toast('◍ ТИХАЯ СИНГУЛЯРНОСТЬ: поле уже плотно собрано');return false;}
+  const previousBoard=board;
+  board=result.board;
+  // A compression may never create a collision with the freshly spawned piece.
+  if(piece&&collides(piece)){
+    board=previousBoard;
+    toast('◍ ТИХАЯ СИНГУЛЯРНОСТЬ: безопасный промежуток не найден');
+    return false;
+  }
+  toast('◍ ТИХАЯ СИНГУЛЯРНОСТЬ: пустой ряд сжат');
+  return true;
+}
+function levelUp(){
+  level++;
+  levelLines-=needLines;
+  let t0=runSeconds;
+  const chronoSynergy=mode==='rogue'&&bbGetRogueCardRank('slow')&&bbGetRogueCardRank('memory');
+  needLines=Math.min(8,Math.max(3,Math.ceil(needLines*1.12+(level-1)*.12)-(boosts.includes('memory')?bbGetUpgradeRank('memory'):0)-(boosts.includes('loop')?bbGetUpgradeRank('loop'):0)-(chronoSynergy?1:0)));
+  dropMs=Math.max(130,dropMs-48-(level*3)+(boosts.includes('fortress')?15*bbGetUpgradeRank('fortress'):0)+(boosts.includes('slow')?25*bbGetUpgradeRank('slow'):0)+(chronoSynergy?12:0));
+  if(boosts.includes('void'))bbApplyVoidCompression();
+  restartDrop();
+  if(boosts.includes('comet')&&runSeconds-t0<35)score+=300;
+  updateProgress();render();
+  if(mode==='rogue'){paused=true;showUpgrade()}
+  else{paused=false;if(mode==='campaign')toast('✦ УРОВЕНЬ ПОВЫШЕН · ЭКСПЕДИЦИЯ ПРОДОЛЖАЕТСЯ');restartDrop()}
+}
+function updateHud(){bbRenderHeroSkillSlot();$('score').textContent=score.toLocaleString('ru-RU');$('lines').textContent=lines;$('level').textContent=level;const coinsValue = $('gameCoinsValue'); if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');$('boostIcon').textContent=mode==='rogue'&&boosts.length?'✧':'◇';$('boostName').textContent=mode==='rogue'?(boosts.length?upgrades.find(u=>u[3]===boosts[boosts.length-1])?.[1]||'Реликвия':'Нет усиления'):'Только в Block Run';$('boostNum').textContent=mode==='rogue'?(boosts.length?boosts.length+' карт':'Карты не выбраны'):'Обычные правила';$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100))+'%');if(score>best){best=score;localStorage.nrBest=best;updateStats()}}
 function updateProgress(){const pct=Math.max(0,Math.min(100,levelLines/Math.max(1,needLines)*100));$('progressText').textContent=levelLines+'/'+needLines;$('chargeRing').style.setProperty('--charge-progress',pct+'%');$('chargeRing').setAttribute('aria-label','Заряд уровня '+Math.round(pct)+' процентов');$('progressLabel').textContent=pct>=100?'УРОВЕНЬ ГОТОВ':'ДО НОВОГО УРОВНЯ'}
 function showUpgrade(){
-  const rogue=mode==='rogue';
-  let pool=rogue?upgrades.slice():upgrades.filter(u=>!boosts.includes(u[3]));
-  if(!pool.length)pool=upgrades.slice();
+  if(mode!=='rogue'){paused=false;restartDrop();return;}
+  const rogue=true;
+  let pool=bbGetModeUpgradePool('rogue');
+  if(!pool.length){paused=false;restartDrop();return;}
   pool.sort(()=>Math.random()-.5);
   const picks=pool.slice(0,3);
   const stage=rogue?Math.max(1,Math.floor((level-1)/3)+1):0;
@@ -7821,6 +7952,23 @@ function bbDailyGlitchColor(index){
 }
 function bbSyncDailyPreview(){const preview=$('next');if(preview)preview.style.visibility=(bbIsDailyMechanic('blindAssembly')||bbIsDailyMechanic('silent'))?'hidden':'';}
 let bbLineClearAnimation=null,bbLineClearAnimationRaf=0;
+let bbPrismAnimationRaf=0,bbPrismLastFrame=0;
+function bbPrismColor(index,now=performance.now()){
+  const base=colors[index%colors.length]||'#69f4ff';
+  if(!boosts.includes('prism')||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return base;
+  const hue=((now/4200)*360+index*41)%360,s=.82,l=.62,c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((hue/60)%2-1)),m=l-c/2;
+  const rgb=hue<60?[c,x,0]:hue<120?[x,c,0]:hue<180?[0,c,x]:hue<240?[0,x,c]:hue<300?[x,0,c]:[c,0,x];
+  return '#'+rgb.map(v=>Math.round((v+m)*255).toString(16).padStart(2,'0')).join('');
+}
+function bbSchedulePrismAnimation(){
+  if(bbPrismAnimationRaf||!boosts.includes('prism')||!started||paused||gameOver||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  bbPrismAnimationRaf=requestAnimationFrame(now=>{
+    bbPrismAnimationRaf=0;
+    if(now-bbPrismLastFrame<45){bbSchedulePrismAnimation();return;}
+    bbPrismLastFrame=now;
+    if(boosts.includes('prism')&&started&&!paused&&!gameOver){render();bbSchedulePrismAnimation();}
+  });
+}
 function render(){bbSyncDailyPreview();let c=$('board'),ctx=c.getContext('2d'),cw=c.width,ch=c.height,cell=cw/W;ctx.clearRect(0,0,cw,ch);let grad=ctx.createLinearGradient(0,0,cw,ch);grad.addColorStop(0,'#0c1429');grad.addColorStop(1,'#080d1b');ctx.fillStyle=grad;ctx.fillRect(0,0,cw,ch);/* Precision arena grid: crisp cell boundaries and stronger five-cell guides */
 ctx.save();ctx.fillStyle='#0a1222';ctx.fillRect(0,0,cw,ch);
 for(let y=0;y<H;y++){if(y%2===1){ctx.fillStyle='#ffffff04';ctx.fillRect(0,y*cell,cw,cell);}}
@@ -7867,7 +8015,18 @@ if(bbLineClearAnimation){
 }else{
   for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,bbDailyGlitchColor(board[y][x]-1),cell);
 }
-if(piece&&!gameOver){let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,bbDailyGlitchColor(piece.t),cell,true)}));piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,bbDailyGlitchColor(piece.t),cell)}))}drawNext();
+if(piece&&!gameOver){
+  const activeColor=boosts.includes('prism')?bbPrismColor(piece.t):bbDailyGlitchColor(piece.t);
+  if(boosts.includes('aura')){
+    ctx.save();ctx.globalAlpha=.72;ctx.shadowColor=activeColor;ctx.shadowBlur=cell*.9;ctx.fillStyle=activeColor;
+    piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)ctx.fillRect((piece.x+xx)*cell+cell*.16,(piece.y+yy)*cell+cell*.16,cell*.68,cell*.68)}));
+    ctx.restore();
+  }
+  let ghost={...piece,y:piece.y};while(!collides(ghost,0,1))ghost.y++;
+  ghost.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&ghost.y+yy>=0)drawCell(ctx,piece.x+xx,ghost.y+yy,activeColor,cell,true)}));
+  piece.shape.forEach((r,yy)=>r.forEach((v,xx)=>{if(v&&piece.y+yy>=0)drawCell(ctx,piece.x+xx,piece.y+yy,activeColor,cell)}));
+}
+drawNext();
 if(bbLineClearAnimation){
   if(!bbLineClearAnimationRaf){
     bbLineClearAnimationRaf=requestAnimationFrame(()=>{
@@ -7878,6 +8037,7 @@ if(bbLineClearAnimation){
 }else if(bbLineClearAnimationRaf){
   cancelAnimationFrame(bbLineClearAnimationRaf);bbLineClearAnimationRaf=0;
 }
+  bbSchedulePrismAnimation();
 }
 window.bbGet3DBoardState=function(){
   const settled=board.map(row=>row.slice());
@@ -7888,13 +8048,50 @@ window.bbGet3DBoardState=function(){
     while(!collides(ghost,0,1))ghost.y++;
     ghostY=ghost.y;
   }
-  return {width:W,height:H,board:settled,piece:active,ghostY,colors:colors.slice(),lines:Number(lines)||0,started:!!started,paused:!!paused,gameOver:!!gameOver};
+  return {width:W,height:H,board:settled,piece:active,pieceColor:active?(boosts.includes('prism')?bbPrismColor(active.t):bbDailyGlitchColor(active.t)):null,aura:!!(active&&boosts.includes('aura')),ghostY,colors:colors.slice(),lines:Number(lines)||0,started:!!started,paused:!!paused,gameOver:!!gameOver};
 };
-function drawCell(ctx,x,y,color,cell,ghost=false){let px=x*cell+1.25,py=y*cell+1.25,s=cell-2.5;ctx.save();if(ghost){ctx.globalAlpha=.22;ctx.fillStyle=color;ctx.fillRect(px,py,s,s);ctx.strokeStyle=color;ctx.lineWidth=1;ctx.strokeRect(Math.round(px)+.5,Math.round(py)+.5,s-1,s-1);ctx.restore();return}ctx.shadowColor=color;ctx.shadowBlur=cell*.22;let g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,color);g.addColorStop(1,shade(color));ctx.fillStyle=g;ctx.fillRect(px,py,s,s);ctx.shadowBlur=0;ctx.strokeStyle='#ffffffa8';ctx.lineWidth=1;ctx.strokeRect(Math.round(px)+.5,Math.round(py)+.5,Math.floor(s)-1,Math.floor(s)-1);ctx.fillStyle='#ffffff55';ctx.fillRect(px+2,py+2,Math.max(0,s-4),Math.max(1,s*.075));ctx.restore()}
+function drawCell(ctx,x,y,color,cell,ghost=false){
+  const px=x*cell+1.25,py=y*cell+1.25,s=cell-2.5,r=Math.min(cell*.16,4.5);
+  const rounded=(left,top,width,height,radius)=>{
+    ctx.beginPath();ctx.moveTo(left+radius,top);ctx.lineTo(left+width-radius,top);ctx.quadraticCurveTo(left+width,top,left+width,top+radius);
+    ctx.lineTo(left+width,top+height-radius);ctx.quadraticCurveTo(left+width,top+height,left+width-radius,top+height);
+    ctx.lineTo(left+radius,top+height);ctx.quadraticCurveTo(left,top+height,left,top+height-radius);
+    ctx.lineTo(left,top+radius);ctx.quadraticCurveTo(left,top,left+radius,top);ctx.closePath();
+  };
+  ctx.save();
+  if(ghost){
+    ctx.globalAlpha=.24;ctx.fillStyle=color;rounded(px+1,py+1,s-2,s-2,r);ctx.fill();
+    ctx.globalAlpha=.9;ctx.strokeStyle=color;ctx.lineWidth=Math.max(1,cell*.035);ctx.setLineDash([Math.max(2,cell*.12),Math.max(2,cell*.1)]);rounded(px+1.5,py+1.5,s-3,s-3,r);ctx.stroke();ctx.setLineDash([]);
+    ctx.restore();return;
+  }
+  ctx.shadowColor=color;ctx.shadowBlur=cell*.28;
+  const g=ctx.createLinearGradient(px,py,px+s,py+s);g.addColorStop(0,'#ffffff');g.addColorStop(.12,color);g.addColorStop(.72,shade(color));g.addColorStop(1,'#07101f');
+  ctx.fillStyle=g;rounded(px,py,s,s,r);ctx.fill();ctx.shadowBlur=0;
+  ctx.lineWidth=Math.max(1,cell*.035);ctx.strokeStyle='#ffffffb8';ctx.stroke();
+  rounded(px+cell*.095,py+cell*.095,s-cell*.19,s-cell*.19,Math.max(1,r*.55));
+  ctx.strokeStyle='#ffffff24';ctx.lineWidth=Math.max(1,cell*.018);ctx.stroke();
+  const shine=ctx.createLinearGradient(px,py,px,py+s*.46);shine.addColorStop(0,'#ffffff8c');shine.addColorStop(1,'#ffffff00');
+  ctx.fillStyle=shine;rounded(px+cell*.09,py+cell*.07,s-cell*.18,s*.34,Math.max(1,r*.55));ctx.fill();
+  ctx.fillStyle='#ffffff35';ctx.fillRect(px+cell*.18,py+cell*.16,Math.max(1,s-cell*.36),Math.max(1,cell*.045));
+  ctx.fillStyle='#02081742';ctx.fillRect(px+cell*.12,py+s-cell*.13,s-cell*.24,Math.max(1,cell*.055));
+  ctx.restore();
+}
 function shade(hex){let n=parseInt(hex.slice(1),16);return '#'+[0,8,16].map((v,i)=>Math.max(0,((n>>(16-i*8))&255)-38).toString(16).padStart(2,'0')).join('')}
-function drawNext(){let c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;let s=shapes[nextType],cell=Math.min(20,78/Math.max(s[0].length,s.length)),ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x])drawCell(ctx,0,0,colors[nextType],cell);ctx.clearRect(0,0,c.width,c.height);for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){let px=ox+x*cell+1,py=oy+y*cell+1;ctx.fillStyle=colors[nextType];ctx.shadowColor=colors[nextType];ctx.shadowBlur=7;ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke()}}
+function drawNext(){
+  const c=$('next'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+  if(mode==='daily'&&bbGetActiveDailyRule().mod==='silent'&&started)return;
+  const s=shapes[nextType],color=bbPrismColor(nextType),cell=Math.min(20,78/Math.max(s[0].length,s.length));
+  const ox=(c.width-s[0].length*cell)/2,oy=(c.height-s.length*cell)/2;
+  for(let y=0;y<s.length;y++)for(let x=0;x<s[y].length;x++)if(s[y][x]){
+    const px=ox+x*cell+1,py=oy+y*cell+1;
+    ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=7;
+    ctx.beginPath();ctx.roundRect(px,py,cell-2,cell-2,3);ctx.fill();
+    ctx.shadowBlur=0;ctx.strokeStyle='#fff7';ctx.stroke();
+  }
+}
 function flash(){let b=$('board');b.animate([{filter:'brightness(1)'},{filter:'brightness(1.9) saturate(1.4)'},{filter:'brightness(1)'}],{duration:280})}
 let dropCurrentMs=760,dropRampAt=0,dropRampFromMs=760,dropLastStepAt=0;
+let bbGearMoveCount=0;
 function restartDrop(){
   if(dropTimer)clearTimeout(dropTimer);
   if(mode!=='rogue'){
@@ -7987,9 +8184,10 @@ if (boostCard) {
 }
 
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;chime();if(mode==='campaign'){buildMap();show('campaign')}else if(mode==='daily'){setupDaily();show('daily')}else startGame()});document.querySelectorAll('[data-home]').forEach(b=>b.onclick=()=>show('menu'));$('openHeroes').onclick=()=>show('heroes');
-$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;if(holdUsed<(bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(boosts.includes('hold')?(mode==='rogue'?1+bbGetRogueCardRank('hold'):2):1))){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;
+$('heroesBack').onclick=()=>show('menu');$('campaignStart').onclick=()=>{mode='campaign';startGame()};$('dailyStart').onclick=()=>{mode='daily';startGame()};$('pauseBtn').onclick=pauseGame;$('holdBtn').onclick=()=>{if(!started||paused||gameOver)return;const holdLimit=bbSelectedHero==='pixel'?Math.min(4,2+Math.floor((bbGetHeroProgress('pixel').level-1)/5)):(mode==='rogue'&&boosts.includes('hold')?1+bbGetRogueCardRank('hold'):mode==='campaign'&&bbHasCampaignPerk('scout')?2:1);if(holdUsed<holdLimit){let t=piece.t;piece=newPiece(nextType);nextType=t;holdUsed++;if(mode==='campaign')bbCampaignRun.holdUses++;
 $('holdBtn').textContent=bbSelectedHero==='pixel'?'УДЕРЖАТЬ ('+(2-holdUsed)+')':'УДЕРЖАТЬ';
 render();
+if(mode==='campaign')bbRenderGoals();
 tone(330,.09,'triangle')}else toast('Удержание уже использовано')};$('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent=musicOn?'♫ ВКЛ':'♫ ВЫКЛ';if(musicOn&&started&&!paused)music()};$('soundBtn').onclick=()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♩̸';if(soundOn)chime();toast(soundOn?'Звук включён':'Звук выключен')};
 const hapticButton=$('hapticBtn');
 if(hapticButton){
@@ -8029,13 +8227,13 @@ document.querySelectorAll('[data-act]').forEach(b=>{let act=()=>{audioCtx();let 
 let touch = null;
 let touchDropLocked = false;
 let touchDropUnlockTimer = null;
-function lockTouchDrop() {
+function lockTouchDrop(duration=140) {
   touchDropLocked = true;
   if (touchDropUnlockTimer) clearTimeout(touchDropUnlockTimer);
   touchDropUnlockTimer = setTimeout(() => {
     touchDropLocked = false;
     touchDropUnlockTimer = null;
-  }, 220);
+  }, duration);
 }
 const cv = $('game');
 
@@ -8066,7 +8264,7 @@ cv.addEventListener('touchstart', e => {
 },{passive:false});
 
 cv.addEventListener('touchmove',e=>{
-  if(!touch||touch.dropped||!started||paused||gameOver)return;
+  if(touchDropLocked||!touch||touch.dropped||!started||paused||gameOver)return;
   // The board owns this gesture; keep the WebView from scrolling under the finger.
   if(touch.boardGesture && e.cancelable) e.preventDefault();
   const t=e.changedTouches[0],tx=t.clientX-touch.x,ty=t.clientY-touch.y;
@@ -8089,6 +8287,7 @@ cv.addEventListener('touchmove',e=>{
 
 cv.addEventListener('touchend',e=>{
   if(e.target.closest('button, input, select, textarea, [data-act]')){touch=null;return}
+  if(touchDropLocked){touch=null;return}
   if(!touch)return;
   const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;
   const elapsed=Date.now()-touch.at;
@@ -8098,16 +8297,18 @@ cv.addEventListener('touchend',e=>{
   if(!touch.dropped&&!touch.suppressTap&&Math.abs(dx)<18&&Math.abs(dy)<18&&elapsed<230){
     rotatePiece();
   }else if(verticalSwipe&&started&&!paused&&!gameOver){
-    // Only a genuinely quick flick performs the remaining hard drop. Slow
-    // swipes have already moved row-by-row in touchmove; touchend adds no jump.
-    if(fastDownSwipe){lockTouchDrop();hardDrop();}
+    // A soft-drop touchmove may already have reached the floor and called
+    // lockPiece(), which spawns the next piece. Never let this same gesture's
+    // touchend hard-drop that newly spawned piece.
+    if(fastDownSwipe&&!touch.dropped){lockTouchDrop();hardDrop();}
   }
   touch=null;
 },{passive:true});
 
 cv.addEventListener('touchcancel',()=>{
   touch=null;
-  touchDropLocked=false;
+  // Do not clear the post-drop lock on cancellation: the same physical
+  // gesture may be cancelled and re-delivered by the WebView.
 },{passive:true});
 
 
@@ -8183,7 +8384,7 @@ const bbHeroes = [
     hp: 3,
     power: 4,
     skill: 'Глитч',
-    skillDesc: 'Даёт случайный небольшой бонус в начале забега.'
+    skillDesc: 'В Block Run получает случайное стартовое усиление.'
   },
   {
     id: 'pixel',
@@ -8552,11 +8753,11 @@ function bbOpenCampaignTraining(heroId){
   const options=[
     {id:'guardian',name:'Страж рубежа',icon:'🛡️',desc:'Один раз за планету кампании предотвращает поражение и очищает верхние ряды.',effect:r=>r===0?'Откроет спасение один раз за планету и очистку верхних рядов.':r===1?'Усилит спасение: очищаются 2 верхних ряда.':r===2?'Усилит спасение: очищаются 3 верхних ряда.':'Максимальная защита достигнута.',cost:1,max:3},
     {id:'tactician',name:'Тактический расчёт',icon:'🎯',desc:'Повышает количество очков за действия в кампании.',effect:r=>'Бонус к очкам кампании: +'+((r+1)*12)+'%.',cost:2,max:3},
-    {id:'scout',name:'Разведчик',icon:'🧭',desc:'Помогает подготовиться к каждому узлу звёздной карты.',effect:r=>r?'В начале каждого узла выдаётся бесплатный щит.':'Откроет бесплатный щит в начале каждого узла.',cost:3,max:1}
+    {id:'scout',name:'Разведчик',icon:'🧭',desc:'Даёт дополнительную возможность удержать фигуру в каждом узле кампании.',effect:r=>r?'Доступно 2 удержания фигуры за узел.':'Откроет второе удержание фигуры в каждом узле.',cost:3,max:1}
   ];
   const cards=options.map(p=>{
     const rank=Math.max(0,Number(perks[p.id])||0),cost=p.cost*(rank+1),maxed=rank>=p.max,canBuy=!maxed&&bbCampaignMarks>=cost;
-    const nextEffect=p.id==='guardian'?(rank===0?'Один раз за планету: спасение + очистка верхнего ряда.':rank===1?'Теперь очищает 2 верхних ряда.':'Теперь очищает 3 верхних ряда.'):p.id==='tactician'?'После улучшения: +'+((rank+1)*12)+'% очков кампании.': 'После улучшения: бесплатный щит в начале каждого узла.';
+    const nextEffect=p.id==='guardian'?(rank===0?'Один раз за планету: спасение + очистка верхнего ряда.':rank===1?'Теперь очищает 2 верхних ряда.':'Теперь очищает 3 верхних ряда.'):p.id==='tactician'?'После улучшения: +'+((rank+1)*12)+'% очков кампании.': 'После улучшения: второе удержание фигуры в каждом узле.';
     return '<article class="bb-training-perk '+(maxed?'is-maxed':'')+'"><div class="bb-training-perk-top"><span class="bb-training-perk-icon">'+p.icon+'</span><span class="bb-training-rank">РАНГ <b>'+rank+'</b> / '+p.max+'</span></div><h4>'+p.name+'</h4><p>'+p.desc+'</p><div class="bb-training-current"><small>ТЕКУЩИЙ ЭФФЕКТ</small><span>'+(rank?p.effect(rank):'Пока не изучено')+'</span></div><div class="bb-training-next"><small>'+(maxed?'СТАТУС':'СЛЕДУЮЩЕЕ УЛУЧШЕНИЕ')+'</small><span>'+(maxed?'Все ранги открыты':nextEffect)+'</span></div><button type="button" data-campaign-perk="'+p.id+'" '+(canBuy?'':'disabled')+'>'+(maxed?'✓ МАКСИМАЛЬНЫЙ РАНГ': 'УЛУЧШИТЬ · '+cost+' 🏅')+'</button></article>';
   }).join('');
   bbModal('<section class="bb-campaign-training"><header class="bb-training-header"><div class="bb-training-header-icon">🏅</div><div><div class="eyebrow">ПОЛИГОН КАМПАНИИ</div><h3>Тренировка героя</h3><p>Улучшай навыки героя для прохождения звёздной карты.</p></div></header><div class="bb-training-hero"><div class="bb-training-hero-emblem">'+bbHeroEmblem(hero.id,'detail')+'</div><div class="bb-training-hero-info"><strong>'+hero.name+'</strong><span>Уровень героя · '+progress.level+'</span><small>Опыт: '+progress.xp+' / '+(200+(progress.level-1)*100)+'</small></div><div class="bb-training-wallet"><small>ТВОИ ЗНАКИ</small><b>🏅 '+bbCampaignMarks+'</b></div></div><div class="bb-training-rule"><b>Как это работает</b><span>Выбери навык и нажми «Улучшить». Каждый ранг усиливает эффект. Эти перки действуют только в кампании — Block Run и ежедневные испытания не затрагиваются.</span></div><div class="bb-training-section-title">НАВЫКИ ГЕРОЯ <span>3 ПЕРКА</span></div><div class="bb-training-perks">'+cards+'</div><button type="button" class="action secondary bb-training-back" id="bbTrainingBack">← НАЗАД К ДОСЬЕ ГЕРОЯ</button></section>');
@@ -8795,7 +8996,7 @@ startGame=function(){
 const bbOldStartNow=startGameNow;
 startGameNow=function(){
   bbOldStartNow();
-  if(!started||gameOver||!Array.isArray(board)||board.length!==H)return;
+  if(!started||gameOver||!Array.isArray(board)||board.length!==H||mode!=='rogue')return;
   if(bbInventory.quick>0){
     bbInventory.quick--;
     if(!boosts.includes('mult'))boosts.push('mult');
@@ -9028,8 +9229,48 @@ if (resetProgressBtn) {
   });
 }
 
+  // Explicitly gated visual QA hook; absent from normal gameplay sessions.
+  if(new URLSearchParams(location.search).get('qaVisual')==='1'){
+    window.__TETRIOS_QA__={
+      activatePrismAura(){
+        boosts=['prism','aura'];
+        if(typeof render==='function')render();
+        if(typeof bbSchedulePrismAnimation==='function')bbSchedulePrismAnimation();
+        return {
+          activePiece:!!piece,
+          boosts:[...boosts],
+          prismColor:typeof bbPrismColor==='function'?bbPrismColor(piece?.t||0,performance.now()):null,
+          auraOwned:boosts.includes('aura')
+        };
+      },
+      testVoidCompression(){
+        const previous={mode,boosts,board,piece,level,voidLevel:bbVoidLastAppliedLevel,toast};
+        const count=rows=>rows.reduce((sum,row)=>sum+row.filter(Boolean).length,0);
+        try{
+          mode='rogue';boosts=['void'];level=2;bbVoidLastAppliedLevel=1;piece=null;toast=()=>{};
+          board=Array.from({length:H},()=>Array(W).fill(0));
+          board[4][0]=1;board[6][1]=2;
+          const blocksBefore=count(board);
+          const firstActivation=bbApplyVoidCompression();
+          const compressed=board.map(row=>row.slice());
+          const secondActivation=bbApplyVoidCompression();
+          return {
+            firstActivation,secondActivation,
+            rowCount:board.length,
+            blocksBefore,blocksAfter:count(board),
+            compressedRow:compressed.findIndex((row,index)=>row.some(Boolean)&&index>=4),
+            topSpawnRowsEmpty:board.slice(0,4).every(row=>row.every(cell=>!cell))
+          };
+        }finally{
+          mode=previous.mode;boosts=previous.boosts;board=previous.board;piece=previous.piece;
+          level=previous.level;bbVoidLastAppliedLevel=previous.voidLevel;toast=previous.toast;
+        }
+      }
+    };
+  }
+
 })();
-</script><script type="module" src="./hero-arena.js"></script><script type="module" src="./visual-3d.js"></script><script type="module" src="./arena-3d.js?v=20261101-opt-in-2d"></script>
+</script><script type="module" src="./hero-arena.js"></script><script type="module" src="./visual-3d.js"></script>
 
 
 <style id="bb-unified-hud-fit">
@@ -12174,4 +12415,1160 @@ body .app{background:transparent!important;background-color:transparent!importan
   }
 }
 </style>
+
+<style id="bb-mobile-rogue-goals-compact-380-v1">
+/* Preserve the 10:23 arena; shave only the lower objective rail on short-width phones. */
+@media(max-width:380px) and (orientation:portrait){
+  #game .gameleftcol #rogueGoals{gap:3px!important}
+  #game .gameleftcol #rogueGoals>div:not(:first-child){padding:3px!important}
+}
+</style>
+
+<style id="bb-signature-2d-arena-v1">
+/* Signature 2D arena: premium graphite chassis, restrained energy rails and tactile canvas cells. */
+#game .boardframe{
+  position:relative!important;
+  isolation:isolate!important;
+  padding:5px!important;
+  border:1px solid rgba(113,190,207,.72)!important;
+  border-radius:17px!important;
+  background:
+    linear-gradient(145deg,rgba(43,67,91,.96),rgba(10,20,38,.98) 42%,rgba(27,35,65,.98))!important;
+  box-shadow:
+    0 18px 42px rgba(0,0,0,.48),
+    0 0 0 1px rgba(255,255,255,.045),
+    0 0 26px rgba(65,232,224,.13),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -8px 18px rgba(0,0,0,.34)!important;
+  overflow:hidden!important;
+}
+#game .boardframe:before{
+  content:""!important;display:block!important;position:absolute!important;inset:2px!important;
+  border:1px solid rgba(148,213,224,.12)!important;border-radius:12px!important;
+  box-shadow:inset 0 0 18px rgba(87,230,222,.055)!important;pointer-events:none!important;z-index:2!important;
+}
+#game .boardframe:after{
+  content:""!important;position:absolute!important;left:12%!important;right:12%!important;top:2px!important;height:1px!important;
+  background:linear-gradient(90deg,transparent,rgba(220,255,255,.72),transparent)!important;
+  opacity:.72!important;pointer-events:none!important;z-index:3!important;
+}
+#game .boardframe #board{
+  position:relative!important;z-index:1!important;border-radius:9px!important;
+  background:radial-gradient(ellipse at 50% 35%,#142943 0%,#091426 64%,#060c19 100%)!important;
+  box-shadow:inset 0 0 24px rgba(0,0,0,.38),0 0 14px rgba(54,224,220,.055)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #game .boardframe,#game .boardframe:before{animation:none!important;transition:none!important}
+}
+</style>
+
+<style id="bb-mobile-compact-cabinet-layout-v1">
+/* Mobile cabinet layout inspired by the user's reference.
+   Preserve the full 10:23 board; all existing gameplay widgets remain in their original DOM/JS hooks. */
+@media(max-width:520px) and (orientation:portrait){
+  #game:not([hidden]){
+    width:100%!important;max-width:520px!important;margin-inline:auto!important;
+    padding-inline:6px!important;box-sizing:border-box!important;
+  }
+  #game>.screenhead{
+    display:flex!important;min-height:30px!important;margin:0 0 5px!important;
+    gap:8px!important;align-items:center!important;
+  }
+  #game>.screenhead h2{font-size:14px!important;line-height:1.15!important}
+  #game>.screenhead p{display:none!important}
+  #game>.screenhead .pause-trigger{width:34px!important;height:32px!important;flex:0 0 34px!important}
+  #game>.gamehud-top{
+    display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:4px!important;margin:0 0 6px!important;
+  }
+  #game>.gamehud-top .hudbox{
+    min-width:0!important;padding:4px 3px!important;border-radius:8px!important;
+    text-align:center!important;background:linear-gradient(155deg,#17243b,#090f1e)!important;
+    border:1px solid rgba(119,169,193,.35)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.08),0 3px 8px #0005!important;
+  }
+  #game>.gamehud-top .hudbox span{font-size:7px!important;letter-spacing:.04em!important}
+  #game>.gamehud-top .hudbox strong{font-size:14px!important;line-height:1.1!important;margin-top:2px!important}
+  #game>.gamehud-top #gameCoins{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:2px!important;margin:0!important;padding:4px 3px!important}
+  #game>.playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(48px,clamp(50px,14vw,62px)) minmax(0,1fr) minmax(62px,clamp(64px,18vw,76px))!important;
+    grid-template-rows:minmax(0,1fr)!important;
+    gap:5px!important;align-items:stretch!important;
+    width:100%!important;min-width:0!important;margin:0!important;padding:5px!important;
+    border:1px solid rgba(111,177,197,.38)!important;border-radius:15px!important;
+    background:linear-gradient(145deg,#101b2d,#070d19 55%,#10172b)!important;
+    box-shadow:0 9px 25px #0007,inset 0 1px rgba(255,255,255,.07)!important;
+  }
+  #game>.playlayout>.gameleftcol{
+    grid-column:1!important;grid-row:1!important;
+    display:flex!important;flex-direction:column!important;gap:5px!important;
+    min-width:0!important;min-height:0!important;max-height:var(--bb-cabinet-height,570px)!important;
+    overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:none!important;
+    padding:3px!important;border:1px solid rgba(100,153,184,.25)!important;border-radius:10px!important;
+    background:linear-gradient(180deg,rgba(9,16,31,.96),rgba(16,24,43,.94))!important;
+  }
+  #game>.playlayout>.gameleftcol::-webkit-scrollbar,
+  #game>.playlayout>.sidecol::-webkit-scrollbar{display:none!important}
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    display:block!important;width:100%!important;min-width:0!important;
+    margin:0!important;padding:5px 4px!important;border-radius:8px!important;
+    font-size:7px!important;line-height:1.3!important;overflow-wrap:anywhere!important;
+    border:1px solid rgba(158,130,255,.38)!important;
+    background:linear-gradient(155deg,#1b2340,#0c1426)!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>strong,
+  #game>.playlayout>.gameleftcol #campaignGoals>strong{font-size:8px!important}
+  #game>.playlayout>.gameleftcol #rogueGoals>div,
+  #game>.playlayout>.gameleftcol #campaignGoals>div{margin:4px 0!important}
+  #game>.playlayout>.gameleftcol .bb-monster-encounter,
+  #game>.playlayout>.gameleftcol [class*="monster"]{max-width:100%!important}
+  #game>.playlayout>div:not(.gameleftcol){
+    grid-column:2!important;grid-row:1!important;
+    display:flex!important;align-items:stretch!important;justify-content:center!important;
+    min-width:0!important;min-height:0!important;height:auto!important;overflow:visible!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe{
+    --bb-cabinet-height:min(66dvh,570px);
+    height:var(--bb-cabinet-height)!important;max-height:var(--bb-cabinet-height)!important;
+    min-height:0!important;width:100%!important;min-width:0!important;
+    display:flex!important;align-items:stretch!important;justify-content:center!important;
+    padding:4px!important;overflow:hidden!important;border-radius:10px!important;
+    border:2px solid rgba(12,17,27,.98)!important;
+    outline:1px solid rgba(109,172,190,.62)!important;outline-offset:-1px!important;
+    background:linear-gradient(145deg,#28394c,#0b1422 24%,#050a14 72%,#1a2b3b)!important;
+    box-shadow:0 7px 18px #0008,inset 0 0 0 2px rgba(255,255,255,.045),inset 0 0 18px #0009!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe:before{
+    inset:2px!important;border-radius:6px!important;border-color:rgba(143,198,209,.16)!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe:after{display:none!important}
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe>#board{
+    display:block!important;width:auto!important;height:100%!important;max-width:100%!important;
+    max-height:100%!important;aspect-ratio:10/23!important;flex:0 1 auto!important;
+    object-fit:contain!important;border-radius:5px!important;
+    background:radial-gradient(ellipse at 50% 30%,#14263a,#081321 72%,#050a12)!important;
+    box-shadow:inset 0 0 16px #0009!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:3!important;grid-row:1!important;
+    display:flex!important;flex-direction:column!important;gap:5px!important;
+    min-width:0!important;min-height:0!important;max-height:var(--bb-cabinet-height,570px)!important;
+    overflow-y:auto!important;overscroll-behavior:contain!important;scrollbar-width:none!important;
+    padding:3px!important;border:1px solid rgba(100,153,184,.25)!important;border-radius:10px!important;
+    background:linear-gradient(180deg,rgba(9,16,31,.96),rgba(16,24,43,.94))!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>.drop-card{
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    justify-content:center!important;min-width:0!important;min-height:0!important;
+    padding:5px 3px!important;margin:0!important;border-radius:8px!important;
+    border:1px solid rgba(111,155,186,.3)!important;
+    background:linear-gradient(155deg,#1a2940,#0a1221)!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.07)!important;
+  }
+  #game>.playlayout>.sidecol .sidecard label{font-size:6px!important;line-height:1.2!important;letter-spacing:.03em!important;text-align:center!important}
+  #game>.playlayout>.sidecol .nextcanvas{width:100%!important;height:auto!important;max-height:54px!important;margin:3px auto 0!important}
+  #game>.playlayout>.sidecol .charge-ring{width:min(100%,52px)!important;margin:5px auto 3px!important;box-shadow:0 0 0 2px #0b1327,0 0 0 3px color-mix(in srgb,var(--chrono-color,#39a9ff) 55%,transparent)!important}
+  #game>.playlayout>.sidecol .charge-ring-inner strong,
+  #game>.playlayout>.sidecol .chrono-ring-inner strong{font-size:14px!important}
+  #game>.playlayout>.sidecol .charge-ring-inner small,
+  #game>.playlayout>.sidecol .chrono-ring-inner small{font-size:5px!important}
+  #game>.playlayout>.sidecol .charge-caption{font-size:6px!important;line-height:1.15!important}
+  #game>.playlayout>.sidecol .boosticon{font-size:18px!important;margin:3px 0!important}
+  #game>.playlayout>.sidecol .boostname,
+  #game>.playlayout>.sidecol .boostnum{font-size:7px!important;line-height:1.2!important;text-align:center!important;overflow-wrap:anywhere!important}
+  #game>.playlayout>.sidecol .chrono-ring{width:min(100%,50px)!important;margin:4px auto!important}
+  #game>.playlayout>.sidecol .chrono-hourglass{font-size:11px!important}
+  #game>.playlayout>.sidecol .chrono-caption{font-size:6px!important;line-height:1.1!important}
+  #game>.playlayout>.sidecol #timer{font-size:13px!important;margin:3px auto!important;line-height:1.1!important}
+  #game>.playlayout>.sidecol #holdBtn,
+  #game>.playlayout>.sidecol .side-drop{width:100%!important;min-height:27px!important;margin:3px 0 0!important;padding:3px 1px!important;font-size:8px!important;line-height:1.1!important}
+  #game>.playlayout>.sidecol #bbHeroSkillCard{width:100%!important;min-width:0!important;min-height:54px!important;padding:4px 2px!important;gap:2px!important;flex-direction:column!important;border-radius:8px!important}
+  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-art{width:28px!important;height:27px!important;flex-basis:27px!important}
+  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-copy{min-width:0!important;text-align:center!important}
+  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:6px!important}
+  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game>.playlayout>.sidecol #bbHeroSkillCard .bb-hero-skill-copy em{font-size:5px!important;line-height:1.1!important}
+  #game>.playlayout>.sidecol .drop-card{min-height:44px!important}
+  #game>.controls{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px!important;margin:6px 0 0!important}
+  #game>.controls .control{height:38px!important;border-radius:9px!important}
+  #game>.hint{font-size:7px!important;line-height:1.25!important;margin:4px 0 0!important}
+}
+@media(max-width:520px) and (orientation:portrait){
+  /* The legacy mobile shell uses display:contents; place its children on the game grid explicitly. */
+  #game:not([hidden]){display:grid!important;grid-template-columns:clamp(48px,14vw,58px) minmax(0,1fr) clamp(62px,18vw,74px)!important;grid-template-rows:auto auto auto minmax(0,1fr) auto auto!important;align-content:stretch!important;align-items:stretch!important;gap:5px!important}
+  #game>.screenhead,#game>#dailyMissionGoal,#game>.gamehud-top{grid-column:1/-1!important}
+  #game>.playlayout{display:contents!important}
+  #game>.playlayout>.gameleftcol{grid-column:1!important;grid-row:4!important;position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;max-height:min(66dvh,570px)!important;align-self:stretch!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){grid-column:2!important;grid-row:4!important;width:100%!important;min-width:0!important;min-height:0!important;align-self:center!important;display:flex!important;align-items:stretch!important;justify-content:center!important}
+  #game>.playlayout>.sidecol{grid-column:3!important;grid-row:4!important;width:100%!important;max-width:none!important;max-height:min(66dvh,570px)!important;align-self:stretch!important}
+  #game>.controls{grid-column:1/-1!important;grid-row:5!important}
+  #game>.hint{grid-column:1/-1!important;grid-row:6!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:100%!important;height:auto!important;aspect-ratio:10/23!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    flex:0 1 auto!important;
+  }
+}
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout:not(:has(>.gameleftcol)){grid-template-columns:minmax(0,1fr) minmax(62px,clamp(64px,18vw,76px))!important}
+  #game>.playlayout:not(:has(>.gameleftcol))>div:not(.gameleftcol){grid-column:1!important}
+  #game>.playlayout:not(:has(>.gameleftcol))>.sidecol{grid-column:2!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game>.playlayout{grid-template-columns:48px minmax(0,1fr) 62px!important;gap:4px!important;padding:4px!important}
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe{--bb-cabinet-height:min(64dvh,540px);padding:3px!important}
+  #game>.playlayout>.gameleftcol,#game>.playlayout>.sidecol{padding:2px!important;gap:4px!important}
+}
+@media(max-width:520px) and (orientation:portrait) and (max-height:700px){
+  #game>.playlayout>div:not(.gameleftcol)>.boardframe{--bb-cabinet-height:min(59dvh,430px)}
+  #game>.controls .control{height:34px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #game>.playlayout>.boardframe,#game>.playlayout>.gameleftcol,#game>.playlayout>.sidecol{scroll-behavior:auto!important;transition:none!important}
+}
+
+/* Geometry correction: keep both information rails vertically aligned to the actual 10:23 cabinet. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.playlayout>.sidecol{
+    height:min(66dvh,calc((100vw - 178px)*2.3),570px)!important;
+    max-height:min(66dvh,calc((100vw - 178px)*2.3),570px)!important;
+    min-height:0!important;align-self:center!important;box-sizing:border-box!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    flex:1 1 0!important;height:100%!important;min-height:0!important;max-height:100%!important;
+    overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+    box-sizing:border-box!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div,
+  #game>.playlayout>.gameleftcol #campaignGoals>div{min-width:0!important;max-width:100%!important}
+  #game>.playlayout>.sidecol{overscroll-behavior:contain!important}
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>.drop-card{flex:0 0 auto!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game:not([hidden]){grid-template-columns:50px minmax(0,1fr) 68px!important}
+  #game>.playlayout>.gameleftcol,
+  #game>.playlayout>.sidecol{height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important;max-height:min(64dvh,calc((100vw - 166px)*2.3),540px)!important}
+}
+</style>
+
+<style id="bb-mobile-goals-wide-rail-v2">
+/* KT-402 direction: give the 10:23 arena the former left-rail width.
+   Goals/progress move below the arena into a readable full-width strip;
+   the right utility rail remains beside the board. Desktop is untouched. */
+@media(max-width:520px) and (orientation:portrait){
+  #game:not([hidden]){
+    grid-template-columns:minmax(0,1fr) minmax(66px,clamp(68px,19vw,78px))!important;
+    grid-template-rows:auto auto auto minmax(0,1fr) auto auto auto!important;
+    align-content:start!important;
+    row-gap:5px!important;
+  }
+  #game>.playlayout>.gameleftcol{
+    grid-column:1/-1!important;
+    grid-row:5!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:5px!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:5px!important;
+    border:1px solid rgba(100,153,184,.28)!important;
+    border-radius:11px!important;
+    background:linear-gradient(145deg,rgba(9,16,31,.96),rgba(16,24,43,.94))!important;
+  }
+  #game>.playlayout>.gameleftcol .progresswrap{
+    width:100%!important;
+    margin:0!important;
+    padding:6px 8px!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals,
+  #game>.playlayout>.gameleftcol #campaignGoals{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    align-items:stretch!important;
+    gap:5px!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:190px!important;
+    min-height:0!important;
+    flex:0 1 auto!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+    margin:0!important;
+    padding:6px!important;
+    border:1px solid rgba(158,130,255,.38)!important;
+    border-radius:10px!important;
+    background:linear-gradient(155deg,#1b2340,#0c1426)!important;
+    font-size:9px!important;
+    line-height:1.3!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>strong,
+  #game>.playlayout>.gameleftcol #campaignGoals>strong{
+    grid-column:1/-1!important;
+    display:block!important;
+    margin:0!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:first-child,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:first-child{
+    grid-column:1/-1!important;
+    min-width:0!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child),
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child){
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:space-between!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:6px!important;
+    border:1px solid rgba(158,130,255,.25)!important;
+    border-radius:8px!important;
+    background:linear-gradient(145deg,#1a2037,#11182b)!important;
+    overflow-wrap:anywhere!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+  }
+  #game>.playlayout>.gameleftcol #rogueGoals>div:not(:first-child)>span,
+  #game>.playlayout>.gameleftcol #campaignGoals>div:not(:first-child)>span{
+    display:block!important;
+    float:none!important;
+    margin:3px 0 0!important;
+    font-size:8px!important;
+    line-height:1.2!important;
+    white-space:normal!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol){
+    grid-column:1!important;
+    grid-row:4!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    align-self:center!important;
+    justify-self:center!important;
+  }
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(66dvh,calc((100vw - 142px)*2.3),570px)/2.3))!important;
+    height:auto!important;
+    aspect-ratio:10/23!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    margin-inline:auto!important;
+  }
+  #game>.playlayout>.sidecol{
+    grid-column:2!important;
+    grid-row:4!important;
+    width:100%!important;
+    max-width:none!important;
+    height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    max-height:min(66dvh,calc((100vw - 142px)*2.3),570px)!important;
+    min-height:0!important;
+    align-self:center!important;
+  }
+  #game>.controls{grid-column:1/-1!important;grid-row:6!important}
+  #game>.hint{grid-column:1/-1!important;grid-row:7!important}
+}
+@media(max-width:380px) and (orientation:portrait){
+  #game:not([hidden]){grid-template-columns:minmax(0,1fr) 68px!important}
+  #game>.playlayout>.sidecol{height:min(64dvh,calc((100vw - 132px)*2.3),540px)!important;max-height:min(64dvh,calc((100vw - 132px)*2.3),540px)!important}
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(64dvh,calc((100vw - 132px)*2.3),540px)/2.3))!important;
+    max-height:min(64dvh,calc((100vw - 132px)*2.3),540px)!important;
+  }
+}
+</style>
+
+<style id="bb-mobile-narrow-viewport-clearance-v1">
+@media(max-width:380px) and (orientation:portrait){
+  #game>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
+    width:min(100%,calc(min(60dvh,calc((100vw - 142px)*2.3),570px)/2.3))!important;
+    max-height:min(60dvh,calc((100vw - 142px)*2.3),570px)!important;
+    align-self:start!important;
+    margin-top:0!important;
+  }
+}
+</style>
+
+<style id="bb-mobile-rail-alignment-v2">
+@media(max-width:380px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    height:min(60dvh,calc((100vw - 142px)*2.3),570px)!important;
+    max-height:min(60dvh,calc((100vw - 142px)*2.3),570px)!important;
+  }
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:translateY(16px)!important}
+}
+@media(min-width:381px) and (max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:translateY(6px)!important}
+}
+
+
+<style id="bb-mobile-utility-rail-scroll-v1">
+/* Keep utility cards inside the arena column on short phones; allow touch scrolling instead of painting over objectives. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+    touch-action:pan-y!important;
+    box-sizing:border-box!important;
+  }
+  #game>.playlayout>.sidecol::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>.drop-card,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{flex-shrink:0!important}
+}
+</style>
+</style>
+
+<style id="bb-mobile-arena-row-intrinsic-v1">
+/* Do not compress the arena grid track below the 10:23 cabinet height on WebKit phones.
+   The previous 1fr track let the cabinet overflow into the full-width goals row. */
+@media(min-width:381px) and (max-width:520px) and (orientation:portrait){
+  #game:not([hidden]){
+    grid-template-rows:auto auto auto max-content auto auto auto!important;
+  }
+}
+</style>
+
+<style id="bb-mobile-390-row-clearance-v1">
+/* At 390px WebKit computed a shorter grid track than the fixed-ratio cabinet.
+   Reserve the cabinet's full capped height before placing the goals rail. */
+@media(min-width:381px) and (max-width:400px) and (orientation:portrait){
+  #game:not([hidden]){
+    grid-template-rows:auto auto auto minmax(min(66dvh,570px),max-content) auto auto auto!important;
+  }
+}
+</style>
+
+<style id="bb-mobile-390-goals-clearance-v2">
+/* WebKit 390x844: the cabinet keeps its full 10:23 height; move the lower
+   information/control rows below it instead of shrinking the playfield. */
+@media(min-width:381px) and (max-width:400px) and (orientation:portrait){
+  #game>.playlayout>.gameleftcol,
+  #game>.controls,
+  #game>.hint{transform:translateY(28px)!important}
+}
+</style>
+
+<style id="bb-mobile-utility-rail-hud-v2">
+/* Mobile utility dock redesign: compact functional HUD tiles, not a scaled desktop sidebar.
+   Keep every live control and readout in the original DOM so game logic and input handlers stay intact. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:minmax(0,1fr)!important;
+    align-content:stretch!important;
+    justify-content:stretch!important;
+    gap:3px!important;
+    padding:3px!important;
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
+    border:1px solid rgba(112,178,201,.34)!important;
+    border-radius:11px!important;
+    background:
+      linear-gradient(180deg,rgba(17,31,51,.98),rgba(6,13,25,.98))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.07),0 5px 16px rgba(0,0,0,.3)!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard,
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    position:relative!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:3px 2px!important;
+    gap:2px!important;
+    overflow:hidden!important;
+    border:1px solid rgba(115,159,190,.25)!important;
+    border-radius:8px!important;
+    background:linear-gradient(150deg,rgba(31,49,72,.94),rgba(11,20,36,.98))!important;
+    box-shadow:inset 0 1px rgba(255,255,255,.07)!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard:before{
+    content:""!important;
+    position:absolute!important;
+    left:0!important;top:5px!important;bottom:5px!important;
+    width:2px!important;border-radius:2px!important;
+    background:rgba(111,190,215,.62)!important;
+    pointer-events:none!important;
+  }
+  #game>.playlayout>.sidecol>.charge-card:before{background:#55d9cb!important}
+  #game>.playlayout>.sidecol>.chrono-card:before{background:#b69aff!important}
+  #game>.playlayout>.sidecol>.drop-card:before{background:#62e99b!important}
+  #game>.playlayout>.sidecol>.sidecard>label{
+    position:relative!important;display:block!important;
+    width:100%!important;height:12px!important;min-height:12px!important;
+    margin:0!important;padding:0!important;
+    color:transparent!important;font-size:0!important;font-weight:900!important;
+    line-height:12px!important;letter-spacing:.06em!important;text-align:center!important;
+    white-space:nowrap!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard>label:after{display:none!important;content:none!important}
+  #game>.playlayout>.sidecol>.charge-card>label:before{content:"✦ CHARGE"!important;color:#65e7dc!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(2)>label:before{content:"▦ NEXT"!important;color:#8ddcff!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(3)>label:before{content:"⚡ BOOST"!important;color:#ffc66f!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.chrono-card>label:before{content:"⌛ RIFT"!important;color:#c5aaff!important;font-size:6px!important}
+  #game>.playlayout>.sidecol>.sidecard:has(#timer)>label:before{content:"◷ TIME"!important;color:#8ddcff!important;font-size:6px!important}
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:min(100%,43px)!important;max-width:43px!important;
+    margin:1px auto!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner strong,
+  #game>.playlayout>.sidecol .chrono-ring-inner strong{
+    font-size:12px!important;line-height:1!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring-inner small,
+  #game>.playlayout>.sidecol .chrono-ring-inner small,
+  #game>.playlayout>.sidecol .charge-ring-inner>.charge-symbol,
+  #game>.playlayout>.sidecol .chrono-ring-inner>.chrono-hourglass{
+    display:none!important;
+  }
+  #game>.playlayout>.sidecol .charge-caption,
+  #game>.playlayout>.sidecol .chrono-caption{
+    display:block!important;max-width:100%!important;
+    margin:0!important;color:#a9bfd1!important;
+    font-size:5px!important;line-height:1.1!important;text-align:center!important;
+    white-space:normal!important;
+  }
+  #game>.playlayout>.sidecol .chrono-track{
+    width:80%!important;height:3px!important;margin:1px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .nextcanvas{
+    display:block!important;width:100%!important;height:auto!important;
+    max-height:46px!important;min-height:0!important;margin:0 auto!important;
+    object-fit:contain!important;
+  }
+  #game>.playlayout>.sidecol .boosticon{
+    display:grid!important;place-items:center!important;
+    min-height:25px!important;margin:0!important;
+    color:#ffd38a!important;font-size:22px!important;line-height:1!important;
+  }
+  #game>.playlayout>.sidecol .boostname{
+    display:block!important;max-width:100%!important;
+    color:#f1f6ff!important;font-size:6px!important;font-weight:800!important;
+    line-height:1.1!important;text-align:center!important;
+    overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game>.playlayout>.sidecol .boostnum{display:none!important}
+  #game>.playlayout>.sidecol #timer{
+    margin:0 auto!important;color:#f4fbff!important;
+    font-size:15px!important;font-weight:900!important;line-height:1.1!important;
+    font-variant-numeric:tabular-nums!important;
+  }
+  #game>.playlayout>.sidecol #holdBtn{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:25px!important;height:25px!important;
+    margin:1px 0 0!important;padding:2px!important;
+    border:1px solid rgba(143,196,225,.38)!important;border-radius:6px!important;
+    background:linear-gradient(145deg,#253c56,#111e32)!important;
+    color:transparent!important;font-size:0!important;font-weight:900!important;
+    line-height:1!important;white-space:nowrap!important;
+  }
+  #game>.playlayout>.sidecol #holdBtn:after{
+    content:"⇄"!important;display:block!important;color:#d9efff!important;
+    font-size:17px!important;line-height:19px!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    flex-direction:row!important;justify-content:center!important;
+    gap:3px!important;padding:3px!important;
+    border-color:rgba(120,224,218,.38)!important;
+    background:linear-gradient(145deg,rgba(21,55,66,.96),rgba(10,24,38,.98))!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 30px!important;width:30px!important;height:30px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    display:flex!important;min-width:0!important;flex:1 1 auto!important;
+    flex-direction:column!important;gap:1px!important;text-align:left!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{
+    display:block!important;color:#e9ffff!important;font-size:6px!important;
+    line-height:1.1!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy small{
+    display:block!important;color:#9edbdc!important;font-size:5px!important;
+    line-height:1.1!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    display:block!important;color:#bce9c9!important;font-size:5px!important;
+    line-height:1.1!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-pulse{
+    position:absolute!important;right:3px!important;top:2px!important;font-size:8px!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(>.side-drop){
+    border-color:rgba(83,238,145,.5)!important;
+    background:linear-gradient(145deg,rgba(20,79,57,.98),rgba(7,34,29,.98))!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(>.side-drop):before{background:#69f2a2!important}
+  #game>.playlayout>.sidecol .side-drop{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    box-sizing:border-box!important;width:100%!important;min-width:0!important;
+    min-height:38px!important;height:38px!important;margin:0!important;padding:2px!important;
+    border:1px solid rgba(171,255,202,.85)!important;border-radius:7px!important;
+    background:linear-gradient(180deg,#38c979,#087c48)!important;
+    color:#fff!important;font-size:10px!important;font-weight:1000!important;
+    line-height:1!important;letter-spacing:.04em!important;
+    box-shadow:0 2px 0 #034b2c,0 0 10px rgba(50,230,125,.16)!important;
+    touch-action:manipulation!important;
+  }
+  #game>.playlayout>.sidecol .side-drop:after{display:none!important;content:none!important}
+  #game>.playlayout>.sidecol .sidecard:has(#timer)>label{font-size:6px!important}
+
+  /* Compact content-sized HUD tiles: keep every live value readable without seven oversized cards. */
+  #game>.playlayout>.sidecol{
+    grid-auto-rows:auto!important;
+    align-content:space-between!important;
+    gap:3px!important;
+  }
+  #game>.playlayout>.sidecol>.charge-card{height:58px!important;min-height:58px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(2){height:60px!important;min-height:60px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.sidecard:nth-child(3){height:54px!important;min-height:54px!important;flex:none!important}
+  #game>.playlayout>.sidecol>#chronoCard{height:58px!important;min-height:58px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.sidecard:has(#timer){height:64px!important;min-height:64px!important;flex:none!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{height:56px!important;min-height:56px!important;flex:none!important}
+  #game>.playlayout>.sidecol>.drop-card{height:52px!important;min-height:52px!important;flex:none!important}
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{width:min(100%,35px)!important;max-width:35px!important}
+  #game>.playlayout>.sidecol .nextcanvas{max-height:34px!important}
+  #game>.playlayout>.sidecol .boosticon{min-height:19px!important;font-size:18px!important}
+  #game>.playlayout>.sidecol .boostname{font-size:6px!important;line-height:1.1!important}
+  #game>.playlayout>.sidecol #holdBtn{min-height:24px!important;height:24px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-art{flex-basis:26px!important;width:26px!important;height:26px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:5.5px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:4.8px!important}
+  #game>.playlayout>.sidecol .side-drop{min-height:44px!important;height:44px!important}
+}
+</style>
+
+
+<style id="bb-mobile-utility-rail-copy-v3">
+/* Keep compact HUD copy readable: wrap short names instead of truncating them. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol .boostname{
+    display:-webkit-box!important;
+    width:100%!important;max-width:100%!important;
+    min-height:14px!important;max-height:14px!important;
+    overflow:hidden!important;text-overflow:clip!important;
+    white-space:normal!important;overflow-wrap:anywhere!important;
+    -webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;
+    font-size:5.8px!important;line-height:1.15!important;text-align:center!important;
+  }
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    flex-direction:column!important;justify-content:center!important;
+    gap:1px!important;padding:2px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{
+    flex:0 0 19px!important;width:19px!important;height:19px!important;
+    max-height:19px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    display:flex!important;width:100%!important;min-width:0!important;
+    flex:0 0 auto!important;flex-direction:column!important;
+    align-items:center!important;gap:1px!important;text-align:center!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong,
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    display:block!important;width:100%!important;max-width:100%!important;
+    height:auto!important;max-height:7px!important;min-height:0!important;
+    overflow:hidden!important;text-overflow:clip!important;
+    white-space:nowrap!important;text-align:center!important;
+    line-height:1.1!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:5.8px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:5px!important}
+}
+</style>
+
+
+<style id="bb-mobile-utility-rail-copy-v4">
+/* Give every compact HUD tile a stable label/content lane; remove artwork/text collisions. */
+@media(max-width:520px) and (orientation:portrait){
+  #game>.playlayout>.sidecol>.sidecard>label{
+    position:absolute!important;top:3px!important;left:3px!important;
+    width:calc(100% - 6px)!important;height:8px!important;min-height:8px!important;
+    line-height:8px!important;font-size:0!important;z-index:2!important;
+  }
+  #game>.playlayout>.sidecol>.sidecard>label:before{
+    display:block!important;font-size:6.5px!important;line-height:8px!important;
+  }
+  #game>.playlayout>.sidecol .charge-ring,
+  #game>.playlayout>.sidecol .chrono-ring{
+    width:34px!important;max-width:34px!important;margin:7px auto 0!important;
+  }
+  #game>.playlayout>.sidecol .charge-caption,
+  #game>.playlayout>.sidecol .chrono-caption{display:none!important}
+  #game>.playlayout>.sidecol .chrono-track{margin:2px auto 0!important}
+  #game>.playlayout>.sidecol .nextcanvas{max-height:31px!important;margin:8px auto 0!important}
+  #game>.playlayout>.sidecol .boosticon{min-height:17px!important;margin-top:7px!important;font-size:17px!important}
+  #game>.playlayout>.sidecol .boostname{
+    min-height:14px!important;max-height:14px!important;
+    font-size:6.5px!important;line-height:1.1!important;
+    white-space:normal!important;overflow-wrap:anywhere!important;
+  }
+  #game>.playlayout>.sidecol .sidecard:has(#timer)>label{top:3px!important}
+  #game>.playlayout>.sidecol #timer{margin-top:7px!important;font-size:14px!important}
+  #game>.playlayout>.sidecol #holdBtn{margin-top:1px!important}
+  #game>.playlayout>.sidecol>.drop-card>label{display:none!important}
+  #game>.playlayout>.sidecol .side-drop{height:44px!important;min-height:44px!important;margin:auto!important}
+  #game>.playlayout>.sidecol>#bbHeroSkillCard{
+    flex-direction:column!important;justify-content:center!important;gap:1px!important;
+    padding:3px 2px!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-art{display:none!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy{
+    display:flex!important;width:100%!important;min-width:0!important;flex:0 0 auto!important;
+    flex-direction:column!important;align-items:center!important;gap:2px!important;text-align:center!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong,
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{
+    display:block!important;width:100%!important;max-width:100%!important;height:auto!important;
+    max-height:8px!important;min-height:0!important;overflow:hidden!important;
+    text-overflow:clip!important;white-space:nowrap!important;text-align:center!important;
+    line-height:1.1!important;
+  }
+  #game #bbHeroSkillCard .bb-hero-skill-copy strong{font-size:6.2px!important}
+  #game #bbHeroSkillCard .bb-hero-skill-copy small,
+  #game #bbHeroSkillCard .bb-hero-skill-copy em{font-size:5.6px!important}
+}
+</style>
+
+<style id="bb-hard-drop-single-gesture-v1">
+/* Bottom movement buttons are redundant on touch devices: swipe controls remain,
+   and the dedicated DROP action stays in the right utility rail. */
+#game>.controls{visibility:hidden!important;pointer-events:none!important}
+</style>
+
+
+<style id="bb-home-dashboard-layout-kt400">
+/* KT-400: mobile/tablet home rebuilt as a natural-flow dashboard.
+   The previous visual-overhaul grid kept a fixed viewport height and clipped
+   the core modes. Reset the old grid tracks/areas instead of stacking patches. */
+/* KT-401: reset legacy named grid areas with higher specificity.
+   KT-400's broad child selector could not override the old #menu.home-dashboard>.hero/.modes
+   declarations. The old rogue span also created an implicit second column on phones. */
+#menu.home-dashboard.home-dashboard > *{
+  grid-area:auto!important;
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+#menu.home-dashboard.home-dashboard > .modes{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+  grid-auto-flow:row!important;
+  grid-auto-columns:minmax(0,1fr)!important;
+  grid-template-columns:minmax(0,1fr)!important;
+}
+#menu.home-dashboard.home-dashboard > .modes > .mode{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  justify-self:stretch!important;
+  align-self:stretch!important;
+  min-width:0!important;
+  width:100%!important;
+}
+#menu.home-dashboard.home-dashboard > .hero{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+  position:relative!important;
+  min-height:180px!important;
+  height:auto!important;
+}
+#menu.home-dashboard.home-dashboard > .sectionlabel{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+}
+#menu.home-dashboard.home-dashboard > #dailyQuestsPanel,
+#menu.home-dashboard.home-dashboard > #bbVisitStreak,
+#menu.home-dashboard.home-dashboard > #openHeroes,
+#menu.home-dashboard.home-dashboard > #rpgPanel,
+#menu.home-dashboard.home-dashboard > .currency-panel,
+#menu.home-dashboard.home-dashboard > .bottomstats,
+#menu.home-dashboard.home-dashboard > #bbOpenCardLibrary,
+#menu.home-dashboard.home-dashboard > .apk-download,
+#menu.home-dashboard.home-dashboard > .home-reset{
+  grid-area:auto!important;
+  grid-column:1 / -1!important;
+  grid-row:auto!important;
+}
+@media (max-width:900px){
+  #menu.home-dashboard:not([hidden]){
+    display:grid!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:620px!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:none!important;
+    grid-auto-rows:auto!important;
+    grid-template-areas:none!important;
+    align-content:start!important;
+    align-items:stretch!important;
+    gap:12px!important;
+    margin:0 auto!important;
+    padding:0 12px 26px!important;
+  }
+  #menu.home-dashboard > *{
+    grid-area:auto!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    margin:0!important;
+  }
+
+  /* Compact brand panel: keep the mark, wordmark and slogan without a tall hero. */
+  #menu.home-dashboard > .hero{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:8px!important;
+    width:100%!important;
+    padding:17px 12px 15px!important;
+    border-radius:20px!important;
+    text-align:center!important;
+    overflow:hidden!important;
+  }
+  #menu.home-dashboard > .hero .eyebrow{
+    position:static!important;
+    inset:auto!important;
+    margin:0!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+    letter-spacing:.13em!important;
+    text-align:center!important;
+  }
+  #menu.home-dashboard > .hero .hero-brand-lockup{
+    position:static!important;
+    inset:auto!important;
+    transform:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  #menu.home-dashboard > .hero .hero-app-mark{
+    position:relative!important;
+    flex:0 0 64px!important;
+    width:64px!important;
+    height:64px!important;
+    min-width:64px!important;
+    margin:0!important;
+  }
+  #menu.home-dashboard > .hero h1{
+    position:static!important;
+    display:flex!important;
+    justify-content:center!important;
+    align-items:center!important;
+    flex:0 1 auto!important;
+    width:100%!important;
+    margin:0!important;
+    font-size:clamp(32px,8vw,43px)!important;
+    line-height:1!important;
+    letter-spacing:-.045em!important;
+    white-space:nowrap!important;
+  }
+  #menu.home-dashboard > .hero p{
+    position:static!important;
+    inset:auto!important;
+    align-self:center!important;
+    max-width:100%!important;
+    margin:0!important;
+    font-size:11px!important;
+    line-height:1.35!important;
+    text-align:center!important;
+  }
+
+  /* Two core modes are always present, equal in size and first in the hierarchy. */
+  #menu.home-dashboard > .sectionlabel{
+    display:flex!important;
+    margin:1px 2px -3px!important;
+    font-size:10px!important;
+  }
+  #menu.home-dashboard > .modes{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:none!important;
+    grid-auto-rows:auto!important;
+    gap:9px!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    align-content:start!important;
+  }
+  #menu.home-dashboard > .modes > .mode{
+    display:flex!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:relative!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:88px!important;
+    height:88px!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:12px 14px!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:13px!important;
+    border-radius:17px!important;
+    overflow:hidden!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modeicon{
+    display:grid!important;
+    place-items:center!important;
+    flex:0 0 46px!important;
+    width:46px!important;
+    height:46px!important;
+    font-size:24px!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modetext{
+    display:flex!important;
+    flex:1 1 auto!important;
+    min-width:0!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:3px!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modetitle{
+    display:block!important;
+    font-size:16px!important;
+    line-height:1.15!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modesub{
+    display:-webkit-box!important;
+    min-height:0!important;
+    margin:0!important;
+    overflow:hidden!important;
+    -webkit-box-orient:vertical!important;
+    -webkit-line-clamp:2!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+  #menu.home-dashboard > .modes > .mode .tag{
+    display:inline-block!important;
+    margin:2px 0 0!important;
+    padding:3px 6px!important;
+    font-size:7px!important;
+    line-height:1.15!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modearrow{
+    display:block!important;
+    flex:0 0 auto!important;
+    margin-left:auto!important;
+    font-size:23px!important;
+  }
+
+  /* Daily challenge is a smaller secondary action, not a third oversized mode. */
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"]{
+    min-height:68px!important;
+    height:68px!important;
+    padding:9px 12px!important;
+    border-color:rgba(255,200,107,.45)!important;
+    background:linear-gradient(110deg,rgba(57,46,30,.94),rgba(15,23,43,.98))!important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modeicon{
+    flex-basis:40px!important;width:40px!important;height:40px!important;
+    font-size:21px!important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modetitle{font-size:14px!important}
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .modesub{
+    display:block!important;-webkit-line-clamp:1!important;font-size:9px!important;
+  }
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"] .tag{display:none!important}
+
+  /* Quests remain available, but compact and visually subordinate. */
+  #menu.home-dashboard > #dailyQuestsPanel{
+    display:block!important;
+    width:100%!important;
+    min-height:0!important;
+    padding:11px 12px!important;
+    border-radius:16px!important;
+    overflow:visible!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child{margin-bottom:5px!important}
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child strong{font-size:12px!important}
+  #menu.home-dashboard > #dailyQuestsPanel > div:first-child span{font-size:8px!important}
+  #menu.home-dashboard > #dailyQuestsPanel > div:nth-child(2){
+    display:block!important;
+    font-size:10px!important;
+    line-height:1.3!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:6px!important;
+    margin-top:8px!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div{
+    display:block!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:8px 9px!important;
+    border-radius:11px!important;
+    background:linear-gradient(145deg,#172943,#101d33)!important;
+    border:1px solid rgba(122,164,220,.24)!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:first-child{
+    font-size:10px!important;line-height:1.2!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(2){
+    font-size:9px!important;margin-top:3px!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:nth-child(3){
+    height:4px!important;margin-top:5px!important;
+  }
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div > div:last-child{
+    font-size:8px!important;margin-top:4px!important;
+  }
+
+  #menu.home-dashboard > #bbVisitStreak,
+  #menu.home-dashboard > #openHeroes,
+  #menu.home-dashboard > #rpgPanel,
+  #menu.home-dashboard > .currency-panel,
+  #menu.home-dashboard > .bottomstats,
+  #menu.home-dashboard > #bbOpenCardLibrary,
+  #menu.home-dashboard > .apk-download,
+  #menu.home-dashboard > .home-reset{
+    width:100%!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+  }
+  #menu.home-dashboard > .bottomstats{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+}
+@media (min-width:600px) and (max-width:900px){
+  #menu.home-dashboard{padding-left:16px!important;padding-right:16px!important;gap:14px!important}
+  #menu.home-dashboard > .modes{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #menu.home-dashboard > .modes > .mode[data-mode="daily"]{grid-column:1/-1!important}
+  #menu.home-dashboard > .hero{padding:20px!important}
+  #menu.home-dashboard > .hero .hero-brand-lockup{flex-direction:row!important;gap:14px!important}
+  #menu.home-dashboard > .hero .hero-app-mark{flex-basis:68px!important;width:68px!important;height:68px!important}
+  #menu.home-dashboard > .hero h1{font-size:clamp(36px,5vw,48px)!important}
+  #menu.home-dashboard > #dailyQuestsPanel #dailyQuestsList{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media (max-width:380px){
+  #menu.home-dashboard{padding-left:9px!important;padding-right:9px!important;gap:10px!important}
+  #menu.home-dashboard > .hero{padding:14px 8px!important}
+  #menu.home-dashboard > .modes > .mode{min-height:82px!important;height:82px!important;padding:10px!important;gap:9px!important}
+  #menu.home-dashboard > .modes > .mode .modeicon{flex-basis:40px!important;width:40px!important;height:40px!important}
+  #menu.home-dashboard > .modes > .mode .modetitle{font-size:14px!important}
+}
+</style>
+
+
+<style id="bb-kt624-adventure-atlas">
+/* KT-624 · A friendlier storybook atlas for the Block Buddies campaign. */
+#campaign #mapgrid.bb-galaxy-atlas,#campaign #mapgrid.bb-planet-map{gap:14px!important}
+#campaign .bb-atlas-intro{padding:5px 4px 9px!important;gap:6px!important}
+#campaign .bb-atlas-intro>span,#campaign .bb-planet-kicker{display:inline-flex!important;align-self:flex-start!important;align-items:center!important;padding:5px 9px!important;border:1px solid #8fe4d866!important;border-radius:99px!important;background:#b9f4e51c!important;color:#8ee8d7!important;font-size:9px!important;letter-spacing:.15em!important;font-weight:900!important}
+#campaign .bb-atlas-intro strong{font-size:clamp(23px,4vw,29px)!important;letter-spacing:-.045em!important;color:#f4fffc!important}
+#campaign .bb-atlas-intro small{font-size:11px!important;line-height:1.45!important;color:#b6d6d7!important}
+#campaign .bb-atlas-status-legend{display:flex!important;flex-wrap:wrap!important;gap:7px!important;margin-top:5px!important}
+#campaign .bb-atlas-status-legend span{padding:5px 8px!important;border-radius:99px!important;background:#16394b!important;border:1px solid #6bc9bd33!important;font-size:8px!important;letter-spacing:.08em!important}
+#campaign .bb-galaxy-viewport,#campaign .bb-planet-viewport{padding-top:12px!important;padding-bottom:20px!important}
+#campaign .bb-galaxy-track{gap:13px!important;padding:5px 4px 12px!important}
+#campaign .bb-galaxy-card{width:min(76vw,286px)!important;min-height:328px!important;gap:8px!important;padding:15px 15px 16px!important;border:1px solid color-mix(in srgb,var(--biome-color) 52%,#a4d8d2)!important;border-radius:25px!important;color:#effffb!important;background:radial-gradient(ellipse at 50% 6%,color-mix(in srgb,var(--biome-color) 36%,#b9f4e5) 0%,transparent 56%),linear-gradient(155deg,#244e60 0%,#17394c 58%,#122d40 100%)!important;box-shadow:0 12px 28px #061a2b66,inset 0 1px #ffffff2b!important}
+#campaign .bb-galaxy-card::after{inset:auto -10% -32% -10%!important;height:52%!important;background:radial-gradient(ellipse,color-mix(in srgb,var(--biome-color) 65%,#8ce1ca),transparent 68%)!important;opacity:.2!important}
+#campaign .bb-galaxy-card.is-current{transform:translateY(-3px)!important;border-color:#ffe09a!important;box-shadow:0 0 0 2px #ffe09a55,0 16px 34px #061a2b77,inset 0 1px #ffffff44!important}
+#campaign .bb-galaxy-card.is-locked{filter:saturate(.62)!important;opacity:.76!important}
+#campaign .bb-galaxy-art{width:100%!important;height:174px!important}
+#campaign .bb-galaxy-model-slot{width:112px!important;height:112px!important;display:grid!important;place-items:center!important;border-radius:50%!important;position:relative!important;isolation:isolate!important;background:radial-gradient(circle at 32% 23%,#fff9d7 0 3%,transparent 4%),radial-gradient(ellipse at 36% 30%,color-mix(in srgb,var(--biome-color) 45%,#fff) 0 14%,transparent 44%),radial-gradient(circle at 62% 68%,color-mix(in srgb,var(--biome-color) 65%,#102d43),#123448 76%)!important;border:2px solid color-mix(in srgb,var(--biome-color) 60%,#d6f7e8)!important;box-shadow:inset -13px -15px 22px #06223788,0 9px 0 #071f3038,0 0 0 8px #d6f8e51c,0 0 28px color-mix(in srgb,var(--biome-color) 44%,transparent)!important}
+#campaign .bb-galaxy-model-fallback{font-size:39px!important;filter:drop-shadow(0 4px 3px #06223788)!important}
+#campaign .bb-galaxy-orbit{border-color:color-mix(in srgb,var(--biome-color) 75%,#fff)!important;opacity:.7!important}
+#campaign .bb-galaxy-orbit.orbit-b{border-style:dotted!important;opacity:.35!important}
+#campaign .bb-galaxy-star{color:#ffe3a0!important;text-shadow:0 2px 8px #f7c96a66!important}
+#campaign .bb-galaxy-index{color:#a9f0df!important;font-size:8px!important}
+#campaign .bb-galaxy-card strong{font-size:18px!important;color:#f5fffb!important}
+#campaign .bb-galaxy-card small{color:#c0dedd!important;min-height:28px!important;line-height:1.4!important}
+#campaign .bb-galaxy-range{color:#f6dfaa!important}
+#campaign .bb-galaxy-progress{height:6px!important;background:#061f304d!important;border:1px solid #ffffff18!important}
+#campaign .bb-galaxy-progress i{border-radius:99px!important;background:linear-gradient(90deg,#8de4c9,#ffe09a)!important;box-shadow:0 0 10px #8de4c966!important}
+#campaign .bb-galaxy-status{color:#a8eddb!important;font-size:8px!important}
+#campaign .bb-atlas-controls{color:#b8d9d6!important}
+#campaign .bb-atlas-controls button{width:40px!important;height:38px!important;border:1px solid #8ed9cd66!important;border-radius:14px!important;background:linear-gradient(145deg,#2b6170,#1b4358)!important;color:#f4fffa!important;box-shadow:0 4px 0 #0b2a3c!important}
+#campaign .bb-planet-heading{gap:7px!important;padding:12px 14px!important;border:1px solid #8bd8ca33!important;border-left:4px solid var(--biome-color)!important;border-radius:17px!important;background:linear-gradient(110deg,#285567dd,#193e52bb 70%,#17374a88)!important;box-shadow:inset 0 1px #ffffff18!important}
+#campaign .bb-planet-heading strong{font-size:19px!important;color:#f5fffb!important}
+#campaign .bb-planet-heading small,#campaign .bb-planet-heading>span:last-child{font-size:10px!important;color:#c0dfdc!important;line-height:1.4!important}
+#campaign .bb-planet-track{padding:22px 5px 26px!important}
+#campaign .bb-treasure-trail{overflow:visible!important}
+#campaign .bb-trail-shadow{stroke:#0c2c3c!important;stroke-width:10!important;opacity:.36!important}
+#campaign .bb-trail-glow{fill:none!important;stroke:#ffe0a0!important;stroke-width:5!important;stroke-linecap:round!important;opacity:.22!important}
+#campaign .bb-trail-dashes{stroke:#ffe0a0!important;stroke-width:3.5!important;stroke-dasharray:3 11!important;filter:drop-shadow(0 1px 3px #f6ce7788)!important;opacity:1!important}
+#campaign .bb-planet-node{width:104px!important;height:136px!important;min-width:104px!important;gap:6px!important;border-radius:18px!important;transition:transform .18s ease,opacity .18s ease!important}
+#campaign .bb-planet-node:focus-visible{outline:3px solid #ffe09a!important;outline-offset:4px!important;border-radius:18px!important}
+#campaign .bb-planet-orbit{display:none!important}
+#campaign .bb-planet-sphere{width:72px!important;height:72px!important;border-radius:50%!important;position:relative!important;overflow:hidden!important;font-size:0!important;color:transparent!important;background:radial-gradient(ellipse at 30% 23%,#ffffffb8 0 3%,transparent 4%),radial-gradient(ellipse at 34% 35%,hsl(var(--planet-hue) 72% 78%) 0 20%,transparent 42%),radial-gradient(ellipse at 68% 66%,hsl(calc(var(--planet-hue) + 24) 58% 43%) 0 25%,transparent 48%),radial-gradient(circle at 42% 38%,hsl(var(--planet-hue) 65% 62%),hsl(var(--planet-hue) 60% 35%) 68%,#17384a 100%)!important;border:2px solid #ffffff9a!important;box-shadow:inset -12px -13px 17px #09283a88,0 5px 0 #082a3b55,0 0 0 5px #b5e9d91c!important;animation:bbPlanetFloat 5.5s ease-in-out infinite!important}
+#campaign .bb-planet-sphere::before{content:""!important;position:absolute!important;inset:14% 18% 23% 13%!important;border-radius:58% 42% 48% 52%!important;transform:rotate(-24deg)!important;background:linear-gradient(135deg,#c5f0bd99,#6bbd9d99 58%,#d9e8a477)!important;filter:blur(.2px)!important;box-shadow:12px 19px 0 -8px #d5efb077,-13px -8px 0 -9px #e4f2bd77!important}
+#campaign .bb-planet-sphere::after{content:""!important;position:absolute!important;left:12%!important;right:12%!important;top:28%!important;height:8px!important;border:0!important;border-radius:50%!important;transform:rotate(-24deg)!important;background:#ffffff45!important;box-shadow:0 19px 0 -2px #ffffff26!important}
+#campaign .bb-planet-fallback{display:none!important}
+#campaign .bb-planet-node:nth-child(4n) .bb-planet-sphere{width:78px!important;height:78px!important}
+#campaign .bb-planet-node:nth-child(5n) .bb-planet-sphere::after{left:-15%!important;right:-15%!important;top:38%!important;height:19px!important;border:3px solid #f4dda9cc!important;background:transparent!important;box-shadow:none!important;transform:rotate(-24deg)!important}
+#campaign .bb-planet-node strong{display:grid!important;place-items:center!important;min-width:35px!important;height:22px!important;padding:0 8px!important;border:1px solid #b9e6d977!important;border-radius:99px!important;background:#1b4558!important;color:#effff8!important;font-size:10px!important;letter-spacing:.1em!important;box-shadow:0 3px 0 #0b2d3d66!important}
+#campaign .bb-planet-node small{padding:3px 7px!important;border-radius:99px!important;background:#15394c!important;color:#b9ddd7!important;font-size:7px!important;letter-spacing:.08em!important}
+#campaign .bb-planet-node.is-current .bb-planet-sphere{border-color:#ffe09a!important;box-shadow:inset -12px -13px 17px #09283a88,0 0 0 4px #ffe09a55,0 0 0 9px #ffe09a1f,0 7px 0 #082a3b55!important;transform:scale(1.08)!important}
+#campaign .bb-planet-node.is-current strong{background:#ffe09a!important;border-color:#ffe9bd!important;color:#254657!important}
+#campaign .bb-planet-node.is-cleared .bb-planet-sphere{filter:saturate(.76) brightness(.94)!important}
+#campaign .bb-planet-node.is-locked{opacity:.62!important;filter:saturate(.48)!important}
+#campaign .bb-planet-hint{padding:9px 12px!important;border:1px solid #8bd8ca33!important;border-radius:13px!important;background:#173c4eaa!important;color:#b7ddd6!important;font-size:8px!important;letter-spacing:.1em!important}
+@media(max-width:520px){#campaign .bb-galaxy-card{width:min(78vw,270px)!important;min-height:310px!important;padding:13px!important}#campaign .bb-galaxy-art{height:158px!important}#campaign .bb-galaxy-model-slot{width:100px!important;height:100px!important}#campaign .bb-planet-node{width:96px!important;min-width:96px!important}#campaign .bb-planet-sphere{width:66px!important;height:66px!important}}
+#campaign .bb-planet-controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;flex-wrap:wrap!important;padding:3px 0 5px!important}
+#campaign .bb-planet-controls button{min-height:38px!important;padding:0 13px!important;border:1px solid #8ed9cd66!important;border-radius:13px!important;background:linear-gradient(145deg,#2b6170,#1b4358)!important;color:#f4fffa!important;font-size:10px!important;font-weight:900!important;letter-spacing:.06em!important;box-shadow:0 4px 0 #0b2a3c!important}
+#campaign .bb-planet-controls button:disabled{opacity:.34!important;cursor:default!important;box-shadow:none!important}
+#campaign .bb-planet-controls button:focus-visible{outline:3px solid #ffe09a!important;outline-offset:3px!important}
+#campaign .bb-planet-range-label{flex:1 1 100%!important;text-align:center!important;color:#b8d9d6!important;font-size:8px!important;font-weight:900!important;letter-spacing:.14em!important}
+#campaign .bb-planet-current{background:linear-gradient(145deg,#f6dda0,#e6b85f)!important;border-color:#ffe7b2!important;color:#284657!important}
+@media(max-width:520px){#campaign .bb-planet-controls{gap:7px!important}#campaign .bb-planet-controls button{min-height:40px!important;padding:0 11px!important}#campaign .bb-planet-range-label{order:-1}}
+@media(prefers-reduced-motion:reduce){#campaign .bb-planet-sphere{animation:none!important}}
+</style>
+
 </body></html>

@@ -129,7 +129,7 @@ if (!index.includes('@media (max-width: 520px)') || !index.includes('#game .play
 if (!index.includes('class="screen home-dashboard"') || !mobileCss.includes('#menu.home-dashboard') || !mobileCss.includes('grid-template-areas:') || !mobileCss.includes('@media(max-width:760px)') || !mobileCss.includes('@media(max-height:620px)')) fail('home dashboard must use responsive single-viewport layouts with a safe short-screen overflow fallback');
 if (!index.includes('id="hapticBtn"') || !index.includes('function bbHaptic(pattern)') || !index.includes("typeof navigator.vibrate!=='function'")) fail('mobile haptic feedback must be optional and guarded for unsupported browsers');
 if (!index.includes('bbHaptic(cleared>=4?[28,40,70]:cleared>=2?32:16)') || !index.includes('score+=dist*2;bbHaptic(16);lockPiece()')) fail('haptic feedback must respond to line clears and hard drops');
-if (!index.includes('if(rotated){bbHaptic(9);chime();render()}')) fail('successful piece rotations must trigger a light haptic pulse without vibrating on blocked rotations');
+if (!/if\(rotated\)\{[\s\S]*?bbHaptic\(9\);chime\(\);render\(\);if\(mode==='campaign'\)bbRenderGoals\(\)\}/.test(index)) fail('successful piece rotations must trigger a light haptic pulse without vibrating on blocked rotations');
 if (!index.includes("localStorage.bb_haptics=hapticsOn?'1':'0'")) fail('haptic preference must persist between sessions');
 if (!index.includes('function bbHandleVisibilityChange()') || !index.includes('if (document.hidden && started && !paused && !gameOver)') || !index.includes("document.addEventListener('visibilitychange', bbHandleVisibilityChange)")) fail('an active game must auto-pause when the app is backgrounded and require manual resume');
 if (index.includes('bbSetupMobileGameHud') || index.includes('mobile-game-hud-trigger') || index.includes('bb-mobile-game-active')) fail('experimental immersive mobile HUD must remain removed');
@@ -140,7 +140,8 @@ if (!audioCredits.includes('CC0') || !audioCredits.includes('Holizna')) fail('so
 if (!await exists('site/audio/chills.mp3')) fail('bundled offline soundtrack is missing: site/audio/chills.mp3');
 
 const importMapPosition = index.indexOf('<script type="importmap">');
-for (const modulePath of ['./visual-3d.js', './arena-3d.js']) {
+// The 3D board renderer is intentionally no longer loaded; Three.js remains for hero previews and the universe atlas.
+for (const modulePath of ['./visual-3d.js']) {
   const modulePrefix = `src="${modulePath}`;
   const modulePosition = index.indexOf(modulePrefix);
   const moduleEnd = modulePosition >= 0 ? index.indexOf('"', modulePosition + modulePrefix.length) : -1;
@@ -209,6 +210,7 @@ for (const id of requiredCharacters) {
 }
 
 if (!arena.includes('const arenaWidth=10.4,arenaHeight=23.2') || !arena.includes('camera.lookAt(0,0,0)')) fail('3D arena camera must fit and centre the responsive 10x23 board');
+if (!arena.includes('function blockInto(target,x,y,color,ghost=false,aura=false)') || !arena.includes('if(aura&&!ghost)') || !arena.includes('state.pieceColor||colors[p.t]')) fail('3D active piece must render the card-gated Aura halo and Prism color without changing the board geometry');
 if (!arena.includes('new THREE.PlaneGeometry(10,23)') || !arena.includes('color:0x38506f,transparent:true,opacity:.78') || !arena.includes('color:0x75a6c9,transparent:true,opacity:.58')) fail('3D board surface and grid must visually match the 2D arena contrast and five-cell guides');
 // Preserve the established playlayout and side-panel flow; arena sizing must not reflow sibling HUD elements.
 
