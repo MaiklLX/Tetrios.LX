@@ -365,6 +365,16 @@ const targets = [
     // shelf return destination so the atlas assertions below remain meaningful.
     await campaignPage.locator('#campaignBack').click();
     await campaignPage.locator('#bbHomeCollectionCard').waitFor({state:'visible',timeout:10000});
+    const backNavigationState = await campaignPage.evaluate(() => ({
+      exported: typeof window.bbNavigateBack === 'function',
+      menuVisible: !document.querySelector('#menu')?.hidden,
+      campaignHidden: !!document.querySelector('#campaign')?.hidden
+    }));
+    if (!backNavigationState.exported || !backNavigationState.menuVisible || !backNavigationState.campaignHidden ||
+        pageErrors.some(error => error.includes('bbNavigateBack is not defined'))) {
+      failures.push(target.name + ': KT-645 global back-navigation bridge failed (' +
+        JSON.stringify({backNavigationState,backErrors:pageErrors.filter(error=>error.includes('bbNavigateBack'))}) + ')');
+    }
     await campaignPage.locator('#bbHomeCollectionCard').click();
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
@@ -614,17 +624,40 @@ const targets = [
     try {
       await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     } catch (error) {
-      const launchState = await page.evaluate(() => ({
-        gameHidden:document.querySelector('#game')?.hidden,
-        gameStyle:(()=>{const el=document.querySelector('#game'),s=el?getComputedStyle(el):null,r=el?.getBoundingClientRect();return s?{display:s.display,visibility:s.visibility,opacity:s.opacity,width:r?.width,height:r?.height,classes:el.className}:null})(),
-        modalVisible:document.querySelector('#overlay')?.classList.contains('show'),
-        modalText:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
-        selectedMode:document.querySelector('#game')?.dataset.mode||'',
-        errorText:document.querySelector('#toast')?.innerText||''
-      }));
+      const launchState = await page.evaluate(() => {
+        const el=document.querySelector('#game'),style=el?getComputedStyle(el):null,rect=el?.getBoundingClientRect();
+        const parent=el?.parentElement,parentStyle=parent?getComputedStyle(parent):null,parentRect=parent?.getBoundingClientRect();
+        const box=node=>{if(!node)return null;const r=node.getBoundingClientRect();return {tag:node.tagName,id:node.id||'',className:typeof node.className==='string'?node.className:'',hidden:node.hidden,display:getComputedStyle(node).display,height:Math.round(r.height*100)/100}};
+        return {
+          gameHidden:el?.hidden,
+          gameStyle:style?{display:style.display,visibility:style.visibility,opacity:style.opacity,width:rect?.width,height:rect?.height,gridTemplateRows:style.gridTemplateRows,classes:el.className}:null,
+          parent:parentStyle?{tag:parent.tagName,className:parent.className,display:parentStyle.display,flexDirection:parentStyle.flexDirection,height:parentRect?.height,gridTemplateRows:parentStyle.gridTemplateRows}:null,
+          siblings:Array.from(parent?.children||[]).map(box),
+          children:Array.from(el?.children||[]).map(box),
+          playlayout:box(el?.querySelector(':scope > .playlayout')),
+          frame:box(el?.querySelector('.boardframe')),
+          modalVisible:document.querySelector('#overlay')?.classList.contains('show'),
+          modalText:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
+          selectedMode:el?.dataset.mode||'',
+          errorText:document.querySelector('#toast')?.innerText||''
+        };
+      });
       throw new Error('Block Run hero confirmation did not open the arena: '+JSON.stringify({launchState,pageErrors:pageErrors.slice(-5),consoleErrors:consoleErrors.slice(-5),cause:error.message}));
     }
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
+    if (target.name.startsWith('desktop-')) {
+      const desktopArenaLayout = await page.evaluate(() => {
+        const game=document.querySelector('#game'),playlayout=game?.querySelector(':scope > .playlayout');
+        const frame=game?.querySelector('.boardframe');
+        const rect=node=>{if(!node)return null;const r=node.getBoundingClientRect();return {width:Math.round(r.width),height:Math.round(r.height)}};
+        return {game:rect(game),playlayout:rect(playlayout),frame:rect(frame),gridTemplateRows:game?getComputedStyle(game).gridTemplateRows:''};
+      });
+      if (!desktopArenaLayout.game || desktopArenaLayout.game.height < 400 ||
+          !desktopArenaLayout.playlayout || desktopArenaLayout.playlayout.height < 300 ||
+          !desktopArenaLayout.frame || desktopArenaLayout.frame.height < 300) {
+        throw new Error('Desktop arena layout collapsed after Block Run launch: ' + JSON.stringify(desktopArenaLayout));
+      }
+    }
     await page.waitForTimeout(900);
 
     console.log('[stage:gameplay-ready] ' + target.name);
