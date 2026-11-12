@@ -657,14 +657,33 @@ const targets = [
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
     if (target.name.startsWith('desktop-')) {
       const desktopArenaLayout = await page.evaluate(() => {
-        const game=document.querySelector('#game'),playlayout=game?.querySelector(':scope > .playlayout');
+        const game=document.querySelector('#game');
+        const playlayout=game?.querySelector(':scope > .playlayout');
         const frame=game?.querySelector('.boardframe');
         const rect=node=>{if(!node)return null;const r=node.getBoundingClientRect();return {width:Math.round(r.width),height:Math.round(r.height)}};
-        return {game:rect(game),playlayout:rect(playlayout),frame:rect(frame),gridTemplateRows:game?getComputedStyle(game).gridTemplateRows:''};
+        const playlayoutDisplay=playlayout?getComputedStyle(playlayout).display:'';
+        const frameStyle=frame?getComputedStyle(frame):null;
+        const frameRect=rect(frame);
+        return {
+          game:rect(game),
+          playlayout:rect(playlayout),
+          playlayoutPresent:!!playlayout,
+          playlayoutDisplay,
+          frame:frameRect,
+          frameInsidePlaylayout:!!(playlayout&&frame&&playlayout.contains(frame)),
+          frameVisible:!!frameStyle&&frameStyle.display!=='none'&&frameStyle.visibility!=='hidden'&&Number(frameStyle.opacity)>0,
+          gridTemplateRows:game?getComputedStyle(game).gridTemplateRows:''
+        };
       });
+      // Desktop intentionally uses display:contents for .playlayout so its
+      // board/rail children participate directly in #game's grid. The wrapper
+      // therefore has no bounding box; the rendered .boardframe is authoritative.
+      const playlayoutBoxRequired = desktopArenaLayout.playlayoutDisplay !== 'contents';
       if (!desktopArenaLayout.game || desktopArenaLayout.game.height < 400 ||
-          !desktopArenaLayout.playlayout || desktopArenaLayout.playlayout.height < 300 ||
-          !desktopArenaLayout.frame || desktopArenaLayout.frame.height < 300) {
+          !desktopArenaLayout.playlayoutPresent || !desktopArenaLayout.frameInsidePlaylayout ||
+          (playlayoutBoxRequired && (!desktopArenaLayout.playlayout || desktopArenaLayout.playlayout.height < 300)) ||
+          !desktopArenaLayout.frame || desktopArenaLayout.frame.width < 280 ||
+          desktopArenaLayout.frame.height < 300 || !desktopArenaLayout.frameVisible) {
         throw new Error('Desktop arena layout collapsed after Block Run launch: ' + JSON.stringify(desktopArenaLayout));
       }
     }
