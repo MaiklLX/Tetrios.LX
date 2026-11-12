@@ -61,3 +61,14 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - At checkpoint time, no workflow run or combined status was yet returned for the new code SHA. **Do not mark KT-427.8 passed until a fresh Mobile Arena and Cross-platform run for the exact SHA is green.**
 - PR #76 remains Draft/open. Its base has advanced substantially: compare against current `main` reports 51 commits ahead and 73 behind, with mergeability false. Do not merge or mechanically rebase this branch; reconcile the stacked history and overlapping `site/index.html` work separately.
 - Browser previews remain distinct from physical-device validation. No merge, deployment, APK build/release or user-data mutation.
+
+
+## 2026-11-12 — KT-427.9: stacked WebKit regression validation
+
+- The selector fix from code commit `969439e69f4ef7f660ca5b4be484e680467ba8cf` is now covered by test-only stacked Draft PR #89. The test branch is based on parent checkpoint `4f1275311d817d319a2200755ecdfd6cc9fced8e` and is three commits ahead; it does not alter gameplay or persistence.
+- Cross-platform Visual Preview [run 43212247116](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43212247116) completed **SUCCESS** on test SHA `d98bdb58f009d9712b8a9c6113e319d4535e30bb`. All 13 workflow steps passed.
+- Downloaded and inspected artifact [13942522741](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43212247116/artifacts/13942522741) (64 files). On iOS WebKit 375×812, `frameSelector.found=true` and `matchesArenaFrame=true`; the side rail uses measured scale `0.97584`; frame and rail heights both report 494.75px. The 10:23 frame ratio is approximately 0.43478. At 412×915 the intended inset rail remains present.
+- The same successful script exercises mobile gestures and visible Hold → Pause → Resume → Drop controls on each playable viewport, plus a live iOS WebKit landscape pause/guard/portrait-resume cycle. Landscape guard captures are present for iOS WebKit and Android Chromium. No page errors or console errors were recorded.
+- The WebKit report includes a cancelled `audio/chills.mp3` request during page teardown; this did not fail the run or produce a page/console error.
+- **Scope of acceptance:** this validates the parent selector fix through the stacked Cross-platform workflow. It is not a fresh Mobile Arena run on the exact parent code SHA, and it is not physical-device validation. Trigger/inspect a Mobile Arena run for the updated parent PR HEAD before marking the complete KT-427 preview set green.
+- PR #76 remains Draft and diverged from current `main`; do not merge or mechanically rebase. No main, deployment, APK, persistence or user-data changes.
