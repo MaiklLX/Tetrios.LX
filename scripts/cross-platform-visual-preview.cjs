@@ -135,14 +135,46 @@ const targets = [
       const currentButton = planetControls.locator('.bb-planet-current');
       if (!(await previous.isDisabled())) failures.push(target.name + ': previous route control should be disabled at the beginning');
       if (await currentButton.isDisabled()) failures.push(target.name + ': jump-to-current planet control should be enabled');
+      const planetViewport = campaignPage.locator('#campaign .bb-planet-viewport');
+      const initialScroll = await planetViewport.evaluate(node => node.scrollLeft);
       await next.click();
-      await campaignPage.waitForTimeout(420);
-      const advanced = await campaignPage.locator('#campaign .bb-planet-viewport').evaluate(node => node.scrollLeft > 10);
-      if (!advanced) failures.push(target.name + ': next route control did not advance the planet map');
+      const afterNext = await planetViewport.evaluate(async node => {
+        const started = performance.now();
+        let previous = node.scrollLeft, stable = 0;
+        while (performance.now() - started < 2500) {
+          await new Promise(requestAnimationFrame);
+          const current = node.scrollLeft;
+          stable = Math.abs(current - previous) < 0.5 ? stable + 1 : 0;
+          previous = current;
+          if (stable >= 5) break;
+        }
+        return node.scrollLeft;
+      });
+      if (afterNext <= initialScroll + 10) {
+        failures.push(target.name + ': next route control did not advance the planet map (' +
+          JSON.stringify({initialScroll,afterNext}) + ')');
+      }
+      const currentTarget = await planetViewport.evaluate(node => {
+        const active = node.querySelector('.bb-planet-node.is-current');
+        return active ? Math.max(0, active.offsetLeft - Math.max(0, (node.clientWidth - active.offsetWidth) / 2)) : null;
+      });
       await currentButton.click();
-      await campaignPage.waitForTimeout(420);
-      const returned = await campaignPage.locator('#campaign .bb-planet-viewport').evaluate(node => node.scrollLeft < 8);
-      if (!returned) failures.push(target.name + ': jump-to-current control did not return to the available planet');
+      const returnState = await planetViewport.evaluate(async (node, targetLeft) => {
+        const started = performance.now();
+        let previous = node.scrollLeft, stable = 0;
+        while (performance.now() - started < 2500) {
+          await new Promise(requestAnimationFrame);
+          const current = node.scrollLeft;
+          stable = Math.abs(current - previous) < 0.5 ? stable + 1 : 0;
+          previous = current;
+          if (stable >= 5) break;
+        }
+        return {scrollLeft:node.scrollLeft,targetLeft,distance:targetLeft === null ? null : Math.abs(node.scrollLeft - targetLeft)};
+      }, currentTarget);
+      if (returnState.targetLeft === null || returnState.distance > 8) {
+        failures.push(target.name + ': jump-to-current control did not return to the available planet (' +
+          JSON.stringify(returnState) + ')');
+      }
       await campaignPage.screenshot({ path: outputDir + '/' + target.name + '-campaign-planets-navigation.png', fullPage: false });
     }
     await campaignPage.locator('#campaignStart').click({ force: true });
