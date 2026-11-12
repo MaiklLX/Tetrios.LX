@@ -35,3 +35,16 @@ This separates Playwright's pointer-stability heuristic from the test's intended
 
 - `main` was not changed.
 - No merge, deployment, APK build/release, external code agent, image generation, or persistent user-data mutation was performed.
+
+
+## Follow-up from run 43211987358
+
+The actionability adjustment advanced the test past hero confirmation. The next exact failure exposed two independent issues on the current main snapshot:
+
+1. **Desktop arena collapsed:** after the confirmation handler ran, `#game` was unhidden and had `display:grid`, but its measured height was 0px. The desktop grid declared four rows (`auto auto auto 1fr`) while the daily objective is moved into the heading and the visible direct children are only the heading, HUD, and playlayout. The empty fourth track left the arena layout in an auto-sized row with a percentage-height child. The desktop grid now uses three rows so the playlayout receives the available 1fr track. The test now requires a desktop game height ≥400px, playlayout ≥300px, and board frame ≥300px.
+2. **Campaign back bridge scope:** the main gameplay script is wrapped in an IIFE, so its `bbNavigateBack` function is not visible to the later standalone `bb-kt632-ui-ready` script. That listener raised `ReferenceError: bbNavigateBack is not defined`. The function is now explicitly exported as `window.bbNavigateBack`, and the listener calls that exported function. The cross-platform test verifies the global bridge and that the campaign back control returns to the home screen.
+
+Updated code commit: `98503f22a3b3a52bed83b6e7d933564d70de9e03`.
+Updated test commit: `c53d17e8b95d85b066ca0915854596145f5db4f9`.
+
+Fresh Cross-platform Visual Preview on the new branch HEAD is required. No success is claimed until it completes.
