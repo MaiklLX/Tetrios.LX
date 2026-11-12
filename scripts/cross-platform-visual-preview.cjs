@@ -578,8 +578,39 @@ const targets = [
 
     console.log('[stage:block-run-start] ' + target.name);
     await page.locator('button.mode[data-mode="rogue"]').click();
-    await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#bbConfirmStartHero').click();
+    const blockRunHeroConfirm = page.locator('#bbConfirmStartHero');
+    await blockRunHeroConfirm.waitFor({ state: 'visible', timeout: 15000 });
+    await blockRunHeroConfirm.scrollIntoViewIfNeeded();
+    const blockRunHeroHitTest = await blockRunHeroConfirm.evaluate(button => {
+      const style = getComputedStyle(button);
+      const rect = button.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const hit = document.elementFromPoint(x, y);
+      return {
+        visible: style.display !== 'none' && style.visibility !== 'hidden' &&
+          Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0,
+        enabled: !button.disabled,
+        pointerEvents: style.pointerEvents,
+        hitTarget: hit?.id || hit?.tagName || null,
+        hitMatches: Boolean(hit && (hit === button || button.contains(hit))),
+        rect: {
+          x: Math.round(rect.x * 10) / 10,
+          y: Math.round(rect.y * 10) / 10,
+          width: Math.round(rect.width * 10) / 10,
+          height: Math.round(rect.height * 10) / 10
+        }
+      };
+    });
+    if (!blockRunHeroHitTest.visible || !blockRunHeroHitTest.enabled ||
+        blockRunHeroHitTest.pointerEvents === 'none' || !blockRunHeroHitTest.hitMatches) {
+      throw new Error('Block Run hero confirm is not interactable: ' + JSON.stringify(blockRunHeroHitTest));
+    }
+    // Separate target hit-testing from the click-handler setup step. The hero
+    // showcase can fail Playwright's pointer-stability heuristic even when the
+    // visible button is enabled and unobstructed; the DOM click still exercises
+    // the same registered handler before the arena visibility assertion below.
+    await blockRunHeroConfirm.evaluate(button => button.click());
     try {
       await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     } catch (error) {
