@@ -206,7 +206,65 @@ jobs:
                 failures.push('Expected a single-renderer 2D arena at ' + viewport.name + ': ' + JSON.stringify(arenaModeState));
               }
               await page.screenshot({ path: 'preview-artifacts/arena-2d-final-' + viewport.name + '.png' });
-              results.push({ viewport: viewport.name, geometry, arenaModeState, pageErrors });
+
+              // KT-427.10: prove that the four primary touch actions remain
+              // visible/hit-testable in the preview, then exercise their click
+              // handlers in this isolated browser context (never user storage).
+              const controlState = await page.evaluate(() => {
+                const inspect = selector => {
+                  const element=document.querySelector(selector);
+                  if(!element)return null;
+                  const style=getComputedStyle(element),r=element.getBoundingClientRect();
+                  const hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+                  return {
+                    visible:style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>0&&r.width>0&&r.height>0,
+                    enabled:!element.disabled,
+                    pointerEvents:style.pointerEvents,
+                    hitMatches:!!hit&&(hit===element||element.contains(hit)),
+                    rect:{x:Math.round(r.x*100)/100,y:Math.round(r.y*100)/100,width:Math.round(r.width*100)/100,height:Math.round(r.height*100)/100}
+                  };
+                };
+                return {hold:inspect('#holdBtn'),pause:inspect('#pauseBtn'),drop:inspect('#game .side-drop')};
+              });
+              for (const [name,state] of Object.entries(controlState)) {
+                if(!state||!state.visible||!state.enabled||state.pointerEvents==='none'||!state.hitMatches) {
+                  failures.push('Primary ' + name + ' control is not interactable at ' + viewport.name + ': ' + JSON.stringify(state));
+                }
+              }
+
+              await page.locator('#holdBtn').evaluate(element=>element.click());
+              await page.locator('#game .side-drop').evaluate(element=>element.click());
+              await page.locator('#pauseBtn').evaluate(element=>element.click());
+              await page.locator('#overlay.show #resume').waitFor({state:'visible',timeout:8000});
+              const resumeState=await page.locator('#overlay.show #resume').evaluate(element=>{
+                const style=getComputedStyle(element),r=element.getBoundingClientRect();
+                const hit=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+                return {
+                  visible:style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>0&&r.width>0&&r.height>0,
+                  enabled:!element.disabled,
+                  pointerEvents:style.pointerEvents,
+                  hitMatches:!!hit&&(hit===element||element.contains(hit)),
+                  rect:{x:Math.round(r.x*100)/100,y:Math.round(r.y*100)/100,width:Math.round(r.width*100)/100,height:Math.round(r.height*100)/100}
+                };
+              });
+              if(!resumeState.visible||!resumeState.enabled||resumeState.pointerEvents==='none'||!resumeState.hitMatches) {
+                failures.push('Resume control is not interactable at ' + viewport.name + ': ' + JSON.stringify(resumeState));
+              }
+              await page.locator('#overlay.show #resume').evaluate(element=>element.click());
+              await page.waitForFunction(()=>{
+                const overlay=document.querySelector('#overlay');
+                return !overlay||!overlay.classList.contains('show');
+              },null,{timeout:8000});
+              const interactionState=await page.evaluate(()=>({
+                gameVisible:!!document.querySelector('#game:not([hidden])'),
+                pauseOverlayClosed:!document.querySelector('#overlay')?.classList.contains('show')
+              }));
+              if(!interactionState.gameVisible||!interactionState.pauseOverlayClosed) {
+                failures.push('Pause/Resume did not return to the active arena at ' + viewport.name + ': ' + JSON.stringify(interactionState));
+              }
+              if(pageErrors.length) failures.push('Primary control interaction produced page errors at ' + viewport.name + ': ' + JSON.stringify(pageErrors));
+
+              results.push({ viewport: viewport.name, geometry, arenaModeState, controlState, resumeState, interactionState, pageErrors });
               await context.close();
             }
             fs.writeFileSync('preview-artifacts/geometry-report.json', JSON.stringify(results, null, 2));
