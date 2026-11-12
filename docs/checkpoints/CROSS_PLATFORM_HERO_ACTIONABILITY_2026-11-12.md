@@ -48,3 +48,15 @@ Updated code commit: `98503f22a3b3a52bed83b6e7d933564d70de9e03`.
 Updated test commit: `c53d17e8b95d85b066ca0915854596145f5db4f9`.
 
 Fresh Cross-platform Visual Preview on the new branch HEAD is required. No success is claimed until it completes.
+
+
+## Mobile preview finding — run 43213291239
+
+The first Mobile Arena Visual Preview on the branch failed at both 375×812 and 412×915. Its screenshots showed the full home dashboard still occupying the page while the newly opened 2D arena began below it (frame y=876px and y=988px respectively). The menu had been assigned its HTML `hidden` state by the screen switcher, but the late `#menu.home-dashboard { display:grid }` brand rule still won the cascade, so the hidden menu retained layout space.
+
+A final, higher-specificity guard now enforces `#menu.home-dashboard[hidden] { display:none!important }`. The mobile workflow now checks the menu's hidden/display/height state, arena frame top, and document height in addition to the existing 10×23 geometry, Hold/Drop visibility, objective placement, and 2D renderer checks.
+
+Application fix commit: `4cfb0cf33806f384de8eef2ed4678c10191e3276`.
+Mobile regression-test commit: `e119164f19f65068c8538109ce96cd9291394cf7`.
+
+The exact new HEAD still requires fresh Mobile Arena and Cross-platform runs; no PASS is claimed.
