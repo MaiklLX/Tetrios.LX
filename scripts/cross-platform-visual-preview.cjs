@@ -503,43 +503,53 @@ const targets = [
     await campaignPage.locator('#campaignStart').evaluate(button => button.click());
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().waitFor({state:'visible',timeout:10000});
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
+    let campaignMissionState = null;
+    let campaignHeroReady = true;
     try {
-      await campaignPage.locator('#bbStartHeroChoose').waitFor({state:'visible',timeout:10000});
+      // Desktop's procedural hero showcase can settle after the atlas animation.
+      // Keep the wait bounded, but do not abandon the whole viewport on a late control.
+      await campaignPage.locator('#bbStartHeroChoose').waitFor({state:'visible',timeout:20000});
     } catch (error) {
       const heroDiagnostic=await campaignPage.evaluate(()=>({
         modalVisible:!!document.querySelector('#modal.show'),
         modalText:document.querySelector('#modal')?.innerText?.slice(0,1200)||'',
         heroListCount:document.querySelectorAll('#bbStartHeroList [data-start-hero]').length,
         chooseButton:!!document.querySelector('#bbStartHeroChoose'),
+        chooseDisplay:document.querySelector('#bbStartHeroChoose')?getComputedStyle(document.querySelector('#bbStartHeroChoose')).display:'',
+        chooseVisibility:document.querySelector('#bbStartHeroChoose')?getComputedStyle(document.querySelector('#bbStartHeroChoose')).visibility:'',
+        chooseRect:(()=>{const el=document.querySelector('#bbStartHeroChoose');if(!el)return null;const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})(),
         confirmButton:!!document.querySelector('#bbConfirmStartHero')
       }));
-      failures.push(target.name+': campaign hero detail did not open ('+JSON.stringify({heroDiagnostic,pageErrors:pageErrors.slice(-5)})+')');
+      const diagnostic={heroDiagnostic,pageErrors:pageErrors.slice(-5),cause:error.message};
+      failures.push(target.name+': campaign hero detail did not open ('+JSON.stringify(diagnostic)+')');
+      console.error('[campaign-hero-diagnostic] '+target.name+' '+JSON.stringify(diagnostic));
       await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-hero-diagnostic.png',fullPage:false});
-      await campaignPage.close();
-      continue;
+      campaignHeroReady=false;
     }
-    await campaignPage.locator('#bbStartHeroChoose').click();
-    await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.waitForTimeout(900);
-    const campaignMissionState = await campaignPage.evaluate(() => {
-      const goals = document.querySelector('#campaignGoals');
-      return {
-        objectiveRows: Math.max(0, goals ? Array.from(goals.children).filter(node => node.tagName === 'DIV').length - 1 : 0),
-        boostLabel: document.querySelector('#boostName')?.textContent || '',
-        cardChoices: document.querySelectorAll('#modal [data-up]').length,
-        missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
-        viewportHeight: innerHeight,
-        proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
-        loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length
-      };
-    });
-    if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');
-    if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
-    if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
-    if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
-    if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
-    await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
-    console.log('[stage:campaign-missions] ' + target.name);
+    if (campaignHeroReady) {
+      await campaignPage.locator('#bbStartHeroChoose').click();
+      await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
+      await campaignPage.waitForTimeout(900);
+      campaignMissionState = await campaignPage.evaluate(() => {
+        const goals = document.querySelector('#campaignGoals');
+        return {
+          objectiveRows: Math.max(0, goals ? Array.from(goals.children).filter(node => node.tagName === 'DIV').length - 1 : 0),
+          boostLabel: document.querySelector('#boostName')?.textContent || '',
+          cardChoices: document.querySelectorAll('#modal [data-up]').length,
+          missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
+          viewportHeight: innerHeight,
+          proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
+          loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length
+        };
+      });
+      if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');
+      if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
+      if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
+      if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
+      if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
+      await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+      console.log('[stage:campaign-missions] ' + target.name);
+    }
     await campaignPage.close();
 
     {
