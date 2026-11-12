@@ -3,10 +3,6 @@ name: Build Block Buddies APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - feature/gameplay-evolution-389-2026-11-03
 
 permissions:
   contents: write
