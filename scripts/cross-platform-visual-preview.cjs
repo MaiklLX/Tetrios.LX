@@ -398,6 +398,16 @@ const targets = [
         };
       };
       const frame = document.querySelector('#game .boardframe');
+      // Match the runtime's nested selector exactly: the arena frame may sit
+      // inside a board-column wrapper rather than being a direct playlayout child.
+      const runtimeFrame = document.querySelector('#game .playlayout')?.querySelector('.boardframe') || null;
+      const frameSelector = {
+        found: !!runtimeFrame,
+        matchesArenaFrame: runtimeFrame === frame,
+        parentTag: runtimeFrame?.parentElement?.tagName || null,
+        parentClass: typeof runtimeFrame?.parentElement?.className === 'string'
+          ? runtimeFrame.parentElement.className : ''
+      };
       const side = document.querySelector('#game .sidecol');
       const sideMetrics = side ? {
         naturalHeight: side.offsetHeight,
@@ -419,6 +429,7 @@ const targets = [
           height: document.documentElement.scrollHeight
         },
         frame: rect(frame),
+        frameSelector,
         leftRail: rect(leftRail),
         controlRow: rect(controlRow),
         controlVisibility: controlRow ? {display:getComputedStyle(controlRow).display,visibility:getComputedStyle(controlRow).visibility,pointerEvents:getComputedStyle(controlRow).pointerEvents,buttons:Array.from(controlRow.querySelectorAll('.control')).map(node=>rect(node))} : null,
@@ -479,6 +490,11 @@ const targets = [
     const ratio = geometry.frameRatio;
     if (!geometry.frame || ratio < 0.42 || ratio > 0.45) {
       failures.push(target.name + ': arena frame ratio is outside the 10:23 tolerance (' + ratio + ')');
+    }
+    if (target.name === 'ios-webkit-375x812' &&
+        (!geometry.frameSelector?.found || !geometry.frameSelector.matchesArenaFrame)) {
+      failures.push(target.name + ': runtime nested boardframe selector did not resolve the geometry frame (' +
+        JSON.stringify(geometry.frameSelector) + ')');
     }
     // KT-427.6: protect the measured 375x812 side-rail/frame alignment in the
     // full application preview, not only in the lightweight mobile fixture.
