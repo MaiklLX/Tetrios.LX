@@ -78,3 +78,70 @@ static func scrollbar(layout: Dictionary, scroll_offset: float) -> Dictionary:
 	var progress := clampf(scroll_offset / max_scroll, 0.0, 1.0) if max_scroll > 0.0 else 0.0
 	var thumb_y := track.position.y + (track.size.y - thumb_height) * progress
 	return {"track": track, "thumb": Rect2(track.position.x - 0.5, thumb_y, 3.0, thumb_height)}
+
+static func collection_strip(viewport: Vector2) -> Dictionary:
+	var width := maxf(1.0, viewport.x)
+	var height := maxf(1.0, viewport.y)
+	var compact := width <= 480.0
+	var short_screen := height < 560.0
+	var top := 108.0 if short_screen else maxf(142.0, (height - 480.0) * 0.5)
+	var margin := 10.0 if width <= 360.0 else 16.0
+	var carousel_height := 150.0 if short_screen else 220.0
+	var detail_height := 94.0 if short_screen else 154.0
+	var gap := 12.0
+	var grid := Rect2(margin, top, maxf(1.0, width - margin * 2.0), carousel_height)
+	var detail := Rect2(12.0, grid.end.y + gap, maxf(1.0, width - 24.0), detail_height)
+	var card_width := clampf(grid.size.x * 0.22, 82.0, 142.0)
+	var card_height := maxf(80.0, carousel_height - 10.0)
+	var content_width := 49.0 * card_width + 48.0 * gap
+	var max_scroll := maxf(0.0, content_width - grid.size.x)
+	var inspect_width := minf(76.0, maxf(62.0, detail.size.x * 0.22))
+	var inspect_height := 34.0 if not short_screen else 30.0
+	var inspect := Rect2(detail.end.x - inspect_width - 7.0, detail.position.y + (detail.size.y - inspect_height) * 0.5, inspect_width, inspect_height)
+	return {
+		"compact": compact,
+		"short_screen": short_screen,
+		"grid_viewport_rect": grid,
+		"detail_rect": detail,
+		"inspect_rect": inspect,
+		"card_width": card_width,
+		"card_height": card_height,
+		"gap": gap,
+		"content_width": content_width,
+		"max_scroll": max_scroll,
+		"title_y": top - 62.0,
+		"subtitle_y": top - 38.0,
+		"legend_y": top - 14.0,
+		"footer_y": detail.end.y + 18.0
+	}
+
+
+static func scroll_offset_for_index_strip(layout: Dictionary, item_index: int, current_offset: float = 0.0) -> float:
+	var grid: Rect2 = layout.get("grid_viewport_rect", Rect2())
+	var card_width := float(layout.get("card_width", 0.0))
+	var stride := card_width + float(layout.get("gap", 0.0))
+	var max_scroll := float(layout.get("max_scroll", 0.0))
+	if stride <= 0.0 or card_width <= 0.0 or grid.size.x <= 0.0:
+		return 0.0
+	var left := float(maxi(0, item_index)) * stride
+	var right := left + card_width
+	var offset := current_offset
+	if left < offset:
+		offset = left
+	elif right > offset + grid.size.x:
+		offset = right - grid.size.x
+	return clampf(offset, 0.0, max_scroll)
+
+
+static func scrollbar_strip(layout: Dictionary, scroll_offset: float) -> Dictionary:
+	var grid: Rect2 = layout.get("grid_viewport_rect", Rect2())
+	var max_scroll := float(layout.get("max_scroll", 0.0))
+	var content_width := float(layout.get("content_width", 0.0))
+	if max_scroll <= 0.5 or content_width <= 0.0 or grid.size.x <= 0.0:
+		return {"track": Rect2(), "thumb": Rect2()}
+	var track := Rect2(grid.position.x + 4.0, grid.end.y - 4.0, maxf(1.0, grid.size.x - 8.0), 2.0)
+	var thumb_width := minf(track.size.x, maxf(24.0, track.size.x * grid.size.x / content_width))
+	var progress := clampf(scroll_offset / max_scroll, 0.0, 1.0)
+	var thumb_x := track.position.x + (track.size.x - thumb_width) * progress
+	return {"track": track, "thumb": Rect2(thumb_x, track.position.y - 0.5, thumb_width, 3.0)}
+

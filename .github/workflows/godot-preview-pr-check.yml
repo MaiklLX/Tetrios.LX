@@ -38,7 +38,7 @@ jobs:
             campaign_collection_test.gd campaign_collection_layout_test.gd campaign_achievements_test.gd \
             campaign_planet_catalog_test.gd campaign_mechanics_test.gd campaign_boss_session_test.gd \
             campaign_effect_session_test.gd campaign_special_piece_test.gd campaign_piece_runtime_test.gd \
-            campaign_live_integration_test.gd campaign_piece_store_test.gd block_run_model_test.gd \
+            campaign_live_integration_test.gd campaign_piece_store_test.gd gesture_input_test.gd block_run_model_test.gd \
             block_run_effects_test.gd block_run_board_test.gd block_run_session_test.gd \
             block_run_bridge_test.gd block_run_live_integration_test.gd; do
             echo "Running $test"

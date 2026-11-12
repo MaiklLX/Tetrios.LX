@@ -92,5 +92,35 @@ func _run() -> void:
 		var modal := CollectionLayout.reward_modal(viewport)
 		if not _check(modal.position.x >= -0.1 and modal.position.y >= -0.1 and modal.end.x <= viewport.x + 0.1 and modal.end.y <= viewport.y + 0.1, "Reward preview modal must remain fully inside the viewport at %s" % [viewport]):
 			return
+
+	for viewport in [Vector2(240.0, 390.0), Vector2(320.0, 568.0), Vector2(360.0, 640.0), Vector2(390.0, 844.0), Vector2(720.0, 1280.0), Vector2(720.0, 1600.0)]:
+		var strip: Dictionary = CollectionLayout.collection_strip(viewport)
+		var strip_rect: Rect2 = strip.grid_viewport_rect
+		var detail_rect: Rect2 = strip.detail_rect
+		var inspect_rect: Rect2 = strip.inspect_rect
+		var card_width := float(strip.card_width)
+		var card_height := float(strip.card_height)
+		var stride := card_width + float(strip.gap)
+		var strip_max := float(strip.max_scroll)
+		if not _check(card_width >= 82.0 and card_height >= 80.0, "Horizontal reward cards must remain large enough for visible emblems at %s" % [viewport]):
+			return
+		if not _check(strip_rect.position.x >= 0.0 and strip_rect.end.x <= viewport.x + 0.1 and strip_rect.end.y <= detail_rect.position.y, "Horizontal reward strip and details must not overlap or exceed the viewport width at %s" % [viewport]):
+			return
+		if not _check(inspect_rect.position.x >= detail_rect.position.x and inspect_rect.end.x <= detail_rect.end.x and inspect_rect.position.y >= detail_rect.position.y and inspect_rect.end.y <= detail_rect.end.y, "Reward inspect action must remain inside the detail panel at %s" % [viewport]):
+			return
+		if not _check(strip_max > 0.0 and absf(strip_max - (float(strip.content_width) - strip_rect.size.x)) < 0.1, "Forty-nine rewards must form a horizontally scrollable strip at %s" % [viewport]):
+			return
+		var last_offset := CollectionLayout.scroll_offset_for_index_strip(strip, 48, 0.0)
+		var last_left := 48.0 * stride
+		if not _check(last_left >= last_offset - 0.1 and last_left + card_width <= last_offset + strip_rect.size.x + 0.1, "Selecting the final reward must bring it fully into view at %s" % [viewport]):
+			return
+		var first_offset := CollectionLayout.scroll_offset_for_index_strip(strip, 0, strip_max)
+		if not _check(first_offset == 0.0, "Selecting the first reward must return to the beginning of the strip at %s" % [viewport]):
+			return
+		var scroll_visual: Dictionary = CollectionLayout.scrollbar_strip(strip, strip_max)
+		var track: Rect2 = scroll_visual.track
+		var thumb: Rect2 = scroll_visual.thumb
+		if not _check(track.size.x > 0.0 and thumb.end.x <= track.end.x + 0.1 and thumb.end.x >= track.end.x - 0.1, "Horizontal scrollbar must reach the end of its track at maximum scroll at %s" % [viewport]):
+			return
 	print("Campaign collection layout tests passed: responsive 4x13 / 5x10 / 6x9 / 7x7 grids, preserved reward emblem scale, selection visibility, scrollbar geometry and 8 viewport sizes.")
 	quit(0)

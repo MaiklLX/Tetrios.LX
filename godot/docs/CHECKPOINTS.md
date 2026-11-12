@@ -441,3 +441,54 @@
 - Added unit tests for phase transitions, per-phase baselines, near-miss rejection and final completion. Extended live integration to complete Planet 040 and verify its reward/unlock.
 - Phase system remains dormant in Classic, Sprint/Marathon and Block Run. No board, save schema, rewards, exit/restart behavior, main or public release changes.
 - CI result for the latest PR head is pending; no pass is claimed yet.
+
+
+## KT-548.5 — Full-screen free-area touch gestures (2026-11-09)
+- Published the isolated Godot Web preview at `/godot-preview/` through Pages deployment run [#42615190536](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42615190536), following successful PR validation run [#42596156626](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42596156626).
+- Publication commit: `ae410e7ba5fdb430c9b8854c29bb52b53bf78d32`. Legacy site root remains the existing route; the preview is isolated. The preserved backup branch remains separate. No APK release.
+- Follow-up branch: `godot/kt548.5-fullscreen-touch-gestures-2026-11-09`.
+- Godot arena gestures now begin anywhere on the active game surface except explicit tap controls (Mode, Pause, Hold, DROP and Block Run hero skill). This includes free gutters around the 10×23 board; menu, modal, paused and completed states remain excluded.
+- Added `godot/tests/gesture_input_test.gd`: validates left/right gutter gesture acceptance, reserved control hit targets, horizontal movement and rotation immediately after hard drop.
+- Added the regression test to `.github/workflows/godot-preview-pr-check.yml`.
+- Validation for KT-548.5 is pending in PR CI. No main merge, new Pages deploy, APK build/release or physical-device verification is claimed for this follow-up.
+
+
+## KT-549.1 — Mobile touch and full-height viewport foundation (2026-11-09)
+- Started isolated branch `godot/kt549-mobile-first-polish-2026-11-09` from the validated KT-548.5 head; PR #83 remains Draft and unmerged.
+- Godot Web viewport now uses `stretch/aspect=expand` so tall devices can use their full screen instead of retaining the 720×1280 canvas aspect with unused side space.
+- Increased the board height budget for tall viewports from 68% to 78%, retaining width and bottom safety limits.
+- Reworked swipe classification: horizontal and vertical actions require a strong dominant axis (1.45×); ambiguous diagonals are consumed without triggering movement, rotation or an accidental tap. Vertical drop timing is slightly more forgiving.
+- Added a lightweight touch ripple on press/release and regression coverage for tall-screen board sizing, horizontal/vertical classification and diagonal rejection.
+- Awaiting CI and browser validation. Physical Xiaomi 13T verification is still required; no claim of device acceptance, main merge, Pages deployment or APK release.
+
+
+## KT-549.2 — Reward carousel and vertical planet ascent (2026-11-09)
+- Replaced the compact multi-row reward grid with a horizontal, swipeable strip of 49 larger trophy cards. The selected trophy retains a detail panel and inspect action; the strip exposes a horizontal progress indicator.
+- Reworked the campaign route into a two-lane serpentine climb with 15 vertical tiers: Planet 001 begins at the bottom, progress is scrolled upward, and boss Planet 030 sits at the summit. Boss milestones 010 and 020 remain visible along the ascent.
+- Added touch-scroll handling for the reward strip and route, with independent offsets and visible scroll indicators.
+- Added responsive layout assertions for reward card size, horizontal scrolling, selection visibility and scrollbar bounds. Existing collection grid helper remains for legacy regression coverage but is no longer used by the active reward screen.
+- Validation pending after this UI batch. No merge, public deployment, APK build/release or physical-device acceptance.
+
+
+## KT-549.3 — First-run speech-bubble onboarding (2026-11-09)
+- Added a first-launch guided tour with speech-bubble callouts for the home menu, universe atlas, vertical planet route and horizontal reward carousel.
+- Added a separate first-gameplay walkthrough for the HUD, playfield and touch controls. Home and gameplay completion are persisted in `user://tutorial.cfg`; the player can skip the tour.
+- Tutorial touch routing consumes drags but still allows short taps on Next/Skip. Button widths adapt on very narrow screens.
+- The full combined KT-549.1–549.3 branch is under CI in Draft PR #84. Automated regression, Web export and Chromium smoke checks must pass on the latest head before acceptance.
+- No merge, main change, public Pages deployment, APK build/release or physical Xiaomi 13T verification.
+
+
+## KT-549.4 — Arena HUD icon language (2026-11-09)
+- Added distinct compact visual symbols to the score/objective cards: score star, boss target, level bars and timer dial.
+- Moved labels and values into a wider text column so the icon is an anchor rather than a replacement for meaning; small labels now have more room and adaptive sizing.
+- The HUD retains text values for clarity and accessibility; this is a visual aid, not an icon-only interface.
+- Validation pending on the latest combined branch head. No merge, deployment, APK release or device acceptance.
+
+
+## KT-549.5 — Full mobile-first validation checkpoint (2026-11-09)
+- Latest tested source head before this documentation-only checkpoint: `0ed47a56ae9d6a42e14b10f27557e15686410388`.
+- GitHub Actions run `42621716888` completed successfully: Godot project import/check, all regression scripts, Web export, Chromium dependency setup and real-browser smoke tests.
+- An earlier test-only failure was traced to the gesture probe inheriting the new first-run tutorial state. The probe now explicitly disables onboarding; production tutorial behavior is unchanged.
+- The latest branch adds press-state outlines above every screen, short tap handling for tutorial buttons, responsive speech-bubble placement and directional tails.
+- PR #84 remains Draft and unmerged. Main and the public Pages deployment are untouched. No APK has been built or released.
+- Xiaomi 13T hardware validation is still outstanding. Automated browser success does not certify physical touch feel, display cutouts, haptics or device-specific safe areas.
