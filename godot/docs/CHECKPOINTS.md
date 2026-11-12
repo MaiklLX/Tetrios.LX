@@ -350,3 +350,14 @@
 - This was a read-only source audit. No browser storage was accessed, no migration was executed, no `user://` writes were added, and no user data was read or changed.
 - Existing code validation remains [Godot Native Project Check #43015952545](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545) on code HEAD `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67` — **SUCCESS**. This documentation update should receive its own PR CI run; do not infer that result before it completes.
 - Remaining migration gates: full value-range/semantics audit for every mode and reward path, conflict/recovery fixtures, source export contract, atomic persistent storage, real Android migration acceptance. Keep persistent writes disabled.
+
+
+## 2026-11-12 — KT-428 latest HEAD and viewport artifact audit
+
+- PR #77 current HEAD: `a639cb1a530a2279ba0ef0c12639383dc704dec5`; base foundation branch remains exactly `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Compared against the previously inspected code HEAD `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67`: two commits ahead, with changes limited to this checkpoint document. Gameplay scripts, scenes, model and tests are unchanged.
+- Exact-HEAD Godot workflow [#43216949560](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43216949560) completed **SUCCESS**. All 16 validation steps passed: Godot 4.4.1 setup/import, main scene script parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- Downloaded artifact [13944071892](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43216949560/artifacts/13944071892) (9 PNGs) and inspected `08-mobile-360-arena.png`, `02-classic-arena.png`, and `09-mobile-360-results.png`. The 360×800 capture shows the procedural pixel Buddy in the left gutter, the unchanged 2D 10×23 board, and visible Drop control. The results modal correctly covers the arena/Buddy. The 720×1280 Classic capture shows the larger Buddy treatment and full board.
+- The mobile Buddy is visibly smaller at 360×800 than in the desktop/720×1280 capture; it remains identifiable in the viewport artifact. Treat actual-device legibility and one-hand comfort as open acceptance checks rather than assuming the viewport is sufficient.
+- These are Godot/Xvfb viewport captures, not physical Android screenshots. Installed-device scaling, touch feel, safe areas, and portrait/landscape pause-resume remain unverified. No APK build/release, merge, deployment, persistent storage write, or user-data mutation.
+- PR #78 remains stacked on #77 and PR #81 remains stacked on #78. Preserve this chain without mechanical rebase; reconcile overlapping Buddy/main-scene edits before any integration.
