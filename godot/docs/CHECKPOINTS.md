@@ -328,3 +328,14 @@
 - Open migration/parity task [#52 — KT-GODOT-002](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open.
 - Stacked-branch audit: PR #78 is based on this branch but has diverged (4 commits ahead / 3 behind from merge base `dc1802f663f48c930025a6ac177ed7d9128c9379`); PR #81 is based exactly on PR #78 HEAD `1eb08ff22803293f409fe93067e97198aa2c4a38`. Do not mechanically rebase or merge the stack; reconcile the Buddy and main-scene edits first.
 - No code change was necessary in PR #77 during this audit. Next safe work is to keep the current Buddy foundation stable while the visual stack is reconciled and the read-only Web save migration contract advances; persistent storage remains gated.
+
+
+## 2026-11-12 — KT-428 current HEAD and visual artifact review
+
+- PR #77 code HEAD: `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67`; PR remains Draft/open and targets foundation branch `godot/android-native-foundation-2026-11-05` at `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`. The foundation branch still points to that exact base SHA.
+- Latest workflow for the code HEAD: [Godot Native Project Check #43015952545](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545) — **SUCCESS**. Verified step summaries: Godot 4.4.1 setup/import, main scene parse, model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, screenshot capture/upload, and scene smoke test.
+- Downloaded artifact [block-buddies-visual-checks, ID 13851919301](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545/artifacts/13851919301) (9 PNGs) and inspected the mode selector, mobile 360×800 arena, Block Run skill-ready arena, and results screen. Buddy is procedurally rendered in pixel style at the left safe gutter; the gameplay board remains 2D and 10×23; Drop remains outside the board; results overlay correctly covers the arena.
+- The capture is Godot/Xvfb viewport output, not a physical Android device. Installed-device scaling, one-hand touch feel, safe areas, and portrait/landscape pause-resume remain unverified.
+- Open migration/parity task [#52 — KT-GODOT-002](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open. No persistent user data was read or mutated; no APK build/release, merge, or deployment.
+- PR #78 and #81 remain stacked on this branch. Their last inspected Godot Native Project Check runs [42481365011](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481365011) and [42591587500](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42591587500) both succeeded, but their branch divergence still requires explicit reconciliation before integration.
+- This entry is documentation-only; the successful workflow above validates the unchanged code HEAD `6a28d5e`.
