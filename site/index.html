@@ -18161,4 +18161,8 @@ body>canvas.bb-galaxy-model-canvas,
     pointer-events:auto!important;touch-action:manipulation!important;
   }
 }
+
+
+/* Hidden screen state must win over the home dashboard's explicit display:grid. */
+#menu.home-dashboard[hidden]{display:none!important;}
 </style>
