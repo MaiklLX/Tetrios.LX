@@ -89,3 +89,14 @@ Corrected CSS commit: `71cfaa677f17f0b874a8899fc5342a3c54f179a3`.
 - This is test-harness-only; no UI/gameplay/persistence code changed. A fresh Cross-platform run on the new exact SHA is required. The earlier run remains **FAIL**; no pass is claimed. Mobile Preview [43213975247](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43213975247) remains **SUCCESS** on `cb3345e`.
 - The diagnostic capture showed the hero detail card and its selected-state action visible after the timeout; the new run will log computed display/visibility/rect and the caught timeout cause so any remaining timing or selector issue is explicit.
 - No main edit, merge, deployment, APK build/release, user-data change, image generation or external agent.
+
+
+## Desktop arena assertion correction — 12 Nov 2026
+
+- Cross-platform run [43218574080](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43218574080) failed after Block Run launch on desktop with `playlayout` reported as 0×0 while its nested board frame measured 319×734 and the game measured 1375×878.
+- Inspected the failed job log and CSS cascade. Desktop intentionally sets `#game > .playlayout { display: contents }`, allowing the arena and utility rail to participate directly in the parent grid. Under CSS `display: contents`, the wrapper has no principal box and `getBoundingClientRect()` may return zero even while its descendants render normally. The prior test incorrectly required the wrapper itself to have a 300px box.
+- The partial artifact [13944064992](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43218574080/artifacts/13944064992) was downloaded and inspected. The desktop campaign and daily-challenge arena captures show the 2D board and right utility rail rendered; the failed run stopped before the Block Run arena screenshot.
+- Corrected the Cross-platform test only: it now accepts the intentional `display: contents` wrapper, verifies that the board frame remains inside it, and checks the actual rendered frame's visibility and minimum dimensions. Non-`contents` wrappers must still have a real layout box.
+- Test-harness commit: `ac0fc298b7dde6a23b9ea9bf0f114e3c451e3354`.
+- A fresh Cross-platform run on the new exact SHA is required. The previous run remains **FAIL**; no pass is claimed. Mobile Arena [43218574205](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43218574205) passed on the parent code SHA, and its artifact [13944113863](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43218574205/artifacts/13944113863) is available for review.
+- No gameplay, progression, persistence, user data, `main`, deployment, APK, or release changes.
