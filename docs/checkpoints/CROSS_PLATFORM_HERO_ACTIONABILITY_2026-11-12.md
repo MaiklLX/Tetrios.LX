@@ -60,3 +60,12 @@ Application fix commit: `4cfb0cf33806f384de8eef2ed4678c10191e3276`.
 Mobile regression-test commit: `e119164f19f65068c8538109ce96cd9291394cf7`.
 
 The exact new HEAD still requires fresh Mobile Arena and Cross-platform runs; no PASS is claimed.
+
+
+## Specificity correction — Mobile Preview run 43213745135
+
+The first hidden-screen guard did not outrank the older triple-`.home-dashboard` selector at `site/index.html:5759`, which still applied `display:grid!important`. The failed run confirmed `hidden:true` but `display:grid` and a 750–853px menu height.
+
+The guard now uses the same four-class specificity pattern already present in the legacy cascade, plus the `[hidden]` state, so it wins over the triple-class display rule. The mobile regression assertion remains strict; the next exact-SHA run must prove `display:none`, zero menu height, and an arena frame near the top of the viewport.
+
+Corrected CSS commit: `71cfaa677f17f0b874a8899fc5342a3c54f179a3`.
