@@ -1471,3 +1471,109 @@
     transform: none !important;
   }
 }
+
+
+/* KT-ARENA-REPAIR-001 — restore the accepted three-column gameplay frame.
+   The live HUD and dynamically rendered goals share the left rail; the
+   10×23 board remains centered between equal side rails. Desktop only. */
+@media (min-width: 901px) {
+  #game > .playlayout {
+    grid-template-columns: minmax(190px, 1fr) auto minmax(190px, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  #game > .playlayout > .gameleftcol {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    justify-self: end;
+    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column;
+    width: clamp(190px, 17vw, 250px);
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0 clamp(14px, 1.6vw, 24px) 0 0;
+    padding: 0;
+    gap: clamp(5px, .65vh, 8px);
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(92,245,232,.28) transparent;
+  }
+
+  #game .gameleftcol > .gamehud {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(5px, .65vh, 8px);
+    width: 100%;
+    min-width: 0;
+    margin: 0 !important;
+  }
+
+  #game .gameleftcol > .gamehud > .hudbox,
+  #game .gameleftcol > .gamehud > #gameCoins {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    min-height: clamp(48px, 7vh, 68px);
+    margin: 0 !important;
+    padding: 7px 9px !important;
+    text-align: center;
+  }
+
+  #game .gameleftcol > .gamehud .hudbox span,
+  #game .gameleftcol > .gamehud #gameCoins span {
+    font-size: 8px;
+    letter-spacing: .12em;
+  }
+
+  #game .gameleftcol > .gamehud .hudbox strong,
+  #game .gameleftcol > .gamehud #gameCoins strong {
+    margin-top: 3px;
+    font-size: clamp(17px, 1.35vw, 22px) !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #game > .playlayout > div:first-child {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    justify-self: center;
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+  }
+
+  #game .boardframe {
+    width: min(38vw, calc((100dvh - 190px) / 2.3), 430px);
+    max-width: none;
+    aspect-ratio: 10 / 23;
+    height: auto;
+  }
+
+  #game > .playlayout > .sidecol {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+    justify-self: start;
+    width: clamp(190px, 17vw, 250px);
+    margin: 0 0 0 clamp(14px, 1.6vw, 24px);
+  }
+
+  #game .gameleftcol > #rogueGoals,
+  #game .gameleftcol > #campaignGoals {
+    flex: 0 0 auto;
+    width: 100%;
+    margin: auto 0 0 !important;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1120px) {
+  #game > .playlayout > .gameleftcol { width: 180px; margin-right: 12px; }
+  #game > .playlayout > .sidecol { width: 180px; margin-left: 12px; }
+  #game .boardframe { width: min(38vw, calc((100dvh - 190px) / 2.3), 350px); }
+}
