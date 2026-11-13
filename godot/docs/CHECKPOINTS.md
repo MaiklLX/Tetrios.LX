@@ -377,3 +377,11 @@
 ### Next safe step
 
 Continue with pure migration fixtures and a read-only parser/validator for coin-alias conflicts, per-hero fallback, daily reward markers, unknown keys, and idempotency. Keep persistent storage writes disabled until atomic-write/recovery fixtures and the full Web parity audit pass. Separately schedule physical Android checks for portrait/landscape pause-resume, safe areas, and one-hand controls.
+
+
+## 2026-11-13 — KT-428 checkpoint commit validation
+
+- The checkpoint update above is at PR #77 HEAD `1d1639281f4e086e90c9ea7061948b2f8e2ca1e5`.
+- Exact-HEAD Godot Native Project Check [run 43419029037](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43419029037) completed **SUCCESS** (workflow #567). All 16 validation steps passed: Godot 4.4.1 setup/import, scene script parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, screenshot capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [14033535985](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43419029037/artifacts/14033535985) (9 PNGs). The 360×800 capture again shows Buddy in the left gutter, a 2D 10×23 board, and visible Drop. The viewport is a CI/Xvfb capture, not a physical Android device.
+- No gameplay code changed in this checkpoint. Persistent storage remains disabled; issue #52 remains open. No APK build/release, merge, deployment, main edit, or user-data access/mutation.
