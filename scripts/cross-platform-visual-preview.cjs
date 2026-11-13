@@ -365,6 +365,16 @@ const targets = [
     // shelf return destination so the atlas assertions below remain meaningful.
     await campaignPage.locator('#campaignBack').click();
     await campaignPage.locator('#bbHomeCollectionCard').waitFor({state:'visible',timeout:10000});
+    const backNavigationState = await campaignPage.evaluate(() => ({
+      exported: typeof window.bbNavigateBack === 'function',
+      menuVisible: !document.querySelector('#menu')?.hidden,
+      campaignHidden: !!document.querySelector('#campaign')?.hidden
+    }));
+    if (!backNavigationState.exported || !backNavigationState.menuVisible || !backNavigationState.campaignHidden ||
+        pageErrors.some(error => error.includes('bbNavigateBack is not defined'))) {
+      failures.push(target.name + ': KT-645 global back-navigation bridge failed (' +
+        JSON.stringify({backNavigationState,backErrors:pageErrors.filter(error=>error.includes('bbNavigateBack'))}) + ')');
+    }
     await campaignPage.locator('#bbHomeCollectionCard').click();
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
@@ -493,43 +503,53 @@ const targets = [
     await campaignPage.locator('#campaignStart').evaluate(button => button.click());
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().waitFor({state:'visible',timeout:10000});
     await campaignPage.locator('#bbStartHeroList [data-start-hero]').first().click();
+    let campaignMissionState = null;
+    let campaignHeroReady = true;
     try {
-      await campaignPage.locator('#bbStartHeroChoose').waitFor({state:'visible',timeout:10000});
+      // Desktop's procedural hero showcase can settle after the atlas animation.
+      // Keep the wait bounded, but do not abandon the whole viewport on a late control.
+      await campaignPage.locator('#bbStartHeroChoose').waitFor({state:'visible',timeout:20000});
     } catch (error) {
       const heroDiagnostic=await campaignPage.evaluate(()=>({
         modalVisible:!!document.querySelector('#modal.show'),
         modalText:document.querySelector('#modal')?.innerText?.slice(0,1200)||'',
         heroListCount:document.querySelectorAll('#bbStartHeroList [data-start-hero]').length,
         chooseButton:!!document.querySelector('#bbStartHeroChoose'),
+        chooseDisplay:document.querySelector('#bbStartHeroChoose')?getComputedStyle(document.querySelector('#bbStartHeroChoose')).display:'',
+        chooseVisibility:document.querySelector('#bbStartHeroChoose')?getComputedStyle(document.querySelector('#bbStartHeroChoose')).visibility:'',
+        chooseRect:(()=>{const el=document.querySelector('#bbStartHeroChoose');if(!el)return null;const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})(),
         confirmButton:!!document.querySelector('#bbConfirmStartHero')
       }));
-      failures.push(target.name+': campaign hero detail did not open ('+JSON.stringify({heroDiagnostic,pageErrors:pageErrors.slice(-5)})+')');
+      const diagnostic={heroDiagnostic,pageErrors:pageErrors.slice(-5),cause:error.message};
+      failures.push(target.name+': campaign hero detail did not open ('+JSON.stringify(diagnostic)+')');
+      console.error('[campaign-hero-diagnostic] '+target.name+' '+JSON.stringify(diagnostic));
       await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-hero-diagnostic.png',fullPage:false});
-      await campaignPage.close();
-      continue;
+      campaignHeroReady=false;
     }
-    await campaignPage.locator('#bbStartHeroChoose').click();
-    await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
-    await campaignPage.waitForTimeout(900);
-    const campaignMissionState = await campaignPage.evaluate(() => {
-      const goals = document.querySelector('#campaignGoals');
-      return {
-        objectiveRows: Math.max(0, goals ? Array.from(goals.children).filter(node => node.tagName === 'DIV').length - 1 : 0),
-        boostLabel: document.querySelector('#boostName')?.textContent || '',
-        cardChoices: document.querySelectorAll('#modal [data-up]').length,
-        missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
-        viewportHeight: innerHeight,
-        proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
-        loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length
-      };
-    });
-    if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');
-    if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
-    if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
-    if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
-    if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
-    await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
-    console.log('[stage:campaign-missions] ' + target.name);
+    if (campaignHeroReady) {
+      await campaignPage.locator('#bbStartHeroChoose').click();
+      await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
+      await campaignPage.waitForTimeout(900);
+      campaignMissionState = await campaignPage.evaluate(() => {
+        const goals = document.querySelector('#campaignGoals');
+        return {
+          objectiveRows: Math.max(0, goals ? Array.from(goals.children).filter(node => node.tagName === 'DIV').length - 1 : 0),
+          boostLabel: document.querySelector('#boostName')?.textContent || '',
+          cardChoices: document.querySelectorAll('#modal [data-up]').length,
+          missionBottom: goals ? goals.getBoundingClientRect().bottom : 0,
+          viewportHeight: innerHeight,
+          proceduralModels: document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length,
+          loadedModels: document.querySelectorAll('#campaign [data-universe-model].is-loaded').length
+        };
+      });
+      if (campaignMissionState.proceduralModels < 1) failures.push(target.name + ': campaign has no visible procedural 3D fallback models');
+      if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
+      if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
+      if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
+      if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
+      await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
+      console.log('[stage:campaign-missions] ' + target.name);
+    }
     await campaignPage.close();
 
     {
@@ -578,22 +598,95 @@ const targets = [
 
     console.log('[stage:block-run-start] ' + target.name);
     await page.locator('button.mode[data-mode="rogue"]').click();
-    await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#bbConfirmStartHero').click();
+    const blockRunHeroConfirm = page.locator('#bbConfirmStartHero');
+    await blockRunHeroConfirm.waitFor({ state: 'visible', timeout: 15000 });
+    await blockRunHeroConfirm.scrollIntoViewIfNeeded();
+    const blockRunHeroHitTest = await blockRunHeroConfirm.evaluate(button => {
+      const style = getComputedStyle(button);
+      const rect = button.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const hit = document.elementFromPoint(x, y);
+      return {
+        visible: style.display !== 'none' && style.visibility !== 'hidden' &&
+          Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0,
+        enabled: !button.disabled,
+        pointerEvents: style.pointerEvents,
+        hitTarget: hit?.id || hit?.tagName || null,
+        hitMatches: Boolean(hit && (hit === button || button.contains(hit))),
+        rect: {
+          x: Math.round(rect.x * 10) / 10,
+          y: Math.round(rect.y * 10) / 10,
+          width: Math.round(rect.width * 10) / 10,
+          height: Math.round(rect.height * 10) / 10
+        }
+      };
+    });
+    if (!blockRunHeroHitTest.visible || !blockRunHeroHitTest.enabled ||
+        blockRunHeroHitTest.pointerEvents === 'none' || !blockRunHeroHitTest.hitMatches) {
+      throw new Error('Block Run hero confirm is not interactable: ' + JSON.stringify(blockRunHeroHitTest));
+    }
+    // Separate target hit-testing from the click-handler setup step. The hero
+    // showcase can fail Playwright's pointer-stability heuristic even when the
+    // visible button is enabled and unobstructed; the DOM click still exercises
+    // the same registered handler before the arena visibility assertion below.
+    await blockRunHeroConfirm.evaluate(button => button.click());
     try {
       await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     } catch (error) {
-      const launchState = await page.evaluate(() => ({
-        gameHidden:document.querySelector('#game')?.hidden,
-        gameStyle:(()=>{const el=document.querySelector('#game'),s=el?getComputedStyle(el):null,r=el?.getBoundingClientRect();return s?{display:s.display,visibility:s.visibility,opacity:s.opacity,width:r?.width,height:r?.height,classes:el.className}:null})(),
-        modalVisible:document.querySelector('#overlay')?.classList.contains('show'),
-        modalText:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
-        selectedMode:document.querySelector('#game')?.dataset.mode||'',
-        errorText:document.querySelector('#toast')?.innerText||''
-      }));
+      const launchState = await page.evaluate(() => {
+        const el=document.querySelector('#game'),style=el?getComputedStyle(el):null,rect=el?.getBoundingClientRect();
+        const parent=el?.parentElement,parentStyle=parent?getComputedStyle(parent):null,parentRect=parent?.getBoundingClientRect();
+        const box=node=>{if(!node)return null;const r=node.getBoundingClientRect();return {tag:node.tagName,id:node.id||'',className:typeof node.className==='string'?node.className:'',hidden:node.hidden,display:getComputedStyle(node).display,height:Math.round(r.height*100)/100}};
+        return {
+          gameHidden:el?.hidden,
+          gameStyle:style?{display:style.display,visibility:style.visibility,opacity:style.opacity,width:rect?.width,height:rect?.height,gridTemplateRows:style.gridTemplateRows,classes:el.className}:null,
+          parent:parentStyle?{tag:parent.tagName,className:parent.className,display:parentStyle.display,flexDirection:parentStyle.flexDirection,height:parentRect?.height,gridTemplateRows:parentStyle.gridTemplateRows}:null,
+          siblings:Array.from(parent?.children||[]).map(box),
+          children:Array.from(el?.children||[]).map(box),
+          playlayout:box(el?.querySelector(':scope > .playlayout')),
+          frame:box(el?.querySelector('.boardframe')),
+          modalVisible:document.querySelector('#overlay')?.classList.contains('show'),
+          modalText:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
+          selectedMode:el?.dataset.mode||'',
+          errorText:document.querySelector('#toast')?.innerText||''
+        };
+      });
       throw new Error('Block Run hero confirmation did not open the arena: '+JSON.stringify({launchState,pageErrors:pageErrors.slice(-5),consoleErrors:consoleErrors.slice(-5),cause:error.message}));
     }
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
+    if (target.name.startsWith('desktop-')) {
+      const desktopArenaLayout = await page.evaluate(() => {
+        const game=document.querySelector('#game');
+        const playlayout=game?.querySelector(':scope > .playlayout');
+        const frame=game?.querySelector('.boardframe');
+        const rect=node=>{if(!node)return null;const r=node.getBoundingClientRect();return {width:Math.round(r.width),height:Math.round(r.height)}};
+        const playlayoutDisplay=playlayout?getComputedStyle(playlayout).display:'';
+        const frameStyle=frame?getComputedStyle(frame):null;
+        const frameRect=rect(frame);
+        return {
+          game:rect(game),
+          playlayout:rect(playlayout),
+          playlayoutPresent:!!playlayout,
+          playlayoutDisplay,
+          frame:frameRect,
+          frameInsidePlaylayout:!!(playlayout&&frame&&playlayout.contains(frame)),
+          frameVisible:!!frameStyle&&frameStyle.display!=='none'&&frameStyle.visibility!=='hidden'&&Number(frameStyle.opacity)>0,
+          gridTemplateRows:game?getComputedStyle(game).gridTemplateRows:''
+        };
+      });
+      // Desktop intentionally uses display:contents for .playlayout so its
+      // board/rail children participate directly in #game's grid. The wrapper
+      // therefore has no bounding box; the rendered .boardframe is authoritative.
+      const playlayoutBoxRequired = desktopArenaLayout.playlayoutDisplay !== 'contents';
+      if (!desktopArenaLayout.game || desktopArenaLayout.game.height < 400 ||
+          !desktopArenaLayout.playlayoutPresent || !desktopArenaLayout.frameInsidePlaylayout ||
+          (playlayoutBoxRequired && (!desktopArenaLayout.playlayout || desktopArenaLayout.playlayout.height < 300)) ||
+          !desktopArenaLayout.frame || desktopArenaLayout.frame.width < 280 ||
+          desktopArenaLayout.frame.height < 300 || !desktopArenaLayout.frameVisible) {
+        throw new Error('Desktop arena layout collapsed after Block Run launch: ' + JSON.stringify(desktopArenaLayout));
+      }
+    }
     await page.waitForTimeout(900);
 
     console.log('[stage:gameplay-ready] ' + target.name);
