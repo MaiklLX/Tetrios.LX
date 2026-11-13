@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - design/kt427-block-buddies-brand-identity-2026-11-07
     paths:
       - 'site/**'
       - '.github/workflows/mobile-arena-preview.yml'
