@@ -361,3 +361,19 @@
 - The mobile Buddy is visibly smaller at 360×800 than in the desktop/720×1280 capture; it remains identifiable in the viewport artifact. Treat actual-device legibility and one-hand comfort as open acceptance checks rather than assuming the viewport is sufficient.
 - These are Godot/Xvfb viewport captures, not physical Android screenshots. Installed-device scaling, touch feel, safe areas, and portrait/landscape pause-resume remain unverified. No APK build/release, merge, deployment, persistent storage write, or user-data mutation.
 - PR #78 remains stacked on #77 and PR #81 remains stacked on #78. Preserve this chain without mechanical rebase; reconcile overlapping Buddy/main-scene edits before any integration.
+
+
+## 2026-11-13 — KT-428 exact-HEAD CI and viewport artifact audit
+
+- PR [#77](https://github.com/MaiklLX/Tetrios.LX/pull/77) remains Draft/open on `godot/kt428-buddy-companion-2026-11-07`, targeting `godot/android-native-foundation-2026-11-05`.
+- Code/gameplay HEAD remains `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67`; current branch HEAD before this checkpoint is documentation-only commit `0ede50f3feae6cb06670655fb1265251e14f8f57`. Compare against the foundation branch: 280 commits ahead, 0 behind; base remains `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Exact-current-HEAD Godot Native Project Check [run 43220918565](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43220918565) completed **SUCCESS**. All 18 steps passed: Godot 4.4.1 setup/import, main scene parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [13945842789](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43220918565/artifacts/13945842789) (9 PNGs). The 360×800 arena shows the procedural pixel Buddy in the left safe gutter, the unchanged 2D 10×23 board, and Drop outside the board. The 720×1280 Classic capture confirms the same 2D field and a larger Buddy treatment. The results modal correctly covers the gameplay scene.
+- The 360×800 Buddy remains identifiable but is small relative to the board. Keep one-hand comfort and legibility as physical-device acceptance items; do not infer them from Xvfb captures.
+- `godot/docs/SAVE_MIGRATION_CONTRACT.md` remains a proposed, read-only contract. No `user://` profile writes, autosave, wallet reconciliation, campaign migration, or daily reward migration are enabled. Open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved.
+- PR #78 remains stacked on #77 and PR #81 on #78. Preserve the chain; do not mechanically rebase overlapping Buddy/main-scene edits.
+- No main edit, merge, deployment, APK build/release, physical Android test, image generation, external agent, or user-data access/mutation occurred.
+
+### Next safe step
+
+Continue with pure migration fixtures and a read-only parser/validator for coin-alias conflicts, per-hero fallback, daily reward markers, unknown keys, and idempotency. Keep persistent storage writes disabled until atomic-write/recovery fixtures and the full Web parity audit pass. Separately schedule physical Android checks for portrait/landscape pause-resume, safe areas, and one-hand controls.
