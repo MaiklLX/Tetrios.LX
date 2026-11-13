@@ -100,3 +100,17 @@ Corrected CSS commit: `71cfaa677f17f0b874a8899fc5342a3c54f179a3`.
 - Test-harness commit: `ac0fc298b7dde6a23b9ea9bf0f114e3c451e3354`.
 - A fresh Cross-platform run on the new exact SHA is required. The previous run remains **FAIL**; no pass is claimed. Mobile Arena [43218574205](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43218574205) passed on the parent code SHA, and its artifact [13944113863](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43218574205/artifacts/13944113863) is available for review.
 - No gameplay, progression, persistence, user data, `main`, deployment, APK, or release changes.
+
+
+## 2026-11-13 — Cross-platform run 43220817119 failure audit
+
+- PR #88 Cross-platform Visual Preview [run 43220817119](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43220817119) completed **FAILURE** on HEAD `66ad6c6704774f2e10c316c04d2c5c07849d4210`. The preview server, browser setup, screenshots and artifact upload succeeded; the failure occurred in the visual assertion stage. No page or console errors were recorded.
+- Downloaded and inspected artifact [13945149666](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43220817119/artifacts/13945149666) (55 files), including Android Chromium menu and campaign-atlas captures. The menu screenshot shows BLOCK BUDDIES branding, but the three mobile mode cards wrap Russian titles into narrow columns; this is a real readability concern, not something to hide by weakening the assertion.
+- The 26 reported failures repeat across six viewport targets and cluster into four groups:
+  - KT-571 profile panel is present with hero emblem/name/level and matching wallet, but the test requires a 50px height while the rendered panel is approximately 48px. This is a threshold mismatch; the screenshot shows the panel.
+  - KT-577 mode cards have the expected gradients, accent colors, icon size and visible border, but use a 15px radius against a 16px minimum. This is an off-by-one style threshold.
+  - KT-581 the current layout is a two-column profile/collection row plus three mode cards in one row. The test expects each mode card to occupy at least 78% of the menu width; actual cards are about one-third width, and the Android screenshot confirms awkward title wrapping. Do not relax this check without fixing readability; a responsive menu-layout decision is required.
+  - KT-574 the horizontal atlas has 12 cards, flex-row layout, horizontal overflow, correct scroll direction and visible art, but art width is 131px against a 150px minimum. The card/art sizing needs visual review rather than a blind threshold change.
+- The campaign-atlas final-state assertion also sees root opacity 0 after re-entering the atlas, despite the earlier atlas capture being visible. The script waits for a card's box but not for the root opacity transition to complete; this is a likely test timing issue and should be isolated in a follow-up.
+- No broad UI redesign or test-threshold relaxation was made in this audit. The mode-card layout and atlas-art sizing are user-visible product choices; keep the PR Draft until they are resolved and the exact-HEAD Cross-platform workflow is green.
+- Safety: no `main`, gameplay rules, persistence, wallet, user data, deployment, APK, or release changes.
