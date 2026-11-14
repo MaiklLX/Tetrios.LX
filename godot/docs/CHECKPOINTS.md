@@ -404,3 +404,11 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - KT-483 changes only the order of derived migration diagnostics; the original source snapshot remains read-only. No persistent `user://` writes, browser storage access, migration execution or reward settlement.
 - The Godot PR remains Draft and targets the foundation branch. The foundation remains 20 commits ahead / 448 behind current `main`; the Godot branch is 285 commits ahead / 0 behind its foundation base. Do not merge, retarget or mechanically rebase this stack.
 - No APK build/release, physical Android test, main edit, deployment, image generation, external code agent or user-data mutation occurred.
+
+
+## 2026-11-14 — KT-484: preserve Buddy's game-over reaction
+
+- Code inspection found a real visibility contradiction: `_sync_buddy_state()` set Buddy to `surprised` at game over but hid the companion whenever the result overlay was visible. The animation therefore could not be seen.
+- Centralized Buddy visibility in `_buddy_should_be_visible()`: ordinary pause and completed-objective overlays still hide Buddy; an actual game-over state keeps Buddy visible so the surprised reaction can render in the left gutter above the results overlay.
+- Extended the Godot visual smoke test to assert visible `happy` after a normal line clear, visible `victory` after a four-line clear, and visible `surprised` during game-over results.
+- Exact-HEAD Godot Native Project Check is pending. The change is confined to the Godot feature branch and does not touch gameplay rules, saves, economy, web project or `main`.
