@@ -334,41 +334,62 @@ const targets = [
       }
     }
 
-    // KT-429: exercise the visible pause, resume, Hold and Drop controls on every playable viewport.
-    const controlState = await page.evaluate(() => {
+    // KT-429: exercise visible controls with real browser input. Mobile
+    // contexts use touchscreen taps; desktop uses mouse clicks. This avoids
+    // HTMLElement.click(), which bypasses the touch-input path under test.
+    const controlSetup = await page.evaluate(() => {
       const qa = window.__TETRIOS_QA__;
       const prepared = qa?.prepareGestureTest?.();
       const before = qa?.getPieceState?.();
-      if (!prepared?.ready || !before?.piece) return { supported:false, reason:'deterministic piece unavailable' };
-      const hold = document.querySelector('#holdBtn');
-      const pause = document.querySelector('#pauseBtn');
-      const drop = document.querySelector('#game .side-drop');
-      if (!hold || !pause || !drop) return { supported:false, reason:'one or more visible controls missing' };
-      hold.click();
-      const afterHold = qa.getPieceState();
-      pause.click();
-      const afterPause = qa.getPieceState();
-      const resume = document.querySelector('#resume');
-      const resumeVisible = !!resume && getComputedStyle(resume).display !== 'none';
-      resume?.click();
-      const afterResume = qa.getPieceState();
-      drop.click();
-      const afterDrop = qa.getPieceState();
       return {
-        supported:true,
-        held:!!afterHold?.piece && JSON.stringify(afterHold.piece)!==JSON.stringify(before.piece),
-        paused:!!afterPause?.paused && !!afterPause?.started,
-        resumeVisible,
-        resumed:!!afterResume?.started && !afterResume?.paused && !afterResume?.gameOver,
-        dropAccepted:!!afterDrop?.started && !afterDrop?.paused && !afterDrop?.gameOver,
-        dropPerformed:!!afterDrop?.piece && JSON.stringify(afterDrop.piece)!==JSON.stringify(afterResume?.piece),
-        holdRect:(()=>{const r=hold.getBoundingClientRect();return {width:r.width,height:r.height}})(),
-        dropRect:(()=>{const r=drop.getBoundingClientRect();return {width:r.width,height:r.height}})()
+        supported: !!prepared?.ready && !!before?.piece,
+        reason: !prepared?.ready ? 'deterministic piece unavailable' : (!before?.piece ? 'piece state unavailable' : ''),
+        beforePiece: before?.piece || null
       };
     });
+    const activateControl = async selector => {
+      const control = page.locator(selector);
+      if (target.mobile) await control.tap({ timeout: 8000 });
+      else await control.click({ timeout: 8000 });
+    };
+    let afterHold = null;
+    let afterPause = null;
+    let afterResume = null;
+    let afterDrop = null;
+    let resumeVisible = false;
+    let holdRect = null;
+    let dropRect = null;
+    if (controlSetup.supported) {
+      await activateControl('#holdBtn');
+      afterHold = await page.evaluate(() => window.__TETRIOS_QA__?.getPieceState?.() || null);
+      await activateControl('#pauseBtn');
+      afterPause = await page.evaluate(() => window.__TETRIOS_QA__?.getPieceState?.() || null);
+      const resumeControl = page.locator('#overlay.show #resume');
+      await resumeControl.waitFor({ state: 'visible', timeout: 8000 });
+      resumeVisible = await resumeControl.isVisible();
+      await activateControl('#overlay.show #resume');
+      afterResume = await page.evaluate(() => window.__TETRIOS_QA__?.getPieceState?.() || null);
+      await activateControl('#game .side-drop');
+      afterDrop = await page.evaluate(() => window.__TETRIOS_QA__?.getPieceState?.() || null);
+      holdRect = await page.locator('#holdBtn').boundingBox();
+      dropRect = await page.locator('#game .side-drop').boundingBox();
+    }
+    const controlState = {
+      supported: controlSetup.supported,
+      reason: controlSetup.reason,
+      inputMethod: target.mobile ? 'touchscreen-tap' : 'mouse-click',
+      held: !!afterHold?.piece && JSON.stringify(afterHold.piece) !== JSON.stringify(controlSetup.beforePiece),
+      paused: !!afterPause?.paused && !!afterPause?.started,
+      resumeVisible,
+      resumed: !!afterResume?.started && !afterResume?.paused && !afterResume?.gameOver,
+      dropAccepted: !!afterDrop?.started && !afterDrop?.paused && !afterDrop?.gameOver,
+      dropPerformed: !!afterDrop?.piece && JSON.stringify(afterDrop.piece) !== JSON.stringify(afterResume?.piece),
+      holdRect: holdRect ? { width: holdRect.width, height: holdRect.height } : null,
+      dropRect: dropRect ? { width: dropRect.width, height: dropRect.height } : null
+    };
     if (!controlState.supported || !controlState.held || !controlState.paused ||
         !controlState.resumeVisible || !controlState.resumed || !controlState.dropAccepted || !controlState.dropPerformed) {
-      failures.push(target.name + ': visible arena control interaction failed (' + JSON.stringify(controlState) + ')');
+      failures.push(target.name + ': visible arena control input failed (' + JSON.stringify(controlState) + ')');
     }
 
     const visualBoostState = await page.evaluate(() => window.__TETRIOS_QA__?.activatePrismAura?.() || null);
