@@ -349,8 +349,19 @@ const targets = [
     });
     const activateControl = async selector => {
       const control = page.locator(selector);
-      if (target.mobile) await control.tap({ timeout: 8000 });
-      else await control.click({ timeout: 8000 });
+      if (target.mobile) {
+        const point = await control.evaluate(element => {
+          const rect = element.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          const hit = document.elementFromPoint(x, y);
+          return { x, y, hitMatches: !!hit && (hit === element || element.contains(hit)) };
+        });
+        if (!point.hitMatches) throw new Error('Touch target is obscured or not hit-testable: ' + selector + ' ' + JSON.stringify(point));
+        await page.touchscreen.tap(point.x, point.y);
+      } else {
+        await control.click({ timeout: 8000 });
+      }
     };
     let afterHold = null;
     let afterPause = null;
