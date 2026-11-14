@@ -394,3 +394,13 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - This remains a pure read-only parser change. No localStorage access, `user://` writes, profile import, reward settlement, or user-data mutation was added.
 - Exact-HEAD Godot Native Project Check is **pending** for this commit. Do not mark KT-483 accepted until import, parse, migration/model suites, visual capture and scene smoke all pass.
 - Next: continue source-grounded daily challenge schema and recovery-fixture audit. Keep persistent writes disabled; open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved. Physical Android checks are still outstanding.
+
+
+## 2026-11-14 — KT-483 deterministic migration diagnostics validated
+
+- Code/test HEAD `d9eb98c72bdac6146693de7cbe91a5eb9b1ea037` passed exact-HEAD Godot Native Project Check [run 43592599214](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592599214).
+- All 16 workflow steps succeeded: Godot 4.4.1 setup/import, main-scene parse, Classic model tests, Web save migration tests (including forward/reverse key-order regression), Block Run model/effect/board/session/bridge/live integration tests, visual capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [14113295830](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592599214/artifacts/14113295830) (9 PNGs). The 360×800 arena keeps the 10×23 board 2D, Buddy in the left safe gutter, and Drop outside the board. The results overlay correctly covers the arena. The Buddy is still small at 360×800; legibility and one-hand comfort remain physical-device acceptance items.
+- KT-483 changes only the order of derived migration diagnostics; the original source snapshot remains read-only. No persistent `user://` writes, browser storage access, migration execution or reward settlement.
+- The Godot PR remains Draft and targets the foundation branch. The foundation remains 20 commits ahead / 448 behind current `main`; the Godot branch is 285 commits ahead / 0 behind its foundation base. Do not merge, retarget or mechanically rebase this stack.
+- No APK build/release, physical Android test, main edit, deployment, image generation, external code agent or user-data mutation occurred.
