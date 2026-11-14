@@ -112,3 +112,12 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - Replaced mobile `locator.tap()` with `page.touchscreen.tap()` at the verified element center. The helper first checks `elementFromPoint` so an obscured target still fails with a useful diagnostic; subsequent state assertions must prove Hold/Pause/Resume/Drop actually changed the game state.
 - Desktop continues to use a normal Playwright mouse click. No runtime gameplay or CSS changes were made.
 - Fresh cross-platform and Mobile Arena results are pending; do not mark the touchscreen gate passed until the rerun and artifact review complete.
+
+
+## 2026-11-14 — KT-427.13 exact-parent workflow status
+
+- PR #76 validation-record commit `4ef4d21fd32ab8f0fbdeb7c7d688ce14644c6227` updated the `site/**` preview evidence file to request exact-head Mobile Arena and Cross-platform runs.
+- GitHub returned **no workflow runs and zero check-runs** for that exact PR #76 head. The path-filtered workflows did not start after the API-created branch commit; this is not a pass and does not validate the new coordinate-touch helper.
+- Cross-platform run [43592769174](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592769174) belongs to stacked test-only PR #90, head `36e63f466d95baf1f5b867f090e38c8e1e31412d`, and its older `locator.tap()` test. Do not attribute that failure to the current PR #76 coordinate-touch implementation.
+- The latest exact-parent gate remains **pending**. The available GitHub integration exposes run inspection and rerun actions, but no workflow-dispatch action; do not claim the preview checks passed without actual runs on the parent head.
+- Current PR #76 branch is 65 commits ahead / 90 behind `main@20d66e3171522feb010a81522dc3f5cf4334d936` and remains non-mergeable. Keep Draft; do not merge or mechanically rebase.
