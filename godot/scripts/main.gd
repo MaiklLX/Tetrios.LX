@@ -95,15 +95,15 @@ func _should_show_orientation_guard(orientation: int, viewport_size: Vector2, mo
 
 func _sync_orientation_guard() -> void:
 	var mobile_platform := _is_mobile_platform()
-	var orientation := DisplayServer.SCREEN_PORTRAIT
+	if not mobile_platform:
+		return
+	var orientation := DisplayServer.screen_get_orientation()
 	var orientation_size := screen_size
-	if mobile_platform:
-		orientation = DisplayServer.screen_get_orientation()
-		var physical_size := DisplayServer.screen_get_size()
-		if physical_size.x > 0 and physical_size.y > 0:
-			orientation_size = Vector2(physical_size)
+	var physical_size := DisplayServer.screen_get_size()
+	if physical_size.x > 0 and physical_size.y > 0:
+		orientation_size = Vector2(physical_size)
 	var gameplay_active := game != null and not mode_select_visible and not game.game_over and not _mode_finished()
-	_apply_orientation_guard(_should_show_orientation_guard(orientation, orientation_size, mobile_platform, gameplay_active))
+	_apply_orientation_guard(_should_show_orientation_guard(orientation, orientation_size, true, gameplay_active))
 
 func _apply_orientation_guard(should_guard: bool) -> void:
 	if should_guard == orientation_guard_active:

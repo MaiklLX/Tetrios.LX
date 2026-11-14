@@ -434,3 +434,6 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - Added deterministic coverage for both landscape directions, portrait/reverse-portrait, desktop, menu/results exclusion, sensor fallback, gravity/timer freeze, input blocking, and preservation of manual pause. The visual capture suite now includes an 800×360 landscape-guard screenshot.
 - Godot CI validation is pending on the new feature-branch commit. Physical Android portrait/landscape behavior remains unverified until tested on a real device; CI viewport simulation is not device acceptance.
 - No APK build/export, main edit, merge, deployment, persistent storage write, or old web-project change.
+
+
+- CI first pass [43596187953](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596187953) exposed a test-harness issue: the deterministic test injected a landscape guard on Linux, then the per-frame platform sync cleared it because the host is not mobile. The runtime poll now exits immediately on non-mobile platforms; the regression test intentionally verifies that a simulated guard remains active in desktop CI. Re-run pending.
