@@ -30,7 +30,7 @@
       "bbDailyChallengeCompletedDate": "2026-11-07",
       "bbDailyReplayCompleted": "[\"2026-11-06\"]",
       "bbDailyRewardClaimed:2026-11-07": "1",
-      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":5,\"best\":9}",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":5,\"best\":9,\"repairItems\":1,\"brokenStreak\":0,\"brokenOn\":\"\",\"lastRewardMilestone\":1}",
       "nrBest": "4200",
       "nrRuns": "38",
       "nrDailyDone": "2026-11-07",
@@ -149,6 +149,71 @@
     "local_storage": {
       "bb_coins": "20",
       "bbDailyChallengeCompletedDate": "not-a-date"
+    }
+  },
+  "partial_visit_streak": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":3,\"best\":3}"
+    }
+  },
+  "invalid_visit_streak_date": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbVisitStreak": "{\"lastDate\":\"2026-02-30\",\"current\":1,\"best\":1,\"repairItems\":0,\"brokenStreak\":0,\"brokenOn\":\"\",\"lastRewardMilestone\":0}"
+    }
+  },
+  "invalid_visit_streak_counter": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":-1,\"best\":0,\"repairItems\":0,\"brokenStreak\":0,\"brokenOn\":\"\",\"lastRewardMilestone\":0}"
+    }
+  },
+  "invalid_visit_streak_best": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":5,\"best\":3,\"repairItems\":0,\"brokenStreak\":0,\"brokenOn\":\"\",\"lastRewardMilestone\":0}"
+    }
+  },
+  "invalid_visit_streak_repair": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":0,\"best\":2,\"repairItems\":1,\"brokenStreak\":2,\"brokenOn\":\"\",\"lastRewardMilestone\":0}"
+    }
+  },
+  "invalid_visit_streak_milestone": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbVisitStreak": "{\"lastDate\":\"2026-11-08\",\"current\":0,\"best\":6,\"repairItems\":1,\"brokenStreak\":0,\"brokenOn\":\"\",\"lastRewardMilestone\":1}"
+    }
+  },
+  "replay_marker_without_history": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbDailyReplayCompleted": "[\"2026-11-06\"]",
+      "bbDailyChallengeHistory": "{}"
+    }
+  },
+  "history_replay_without_marker": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbDailyChallengeHistory": "{\"2026-11-06\":{\"date\":\"2026-11-06\",\"title\":\"Тестовый вызов\",\"symbol\":\"◇\",\"desc\":\"Описание испытания\",\"goal\":\"8 линий\",\"rule\":\"Правило испытания\",\"mod\":\"mirror\",\"status\":\"replayed\"}}",
+      "bbDailyReplayCompleted": "[]"
+    }
+  },
+  "completed_marker_without_reward": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbDailyChallengeCompletedDate": "2026-11-07",
+      "bbDailyChallengeHistory": "{\"2026-11-07\":{\"date\":\"2026-11-07\",\"title\":\"Тестовый вызов\",\"symbol\":\"◇\",\"desc\":\"Описание испытания\",\"goal\":\"8 линий\",\"rule\":\"Правило испытания\",\"mod\":\"mirror\",\"status\":\"completed\"}}"
+    }
+  },
+  "reward_marker_with_replayed_history": {
+    "local_storage": {
+      "bb_coins": "20",
+      "bbDailyRewardClaimed:2026-11-06": "1",
+      "bbDailyReplayCompleted": "[\"2026-11-06\"]",
+      "bbDailyChallengeHistory": "{\"2026-11-06\":{\"date\":\"2026-11-06\",\"title\":\"Тестовый вызов\",\"symbol\":\"◇\",\"desc\":\"Описание испытания\",\"goal\":\"8 линий\",\"rule\":\"Правило испытания\",\"mod\":\"mirror\",\"status\":\"replayed\"}}"
     }
   }
 }

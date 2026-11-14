@@ -456,3 +456,15 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - Downloaded and inspected artifact [14114801600](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43597017006/artifacts/14114801600) (10 PNGs), including the 360×800 arena and 800×360 orientation guard. The board remains 2D at 10×23; Buddy is still small on the narrow viewport, so legibility and one-hand comfort remain physical-device acceptance items.
 - No `user://` persistence, Web storage access, migration execution, wallet/reward settlement, user-data mutation, main edit, merge, deployment or APK build/export was added.
 - Next: continue the source-grounded audit of visit-streak fields and daily completion/history/replay cross-consistency, then add atomic-write/recovery fixtures. Keep persistent storage disabled; parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open. Physical Android portrait/landscape and touch checks remain outstanding.
+
+
+## 2026-11-14 — KT-487: read-only visit-streak and daily receipt validation
+
+- Audited the Web source at `main@20d66e3171522feb010a81522dc3f5cf4334d936`: `bbVisitStreak` uses seven fields; standard daily completion writes the completed-date marker, per-date reward marker and `completed` history status; replay writes the replayed-date array and `replayed` history status.
+- Added a read-only validator for visit-streak date/counter ranges and internal consistency. Older partial objects receive safe defaults only in the import candidate; the raw source snapshot remains unchanged in `source_backup`.
+- Added review-only diagnostics for missing or contradictory standard/replay receipts. No reward is granted, no source key is rewritten, and no persistent storage is enabled.
+- Added deterministic fixtures for malformed streak dates/counters, best-streak bounds, broken-streak pairing, reward milestones, and daily completion/replay mismatches.
+- Exact-HEAD Godot Native Project Check is **pending** for this code/test change. Do not mark KT-487 accepted until import, parse, migration/model suites, visual capture and scene smoke all pass.
+- No Web runtime, gameplay rules, economy, campaign, user data, `main`, old project, APK/export or deployment changes.
+- Next: run exact-HEAD Godot CI, inspect the visual artifact, then continue with pure atomic-write/recovery fixtures. Keep `user://` persistence disabled.
+

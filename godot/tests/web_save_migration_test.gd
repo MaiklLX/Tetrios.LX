@@ -51,6 +51,8 @@ func _run() -> void:
 		return
 	if not _check(typical_import.profile.daily.challenge_history["2026-11-07"]["status"] == "completed" and typical_import.profile.daily.challenge_history["2026-11-06"]["status"] == "replayed", "Daily challenge history must preserve completed and replayed statuses"):
 		return
+	if not _check(typical_import.profile.daily.visit_streak.current == 5 and typical_import.profile.daily.visit_streak.lastRewardMilestone == 1, "Visit streak counters and reward milestone must be preserved"):
+		return
 	if not _check(typical_import.source_backup == typical_before and typical_raw == typical_before, "Parser must not mutate input and must preserve backup"):
 		return
 
@@ -145,6 +147,45 @@ func _run() -> void:
 	var invalid_completed_date: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_daily_completed_date"]["local_storage"])
 	if not _check(not invalid_completed_date.ok, "Daily completion marker must be a valid calendar date"):
 		return
+
+	print("Web migration tests: visit streak validation")
+	var partial_streak_raw: Dictionary = fixtures["partial_visit_streak"]["local_storage"]
+	var partial_streak_before: Dictionary = partial_streak_raw.duplicate(true)
+	var partial_streak: Dictionary = WebMigration.parse_local_storage(partial_streak_raw)
+	if not _check(partial_streak.ok and partial_streak.profile.daily.visit_streak.repairItems == 0 and partial_streak.warnings.size() > 0, "Missing visit-streak fields must receive safe candidate defaults"):
+		return
+	if not _check(partial_streak_raw == partial_streak_before and partial_streak.source_backup == partial_streak_before, "Visit-streak defaults must not mutate the raw source or its backup"):
+		return
+	var invalid_streak_date: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_visit_streak_date"]["local_storage"])
+	if not _check(not invalid_streak_date.ok, "Visit streak dates must be valid calendar dates"):
+		return
+	var invalid_streak_counter: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_visit_streak_counter"]["local_storage"])
+	if not _check(not invalid_streak_counter.ok, "Visit streak counters must be non-negative integers"):
+		return
+	var invalid_streak_best: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_visit_streak_best"]["local_storage"])
+	if not _check(not invalid_streak_best.ok, "Visit streak best must cover current and broken streak values"):
+		return
+	var invalid_streak_repair: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_visit_streak_repair"]["local_storage"])
+	if not _check(not invalid_streak_repair.ok, "A broken streak must include its repair date"):
+		return
+	var invalid_streak_milestone: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_visit_streak_milestone"]["local_storage"])
+	if not _check(not invalid_streak_milestone.ok, "Visit-streak reward milestone must not exceed the best-streak milestone"):
+		return
+
+	print("Web migration tests: daily completion/replay cross-consistency")
+	var replay_without_history: Dictionary = WebMigration.parse_local_storage(fixtures["replay_marker_without_history"]["local_storage"])
+	if not _check(replay_without_history.ok and replay_without_history.requires_review, "Replay marker without matching history must require review without issuing a reward"):
+		return
+	var history_without_replay: Dictionary = WebMigration.parse_local_storage(fixtures["history_replay_without_marker"]["local_storage"])
+	if not _check(history_without_replay.ok and history_without_replay.requires_review, "Replayed history without a replay marker must require review"):
+		return
+	var completed_without_reward: Dictionary = WebMigration.parse_local_storage(fixtures["completed_marker_without_reward"]["local_storage"])
+	if not _check(completed_without_reward.ok and completed_without_reward.requires_review, "Completed challenge without a per-date reward marker must require review"):
+		return
+	var reward_for_replay: Dictionary = WebMigration.parse_local_storage(fixtures["reward_marker_with_replayed_history"]["local_storage"])
+	if not _check(reward_for_replay.ok and reward_for_replay.requires_review, "A standard reward marker must not silently agree with replay history"):
+		return
+
 	var large_archive: Dictionary = {}
 	for day_index in range(91):
 		var month := int(day_index / 28) + 1
@@ -158,5 +199,5 @@ func _run() -> void:
 	if not _check(large_archive_import.warnings.size() > 0, "Archives over the Web 90-day save window must surface a preservation warning"):
 		return
 
-	print("Web migration parser tests passed: defaults, complete profile, alias conflicts, malformed JSON, legacy fallbacks, inventory and daily schema validation, reward idempotency, and source immutability.")
+	print("Web migration parser tests passed: defaults, complete profile, aliases, visit-streak validation, daily completion/replay consistency, inventory schemas, reward idempotency, and source immutability.")
 	quit(0)

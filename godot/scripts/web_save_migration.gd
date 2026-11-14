@@ -130,6 +130,8 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 	_copy_json_container(raw, "bbDailyChallengeHistory", daily, "challenge_history", TYPE_DICTIONARY, result)
 	_copy_json_container(raw, "bbDailyReplayCompleted", daily, "replayed_dates", TYPE_ARRAY, result)
 	_copy_json_container(raw, "bbVisitStreak", daily, "visit_streak", TYPE_DICTIONARY, result)
+	if daily.has("visit_streak"):
+		_validate_visit_streak(daily["visit_streak"], result)
 	_copy_raw_string(raw, "bbDailyChallengeCatalogSignature", daily, "challenge_catalog_signature", result)
 	_copy_raw_string(raw, "bbDailyChallengeCompletedDate", daily, "last_completed_date", result)
 	_copy_raw_string(raw, "nrDailyDone", stats, "last_daily_run_date", result)
@@ -166,11 +168,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 		var completed_date := str(daily["last_completed_date"])
 		if not completed_date.is_empty() and not _looks_like_date(completed_date):
 			_add_error(result, "bbDailyChallengeCompletedDate must contain a valid date")
-	if typeof(daily.get("challenge_history", {})) == TYPE_DICTIONARY:
-		for reward_date in reward_dates:
-			if not daily.get("challenge_history", {}).has(reward_date):
-				result["requires_review"] = true
-				result["warnings"].append("Daily reward marker has no matching challenge-history entry: " + reward_date)
+	_validate_daily_challenge_cross_consistency(daily, reward_dates, result)
 
 	for key in raw.keys():
 		var key_text := str(key)
@@ -293,6 +291,123 @@ static func _validate_replayed_dates(value: Variant, result: Dictionary) -> void
 		if seen_dates.has(date_text):
 			_add_error(result, "bbDailyReplayCompleted contains a duplicate date: " + date_text)
 		seen_dates[date_text] = true
+
+
+static func _validate_visit_streak(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_DICTIONARY:
+		return
+	var streak: Dictionary = value
+	var defaults := {
+		"lastDate": "",
+		"current": 0,
+		"best": 0,
+		"repairItems": 0,
+		"brokenStreak": 0,
+		"brokenOn": "",
+		"lastRewardMilestone": 0
+	}
+	for field in defaults.keys():
+		if not streak.has(field):
+			streak[field] = defaults[field]
+			result["warnings"].append("bbVisitStreak is missing " + str(field) + "; a safe default was applied to the import candidate")
+
+	var dates_valid := true
+	for field in ["lastDate", "brokenOn"]:
+		var date_value: Variant = streak.get(field)
+		if typeof(date_value) != TYPE_STRING or (not str(date_value).is_empty() and not _looks_like_date(str(date_value))):
+			_add_error(result, "bbVisitStreak " + field + " must be empty or a valid calendar date")
+			dates_valid = false
+
+	var counters_valid := true
+	for field in ["current", "best", "repairItems", "brokenStreak", "lastRewardMilestone"]:
+		if not _is_non_negative_int(streak.get(field)):
+			_add_error(result, "bbVisitStreak " + field + " must be a non-negative integer")
+			counters_valid = false
+
+	if counters_valid:
+		var current_count := int(streak["current"])
+		var best_count := int(streak["best"])
+		var broken_count := int(streak["brokenStreak"])
+		var reward_milestone := int(streak["lastRewardMilestone"])
+		if best_count < max(current_count, broken_count):
+			_add_error(result, "bbVisitStreak best must not be lower than current or brokenStreak")
+		if reward_milestone > int(floor(float(best_count) / 7.0)):
+			_add_error(result, "bbVisitStreak lastRewardMilestone exceeds the best-streak milestone")
+		if (broken_count > 0) != (not str(streak["brokenOn"]).is_empty()):
+			_add_error(result, "bbVisitStreak brokenStreak and brokenOn must be present together")
+
+	if dates_valid and not str(streak["brokenOn"]).is_empty():
+		if str(streak["lastDate"]).is_empty() or str(streak["brokenOn"]) > str(streak["lastDate"]):
+			_add_error(result, "bbVisitStreak brokenOn cannot be later than lastDate")
+
+
+static func _add_review_warning(result: Dictionary, message: String) -> void:
+	result["requires_review"] = true
+	result["warnings"].append(message)
+
+
+static func _validate_daily_challenge_cross_consistency(daily: Dictionary, reward_dates: Array[String], result: Dictionary) -> void:
+	var history: Variant = daily.get("challenge_history", {})
+	var replayed_dates: Variant = daily.get("replayed_dates", [])
+	var history_is_dictionary := typeof(history) == TYPE_DICTIONARY
+	var replayed_is_array := typeof(replayed_dates) == TYPE_ARRAY
+	var reward_lookup: Dictionary = {}
+	var replay_lookup: Dictionary = {}
+
+	for reward_date in reward_dates:
+		reward_lookup[reward_date] = true
+	if replayed_is_array:
+		for replay_date in replayed_dates:
+			if typeof(replay_date) == TYPE_STRING and _looks_like_date(str(replay_date)):
+				replay_lookup[str(replay_date)] = true
+
+	for reward_date in reward_dates:
+		if not history_is_dictionary or not history.has(reward_date):
+			_add_review_warning(result, "Daily reward marker has no matching challenge-history entry: " + reward_date)
+			continue
+		var reward_history: Variant = history[reward_date]
+		if typeof(reward_history) == TYPE_DICTIONARY and str(reward_history.get("status", "")) != "completed":
+			_add_review_warning(result, "Daily reward marker conflicts with challenge-history status: " + reward_date)
+		if replay_lookup.has(reward_date):
+			_add_review_warning(result, "A replay marker conflicts with a standard daily reward marker: " + reward_date)
+
+	for replay_date in replay_lookup.keys():
+		var replay_date_text := str(replay_date)
+		if not history_is_dictionary or not history.has(replay_date_text):
+			_add_review_warning(result, "Replay completion marker has no matching challenge-history entry: " + replay_date_text)
+			continue
+		var replay_history: Variant = history[replay_date_text]
+		if typeof(replay_history) == TYPE_DICTIONARY and str(replay_history.get("status", "")) != "replayed":
+			_add_review_warning(result, "Replay completion marker conflicts with challenge-history status: " + replay_date_text)
+
+	if history_is_dictionary:
+		for date_key in history.keys():
+			var date_text := str(date_key)
+			var entry: Variant = history[date_key]
+			if typeof(entry) != TYPE_DICTIONARY:
+				continue
+			var status := str(entry.get("status", ""))
+			if status == "replayed" and not replay_lookup.has(date_text):
+				_add_review_warning(result, "Challenge history marks a replay without a replay completion marker: " + date_text)
+			elif status == "completed":
+				if replay_lookup.has(date_text):
+					_add_review_warning(result, "Completed challenge history conflicts with a replay completion marker: " + date_text)
+				if not reward_lookup.has(date_text):
+					_add_review_warning(result, "Completed challenge history has no per-date reward marker: " + date_text)
+
+	var completed_date := str(daily.get("last_completed_date", ""))
+	if not completed_date.is_empty():
+		if not history_is_dictionary or not history.has(completed_date):
+			_add_review_warning(result, "Last completed daily challenge has no matching history entry: " + completed_date)
+		else:
+			var completed_history: Variant = history[completed_date]
+			if typeof(completed_history) == TYPE_DICTIONARY and str(completed_history.get("status", "")) != "completed":
+				_add_review_warning(result, "Last completed daily challenge conflicts with its history status: " + completed_date)
+		if not reward_lookup.has(completed_date):
+			_add_review_warning(result, "Last completed daily challenge has no per-date reward marker: " + completed_date)
+		if replay_lookup.has(completed_date):
+			_add_review_warning(result, "Last completed daily challenge also appears in replay markers: " + completed_date)
+
 
 static func _read_value(raw: Dictionary, key: String, json_encoded: bool) -> Variant:
 	if not raw.has(key):

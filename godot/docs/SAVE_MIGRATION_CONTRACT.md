@@ -1,7 +1,7 @@
 # KT-446 — Web → Godot save audit and migration contract
 
-- Date: 2026-11-08
-- Read-only source baseline: `main` at `38c61b606187b88ce8a48a1c6b71d264aecf4258` (`site/index.html`).
+- Date: 2026-11-14
+- Read-only source baseline: `main` at `20d66e3171522feb010a81522dc3f5cf4334d936` (`site/index.html`).
 - Target: `godot/kt428-buddy-companion-2026-11-07`, Draft PR #77.
 - Status: **AUDIT COMPLETE / CONTRACT PROPOSED / IMPLEMENTATION NOT STARTED**.
 - Safety: no writes to `main`, no deployment, no data reset, no APK build.
@@ -50,6 +50,12 @@ All names below are based on direct `localStorage` access and the `bbGet/bbPut` 
 | `nrRuns` | Completed run count | Raw number string | `stats.runs` |
 | `nrDailyDone` | Legacy last-daily-run date | Raw date string; initialized at startup and written after a daily run | `stats.last_daily_run_date` (legacy/import) |
 | `bb_haptics` | Haptics preference | Raw `0` / `1`; default enabled | `settings.haptics` |
+
+### Visit-streak and daily receipt consistency
+
+The current Web visit-streak writer stores `lastDate`, `current`, `best`, `repairItems`, `brokenStreak`, `brokenOn`, and `lastRewardMilestone` in `bbVisitStreak`. Dates are empty strings or calendar dates; counters are non-negative integers. The read-only migration candidate validates that `best` covers both `current` and `brokenStreak`, the broken-streak count and date are paired, the break date is not later than the last visit, and the reward milestone does not exceed the best streak's seven-day milestone. Older partial objects receive safe defaults in the candidate only; the original raw key/value remains in `source_backup`.
+
+The source writes a standard completion as a completed-date marker, a per-date reward marker, and a history record with status `completed`. A replay writes the replayed-date array and a history record with status `replayed`. Missing or contradictory receipts are retained and marked `requires_review`; the parser never grants or settles a reward while reconciling them.
 
 ### Key-prefix clarification
 
@@ -201,11 +207,11 @@ This is a **shape proposal**, not a finalized list of game rules. Fields such as
 
 ## 9. Work boundary and next steps
 
-- **Done:** source-key inventory, helper/direct-key distinction, data-shape sampling, alias hazards, transient-vs-durable classification, proposed versioned contract, and an initial read-only parser/validator with fixtures for wallet aliases, hero fallbacks, daily quest/archive schemas, full daily challenge assignment/history snapshots, replay/completion markers and deterministic diagnostics.
-- **Not done:** complete value-range audit for every gameplay system, source-side export format, migration execution, Godot disk persistence, autosave, cross-device/cloud sync, atomic-write/recovery acceptance, physical Android verification.
-- Next: validate visit-streak fields and daily completion/history/replay cross-consistency, then add atomic-write/recovery fixtures. Do not connect it to `user://` writes until conflict rules are covered and the user approves the migration boundary.
+- **Done:** source-key inventory, helper/direct-key distinction, data-shape sampling, alias hazards, transient-vs-durable classification, proposed versioned contract, read-only parser/validator for wallet aliases, hero fallbacks, daily quest/archive/challenge schemas, visit-streak fields, daily completion/replay receipt consistency, and deterministic diagnostics.
+- **Not done:** source-side export format, migration execution, Godot disk persistence, autosave, cross-device/cloud sync, atomic-write/recovery acceptance, physical Android verification.
+- Next: add pure atomic-write/recovery fixtures and a failure-safe storage adapter design. Keep all persistent `user://` writes disabled until recovery tests pass and the user approves the migration boundary.
 - No main-branch edits, merge, deploy, APK build or release.
 
 ## Recovery phrase
 
-`BLOCK BUDDIES — KT-446. Web localStorage audit baseline main@38c61b606187b88ce8a48a1c6b71d264aecf4258. No canonical Web save blob; bb_coins is live wallet source with legacy aliases coins/bbCoins; separate campaign marks and relics; per-hero progression; cosmetics; daily state. KT-445 is in-memory run snapshot only. Continue with pure migration fixtures and read-only parser on Godot feature branch. Do not enable disk writes, touch main, merge, deploy or build APK without approval.`
+`BLOCK BUDDIES — KT-487. Web localStorage audit baseline main@20d66e3171522feb010a81522dc3f5cf4334d936. No canonical Web save blob; bb_coins is live wallet source with legacy aliases coins/bbCoins; separate campaign marks and relics; per-hero progression; cosmetics; daily state. Visit streak and daily completion/replay receipts are now validated read-only. Continue with atomic-write/recovery fixtures on the Godot feature branch. Keep user:// writes disabled; do not touch main, merge, deploy or build APK without approval.`
