@@ -46,3 +46,425 @@
 - Source parity audit started in `godot/docs/PARITY_MATRIX.md`; still in progress. Score, rotation, randomizer, timers, Hold, mode progression, rewards and persistence are not yet parity-approved.
 - No APK built. No change to `main`.
 
+
+
+## KT-446 — Web save audit and migration contract
+- Date: 2026-11-08
+- Branch: `godot/kt428-buddy-companion-2026-11-07`
+- Read-only Web source baseline: `main@38c61b606187b88ce8a48a1c6b71d264aecf4258` (`site/index.html`).
+- Added `godot/docs/SAVE_MIGRATION_CONTRACT.md` with the actual localStorage key inventory, helper-expanded key names, sampled record shapes, legacy aliases, daily reward markers, transient-vs-durable state split, reset-flow warning, proposed versioned native profile/run documents, migration precedence and 12 required regression fixtures.
+- Extended `godot/docs/PARITY_MATRIX.md` with the detailed audit reference and important corrections.
+- Key finding: the live Web wallet is loaded from helper key `bb_coins`; direct aliases `coins` and `bbCoins` are not consistently synchronized. Migration must detect conflicts and must never add these values together.
+- Campaign marks (`bbCampaignMarks`) and Block Run relics (`nrRelics`) are separate currencies. Hero XP/levels and campaign perks are per hero. Daily challenge assignments, history, completion, replay, quest archive, reward markers and visit streak are distinct records.
+- The actual campaign-perk helper key is `bb_bbCampaignPerks_<heroId>`, since `bbPut()` adds the `bb_` prefix.
+- KT-445 remains an in-memory run snapshot only. No Godot disk persistence, autosave, Web import, cloud sync or Android device test is included in this checkpoint.
+- Status: **source audit + proposed contract complete; implementation pending**. Next safe step is pure migration fixtures and a read-only parser/validator. Atomic disk writes remain gated until conflict and recovery tests pass.
+- No writes to `main`, no deployment, no merge, no APK build, no user-data reset or modification.
+
+
+## KT-447 — Read-only Web save parser and regression fixtures
+- Date: 2026-11-08
+- Added `godot/scripts/web_save_migration.gd`: pure read-only parser for a supplied localStorage snapshot. It returns a candidate profile, validation errors/warnings, coin alias conflicts, unknown keys and a deep raw source backup. It does not access localStorage, files, `user://`, or grant rewards.
+- Added representative fixtures in `godot/tests/fixtures/web_save_profiles.json` and isolated regression suite `godot/tests/web_save_migration_test.gd`; CI now runs it as a distinct step.
+- Covered empty profile, full representative profile, matching and conflicting coin aliases, conflict without primary wallet, malformed JSON, legacy Plush XP/level, legacy single-slot cosmetic fallback, unknown-key retention, daily reward marker retention/malformed marker, and input immutability.
+- Parser accepts finite whole-number JSON numeric values (Godot may decode integer JSON numbers as floats) and normalizes them to integers. Fractional values remain invalid. Fixed legacy cosmetic fallback so it is used when the default per-hero equip map is empty.
+- Validation: workflow run `42450365090`, commit `55e0a8701b97c5b3e45dbcf7576d8d8417504b1c` — Godot import, main script parse, gameplay model tests, Web migration fixture tests and scene smoke test all **SUCCESS**.
+- Earlier test attempts caught real issues: strict JSON integer typing, test-suite indentation, and a legacy cosmetic fallback condition. Those were corrected before the successful run. No production save data was accessed or changed.
+- Still not implemented: persistent storage, atomic writes, backup rotation, actual Web import, reward settlement, cloud sync or physical Android verification. Continue adversarial fixtures and conflict-review design before any storage integration.
+- No edits to `main`, no merge, deployment, APK build or release.
+
+
+## KT-448 — adversarial migration validation
+- Extended `web_save_migration.gd` to validate consumable IDs/counts, permanent perk IDs, hero-scoped campaign perk IDs/ranks, equipped cosmetic hero mappings, current daily quest schema, challenge date records and date ranges.
+- A daily reward marker with no matching challenge-history entry is retained but sets `requires_review`; no reward is granted. This avoids silently discarding ambiguous history.
+- Added adversarial fixtures for unknown consumables/perks/heroes, incomplete daily quest records and orphan reward markers. Corrected the representative daily quest fixture to include all observed fields.
+- Added `godot/docs/KT-448_ADVERSARIAL_MIGRATION_VALIDATION.md`.
+- CI workflow run `42450599486` on HEAD `31b0545a9a7447b3b42c86ee1c1238327009cc16`: import, parse, gameplay tests, migration tests and scene smoke test all **SUCCESS**.
+- Remaining gaps: historical daily archive and catalog-signature drift, full cosmetic catalog validation, hero skill state, mode-specific interrupted runs, and review UI. No persistent storage or actual import is enabled.
+- No main edits, merge, deployment, APK build or user-data modification.
+
+
+## KT-449 — Daily archive and calendar-date audit
+- Date: 2026-11-08
+- Branch: `godot/kt428-buddy-companion-2026-11-07`
+- Added strict validation for actual Web daily quest archive records: date key, matching embedded date, quest array and complete quest fields.
+- Date validation now rejects impossible Gregorian dates, including non-leap-year February 29.
+- Archive entries above 90 are retained in full with a warning; import does not reproduce the Web save-time trim.
+- Catalog signature is preserved byte-for-byte as an opaque source string. It is not recalculated and does not trigger assignment/history deletion in the native migration parser.
+- Added malformed archive/date fixtures and a 91-entry no-trim regression test.
+- Parser remains pure/read-only. No storage writes, rewards, cloud sync, main edits, merge, deployment or APK build.
+
+
+## KT-465 — Three-mode selector layout and Marathon regression QA
+- Date: 2026-11-08
+- Branch: `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open.
+- Corrected the three-card mode selector vertical spacing: title and subtitle now clear the first card; card hitboxes remain distinct; instructions clear the Marathon card.
+- Extracted responsive mode-card geometry into `_mode_select_layout(viewport)` and added geometry assertions at 360×800, 375×812, 412×915 and 720×1280.
+- Generalized the objective progress helper name so it no longer implies Sprint-only behavior.
+- Added Marathon failure-path checks: game over at 99/100 lines, correct `MARATHON FAILED` title, 99/100 progress and elapsed-time display; added card-tap launch coverage.
+- Validation: Godot Native Project Check run `42461758390` on code HEAD `ede9fdcb1124dfa6d75e0316e0bc477aa7ac3bbe` — import, main script parse, gameplay/model tests, Web migration tests and scene smoke test all **SUCCESS**.
+- The prior intermediate CI attempts exposed a type annotation omission, a stale local variable name and a test setup issue; each was corrected before the successful run above.
+- No changes to `main` or the Web game; no merge, deployment, APK build/release, persistence integration or user-data modification. Physical Android runtime remains unverified.
+
+
+## KT-466 — Block Run Roguelike native domain foundation
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Audited original Web source at `main@38c61b606187b88ce8a48a1c6b71d264aecf4258`.
+- Added isolated `block_run_model.gd`: 35 card definitions, three source synergies, room/floor/boss progression, source-matched enemy HP, attack cycles/timers, deterministic garbage patterns, enemy damage and room transition, five-rank card drafting, Reserve charges and four goal families.
+- Added `block_run_model_test.gd` and a dedicated CI step. Tests cover room 1, room 5 boss, Breach/Crossfire/Siege patterns, deterministic garbage rows, room transitions, rank cap, score+mult and slow+memory synergies, Reserve absorption, Chrono timing and all goal types.
+- CI run `42462476795` on HEAD `22ae4ba386fd67c3dde07b9cbcd653a7c0ce8bcd`: **SUCCESS** — import, main parse, gameplay tests, migration tests, Block Run model tests and scene smoke test.
+- The mode is not yet selectable/playable: encounter HUD, board integration, all 35 card event effects, three simultaneous goals/reward settlement, five hero abilities, relic economy and run-end flow remain next stages.
+- No save/storage work, main changes, merge, deployment, APK build/release or physical-device test.
+
+
+## KT-467 — Block Run card event/effect audit
+- Audited all 35 card IDs against the legacy Web runtime paths: piece lock, line clear, timer tick, level-up, spawn collision, rotation, render, monster attack and monster defeat.
+- Added `godot/docs/KT-467_BLOCK_RUN_CARD_EVENT_MAP.md` with the observed trigger/effect for every card and the three exact synergies.
+- Identified two source discrepancies that must not be silently copied as design intent: Luck has no observed runtime consumer in the audited source, and Comet's local timer check is assigned immediately before use, making its under-35-second condition effectively always true. Slow's prose description also needs reconciliation with its actual level-up interval math.
+- Defined the event dispatcher contract for KT-468: piece lock, line clear, timer second, level-up, spawn collision, rotation, monster attack and monster defeat. Random outcomes must be deterministic in tests.
+- No native card effects have been wired yet; this checkpoint is an audit gate before implementation.
+- No main merge, deployment, APK build/release, persistence or user-data changes.
+
+
+## KT-468 — Deterministic Block Run card event effects
+- Added `godot/scripts/block_run_effects.gd`: pure deterministic event calculations for card draft, piece lock, line clear, timer second, level-up, rotation, piece spawn, spawn collision and monster defeat.
+- Implemented source-grounded effects for scoring/multipliers, line/monster damage, level charge, relic gain, Flash/Plasma, Tide/Unstable, Memory/Loop/Slow/Fortress, Stable/Shift, Mirror/Prism/Aura, Shield/Armor/Nova/Rift, Gear, Reserve and Hold. Comet is gated for source-bug review; Luck remains unimplemented because no runtime consumer was found.
+- Preserved Pixel's hero-specific Hold override and exact Shield/Iron Fortress rescue geometry.
+- Added `godot/tests/block_run_effects_test.gd` and a dedicated CI step.
+- CI run `42462909799` on HEAD `cdf419b0f73eddc71f12e88aee4578a6f9edffd0`: **SUCCESS** — import, parse, gameplay, migration, Block Run model, Block Run event-effect tests and scene smoke test.
+- The effect layer is still isolated and not connected to the live board. Board mutations, active run integration, goals/rewards, hero abilities, relic wallet, HUD/draft/result UI and responsive QA remain pending.
+- No storage work, main merge, deployment, APK build/release or physical-device test.
+
+
+## KT-469 — Block Run board mutation adapter
+- Added `godot/scripts/block_run_board.gd`: validated 10×23 board mutations for deterministic garbage insertion, top-out reporting, bottom-row clearing and rescue-row patterns.
+- Added `godot/tests/block_run_board_test.gd` and CI stage `Run Block Run board mutation tests`.
+- CI run `42463302261` on HEAD `5dcecbf891c9ac098ae86f0d36bcfbc4fc6b48ad`: **SUCCESS** — import, parse, gameplay, migration, Block Run model/effect/board tests and scene smoke test all passed.
+- This is an isolated adapter and is not yet wired into the live main scene or piece-lock loop. Next: connect attacks/rescues to the active board, then goals/rewards, hero skills and encounter/draft UI.
+- PR #77 remains Draft/open/unmerged. No main merge, deployment, APK build/release, persistence or physical-device test.
+
+
+## KT-470 — Block Run encounter/session integration
+- Added `godot/scripts/block_run_session.gd`, composing encounter model, deterministic card effects and board adapter.
+- Session now routes card drafts, placement bonuses, line-clear scoring/damage, relics, timer events, enemy attack countdown, garbage insertion, Reserve absorption, top-out failure and Rift room-clear effect.
+- Added `godot/tests/block_run_session_test.gd` and CI stage `Run Block Run session integration tests`.
+- CI run `42463408749` (#143) on HEAD `6b8bd27f280ef2eabaf4ef0e90457535557af18a`: **SUCCESS** — import, parse, gameplay, migration, Block Run model/effects/board/session tests and scene smoke test all passed.
+- Session coordinator is not yet connected to `main.gd`; Block Run remains hidden and is not yet playable. Shield/Nova rescue, three live goals/rewards, hero abilities, draft/encounter HUD and run-end UI remain.
+- PR #77 remains Draft/open/unmerged. No main merge, deployment, APK build/release, persistence or physical-device test.
+
+
+## KT-471 — Three live Block Run goals and reward replacement
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Extended `block_run_session.gd` to create exactly three active goals at run start, using the four source goal families: lines, score, survive time and level.
+- Goal targets and rewards use the source formulas from `bbCreateRogueGoal()`: +3–6 lines, +400–1000 score, +15–35 seconds, +1–2 levels, and 10–25 coins.
+- Added live goal-state snapshots and completion events. A completed goal emits a single reward event and is immediately replaced in the same slot with a new goal based on current run progress.
+- Goal checks are routed after piece-lock score, line-clear score/progress and one-second timer updates. Reward totals remain run-local events; no persistent wallet or save storage is changed yet. The eventual scene/profile integration must consume each event once and credit the existing coin system exactly once.
+- Regression coverage: exactly three initial goals, unique active IDs, reward/target ranges, line-goal completion/replacement, survive-goal timer completion, score-goal completion, and existing combat/attack/Reserve/top-out behavior.
+- CI run `42467057040` on code HEAD `d4c230d3695c785bbc0c32d0298bf9d615535bdd`: **SUCCESS** — gameplay, migration, Block Run model/effects/board/session tests, real rendered screenshot capture, artifact upload and scene smoke test.
+- Real screenshot artifact: `block-buddies-visual-checks` (selector + Classic arena, 720×1280); available from GitHub Actions run `42467057040`.
+- Remaining: connect session to `main.gd` and the real board/piece lifecycle; wire exact Shield/Nova rescue mutations; then add hero skills, card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable until these are complete.
+- No main merge, deployment, APK build/release, persistence work or physical-device test.
+
+
+## KT-472 — Five source-matched Block Run hero abilities
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Added `use_hero_skill(hero_id, hero_level)` to the isolated Block Run session. All five legacy hero branches are represented: Captain Plush clears the top `2 + tier` rows; Prism deals `8 + tier × 5` enemy damage; Blip delays the next attack by `12 + tier × 4` seconds; Pixel clears `tier` bottom rows and adds the same level charge; Spark deals `12 + tier × 5` enemy damage.
+- Hero ability tier follows the source formula `1 + floor((level - 5) / 5)`; skills are locked below level 5 and share a 45-second run-time cooldown. Cooldown advances only with active run seconds.
+- Prism/Spark enemy defeat applies the already implemented Rift effect when drafted. Ability mutations remain run-local; no persistent XP, wallet, or save data is touched.
+- Regression coverage includes all five heroes, level-4 lockout, level-10 tier scaling, attack delay, board mutations, enemy damage, and cooldown rejection/countdown.
+- CI run [42467652778](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42467652778) on code HEAD `0ce7ed5fba9a30bebeef406375612283317a7598`: **SUCCESS** — import, main parse, gameplay, migration, Block Run model/effect/board/session tests, rendered screenshot capture/upload and scene smoke test.
+- Real rendered screenshot artifact: `block-buddies-visual-checks`, 720×1280 selector and Classic arena. These screenshots confirm existing scenes render; they do not depict Block Run, which is still not connected to the main scene.
+- Remaining: connect session to the live piece/board lifecycle; integrate Shield/Nova rescue mutations; build card draft, encounter/goals HUD, reward settlement and run-end UI. Block Run remains hidden and not playable.
+- No main merge, deployment, APK build/release, persistence work or physical-device test.
+
+
+## KT-473 — Block Run Shield / Iron Fortress / Nova rescue mutations
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open.
+- Added session-level `on_spawn_collision()` that applies the existing source effect decision and mutates the isolated 10×23 Block Run board.
+- Shield consumes one charge and randomizes the source-defined lower 3 rows at 22% fill; Shield + Armor (Iron Fortress) randomizes lower 5 rows at 10% fill. The mutation uses a deterministic run seed for reproducible tests.
+- Nova clears its rank-scaled number of bottom rows and marks the one-time rescue as consumed. A second spawn collision cannot reuse Nova.
+- Added regression coverage for charge consumption, board mutation, Iron Fortress combination, Nova row clearing and one-time use.
+- First test attempt exposed a GDScript static type inference issue in a test fixture; explicit typing fixed it. Final CI run [42468010685](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42468010685) on HEAD `d79a40dc78d112f5ea6b077ac3b24e278687c816`: **SUCCESS** — import, main parse, gameplay, migration, Block Run model/effects/board/session tests, rendered screenshot capture/upload and scene smoke test.
+- Real rendered screenshot artifact: `block-buddies-visual-checks`, 720×1280; current Classic arena screenshot is also available in the run artifacts. It confirms existing Classic rendering only; it is not a Block Run screen.
+- Status boundary: rescue logic is implemented and tested inside the Block Run session. It is not yet called from the live game model or main scene. Block Run remains hidden/unplayable until the live board/piece lifecycle, draft/HUD and run-end flow are integrated.
+- No main merge, deployment, APK build/release, persistent storage changes or physical Android test.
+
+
+## KT-474 — validated live-board bridge foundation
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Added `godot/scripts/block_run_bridge.gd` as the explicit 10×23 boundary between the live gameplay model and Block Run encounter session. Both copy directions validate the complete grid before mutation; malformed input is rejected atomically.
+- Added live spawn-rescue revalidation in `game_model.gd`: after a rescue mutation, the active piece is checked against the resulting board. A blocked spawn remains terminal; the bridge marks the encounter failed rather than falsely resuming play.
+- Added safe rendering for the Block Run garbage tile ID in the existing board renderer, avoiding an out-of-range palette lookup when a garbage row is eventually synchronized.
+- Added `godot/tests/block_run_bridge_test.gd` and CI step covering board copy in both directions, coordinate preservation, malformed-board rejection without partial mutation, and spawn revalidation.
+- CI run [42472885866](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42472885866) on code HEAD `24a54c90939f188296d4f30118c9988cc9a00c95`: **SUCCESS** — project import, main parse, Classic model tests, Web migration tests, Block Run model/effect/board/session/bridge tests, real rendered screenshot capture/upload and scene smoke test.
+- Screenshot artifact `block-buddies-visual-checks` (720×1280) contains the current mode selector and Classic arena. It confirms existing scenes still render; it is **not** a Block Run screenshot.
+- Important boundary: this is the tested synchronization/rescue boundary, not yet the complete live gameplay hookup. Main still does not route every lock, line-clear, timer, attack, hero-skill or draft event through the bridge. Block Run remains hidden and unplayable. Next: connect event lifecycle with exactly-once dispatch, then test actual attack/rescue behavior on the live board before exposing the mode.
+- No main merge, deployment, APK build/release, persistence work or physical Android test.
+
+
+## KT-475 — live Block Run lock / line / timer event routing
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open and unmerged.
+- Added an ephemeral monotonic lock-event cursor to the gameplay model. The main scene consumes each piece-lock event once, routes placement bonuses and line-clear progress into the Block Run session, and refuses to continue if the cursor unexpectedly skips an event.
+- Added an internal Block Run session start path (not exposed in the mode selector). The bridge now routes timed enemy attacks back onto the live 10×23 model board; garbage overflow ends the run. The active falling piece is revalidated after board shifts so an attack cannot silently place a block inside it.
+- Added isolated live-loop tests: one lock dispatches one placement, line-progress delta dispatches once, repeated frame processing does not double-count, timed Breach garbage reaches both session and live board, and occupied top-row overflow produces Game Over.
+- CI run [42473197674](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473197674) on code HEAD `66e20ad135dfadd431113af66e1de6793a7feb1f`: **SUCCESS** — import, main parse, all Classic/migration/Block Run domain/session/bridge/live-loop tests, real rendered screenshot capture/upload and scene smoke test.
+- Visual artifact remains the real 720×1280 mode-selector + Classic arena pair. It confirms the unchanged visible scenes; Block Run is still not exposed and no Block Run screenshot is claimed.
+- Remaining before mode exposure: audit/route all gameplay input and gravity event paths under the Block Run state, validate actual spawn-rescue path end-to-end on the live board, wire card draft/encounter/goals HUD, hero abilities and run-end UI, and settle goal rewards safely. No persistent wallet or storage work.
+- No main merge, deployment, APK build/release or physical Android test.
+
+
+## KT-476 — Hold-triggered spawn-collision routing
+- Fixed an event-order gap: Hold can spawn a replacement piece and hit a blocked spawn without incrementing the piece-lock cursor. The Block Run dispatcher now checks spawn collision independently before waiting for a lock event.
+- Added regression coverage where Hold attempts a replacement spawn into a blocked top row; the collision reaches the encounter rescue/failure path even though no lock event occurred.
+- CI run [42473308354](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473308354) on code SHA `e941a3688c454fd5ddc2c5706b8c449012f47693`: **SUCCESS** — all Godot import/parse, Classic/migration/Block Run model, effect, board, session, bridge and live-loop tests, screenshot capture/upload and scene smoke test.
+- This closes the Hold event-order gap but does not yet prove a successful Shield/Nova rescue on a live top-out board. Block Run remains hidden and unplayable until full card/hero/goal UI and end-to-end rescue validation are complete.
+
+
+## KT-477 — source-matched Shield and live Nova rescue validation
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open/unmerged.
+- Re-audited the original Web top-out branch in `site/index.html`. Found a parity defect in the native Shield implementation: Web rebuilds the **entire** board after a Shield rescue, leaving only a sparse randomized bottom 3 rows (or 5 with Shield+Armor). Native code had only randomized the bottom zone and left the blocking top stack intact.
+- Fixed `block_run_session.gd` to clear the complete board first, then generate the source-defined randomized lower zone. This allows the active piece to resume after a genuine spawn collision and consumes the shield charge once.
+- Extended live gameplay integration tests through `main.gd` + bridge: a blocked spawn is rescued by Shield and by rank-1 Nova under a valid horizontal-I spawn geometry; both cases verify the live model resumes, the obstruction is removed and the corresponding rescue resource is consumed. Existing tests continue to cover Hold-triggered failure when no rescue is available, and attack overflow.
+- An initial Nova integration test used a multi-row random piece with a rank-1 one-row Nova clear and correctly failed the strict collision revalidation. The fixture was corrected to a horizontal I piece, matching the source-defined one-row clear geometry; the runtime rule was not weakened.
+- CI run [42473876259](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42473876259) on code HEAD `5d19c2ff9f240578bfab1e588a5f5d7c0c77070f`: **SUCCESS** — import, main parse, Classic and migration tests, all Block Run model/effects/board/session/bridge/live integration suites, rendered screenshot capture/upload and scene smoke test.
+- Screenshot artifact `block-buddies-visual-checks` (720×1280) contains existing mode selector + Classic arena. It confirms existing scenes still render; it is not a Block Run screenshot. Physical Android remains untested.
+- Block Run is still internal/hidden. Remaining: full hero skill input/UI wiring, card draft UI, encounter + three-goal HUD, one-time reward settlement to the existing wallet, run-end/result screen, and end-to-end playtesting of the full run loop. Persistent saves remain deferred by priority.
+- No main merge, deployment, APK build/release or user-data mutation.
+
+
+## KT-478 — Block Run level-up card draft and native selection UI
+- Audited the Web source: `levelUp()` pauses the run and calls `showUpgrade()`; Block Run offers three distinct cards, repeat picks raise card rank to five stars, and selecting one closes the modal/resumes play.
+- Native session now counts cleared lines toward the level threshold, applies the source-matched threshold/gravity ramp, opens a three-card draft, rejects cards not in the visible offer, and applies exactly one selected rank. Timer-based charge and Pixel skill charge use the same level-up gate. Goal level tracking now reads the actual session level.
+- Main scene renders a touch-first three-card modal with keyboard `1 / 2 / 3` selection. Gameplay gravity, encounter clock and event dispatch remain frozen until a valid choice is made. The Block Run HUD now identifies the mode and displays room/floor plus enemy HP; Buddy is hidden behind the modal for a clean selection surface.
+- Added session tests for threshold transition, three unique options, invalid-choice rejection, one-time rank application and no duplicate draft. Added live-scene tap-selection integration coverage.
+- Extended the graphical Godot screenshot pipeline with `03-block-run-card-draft.png` (720×1280), captured from the real rendered scene. The screenshot was visually inspected; it shows the Block Run header, room/enemy HP and three selectable cards without Buddy overlap.
+- CI run [42474850074](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42474850074) on code HEAD `66e379fd75a225e7b9c1f84f9c9f9238f3c62b66`: **SUCCESS** — import, main parse, Classic/migration suites, Block Run model/effects/board/session/bridge/live integration, rendered screenshots and scene smoke test.
+- Remaining: full encounter/three-goal HUD, hero ability input/cooldown UI, exactly-once settlement of goal rewards to the existing wallet, run-end/results screen, and full-run end-to-end QA. Block Run remains internal/hidden; no public mode exposure.
+- No main merge, deployment, APK build/release, persistence changes, user-data mutation or physical Android test. Save-system work remains deferred.
+
+
+## KT-479 — Block Run live goals and encounter HUD
+- Added a compact three-goal strip to the native Block Run arena. It displays each goal family, current/target progress and coin reward; progress is clamped to 0–100% and the three goal families are rendered in Russian.
+- Encounter HUD now includes room/boss, floor, enemy HP bar and seconds until the next attack. Score HUD displays the number of active synergies; this is driven by the live card-pair state (not a hardcoded visual).
+- Reworked top spacing so the score/encounter cards, HOLD/NEXT previews and goal strip fit above the board without permanent controls or reducing the 10×23 playfield. Goal strip is drawn above the board frame to avoid clipping.
+- Added live integration checks for goal progress, compact labels, three-goal state, attack countdown presence and synergy activation after drafting the matching pair.
+- Added a fourth graphical Godot capture `04-block-run-goals-hud.png` at 720×1280. The rendered screenshot was inspected: three goal meters, active synergy count, room/floor, enemy HP and attack countdown are visible together.
+- CI run [42475838582](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42475838582) on code HEAD `2fbde4a924003e6945959065ff570a23e0df8822`: **SUCCESS** — import, parse, Classic/migration, Block Run model/effects/board/session/bridge/live integration, graphical screenshot capture and scene smoke all passed.
+- Remaining before Block Run exposure: hero skill input/cooldown UI, exactly-once wallet reward settlement, run-end/results screen and full-run end-to-end QA. Mode remains hidden. Persistence stays deferred; no main merge, deployment, APK or physical-device test.
+
+
+## KT-480 — Block Run hero skill input and live cooldown HUD
+- Connected the existing five-hero skill model to the live Block Run scene through the validated board bridge. Activation synchronizes the live 10×23 board into the run session, applies the selected hero effect, syncs mutations back, and revalidates the falling piece; unsafe mutations fail closed.
+- Added a compact third preview slot for the active hero skill in Block Run only. It shows hero ID, locked state below level 5, ready state, or remaining cooldown; tap the slot or press Q to activate. Classic retains its original two preview cards and no new gameplay controls are added.
+- Added explicit configure_block_run_hero(hero_id, hero_level) input for the native profile layer. Current Godot prototype defaults to source-compatible Plush level 1 because native profile loading is not yet wired; no fake profile import or persistence change was introduced. Save/profile migration remains deferred.
+- Cooldown uses the existing 45-active-second session timer. Paused runs and open card drafts reject activation; cooldown advances only through active encounter seconds.
+- Added live integration coverage for all five heroes, level-4 lockout, activation, cooldown and expiry, repeated-use rejection, pause/draft guards, and preservation of the live 10×23 board.
+- Added graphical 720×1280 captures 05-block-run-hero-skill-ready.png and 06-block-run-hero-skill-cooldown.png. Both were inspected; the skill slot shows ready and 45-second cooldown states in the rendered scene.
+- CI run [42476376720](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476376720) on HEAD 9249867d82501355191ca5832c5ff176346e7979: **SUCCESS** — import, main parse, Classic/migration, all Block Run model/effect/board/session/bridge/live integration suites, graphical screenshot capture/upload and scene smoke test.
+- Remaining: bind hero configuration to the eventual native profile/selection flow, settle goal coin rewards exactly once into the existing wallet, add the run-end/results screen, and complete full-run end-to-end QA. Block Run remains internal/hidden.
+- No main merge, deployment, APK build/release, persistent storage change, user-data mutation or physical Android test. Save-system work remains deferred.
+
+
+## KT-481 — exactly-once Block Run goal reward receipts
+- Completed goals now create unique receipts keyed by their stable goal ID. The session stores reward amount and claim state; first claim succeeds, duplicate claims and unknown receipt IDs are rejected without changing the claimed total.
+- Added tests for pending total, exact first claim, duplicate claim rejection, unknown receipt rejection and zero pending balance after claim.
+- CI run [42476726527](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476726527) on HEAD d4ac61fe195ca2e6108540c32ed65dbcad189711: **SUCCESS** — import, main parse, Classic/migration, all Block Run model/effect/board/session/bridge/live integration suites, graphical screenshot capture/upload and scene smoke test.
+- Important integration boundary: this Godot branch does not yet load a native profile or expose a persistent coin wallet. The Web version has its own browser coin balance, and the migration parser can read its legacy keys, but no live profile bridge exists in the Godot scene. KT-481 therefore establishes an idempotent claim ledger, not a spendable wallet credit. Do not present claimed rewards as already added to the user's persistent balance.
+- Persistent profile/wallet wiring remains deferred with the save-system work, consistent with the agreed priority. Next: Block Run end/results screen showing earned goal rewards and clear run outcome; later connect receipts to the native wallet once profile integration is scheduled.
+- No main merge, deployment, APK build/release, persistent storage change, user-data mutation or physical Android test.
+
+
+## KT-482 — Block Run results screen and restart flow
+- Added a dedicated Block Run end screen with room/floor, run score, lines, elapsed time, total goal coin rewards and completed-goal count. Classic and Sprint/Marathon result screens retain their existing layouts.
+- Fixed restart routing: tapping the Block Run results screen or pressing R now resets the model and starts a fresh Block Run session instead of falling back into the previously selected Classic/Sprint/Marathon mode.
+- Added graphical 720×1280 screenshot `07-block-run-results.png`; visually inspected the rendered overlay, text hierarchy and reward summary. The visual capture test also invokes the restart flow and asserts a fresh running session with a non-game-over model.
+- CI run [42476914581](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42476914581) on HEAD e3747e9da83d785c80bb6757cbfc51c9d8537493: **SUCCESS** — import, main parse, all model/migration/Block Run test suites, graphical capture/upload and scene smoke.
+- The displayed coin amount is the run's goal-reward total only. It is not yet credited to a persistent wallet; native profile/wallet loading remains deferred. No save or migration changes were made.
+- Block Run remains internal/hidden. No main merge, deployment, APK build/release, user-data mutation or physical Android test.
+
+## KT-483 — real live line-clear to Block Run reward receipt regression
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open/unmerged.
+- Commit `8122de17f20663d31392bf2c4a8398dae66d3a5d` replaced a synthetic `game.lines = 1` assignment in `block_run_live_integration_test.gd` with a deterministic gameplay fixture: a horizontal I piece drops into a four-cell gap in the bottom row and the model itself clears that row.
+- The regression asserts the model's actual line counter and `last_lock_cleared`, exactly one lock-serial increment, delivery of the line-goal receipt through `_process_block_run_events()`, and exactly-once claim behavior.
+- CI run [42478000377](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478000377) on code HEAD `8122de17f20663d31392bf2c4a8398dae66d3a5d`: **SUCCESS** — Godot 4.4.1 import, main-script parse, Classic/model tests, Web-save migration tests, Block Run model/effect/board/session/bridge/live integration tests, screenshot capture/upload, and scene smoke test.
+- A subsequent branch update added Russian Classic/Sprint/Marathon result-title assertions. Latest CI run [42478102381](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478102381) on descendant HEAD `f502d6e200a8ec5aab6bad371eed328c79897799`: **SUCCESS**.
+- Reviewed latest artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478102381/artifacts/13615864955): the 720×1280 Classic capture shows the procedural Buddy in the left gutter beside the unchanged 2D 10×23 board, with Russian UI labels. The artifact contains mode selector and Block Run captures; no physical Android screenshot is present.
+- CI still emits non-failing headless teardown diagnostics (CanvasItem/ObjectDB/resource leak warnings) after the Classic gameplay model test, plus expected headless audio/V-Sync warnings during screenshot capture. The job exits successfully; these diagnostics remain separate cleanup work and are not represented as a warning-free run.
+- No persistent profile/wallet integration, user-data mutation, main merge, deployment, APK build/release, or physical Android test.
+
+## KT-484 — Buddy game-over reaction and test-node cleanup
+- Date: 2026-11-08; branch `godot/kt428-buddy-companion-2026-11-07`; PR #77 remains Draft/open/unmerged.
+- Added a direct regression assertion that a game-over state routes Buddy to the `surprised` expression, complementing the existing idle, happy, four-line victory, and timed-return-to-idle checks.
+- Corrected test ownership for Node2D probes: Buddy nodes are now attached to their probe parents, and the standalone Buddy probe is explicitly freed. This removes the unowned test nodes that were producing headless CanvasItem/ObjectDB/resource leak diagnostics.
+- CI run [42478691782](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782) on HEAD `22f85adc1f9915b3c4adfb1385e6c115f6850e02`: **SUCCESS** — import, main parse, gameplay/model, migration, Block Run model/effects/board/session/bridge/live integration, screenshot capture/upload, and scene smoke test all passed.
+- Log comparison: the previous run emitted CanvasItem/ObjectDB/resource-leak warnings after the gameplay model test; these are absent in KT-484. Remaining V-Sync and ALSA dummy-audio messages occur only during headless visual capture and did not fail the job.
+- Visual artifact [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42478691782/artifacts/13616556489) was uploaded. Physical Android rendering and orientation behavior remain unverified.
+- No main merge, deployment, APK build/release, persistent profile write, or user-data mutation.
+
+
+## KT-486–KT-490 — русская локализация и мобильная визуальная проверка (08.11.2026)
+- KT-486: завершены русские подписи HUD, целей, экрана завершения и результатов Block Run; Sprint/Marathon сохраняют время и прогресс.
+- KT-487: имена пяти героев в карточке способности переведены на русский; состояние готовности не показывает клавишу Q, лишнюю для сенсорного интерфейса.
+- KT-488: CI дополнен реальными Godot viewport-скриншотами в портретном размере 360×800 наряду с 720×1280.
+- KT-489–KT-490: исправлены две найденные на 360×800 визуальные проблемы — Buddy скрывался за модальным экраном результатов/паузы, заголовок центрируется между верхними кнопками и помещается без перекрытия.
+- Просмотрены кадры арены и результатов 360×800; Buddy остаётся вне панели, заголовок не заходит под кнопки.
+- CI run [42479580700](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42479580700) на HEAD `dc1802f663f48c930025a6ac177ed7d9128c9379`: **SUCCESS** — импорт, парсинг, модельные и Block Run тесты, visual capture и scene smoke.
+- Артефакт содержит 9 кадров режимов, Classic, Block Run и мобильных экранов. Это Godot viewport/Xvfb, не физическое Android-устройство.
+
+## KT-491 — геометрия и действие видимой кнопки Drop (09.11.2026)
+- В `visual_capture_test.gd` добавлены проверки для Classic 720×1280 и узкого портрета 360×800: Drop не меньше 42×44, находится справа от поля 10×23, не выходит за viewport и не пересекает рамку поля.
+- Тест передаёт центр видимой Drop-области в обработчик игрового тапа и проверяет ровно одно увеличение `lock_serial`; затем возвращает Classic перед запуском Block Run capture.
+- Текущий HEAD PR #77: `ca592f3b4fc6deeae41d0946097e33f63c4d0d61`. CI [run 42481294873](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481294873): **SUCCESS** — Godot 4.4.1 import, parse, Classic/model, Web-save migration, все Block Run suites, visual capture/upload и scene smoke.
+- Артефакт [block-buddies-visual-checks](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481294873/artifacts/13617996102) скачан и просмотрен: `08-mobile-360-arena.png` показывает Buddy в левом безопасном поле рядом с неизменённой 2D-ареной 10×23 и видимую кнопку Drop вне рамки поля.
+- Физическое Android-тестирование, портрет/альбом на устройстве, реальные touch-жесты и регрессия постоянных сохранений не подтверждены. APK не собирался; main, публикация и пользовательские данные не затронуты.
+
+
+## 2026-11-11 — KT-428 status audit and visual artifact review
+
+- Current PR #77 code HEAD: `0b942612a063b7f4d1d741999d875c254f5c9314`; PR remains Draft/open and targets `godot/android-native-foundation-2026-11-05` at `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Latest workflow associated with that exact code HEAD: [Godot Native Project Check #562](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42609082893) — **SUCCESS**. Verified step summaries: Godot 4.4.1 setup/import, main scene script parse, gameplay/model tests, Web save migration tests, all Block Run model/effect/board/session/bridge/live integration suites, visual screenshot capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [block-buddies-visual-checks, ID 13670120832](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42609082893/artifacts/13670120832). Nine captures are present. The 360×800 arena capture shows the procedural pixel Buddy in the left safe gutter, the unchanged 2D 10×23 board, and a visible Drop control outside the board. The results capture correctly hides Buddy behind the modal.
+- The viewport artifact is Godot/Xvfb output, not a physical Android device. Touch feel, safe-area behavior, portrait/landscape pause-resume and installed-device scaling remain unverified. APK was not built; no persistent user data was read or changed.
+- Open migration/parity task [#52 — KT-GODOT-002](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open.
+- Stacked-branch audit: PR #78 is based on this branch but has diverged (4 commits ahead / 3 behind from merge base `dc1802f663f48c930025a6ac177ed7d9128c9379`); PR #81 is based exactly on PR #78 HEAD `1eb08ff22803293f409fe93067e97198aa2c4a38`. Do not mechanically rebase or merge the stack; reconcile the Buddy and main-scene edits first.
+- No code change was necessary in PR #77 during this audit. Next safe work is to keep the current Buddy foundation stable while the visual stack is reconciled and the read-only Web save migration contract advances; persistent storage remains gated.
+
+
+## 2026-11-12 — KT-428 current HEAD and visual artifact review
+
+- PR #77 code HEAD: `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67`; PR remains Draft/open and targets foundation branch `godot/android-native-foundation-2026-11-05` at `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`. The foundation branch still points to that exact base SHA.
+- Latest workflow for the code HEAD: [Godot Native Project Check #43015952545](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545) — **SUCCESS**. Verified step summaries: Godot 4.4.1 setup/import, main scene parse, model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, screenshot capture/upload, and scene smoke test.
+- Downloaded artifact [block-buddies-visual-checks, ID 13851919301](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545/artifacts/13851919301) (9 PNGs) and inspected the mode selector, mobile 360×800 arena, Block Run skill-ready arena, and results screen. Buddy is procedurally rendered in pixel style at the left safe gutter; the gameplay board remains 2D and 10×23; Drop remains outside the board; results overlay correctly covers the arena.
+- The capture is Godot/Xvfb viewport output, not a physical Android device. Installed-device scaling, one-hand touch feel, safe areas, and portrait/landscape pause-resume remain unverified.
+- Open migration/parity task [#52 — KT-GODOT-002](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open. No persistent user data was read or mutated; no APK build/release, merge, or deployment.
+- PR #78 and #81 remain stacked on this branch. Their last inspected Godot Native Project Check runs [42481365011](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42481365011) and [42591587500](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42591587500) both succeeded, but their branch divergence still requires explicit reconciliation before integration.
+- This entry is documentation-only; the successful workflow above validates the unchanged code HEAD `6a28d5e`.
+
+
+## 2026-11-12 — Read-only Web save-key parity re-audit against current main
+
+- Re-read current browser source at `main@20d66e3171522feb010a81522dc3f5cf4334d936` (`site/index.html`, blob `9107542b0613a63b6cfd01654de58febcf9e184f`) and compared all direct `localStorage` calls plus the `bbGet`/`bbPut` helper key families against `web_save_migration.gd`.
+- No new durable key family was found beyond the existing migration parser's recognized inventory. Confirmed families remain: wallet `bb_coins` plus legacy aliases `coins`/`bbCoins`; gems, inventory, perks, chest cosmetics and fragments; selected hero and per-hero XP/levels/campaign perks; campaign node/marks; Block Run relics; daily quests/archive/catalog signature/assignments/history/completion/replay/reward markers/visit streak; best score, run count, legacy daily marker and haptics.
+- The current Home reward-collection screen derives its unlock state from existing campaign/relic values; it does not introduce a separate persistent collection key. Daily mechanic state and campaign run counters remain in-memory in the inspected source.
+- The parser's special cases still match the source: helper-expanded `bb_bbCampaignPerks_<heroId>`, `bb_equippedChestCosmetics` plus the legacy single-cosmetic key, date-suffixed `bbDailyRewardClaimed:<date>`, and the three coin aliases. Reset flows contain dynamic `removeItem(key)` loops; migration must continue preserving the original snapshot and must not emulate reset behavior.
+- This was a read-only source audit. No browser storage was accessed, no migration was executed, no `user://` writes were added, and no user data was read or changed.
+- Existing code validation remains [Godot Native Project Check #43015952545](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43015952545) on code HEAD `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67` — **SUCCESS**. This documentation update should receive its own PR CI run; do not infer that result before it completes.
+- Remaining migration gates: full value-range/semantics audit for every mode and reward path, conflict/recovery fixtures, source export contract, atomic persistent storage, real Android migration acceptance. Keep persistent writes disabled.
+
+
+## 2026-11-12 — KT-428 latest HEAD and viewport artifact audit
+
+- PR #77 current HEAD: `a639cb1a530a2279ba0ef0c12639383dc704dec5`; base foundation branch remains exactly `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Compared against the previously inspected code HEAD `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67`: two commits ahead, with changes limited to this checkpoint document. Gameplay scripts, scenes, model and tests are unchanged.
+- Exact-HEAD Godot workflow [#43216949560](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43216949560) completed **SUCCESS**. All 16 validation steps passed: Godot 4.4.1 setup/import, main scene script parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- Downloaded artifact [13944071892](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43216949560/artifacts/13944071892) (9 PNGs) and inspected `08-mobile-360-arena.png`, `02-classic-arena.png`, and `09-mobile-360-results.png`. The 360×800 capture shows the procedural pixel Buddy in the left gutter, the unchanged 2D 10×23 board, and visible Drop control. The results modal correctly covers the arena/Buddy. The 720×1280 Classic capture shows the larger Buddy treatment and full board.
+- The mobile Buddy is visibly smaller at 360×800 than in the desktop/720×1280 capture; it remains identifiable in the viewport artifact. Treat actual-device legibility and one-hand comfort as open acceptance checks rather than assuming the viewport is sufficient.
+- These are Godot/Xvfb viewport captures, not physical Android screenshots. Installed-device scaling, touch feel, safe areas, and portrait/landscape pause-resume remain unverified. No APK build/release, merge, deployment, persistent storage write, or user-data mutation.
+- PR #78 remains stacked on #77 and PR #81 remains stacked on #78. Preserve this chain without mechanical rebase; reconcile overlapping Buddy/main-scene edits before any integration.
+
+
+## 2026-11-13 — KT-428 exact-HEAD CI and viewport artifact audit
+
+- PR [#77](https://github.com/MaiklLX/Tetrios.LX/pull/77) remains Draft/open on `godot/kt428-buddy-companion-2026-11-07`, targeting `godot/android-native-foundation-2026-11-05`.
+- Code/gameplay HEAD remains `6a28d5e1025c5e403536baceeab5e7c2ca5fbf67`; current branch HEAD before this checkpoint is documentation-only commit `0ede50f3feae6cb06670655fb1265251e14f8f57`. Compare against the foundation branch: 280 commits ahead, 0 behind; base remains `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Exact-current-HEAD Godot Native Project Check [run 43220918565](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43220918565) completed **SUCCESS**. All 18 steps passed: Godot 4.4.1 setup/import, main scene parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [13945842789](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43220918565/artifacts/13945842789) (9 PNGs). The 360×800 arena shows the procedural pixel Buddy in the left safe gutter, the unchanged 2D 10×23 board, and Drop outside the board. The 720×1280 Classic capture confirms the same 2D field and a larger Buddy treatment. The results modal correctly covers the gameplay scene.
+- The 360×800 Buddy remains identifiable but is small relative to the board. Keep one-hand comfort and legibility as physical-device acceptance items; do not infer them from Xvfb captures.
+- `godot/docs/SAVE_MIGRATION_CONTRACT.md` remains a proposed, read-only contract. No `user://` profile writes, autosave, wallet reconciliation, campaign migration, or daily reward migration are enabled. Open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved.
+- PR #78 remains stacked on #77 and PR #81 on #78. Preserve the chain; do not mechanically rebase overlapping Buddy/main-scene edits.
+- No main edit, merge, deployment, APK build/release, physical Android test, image generation, external agent, or user-data access/mutation occurred.
+
+### Next safe step
+
+Continue with pure migration fixtures and a read-only parser/validator for coin-alias conflicts, per-hero fallback, daily reward markers, unknown keys, and idempotency. Keep persistent storage writes disabled until atomic-write/recovery fixtures and the full Web parity audit pass. Separately schedule physical Android checks for portrait/landscape pause-resume, safe areas, and one-hand controls.
+
+
+## 2026-11-13 — KT-428 checkpoint commit validation
+
+- The checkpoint update above is at PR #77 HEAD `1d1639281f4e086e90c9ea7061948b2f8e2ca1e5`.
+- Exact-HEAD Godot Native Project Check [run 43419029037](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43419029037) completed **SUCCESS** (workflow #567). All 16 validation steps passed: Godot 4.4.1 setup/import, scene script parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, screenshot capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [14033535985](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43419029037/artifacts/14033535985) (9 PNGs). The 360×800 capture again shows Buddy in the left gutter, a 2D 10×23 board, and visible Drop. The viewport is a CI/Xvfb capture, not a physical Android device.
+- No gameplay code changed in this checkpoint. Persistent storage remains disabled; issue #52 remains open. No APK build/release, merge, deployment, main edit, or user-data access/mutation.
+
+
+## 2026-11-14 — KT-483: deterministic migration diagnostics
+
+- Canonicalized the parser's derived `daily.reward_claimed_dates` and `unknown_keys` arrays in lexicographic order. Diagnostic output no longer depends on Dictionary insertion order; the original `source_backup` remains untouched.
+- Added a forward/reverse insertion-order regression pair for multiple daily reward markers and unknown source keys, plus a source-immutability assertion.
+- This remains a pure read-only parser change. No localStorage access, `user://` writes, profile import, reward settlement, or user-data mutation was added.
+- Exact-HEAD Godot Native Project Check is **pending** for this commit. Do not mark KT-483 accepted until import, parse, migration/model suites, visual capture and scene smoke all pass.
+- Next: continue source-grounded daily challenge schema and recovery-fixture audit. Keep persistent writes disabled; open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved. Physical Android checks are still outstanding.
+
+
+## 2026-11-14 — KT-483 deterministic migration diagnostics validated
+
+- Code/test HEAD `d9eb98c72bdac6146693de7cbe91a5eb9b1ea037` passed exact-HEAD Godot Native Project Check [run 43592599214](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592599214).
+- All 16 workflow steps succeeded: Godot 4.4.1 setup/import, main-scene parse, Classic model tests, Web save migration tests (including forward/reverse key-order regression), Block Run model/effect/board/session/bridge/live integration tests, visual capture/upload, and scene smoke test.
+- Downloaded and inspected artifact [14113295830](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592599214/artifacts/14113295830) (9 PNGs). The 360×800 arena keeps the 10×23 board 2D, Buddy in the left safe gutter, and Drop outside the board. The results overlay correctly covers the arena. The Buddy is still small at 360×800; legibility and one-hand comfort remain physical-device acceptance items.
+- KT-483 changes only the order of derived migration diagnostics; the original source snapshot remains read-only. No persistent `user://` writes, browser storage access, migration execution or reward settlement.
+- The Godot PR remains Draft and targets the foundation branch. The foundation remains 20 commits ahead / 448 behind current `main`; the Godot branch is 285 commits ahead / 0 behind its foundation base. Do not merge, retarget or mechanically rebase this stack.
+- No APK build/release, physical Android test, main edit, deployment, image generation, external code agent or user-data mutation occurred.
+
+
+## 2026-11-14 — KT-484: preserve Buddy's game-over reaction
+
+- Code inspection found a real visibility contradiction: `_sync_buddy_state()` set Buddy to `surprised` at game over but hid the companion whenever the result overlay was visible. The animation therefore could not be seen.
+- Centralized Buddy visibility in `_buddy_should_be_visible()`: ordinary pause and completed-objective overlays still hide Buddy; an actual game-over state keeps Buddy visible so the surprised reaction can render in the left gutter above the results overlay.
+- Extended the Godot visual smoke test to assert visible `happy` after a normal line clear, visible `victory` after a four-line clear, and visible `surprised` during game-over results.
+- Exact-HEAD Godot Native Project Check is pending. The change is confined to the Godot feature branch and does not touch gameplay rules, saves, economy, web project or `main`.
+
+
+## 2026-11-14 — KT-484 exact-HEAD validation complete
+
+- PR #77 code/test HEAD `e6c79e873632b35035bac20d8524eecc3a3a5d0d` passed the exact-HEAD Godot Native Project Check [run 43593881967](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43593881967).
+- All 18 workflow steps succeeded: Godot 4.4.1 setup/import, main-scene parse, Classic model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- Downloaded artifact [14114055260](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43593881967/artifacts/14114055260) (9 PNGs) and inspected `02-classic-arena.png`, `07-block-run-results.png`, `08-mobile-360-arena.png`, and `09-mobile-360-results.png`. The 360×800 capture shows the unchanged 2D 10×23 board, Buddy in the left safe gutter, and Drop outside the board. The game-over capture shows Buddy's `surprised` state still visible with the results overlay; the 720×1280 capture shows the larger Buddy treatment. These are CI/Xvfb viewport captures, not physical Android screenshots.
+- KT-484's regression assertions now pass for visible `happy` after a normal line clear, visible `victory` after a four-line clear, and visible `surprised` during game-over results. The visibility fix does not alter scoring, collision, board rules, save schema, economy or web source.
+- Buddy remains small at 360×800; actual-device legibility and one-hand comfort remain open. Android portrait/landscape pause-resume, safe-area behavior and touch feel are not physically verified.
+- Web-save migration remains a read-only parser/contract: no `user://` writes, automatic Web profile import, wallet reconciliation, campaign migration or daily-reward migration. Open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved.
+- PR #77 remains Draft on the Godot feature branch. Its foundation base is `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`; the Godot branch is 290 commits ahead / 0 behind that base. The foundation itself is 20 ahead / 448 behind current `main@20d66e3171522feb010a81522dc3f5cf4334d936`. PR #78 remains stacked on #77 and PR #81 on #78; preserve the chain and do not mechanically rebase.
+- No main edit, old web-project edit, merge, deployment, APK build/release, persistent storage write, image generation, external code agent or user-data mutation.
+
+
+## 2026-11-14 — KT-485: portrait-first landscape guard
+
+- The Godot project was configured with `window/handheld/orientation=1`, which locks the app to portrait and prevents the requested in-app landscape guard from being exercised. It now uses sensor orientation (`6`) so Android/iOS can report portrait and landscape; Godot 4.4 defines `SCREEN_SENSOR=6` as automatic landscape or portrait.
+- Active mobile gameplay now polls the actual display orientation. Landscape/reverse-landscape freezes the same run, blocks all game input, hides Buddy, and draws an original cyan/graphite portrait-return placeholder. Returning to portrait restores the exact pre-rotation pause state: an unpaused run resumes automatically, while a manual pause remains paused.
+- The mode selector, completed objectives and game-over results are not replaced by the guard. Desktop landscape is unaffected. The board remains 2D at 10×23; no gameplay rules or save data change.
+- Added deterministic coverage for both landscape directions, portrait/reverse-portrait, desktop, menu/results exclusion, sensor fallback, gravity/timer freeze, input blocking, and preservation of manual pause. The visual capture suite now includes an 800×360 landscape-guard screenshot.
+- Godot CI validation is pending on the new feature-branch commit. Physical Android portrait/landscape behavior remains unverified until tested on a real device; CI viewport simulation is not device acceptance.
+- No APK build/export, main edit, merge, deployment, persistent storage write, or old web-project change.
+
+
+- CI first pass [43596187953](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596187953) exposed a test-harness issue: the deterministic test injected a landscape guard on Linux, then the per-frame platform sync cleared it because the host is not mobile. The runtime poll now exits immediately on non-mobile platforms; the regression test intentionally verifies that a simulated guard remains active in desktop CI. Re-run pending.
+
+
+## 2026-11-14 — KT-485 exact-HEAD validation complete
+
+- The first orientation-guard run [43596187953](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596187953) failed in the deterministic test at the gravity-freeze assertion. Job logs confirmed that the desktop CI host cleared the injected mobile landscape guard during `_sync_orientation_guard()`, so the test run advanced gravity. The fix makes the runtime orientation poll return immediately on non-mobile platforms while keeping the guard helper directly testable in desktop CI.
+- Exact-HEAD Godot Native Project Check [run 43596294522](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596294522) on code commit `25573e53e44bf8d288f5bdaabe0decdb1de12e61` completed **SUCCESS**. Godot 4.4.1 import, scene parse, orientation tests, Classic model tests, Web migration tests, all Block Run suites, visual capture/upload and scene smoke test passed.
+- Downloaded and inspected artifact [14114800677](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596294522/artifacts/14114800677) (10 PNGs), including `08-mobile-360-arena.png` and `10-landscape-orientation-guard.png`. The 360×800 viewport shows the 2D 10×23 board, Buddy in the left safe gutter and Drop outside the board; the 800×360 capture shows the portrait-return pause guard.
+- This is Godot/Xvfb viewport evidence, not a physical Android test. Sensor rotation, safe areas, touch feel and automatic resume still require a real device.
+
+
+## 2026-11-14 — KT-486: validate daily challenge migration records
+
+- Audited the current Web source at `main@20d66e3171522feb010a81522dc3f5cf4334d936`: assignments and history store complete dated rule snapshots (`date`, `title`, `symbol`, `desc`, `goal`, `rule`, `mod`); history status is `completed` or `replayed`; replay completion is a unique array of date strings; the standard completion marker is a date string.
+- Extended the read-only Godot migration parser to reject assignment/history records whose date does not match the dictionary key, missing rule fields, unknown history statuses, invalid or duplicate replay dates, and malformed standard completion dates.
+- Updated the representative fixture to match the actual Web record shape and added adversarial fixtures for each invalid case. Raw source snapshots remain unchanged and preserved in `source_backup`; this does not execute migration or issue rewards.
+- Code/test HEAD `2631f77f1d30dedad24e615cead2d3a002c301ba` passed exact-HEAD Godot Native Project Check [run 43597017006](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43597017006). Godot import, parse, orientation, Classic/model, migration, Block Run model/effect/board/session/bridge/live integration, visual capture/upload and scene smoke checks all completed **SUCCESS**.
+- Downloaded and inspected artifact [14114801600](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43597017006/artifacts/14114801600) (10 PNGs), including the 360×800 arena and 800×360 orientation guard. The board remains 2D at 10×23; Buddy is still small on the narrow viewport, so legibility and one-hand comfort remain physical-device acceptance items.
+- No `user://` persistence, Web storage access, migration execution, wallet/reward settlement, user-data mutation, main edit, merge, deployment or APK build/export was added.
+- Next: continue the source-grounded audit of visit-streak fields and daily completion/history/replay cross-consistency, then add atomic-write/recovery fixtures. Keep persistent storage disabled; parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open. Physical Android portrait/landscape and touch checks remain outstanding.
+
+
+## 2026-11-14 — KT-487: read-only visit-streak and daily receipt validation
+
+- Audited the Web source at `main@20d66e3171522feb010a81522dc3f5cf4334d936`: `bbVisitStreak` uses seven fields; standard daily completion writes the completed-date marker, per-date reward marker and `completed` history status; replay writes the replayed-date array and `replayed` history status.
+- Added a read-only validator for visit-streak date/counter ranges and internal consistency. Older partial objects receive safe defaults only in the import candidate; the raw source snapshot remains unchanged in `source_backup`.
+- Added review-only diagnostics for missing or contradictory standard/replay receipts. No reward is granted, no source key is rewritten, and no persistent storage is enabled.
+- Added deterministic fixtures for malformed streak dates/counters, best-streak bounds, broken-streak pairing, reward milestones, and daily completion/replay mismatches.
+- Exact-HEAD Godot Native Project Check [run 43598965029](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43598965029) on code/test SHA `01a038e5b32073dd4867cdb65e8363bb225389ef` — **SUCCESS**. Godot 4.4.1 import, main scene parse, portrait-first orientation guard, gameplay model, Web migration parser, Block Run model/effect/board/session/bridge/live integration, visual capture and scene smoke all passed. Artifact [14115720952](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43598965029/artifacts/14115720952) was downloaded and inspected: all 10 captures are present, including the 360px portrait 2D arena and landscape orientation guard. Headless capture logged missing ALSA device warnings and fell back to dummy audio; this was non-blocking and the workflow stayed green. The checkpoint-only head `495daa73137fc890cbf1abd3a6ab32d09132ec00` was also validated by [run 43599416314](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43599416314) — **SUCCESS** — with the same full job set. Its visual artifact [14115218956](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43599416314/artifacts/14115218956) was downloaded and the 360px portrait arena plus landscape guard were inspected again.
+- No Web runtime, gameplay rules, economy, campaign, user data, `main`, old project, APK/export or deployment changes.
+- Next: add pure atomic-write/recovery fixtures and a failure-safe storage adapter design. Keep all persistent `user://` writes disabled until recovery tests pass and the user approves the migration boundary.
+

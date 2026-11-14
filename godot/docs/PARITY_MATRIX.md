@@ -10,7 +10,7 @@
 | Mode | Confirmed source behavior | Source | Godot migration status |
 |---|---|---|---|
 | Campaign | Node/sector progression; node-specific objectives; line-clear/placement/rotation/hold counters; campaign perks and relic choices; campaign completion checks. | `site/index.html`: `startGameNow()`, `bbGetNodeGoals()`, `bbCheckCampaignCompletion()`, `bbCampaignRun`; `docs/checkpoints/CHECKPOINT_389_GAMEPLAY_EVOLUTION_AND_VISUAL_QA.md`. | Not implemented. |
-| Block Run (`rogue`) | Roguelike run; 35 upgrade cards with ranks/synergies; room/floor progression; monster HP and timed attacks; three run goals; hero abilities interact with monster/board. | `site/index.html`: `upgrades`, `bbRogueStartRoom()`, `bbRogueRenderEncounter()`, `bbRogueEnemyAttack()`, `bbRogueDamageEnemy()`, `showUpgrade()`, `bbRenderGoals()`; checkpoint #389. | Not implemented. |
+| Block Run (`rogue`) | Roguelike run; 35 upgrade cards with ranks/synergies; room/floor progression; monster HP and timed attacks; three run goals; hero abilities interact with monster/board. | `site/index.html`: `upgrades`, `bbRogueStartRoom()`, `bbRogueRenderEncounter()`, `bbRogueEnemyAttack()`, `bbRogueDamageEnemy()`, `showUpgrade()`, `bbRenderGoals()`; checkpoint #389; native KT-466. | **Domain + deterministic effects + board/session integration**: encounter model, card event calculations, validated board mutations, timed attacks, line-clear damage, Reserve, Rift, three live goals/replacement events, and source-matched active abilities for all five Buddy heroes with level-5 unlock and 45-second cooldown. Coordinator is not wired to main scene; playable run loop not implemented. |
 | Daily | Date-assigned challenge catalog with goal/rule/modifier; per-day history and assignments; replay/archive; daily completion and rewards; modifiers affect gameplay/timers. | `site/index.html`: `dailyRules`, `bbDailyRuleForDate()`, `bbGetActiveDailyRule()`, `bbResetDailyMechanicState()`, `bbCheckDailyCompletion()`, `bbDailySaveChallengeHistory()`; checkpoint #389. | Not implemented. |
 
 **Mode boundary:** upgrade drafting/ranks/synergies, room/floor state and monster encounter timers are Block Run-only. Campaign keeps its own progression/perks/relic choices. Daily keeps its own modifier system. Do not merge these systems into one generic progression loop.
@@ -98,9 +98,123 @@ This is an inventory of observed keys, not a finalized native save schema. Befor
 
 - Board height was corrected from 20 to 23.
 - Tetromino order and colors were corrected to match the source.
-- Native model remains a simplified prototype: campaign, Block Run, daily modifiers, monster encounters, relic/card drafting, hero abilities, Hold, persistence and full source gravity/scoring parity are not implemented.
+- Native model remains a simplified prototype: Campaign and Daily are not implemented. Block Run has KT-466–KT-473 domain/effect/board/session foundations, including three live goals, all five hero abilities, and tested Shield/Iron Fortress/Nova board rescue mutations. The session coordinator is not wired to the main scene; reward-wallet settlement, live piece/board lifecycle, draft/encounter/goals HUD and run-end flow remain pending. Persistent storage is intentionally deferred. Full source gravity/scoring parity is not yet approved.
 - 3D Buddy presentation is still pending. The gameplay board remains 2D by design.
 
 ## Recovery phrase
 
 `BLOCK BUDDIES GODOT — KT-GODOT-002 initial audit. Legacy source baseline main@8fc2b889; board is 10×23; tetromino order I/T/J/L/O/S/Z; five Buddy IDs plush/prism/blip/pixel/spark. Continue source parity audit, preserve campaign/Block Run/daily boundaries, do not invent rules, do not touch main, do not build APK. Godot branch: godot/android-native-foundation-2026-11-05.`
+
+
+## 10. Detailed save audit addendum — KT-446
+
+The full key inventory, sampled data shapes, actual helper-expanded key names, alias/conflict hazards, reset-flow warning, proposed native profile/run split, migration precedence, atomic-write requirements and required migration fixtures are documented in [SAVE_MIGRATION_CONTRACT.md](SAVE_MIGRATION_CONTRACT.md).
+
+Important corrections/clarifications from the deeper source pass:
+- `bbGet('coins')` / `bbPut('coins', ...)` operate on actual key `bb_coins`; `coins` and `bbCoins` are separate raw aliases/mirrors and are not consistently synchronized by every reward path.
+- Per-hero campaign perks are stored under actual keys `bb_bbCampaignPerks_<heroId>` because the helper adds its own `bb_` prefix.
+- Campaign marks (`bbCampaignMarks`) and Block Run relics (`nrRelics`) are separate currencies.
+- Current daily quests, quest archive, challenge assignment/history/completion/replay markers and visit streak are separate records; importing them must never issue rewards.
+- KT-445 currently serializes an in-memory gameplay run only. It does not implement disk persistence or the durable profile described in the new contract.
+
+Status: **KT-446 source audit and proposed contract complete; implementation and migration fixtures pending.** No Web source, main branch, deployment, APK or user data was changed.
+
+
+## 11. KT-447 — read-only migration parser
+
+- `scripts/web_save_migration.gd` converts a supplied Web localStorage snapshot into a candidate profile without reading or writing any storage itself.
+- Candidate output retains a deep copy of every original key/value pair, reports unknown keys, and flags conflicting coin aliases for review. Divergent aliases without `bb_coins` block import.
+- Dedicated fixtures cover representative progression, currency separation, legacy hero/cosmetic fallback, malformed JSON and daily reward idempotency markers.
+- CI run `42450365090` on `55e0a8701b97c5b3e45dbcf7576d8d8417504b1c` passed all five stages including the new migration tests.
+- Persistent storage and migration execution remain intentionally disabled.
+
+
+## 12. KT-448 — adversarial migration validation
+
+- Parser now checks observed consumable/perk IDs, hero-scoped campaign perk maps, equipped-cosmetic owner IDs, current daily quest record fields, date-keyed challenge records and date ranges.
+- Orphan reward markers are preserved and flagged for review instead of being treated as a new reward.
+- Added adversarial fixtures for unknown inventory/perk/hero IDs, incomplete daily quests and reward/history disagreement.
+- CI run `42450599486` on `31b0545a9a7447b3b42c86ee1c1238327009cc16` passed import, parse, gameplay tests, migration tests and scene smoke test.
+- These checks validate candidate data only; persistent storage and migration execution remain disabled.
+
+
+## KT-449 — Daily history migration safeguards
+
+- Web quest archive entries are `{date, quests}` records keyed by the same date; quest records require id/title/target/progress/reward/claimed.
+- Web trims the archive to 90 sorted date keys only on a subsequent save. Native migration preserves every imported archive entry, including entries beyond 90, and warns rather than truncating.
+- Calendar validation follows Gregorian month lengths and leap years.
+- Daily challenge catalog signature is retained as an opaque exact source value. A changed catalog in Web clears assignments only; it does not clear history or reward markers. Native migration must not regenerate historical assignments or settle rewards.
+
+
+## 13. KT-472 — Block Run hero ability parity
+- Source: `site/index.html`, `bbUseHeroActiveSkill()`, legacy baseline audited during KT-472.
+- Native session method `use_hero_skill(hero_id, hero_level)` matches the five Block Run branches:
+  - `plush`: clear top `min(H, 2 + tier)` rows.
+  - `prism`: damage enemy by `8 + tier × 5`.
+  - `blip`: add `12 + tier × 4` seconds to the next enemy attack.
+  - `pixel`: clear `tier` bottom rows and add `tier` level charge.
+  - `spark`: damage enemy by `12 + tier × 5`.
+- Tier is `1 + floor((heroLevel - 5) / 5)`; unlock at hero level 5; shared skill cooldown 45 seconds, advanced by active Block Run seconds.
+- On Prism/Spark kill, the drafted Rift card is applied using the existing bottom-row clear effect.
+- Regression tests cover all five branches, lockout below level 5, tier-2 scaling, cooldown and enemy damage.
+- CI run `42467652778` passed all code and screenshot pipeline stages on code SHA `0ce7ed5fba9a30bebeef406375612283317a7598`.
+- Status boundary: this is tested session/domain behavior, not yet live UI integration. No hero skill is exposed in the current main scene.
+
+
+## 14. KT-473 — Shield / Iron Fortress / Nova rescue
+- Session method `on_spawn_collision()` now applies the source-selected rescue and mutates the isolated 10×23 board.
+- Shield: consume one charge; deterministic 22% fill across the lower 3 rows.
+- Shield + Armor / Iron Fortress: consume one charge; deterministic 10% fill across the lower 5 rows.
+- Nova: clear the rank-scaled bottom rows once per run; later collisions cannot reuse it.
+- Regression tests cover charge, mutation geometry, combined shield/armor, Nova and one-time use.
+- CI run `42468010685` on code SHA `d79a40dc78d112f5ea6b077ac3b24e278687c816`: **SUCCESS**, including rendered viewport screenshots and scene smoke test.
+- This remains session/domain behavior; live game model/main scene does not yet call the rescue method.
+
+
+## 15. KT-474 — live-board bridge foundation
+- Added validated two-way synchronization between the 10×23 Classic model grid and Block Run session board. Invalid grids are rejected without partial writes.
+- Added a live spawn-rescue revalidation helper: the active piece must fit after board mutation; otherwise the encounter remains failed.
+- Existing renderer now handles the Block Run garbage tile value safely.
+- CI run 42472885866 passed all model, migration, Block Run domain/board/session/bridge tests, graphical screenshot capture/upload and scene smoke test.
+- Integration boundary remains explicit: `main.gd` has not yet connected every live gameplay event to the bridge. Block Run remains hidden/unplayable; no screenshot currently depicts it.
+
+
+## 16. KT-475 — live Block Run event routing
+- Main scene now has an internal (not user-selectable) Block Run session path.
+- Gameplay model lock serials let the scene dispatch piece placement exactly once; line-progress deltas feed the session's line-clear event.
+- Timed enemy attacks synchronize the encounter board back to the live model. Garbage overflow ends the run; the active piece is checked after board shifts.
+- Dedicated tests verify one-time dispatch, no duplicate frame processing, garbage insertion into the visible model board and top-out on overflow. CI run 42473197674 passed all suites and graphical screenshot capture.
+- Full Block Run remains hidden: card draft, hero activation, complete encounter/goals HUD, safe wallet reward settlement and run-end UX are not yet wired. End-to-end live spawn rescue still requires a focused integration test.
+
+
+## 17. KT-476 — Hold spawn-collision event ordering
+- Hold-triggered replacement-piece spawn collisions are now processed even when no piece-lock serial changes.
+- Regression test fills the spawn row, invokes Hold, and verifies the Block Run session reaches its rescue/failure decision path.
+- CI run 42473308354 passed all tests and visual capture stages.
+- Successful live Shield/Nova rescue remains to be verified end-to-end; the mode is still not exposed.
+
+
+## 18. KT-477 — Shield/Nova top-out rescue parity
+- Web-source audit confirmed Shield replaces the entire board with empty rows plus a sparse randomized lower zone; native implementation previously retained the obstructing upper stack. Native Shield now matches the full-board reset, including 3-row and Iron Fortress 5-row variants.
+- Live scene integration tests verify Shield clears a blocked spawn and resumes; Nova's rank-1 bottom-row clear resumes a valid horizontal-I spawn after the old top row shifts down.
+- Initial Nova test fixture used a multi-row piece for a one-row rescue and failed strict collision validation; corrected the test geometry rather than weakening runtime validation.
+- CI run 42473876259 on code SHA 5d19c2ff9f240578bfab1e588a5f5d7c0c77070f passed all tests, visual capture and scene smoke test.
+- Block Run remains hidden until card/hero/goal/result UI and reward settlement are complete.
+
+
+## 19. KT-478 — Block Run level-up card draft
+- Source trigger verified in Web `levelUp()`: pause the run, show three upgrade choices, apply one choice, then resume. Repeated cards increase rank up to five.
+- Native session now advances its own level from cleared-line charge, applies the source threshold/gravity progression, creates three unique offers, and accepts only an offered card while a draft is open. The visible choice increments exactly one rank and closes the draft.
+- Native scene provides touch cards and keyboard 1/2/3. The run clock and falling-piece gravity stop while the draft is open. Block Run HUD shows room/floor and enemy HP; Buddy is hidden behind the modal.
+- CI run 42474850074 on code HEAD `66e379fd75a225e7b9c1f84f9c9f9238f3c62b66`: **SUCCESS** — all import/parse, Classic, migration, Block Run model/effect/board/session/bridge/live tests, graphical capture and scene smoke checks passed.
+- New real rendered artifact includes `03-block-run-card-draft.png` at 720×1280. This verifies the modal render only; the complete Block Run mode remains internal and is not exposed in the selector.
+- Still pending: encounter and three-goal HUD, hero skill input/cooldown display, exactly-once wallet reward settlement, run-end/results UX, and full-run playtesting. Persistence remains deferred. No main merge, deployment, APK or physical Android test.
+
+
+## 20. KT-479 — Block Run goals and combat HUD
+- Added live 3-goal progress cards with Russian goal-family labels, current/target progress and reward amount.
+- Added enemy HP, room/boss, floor, attack countdown and active synergy count to the arena HUD. Synergy count comes from actual drafted card pairs.
+- Rebalanced vertical HUD spacing and draw order to keep the goals strip visible above the arena frame and keep the full 10×23 board/control-free layout.
+- Live integration tests cover goal ratio/labels, active goals, attack countdown and synergy activation.
+- Graphical capture `04-block-run-goals-hud.png` at 720×1280 inspected; CI run 42475838582 on code HEAD 2fbde4a924003e6945959065ff570a23e0df8822: **SUCCESS**.
+- Remaining: hero ability input/cooldown UI, exactly-once reward settlement, run-end screen and full-run QA. Block Run is still internal/hidden; no main merge, deploy, APK or persistence work.

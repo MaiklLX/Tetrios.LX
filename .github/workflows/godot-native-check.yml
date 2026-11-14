@@ -32,8 +32,43 @@ jobs:
         run: godot --headless --editor --path godot --quit
       - name: Parse main scene script
         run: godot --headless --path godot --check-only --script res://scripts/main.gd
+      - name: Run portrait-first orientation guard tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/orientation_guard_test.gd
       - name: Run model tests
         timeout-minutes: 2
         run: godot --headless --path godot --script res://tests/game_model_test.gd
+      - name: Run Web save migration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/web_save_migration_test.gd
+      - name: Run Block Run model tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_model_test.gd
+      - name: Run Block Run event effect tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_effects_test.gd
+      - name: Run Block Run board mutation tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_board_test.gd
+      - name: Run Block Run session integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_session_test.gd
+      - name: Run Block Run live-board bridge tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_bridge_test.gd
+      - name: Run Block Run live gameplay integration tests
+        timeout-minutes: 2
+        run: godot --headless --path godot --script res://tests/block_run_live_integration_test.gd
+      - name: Run visual screenshot capture
+        timeout-minutes: 2
+        run: xvfb-run -a godot --path godot --rendering-method gl_compatibility --script res://tests/visual_capture_test.gd
+      - name: Upload visual screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: block-buddies-visual-checks
+          path: artifacts/screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 14
       - name: Run scene smoke test
         run: godot --headless --path godot --quit-after 3
