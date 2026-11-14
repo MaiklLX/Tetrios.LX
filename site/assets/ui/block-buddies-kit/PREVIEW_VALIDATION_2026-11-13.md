@@ -1,11 +1,11 @@
-# KT-427 exact-parent preview evidence — 2026-11-13
+# KT-427 preview evidence — 2026-11-14
 
 ## Parent branch snapshot
 
 - PR: [#76 — KT-427: restore BLOCK BUDDIES pixel brand identity](https://github.com/MaiklLX/Tetrios.LX/pull/76)
 - Branch: `design/kt427-block-buddies-brand-identity-2026-11-07`
-- Parent HEAD before this validation-record commit: `de44ce949d19b4e8ea84f2a2b5dbdfe08581897d`
-- PR remains Draft. It is 56 commits ahead / 90 behind current `main@20d66e3171522feb010a81522dc3f5cf4334d936`; mergeability is false. Do not rebase or merge mechanically.
+- Current PR #76 HEAD before KT-427.14 evidence refresh: `eeb317d8af147b29ddeba3733cac2141c5097b68`
+- PR remains Draft. It is 66 commits ahead / 90 behind current `main@20d66e3171522feb010a81522dc3f5cf4334d936`; mergeability is false. Do not rebase or merge mechanically.
 
 ## Stacked regression runs inspected
 
@@ -19,7 +19,7 @@ The test-only PR #89 branch is based on parent checkpoint `4f1275311d817d319a220
 
 ## Exact-parent validation gate
 
-This file is added under `site/**` so the PR's path-filtered Mobile Arena and Cross-platform workflows run against the current PR #76 head. Do not mark KT-427 complete until those fresh runs finish on the resulting parent SHA and their artifacts are inspected.
+This file is updated under `site/**` to request fresh path-filtered Mobile Arena and Cross-platform workflows against the resulting PR #76 head. Do not mark KT-427 complete until those fresh runs finish on that SHA and their artifacts are inspected.
 
 ## Safety
 
@@ -34,3 +34,27 @@ No gameplay, balance, persistence, wallet, campaign, user data, or old project c
 - PR #76 current HEAD had no associated check-runs/workflow runs at this audit. This update is under `site/**` specifically to request fresh path-filtered Mobile Arena and Cross-platform previews on the updated parent PR head.
 - Acceptance remains pending until both workflows complete on the resulting PR #76 HEAD and their artifacts/geometry reports are inspected. A stacked test PR or older SHA is not an exact-parent substitute.
 - Browser automation remains separate from physical-device testing. Keep PR #76 Draft; no merge, rebase, deployment, APK, game-rule, save-data or user-data changes.
+
+
+## 2026-11-14 — KT-427.14: coordinate-touch regression evidence
+
+### Earlier PR #76 preview baseline
+
+- Mobile Arena Visual Preview [run 42406781492](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42406781492) — **SUCCESS** on SHA `a20795c9a6e3dcd5bef498aee3c4907ba04dbac8`.
+- Cross-platform Visual Preview [run 42406781408](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42406781408) — **SUCCESS** on the same SHA.
+- Downloaded and inspected mobile artifact [13587746752](https://github.com/MaiklLX/Tetrios.LX/actions/runs/42406781492/artifacts/13587746752): both 375×812 and 412×915 screenshots are present. The geometry report records no horizontal page overflow; at 375×812 the board frame and utility rail are both 494.75px high, Hold and Drop remain inside the rail, and the goals panel stays inside the viewport. These captures are from the older a20795 snapshot, not the current PR #76 head.
+
+### Touch interaction regression and fix
+
+- Stacked test PR [#90](https://github.com/MaiklLX/Tetrios.LX/pull/90), head `36e63f466d95baf1f5b867f090e38c8e1e31412d`, failed Cross-platform Visual Preview [run 43592769174](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592769174) on iOS WebKit 375×812. The log shows the Pause target was visible, enabled and stable; Playwright scrolled it into view and began `locator.tap()`, then timed out. No page exception was reported. This is a touch-automation timeout, not evidence that the Pause control is absent.
+- The current PR #76 script at the parent snapshot uses coordinate-based `page.touchscreen.tap(x, y)` after verifying `document.elementFromPoint()` resolves to the intended control. It then checks actual state transitions: Hold changes the active piece, Pause sets the paused state, Resume clears it, and Drop changes the active piece.
+- Stacked test PR [#91](https://github.com/MaiklLX/Tetrios.LX/pull/91), head `d1e906639a8652b8f9e0f9ce7afee1d5e0de0725`, based on PR #76 parent `a33174ec979217644d0f05d04c6086dfc3e73500`, passed Cross-platform Visual Preview [run 43593443365](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43593443365) — **SUCCESS**. Downloaded artifact [14113881848](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43593443365/artifacts/14113881848) contains 64 captures and a report for 10 targets with zero report failures and no page errors. Inspected the iOS WebKit 375×812 final arena screenshot and the 375×812 / 412×915 geometry records. This validates the coordinate-touch fix on the stacked a33174 parent, not the latest PR #76 head.
+- PR #76 current HEAD `eeb317d8af147b29ddeba3733cac2141c5097b68` has no exact-head Mobile Arena or Cross-platform run. The latest runs on the PR #76 branch itself remain the older 2026-11-10 runs on SHA `67bf06715cf6566ec3f6360b257062d05163b1be`.
+
+### Exact-head gate requested
+
+This evidence refresh changes only this validation document under `site/**`, so the path-filtered Mobile Arena and Cross-platform workflows should run against the resulting PR #76 head. Acceptance remains **PENDING** until both exact-head workflows complete and their artifacts/geometry reports are inspected. Do not treat PR #91's stacked run or the older a20795 preview as exact-head confirmation.
+
+### Safety
+
+No gameplay/runtime code, balance, progression, save data, economy, campaign, old project, `main`, deployment or release was changed. PR #76 remains Draft. No APK build/export, image generation, DeepSeek Harness or external code agent was used. Physical Android/iPhone touch and orientation testing remains unverified.
