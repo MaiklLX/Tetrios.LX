@@ -74,8 +74,7 @@ func _layout() -> void:
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
-		var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-		buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
+		buddy.visible = _buddy_should_be_visible(buddy_layout.visible)
 	queue_redraw()
 
 func _mode_select_layout(viewport: Vector2) -> Dictionary:
@@ -416,6 +415,17 @@ func _open_mode_select() -> void:
 func _mode_finished() -> bool:
 	return mode_session != null and not mode_session.is_running()
 
+func _buddy_should_be_visible(layout_visible: bool) -> bool:
+	if not layout_visible or _block_run_draft_is_open():
+		return false
+	# Keep Buddy visible for the surprised game-over reaction, even while the
+	# result overlay is drawn. A user pause or completed objective still hides it.
+	if game != null and game.game_over:
+		return true
+	if paused:
+		return false
+	return mode_session == null or mode_session.status != ModeSession.STATUS_COMPLETED
+
 func _sync_buddy_state() -> void:
 	if game == null:
 		return
@@ -424,8 +434,7 @@ func _sync_buddy_state() -> void:
 	if not is_instance_valid(buddy):
 		return
 	var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
-	var result_overlay_visible := paused or game.game_over or (mode_session != null and mode_session.status == ModeSession.STATUS_COMPLETED)
-	buddy.visible = buddy_layout.visible and not _block_run_draft_is_open() and not result_overlay_visible
+	buddy.visible = _buddy_should_be_visible(buddy_layout.visible)
 	if game.game_over:
 		if buddy.state != "surprised":
 			buddy.set_state("surprised", 0.0)
