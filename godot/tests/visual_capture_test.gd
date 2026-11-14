@@ -47,20 +47,20 @@ func _run() -> void:
 		return
 	scene.call("_select_mode", "classic")
 	var buddy = scene.get("buddy")
-	var classic_model = scene.get("game")
-	classic_model.lines = 1
+	var buddy_test_model = scene.get("game")
+	buddy_test_model.lines = 1
 	scene.call("_sync_buddy_state")
 	if buddy.state != "happy" or not buddy.visible:
 		push_error("Buddy must remain visible and happy after a normal line clear.")
 		quit(1)
 		return
-	classic_model.lines = 5
+	buddy_test_model.lines = 5
 	scene.call("_sync_buddy_state")
 	if buddy.state != "victory" or not buddy.visible:
 		push_error("Buddy must remain visible and celebrate a four-line clear.")
 		quit(1)
 		return
-	classic_model.lines = 0
+	buddy_test_model.lines = 0
 	scene.set("buddy_last_lines", 0)
 	buddy.set_state("idle", 0.0)
 	scene.call("_sync_buddy_state")
