@@ -37,6 +37,8 @@ var clear_flash_time := 0.0
 var clear_flash_count := 0
 var ambient_time := 0.0
 var paused := false
+var orientation_guard_active := false
+var orientation_pause_was_active := false
 var pause_rect := Rect2()
 var resume_rect := Rect2()
 var hold_rect := Rect2()
@@ -59,6 +61,7 @@ func _ready() -> void:
 
 func _layout() -> void:
 	screen_size = get_viewport_rect().size
+	_sync_orientation_guard()
 	var board_metrics := _board_metrics(screen_size)
 	board_rect = board_metrics.board_rect
 	drop_rect = _drop_button_layout(screen_size, board_rect)
@@ -74,6 +77,48 @@ func _layout() -> void:
 		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.scale = Vector2.ONE * buddy_layout.scale
 		buddy.position = Vector2(8.0, board_rect.position.y + 18.0)
+		buddy.visible = _buddy_should_be_visible(buddy_layout.visible)
+	queue_redraw()
+
+func _is_mobile_platform() -> bool:
+	var platform := OS.get_name()
+	return platform == "Android" or platform == "iOS"
+
+func _should_show_orientation_guard(orientation: int, viewport_size: Vector2, mobile_platform: bool, gameplay_active: bool) -> bool:
+	if not mobile_platform or not gameplay_active:
+		return false
+	if orientation == DisplayServer.SCREEN_LANDSCAPE or orientation == DisplayServer.SCREEN_REVERSE_LANDSCAPE:
+		return true
+	if orientation == DisplayServer.SCREEN_PORTRAIT or orientation == DisplayServer.SCREEN_REVERSE_PORTRAIT:
+		return false
+	return viewport_size.x > viewport_size.y
+
+func _sync_orientation_guard() -> void:
+	var mobile_platform := _is_mobile_platform()
+	var orientation := DisplayServer.SCREEN_PORTRAIT
+	var orientation_size := screen_size
+	if mobile_platform:
+		orientation = DisplayServer.screen_get_orientation()
+		var physical_size := DisplayServer.screen_get_size()
+		if physical_size.x > 0 and physical_size.y > 0:
+			orientation_size = Vector2(physical_size)
+	var gameplay_active := game != null and not mode_select_visible and not game.game_over and not _mode_finished()
+	_apply_orientation_guard(_should_show_orientation_guard(orientation, orientation_size, mobile_platform, gameplay_active))
+
+func _apply_orientation_guard(should_guard: bool) -> void:
+	if should_guard == orientation_guard_active:
+		return
+	if should_guard:
+		orientation_pause_was_active = paused
+		orientation_guard_active = true
+		paused = true
+	else:
+		orientation_guard_active = false
+		paused = orientation_pause_was_active
+		orientation_pause_was_active = false
+	touch_active = false
+	if is_instance_valid(buddy):
+		var buddy_layout := _buddy_layout_for_gutter(board_rect.position.x)
 		buddy.visible = _buddy_should_be_visible(buddy_layout.visible)
 	queue_redraw()
 
@@ -128,6 +173,9 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if game == null:
 		return
+	_sync_orientation_guard()
+	if orientation_guard_active:
+		return
 	if block_run_active:
 		_process_block_run_events()
 		_advance_block_run_clock(delta if not paused and not mode_select_visible else 0.0)
@@ -181,7 +229,9 @@ func start_block_run_session() -> bool:
 	block_run_last_lock_serial = game.lock_serial
 	block_run_last_lines = game.lines
 	block_run_clock = 0.0
-	return BlockRunBridge.sync_model_to_session(game, block_run_session)
+	var synchronized := BlockRunBridge.sync_model_to_session(game, block_run_session)
+	_sync_orientation_guard()
+	return synchronized
 
 func _process_block_run_events() -> void:
 	if not block_run_active or block_run_session == null or block_run_session.status != BlockRunSession.STATUS_RUNNING or _block_run_draft_is_open():
@@ -249,6 +299,8 @@ func _advance_block_run_clock(delta: float) -> void:
 
 
 func _restart_current_run() -> void:
+	if orientation_guard_active:
+		return
 	game.reset()
 	if block_run_active:
 		start_block_run_session()
@@ -260,9 +312,12 @@ func _restart_current_run() -> void:
 	clear_flash_time = 0.0
 	clear_flash_count = 0
 	buddy.set_state("idle", 0.0)
+	_sync_orientation_guard()
 	queue_redraw()
 
 func _unhandled_input(event: InputEvent) -> void:
+	if orientation_guard_active:
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if mode_select_visible:
 			if event.keycode == KEY_1:
@@ -346,12 +401,14 @@ func _handle_swipe(start: Vector2, finish: Vector2, duration_msec: int = 250) ->
 	return true
 
 func _toggle_pause() -> void:
-	if game == null or game.game_over or _mode_finished() or mode_select_visible:
+	if orientation_guard_active or game == null or game.game_over or _mode_finished() or mode_select_visible:
 		return
 	paused = not paused
 	queue_redraw()
 
 func _handle_tap(point: Vector2) -> void:
+	if orientation_guard_active:
+		return
 	if mode_select_visible:
 		if classic_mode_rect.has_point(point):
 			_select_mode("classic")
@@ -405,11 +462,14 @@ func _select_mode(requested_mode_id: String) -> void:
 	clear_flash_count = 0
 	if is_instance_valid(buddy):
 		buddy.set_state("idle", 0.0)
+	_sync_orientation_guard()
 	queue_redraw()
 
 func _open_mode_select() -> void:
 	mode_select_visible = true
+	orientation_pause_was_active = false
 	paused = false
+	_sync_orientation_guard()
 	queue_redraw()
 
 func _mode_finished() -> bool:
@@ -449,6 +509,9 @@ func _sync_buddy_state() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color("#070d1c"))
 	_draw_backdrop()
+	if orientation_guard_active:
+		_draw_orientation_guard()
+		return
 	if mode_select_visible:
 		_draw_mode_select()
 		return
@@ -852,6 +915,17 @@ func _draw_pause_overlay() -> void:
 	var label := "ПРОДОЛЖИТЬ"
 	var width := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x
 	draw_string(font, resume_rect.get_center() + Vector2(-width * 0.5, 6), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color("#f4f8ff"))
+
+func _draw_orientation_guard() -> void:
+	var panel_width := minf(360.0, maxf(180.0, screen_size.x - 40.0))
+	var panel_height := minf(210.0, maxf(150.0, screen_size.y - 40.0))
+	var panel_size := Vector2(panel_width, panel_height)
+	var panel := Rect2((screen_size - panel_size) * 0.5, panel_size)
+	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.90))
+	_draw_overlay_panel(panel, Color("#45d9f5"))
+	_center_text("ПОВЕРНИТЕ УСТРОЙСТВО", screen_size.y * 0.5 - 30.0, 18, Color("#f4f8ff"))
+	_center_text("ИГРА ПРИОСТАНОВЛЕНА", screen_size.y * 0.5 + 2.0, 12, Color("#83a3bd"))
+	_center_text("ВЕРНИТЕСЬ В ПОРТРЕТ", screen_size.y * 0.5 + 32.0, 11, Color("#45d9f5"))
 
 func _draw_mode_complete() -> void:
 	draw_rect(Rect2(Vector2.ZERO, screen_size), Color(0.01, 0.02, 0.04, 0.82))

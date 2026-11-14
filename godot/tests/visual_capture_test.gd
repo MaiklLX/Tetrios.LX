@@ -190,5 +190,21 @@ func _run() -> void:
 	if not await _capture(viewport, "09-mobile-360-results"):
 		quit(1)
 		return
+	scene.call("_restart_current_run")
+	viewport.size = Vector2i(800, 360)
+	scene.call("_layout")
+	scene.call("_apply_orientation_guard", true)
+	await process_frame
+	await process_frame
+	if not bool(scene.get("orientation_guard_active")) or not bool(scene.get("paused")):
+		push_error("Landscape guard must pause the active run before visual capture.")
+		quit(1)
+		return
+	if not await _capture(viewport, "10-landscape-orientation-guard"):
+		quit(1)
+		return
+	scene.call("_apply_orientation_guard", false)
+	viewport.size = Vector2i(360, 800)
+	scene.call("_layout")
 	print("Visual smoke captures completed.")
 	quit(0)

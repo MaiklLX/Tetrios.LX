@@ -424,3 +424,13 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - Web-save migration remains a read-only parser/contract: no `user://` writes, automatic Web profile import, wallet reconciliation, campaign migration or daily-reward migration. Open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved.
 - PR #77 remains Draft on the Godot feature branch. Its foundation base is `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`; the Godot branch is 290 commits ahead / 0 behind that base. The foundation itself is 20 ahead / 448 behind current `main@20d66e3171522feb010a81522dc3f5cf4334d936`. PR #78 remains stacked on #77 and PR #81 on #78; preserve the chain and do not mechanically rebase.
 - No main edit, old web-project edit, merge, deployment, APK build/release, persistent storage write, image generation, external code agent or user-data mutation.
+
+
+## 2026-11-14 — KT-485: portrait-first landscape guard
+
+- The Godot project was configured with `window/handheld/orientation=1`, which locks the app to portrait and prevents the requested in-app landscape guard from being exercised. It now uses sensor orientation (`6`) so Android/iOS can report portrait and landscape; Godot 4.4 defines `SCREEN_SENSOR=6` as automatic landscape or portrait.
+- Active mobile gameplay now polls the actual display orientation. Landscape/reverse-landscape freezes the same run, blocks all game input, hides Buddy, and draws an original cyan/graphite portrait-return placeholder. Returning to portrait restores the exact pre-rotation pause state: an unpaused run resumes automatically, while a manual pause remains paused.
+- The mode selector, completed objectives and game-over results are not replaced by the guard. Desktop landscape is unaffected. The board remains 2D at 10×23; no gameplay rules or save data change.
+- Added deterministic coverage for both landscape directions, portrait/reverse-portrait, desktop, menu/results exclusion, sensor fallback, gravity/timer freeze, input blocking, and preservation of manual pause. The visual capture suite now includes an 800×360 landscape-guard screenshot.
+- Godot CI validation is pending on the new feature-branch commit. Physical Android portrait/landscape behavior remains unverified until tested on a real device; CI viewport simulation is not device acceptance.
+- No APK build/export, main edit, merge, deployment, persistent storage write, or old web-project change.
