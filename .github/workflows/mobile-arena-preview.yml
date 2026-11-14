@@ -232,9 +232,9 @@ jobs:
                 }
               }
 
-              await page.locator('#holdBtn').evaluate(element=>element.click());
-              await page.locator('#game .side-drop').evaluate(element=>element.click());
-              await page.locator('#pauseBtn').evaluate(element=>element.click());
+              await page.locator('#holdBtn').tap();
+              await page.locator('#game .side-drop').tap();
+              await page.locator('#pauseBtn').tap();
               await page.locator('#overlay.show #resume').waitFor({state:'visible',timeout:8000});
               const resumeState=await page.locator('#overlay.show #resume').evaluate(element=>{
                 const style=getComputedStyle(element),r=element.getBoundingClientRect();
@@ -250,7 +250,7 @@ jobs:
               if(!resumeState.visible||!resumeState.enabled||resumeState.pointerEvents==='none'||!resumeState.hitMatches) {
                 failures.push('Resume control is not interactable at ' + viewport.name + ': ' + JSON.stringify(resumeState));
               }
-              await page.locator('#overlay.show #resume').evaluate(element=>element.click());
+              await page.locator('#overlay.show #resume').tap();
               await page.waitForFunction(()=>{
                 const overlay=document.querySelector('#overlay');
                 return !overlay||!overlay.classList.contains('show');
