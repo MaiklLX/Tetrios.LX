@@ -96,3 +96,11 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - The current parent branch has advanced to `88ae770`. The new file under `site/**` was added specifically to request path-filtered Mobile Arena and Cross-platform checks on the current parent. GitHub returned no workflow run or combined status for `88ae770` at this audit; exact-parent validation remains **pending**, not passed.
 - Current `main` remains `20d66e3171522feb010a81522dc3f5cf4334d936`; PR #76 remains Draft, 56 commits ahead / 90 behind, mergeability false. Preserve its brand assets; do not merge or mechanically rebase.
 - Browser preview remains separate from physical-device acceptance. No main edit, merge, deployment, APK build/release, image generation, external agent, or user-data mutation.
+
+
+## 2026-11-14 — KT-427.12: exercise real touch input in preview
+
+- Mobile Arena Visual Preview now uses Playwright `locator.tap()` for Hold, Drop, Pause and Resume instead of calling `HTMLElement.click()` directly. Cross-platform Visual Preview uses touchscreen taps on mobile contexts and mouse clicks on desktop.
+- Existing visibility, enabled-state, pointer-events, center hit-test, geometry and state-transition assertions remain. The change exercises the browser touch-input path rather than bypassing it with a synthetic DOM method.
+- This is still browser automation, not physical-device validation. The new checks are **pending** until fresh Mobile Arena and Cross-platform workflows complete on the resulting PR #76 HEAD and their artifacts are inspected.
+- PR #76 remains Draft and substantially diverged from current `main`; do not merge or mechanically rebase. No gameplay, balance, persistence, user data, deployment, or APK changes.
