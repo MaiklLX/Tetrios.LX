@@ -104,3 +104,11 @@ Visual review on narrow portrait screens and desktop is still required. This is 
 - Existing visibility, enabled-state, pointer-events, center hit-test, geometry and state-transition assertions remain. The change exercises the browser touch-input path rather than bypassing it with a synthetic DOM method.
 - This is still browser automation, not physical-device validation. The new checks are **pending** until fresh Mobile Arena and Cross-platform workflows complete on the resulting PR #76 HEAD and their artifacts are inspected.
 - PR #76 remains Draft and substantially diverged from current `main`; do not merge or mechanically rebase. No gameplay, balance, persistence, user data, deployment, or APK changes.
+
+
+## 2026-11-14 — KT-427.13: WebKit touch-action timeout diagnosed
+
+- Cross-platform run [43592769174](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592769174) failed at `ios-webkit-375x812` while calling Playwright `locator.tap()` on Pause. The element resolved and was visible, enabled and stable; the action timed out after the tap began. Earlier Hold and Drop taps completed. This was a test-input/actionability failure, not a reported page exception.
+- Replaced mobile `locator.tap()` with `page.touchscreen.tap()` at the verified element center. The helper first checks `elementFromPoint` so an obscured target still fails with a useful diagnostic; subsequent state assertions must prove Hold/Pause/Resume/Drop actually changed the game state.
+- Desktop continues to use a normal Playwright mouse click. No runtime gameplay or CSS changes were made.
+- Fresh cross-platform and Mobile Arena results are pending; do not mark the touchscreen gate passed until the rerun and artifact review complete.
