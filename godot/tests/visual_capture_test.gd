@@ -46,6 +46,24 @@ func _run() -> void:
 		quit(1)
 		return
 	scene.call("_select_mode", "classic")
+	var buddy = scene.get("buddy")
+	var classic_model = scene.get("game")
+	classic_model.lines = 1
+	scene.call("_sync_buddy_state")
+	if buddy.state != "happy" or not buddy.visible:
+		push_error("Buddy must remain visible and happy after a normal line clear.")
+		quit(1)
+		return
+	classic_model.lines = 5
+	scene.call("_sync_buddy_state")
+	if buddy.state != "victory" or not buddy.visible:
+		push_error("Buddy must remain visible and celebrate a four-line clear.")
+		quit(1)
+		return
+	classic_model.lines = 0
+	scene.set("buddy_last_lines", 0)
+	buddy.set_state("idle", 0.0)
+	scene.call("_sync_buddy_state")
 	await process_frame
 	await process_frame
 	if not await _capture(viewport, "02-classic-arena"):
@@ -132,6 +150,11 @@ func _run() -> void:
 	block_run_session.status = "failed"
 	scene.get("game").game_over = true
 	scene.call("_sync_buddy_state")
+	var result_buddy = scene.get("buddy")
+	if not result_buddy.visible or result_buddy.state != "surprised":
+		push_error("Buddy must stay visible and react with surprise during game-over results.")
+		quit(1)
+		return
 	scene.queue_redraw()
 	await process_frame
 	await process_frame
