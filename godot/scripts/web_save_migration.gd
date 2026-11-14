@@ -158,8 +158,14 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 		_validate_daily_quests(daily["quests_current"], result)
 	if daily.has("quest_archive"):
 		_validate_daily_archive(daily["quest_archive"], result)
-	_validate_date_dictionary(daily.get("challenge_assignments", {}), "bbDailyChallengeAssignments", result)
-	_validate_date_dictionary(daily.get("challenge_history", {}), "bbDailyChallengeHistory", result)
+	_validate_daily_challenge_records(daily.get("challenge_assignments", {}), "bbDailyChallengeAssignments", false, result)
+	_validate_daily_challenge_records(daily.get("challenge_history", {}), "bbDailyChallengeHistory", true, result)
+	if daily.has("replayed_dates"):
+		_validate_replayed_dates(daily["replayed_dates"], result)
+	if daily.has("last_completed_date"):
+		var completed_date := str(daily["last_completed_date"])
+		if not completed_date.is_empty() and not _looks_like_date(completed_date):
+			_add_error(result, "bbDailyChallengeCompletedDate must contain a valid date")
 	if typeof(daily.get("challenge_history", {})) == TYPE_DICTIONARY:
 		for reward_date in reward_dates:
 			if not daily.get("challenge_history", {}).has(reward_date):
@@ -256,12 +262,37 @@ static func _validate_daily_quest_entries(quests: Array, result: Dictionary) -> 
 		if not _is_non_negative_int(quest.get("reward")) or typeof(quest.get("claimed")) != TYPE_BOOL:
 			_add_error(result, "Daily quest reward/claimed fields are malformed")
 
-static func _validate_date_dictionary(value: Variant, source_key: String, result: Dictionary) -> void:
+static func _validate_daily_challenge_records(value: Variant, source_key: String, is_history: bool, result: Dictionary) -> void:
 	if typeof(value) != TYPE_DICTIONARY:
 		return
 	for date_key in value.keys():
-		if not _looks_like_date(str(date_key)) or typeof(value[date_key]) != TYPE_DICTIONARY:
-			_add_error(result, source_key + " contains an invalid date record")
+		var date_text := str(date_key)
+		var entry: Variant = value[date_key]
+		if not _looks_like_date(date_text) or typeof(entry) != TYPE_DICTIONARY:
+			_add_error(result, source_key + " contains an invalid date record: " + date_text)
+			continue
+		if typeof(entry.get("date")) != TYPE_STRING or str(entry.get("date")) != date_text:
+			_add_error(result, source_key + " record date does not match its key: " + date_text)
+		for field in ["title", "symbol", "desc", "goal", "rule", "mod"]:
+			if typeof(entry.get(field)) != TYPE_STRING or str(entry.get(field)).strip_edges().is_empty():
+				_add_error(result, source_key + " record is missing a non-empty " + field + ": " + date_text)
+		if is_history:
+			var status_value: Variant = entry.get("status")
+			if typeof(status_value) != TYPE_STRING or not ["completed", "replayed"].has(str(status_value)):
+				_add_error(result, source_key + " record has an invalid status: " + date_text)
+
+static func _validate_replayed_dates(value: Variant, result: Dictionary) -> void:
+	if typeof(value) != TYPE_ARRAY:
+		return
+	var seen_dates := {}
+	for date_value in value:
+		if typeof(date_value) != TYPE_STRING or not _looks_like_date(str(date_value)):
+			_add_error(result, "bbDailyReplayCompleted contains an invalid date")
+			continue
+		var date_text := str(date_value)
+		if seen_dates.has(date_text):
+			_add_error(result, "bbDailyReplayCompleted contains a duplicate date: " + date_text)
+		seen_dates[date_text] = true
 
 static func _read_value(raw: Dictionary, key: String, json_encoded: bool) -> Variant:
 	if not raw.has(key):

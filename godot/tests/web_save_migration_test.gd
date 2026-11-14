@@ -45,6 +45,12 @@ func _run() -> void:
 		return
 	if not _check(typical_import.profile.daily.reward_claimed_dates == ["2026-11-07"], "Reward idempotency markers must be retained"):
 		return
+	if not _check(typical_import.profile.daily.replayed_dates == ["2026-11-06"], "Valid replay completion dates must be retained"):
+		return
+	if not _check(typical_import.profile.daily.challenge_assignments["2026-11-08"]["mod"] == "gravity", "Daily challenge assignments must preserve the complete dated rule snapshot"):
+		return
+	if not _check(typical_import.profile.daily.challenge_history["2026-11-07"]["status"] == "completed" and typical_import.profile.daily.challenge_history["2026-11-06"]["status"] == "replayed", "Daily challenge history must preserve completed and replayed statuses"):
+		return
 	if not _check(typical_import.source_backup == typical_before and typical_raw == typical_before, "Parser must not mutate input and must preserve backup"):
 		return
 
@@ -123,6 +129,21 @@ func _run() -> void:
 		return
 	var invalid_calendar: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_calendar_date"]["local_storage"])
 	if not _check(not invalid_calendar.ok, "Impossible calendar dates such as February 29 in a non-leap year must be rejected"):
+		return
+	var invalid_assignment: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_daily_challenge_assignment"]["local_storage"])
+	if not _check(not invalid_assignment.ok, "Daily challenge assignment date must match its key and include a complete rule snapshot"):
+		return
+	var invalid_history_status: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_daily_challenge_history_status"]["local_storage"])
+	if not _check(not invalid_history_status.ok, "Daily challenge history must use a known completed/replayed status"):
+		return
+	var invalid_replay_date: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_replay_date"]["local_storage"])
+	if not _check(not invalid_replay_date.ok, "Replay completion dates must be real calendar dates"):
+		return
+	var duplicate_replay_dates: Dictionary = WebMigration.parse_local_storage(fixtures["duplicate_replay_dates"]["local_storage"])
+	if not _check(not duplicate_replay_dates.ok, "Replay completion dates must not contain duplicates"):
+		return
+	var invalid_completed_date: Dictionary = WebMigration.parse_local_storage(fixtures["invalid_daily_completed_date"]["local_storage"])
+	if not _check(not invalid_completed_date.ok, "Daily completion marker must be a valid calendar date"):
 		return
 	var large_archive: Dictionary = {}
 	for day_index in range(91):
