@@ -58,3 +58,12 @@ This evidence refresh changes only this validation document under `site/**`, so 
 ### Safety
 
 No gameplay/runtime code, balance, progression, save data, economy, campaign, old project, `main`, deployment or release was changed. PR #76 remains Draft. No APK build/export, image generation, DeepSeek Harness or external code agent was used. Physical Android/iPhone touch and orientation testing remains unverified.
+
+
+## 2026-11-14 — KT-427.15: exact-head trigger outcome
+
+- Evidence refresh commit `1a4794d52f03fbeac7c9b36955d3483d1696abb6` changed only this validation record under `site/**`. After the update, GitHub returned no workflow runs and no check-runs for that exact SHA; the PR #76 branch run history still ends with the 2026-11-10 Mobile Arena / Cross-platform runs on `67bf06715cf6566ec3f6360b257062d05163b1be`.
+- Therefore the expected path-filtered Mobile Arena and Cross-platform jobs did **not** start on the resulting PR #76 head. This is a missing exact-head validation, not a passing check. Do not mark KT-427 complete.
+- PR #91's coordinate-touch Cross-platform success remains useful stacked evidence on parent `a33174ec979217644d0f05d04c6086dfc3e73500`, but it is not an exact-head run for PR #76. PR #76 remains Draft and currently 67 commits ahead / 90 behind `main`; no mechanical rebase or merge was attempted.
+- Next safe step: obtain a fresh Mobile Arena and Cross-platform run against the current PR #76 head, then inspect the resulting artifacts. Do not substitute old `a20795` previews or stacked PR #91 results.
+- No runtime/gameplay, balance, progression, save data, user data, `main`, deployment, APK/export, image generation or external-agent changes.
