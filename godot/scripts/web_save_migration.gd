@@ -151,6 +151,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 				reward_dates.append(date_text)
 			else:
 				_add_error(result, "Malformed daily reward marker: " + key_text)
+	reward_dates.sort()
 	daily["reward_claimed_dates"] = reward_dates
 	_validate_equipped_cosmetics(cosmetics["equipped_by_hero"], result)
 	if daily.has("quests_current"):
@@ -173,6 +174,7 @@ static func parse_local_storage(raw: Dictionary) -> Dictionary:
 				_add_error(result, "Campaign perks reference an unknown hero: " + perk_hero_id)
 		if not _is_known_key(key_text):
 			result["unknown_keys"].append(key_text)
+	result["unknown_keys"].sort()
 	if not result["unknown_keys"].is_empty():
 		result["warnings"].append("Unknown source keys were preserved in source_backup and were not imported")
 
