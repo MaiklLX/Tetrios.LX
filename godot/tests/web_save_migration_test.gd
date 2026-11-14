@@ -73,6 +73,30 @@ func _run() -> void:
 	if not _check(unknown.ok and unknown.unknown_keys.has("custom_mod_data") and unknown.source_backup.has("custom_mod_data"), "Unknown keys must be reported and retained in backup"):
 		return
 
+	print("Web migration tests: deterministic diagnostic ordering")
+	var diagnostics_forward: Dictionary = {}
+	diagnostics_forward["bb_coins"] = "20"
+	diagnostics_forward["bbDailyRewardClaimed:2026-11-08"] = "1"
+	diagnostics_forward["custom_z"] = "z"
+	diagnostics_forward["bbDailyRewardClaimed:2026-11-07"] = "1"
+	diagnostics_forward["custom_a"] = "a"
+	var diagnostics_reverse: Dictionary = {}
+	diagnostics_reverse["custom_a"] = "a"
+	diagnostics_reverse["bbDailyRewardClaimed:2026-11-07"] = "1"
+	diagnostics_reverse["custom_z"] = "z"
+	diagnostics_reverse["bbDailyRewardClaimed:2026-11-08"] = "1"
+	diagnostics_reverse["bb_coins"] = "20"
+	var forward_diagnostics: Dictionary = WebMigration.parse_local_storage(diagnostics_forward)
+	var reverse_diagnostics: Dictionary = WebMigration.parse_local_storage(diagnostics_reverse)
+	var expected_reward_dates := ["2026-11-07", "2026-11-08"]
+	var expected_unknown_keys := ["custom_a", "custom_z"]
+	if not _check(forward_diagnostics.profile.daily.reward_claimed_dates == expected_reward_dates and reverse_diagnostics.profile.daily.reward_claimed_dates == expected_reward_dates, "Reward marker output must be sorted independently of source key insertion order"):
+		return
+	if not _check(forward_diagnostics.unknown_keys == expected_unknown_keys and reverse_diagnostics.unknown_keys == expected_unknown_keys, "Unknown-key diagnostics must be sorted independently of source key insertion order"):
+		return
+	if not _check(diagnostics_forward.bb_coins == "20" and diagnostics_reverse.bb_coins == "20", "Canonical diagnostic ordering must not mutate the source snapshot"):
+		return
+
 	print("Web migration tests: malformed reward marker")
 	var bad_marker: Dictionary = WebMigration.parse_local_storage(fixtures["malformed_reward_marker"]["local_storage"])
 	if not _check(not bad_marker.ok, "Malformed reward marker must block import"):
