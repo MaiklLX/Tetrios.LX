@@ -385,3 +385,12 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - Exact-HEAD Godot Native Project Check [run 43419029037](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43419029037) completed **SUCCESS** (workflow #567). All 16 validation steps passed: Godot 4.4.1 setup/import, scene script parse, Classic/model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, screenshot capture/upload, and scene smoke test.
 - Downloaded and inspected artifact [14033535985](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43419029037/artifacts/14033535985) (9 PNGs). The 360×800 capture again shows Buddy in the left gutter, a 2D 10×23 board, and visible Drop. The viewport is a CI/Xvfb capture, not a physical Android device.
 - No gameplay code changed in this checkpoint. Persistent storage remains disabled; issue #52 remains open. No APK build/release, merge, deployment, main edit, or user-data access/mutation.
+
+
+## 2026-11-14 — KT-483: deterministic migration diagnostics
+
+- Canonicalized the parser's derived `daily.reward_claimed_dates` and `unknown_keys` arrays in lexicographic order. Diagnostic output no longer depends on Dictionary insertion order; the original `source_backup` remains untouched.
+- Added a forward/reverse insertion-order regression pair for multiple daily reward markers and unknown source keys, plus a source-immutability assertion.
+- This remains a pure read-only parser change. No localStorage access, `user://` writes, profile import, reward settlement, or user-data mutation was added.
+- Exact-HEAD Godot Native Project Check is **pending** for this commit. Do not mark KT-483 accepted until import, parse, migration/model suites, visual capture and scene smoke all pass.
+- Next: continue source-grounded daily challenge schema and recovery-fixture audit. Keep persistent writes disabled; open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved. Physical Android checks are still outstanding.
