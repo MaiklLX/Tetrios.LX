@@ -437,3 +437,22 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 
 
 - CI first pass [43596187953](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596187953) exposed a test-harness issue: the deterministic test injected a landscape guard on Linux, then the per-frame platform sync cleared it because the host is not mobile. The runtime poll now exits immediately on non-mobile platforms; the regression test intentionally verifies that a simulated guard remains active in desktop CI. Re-run pending.
+
+
+## 2026-11-14 — KT-485 exact-HEAD validation complete
+
+- The first orientation-guard run [43596187953](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596187953) failed in the deterministic test at the gravity-freeze assertion. Job logs confirmed that the desktop CI host cleared the injected mobile landscape guard during `_sync_orientation_guard()`, so the test run advanced gravity. The fix makes the runtime orientation poll return immediately on non-mobile platforms while keeping the guard helper directly testable in desktop CI.
+- Exact-HEAD Godot Native Project Check [run 43596294522](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596294522) on code commit `25573e53e44bf8d288f5bdaabe0decdb1de12e61` completed **SUCCESS**. Godot 4.4.1 import, scene parse, orientation tests, Classic model tests, Web migration tests, all Block Run suites, visual capture/upload and scene smoke test passed.
+- Downloaded and inspected artifact [14114800677](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43596294522/artifacts/14114800677) (10 PNGs), including `08-mobile-360-arena.png` and `10-landscape-orientation-guard.png`. The 360×800 viewport shows the 2D 10×23 board, Buddy in the left safe gutter and Drop outside the board; the 800×360 capture shows the portrait-return pause guard.
+- This is Godot/Xvfb viewport evidence, not a physical Android test. Sensor rotation, safe areas, touch feel and automatic resume still require a real device.
+
+
+## 2026-11-14 — KT-486: validate daily challenge migration records
+
+- Audited the current Web source at `main@20d66e3171522feb010a81522dc3f5cf4334d936`: assignments and history store complete dated rule snapshots (`date`, `title`, `symbol`, `desc`, `goal`, `rule`, `mod`); history status is `completed` or `replayed`; replay completion is a unique array of date strings; the standard completion marker is a date string.
+- Extended the read-only Godot migration parser to reject assignment/history records whose date does not match the dictionary key, missing rule fields, unknown history statuses, invalid or duplicate replay dates, and malformed standard completion dates.
+- Updated the representative fixture to match the actual Web record shape and added adversarial fixtures for each invalid case. Raw source snapshots remain unchanged and preserved in `source_backup`; this does not execute migration or issue rewards.
+- Code/test HEAD `2631f77f1d30dedad24e615cead2d3a002c301ba` passed exact-HEAD Godot Native Project Check [run 43597017006](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43597017006). Godot import, parse, orientation, Classic/model, migration, Block Run model/effect/board/session/bridge/live integration, visual capture/upload and scene smoke checks all completed **SUCCESS**.
+- Downloaded and inspected artifact [14114801600](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43597017006/artifacts/14114801600) (10 PNGs), including the 360×800 arena and 800×360 orientation guard. The board remains 2D at 10×23; Buddy is still small on the narrow viewport, so legibility and one-hand comfort remain physical-device acceptance items.
+- No `user://` persistence, Web storage access, migration execution, wallet/reward settlement, user-data mutation, main edit, merge, deployment or APK build/export was added.
+- Next: continue the source-grounded audit of visit-streak fields and daily completion/history/replay cross-consistency, then add atomic-write/recovery fixtures. Keep persistent storage disabled; parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains open. Physical Android portrait/landscape and touch checks remain outstanding.

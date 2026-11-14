@@ -192,7 +192,7 @@ This is a **shape proposal**, not a finalized list of game rules. Fields such as
 4. Plush legacy XP only; Plush per-hero only; both present with matching values; both present but conflicting.
 5. Legacy single cosmetic equip; per-hero cosmetic equip; invalid owner collision.
 6. Daily quest current date, stale date, 90+ day archive trim, challenge catalog signature change.
-7. Standard daily completion with marker/history/date all present; partial marker combinations; already replayed date.
+7. Standard daily completion with marker/history/date all present; full dated challenge assignment/history snapshots; `completed` versus `replayed` status; partial marker combinations; valid, invalid and duplicate replay dates; already replayed date.
 8. Unknown Web key preservation and malformed JSON handling.
 9. Unknown/future native schema rejection without overwriting the prior valid file.
 10. Interrupted atomic write recovery and backup restore.
@@ -201,9 +201,9 @@ This is a **shape proposal**, not a finalized list of game rules. Fields such as
 
 ## 9. Work boundary and next steps
 
-- **Done:** source-key inventory, helper/direct-key distinction, data-shape sampling, alias hazards, transient-vs-durable classification, proposed versioned contract and migration test list.
-- **Not done:** complete value-range audit for every gameplay system, source-side export format, migration code, Godot disk persistence, autosave, cross-device/cloud sync, physical Android verification.
-- Next: add migration fixtures as pure test data and a read-only parser/validator. Do not connect it to `user://` writes until conflict rules are covered and the user approves the migration boundary.
+- **Done:** source-key inventory, helper/direct-key distinction, data-shape sampling, alias hazards, transient-vs-durable classification, proposed versioned contract, and an initial read-only parser/validator with fixtures for wallet aliases, hero fallbacks, daily quest/archive schemas, full daily challenge assignment/history snapshots, replay/completion markers and deterministic diagnostics.
+- **Not done:** complete value-range audit for every gameplay system, source-side export format, migration execution, Godot disk persistence, autosave, cross-device/cloud sync, atomic-write/recovery acceptance, physical Android verification.
+- Next: validate visit-streak fields and daily completion/history/replay cross-consistency, then add atomic-write/recovery fixtures. Do not connect it to `user://` writes until conflict rules are covered and the user approves the migration boundary.
 - No main-branch edits, merge, deploy, APK build or release.
 
 ## Recovery phrase
