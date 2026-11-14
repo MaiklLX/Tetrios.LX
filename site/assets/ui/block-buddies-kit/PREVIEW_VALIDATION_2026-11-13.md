@@ -24,3 +24,13 @@ This file is added under `site/**` so the PR's path-filtered Mobile Arena and Cr
 ## Safety
 
 No gameplay, balance, persistence, wallet, campaign, user data, or old project changes. No `main` edit, merge, deployment, APK build/release, image generation, or external code agent. Physical iPhone/Android touch and orientation behavior remains unverified.
+
+
+## 2026-11-14 — KT-427.13: coordinate touchscreen path; exact-parent CI requested
+
+- Current PR #76 branch HEAD before this validation-record update: `a33174ec979217644d0f05d04c6086dfc3e73500`.
+- The preview script now uses verified coordinate `page.touchscreen.tap()` for mobile contexts. Before tapping, it checks that `document.elementFromPoint()` resolves to the intended control; after the tap, the test checks the actual Hold/Drop/Pause/Resume state transitions. Desktop continues to use mouse clicks. Runtime gameplay/CSS is unchanged.
+- The preceding `locator.tap()` timeout is from the separate stacked test-only PR [#90](https://github.com/MaiklLX/Tetrios.LX/pull/90), head `36e63f466d95baf1f5b867f090e38c8e1e31412d`, not from PR #76. Cross-platform run [43592769174](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592769174) failed only at iOS WebKit 375×812 while tapping Pause: the button resolved and was visible, enabled and stable, but Playwright's `locator.tap()` timed out after the tap began. No page exception was reported. The run's partial artifact is [14113042274](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43592769174/artifacts/14113042274); it did not reach the final iOS gameplay capture.
+- PR #76 current HEAD had no associated check-runs/workflow runs at this audit. This update is under `site/**` specifically to request fresh path-filtered Mobile Arena and Cross-platform previews on the updated parent PR head.
+- Acceptance remains pending until both workflows complete on the resulting PR #76 HEAD and their artifacts/geometry reports are inspected. A stacked test PR or older SHA is not an exact-parent substitute.
+- Browser automation remains separate from physical-device testing. Keep PR #76 Draft; no merge, rebase, deployment, APK, game-rule, save-data or user-data changes.
