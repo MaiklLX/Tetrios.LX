@@ -412,3 +412,15 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - Centralized Buddy visibility in `_buddy_should_be_visible()`: ordinary pause and completed-objective overlays still hide Buddy; an actual game-over state keeps Buddy visible so the surprised reaction can render in the left gutter above the results overlay.
 - Extended the Godot visual smoke test to assert visible `happy` after a normal line clear, visible `victory` after a four-line clear, and visible `surprised` during game-over results.
 - Exact-HEAD Godot Native Project Check is pending. The change is confined to the Godot feature branch and does not touch gameplay rules, saves, economy, web project or `main`.
+
+
+## 2026-11-14 — KT-484 exact-HEAD validation complete
+
+- PR #77 code/test HEAD `e6c79e873632b35035bac20d8524eecc3a3a5d0d` passed the exact-HEAD Godot Native Project Check [run 43593881967](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43593881967).
+- All 18 workflow steps succeeded: Godot 4.4.1 setup/import, main-scene parse, Classic model tests, Web save migration tests, Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- Downloaded artifact [14114055260](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43593881967/artifacts/14114055260) (9 PNGs) and inspected `02-classic-arena.png`, `07-block-run-results.png`, `08-mobile-360-arena.png`, and `09-mobile-360-results.png`. The 360×800 capture shows the unchanged 2D 10×23 board, Buddy in the left safe gutter, and Drop outside the board. The game-over capture shows Buddy's `surprised` state still visible with the results overlay; the 720×1280 capture shows the larger Buddy treatment. These are CI/Xvfb viewport captures, not physical Android screenshots.
+- KT-484's regression assertions now pass for visible `happy` after a normal line clear, visible `victory` after a four-line clear, and visible `surprised` during game-over results. The visibility fix does not alter scoring, collision, board rules, save schema, economy or web source.
+- Buddy remains small at 360×800; actual-device legibility and one-hand comfort remain open. Android portrait/landscape pause-resume, safe-area behavior and touch feel are not physically verified.
+- Web-save migration remains a read-only parser/contract: no `user://` writes, automatic Web profile import, wallet reconciliation, campaign migration or daily-reward migration. Open parity/migration issue [#52](https://github.com/MaiklLX/Tetrios.LX/issues/52) remains unresolved.
+- PR #77 remains Draft on the Godot feature branch. Its foundation base is `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`; the Godot branch is 290 commits ahead / 0 behind that base. The foundation itself is 20 ahead / 448 behind current `main@20d66e3171522feb010a81522dc3f5cf4334d936`. PR #78 remains stacked on #77 and PR #81 on #78; preserve the chain and do not mechanically rebase.
+- No main edit, old web-project edit, merge, deployment, APK build/release, persistent storage write, image generation, external code agent or user-data mutation.
