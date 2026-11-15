@@ -11,6 +11,7 @@ on:
     branches:
       - 'feature/gameplay-evolution-*'
       - 'feature/visual-redesign-*'
+      - 'design/kt427-block-buddies-brand-identity-2026-11-07'
     paths:
       - 'site/**'
       - 'scripts/cross-platform-visual-preview.cjs'
