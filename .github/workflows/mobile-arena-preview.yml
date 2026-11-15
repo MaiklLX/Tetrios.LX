@@ -1,6 +1,11 @@
 name: Mobile Arena Visual Preview
 
 on:
+  # Run on every update to the KT-427 design branch so documentation-only
+  # checkpoints still receive an exact-HEAD visual validation.
+  push:
+    branches:
+      - 'design/kt427-block-buddies-brand-identity-2026-11-07'
   pull_request:
     branches:
       - main
@@ -12,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: mobile-arena-preview-${{ github.event.pull_request.number }}
+  group: mobile-arena-preview-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -23,7 +28,7 @@ jobs:
       - name: Check out PR source (no deployment)
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
