@@ -1,6 +1,6 @@
 /* TETRIOS.LX — self-playing decorative arena. Independent from the real game. */
 (() => {
- const canvas=document.querySelector('#menu .hero-arena-canvas'),host=canvas?.closest('#menu')||canvas?.parentElement;
+ const canvas=document.querySelector('.app > .hero-arena-canvas'),host=canvas?.parentElement;
  if(!canvas||!host)return;
  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
@@ -102,10 +102,10 @@
  const render=()=>{
   ctx.clearRect(0,0,w,h);
   const glow=ctx.createRadialGradient(w*.5,h*.48,4,w*.5,h*.48,Math.max(w,h)*.7);glow.addColorStop(0,'rgba(22,128,220,.16)');glow.addColorStop(1,'rgba(3,8,24,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle='rgba(89,188,255,.105)';ctx.lineWidth=1;
+  ctx.strokeStyle='rgba(89,188,255,.14)';ctx.lineWidth=1;
   for(let x=0;x<=cols;x++){ctx.beginPath();ctx.moveTo(x*cell,0);ctx.lineTo(x*cell,h);ctx.stroke()}
   for(let y=0;y<=rows;y++){ctx.beginPath();ctx.moveTo(0,y*cell);ctx.lineTo(w,y*cell);ctx.stroke()}
-  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(grid[y][x])block(x,y,grid[y][x],.48);
+  for(let y=0;y<rows;y++)for(let x=0;x<cols;x++)if(grid[y][x])block(x,y,grid[y][x],.62);
   if(piece)piece.shape.forEach(([x,y])=>{if(piece.y+y>=0)block(piece.x+x,piece.y+y,piece.color,.92)});
   clearBursts.forEach(fx=>{
    const alpha=Math.max(0,fx.life),yy=fx.y*cell;
