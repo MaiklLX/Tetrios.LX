@@ -18979,3 +18979,42 @@ body>.app>.topbar{position:relative!important;z-index:3!important}
   body>.app>.hero-arena-canvas{opacity:.55!important}
 }
 </style>
+
+
+<style id="bb-kt678-page-world-final">
+/* KT-678: make the non-home sky the actual app surface, not a negative-z pseudo layer. */
+html,body{min-height:100%;background:#74cfff!important}
+body>.app{
+  min-height:100dvh!important;
+  background-color:#74cfff!important;
+  background-image:
+    radial-gradient(ellipse 30% 13% at 12% 18%,#f5fdffb8 0%,#f5fdff70 42%,transparent 76%),
+    radial-gradient(ellipse 26% 12% at 84% 26%,#f5fdffad 0%,#f5fdff66 44%,transparent 76%),
+    radial-gradient(ellipse 38% 18% at 48% 100%,#6de2d6b8 0%,transparent 76%),
+    radial-gradient(ellipse 27% 15% at 100% 82%,#8de7d2a8 0%,transparent 76%),
+    radial-gradient(ellipse 25% 14% at 0% 76%,#a4e9e5a8 0%,transparent 76%),
+    linear-gradient(180deg,#55bdf8 0%,#8cddff 43%,#b6efff 72%,#91e3e0 100%)!important;
+  background-attachment:fixed!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+}
+body>.app::before,body>.app::after{content:none!important;display:none!important}
+html.bb-home-visible,body.bb-home-visible{background:#07111d!important}
+body>.app.bb-home-visible{
+  background-color:#07111d!important;
+  background-image:none!important;
+}
+body>.app>.hero-arena-canvas{
+  display:block!important;position:fixed!important;inset:0!important;
+  width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;
+  z-index:0!important;visibility:hidden!important;opacity:0!important;
+  pointer-events:none!important;transition:opacity .35s ease!important;
+}
+body>.app.bb-home-visible>.hero-arena-canvas.is-active{
+  visibility:visible!important;opacity:.88!important;
+}
+body>.app>.topbar{position:relative!important;z-index:3!important}
+@media(max-width:600px){
+  body>.app:not(.bb-home-visible){background-position:center!important}
+}
+</style>
