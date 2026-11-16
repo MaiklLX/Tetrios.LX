@@ -17664,10 +17664,11 @@ body>canvas.bb-galaxy-model-canvas{display:none!important;visibility:hidden!impo
 <script id="bb-kt632-ui-ready">document.documentElement.classList.add('bb-ui-ready');
 // KT-645: one predictable back gesture for every internal screen.
 document.addEventListener('click',event=>{
-  const back=event.target.closest('.back, [data-home]');
+  /* Ordinary .back buttons already have screen-specific handlers.
+     Only the generic data-home control needs this fallback. */
+  const back=event.target.closest('[data-home]');
   if(!back)return;
   event.preventDefault();
-  event.stopImmediatePropagation();
   if(typeof window.bbNavigateBack==='function') window.bbNavigateBack();
 },true);
 </script>
