@@ -85,6 +85,11 @@ func _run() -> void:
 	var success_storage := MemoryStorage.new()
 	success_storage.files["profile.json"] = old_text
 	success_storage.files["profile.json.bak"] = prior_backup_text
+	var candidate_json := JSON.stringify(new_profile)
+	var parsed_candidate: Variant = JSON.parse_string(candidate_json)
+	print("Atomic save diagnostic: serialized=", candidate_json)
+	print("Atomic save diagnostic: parsed_types=", typeof(parsed_candidate), "/", typeof(parsed_candidate.get("schema_version")), "/", typeof(parsed_candidate.get("profile")))
+	print("Atomic save diagnostic: parsed_validator=", validator.call(parsed_candidate), " decode=", AtomicSave._decode_document(candidate_json, validator))
 	var success := AtomicSave.save_document(success_storage, "profile.json", new_profile, validator)
 	print("Atomic save diagnostic: validator_valid=", validator.is_valid(), " candidate_valid=", validator.call(new_profile))
 	print("Atomic save diagnostic: adapter_methods=", success_storage.has_method("read_text"), "/", success_storage.has_method("write_text"), "/", success_storage.has_method("flush"), "/", success_storage.has_method("replace_file"))

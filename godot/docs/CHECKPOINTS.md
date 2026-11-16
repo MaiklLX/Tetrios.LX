@@ -486,3 +486,9 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - First exact-HEAD run [43866746891](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43866746891) passed Godot 4.4.1 import, main script parse, orientation tests, Classic model tests and the full Web migration suite, then failed in the new atomic-save suite at its first successful-rotation assertion. Subsequent suites were skipped by the workflow's fail-fast behavior.
 - The job log identifies the failing assertion but the first run did not print the protocol's returned error code or in-memory operation trace. Added temporary test-only diagnostics; the next exact-HEAD run must identify the precise branch before any fix is accepted.
 - The failure is not being treated as a passing save/recovery implementation. No persistence adapter or real storage path is enabled.
+
+
+### KT-488 diagnostic refinement — 2026-11-16
+
+- The second exact-HEAD run [43866981321](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43866981321) reproduced the first-save failure and narrowed it to `candidate_round_trip_rejected`. The caller validator and adapter interface both reported valid before serialization; no storage operation ran, so active/backup bytes remained untouched.
+- Added test-only JSON round-trip diagnostics (serialized bytes, parsed Variant types, validator result and decoder error) to identify whether the rejection comes from JSON type coercion or the protocol decoder. A further exact-HEAD run is required before changing the protocol.
