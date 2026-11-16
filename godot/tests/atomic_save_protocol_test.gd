@@ -86,6 +86,9 @@ func _run() -> void:
 	success_storage.files["profile.json"] = old_text
 	success_storage.files["profile.json.bak"] = prior_backup_text
 	var success := AtomicSave.save_document(success_storage, "profile.json", new_profile, validator)
+	print("Atomic save diagnostic: validator_valid=", validator.is_valid(), " candidate_valid=", validator.call(new_profile))
+	print("Atomic save diagnostic: adapter_methods=", success_storage.has_method("read_text"), "/", success_storage.has_method("write_text"), "/", success_storage.has_method("flush"), "/", success_storage.has_method("replace_file"))
+	print("Atomic save diagnostic: result=", success, " operations=", success_storage.operations, " files=", success_storage.files)
 	if not _check(success.ok, "A valid candidate must be promoted"):
 		return
 	if not _check(_coins(success_storage.files["profile.json"]) == 80, "The new candidate must become active"):
