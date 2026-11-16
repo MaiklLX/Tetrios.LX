@@ -4,7 +4,7 @@
  if(!app)return;
  let canvas=app.querySelector(':scope > .hero-arena-canvas');
  if(!canvas){canvas=document.createElement('canvas');canvas.className='hero-arena-canvas';canvas.setAttribute('aria-hidden','true');app.prepend(canvas)}
- const host=app;
+ const home=document.querySelector('#menu');
  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
  const colors=['#36dfff','#9d75ff','#ffbd55','#63f5bd','#ff6f9f','#6e9cff','#d7f36b'];
  const shapes=[[[0,1],[1,1],[2,1],[3,1]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[0,1],[0,2],[1,2]],[[1,0],[1,1],[1,2],[0,2]],[[1,0],[2,0],[0,1],[1,1]],[[0,0],[1,0],[1,1],[2,1]]];
@@ -139,8 +139,10 @@
  const frame=now=>{raf=0;if(paused)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
  const start=()=>{if(paused||raf)return;last=0;raf=requestAnimationFrame(frame)};
  const stop=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
- const observer=new ResizeObserver(resize);observer.observe(host);window.addEventListener('resize',resize,{passive:true});window.visualViewport?.addEventListener('resize',resize,{passive:true});
- const io=new IntersectionObserver(entries=>{if(entries[0]?.isIntersecting)start();else stop()},{threshold:.02});io.observe(host);
+ const observer=new ResizeObserver(resize);observer.observe(app);window.addEventListener('resize',resize,{passive:true});window.visualViewport?.addEventListener('resize',resize,{passive:true});
+ const setHomeVisible=active=>{app.classList.toggle('bb-home-visible',!!active);canvas.classList.toggle('is-active',!!active);if(active)start();else stop()};
+ const io=new IntersectionObserver(entries=>setHomeVisible(!!entries[0]?.isIntersecting),{threshold:.02});
+ if(home){io.observe(home);setHomeVisible(home.getClientRects().length>0)}else setHomeVisible(true);
  document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)stop();else start()});
  resize();render();start();
 })();
