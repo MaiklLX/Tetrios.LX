@@ -1,6 +1,6 @@
 /* TETRIOS.LX — self-playing decorative arena. Independent from the real game. */
 (() => {
- const canvas=document.querySelector('.app > .hero-arena-canvas'),host=canvas?.parentElement;
+ const canvas=document.querySelector('.app > .hero-arena-canvas'),host=document.querySelector('#menu');
  if(!canvas||!host)return;
  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
