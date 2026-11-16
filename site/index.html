@@ -6026,6 +6026,73 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
   #menu.home-dashboard a{pointer-events:auto!important;touch-action:manipulation!important}
 }
 </style>
+
+<style id="bb-kt665-recovery-layout">
+/* KT-665: repair the dashboard and desktop arena using rules inside the document head. */
+@media (max-width:600px) {
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;
+    align-content:start!important;
+    gap:8px!important;
+    padding:0 0 16px!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > * {
+    grid-column:1!important;
+    min-width:0!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > .hero {
+    min-height:126px!important;height:126px!important;margin:0!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > .modes {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;
+    gap:8px!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > .modes > .mode {
+    display:flex!important;flex-direction:row!important;
+    justify-content:flex-start!important;align-items:center!important;
+    text-align:left!important;gap:12px!important;
+    width:100%!important;height:68px!important;min-height:68px!important;
+    padding:8px 12px!important;white-space:normal!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > .modes > .mode .modeicon {
+    width:44px!important;height:44px!important;flex:0 0 44px!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > .modes > .mode .modetitle {
+    font-size:14px!important;line-height:1.2!important;overflow-wrap:normal!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > .modes > .mode .modesub {
+    font-size:10px!important;line-height:1.2!important;-webkit-line-clamp:1!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > #dailyQuestsPanel #dailyQuestsList {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard.home-dashboard > #dailyQuestsPanel #dailyQuestsList > div:nth-child(3) {
+    grid-column:1/-1!important;
+  }
+}
+@media (min-width:901px) {
+  .app:has(#game:not([hidden])) {
+    height:100dvh!important;min-height:100dvh!important;
+    display:flex!important;flex-direction:column!important;
+  }
+  .app:has(#game:not([hidden])) > #game.screen:not([hidden]) {
+    display:flex!important;flex:1 1 0!important;
+    flex-direction:column!important;align-self:stretch!important;
+    width:100%!important;height:auto!important;
+    min-height:420px!important;max-height:none!important;
+    overflow:visible!important;
+  }
+  .app:has(#game:not([hidden])) > #game.screen:not([hidden]) > .playlayout {
+    flex:1 1 auto!important;min-height:0!important;
+    width:100%!important;align-items:stretch!important;
+  }
+}
+</style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -6898,6 +6965,8 @@ function bbNavigateBack(){
   show(previous);
   bbNavigatingBack=false;
 }
+// Expose the back-navigation bridge to independent UI scripts.
+window.bbNavigateBack = bbNavigateBack;
 
 function overlay(html,variant=''){const root=$('overlay'),modal=$('modal');root.classList.remove('bb-godot-pause-overlay','bb-godot-result-overlay');modal.classList.remove('bb-hero-showcase-modal');if(variant==='pause')root.classList.add('bb-godot-pause-overlay');if(variant==='result')root.classList.add('bb-godot-result-overlay');modal.innerHTML=html;root.classList.add('show')}function closeOverlay(){$('overlay').classList.remove('show','bb-daily-calendar-overlay','bb-godot-pause-overlay','bb-godot-result-overlay');$('modal').classList.remove('bb-hero-showcase-modal','bb-daily-calendar-modal','bb-upgrade-library-modal');if(typeof bbChestBusy!=='undefined')bbChestBusy=false}
 function updateStats(){$('bestScore').textContent=best.toLocaleString('ru-RU');$('runsCount').textContent=runCount;$('relicCount').textContent=relicCount}
@@ -17601,7 +17670,7 @@ document.addEventListener('click',event=>{
   if(!back)return;
   event.preventDefault();
   event.stopImmediatePropagation();
-  bbNavigateBack();
+  if(typeof window.bbNavigateBack==='function') window.bbNavigateBack();
 },true);
 </script>
 
