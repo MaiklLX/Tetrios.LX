@@ -262,6 +262,16 @@ const targets = [
     await campaignPage.goto('http://127.0.0.1:4173/index.html', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
+    const campaignScreenState=await campaignPage.evaluate(()=>Object.fromEntries(
+      ['menu','shopScreen','heroes','campaign','collection','daily','game'].map(id=>{
+        const el=document.getElementById(id);
+        return [id,{hidden:!!el?.hidden,display:el?getComputedStyle(el).display:'missing'}];
+      })
+    ));
+    if(campaignScreenState.campaign.hidden||campaignScreenState.campaign.display==='none'||
+       Object.entries(campaignScreenState).some(([id,state])=>id!=='campaign'&&(!state.hidden||state.display!=='none'))){
+      failures.push(target.name+': KT-669 screen replacement failed after opening campaign ('+JSON.stringify(campaignScreenState)+')');
+    }
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
     // KT-574: classic horizontal universe carousel with Godot's cosmic art direction.
     const atlasCarouselState=await campaignPage.locator('#campaign .bb-galaxy-viewport').evaluate(viewport=>{
@@ -579,7 +589,10 @@ const targets = [
     console.log('[stage:block-run-start] ' + target.name);
     await page.locator('button.mode[data-mode="rogue"]').click();
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
-    await page.locator('#bbConfirmStartHero').click();
+    // The hero showcase has an intentional entrance animation. Finish it in
+    // the visual test so Playwright does not mistake the animation for a stuck UI.
+    await page.locator('#bbConfirmStartHero').evaluate(el=>el.getAnimations({subtree:true}).forEach(animation=>animation.finish()));
+    await page.locator('#bbConfirmStartHero').click({force:true});
     try {
       await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     } catch (error) {
