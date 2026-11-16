@@ -6207,6 +6207,84 @@ html body #game[hidden] {
   #menu .mode,#game button{transition:none!important}
 }
 </style>
+
+  <style id="bb-kt672-stellar-atlas-route">
+    /* KT-672: replace the rigid atlas rail with a calm, winding star trail. */
+    #campaign .bb-galaxy-track{position:relative!important;isolation:isolate!important}
+    #campaign .bb-galaxy-track::before{
+      content:""!important;display:block!important;position:absolute!important;
+      z-index:0!important;pointer-events:none!important;
+      left:0!important;right:0!important;top:0!important;height:100%!important;
+      opacity:.9!important;box-shadow:none!important;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 315' preserveAspectRatio='none'%3E%3Cpath d='M0 166 C105 166 130 54 246 72 S390 266 510 210 S650 50 770 100 S930 270 1050 210 S1140 125 1200 145' fill='none' stroke='%2379dcd4' stroke-width='2.4' stroke-linecap='round' stroke-dasharray='1 13' opacity='.82'/%3E%3Cpath d='M0 166 C105 166 130 54 246 72 S390 266 510 210 S650 50 770 100 S930 270 1050 210 S1140 125 1200 145' fill='none' stroke='%2379dcd4' stroke-width='8' stroke-linecap='round' stroke-dasharray='1 13' opacity='.13'/%3E%3C/svg%3E")!important;
+      background-repeat:repeat-x!important;background-size:1200px 100%!important;
+    }
+    #campaign .bb-galaxy-track::after{
+      content:""!important;display:block!important;position:absolute!important;
+      z-index:0!important;inset:0!important;pointer-events:none!important;
+      opacity:.55!important;
+      background:
+        radial-gradient(circle at 9% 16%,#d6fff5 0 1px,transparent 2px),
+        radial-gradient(circle at 22% 84%,#8de8e0 0 1px,transparent 2px),
+        radial-gradient(circle at 39% 12%,#c6e9ff 0 1px,transparent 2px),
+        radial-gradient(circle at 57% 88%,#8de8e0 0 1px,transparent 2px),
+        radial-gradient(circle at 73% 18%,#d6fff5 0 1px,transparent 2px),
+        radial-gradient(circle at 91% 78%,#8de8e0 0 1px,transparent 2px)!important;
+    }
+    #campaign .bb-galaxy-card{z-index:1!important}
+    #campaign .bb-galaxy-card .bb-galaxy-art{z-index:1!important}
+    #campaign .bb-galaxy-card .bb-galaxy-model-slot{
+      position:relative!important;isolation:isolate!important;
+      overflow:visible!important;z-index:2!important;
+    }
+    #campaign .bb-galaxy-card .bb-galaxy-model-fallback{
+      position:relative!important;isolation:isolate!important;
+      display:grid!important;place-items:center!important;
+      width:96px!important;height:96px!important;flex:0 0 96px!important;
+      border-radius:50%!important;overflow:visible!important;
+      border:1px solid color-mix(in srgb,var(--biome-color) 72%,#b8e9df)!important;
+      background:
+        radial-gradient(circle at 29% 23%,#ffffffb8 0 3%,transparent 15%),
+        radial-gradient(ellipse at 34% 28%,color-mix(in srgb,var(--biome-color) 84%,#d8fff3) 0%,color-mix(in srgb,var(--biome-color) 68%,#183b4b) 43%,#071522 100%)!important;
+      box-shadow:
+        inset -13px -15px 22px #020812a8,
+        inset 3px 3px 9px #ffffff32,
+        0 0 0 5px color-mix(in srgb,var(--biome-color) 12%,transparent),
+        0 0 26px color-mix(in srgb,var(--biome-color) 38%,transparent)!important;
+      font-size:39px!important;line-height:1!important;
+      text-shadow:0 2px 8px #020812!important;
+      animation:bbKt672PlanetDrift 6.8s ease-in-out infinite!important;
+    }
+    #campaign .bb-galaxy-card .bb-galaxy-model-fallback::before{
+      content:""!important;position:absolute!important;z-index:-1!important;
+      width:118px!important;height:34px!important;left:50%!important;top:50%!important;
+      transform:translate(-50%,-50%) rotate(-24deg)!important;
+      border:1px solid color-mix(in srgb,var(--biome-color) 72%,#b8e9df)!important;
+      border-radius:50%!important;box-shadow:0 0 12px color-mix(in srgb,var(--biome-color) 24%,transparent)!important;
+      pointer-events:none!important;
+    }
+    #campaign .bb-galaxy-card .bb-galaxy-model-fallback::after{
+      content:""!important;position:absolute!important;inset:8px!important;
+      border-radius:50%!important;pointer-events:none!important;
+      background:linear-gradient(145deg,#ffffff1c,transparent 38%,#02081235 82%)!important;
+    }
+    #campaign .bb-galaxy-card.is-current .bb-galaxy-model-fallback{
+      box-shadow:
+        inset -13px -15px 22px #020812a8,
+        inset 3px 3px 9px #ffffff38,
+        0 0 0 6px #78e4d52b,
+        0 0 34px color-mix(in srgb,var(--biome-color) 52%,transparent)!important;
+    }
+    #campaign .bb-galaxy-card.is-locked .bb-galaxy-model-fallback{filter:saturate(.5) brightness(.72)!important}
+    #campaign .bb-atlas-intro strong{color:#e0f0ed!important;text-shadow:0 0 22px #62d8d022!important}
+    #campaign .bb-atlas-intro span{color:#70cfc6!important}
+    #campaign .bb-atlas-intro small{color:#91aaa9!important}
+    @keyframes bbKt672PlanetDrift{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg)}}
+    @media(prefers-reduced-motion:reduce){
+      #campaign .bb-galaxy-card .bb-galaxy-model-fallback{animation:none!important}
+    }
+  </style>
+
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
