@@ -18782,3 +18782,89 @@ body>canvas.bb-galaxy-model-canvas,
   #game.screen>.playlayout>.sidecol {width:92px!important;max-width:92px!important}
 }
 </style>
+
+
+<style id="bb-kt675-full-page-arena">
+/* KT-675: the arena belongs to the whole home screen, never to the logo card. */
+body>.app{position:relative!important;isolation:isolate!important;background:transparent!important}
+body>.app>.topbar{position:relative!important;z-index:5!important;background:linear-gradient(180deg,#091521e8,#0915219c)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#menu.home-dashboard{
+  position:relative!important;isolation:isolate!important;overflow-x:hidden!important;
+  background:transparent!important;
+}
+#menu.home-dashboard::before{
+  content:""!important;display:block!important;position:fixed!important;inset:0!important;
+  z-index:0!important;pointer-events:none!important;
+  background:
+    radial-gradient(ellipse at 50% 28%,#1a78834a 0%,transparent 48%),
+    radial-gradient(ellipse at 14% 72%,#164c6a35 0%,transparent 42%),
+    radial-gradient(ellipse at 88% 78%,#4a3a2540 0%,transparent 36%),
+    linear-gradient(90deg,transparent calc(50% - min(43vw,280px)),#5edbd21c calc(50% - min(43vw,280px) + 1px),transparent calc(50% - min(43vw,280px) + 2px),transparent calc(50% + min(43vw,280px) - 2px),#5edbd21c calc(50% + min(43vw,280px) - 1px),transparent calc(50% + min(43vw,280px))),
+    repeating-linear-gradient(90deg,transparent 0 calc((min(86vw,560px) / 10) - 1px),#72d9d31a calc((min(86vw,560px) / 10) - 1px) calc(min(86vw,560px) / 10)),
+    repeating-linear-gradient(0deg,transparent 0 calc((100dvh / 23) - 1px),#72d9d317 calc((100dvh / 23) - 1px) calc(100dvh / 23)),
+    linear-gradient(145deg,#0b1a27 0%,#0a1723 50%,#08121d 100%)!important;
+  background-size:auto,auto,auto,min(86vw,560px) 100%,min(86vw,560px) 100%,min(86vw,560px) 100%,auto!important;
+  background-position:center!important;background-repeat:no-repeat!important;
+  opacity:1!important;
+}
+#menu.home-dashboard::after{
+  content:""!important;display:block!important;position:fixed!important;inset:0!important;
+  z-index:0!important;pointer-events:none!important;opacity:.66!important;
+  background:
+    linear-gradient(90deg,#54dcd5,#54dcd5) 43% 17%/8% 2.1%,
+    linear-gradient(90deg,#54dcd5,#54dcd5) 51% 17%/8% 2.1%,
+    linear-gradient(90deg,#d8bb78,#d8bb78) 59% 26%/8% 2.1%,
+    linear-gradient(90deg,#d8bb78,#d8bb78) 67% 26%/8% 2.1%,
+    linear-gradient(90deg,#6ebce5,#6ebce5) 35% 38%/8% 2.1%,
+    linear-gradient(90deg,#6ebce5,#6ebce5) 43% 38%/8% 2.1%,
+    linear-gradient(90deg,#54dcd5,#54dcd5) 51% 58%/8% 2.1%,
+    linear-gradient(90deg,#54dcd5,#54dcd5) 59% 58%/8% 2.1%,
+    linear-gradient(90deg,#d8bb78,#d8bb78) 67% 72%/8% 2.1%,
+    linear-gradient(90deg,#d8bb78,#d8bb78) 75% 72%/8% 2.1%,
+    radial-gradient(ellipse at 50% 50%,#49d9d21a,transparent 62%)!important;
+  background-repeat:no-repeat!important;
+  filter:drop-shadow(0 0 9px #5fe7dc55)!important;
+}
+#menu.home-dashboard>*{position:relative!important;z-index:1!important}
+#menu.home-dashboard>.hero{
+  position:relative!important;isolation:auto!important;z-index:1!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;height:auto!important;min-height:78px!important;
+  margin:0 0 8px!important;padding:8px 4px!important;
+  overflow:visible!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  text-align:center!important;
+}
+#menu.home-dashboard>.hero::before,#menu.home-dashboard>.hero::after{display:none!important}
+#menu.home-dashboard>.hero .hero-arena-canvas{display:none!important}
+#menu.home-dashboard>.hero .eyebrow{color:#8edbd4!important;text-shadow:0 1px 8px #000!important}
+#menu.home-dashboard>.hero .hero-brand-lockup{justify-content:center!important}
+#menu.home-dashboard>.hero h1{ text-shadow:0 2px 18px #000,0 0 24px #4bd8d044!important}
+#menu.home-dashboard>.hero p{color:#b5d1d0!important;text-shadow:0 1px 8px #000!important}
+#menu.home-dashboard>.modes{
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  padding:0!important;border-radius:0!important;
+}
+#menu.home-dashboard>.modes>.mode{
+  background:linear-gradient(145deg,#18313dcc,#102432c9)!important;
+  border:1px solid #67c9c077!important;
+  box-shadow:0 8px 20px #020a1299,inset 0 1px #ffffff20!important;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+#menu.home-dashboard>#bbHomeProfile,
+#menu.home-dashboard>.bb-home-collection,
+#menu.home-dashboard>#dailyQuestsPanel,
+#menu.home-dashboard>.bottomstats,
+#menu.home-dashboard>.currency-panel{
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+}
+@media(max-width:600px){
+  #menu.home-dashboard>.hero{min-height:72px!important;margin-bottom:5px!important}
+  #menu.home-dashboard::before{
+    background-size:auto,auto,auto,min(92vw,420px) 100%,min(92vw,420px) 100%,min(92vw,420px) 100%,auto!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #menu.home-dashboard::before,#menu.home-dashboard::after{animation:none!important}
+}
+</style>
