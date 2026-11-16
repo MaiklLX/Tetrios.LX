@@ -1,9 +1,11 @@
 /* TETRIOS.LX — self-playing decorative arena. Independent from the real game. */
 (() => {
- const canvas=document.querySelector('.app > .hero-arena-canvas'),host=document.querySelector('#menu');
- if(!canvas||!host)return;
+ const app=document.querySelector('.app');
+ if(!app)return;
+ let canvas=app.querySelector(':scope > .hero-arena-canvas');
+ if(!canvas){canvas=document.createElement('canvas');canvas.className='hero-arena-canvas';canvas.setAttribute('aria-hidden','true');app.prepend(canvas)}
+ const host=app;
  const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
- const reduce=matchMedia('(prefers-reduced-motion: reduce)');
  const colors=['#36dfff','#9d75ff','#ffbd55','#63f5bd','#ff6f9f','#6e9cff','#d7f36b'];
  const shapes=[[[0,1],[1,1],[2,1],[3,1]],[[0,0],[1,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[0,1],[0,2],[1,2]],[[1,0],[1,1],[1,2],[0,2]],[[1,0],[2,0],[0,1],[1,1]],[[0,0],[1,0],[1,1],[2,1]]];
  let w=0,h=0,dpr=1,cols=0,rows=0,cell=28,grid=[],piece=null,last=0,acc=0,raf=0,paused=false,linesTotal=0,bag=[],clearBursts=[],sparks=[];
@@ -134,12 +136,11 @@
   }
   if(fits(grid,piece,0,1))piece.y++;else lock();
  };
- const frame=now=>{raf=0;if(paused||reduce.matches)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
- const start=()=>{if(paused||reduce.matches||raf)return;last=0;raf=requestAnimationFrame(frame)};
+ const frame=now=>{raf=0;if(paused)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
+ const start=()=>{if(paused||raf)return;last=0;raf=requestAnimationFrame(frame)};
  const stop=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
  const observer=new ResizeObserver(resize);observer.observe(host);window.addEventListener('resize',resize,{passive:true});window.visualViewport?.addEventListener('resize',resize,{passive:true});
  const io=new IntersectionObserver(entries=>{if(entries[0]?.isIntersecting)start();else stop()},{threshold:.02});io.observe(host);
  document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)stop();else start()});
- reduce.addEventListener?.('change',()=>{if(reduce.matches){stop();render()}else start()});
- resize();if(reduce.matches)render();else start();
+ resize();render();start();
 })();
