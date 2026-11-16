@@ -140,7 +140,7 @@
  const start=()=>{if(paused||raf)return;last=0;raf=requestAnimationFrame(frame)};
  const stop=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
  const observer=new ResizeObserver(resize);observer.observe(app);window.addEventListener('resize',resize,{passive:true});window.visualViewport?.addEventListener('resize',resize,{passive:true});
- const setHomeVisible=active=>{app.classList.toggle('bb-home-visible',!!active);canvas.classList.toggle('is-active',!!active);if(active)start();else stop()};
+ const setHomeVisible=active=>{app.classList.toggle('bb-home-visible',!!active);document.body.classList.toggle('bb-home-visible',!!active);document.documentElement.classList.toggle('bb-home-visible',!!active);canvas.classList.toggle('is-active',!!active);if(active)start();else stop()};
  const io=new IntersectionObserver(entries=>setHomeVisible(!!entries[0]?.isIntersecting),{threshold:.02});
  if(home){io.observe(home);setHomeVisible(home.getClientRects().length>0)}else setHomeVisible(true);
  document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)stop();else start()});
