@@ -6080,16 +6080,14 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
     display:flex!important;flex-direction:column!important;
   }
   .app:has(#game:not([hidden])) > #game.screen:not([hidden]) {
-    display:flex!important;flex:1 1 0!important;
-    flex-direction:column!important;align-self:stretch!important;
-    width:100%!important;height:auto!important;
-    min-height:420px!important;max-height:none!important;
+    /* Keep the established three-column desktop grid; only constrain its outer height. */
+    display:grid!important;flex:1 1 0!important;
+    align-self:stretch!important;width:100%!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
     overflow:visible!important;
   }
-  .app:has(#game:not([hidden])) > #game.screen:not([hidden]) > .playlayout {
-    flex:1 1 auto!important;min-height:0!important;
-    width:100%!important;align-items:stretch!important;
-  }
+  /* .playlayout is intentionally display:contents on desktop so its arena and side rail
+     remain direct grid items in the existing HUD / board / utility columns. */
 }
 </style>
 
