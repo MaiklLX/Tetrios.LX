@@ -19685,3 +19685,89 @@ body>.app>.topbar{position:relative!important;z-index:3!important}
   #modal.bb-hero-showcase-modal *{scroll-behavior:auto!important;transition:none!important}
 }
 </style>
+
+
+<style id="bb-kt689-hero-dossier-wide-layout">
+/* KT-689: use the dossier space intelligently on desktop, retain a calm phone flow. */
+@media(min-width:760px){
+  #modal.bb-hero-showcase-modal{
+    width:min(900px,calc(100vw - 56px))!important;
+    max-width:900px!important;
+    padding:20px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail){
+    display:grid!important;
+    grid-template-columns:minmax(0,1.08fr) minmax(290px,.92fr)!important;
+    grid-template-rows:auto auto auto auto auto auto!important;
+    align-items:stretch!important;
+    gap:12px 16px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-close{
+    grid-column:2!important;grid-row:1!important;
+    justify-self:end!important;align-self:start!important;
+    margin:0 0 -40px auto!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-topline{
+    grid-column:1/-1!important;grid-row:1!important;
+    align-self:center!important;
+    min-height:40px!important;padding-right:56px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-stage-wrap{
+    grid-column:1!important;grid-row:2 / span 3!important;
+    min-height:470px!important;height:auto!important;
+    align-self:stretch!important;
+    border-radius:20px 7px 20px 7px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-stage-wrap .bb-hero-showcase-stage{
+    min-height:430px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-heading{
+    grid-column:2!important;grid-row:2!important;
+    grid-template-columns:72px minmax(0,1fr)!important;
+    gap:11px!important;padding:11px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-emblem{
+    width:68px!important;height:68px!important;min-width:68px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-stats{
+    grid-column:2!important;grid-row:3!important;
+    grid-template-columns:1fr!important;gap:8px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-stats>div{
+    flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
+    gap:8px!important;padding:10px 12px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-skill{
+    grid-column:2!important;grid-row:4!important;
+    align-self:stretch!important;padding:12px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>#bbShowcaseTraining{
+    grid-column:1/-1!important;grid-row:5!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-cosmetic-panel{
+    grid-column:1/-1!important;grid-row:6!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-progress{
+    grid-column:1/-1!important;grid-row:7!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-select{
+    grid-column:1/-1!important;grid-row:8!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail) .bb-hero-cosmetic-grid{
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important;
+  }
+}
+@media(min-width:760px) and (max-height:760px){
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-stage-wrap{
+    min-height:380px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail)>.bb-hero-showcase-stage-wrap .bb-hero-showcase-stage{
+    min-height:350px!important;
+  }
+}
+@media(max-width:759px){
+  #modal.bb-hero-showcase-modal .bb-hero-showcase:not(.bb-start-hero-detail){
+    display:flex!important;flex-direction:column!important;
+  }
+}
+</style>
