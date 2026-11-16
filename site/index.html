@@ -18115,6 +18115,60 @@ document.addEventListener('click',event=>{
 }
 </style>
 
+
+<style id="bb-kt677-cartoon-world-background">
+/* KT-677: keep the live block arena on the home screen; give every other screen a bright playful sky world. */
+html,body{min-height:100%;background:#74cfff!important}
+body>.app{
+  min-height:100dvh!important;position:relative!important;isolation:isolate!important;
+  background:transparent!important;
+}
+body>.app::before,body>.app::after{
+  content:""!important;display:block!important;position:fixed!important;inset:0!important;
+  z-index:-1!important;pointer-events:none!important;
+}
+body>.app::before{
+  background:
+    radial-gradient(ellipse 27% 12% at 13% 18%,#f5fdffb8 0%,#f5fdff78 38%,transparent 74%),
+    radial-gradient(ellipse 23% 10% at 82% 26%,#f5fdffad 0%,#f5fdff70 42%,transparent 76%),
+    radial-gradient(ellipse 35% 15% at 48% 94%,#6de2d6c9 0%,#6de2d680 48%,transparent 78%),
+    radial-gradient(ellipse 28% 14% at 100% 83%,#8de7d2b0 0%,transparent 75%),
+    radial-gradient(ellipse 24% 12% at 0% 76%,#a4e9e5b0 0%,transparent 75%),
+    linear-gradient(180deg,#55bdf8 0%,#8cddff 43%,#b6efff 72%,#91e3e0 100%)!important;
+  background-size:100% 100%!important;
+  animation:bbSkyDrift 34s ease-in-out infinite alternate;
+}
+body>.app::after{
+  opacity:.7!important;
+  background:
+    radial-gradient(ellipse 17% 5% at 20% 19%,#fff 0%,#fff 42%,transparent 72%),
+    radial-gradient(ellipse 12% 5% at 29% 18%,#fff 0%,#fff 38%,transparent 72%),
+    radial-gradient(ellipse 16% 5% at 75% 28%,#fff 0%,#fff 42%,transparent 72%),
+    radial-gradient(ellipse 11% 5% at 85% 27%,#fff 0%,#fff 40%,transparent 72%),
+    radial-gradient(circle at 8% 44%,#fff9 0 2px,transparent 3px),
+    radial-gradient(circle at 91% 53%,#fff9 0 3px,transparent 4px),
+    radial-gradient(circle at 68% 12%,#fff9 0 2px,transparent 3px),
+    radial-gradient(circle at 39% 63%,#fff8 0 2px,transparent 3px),
+    radial-gradient(ellipse at 50% 100%,#c0fff0a8 0%,transparent 55%)!important;
+}
+@keyframes bbSkyDrift{from{transform:translate3d(-1.2%,0,0) scale(1.02)}to{transform:translate3d(1.2%,-.6%,0) scale(1.04)}}
+html.bb-home-visible,body.bb-home-visible{background:#07111d!important}
+body.bb-home-visible>.app{background:transparent!important}
+body>.app>.hero-arena-canvas{
+  visibility:hidden!important;opacity:0!important;transition:opacity .35s ease!important;
+}
+body>.app.bb-home-visible>.hero-arena-canvas.is-active{
+  visibility:visible!important;opacity:.88!important;
+}
+body>.app.bb-home-visible::before,body>.app.bb-home-visible::after{display:none!important}
+@media(max-width:600px){
+  body>.app::before{background-position:center!important}
+  body>.app::after{opacity:.58!important}
+}
+@media(prefers-reduced-motion:reduce){
+  body>.app::before{animation:none!important}
+}
+</style>
 </body></html>
 
 <style id="bb-kt634-arena-unification">
