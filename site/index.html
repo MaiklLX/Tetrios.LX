@@ -6106,6 +6106,107 @@ html body #game[hidden] {
 }
 </style>
 
+
+<style id="bb-kt671-graphite-cyan-polish">
+/* KT-671 — unify the interface around graphite, muted cyan and restrained gold.
+   Presentation only: keep existing layout, gameplay DOM and interactions intact. */
+:root{
+  --bb-graphite-0:#070d16;
+  --bb-graphite-1:#0c1521;
+  --bb-graphite-2:#111f2d;
+  --bb-graphite-3:#182b39;
+  --bb-cyan:#63dfd5;
+  --bb-cyan-soft:#a3e9e2;
+  --bb-gold:#d9b978;
+  --bb-text:#e0eceb;
+  --bb-muted:#91a9aa;
+}
+#menu .mode{
+  border-color:color-mix(in srgb,var(--glow,var(--bb-cyan)) 34%,#263b47)!important;
+  background:
+    radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--glow,var(--bb-cyan)) 12%,transparent),transparent 58%),
+    linear-gradient(145deg,#172936 0%,#101d29 58%,#0b141f 100%)!important;
+  box-shadow:inset 0 1px #ffffff12,0 4px 0 #050a11,0 12px 24px #0008!important;
+}
+#menu .modeicon{
+  border-color:color-mix(in srgb,var(--glow,var(--bb-cyan)) 40%,#536b70)!important;
+  background:radial-gradient(circle at 30% 20%,color-mix(in srgb,var(--glow,var(--bb-cyan)) 30%,#29404a),#142630 68%,#0a141e)!important;
+  box-shadow:inset 0 1px #ffffff26,0 4px 12px #0007!important;
+}
+#menu .modetitle{color:#e6f2ef!important;text-shadow:0 1px 2px #000!important}
+#menu .modesub{color:#a9bfbd!important}
+#menu .modearrow{color:var(--bb-cyan-soft)!important}
+#menu .tag{background:#8c74402b!important;border-color:#c8a96877!important;color:#e8d5a7!important}
+#menu #rpgPanel,#menu .bottomstats .stat,
+#menu .daily,#menu .daily-quests,#menu .quest-panel,#menu .quests-panel{
+  color:var(--bb-text)!important;
+  background:linear-gradient(145deg,#1b303c,#111f2b 72%,#0c1722)!important;
+  border:1px solid #45616a!important;
+  box-shadow:inset 0 1px #ffffff10,0 4px 12px #0005!important;
+}
+#menu #rpgPanel strong,#menu .bottomstats .stat strong{color:#e4f0ed!important}
+#menu #rpgPanel span,#menu .bottomstats .stat span,
+#menu .daily p,#menu .daily-quests p,#menu .quest-panel p,#menu .quests-panel p{color:#a7bfbc!important}
+#game .gamehud .hudbox,#game .sidecard,
+#game .rpgpanel,#game .challengebox,#game .heroCard{
+  color:var(--bb-text)!important;
+  background:linear-gradient(150deg,#1c303c,#12212d 72%,#0d1924)!important;
+  border:1px solid #45616a!important;
+  box-shadow:inset 0 1px #ffffff10,0 3px 0 #060d14,0 7px 16px #0005!important;
+}
+#game .gamehud .hudbox span,#game .sidecard label,
+#game .rpgpanel p,#game .challengebox p{color:#a9bfbd!important}
+#game .gamehud .hudbox strong,#game .rpgpanel h3,
+#game .rpgpanel strong,#game .challengebox h3{color:#e4f0ed!important}
+#game .boardframe{
+  background:linear-gradient(145deg,#233b46,#111e2a)!important;
+  border:1px solid #52747a!important;
+  box-shadow:inset 0 1px #ffffff18,0 0 0 3px #0a121b,0 8px 24px #0008!important;
+}
+#game .board{background:#08131d!important}
+#game .smallbtn,#game .control:not(.primary):not(.drop),
+#game .action.secondary{
+  color:#c9e4df!important;
+  background:linear-gradient(145deg,#263f49,#172b36)!important;
+  border:1px solid #52747a!important;
+  box-shadow:0 3px 0 #08121a,inset 0 1px #ffffff12!important;
+}
+#game .control.primary,#game .action:not(.secondary){
+  color:#08201f!important;
+  background:linear-gradient(135deg,#9be9df,#55c9c1)!important;
+  border:1px solid #baf8ee!important;
+  box-shadow:0 3px 0 #236a68,inset 0 1px #ffffff88!important;
+}
+#game .control.drop{
+  color:#332817!important;
+  background:linear-gradient(135deg,#e9d29a,#c9a65e)!important;
+  border:1px solid #f4e3b7!important;
+  box-shadow:0 3px 0 #6d552d!important;
+}
+#game .progressbar,#game .xpbar{background:#263d48!important}
+#game .progressfill,#game .xpbar i{background:linear-gradient(90deg,#4dbeb6,#a3e9dc)!important}
+#game .hint,#game .progressmeta{color:#a9bfbd!important}
+#campaign .screenhead h2{color:#e1eeeb!important;text-shadow:0 2px 12px #000!important}
+#campaign .bb-atlas-intro strong,#campaign .bb-planet-heading strong{color:#e4efed!important}
+#campaign .bb-atlas-intro span,#campaign .bb-planet-kicker{color:#83c9c3!important}
+#campaign .bb-galaxy-card strong,#campaign .bb-planet-node strong{color:#e2eeeb!important}
+#campaign .bb-galaxy-index{color:#91c9c4!important}
+#campaign .bb-galaxy-card.is-current .bb-galaxy-index{color:#b6eee5!important}
+#campaign .bb-galaxy-progress{background:#b4d8d51c!important}
+#campaign .bb-galaxy-progress i{filter:saturate(.82)!important}
+#game .screenhead #pauseBtn{
+  color:#a8eee4!important;border-color:#5dbeb5a6!important;
+  background:linear-gradient(145deg,#1b343e,#0d1c27)!important;
+  box-shadow:inset 0 1px #ffffff12,0 3px 10px #0006!important;
+}
+@media(hover:hover){
+  #menu .mode:hover{border-color:#6fded2!important;box-shadow:inset 0 1px #ffffff18,0 5px 0 #050a11,0 15px 28px #0009,0 0 18px #56d7cb22!important}
+  #game .control:hover,#game .smallbtn:hover{filter:brightness(1.12)!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #menu .mode,#game button{transition:none!important}
+}
+</style>
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
