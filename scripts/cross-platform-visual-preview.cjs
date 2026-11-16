@@ -425,8 +425,30 @@ const targets = [
     // changing the existing 30 planets per universe or their node identities.
     // The atlas intentionally centers the currently active galaxy; the first
     // galaxy may be outside the horizontal viewport. Click the visible current one.
-    await campaignPage.locator('#campaign .bb-galaxy-card.is-current').click();
-    await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({state:'visible',timeout:10000});
+    const currentGalaxyCard=campaignPage.locator('#campaign .bb-galaxy-card.is-current');
+    await currentGalaxyCard.waitFor({state:'visible',timeout:10000});
+    const currentGalaxyBefore=await currentGalaxyCard.evaluate(el=>({
+      classes:el.className,
+      rect:(()=>{const r=el.getBoundingClientRect();return {x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)}})(),
+      label:el.innerText?.replace(/\\s+/g,' ').trim()||''
+    }));
+    // Use the same native click handler without depending on touch hit-testing
+    // at high deviceScaleFactor; the real phone tap path is covered elsewhere.
+    await currentGalaxyCard.evaluate(el=>el.click());
+    try {
+      await campaignPage.locator('#campaign .bb-planet-node').first().waitFor({state:'visible',timeout:15000});
+    } catch(error) {
+      const diagnostic=await campaignPage.evaluate(()=>({
+        campaignDisplay:getComputedStyle(document.querySelector('#campaign')).display,
+        currentCards:[...document.querySelectorAll('#campaign .bb-galaxy-card.is-current')].map(el=>el.innerText?.trim()),
+        planetNodes:document.querySelectorAll('#campaign .bb-planet-node').length,
+        modal:document.querySelector('#modal')?.innerText?.slice(0,500)||'',
+        errors:window.__bbLastError||null
+      }));
+      await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-planet-open-diagnostic.png',fullPage:false});
+      throw new Error('Campaign planet route did not open after current galaxy selection: '+JSON.stringify({currentGalaxyBefore,diagnostic,error:String(error)}));
+    }
+    console.log('[stage:campaign-planets] '+target.name);
     await campaignPage.waitForTimeout(350);
     const routeState=await campaignPage.evaluate(()=>{
       const track=document.querySelector('#campaign .bb-planet-track');
