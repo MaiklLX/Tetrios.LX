@@ -57,11 +57,23 @@ func _check(condition: bool, message: String) -> bool:
 	return false
 
 
+func _is_integer_number(value: Variant) -> bool:
+	if typeof(value) == TYPE_INT:
+		return true
+	if typeof(value) == TYPE_FLOAT:
+		return is_equal_approx(float(value), float(roundi(float(value))))
+	return false
+
+
 func _is_valid_profile(value: Variant) -> bool:
 	if typeof(value) != TYPE_DICTIONARY:
 		return false
+	var version: Variant = value.get("schema_version")
 	var profile: Variant = value.get("profile")
-	return typeof(value.get("schema_version")) == TYPE_INT and int(value.get("schema_version")) == 1 and typeof(profile) == TYPE_DICTIONARY
+	if typeof(profile) != TYPE_DICTIONARY:
+		return false
+	var coins: Variant = profile.get("coins")
+	return _is_integer_number(version) and int(version) == 1 and _is_integer_number(coins) and int(coins) >= 0
 
 
 func _profile(coins: int) -> Dictionary:
@@ -85,11 +97,6 @@ func _run() -> void:
 	var success_storage := MemoryStorage.new()
 	success_storage.files["profile.json"] = old_text
 	success_storage.files["profile.json.bak"] = prior_backup_text
-	var candidate_json := JSON.stringify(new_profile)
-	var parsed_candidate: Variant = JSON.parse_string(candidate_json)
-	print("Atomic save diagnostic: serialized=", candidate_json)
-	print("Atomic save diagnostic: parsed_types=", typeof(parsed_candidate), "/", typeof(parsed_candidate.get("schema_version")), "/", typeof(parsed_candidate.get("profile")))
-	print("Atomic save diagnostic: parsed_validator=", validator.call(parsed_candidate), " decode=", AtomicSave._decode_document(candidate_json, validator))
 	var success := AtomicSave.save_document(success_storage, "profile.json", new_profile, validator)
 	print("Atomic save diagnostic: validator_valid=", validator.is_valid(), " candidate_valid=", validator.call(new_profile))
 	print("Atomic save diagnostic: adapter_methods=", success_storage.has_method("read_text"), "/", success_storage.has_method("write_text"), "/", success_storage.has_method("flush"), "/", success_storage.has_method("replace_file"))
@@ -109,6 +116,11 @@ func _run() -> void:
 	if not _check(not invalid_result.ok and invalid_storage.operations.is_empty(), "Unknown candidate schema must be rejected before storage is touched"):
 		return
 	if not _check(invalid_storage.files["profile.json"] == old_text, "Rejected candidate must leave active bytes unchanged"):
+		return
+	var fractional_storage := MemoryStorage.new()
+	var fractional_candidate := {"schema_version": 1, "profile": {"coins": 80.5}}
+	var fractional_result := AtomicSave.save_document(fractional_storage, "profile.json", fractional_candidate, validator)
+	if not _check(not fractional_result.ok and fractional_storage.operations.is_empty(), "Fractional profile values must be rejected before storage is touched"):
 		return
 
 	print("Atomic save tests: backup promotion failure")

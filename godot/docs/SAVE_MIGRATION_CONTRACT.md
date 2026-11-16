@@ -237,3 +237,8 @@ Recovery prefers a valid active document, otherwise offers a valid backup withou
 The deterministic test uses an in-memory fake adapter only. It covers validation-before-write, successful backup rotation, backup promotion failure, interrupted temporary writes, active promotion failure, unknown future schema preservation, backup-only recovery, empty first-save behavior, and unrecoverable damaged documents.
 
 **Important boundary:** this is a protocol/test seam, not enabled persistence. No concrete filesystem adapter, `FileAccess`, `DirAccess`, `user://` path, automatic restore, migration execution, profile import, or run autosave is implemented. Keep persistent writes disabled until the protocol is reviewed against Android filesystem semantics, the full recovery suite is green, and the user approves the migration boundary.
+
+
+### JSON numeric type note for schema validators
+
+Godot 4.4.1's JSON parser exposes JSON numeric values as floating-point Variants in the round-trip path, even when the serialized token has no fractional part. A schema validator used by this protocol must therefore accept either an integer Variant or a finite, integer-valued float for integer fields, while still rejecting fractional values, negatives and out-of-range values. The protocol deliberately does not coerce or rewrite schema values; the caller-owned validator remains responsible for exact field ranges and semantics.

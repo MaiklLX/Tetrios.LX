@@ -492,3 +492,10 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 
 - The second exact-HEAD run [43866981321](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43866981321) reproduced the first-save failure and narrowed it to `candidate_round_trip_rejected`. The caller validator and adapter interface both reported valid before serialization; no storage operation ran, so active/backup bytes remained untouched.
 - Added test-only JSON round-trip diagnostics (serialized bytes, parsed Variant types, validator result and decoder error) to identify whether the rejection comes from JSON type coercion or the protocol decoder. A further exact-HEAD run is required before changing the protocol.
+
+
+### KT-488 root cause and correction — 2026-11-16
+
+- The diagnostic run [43867254844](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43867254844) showed that Godot 4.4.1 parses JSON integer tokens into floating-point Variants (`parsed_types=Dictionary/float/Dictionary`). The protocol correctly rejected the test validator's overly strict `TYPE_INT` check after serialization; no storage calls occurred and no stored bytes changed.
+- Corrected the in-memory profile validator to accept integer-valued JSON floats while rejecting fractional schema/coin values. Added a fractional-value rejection regression. This is a test/schema-validator correction; the storage protocol still performs no implicit numeric coercion.
+- Exact-HEAD validation remains pending. Do not accept KT-488 until the complete workflow is green.
