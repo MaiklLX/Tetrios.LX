@@ -19771,3 +19771,91 @@ body>.app>.topbar{position:relative!important;z-index:3!important}
   }
 }
 </style>
+
+
+<style id="bb-kt691-arena-visual-cohesion">
+/* KT-691: calm the arena's legacy saturated-blue surfaces without touching board cells or gameplay geometry. */
+html body .app section#game.screen .playlayout{
+  border:1px solid #47778355!important;
+  border-radius:17px!important;
+  background:linear-gradient(145deg,#0c1d2b88,#09172466)!important;
+  box-shadow:inset 0 1px #d7f5ef0a!important;
+}
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe{
+  border:1px solid #568b91!important;
+  border-radius:13px!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,#2a687044,transparent 62%),
+    linear-gradient(155deg,#112c3d,#091a29 76%)!important;
+  box-shadow:0 9px 24px #0008,0 0 0 1px #5bd5ce12,inset 0 1px #d8f5e51c!important;
+}
+html body .app section#game.screen .gamehud > .hudbox{
+  min-width:0!important;
+  border:1px solid #477b83!important;
+  border-radius:11px!important;
+  background:linear-gradient(150deg,#183b4b 0%,#123044 68%,#0d2638 100%)!important;
+  box-shadow:inset 0 1px #d8f5e512,0 3px 0 #081b29!important;
+}
+html body .app section#game.screen .gamehud > .hudbox span{
+  color:#a9d5d0!important;font-weight:850!important;letter-spacing:.07em!important;
+}
+html body .app section#game.screen .gamehud > .hudbox strong{
+  color:#eaf4e9!important;text-shadow:none!important;font-variant-numeric:tabular-nums!important;
+}
+html body .app section#game.screen .gamehud > .hudbox:nth-child(2){
+  border-color:#92794d!important;
+  background:linear-gradient(150deg,#3c382d,#292f35 70%,#172b37)!important;
+}
+html body .app section#game.screen .gamehud > .hudbox:nth-child(2) strong{color:#f0d59b!important}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard,
+html body .app section#game.screen .playlayout aside.sidecol > .drop-card{
+  border:1px solid #477b83!important;
+  border-radius:11px!important;
+  background:linear-gradient(150deg,#183b4b 0%,#123044 68%,#0d2638 100%)!important;
+  color:#e5f1e9!important;
+  box-shadow:inset 0 1px #d8f5e512,0 3px 0 #081b29!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard > label,
+html body .app section#game.screen .playlayout aside.sidecol > .drop-card > label{
+  color:#b3dcd4!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard #next,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard #holdPreview{
+  border:1px solid #477783!important;
+  border-radius:9px!important;
+  background:linear-gradient(145deg,#0b2637,#102f40)!important;
+  box-shadow:inset 0 2px 7px #04131f99!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boosticon{color:#e9ce91!important}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boostname{color:#e6f0e8!important}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .boostnum{color:#a9d8d0!important}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .charge-caption,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard .run-timer{color:#b6d8d2!important}
+html body .app section#game.screen #campaignGoals,
+html body .app section#game.screen #rogueGoals{
+  border:1px solid #477b83!important;border-radius:11px!important;
+  background:linear-gradient(145deg,#17394a,#102b3c 75%)!important;
+  color:#e5f1e9!important;box-shadow:inset 0 1px #d8f5e512,0 3px 0 #081b29!important;
+}
+html body .app section#game.screen #campaignGoals > strong,
+html body .app section#game.screen #rogueGoals > strong{color:#ecd39c!important}
+html body .app section#game.screen .playlayout aside.sidecol > .drop-card .side-drop{
+  border:1px solid #c5a66b!important;border-radius:9px!important;
+  background:linear-gradient(180deg,#b98d4e,#765633)!important;
+  color:#fff1ce!important;box-shadow:0 2px 0 #3b2b20!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard #holdBtn{
+  border:1px solid #639b9c!important;border-radius:8px!important;
+  background:linear-gradient(180deg,#347b83,#225564)!important;
+  color:#eaf6ed!important;box-shadow:0 2px 0 #0b2936!important;
+}
+@media(max-width:520px){
+  html body .app section#game.screen .playlayout{border-radius:13px!important}
+  html body .app section#game.screen .gamehud > .hudbox{border-radius:9px!important}
+  html body .app section#game.screen .playlayout aside.sidecol > .sidecard,
+  html body .app section#game.screen .playlayout aside.sidecol > .drop-card{border-radius:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html body .app section#game.screen .playlayout *{scroll-behavior:auto!important}
+}
+</style>
