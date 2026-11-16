@@ -499,3 +499,14 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - The diagnostic run [43867254844](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43867254844) showed that Godot 4.4.1 parses JSON integer tokens into floating-point Variants (`parsed_types=Dictionary/float/Dictionary`). The protocol correctly rejected the test validator's overly strict `TYPE_INT` check after serialization; no storage calls occurred and no stored bytes changed.
 - Corrected the in-memory profile validator to accept integer-valued JSON floats while rejecting fractional schema/coin values. Added a fractional-value rejection regression. This is a test/schema-validator correction; the storage protocol still performs no implicit numeric coercion.
 - Exact-HEAD validation remains pending. Do not accept KT-488 until the complete workflow is green.
+
+
+## 2026-11-16 — KT-488 exact-HEAD validation complete
+
+- Code/test HEAD `0e4bba7f7274464c3b2151ff8a88929164c92f39` passed exact-HEAD Godot Native Project Check [run 43867521016](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43867521016) — **SUCCESS**.
+- All workflow stages passed: Godot 4.4.1 import, main script parse, portrait-first orientation guard, Classic model tests, Web save migration tests, atomic save protocol tests, all Block Run model/effect/board/session/bridge/live integration suites, visual capture/upload, and scene smoke test.
+- The atomic-save test validator was corrected for Godot JSON's integer-token-to-float Variant representation: integer-valued floats are accepted for integer fields, while fractional values are rejected. The protocol itself does not coerce data.
+- Downloaded and inspected artifact [14225053765](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43867521016/artifacts/14225053765) (10 PNGs), including `08-mobile-360-arena.png` and `10-landscape-orientation-guard.png`. The portrait capture retains the 2D 10×23 board, Buddy in the left safe gutter and Drop outside the board; the landscape capture shows the portrait-return pause placeholder. These are Godot/Xvfb viewport captures, not physical Android screenshots.
+- This milestone remains a storage protocol/test seam only. No concrete filesystem adapter, `FileAccess`, `DirAccess`, `user://` write, migration execution, user-data access/mutation or automatic restore was added.
+- PR #77 remains Draft and targets the Godot foundation branch; no merge, main edit, deployment, APK build/export or old web-project change.
+- Next: review Android-specific atomic replacement and flush semantics before implementing a concrete adapter; keep persistent writes disabled pending that review and explicit user approval.
