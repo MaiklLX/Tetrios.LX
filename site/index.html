@@ -18158,3 +18158,136 @@ body>canvas.bb-galaxy-model-canvas,
   }
 }
 </style>
+
+<style id="bb-kt661-stability-recovery">
+/* KT-661: stabilize touch navigation and restore a non-overlapping portrait run. */
+@media (max-width:600px) and (orientation:portrait) {
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard {
+    isolation:auto!important; position:relative!important; overflow-x:hidden!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero {
+    position:relative!important; isolation:isolate!important; z-index:0!important;
+    overflow:hidden!important; height:142px!important; min-height:142px!important;
+    background:linear-gradient(110deg,#102b48f2 0%,#102b48c9 58%,#102b4870 100%)!important;
+    box-shadow:inset 0 1px #ffffff20,0 5px 16px #06152655!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero .hero-arena-canvas {
+    display:block!important; visibility:visible!important; position:absolute!important;
+    inset:0!important; width:100%!important; height:100%!important;
+    z-index:0!important; opacity:.72!important; pointer-events:none!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard>.hero>*:not(.hero-arena-canvas) {
+    position:relative!important; z-index:1!important; pointer-events:none!important;
+  }
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard .mode,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard button,
+  #menu.home-dashboard.home-dashboard.home-dashboard.home-dashboard a {
+    pointer-events:auto!important; position:relative!important; z-index:2!important;
+    touch-action:manipulation!important;
+  }
+  /* Full-screen fixed canvas is deliberately disabled: it must never create a
+     page-wide stacking layer above the menu or the game. */
+  #menu .hero-arena-canvas { position:absolute!important; }
+
+  #game.screen:not([hidden]) {
+    box-sizing:border-box!important; width:100%!important; min-width:0!important;
+    height:100dvh!important; min-height:0!important; max-height:100dvh!important;
+    overflow:hidden!important; display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:auto auto minmax(0,1fr)!important;
+    gap:5px!important; padding:5px!important;
+  }
+  #game.screen>.screenhead {
+    grid-row:1!important; min-height:34px!important; height:34px!important;
+    margin:0!important; padding:2px 4px!important; align-items:center!important;
+  }
+  #game.screen>.screenhead h2 {font-size:14px!important;line-height:1.1!important;margin:0!important}
+  #game.screen>.screenhead p {display:none!important}
+  #game.screen>#pauseBtn {width:32px!important;height:32px!important;flex:0 0 32px!important}
+  #game.screen>.gamehud {
+    grid-row:2!important; display:grid!important; grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:4px!important; height:42px!important; min-height:42px!important; margin:0!important;
+  }
+  #game.screen>.gamehud>.hudbox,
+  #game.screen>.gamehud>#gameCoins {
+    box-sizing:border-box!important; min-width:0!important; height:42px!important;
+    min-height:42px!important; padding:3px!important; display:flex!important;
+    flex-direction:column!important; justify-content:center!important; align-items:center!important;
+  }
+  #game.screen>.gamehud .hudbox span {font-size:7px!important;line-height:1!important}
+  #game.screen>.gamehud .hudbox strong {font-size:13px!important;line-height:1.1!important}
+  #game.screen>.playlayout {
+    grid-row:3!important; display:grid!important;
+    grid-template-columns:minmax(0,1fr) 104px!important;
+    grid-template-rows:minmax(0,1fr)!important; gap:6px!important;
+    width:100%!important; height:100%!important; min-height:0!important;
+    max-height:100%!important; margin:0!important; padding:3px!important;
+    overflow:hidden!important; align-items:stretch!important;
+  }
+  #game.screen>.playlayout>div:first-child {
+    grid-column:1!important; grid-row:1!important; display:flex!important;
+    align-items:center!important; justify-content:center!important;
+    min-width:0!important; min-height:0!important; height:100%!important;
+    margin:0!important; padding:0!important; overflow:hidden!important;
+  }
+  #game.screen>.playlayout>div:first-child>.boardframe {
+    box-sizing:border-box!important; flex:0 1 auto!important;
+    width:min(100%,calc((100dvh - 112px) * 10 / 23))!important;
+    height:auto!important; max-height:calc(100dvh - 112px)!important;
+    min-height:0!important; aspect-ratio:10/23!important; margin:0 auto!important;
+  }
+  #game.screen>.playlayout>div:first-child>.boardframe>#board {
+    display:block!important; width:100%!important; height:100%!important;
+    max-width:100%!important; max-height:100%!important; aspect-ratio:10/23!important;
+  }
+  #game.screen>.playlayout>.sidecol {
+    grid-column:2!important; grid-row:1!important; display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:repeat(5,minmax(0,1fr)) 42px!important;
+    grid-auto-flow:row!important; gap:4px!important;
+    width:104px!important; min-width:0!important; max-width:104px!important;
+    height:100%!important; min-height:0!important; max-height:100%!important;
+    margin:0!important; padding:0!important; overflow:hidden!important;
+  }
+  #game.screen>.playlayout>.sidecol>.sidecard,
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard,
+  #game.screen>.playlayout>.sidecol>.drop-card {
+    box-sizing:border-box!important; min-width:0!important; min-height:0!important;
+    width:100%!important; max-width:100%!important; height:auto!important;
+    max-height:none!important; margin:0!important; padding:4px!important;
+    overflow:hidden!important; border-radius:9px!important;
+  }
+  #game.screen>.playlayout>.sidecol>.sidecard:not([hidden]) {
+    display:flex!important; flex-direction:column!important; justify-content:center!important;
+    align-items:center!important; gap:2px!important;
+  }
+  #game.screen>.playlayout>.sidecol>.sidecard>label {font-size:6px!important;line-height:1!important}
+  #game.screen>.playlayout>.sidecol .charge-ring,
+  #game.screen>.playlayout>.sidecol .chrono-ring {width:34px!important;height:34px!important;margin:0 auto!important}
+  #game.screen>.playlayout>.sidecol .charge-caption,
+  #game.screen>.playlayout>.sidecol .chrono-caption,
+  #game.screen>.playlayout>.sidecol .boostname,
+  #game.screen>.playlayout>.sidecol .boostnum,
+  #game.screen>.playlayout>.sidecol .run-timer {font-size:7px!important;line-height:1.1!important;text-align:center!important}
+  #game.screen>.playlayout>.sidecol .nextcanvas {width:60px!important;height:48px!important;max-width:100%!important}
+  #game.screen>.playlayout>.sidecol .hold-card #holdPreview {width:70px!important;height:40px!important;max-width:100%!important}
+  #game.screen>.playlayout>.sidecol .hold-card #holdBtn {min-height:22px!important;height:22px!important;padding:1px 4px!important;font-size:7px!important}
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard {
+    display:flex!important; flex-direction:column!important; justify-content:center!important;
+    align-items:center!important; gap:2px!important; min-height:0!important;
+  }
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-art {width:25px!important;height:25px!important;flex:0 0 25px!important}
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy {min-width:0!important;text-align:center!important;gap:1px!important}
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy strong {font-size:6px!important}
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy small {font-size:7px!important;line-height:1.1!important}
+  #game.screen>.playlayout>.sidecol>#bbHeroSkillCard .bb-hero-skill-copy em {display:none!important}
+  #game.screen>.playlayout>.sidecol>.drop-card {display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;gap:2px!important}
+  #game.screen>.playlayout>.sidecol>.drop-card .side-drop {width:100%!important;min-height:30px!important;height:30px!important;margin:0!important;font-size:9px!important}
+  #game.screen>.controls,#game.screen>.hint {display:none!important}
+  #game.screen button {pointer-events:auto!important;touch-action:manipulation!important}
+}
+@media(max-width:360px) and (orientation:portrait) {
+  #game.screen>.playlayout {grid-template-columns:minmax(0,1fr) 92px!important;gap:4px!important}
+  #game.screen>.playlayout>.sidecol {width:92px!important;max-width:92px!important}
+}
+</style>
