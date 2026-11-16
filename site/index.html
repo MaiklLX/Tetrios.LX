@@ -6959,6 +6959,11 @@ let bbLastShownScreen = null;
 const bbScreenHistory = [];
 let bbNavigatingBack = false;
 function show(id){
+  const screenIds=['menu','shopScreen','heroes','campaign','collection','daily','game'];
+  if(!screenIds.includes(id)||!$(id)){
+    console.error('[screen-navigation] Unknown screen:',id);
+    return;
+  }
   const changed = bbLastShownScreen !== id;
   if (changed && bbLastShownScreen && id !== 'menu' && !bbNavigatingBack) {
     bbScreenHistory.push(bbLastShownScreen);
@@ -6967,10 +6972,28 @@ function show(id){
   if (id === 'menu') bbScreenHistory.length = 0;
   bbLastShownScreen = id;
   if (changed && id !== 'game' && typeof bbRestartMenuMusic === 'function') bbRestartMenuMusic();
-  ['menu','shopScreen','heroes','campaign','collection','daily','game'].forEach(x=>$(x).hidden=x!==id);
-  $(id).classList.remove('screen');void $(id).offsetWidth;$(id).classList.add('screen');
+
+  // Screen visibility must not depend on stylesheet specificity. The dashboard
+  // and arena have legacy display!important rules; hidden alone can therefore
+  // leave multiple screens in normal document flow. Lock every inactive screen
+  // with an inline important display rule, then release only the active screen.
+  screenIds.forEach(screenId=>{
+    const screen=$(screenId);
+    const active=screenId===id;
+    screen.hidden=!active;
+    if(active) screen.style.removeProperty('display');
+    else screen.style.setProperty('display','none','important');
+    screen.setAttribute('aria-hidden',active?'false':'true');
+    if(active) screen.inert=false;
+    else screen.inert=true;
+  });
+
+  const activeScreen=$(id);
+  activeScreen.classList.remove('screen');
+  void activeScreen.offsetWidth;
+  activeScreen.classList.add('screen');
   if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
-  if(typeof bbSyncMusic==='function')bbSyncMusic()
+  if(typeof bbSyncMusic==='function')bbSyncMusic();
 }
 function bbNavigateBack(){
   const previous=bbScreenHistory.pop()||'menu';
