@@ -19263,3 +19263,61 @@ body>.app>.topbar{position:relative!important;z-index:3!important}
   #shopScreen .surprise-shop-buy{transition:none!important}
 }
 </style>
+
+
+<style id="bb-kt686-unified-night-navigation">
+/* KT-686: finish the calm graphite/teal treatment on secondary-screen navigation and primary actions. */
+.screen:not(#menu):not(#game)>.screenhead .back{
+  color:#e4f5f2!important;
+  background:linear-gradient(145deg,#315c70 0%,#23465c 58%,#1a354a 100%)!important;
+  border:1px solid #638f9b!important;
+  box-shadow:0 3px 0 #102838,0 5px 12px #07182755,inset 0 1px #ffffff18!important;
+  text-shadow:0 1px 2px #07182788!important;
+}
+.screen:not(#menu):not(#game)>.screenhead .back:active{
+  transform:translateY(1px) scale(.98)!important;
+  box-shadow:0 1px 0 #102838,inset 0 1px #ffffff18!important;
+}
+.screen:not(#menu):not(#game)>.action,
+.screen:not(#menu):not(#game) .bb-shelf-modal>.action{
+  color:#102b35!important;
+  background:linear-gradient(105deg,#8bcfc9 0%,#82b9c9 58%,#91aeca 100%)!important;
+  border:1px solid #a6e1d9!important;
+  box-shadow:0 4px 0 #173d4a,0 8px 16px #07182755,inset 0 1px #ffffff70!important;
+  text-shadow:0 1px #ffffff40!important;
+}
+.screen:not(#menu):not(#game)>.action:active,
+.screen:not(#menu):not(#game) .bb-shelf-modal>.action:active{
+  transform:translateY(2px) scale(.99)!important;
+  box-shadow:0 2px 0 #173d4a,inset 0 1px #ffffff70!important;
+}
+#campaign>.challengebox{
+  border-color:#527e88!important;
+  background:
+    radial-gradient(ellipse at 100% 0%,#70c8c51a 0%,transparent 62%),
+    linear-gradient(145deg,#1d3c50 0%,#173448 60%,#122b3e 100%)!important;
+  box-shadow:0 5px 0 #0b2232,0 10px 22px #020b1680,inset 0 1px #ffffff12!important;
+}
+#campaign>.challengebox .symbol{
+  border-color:#669ba0!important;
+  background:linear-gradient(145deg,#315f70,#23485b)!important;
+  box-shadow:inset 0 -3px #17394b,0 4px 12px #020b1666!important;
+}
+#campaign>.challengebox .challengehero h3{color:#f2dfae!important}
+#campaign>.challengebox .challengehero p{color:#c9dfe1!important}
+#campaign>.challengebox .challengegoal{
+  border-color:#4e7884!important;
+  background:#102b3d88!important;
+  color:#cde5e2!important;
+}
+#campaign>.challengebox .challengegoal strong{color:#9ce1d5!important}
+#campaign #campaignStart{
+  background:linear-gradient(105deg,#82d1c6,#7faec5)!important;
+  border-color:#a4e2d9!important;
+  color:#102b35!important;
+}
+@media(prefers-reduced-motion:reduce){
+  .screen:not(#menu):not(#game)>.screenhead .back,
+  .screen:not(#menu):not(#game)>.action{transition:none!important}
+}
+</style>
