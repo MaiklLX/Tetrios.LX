@@ -6226,6 +6226,51 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
  #game.screen>.playlayout>.sidecol{width:86px!important;max-width:86px!important}
 }
 
+
+/* KT-663: hard-reset the mobile dashboard to a single readable flow.
+   Keep the three mode buttons inside their own one-column grid; do not rely on
+   display:contents/named areas across nested dashboard sections. */
+@media (max-width:600px) {
+  .app {padding:9px 10px max(14px,env(safe-area-inset-bottom))!important}
+  #menu.home-dashboard {
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;
+    gap:9px!important;width:100%!important;max-width:620px!important;
+    padding:0 0 18px!important;overflow:visible!important;
+  }
+  #menu.home-dashboard > * {width:100%!important;max-width:100%!important;min-width:0!important;margin-left:0!important;margin-right:0!important;}
+  #menu.home-dashboard > .hero {
+    order:0!important;flex:0 0 142px!important;height:142px!important;min-height:142px!important;
+    margin:0 0 2px!important;padding:10px 12px!important;overflow:hidden!important;
+    position:relative!important;isolation:isolate!important;
+  }
+  #menu.home-dashboard > .hero .hero-arena-canvas {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;z-index:0!important;pointer-events:none!important}
+  #menu.home-dashboard > .hero > *:not(.hero-arena-canvas) {position:relative!important;z-index:1!important}
+  #menu.home-dashboard > #bbHomeProfile {order:1!important;display:grid!important;grid-template-columns:36px minmax(0,1fr) auto!important;min-height:64px!important;height:auto!important;margin:0!important}
+  #menu.home-dashboard > .sectionlabel {order:2!important;margin:3px 2px 0!important}
+  #menu.home-dashboard > .modes {order:3!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-auto-rows:minmax(82px,auto)!important;gap:9px!important;width:100%!important}
+  #menu.home-dashboard > .modes > .mode {
+    display:flex!important;position:relative!important;grid-column:1!important;width:100%!important;min-width:0!important;
+    max-width:100%!important;height:86px!important;min-height:86px!important;box-sizing:border-box!important;
+    flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:13px!important;
+    padding:10px 13px!important;text-align:left!important;overflow:hidden!important;z-index:2!important;
+    pointer-events:auto!important;touch-action:manipulation!important;
+  }
+  #menu.home-dashboard > .modes > .mode .modeicon {width:48px!important;height:48px!important;flex:0 0 48px!important}
+  #menu.home-dashboard > .modes > .mode .modetext {display:block!important;flex:1 1 auto!important;width:auto!important;min-width:0!important}
+  #menu.home-dashboard > .modes > .mode .modetitle {font-size:15px!important;line-height:1.2!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  #menu.home-dashboard > .modes > .mode .modesub {display:block!important;font-size:9px!important;line-height:1.25!important;margin-top:3px!important}
+  #menu.home-dashboard > .modes > .mode .tag {display:none!important}
+  #menu.home-dashboard > .modes > .mode .modearrow {display:block!important;margin-left:auto!important}
+  #menu.home-dashboard > #dailyQuestsPanel {order:4!important;margin:0!important}
+  #menu.home-dashboard > .bb-home-streak,#menu.home-dashboard > #bbHomeStreak {order:5!important}
+  #menu.home-dashboard > .bb-home-heroes,#menu.home-dashboard > #bbHomeHeroes {order:6!important}
+  #menu.home-dashboard > .bb-home-rpg,#menu.home-dashboard > #bbHomeRpg {order:7!important}
+  #menu.home-dashboard > .bb-home-collection {order:8!important}
+  #menu.home-dashboard > .bb-home-resources {order:9!important}
+  #menu.home-dashboard > .apk-download {order:10!important}
+  #menu.home-dashboard > button,#menu.home-dashboard > a,#menu.home-dashboard > .modes > button {pointer-events:auto!important;touch-action:manipulation!important}
+  #menu.home-dashboard .hero-arena-canvas {pointer-events:none!important}
+}
 </style>
 </head>
 <body><div class="stars"></div><main class="app"><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
