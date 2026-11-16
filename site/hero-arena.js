@@ -144,5 +144,5 @@
  const io=new IntersectionObserver(entries=>setHomeVisible(!!entries[0]?.isIntersecting),{threshold:.02});
  if(home){io.observe(home);setHomeVisible(home.getClientRects().length>0)}else setHomeVisible(true);
  document.addEventListener('visibilitychange',()=>{paused=document.hidden;if(paused)stop();else start()});
- resize();render();start();
+ resize();render();
 })();
