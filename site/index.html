@@ -6535,6 +6535,36 @@ body>.app.bb-home-visible{
 }
 </style>
 
+<style id="bb-kt683-night-readable-type">
+/* KT-683: lift secondary copy contrast on the calm blue side screens. */
+.screen:not(#menu):not(#game)>.screenhead h2{
+  color:#f4fbff!important;
+  text-shadow:0 1px 8px #071b2b88!important;
+}
+.screen:not(#menu):not(#game)>.screenhead p{
+  color:#d7e9f2!important;
+  text-shadow:0 1px 4px #071b2b55!important;
+}
+.screen:not(#menu):not(#game) .eyebrow{
+  color:#a9e5df!important;
+}
+.screen:not(#menu):not(#game) .challengehero p,
+.screen:not(#menu):not(#game) .surprise-shop-info p{
+  color:#d7e9f2!important;
+}
+.screen:not(#menu):not(#game) .challengegoal span,
+.screen:not(#menu):not(#game) .wallet,
+.screen:not(#menu):not(#game) .wallet span{
+  color:#e0edf4!important;
+}
+.screen:not(#menu):not(#game) small,
+.screen:not(#menu):not(#game) .muted,
+.screen:not(#menu):not(#game) [style*="color:#b6c2df"],
+.screen:not(#menu):not(#game) [style*="color: #b6c2df"]{
+  color:#c6dce8!important;
+}
+</style>
+
 <style id="bb-kt681-unified-screen-polish">
 /* KT-681: unify navigation, screen arrivals and touch feedback across menus. */
 @keyframes bbScreenArrival{
