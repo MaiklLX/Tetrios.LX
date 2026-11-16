@@ -6513,6 +6513,28 @@ body>.app.bb-home-visible{animation:none!important;will-change:auto!important}
 </style>
 
 
+<style id="bb-kt682-night-friendly-side-world">
+/* KT-682: calm the non-home sky for comfortable night play and stronger text contrast. */
+html,body{background:#1d4058!important}
+body>.app:not(.bb-home-visible){
+  background-color:#254d66!important;
+  background-image:
+    radial-gradient(ellipse 42% 24% at 12% 12%,#4c829055 0%,transparent 74%),
+    radial-gradient(ellipse 38% 22% at 88% 28%,#477b8850 0%,transparent 76%),
+    radial-gradient(ellipse 44% 28% at 50% 100%,#286b6c70 0%,transparent 78%),
+    linear-gradient(180deg,#244d6a 0%,#315f76 46%,#315f69 100%)!important;
+  background-attachment:fixed!important;
+  background-repeat:no-repeat!important;
+  background-size:cover!important;
+}
+body>.app.bb-home-visible{
+  background-color:#07111d!important;background-image:none!important;
+}
+@media(max-width:600px){
+  body>.app:not(.bb-home-visible){background-position:center!important}
+}
+</style>
+
 <style id="bb-kt681-unified-screen-polish">
 /* KT-681: unify navigation, screen arrivals and touch feedback across menus. */
 @keyframes bbScreenArrival{
@@ -6608,7 +6630,7 @@ body>.app.bb-home-visible{animation:none!important;will-change:auto!important}
   .screen:not(#game) .action.secondary:hover{filter:brightness(1.08)!important;transform:translateY(-1px)!important}
 }
 @media(prefers-reduced-motion:reduce){
-  .screen:not(#menu){animation:none!important}
+  .screen:not(#menu):not(#game){animation:none!important}
   .screen:not(#game) .action,.screen:not(#game) .action.secondary,
   .screen:not(#menu)>.screenhead>.back{transition:none!important}
 }
