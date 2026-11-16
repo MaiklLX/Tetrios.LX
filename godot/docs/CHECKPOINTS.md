@@ -479,3 +479,10 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - Added the suite to Godot Native Project Check. Exact-HEAD CI is **pending** for this checkpoint; do not mark KT-488 accepted until import, parse, all model/migration suites, the new atomic-save suite, visual capture and scene smoke test pass.
 - No concrete filesystem adapter, persistent `user://` writes, migration execution, profile import, user-data access/mutation, APK build/export, merge, deployment, main edit or old web-project change.
 - Next: inspect the exact-HEAD CI and visual artifact; then review the adapter's atomic-replace/flush contract against Android filesystem behavior before any concrete storage implementation. Keep persistence disabled.
+
+
+### KT-488 CI diagnostic follow-up — 2026-11-16
+
+- First exact-HEAD run [43866746891](https://github.com/MaiklLX/Tetrios.LX/actions/runs/43866746891) passed Godot 4.4.1 import, main script parse, orientation tests, Classic model tests and the full Web migration suite, then failed in the new atomic-save suite at its first successful-rotation assertion. Subsequent suites were skipped by the workflow's fail-fast behavior.
+- The job log identifies the failing assertion but the first run did not print the protocol's returned error code or in-memory operation trace. Added temporary test-only diagnostics; the next exact-HEAD run must identify the precise branch before any fix is accepted.
+- The failure is not being treated as a passing save/recovery implementation. No persistence adapter or real storage path is enabled.
