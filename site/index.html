@@ -19018,3 +19018,26 @@ body>.app>.topbar{position:relative!important;z-index:3!important}
   body>.app:not(.bb-home-visible){background-position:center!important}
 }
 </style>
+
+
+<style id="bb-kt679-mobile-controls-and-profile">
+/* KT-679: restore comfortable minimum touch targets without changing the board layout. */
+#menu.home-dashboard>#bbHomeProfile{
+  min-height:54px!important;
+  box-sizing:border-box!important;
+}
+@media(max-width:600px){
+  #game.screen>.playlayout>.sidecol>.sidecard.hold-card #holdBtn{
+    min-height:26px!important;height:26px!important;
+    padding:2px 5px!important;font-size:8px!important;
+  }
+  #game.screen>.playlayout>.sidecol>.drop-card{
+    padding:2px!important;gap:0!important;
+  }
+  #game.screen>.playlayout>.sidecol>.drop-card>label{display:none!important}
+  #game.screen>.playlayout>.sidecol>.drop-card .side-drop{
+    width:100%!important;min-height:38px!important;height:38px!important;
+    margin:0!important;padding:2px!important;font-size:9px!important;
+  }
+}
+</style>
