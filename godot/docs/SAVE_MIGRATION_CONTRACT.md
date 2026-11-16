@@ -215,3 +215,25 @@ This is a **shape proposal**, not a finalized list of game rules. Fields such as
 ## Recovery phrase
 
 `BLOCK BUDDIES — KT-487. Web localStorage audit baseline main@20d66e3171522feb010a81522dc3f5cf4334d936. No canonical Web save blob; bb_coins is live wallet source with legacy aliases coins/bbCoins; separate campaign marks and relics; per-hero progression; cosmetics; daily state. Visit streak and daily completion/replay receipts are now validated read-only. Continue with atomic-write/recovery fixtures on the Godot feature branch. Keep user:// writes disabled; do not touch main, merge, deploy or build APK without approval.`
+
+
+## 10. KT-488 — storage-agnostic atomic-save protocol prototype
+
+
+
+The Godot feature branch now contains a pure protocol coordinator in `godot/scripts/atomic_save_protocol.gd`. It accepts an injected adapter and a schema validator; it does not open files or access `user://`, `res://`, browser storage, or Android storage.
+
+The adapter contract is deliberately small:
+
+- `read_text(path)` returns `{ok: bool, exists: bool, text: String}`.
+- `write_text(path, text)` writes only the named temporary path and returns a boolean.
+- `flush(path)` confirms the temporary bytes are durable before promotion.
+- `replace_file(source, destination)` atomically replaces the destination and must leave the destination unchanged when it reports failure.
+
+The protocol validates the candidate and its JSON round-trip before touching storage. When an active document exists, it validates that document, writes and verifies a backup temporary file, atomically promotes the backup, then writes/verifies/promotes the new active temporary file. A failed active promotion therefore leaves the previous valid active document in place and also leaves its backup available. A backup-only state or invalid/future-schema active document blocks a new save until explicit recovery.
+
+Recovery prefers a valid active document, otherwise offers a valid backup without modifying either stored document. If neither is valid, it returns an error; it never resets, deletes, or silently replaces the source.
+
+The deterministic test uses an in-memory fake adapter only. It covers validation-before-write, successful backup rotation, backup promotion failure, interrupted temporary writes, active promotion failure, unknown future schema preservation, backup-only recovery, empty first-save behavior, and unrecoverable damaged documents.
+
+**Important boundary:** this is a protocol/test seam, not enabled persistence. No concrete filesystem adapter, `FileAccess`, `DirAccess`, `user://` path, automatic restore, migration execution, profile import, or run autosave is implemented. Keep persistent writes disabled until the protocol is reviewed against Android filesystem semantics, the full recovery suite is green, and the user approves the migration boundary.

@@ -468,3 +468,14 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - No Web runtime, gameplay rules, economy, campaign, user data, `main`, old project, APK/export or deployment changes.
 - Next: add pure atomic-write/recovery fixtures and a failure-safe storage adapter design. Keep all persistent `user://` writes disabled until recovery tests pass and the user approves the migration boundary.
 
+
+
+## 2026-11-16 — KT-488: storage-agnostic atomic-save protocol prototype
+
+- Added `godot/scripts/atomic_save_protocol.gd`, a pure coordinator that receives an injected storage adapter and a caller-owned schema validator. It contains no `FileAccess`, `DirAccess`, `user://`, browser-storage or Android-storage access.
+- The protocol validates candidate data and its JSON round-trip before storage operations; preserves the current valid active document through a verified temporary backup; and promotes the new active document only after write, flush, read-back and schema validation succeed.
+- Recovery prefers a valid active save, otherwise offers a valid backup without modifying either file. Unknown/future schema, backup-only state and unrecoverable corruption cannot trigger an automatic reset or overwrite.
+- Added an in-memory fake-adapter regression suite for successful rotation, invalid candidates, backup promotion failure, interrupted temp writes, active promotion failure, future-schema preservation, backup-only recovery, initial save and damaged active+backup files.
+- Added the suite to Godot Native Project Check. Exact-HEAD CI is **pending** for this checkpoint; do not mark KT-488 accepted until import, parse, all model/migration suites, the new atomic-save suite, visual capture and scene smoke test pass.
+- No concrete filesystem adapter, persistent `user://` writes, migration execution, profile import, user-data access/mutation, APK build/export, merge, deployment, main edit or old web-project change.
+- Next: inspect the exact-HEAD CI and visual artifact; then review the adapter's atomic-replace/flush contract against Android filesystem behavior before any concrete storage implementation. Keep persistence disabled.
