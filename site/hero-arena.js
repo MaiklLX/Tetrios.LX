@@ -137,7 +137,7 @@
   if(fits(grid,piece,0,1))piece.y++;else lock();
  };
  const frame=now=>{raf=0;if(paused)return;const dt=Math.min(50,now-(last||now));last=now;acc+=dt;if(acc>340){acc=0;step()}const decay=dt/700;clearBursts=clearBursts.filter(fx=>(fx.life-=decay)>0);sparks=sparks.filter(p=>{p.x+=p.vx*dt/16;p.y+=p.vy*dt/16;p.vy+=.12*dt/16;p.vx*=.985;return(p.life-=dt/850)>0});render();raf=requestAnimationFrame(frame)};
- const start=()=>{if(paused||raf)return;last=0;raf=requestAnimationFrame(frame)};
+ const start=()=>{if(paused||raf||!app.classList.contains('bb-home-visible'))return;last=0;raf=requestAnimationFrame(frame)};
  const stop=()=>{if(raf)cancelAnimationFrame(raf);raf=0};
  const observer=new ResizeObserver(resize);observer.observe(app);window.addEventListener('resize',resize,{passive:true});window.visualViewport?.addEventListener('resize',resize,{passive:true});
  const setHomeVisible=active=>{app.classList.toggle('bb-home-visible',!!active);document.body.classList.toggle('bb-home-visible',!!active);document.documentElement.classList.toggle('bb-home-visible',!!active);canvas.classList.toggle('is-active',!!active);if(active)start();else stop()};
