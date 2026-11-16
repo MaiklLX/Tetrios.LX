@@ -19476,3 +19476,212 @@ body>.app>.topbar{position:relative!important;z-index:3!important}
   #heroes .bb-hero-popup-card{transition:none!important}
 }
 </style>
+
+
+<style id="bb-kt688-hero-dossier-command-deck">
+/* KT-688: turn the hero dossier into a compact pilot command deck. */
+#modal.bb-hero-showcase-modal{
+  box-sizing:border-box!important;
+  width:min(660px,calc(100vw - 28px))!important;
+  max-width:660px!important;
+  padding:18px!important;
+  border:1px solid #527e89!important;
+  border-radius:22px 9px 22px 9px!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,#24536a66,transparent 46%),
+    linear-gradient(155deg,#142b40 0%,#101f32 52%,#0b1728 100%)!important;
+  box-shadow:0 24px 70px #000b,inset 0 1px #dfffff1b,0 0 0 1px #07111d!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase{
+  display:flex!important;flex-direction:column!important;gap:13px!important;
+  width:100%!important;min-width:0!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-close{
+  position:sticky!important;top:0!important;align-self:flex-end!important;
+  z-index:40!important;display:grid!important;place-items:center!important;
+  width:40px!important;height:40px!important;min-width:40px!important;
+  margin:0 0 -40px auto!important;padding:0!important;
+  color:#e6f5ed!important;font-size:25px!important;line-height:1!important;
+  border:1px solid #739ba0!important;border-radius:12px 5px 12px 5px!important;
+  background:linear-gradient(145deg,#24465a,#14283c)!important;
+  box-shadow:0 4px 14px #0007!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-topline{
+  padding:7px 52px 8px 10px!important;
+  color:#9fd7d2!important;font-size:9px!important;font-weight:900!important;
+  letter-spacing:.16em!important;line-height:1.4!important;
+  border-bottom:1px solid #6b9da044!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap{
+  position:relative!important;isolation:isolate!important;
+  display:grid!important;place-items:center!important;
+  min-height:250px!important;height:clamp(220px,34vw,300px)!important;
+  margin:0!important;padding:12px!important;overflow:hidden!important;
+  border:1px solid color-mix(in srgb,var(--hero-accent,#61d7d0) 50%,#36556a)!important;
+  border-radius:16px 6px 16px 6px!important;
+  background:
+    radial-gradient(ellipse at 50% 65%,color-mix(in srgb,var(--hero-accent,#61d7d0) 23%,transparent),transparent 50%),
+    radial-gradient(circle at 50% 48%,#28465b 0%,#152b40 44%,#0c1b2d 100%)!important;
+  box-shadow:inset 0 0 45px #061321a8,inset 0 1px #eaffff1b,0 6px 0 #091827!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap::before,
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap::after{
+  content:""!important;position:absolute!important;z-index:-1!important;
+  width:190px!important;height:190px!important;border:1px solid color-mix(in srgb,var(--hero-accent,#61d7d0) 35%,transparent)!important;
+  border-radius:50%!important;opacity:.5!important;pointer-events:none!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap::after{
+  width:245px!important;height:245px!important;opacity:.22!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage{
+  position:relative!important;z-index:1!important;
+  width:100%!important;height:100%!important;min-height:210px!important;
+  border-radius:12px!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage canvas,
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stage img{
+  max-width:100%!important;max-height:100%!important;
+  filter:drop-shadow(0 14px 18px #0009)!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-heading{
+  display:grid!important;grid-template-columns:86px minmax(0,1fr)!important;
+  align-items:center!important;gap:13px!important;
+  padding:13px!important;
+  border:1px solid #4b7480!important;border-radius:13px 5px 13px 5px!important;
+  background:linear-gradient(145deg,#1b374b,#14283b 70%,#102034)!important;
+  box-shadow:inset 0 1px #e9ffff12!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-emblem{
+  position:relative!important;display:grid!important;place-items:center!important;
+  width:82px!important;height:82px!important;min-width:82px!important;
+  border:1px solid #6d9fa0!important;border-radius:13px 5px 13px 5px!important;
+  background:radial-gradient(circle,#31576a,#142b40 72%)!important;
+  box-shadow:inset 0 0 20px #5adbd322,0 4px 0 #0a1b2b!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-emblem svg{
+  width:70px!important;height:70px!important;max-width:100%!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-kicker{
+  color:#a8d6cf!important;font-size:9px!important;font-weight:900!important;
+  letter-spacing:.13em!important;line-height:1.5!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-heading h2{
+  margin:3px 0 5px!important;color:#f2dfb3!important;
+  font-size:clamp(21px,4vw,28px)!important;font-weight:950!important;
+  letter-spacing:-.035em!important;line-height:1.05!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-heading p{
+  margin:0!important;color:#bed1d4!important;font-size:12px!important;
+  line-height:1.5!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stats{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;margin:0!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stats>div{
+  display:flex!important;flex-direction:column!important;gap:7px!important;
+  min-width:0!important;padding:12px!important;
+  border:1px solid #456c7a!important;border-radius:10px 4px 10px 4px!important;
+  background:linear-gradient(145deg,#1a3448,#11263a)!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stats span,
+#modal.bb-hero-showcase-modal .bb-hero-showcase-skill>span{
+  color:#9fc9c8!important;font-size:9px!important;font-weight:900!important;
+  letter-spacing:.12em!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-stats strong{
+  color:#edc879!important;font-size:17px!important;letter-spacing:.08em!important;
+  white-space:nowrap!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-skill{
+  padding:14px!important;border:1px solid #9a7947!important;
+  border-radius:12px 5px 12px 5px!important;
+  background:
+    radial-gradient(ellipse at 0% 0%,#b78a3c20,transparent 58%),
+    linear-gradient(145deg,#302e2b,#202b35 65%,#16283a)!important;
+  box-shadow:inset 0 1px #fff2!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-skill strong{
+  display:block!important;margin:6px 0 4px!important;
+  color:#f2d38e!important;font-size:16px!important;font-weight:950!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-skill p{
+  margin:0!important;color:#d0d8d5!important;font-size:12px!important;line-height:1.5!important;
+}
+#modal.bb-hero-showcase-modal #bbShowcaseTraining{
+  min-height:44px!important;border:1px solid #568b91!important;
+  border-radius:9px 4px 9px 4px!important;
+  background:linear-gradient(145deg,#24596a,#194052)!important;
+  color:#e0f3e9!important;box-shadow:0 4px 0 #0b2635!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-panel{
+  padding:13px!important;border:1px solid #456a78!important;
+  border-radius:12px 5px 12px 5px!important;
+  background:linear-gradient(145deg,#172f43,#102237)!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-heading{
+  color:#e3d1a8!important;font-size:10px!important;font-weight:950!important;
+  letter-spacing:.13em!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-status{
+  margin:6px 0 10px!important;color:#a9c9ca!important;font-size:11px!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-grid{
+  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))!important;
+  gap:8px!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-grid>button{
+  min-height:46px!important;padding:8px!important;
+  color:#d8e9e5!important;border:1px solid #527b83!important;
+  border-radius:8px 4px 8px 4px!important;
+  background:linear-gradient(145deg,#203d50,#142b3d)!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-grid>button.is-equipped{
+  border-color:#c5a35e!important;background:linear-gradient(145deg,#4a3d27,#273342)!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-cosmetic-empty{
+  color:#a9c4c8!important;font-size:11px!important;line-height:1.5!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-progress{
+  padding:11px 13px!important;color:#b9d8d4!important;
+  border:1px solid #426a79!important;border-radius:9px 4px 9px 4px!important;
+  background:linear-gradient(90deg,#19394a,#14293c)!important;
+  font-size:10px!important;font-weight:900!important;letter-spacing:.09em!important;
+}
+#modal.bb-hero-showcase-modal .bb-hero-showcase-select{
+  min-height:50px!important;margin-top:0!important;
+  border:1px solid #d1b36c!important;border-radius:10px 4px 10px 4px!important;
+  background:linear-gradient(145deg,#8d713b,#66502c)!important;
+  color:#fff0c9!important;font-weight:950!important;letter-spacing:.04em!important;
+  box-shadow:0 5px 0 #30291d,0 9px 18px #0004!important;
+}
+#modal.bb-hero-showcase-modal button:focus-visible{
+  outline:2px solid #9be8dc!important;outline-offset:3px!important;
+}
+@media(max-width:520px){
+  #modal.bb-hero-showcase-modal{
+    width:calc(100vw - 18px)!important;max-height:calc(100dvh - 18px)!important;
+    padding:12px!important;border-radius:17px 7px 17px 7px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase{gap:10px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap{
+    min-height:205px!important;height:215px!important;padding:8px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-stage{min-height:185px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-heading{
+    grid-template-columns:68px minmax(0,1fr)!important;gap:10px!important;padding:10px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-emblem{
+    width:66px!important;height:66px!important;min-width:66px!important;
+  }
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-emblem svg{width:58px!important;height:58px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-heading p{font-size:11px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-stats{gap:7px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-stats>div{padding:9px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-showcase-stats strong{font-size:14px!important}
+  #modal.bb-hero-showcase-modal .bb-hero-cosmetic-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #modal.bb-hero-showcase-modal *{scroll-behavior:auto!important;transition:none!important}
+}
+</style>
