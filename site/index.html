@@ -6091,11 +6091,11 @@ body>canvas.bb-galaxy-model-canvas{display:none!important}
 }
 </style>
 
-<style id="bb-kt668-screen-visibility-fix">
-/* KT-668: author display rules must never override the native hidden state.
-   Keep inactive screens out of layout so navigation replaces the current view
-   instead of stacking every screen down the page. */
-html body #menu[hidden],
+<style id="bb-kt669-screen-visibility-and-markup-fix">
+/* KT-669: remove inactive screens even when legacy dashboard selectors use
+   high-specificity !important display rules. The home dashboard has three
+   repeated class selectors, so its hidden-state selector must outrank them. */
+html body #menu.home-dashboard.home-dashboard.home-dashboard[hidden],
 html body #shopScreen[hidden],
 html body #heroes[hidden],
 html body #campaign[hidden],
