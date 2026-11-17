@@ -21011,3 +21011,29 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   }
 }
 </style>
+
+
+<style id="bb-kt710-tablet-goal-rail-flow">
+@media (min-width:701px) and (max-width:900px) and (orientation:portrait){
+  #game.screen .playlayout>.gameleftcol{
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:wrap!important;
+    align-items:flex-start!important;
+    gap:10px!important;
+  }
+  #game.screen .playlayout>.gameleftcol>.gamehud,
+  #game.screen .playlayout>.gameleftcol>.progresswrap{
+    flex:1 1 220px!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  #game.screen .playlayout>.gameleftcol>#rogueGoals,
+  #game.screen .playlayout>.gameleftcol>#campaignGoals{
+    flex:1 1 100%!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+}
+</style>
