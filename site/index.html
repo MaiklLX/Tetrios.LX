@@ -8519,25 +8519,25 @@ toast('Цель выполнена! +' + g.reward + ' монет');
   const done = goals.filter(g => g.value() >= g.target).length;
 
   panel.innerHTML =
-    '<strong style="font-size:14px">🎯 ЦЕЛИ УЗЛА ' +
-    String(campaignNode).padStart(3, '0') + '</strong>' +
-    '<div style="color:#aab6d2;margin:3px 0 8px">' +
-    done + ' из ' + goals.length + ' выполнено</div>' +
+    '<div class="bb-goals-heading"><span>🎯 ЦЕЛИ УЗЛА</span><b>' +
+    String(campaignNode).padStart(3, '0') + '</b></div>' +
+    '<div class="bb-goals-summary"><span>Прогресс миссии</span><strong>' +
+    done + ' / ' + goals.length + '</strong></div>' +
+    '<div class="bb-goals-list">' +
     goals.map(g => {
       const value = g.value();
       const complete = value >= g.target;
       const failed = typeof g.failed === 'function' && g.failed();
-      return '<div style="margin:6px 0">' +
-        '<div style="display:flex;justify-content:space-between;gap:8px">' +
-        '<span>' + (failed?'✕ ':complete ? '✅ ' : '◯ ') + g.label + '</span>' +
-        '<strong>' + (failed?'УСЛОВИЕ НАРУШЕНО':Math.min(value, g.target) + '/' + g.target) + '</strong>' +
-        '</div><div style="height:4px;background:#293550;border-radius:4px;overflow:hidden">' +
-        '<div style="height:100%;width:' +
-        Math.min(100, value / g.target * 100) +
-        '%;background:' + (complete ? '#72d6a0' : '#82aaff') +
-        '"></div></div></div>';
-
-    }).join('');
+      const percent = Math.min(100, value / g.target * 100);
+      return '<div class="bb-campaign-goal' +
+        (complete ? ' is-complete' : '') + (failed ? ' is-failed' : '') + '">' +
+        '<div class="bb-campaign-goal-top"><span class="bb-campaign-goal-label">' +
+        (failed ? '× ' : complete ? '✓ ' : '') + g.label +
+        '</span><strong class="bb-campaign-goal-count">' +
+        (failed ? 'НЕ ВЫПОЛНЕНО' : Math.min(value, g.target) + ' / ' + g.target) +
+        '</strong></div><div class="bb-campaign-goal-track"><span style="width:' +
+        percent + '%"></span></div></div>';
+    }).join('') + '</div>';
 
   bbCheckCampaignCompletion();
 }
@@ -20330,5 +20330,79 @@ html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkil
 }
 @media(prefers-reduced-motion:reduce){
   #game #bbHeroSkillCard{transition:none!important}
+}
+</style>
+
+
+<style id="bb-kt702-campaign-objective-visual-polish">
+/* Campaign objectives: compact mission console, matching the dark celestial arena. */
+html body #campaignGoals {
+  box-sizing: border-box !important;
+  width: 100%;
+  margin: 8px 0 10px !important;
+  padding: 12px 12px 10px !important;
+  border: 1px solid rgba(115, 151, 174, .22) !important;
+  border-radius: 15px !important;
+  background:
+    radial-gradient(130% 100% at 0% 0%, rgba(53, 104, 111, .16), transparent 62%),
+    linear-gradient(155deg, rgba(15, 27, 42, .97), rgba(9, 17, 29, .98)) !important;
+  color: #dce7e8 !important;
+  box-shadow: inset 0 1px 0 rgba(205, 225, 221, .045), 0 8px 22px rgba(0, 0, 0, .18);
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+#campaignGoals .bb-goals-heading {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  color:#9eb8b8; font-size:9px; font-weight:800; letter-spacing:.16em;
+}
+#campaignGoals .bb-goals-heading b {
+  color:#d9bd7a; font-size:12px; letter-spacing:.08em;
+  font-variant-numeric:tabular-nums;
+}
+#campaignGoals .bb-goals-summary {
+  display:flex; align-items:center; justify-content:space-between;
+  margin:7px 0 9px; padding-bottom:8px;
+  border-bottom:1px solid rgba(143,174,177,.13);
+  color:#81999d; font-size:10px;
+}
+#campaignGoals .bb-goals-summary strong {
+  color:#b9d3ce; font-size:10px; font-variant-numeric:tabular-nums;
+}
+#campaignGoals .bb-goals-list { display:grid; gap:9px; }
+#campaignGoals .bb-campaign-goal { min-width:0; }
+#campaignGoals .bb-campaign-goal-top {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+}
+#campaignGoals .bb-campaign-goal-label {
+  min-width:0; color:#c4d0d0; font-size:10px; line-height:1.4;
+}
+#campaignGoals .bb-campaign-goal-count {
+  flex:0 0 auto; color:#91aaa9; font-size:9px;
+  font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+#campaignGoals .bb-campaign-goal-track {
+  height:3px; margin-top:5px; overflow:hidden; border-radius:8px;
+  background:rgba(108,135,145,.19);
+}
+#campaignGoals .bb-campaign-goal-track span {
+  display:block; height:100%; border-radius:inherit;
+  background:linear-gradient(90deg,#648f91,#b59a63);
+  box-shadow:0 0 8px rgba(113,160,151,.2);
+  transition:width .28s ease;
+}
+#campaignGoals .bb-campaign-goal.is-complete .bb-campaign-goal-label,
+#campaignGoals .bb-campaign-goal.is-complete .bb-campaign-goal-count { color:#8fc5a7; }
+#campaignGoals .bb-campaign-goal.is-complete .bb-campaign-goal-track span {
+  background:linear-gradient(90deg,#548d77,#9bcaa2);
+}
+#campaignGoals .bb-campaign-goal.is-failed .bb-campaign-goal-label,
+#campaignGoals .bb-campaign-goal.is-failed .bb-campaign-goal-count { color:#c98780; }
+#campaignGoals .bb-campaign-goal.is-failed .bb-campaign-goal-track span { background:#a95f5b; }
+@media (max-width:700px) {
+  html body #campaignGoals { padding:10px 10px 9px !important; border-radius:13px !important; }
+  #campaignGoals .bb-goals-list { gap:8px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  #campaignGoals .bb-campaign-goal-track span { transition:none; }
 }
 </style>
