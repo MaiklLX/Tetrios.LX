@@ -8492,6 +8492,8 @@ toast('Цель выполнена! +' + g.reward + ' монет');
           '<span style="float:right">' + Math.min(value, g.target) + '/' + g.target +
           ' · 🪙 ' + g.reward + '</span></div>';
       }).join('');
+    const goalsLayout=game.querySelector('.playlayout');
+    if(goalsLayout && panel.parentElement!==game) goalsLayout.after(panel);
     return;
   }
   if (mode !== 'campaign') {
@@ -8538,6 +8540,8 @@ toast('Цель выполнена! +' + g.reward + ' монет');
         '</strong></div><div class="bb-campaign-goal-track"><span style="width:' +
         percent + '%"></span></div></div>';
     }).join('') + '</div>';
+  const campaignLayout=game.querySelector('.playlayout');
+  if(campaignLayout && panel.parentElement!==game) campaignLayout.after(panel);
 
   bbCheckCampaignCompletion();
 }
@@ -21037,3 +21041,31 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   }
 }
 </style>
+
+
+<style id="bb-kt711-goals-below-arena">
+#game.screen>#rogueGoals,
+#game.screen>#campaignGoals{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  box-sizing:border-box!important;margin:10px 0 0!important;padding:8px 0 0!important;
+  border:0!important;border-top:1px solid #536d8b55!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+}
+#game.screen>#rogueGoals>strong,#game.screen>#campaignGoals>strong,
+#game.screen>#rogueGoals>.bb-goals-heading,#game.screen>#campaignGoals>.bb-goals-heading,
+#game.screen>#campaignGoals>.bb-goals-summary{grid-column:1/-1!important}
+@media(max-width:900px){
+ #game.screen>#rogueGoals,#game.screen>#campaignGoals{margin-top:8px!important;gap:5px!important}
+ #game.screen>#dailyMissionGoal:not([hidden]){
+  position:relative!important;inset:auto!important;grid-column:1/-1!important;grid-row:2!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  flex-wrap:wrap!important;gap:5px 10px!important;width:100%!important;min-width:0!important;
+  max-width:100%!important;min-height:34px!important;height:auto!important;
+  margin:0 0 7px!important;padding:6px 10px!important;z-index:2!important;box-sizing:border-box!important;
+ }
+ #game.screen>.gamehud.gamehud-top{
+  grid-column:1/-1!important;grid-row:3!important;position:relative!important;z-index:1!important;
+  margin:0 0 8px!important;
+ }
+}
