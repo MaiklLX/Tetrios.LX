@@ -20230,3 +20230,105 @@ body>.app:has(#game:not([hidden])){
  #game.screen #bbHeroSkillCard{transition:none!important}
 }
 </style>
+
+<style id="bb-kt700-skill-relic-and-dossier-containment">
+/* KT-700: enforce a visibly distinct hero relic and contain the dossier on desktop. */
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard.bb-hero-skill-slot{
+  box-sizing:border-box!important;position:relative!important;isolation:isolate!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-width:0!important;min-height:112px!important;height:auto!important;
+  margin:5px 0!important;padding:9px 4px 8px!important;gap:5px!important;
+  overflow:visible!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;color:#e9e2cc!important;
+  text-align:center!important;cursor:pointer!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:before{
+  content:"";position:absolute;z-index:-1;left:50%;top:34px;width:94px;height:94px;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,#b99b5830 0%,#629d9630 34%,transparent 72%);
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:after{
+  content:"";position:absolute;left:12%;right:12%;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,#b99b5866,transparent);pointer-events:none;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-art{
+  box-sizing:border-box!important;position:relative!important;display:grid!important;place-items:center!important;
+  flex:0 0 68px!important;width:68px!important;height:68px!important;margin:0!important;
+  border:1px solid #c3a96d!important;border-radius:50%!important;
+  background:radial-gradient(circle at 38% 28%,#496b65 0%,#203d43 48%,#0a1a28 82%)!important;
+  box-shadow:inset 0 0 0 3px #091723,inset 0 0 0 4px #c3a96d88,
+    0 0 0 1px #c3a96d55,0 0 24px #8bbeb02b!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-art:before{
+  content:"";position:absolute;inset:-6px;border:1px solid #c3a96d66;border-radius:50%;
+  clip-path:polygon(50% 0,59% 8%,69% 2%,75% 14%,87% 14%,88% 27%,98% 35%,92% 47%,100% 56%,90% 68%,92% 81%,78% 84%,72% 97%,60% 92%,50% 100%,40% 92%,27% 97%,22% 84%,8% 81%,10% 68%,0 56%,8% 44%,2% 35%,14% 27%,14% 14%,27% 14%,33% 2%,43% 8%);
+  pointer-events:none;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-art svg{
+  width:49px!important;height:49px!important;filter:drop-shadow(0 3px 7px #000c)!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-copy{
+  display:flex!important;flex-direction:column!important;align-items:center!important;gap:2px!important;
+  width:100%!important;min-width:0!important;text-align:center!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-copy strong{
+  color:#e8d3a0!important;font-size:9px!important;font-weight:950!important;letter-spacing:.16em!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-copy small{
+  color:#b3c9c1!important;font-size:8px!important;line-height:1.25!important;white-space:normal!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-copy em{
+  margin-top:2px!important;color:#9bc7b8!important;font-size:7px!important;font-weight:900!important;letter-spacing:.12em!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard .bb-hero-skill-pulse{display:none!important}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:not(:disabled) .bb-hero-skill-art{
+  border-color:#f0cf83!important;box-shadow:inset 0 0 0 3px #091723,inset 0 0 0 4px #e6c57c,
+    0 0 0 1px #e6c57c88,0 0 28px #e6c57c55!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:not(:disabled) .bb-hero-skill-copy em{color:#f0cf83!important}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:disabled{opacity:.92!important;filter:saturate(.8)!important}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:not(:disabled):hover{transform:translateY(-2px)!important;filter:brightness(1.15)!important}
+html body .app section#game.screen .playlayout aside.sidecol > button#bbHeroSkillCard:focus-visible{outline:1px solid #e6c57c!important;outline-offset:4px!important}
+
+/* The dossier is a viewport-sized dialog; long content scrolls inside it, never the page. */
+#overlay.show{
+  box-sizing:border-box!important;position:fixed!important;inset:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:clamp(10px,2vh,22px) 14px!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+}
+#overlay.show #modal.bb-hero-showcase-modal{
+  box-sizing:border-box!important;flex:0 1 auto!important;
+  width:min(900px,calc(100vw - 28px))!important;max-width:900px!important;
+  max-height:calc(100dvh - 28px)!important;min-height:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;scrollbar-gutter:stable!important;
+  align-self:center!important;
+}
+#overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase{
+  min-height:0!important;max-height:none!important;align-content:start!important;
+}
+#overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap{
+  min-height:0!important;height:clamp(260px,42vh,390px)!important;max-height:390px!important;
+  contain:layout paint!important;
+}
+#overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage{
+  min-height:0!important;height:100%!important;max-height:100%!important;
+}
+#overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage canvas,
+#overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage img{
+  max-height:100%!important;max-width:100%!important;
+}
+@media(max-width:759px){
+  #overlay.show{align-items:flex-start!important;padding:9px!important}
+  #overlay.show #modal.bb-hero-showcase-modal{
+    width:calc(100vw - 18px)!important;max-height:calc(100dvh - 18px)!important;
+  }
+  #overlay.show #modal.bb-hero-showcase-modal .bb-hero-showcase-stage-wrap{
+    height:clamp(190px,30vh,270px)!important;max-height:270px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #game #bbHeroSkillCard{transition:none!important}
+}
+</style>
