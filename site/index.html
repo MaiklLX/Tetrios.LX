@@ -10773,7 +10773,13 @@ function bbArrangeModeHud(){
   set(boardColumn,{gridColumn:'1',gridRow:'1',display:'flex',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',overflow:'visible'});
   set(rail,{gridColumn:'2',gridRow:'1',position:'relative',inset:'auto',display:'flex',flexDirection:'column',alignItems:'stretch',gap:'9px',width:'100%',minWidth:'0',minHeight:'0',maxHeight:'100%',overflowY:'auto',overflowX:'hidden',overscrollBehavior:'contain'});
   const frame=boardColumn?.querySelector('.boardframe');
-  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',width:'min(100%,calc(min(70dvh,680px)*10/23))',height:'min(70dvh,680px)',minHeight:'360px',maxHeight:'680px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
+  /* On phones the board must share the viewport with the HUD and Block Run goals.
+     The old 70dvh inline-important height pushed the entire goals rail below the fold. */
+  const compactViewport=window.matchMedia('(max-width: 900px)').matches;
+  const phoneViewport=window.matchMedia('(max-width: 520px)').matches;
+  const frameHeight=phoneViewport?'min(49dvh,430px)':compactViewport?'min(54dvh,540px)':'min(70dvh,680px)';
+  const frameMin=phoneViewport?'250px':compactViewport?'270px':'360px';
+  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',width:`min(100%,calc(${frameHeight}*10/23))`,height:frameHeight,minHeight:frameMin,maxHeight:phoneViewport?'430px':compactViewport?'540px':'680px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
   const board=frame?.querySelector('.board');
   set(board,{display:'block',width:'auto',height:'100%',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain'});
   for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
