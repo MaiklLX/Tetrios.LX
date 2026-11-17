@@ -20458,3 +20458,88 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
  html body .app section#game.screen > .gamehud{scroll-behavior:auto!important}
 }
 </style>
+
+<style id="bb-kt704-hud-visual-refinement">
+/* KT-704: give the shared arena HUD a quieter, more deliberate instrument-panel feel. */
+#game.screen>.screenhead{
+  min-height:42px!important;margin:2px 0 12px!important;padding:0 1px!important;
+}
+#game.screen>.screenhead .game-heading-copy h2{
+  color:#e5e9dc!important;font-size:clamp(17px,2.5vw,21px)!important;
+  font-weight:850!important;letter-spacing:-.035em!important;
+}
+#game.screen>.screenhead .game-heading-copy p{
+  color:#829d9d!important;font-size:10px!important;letter-spacing:.025em!important;
+}
+#game.screen>.screenhead .pause-trigger{
+  width:40px!important;height:40px!important;flex:0 0 40px!important;
+  display:grid!important;place-items:center!important;border-radius:13px!important;
+  border:1px solid #668e8a55!important;
+  background:linear-gradient(155deg,#17313a,#0d202b)!important;
+  color:#b7d5c9!important;box-shadow:inset 0 1px #ffffff0b,0 3px 10px #0003!important;
+}
+#game.screen>.screenhead .pause-trigger .pause-glyph{width:21px!important;height:21px!important}
+#game.screen>.gamehud.gamehud-top{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:6px!important;width:min(100%,660px)!important;
+  margin:0 auto 10px!important;padding:6px!important;
+  border:1px solid #6d99902a!important;border-radius:14px!important;
+  background:linear-gradient(115deg,#10232eeF,#0c1b27f5)!important;
+  box-shadow:inset 0 1px #ffffff09,0 8px 18px #0002!important;
+}
+#game.screen>.gamehud.gamehud-top>.hudbox,
+#game.screen>.gamehud.gamehud-top>#gameCoins{
+  min-width:0!important;min-height:43px!important;padding:6px 8px!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+  gap:4px!important;border:1px solid #789a9122!important;border-radius:9px!important;
+  background:linear-gradient(145deg,#1a3038aa,#10232d99)!important;
+  box-shadow:inset 0 1px #ffffff08!important;
+}
+#game.screen>.gamehud.gamehud-top .hudbox span,
+#game.screen>.gamehud.gamehud-top #gameCoins span{
+  color:#88aaa5!important;font-size:7px!important;letter-spacing:.14em!important;
+  line-height:1!important;font-weight:850!important;
+}
+#game.screen>.gamehud.gamehud-top .hudbox strong,
+#game.screen>.gamehud.gamehud-top #gameCoins strong{
+  color:#e4e9dc!important;font-size:17px!important;line-height:1.05!important;
+  font-weight:850!important;letter-spacing:-.025em!important;
+  font-variant-numeric:tabular-nums!important;
+}
+#game.screen>.gamehud.gamehud-top>.hudbox:nth-child(2) strong{color:#b9d6ca!important}
+#game.screen>.gamehud.gamehud-top>.hudbox:nth-child(3) strong{color:#d7c18e!important}
+#game.screen>.gamehud.gamehud-top>#gameCoins{
+  border-color:#b99b5933!important;
+  background:linear-gradient(145deg,#3b3425aa,#1d2828aa)!important;
+}
+#game.screen>.gamehud.gamehud-top>#gameCoins span{color:#c4a96d!important}
+#game.screen>.gamehud.gamehud-top>#gameCoins strong{color:#f0d99b!important}
+#game.screen #dailyMissionGoal{
+  width:min(100%,660px)!important;margin:0 auto 9px!important;
+  padding:8px 11px!important;border:1px solid #b99b5944!important;
+  border-radius:10px!important;background:linear-gradient(100deg,#2c2a20aa,#152b30aa)!important;
+  box-shadow:inset 0 1px #ffffff09!important;
+}
+#game.screen #dailyMissionGoal .daily-mission-label{
+  color:#bda66f!important;font-size:8px!important;letter-spacing:.14em!important;
+}
+#game.screen #dailyMissionGoal strong{color:#e9dfbd!important;font-size:12px!important}
+@media(max-width:600px){
+  #game.screen>.screenhead{margin-bottom:8px!important}
+  #game.screen>.screenhead .pause-trigger{width:37px!important;height:37px!important;flex-basis:37px!important}
+  #game.screen>.gamehud.gamehud-top{
+    gap:4px!important;padding:4px!important;margin-bottom:7px!important;border-radius:12px!important;
+  }
+  #game.screen>.gamehud.gamehud-top>.hudbox,
+  #game.screen>.gamehud.gamehud-top>#gameCoins{
+    min-height:39px!important;padding:5px 5px!important;gap:4px!important;border-radius:8px!important;
+  }
+  #game.screen>.gamehud.gamehud-top .hudbox span,
+  #game.screen>.gamehud.gamehud-top #gameCoins span{font-size:6px!important;letter-spacing:.09em!important}
+  #game.screen>.gamehud.gamehud-top .hudbox strong,
+  #game.screen>.gamehud.gamehud-top #gameCoins strong{font-size:15px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #game.screen>.screenhead .pause-trigger{transition:none!important}
+}
+</style>
