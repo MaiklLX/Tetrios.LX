@@ -18344,6 +18344,42 @@ body>.app.bb-home-visible::before,body>.app.bb-home-visible::after{display:none!
   body>.app::before{animation:none!important}
 }
 </style>
+
+<style id="bb-kt697-structure-agnostic-floating-surfaces">
+/* KT-697: the runtime may re-parent the board into .gameleftcol; target surfaces by role, not wrapper depth. */
+html body main.app #game.screen .playlayout,
+html body main.app #game.screen .gameleftcol,
+html body main.app #game.screen .sidecol{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+html body main.app #game.screen .boardframe{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;padding:0!important;
+}
+html body main.app #game.screen .boardframe:before,
+html body main.app #game.screen .boardframe:after{display:none!important;content:none!important}
+html body main.app #game.screen .sidecol .sidecard,
+html body main.app #game.screen .sidecol .drop-card,
+html body main.app #game.screen .sidecol #bbHeroSkillCard{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+html body main.app #game.screen .sidecol #next,
+html body main.app #game.screen .sidecol #holdPreview{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+html body main.app #game.screen .gamehud .hudbox,
+html body main.app #game.screen .gamehud #gameCoins{
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body main.app #game.screen .sidecol .drop-card .side-drop{
+  border:1px solid #c5a66b!important;border-radius:10px!important;
+  background:linear-gradient(180deg,#b98d4e,#765633)!important;
+  color:#fff1ce!important;box-shadow:0 3px 0 #3b2b20!important;
+}
+</style>
 </body></html>
 
 <style id="bb-kt634-arena-unification">
