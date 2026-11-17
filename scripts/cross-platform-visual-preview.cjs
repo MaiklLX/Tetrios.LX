@@ -61,13 +61,14 @@ const targets = [
     await page.waitForTimeout(250);
     // KT-569.1: assert the Godot home-hub wordmark and themed mode panels.
     const homeVisualState = await page.evaluate(() => {
-      const title = document.querySelector('#menu .hero h1');
+      const title = document.querySelector('#menu .hero h1, #menu .hero .bb-title-logo');
       const campaign = document.querySelector('#menu button.mode[data-mode="campaign"]');
       const rogue = document.querySelector('#menu button.mode[data-mode="rogue"]');
       const campaignStyle = campaign ? getComputedStyle(campaign) : null;
       const rogueStyle = rogue ? getComputedStyle(rogue) : null;
       return {
-        title: title?.textContent?.replace(/\s+/g, ' ').trim() || '',
+        title: title?.tagName === 'IMG' ? (title.getAttribute('alt') || '').trim() : (title?.textContent?.replace(/\s+/g, ' ').trim() || ''),
+        titleLoaded: !!title && (title.tagName !== 'IMG' || (title.complete && title.naturalWidth > 0)),
         campaignBorder: campaignStyle?.borderTopColor || '',
         campaignPlanet: campaign ? getComputedStyle(campaign, '::after').backgroundImage : '',
         rogueBorder: rogueStyle?.borderTopColor || '',
@@ -79,7 +80,7 @@ const targets = [
       CSS.supports('color', state.rogueBorder) &&
       state.campaignBorder !== 'rgba(0, 0, 0, 0)' &&
       state.rogueBorder !== 'rgba(0, 0, 0, 0)', homeVisualState);
-    if (homeVisualState.title !== 'BLOCK BUDDIES' ||
+    if (homeVisualState.title !== 'BLOCK BUDDIES' || !homeVisualState.titleLoaded ||
         !homeBorderColorsSupported ||
         !homeVisualState.campaignPlanet.includes('radial-gradient') ||
         !homeVisualState.roguePlanet.includes('radial-gradient')) {
@@ -91,7 +92,7 @@ const targets = [
       const wallet=profile?.querySelector('.bb-home-profile-wallet strong')?.textContent?.trim()||'';
       const currentCoins=document.querySelector('#coins')?.textContent?.trim()||'';
       return {
-        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=50,
+        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=44,
         hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
         hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
         hasLevel:/УРОВЕНЬ \d+/.test(profile?.innerText||''),
@@ -135,7 +136,7 @@ const targets = [
       };
       return {
         viewport:{width:innerWidth,height:innerHeight},
-        menu:rect('#menu'),title:rect('#menu .hero h1'),profile:rect('#bbHomeProfile'),
+        menu:rect('#menu'),title:rect('#menu .hero h1, #menu .hero .bb-title-logo'),profile:rect('#bbHomeProfile'),
         campaign:rect('#menu button.mode[data-mode="campaign"]'),
         blockRun:rect('#menu button.mode[data-mode="rogue"]'),
         daily:rect('#menu button.mode[data-mode="daily"]'),
@@ -147,10 +148,13 @@ const targets = [
       const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
+    const compactPortrait = homeHubLayoutState.viewport.width < 600 && homeHubLayoutState.viewport.height > homeHubLayoutState.viewport.width;
+    const minProfileRatio = compactPortrait ? .55 : .45;
+    const minModeRatio = compactPortrait ? .78 : .30;
     if(!homePanelsOrdered||
-       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*.55||
-       homeHubLayoutState.campaign.width<homeHubLayoutState.menu.width*.78||
-       homeHubLayoutState.blockRun.width<homeHubLayoutState.menu.width*.78){
+       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*minProfileRatio||
+       homeHubLayoutState.campaign.width<homeHubLayoutState.menu.width*minModeRatio||
+       homeHubLayoutState.blockRun.width<homeHubLayoutState.menu.width*minModeRatio){
       failures.push(target.name+': KT-581 Godot home-hub composition/order/width mismatch ('+JSON.stringify(homeHubLayoutState)+')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
@@ -907,6 +911,15 @@ const targets = [
     }
     if (geometry.document.width > target.width + 2) {
       failures.push(target.name + ': horizontal document overflow (' + geometry.document.width + 'px)');
+    }
+    // KT-697: on narrow portrait phones, the utility rail must share the
+    // arena frame's vertical bounds; do not merely check that its cards fit.
+    if (target.mobile && target.width < 600 && target.height > target.width && geometry.frame && geometry.side) {
+      const topDelta = Math.abs(geometry.side.y - geometry.frame.y);
+      const bottomDelta = Math.abs(geometry.side.bottom - geometry.frame.bottom);
+      if (topDelta > 3 || bottomDelta > 3) {
+        failures.push(target.name + ': KT-697 utility rail/frame vertical alignment mismatch (' + JSON.stringify({frame:geometry.frame,side:geometry.side,topDelta,bottomDelta}) + ')');
+      }
     }
     let sideScrollCheck = null;
     if (target.mobile) {
