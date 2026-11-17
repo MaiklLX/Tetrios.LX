@@ -26,3 +26,10 @@
 
 - Second Mobile preview [run 44076865606](https://github.com/MaiklLX/Tetrios.LX/actions/runs/44076865606) confirmed that the first percentage-height correction aligned 412×915 but left a 5.64px inset error at 375×812: frame y=147.41..626.55, rail y=141.77..632.21. The parent grid row changes with the narrow-width board constraint, so a fixed `calc(100% - 60px)` is not a valid cross-width model.
 - Replaced that percentage subtraction with the same width-derived 10:23 cabinet budget used by the narrow/wide mobile layout (separate 361–380px and 381–520px rules). The rail remains centered; no scale transform is used, so Hold/Drop hit areas are not shrunk. A fresh Mobile and Cross-platform run is pending.
+
+## 2026-11-17 — latest verification state
+
+- Latest feature head: `15155643744562179e151ae96010357f1c48b7fb` (brand CSS formula and checkpoint only after the regression-script commit).
+- Mobile run 44076865606 failed only at 375×812 after the percentage-height attempt; the measured rail was 5.64px taller than the frame, while 412×915 was aligned. The current width-derived sizing correction is committed, but has no new exact-head workflow result.
+- Cross-platform run 44076865452 was cancelled during the desktop campaign-atlas stage when the branch advanced; its partial artifact [14325806755](https://github.com/MaiklLX/Tetrios.LX/actions/runs/44076865452/artifacts/14325806755) is not a completed validation. The previous complete run 44074829401 failed stale home-hub assertions and exposed the independent campaign fallback issue already noted above.
+- No current-head Mobile or Cross-platform run/status was returned after the latest commits. The available GitHub integration has no workflow-dispatch operation; do not rerun the old SHA and do not claim the latest CSS/test changes are green. Exact-head CI remains the next required gate.
