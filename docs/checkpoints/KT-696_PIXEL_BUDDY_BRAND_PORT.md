@@ -23,3 +23,6 @@
 - The same cross-platform run also exposed separate current-mainline campaign atlas failures: no visible procedural fallback/model in the campaign atlas and an art-width threshold miss. These are not hidden or waived by this brand patch; they remain open for a separate campaign-rendering investigation.
 - Exact-head Mobile and Cross-platform reruns are pending for the commits above. Do not mark KT-697 accepted until both workflows pass and their screenshots/reports are inspected.
 - No gameplay, campaign data, economy, save/persistence, main, deployment, APK, release or user data was changed.
+
+- Second Mobile preview [run 44076865606](https://github.com/MaiklLX/Tetrios.LX/actions/runs/44076865606) confirmed that the first percentage-height correction aligned 412×915 but left a 5.64px inset error at 375×812: frame y=147.41..626.55, rail y=141.77..632.21. The parent grid row changes with the narrow-width board constraint, so a fixed `calc(100% - 60px)` is not a valid cross-width model.
+- Replaced that percentage subtraction with the same width-derived 10:23 cabinet budget used by the narrow/wide mobile layout (separate 361–380px and 381–520px rules). The rail remains centered; no scale transform is used, so Hold/Drop hit areas are not shrunk. A fresh Mobile and Cross-platform run is pending.
