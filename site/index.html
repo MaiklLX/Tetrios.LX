@@ -20406,3 +20406,55 @@ html body #campaignGoals {
   #campaignGoals .bb-campaign-goal-track span { transition:none; }
 }
 </style>
+
+<style id="bb-kt704-real-hud-selector-polish">
+/* KT-704: target the actual HUD markup (.gamehud); earlier theme selectors expected a missing modifier class. */
+html body .app section#game.screen > .gamehud{
+  box-sizing:border-box!important;
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:stretch!important;gap:0!important;
+  width:min(100%,680px)!important;min-height:48px!important;
+  margin:0 auto 12px!important;padding:3px!important;
+  border:1px solid #77bdb329!important;border-radius:15px!important;
+  background:linear-gradient(105deg,#10212de8,#142633e8 52%,#101d2be8)!important;
+  box-shadow:inset 0 1px #ffffff0b,0 9px 22px #0003!important;
+}
+html body .app section#game.screen > .gamehud > .hudbox,
+html body .app section#game.screen > .gamehud > #gameCoins{
+  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+  justify-content:center!important;align-items:center!important;gap:3px!important;
+  min-width:0!important;min-height:40px!important;padding:3px 5px!important;
+  border:0!important;border-right:1px solid #a9d4d01a!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body .app section#game.screen > .gamehud > :last-child{border-right:0!important}
+html body .app section#game.screen > .gamehud .hudbox span,
+html body .app section#game.screen > .gamehud #gameCoins span{
+  color:#94b8b5!important;font-size:8px!important;letter-spacing:.12em!important;
+  font-weight:850!important;line-height:1!important;
+}
+html body .app section#game.screen > .gamehud .hudbox strong,
+html body .app section#game.screen > .gamehud #gameCoins strong{
+  color:#eaf2e9!important;font-size:17px!important;font-weight:850!important;
+  line-height:1.1!important;font-variant-numeric:tabular-nums!important;
+}
+html body .app section#game.screen > .gamehud .hudbox:nth-child(2) strong,
+html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!important}
+@media(min-width:901px){
+ html body .app section#game.screen > .gamehud{width:min(100%,560px)!important}
+}
+@media(max-width:600px){
+ html body .app section#game.screen > .gamehud{
+  min-height:43px!important;margin-bottom:6px!important;padding:3px!important;border-radius:12px!important;
+ }
+ html body .app section#game.screen > .gamehud > .hudbox,
+ html body .app section#game.screen > .gamehud > #gameCoins{min-height:35px!important;padding:2px 3px!important}
+ html body .app section#game.screen > .gamehud .hudbox span,
+ html body .app section#game.screen > .gamehud #gameCoins span{font-size:7px!important;letter-spacing:.07em!important}
+ html body .app section#game.screen > .gamehud .hudbox strong,
+ html body .app section#game.screen > .gamehud #gameCoins strong{font-size:15px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html body .app section#game.screen > .gamehud{scroll-behavior:auto!important}
+}
+</style>
