@@ -36,13 +36,20 @@
 
 /* KT-697 — align the mobile utility rail to the centered 10×23 frame.
    This file is linked in <head>, before the later legacy inline layout rules,
-   so the more-specific selector is intentional. The 60px reduction accounts
-   for the 30px vertical centering inset measured at 375×812 and 412×915.
-   Controls keep their original dimensions and remain inside the rail. */
-@media(max-width:600px) and (orientation:portrait){
+   so the more-specific selector is intentional. The cabinet width changes at
+   380px; derive rail height from that same width budget instead of the
+   taller parent grid row. No scale transform is applied to touch targets. */
+@media(min-width:361px) and (max-width:380px) and (orientation:portrait){
   html body .app section#game.screen > .playlayout > .sidecol{
     align-self:center!important;
-    height:calc(100% - 60px)!important;
-    max-height:calc(100% - 60px)!important;
+    height:min(66dvh,calc((100vw - 167px)*2.3),570px)!important;
+    max-height:min(66dvh,calc((100vw - 167px)*2.3),570px)!important;
+  }
+}
+@media(min-width:381px) and (max-width:520px) and (orientation:portrait){
+  html body .app section#game.screen > .playlayout > .sidecol{
+    align-self:center!important;
+    height:min(66dvh,calc((100vw - 157px)*2.3),620px)!important;
+    max-height:min(66dvh,calc((100vw - 157px)*2.3),620px)!important;
   }
 }
