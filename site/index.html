@@ -20664,3 +20664,34 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   #game.screen .sidecol>*{transition:none!important}
 }
 </style>
+
+<style id="bb-kt705b-responsive-grid-correction">
+/* Keep the established three-rail desktop composition; compact only on narrow screens. */
+@media(min-width:701px){
+  #game.screen .playlayout{
+    grid-template-columns:82px minmax(0,1fr) clamp(92px,11vw,116px)!important;
+    grid-template-rows:auto!important;align-items:stretch!important;
+  }
+  #game.screen .playlayout>.gameleftcol{
+    grid-column:1!important;grid-row:1!important;
+    display:flex!important;flex-direction:column!important;align-self:stretch!important;
+  }
+  #game.screen .playlayout>div:first-child{
+    grid-column:2!important;grid-row:1!important;
+    align-self:stretch!important;
+  }
+  #game.screen .playlayout>.sidecol{
+    grid-column:3!important;grid-row:1!important;
+    align-self:stretch!important;
+  }
+}
+@media(max-width:700px){
+  #game.screen .playlayout{
+    grid-template-columns:minmax(0,1fr) clamp(76px,22vw,88px)!important;
+    grid-template-rows:auto auto!important;
+  }
+  #game.screen .playlayout>.gameleftcol{grid-column:1!important;grid-row:2!important}
+  #game.screen .playlayout>div:first-child{grid-column:1!important;grid-row:1!important}
+  #game.screen .playlayout>.sidecol{grid-column:2!important;grid-row:1 / span 2!important}
+}
+</style>
