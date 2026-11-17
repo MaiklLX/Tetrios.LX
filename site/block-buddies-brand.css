@@ -34,18 +34,15 @@
   #menu.home-dashboard>.hero .hero-brand-lockup .bb-title-logo{animation:none!important}
 }
 
-/* KT-697 — keep the portrait utility rail aligned with the 10×23 board.
-   The current mainline lets the side rail fill the whole game row while the
-   board is width-constrained and vertically centered. Match their visual
-   heights without scaling down touch controls. */
+/* KT-697 — align the mobile utility rail to the centered 10×23 frame.
+   This file is linked in <head>, before the later legacy inline layout rules,
+   so the more-specific selector is intentional. The 60px reduction accounts
+   for the 30px vertical centering inset measured at 375×812 and 412×915.
+   Controls keep their original dimensions and remain inside the rail. */
 @media(max-width:600px) and (orientation:portrait){
-  #game.screen>.playlayout>div:first-child>.boardframe{
-    width:100%!important;
-    max-height:100%!important;
-  }
-  #game.screen>.playlayout>.sidecol{
+  html body .app section#game.screen > .playlayout > .sidecol{
     align-self:center!important;
-    height:calc(100% - 22px)!important;
-    max-height:calc(100% - 22px)!important;
+    height:calc(100% - 60px)!important;
+    max-height:calc(100% - 60px)!important;
   }
 }
