@@ -20890,3 +20890,58 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   #game.screen>#dailyMissionGoal:not([hidden]){position:relative!important;inset:auto!important;max-width:100%!important;min-width:0!important}
 }
 </style>
+
+<style id="bb-kt709-arena-unification">
+/* KT-709: finish carrying the Block Run arena language through every
+   shared play-screen element, including hero skill, chrono and controls. */
+#game.screen .playlayout{gap:10px!important;align-items:start!important}
+#game.screen .sidecol{gap:8px!important}
+#game.screen .sidecol>.sidecard,
+#game.screen .sidecol>.drop-card{
+  border:1px solid #345c66!important;
+  border-radius:11px!important;
+  background:linear-gradient(150deg,#142c36,#0d202b)!important;
+  color:#dce9df!important;
+  box-shadow:inset 0 1px #ffffff0a,0 5px 14px #020a1855!important;
+}
+#game.screen .sidecol>.sidecard label,
+#game.screen .sidecol>.drop-card label{color:#a7c5bd!important}
+#game.screen .sidecol>.chrono-card{
+  --chrono-color:#78b9ad!important;
+  border-color:#477d78!important;
+  background:radial-gradient(circle at 50% 35%,#28564a55,transparent 60%),linear-gradient(150deg,#142c36,#0d202b)!important;
+  box-shadow:inset 0 0 18px #72c8b00d,0 5px 14px #020a1855!important;
+}
+#game.screen .sidecol>.chrono-card .chrono-ring{
+  box-shadow:0 0 0 3px #0b1a25,0 0 0 5px #477d7866,0 0 16px #72c8b018!important;
+}
+#game.screen .bb-hero-skill-slot{
+  border:1px solid #477d86!important;border-radius:11px!important;
+  background:radial-gradient(circle at 8% 50%,#28564a55,transparent 60%),linear-gradient(150deg,#142c36,#0d202b)!important;
+  color:#e4eee8!important;
+  box-shadow:inset 0 1px #ffffff0d,0 5px 14px #020a1855!important;
+}
+#game.screen .bb-hero-skill-slot:not(:disabled){
+  border-color:#619c94!important;
+  box-shadow:inset 0 1px #ffffff12,0 0 14px #4ca99b20!important;
+}
+#game.screen .bb-hero-skill-art{background:radial-gradient(circle,#8cc9bd22,transparent 72%),#102630!important;border:1px solid #477d8666!important}
+#game.screen .controls .control{
+  border:1px solid #42616b!important;border-radius:11px!important;
+  background:linear-gradient(150deg,#19313b,#10232d)!important;
+  color:#dce9df!important;box-shadow:0 3px 0 #06131b!important;
+}
+#game.screen .controls .control.primary{
+  border-color:#6ba99d!important;
+  background:linear-gradient(145deg,#4d9389,#326d69)!important;
+  color:#f0f5e9!important;
+}
+#game.screen .controls .control:active{filter:brightness(1.12)!important}
+#game.screen .hint{color:#8da9a4!important}
+@media(max-width:700px){
+  #game.screen .sidecol{gap:7px!important}
+  #game.screen .sidecol>.sidecard,
+  #game.screen .sidecol>.drop-card{border-radius:9px!important}
+  #game.screen .bb-hero-skill-slot{border-radius:9px!important}
+}
+</style>
