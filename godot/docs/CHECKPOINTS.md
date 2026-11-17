@@ -510,3 +510,17 @@ Continue with pure migration fixtures and a read-only parser/validator for coin-
 - This milestone remains a storage protocol/test seam only. No concrete filesystem adapter, `FileAccess`, `DirAccess`, `user://` write, migration execution, user-data access/mutation or automatic restore was added.
 - PR #77 remains Draft and targets the Godot foundation branch; no merge, main edit, deployment, APK build/export or old web-project change.
 - Next: review Android-specific atomic replacement and flush semantics before implementing a concrete adapter; keep persistent writes disabled pending that review and explicit user approval.
+
+
+## 2026-11-17 — KT-489: native parity and mode-exposure audit
+
+- PR #77 HEAD before this checkpoint: `9a881421492a2daeae19e97b7ffc22e318093b8f`; base remains `godot/android-native-foundation-2026-11-05` at `454bcec78b674d5cf9a5b4f6aad2b7d86d695d8a`.
+- Reconciled `godot/docs/PARITY_MATRIX.md` with the actual implementation: Hold is implemented and model-tested; Block Run has an internal live-scene prototype with event routing, board bridge/rescue, draft, goals/combat HUD, five hero skills, results and restart, but remains intentionally hidden from the mode selector.
+- Campaign and Daily are still not implemented. Persistent profile/wallet binding, exactly-once reward settlement, concrete filesystem adapter/`user://` writes, and full source gravity/scoring/card parity remain open. The atomic-save work remains an injected-adapter protocol/test seam only.
+- Exact-HEAD Godot Native Project Check [run 44072803265](https://github.com/MaiklLX/Tetrios.LX/actions/runs/44072803265) completed **SUCCESS** on the pre-checkpoint HEAD. Godot 4.4.1 import, main script parse, portrait-first orientation guard tests, Classic model tests, Web migration tests, atomic-save protocol tests, all Block Run model/effect/board/session/bridge/live-integration suites, visual capture/upload, and scene smoke test all passed.
+- Downloaded and inspected artifact [14322833572](https://github.com/MaiklLX/Tetrios.LX/actions/runs/44072803265/artifacts/14322833572): the 360×800 portrait capture retains the procedural Buddy in the left safe gutter beside the 2D 10×23 board; the 800×360 capture shows the portrait-return pause placeholder. Buddy remains small at 360px, so legibility and one-hand comfort stay open acceptance checks.
+- These are Godot/Xvfb viewport captures, not physical Android evidence. Installed-device scaling, sensor rotation, safe areas, touch feel, and portrait/landscape resume remain unverified.
+- No concrete persistent storage, profile import, wallet/reward settlement, user-data access/mutation, APK build/export, merge, deployment, `main` edit, or old Web-project change.
+
+### Next safe gate
+Complete deterministic Block Run end-to-end and reward/profile boundary coverage before exposing the mode in the selector. Keep Campaign/Daily and persistent profile writes gated until their source parity and migration acceptance are complete; separately schedule physical Android portrait/landscape and one-hand control checks.
