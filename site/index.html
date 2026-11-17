@@ -19859,3 +19859,100 @@ html body .app section#game.screen .playlayout aside.sidecol > .sidecard #holdBt
   html body .app section#game.screen .playlayout *{scroll-behavior:auto!important}
 }
 </style>
+
+
+<style id="bb-kt696-arena-floating-overrides">
+/* KT-696: final cascade override — KT-691's embedded skin follows the external arena sheet. */
+html body .app section#game.screen .playlayout{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;padding:0!important;
+}
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;padding:0!important;
+}
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe:before,
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe:after{
+  display:none!important;content:none!important;
+}
+html body .app section#game.screen .gamehud > .hudbox,
+html body .app section#game.screen .gamehud > #gameCoins{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard,
+html body .app section#game.screen .playlayout aside.sidecol > .drop-card,
+html body .app section#game.screen .playlayout aside.sidecol > #bbHeroSkillCard{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard #next,
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard #holdPreview{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+html body .app section#game.screen #bbHeroSkillCard .bb-hero-skill-art{
+  border:0!important;border-radius:50%!important;
+  background:radial-gradient(circle,#244b50 0%,#142d38 68%,transparent 72%)!important;
+  box-shadow:0 0 18px #59c8b51c!important;
+}
+html body .app section#game.screen #campaignGoals,
+html body .app section#game.screen #rogueGoals{
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;
+}
+/* Keep the one intentional action surface: DROP. */
+html body .app section#game.screen .playlayout aside.sidecol > .drop-card .side-drop{
+  border:1px solid #c5a66b!important;border-radius:10px!important;
+  background:linear-gradient(180deg,#b98d4e,#765633)!important;
+  color:#fff1ce!important;box-shadow:0 3px 0 #3b2b20!important;
+}
+
+/* Chrono Rift timer floats independently; its progress ring is the only frame. */
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-card{
+  min-height:0!important;padding:5px 2px!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:3px!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-card > label{
+  color:#9dc9c8!important;font-size:9px!important;font-weight:800!important;
+  letter-spacing:.14em!important;text-transform:uppercase!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-ring{
+  width:clamp(66px,8vw,92px)!important;margin:5px auto!important;padding:4px!important;
+  border:0!important;
+  background:conic-gradient(#e6c58a var(--chrono-progress,100%),#28434a 0)!important;
+  box-shadow:0 0 20px #74d8c51c,0 0 36px #d4ad6a12!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-ring-inner{
+  border:1px solid #78b9ae55!important;
+  background:radial-gradient(circle at 40% 30%,#193b46,#0b1c2a 76%)!important;
+  box-shadow:inset 0 0 18px #020a12aa!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-ring-inner strong{
+  color:#f1e3c5!important;font-size:clamp(21px,2.2vw,29px)!important;
+  font-variant-numeric:tabular-nums!important;text-shadow:0 0 12px #d6b77938!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-ring-inner small,
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-hourglass{color:#9bc9c1!important}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-caption{
+  color:#b5d3ca!important;font-size:8px!important;letter-spacing:.04em!important;
+  margin:2px 0 4px!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-track{
+  width:min(100%,112px)!important;height:3px!important;border-radius:99px!important;
+  background:#29434a!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-track i{
+  border-radius:99px!important;background:linear-gradient(90deg,#65bdb0,#e6c58a)!important;
+  box-shadow:0 0 9px #76cfc044!important;
+}
+html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-card.chrono-waiting .chrono-ring{
+  animation:none!important;filter:drop-shadow(0 0 8px #6bc9bd28)!important;
+}
+@media(max-width:520px){
+  html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-ring{width:68px!important}
+  html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-card{padding:2px 0!important}
+}
+</style>
