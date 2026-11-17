@@ -8493,7 +8493,8 @@ toast('Цель выполнена! +' + g.reward + ' монет');
           ' · 🪙 ' + g.reward + '</span></div>';
       }).join('');
     const goalsLayout=game.querySelector('.playlayout');
-    if(goalsLayout && panel.parentElement!==game) goalsLayout.after(panel);
+    const goalsRail=goalsLayout?.querySelector('.sidecol');
+    if(goalsRail && panel.parentElement!==goalsRail) goalsRail.appendChild(panel);
     return;
   }
   if (mode !== 'campaign') {
@@ -10777,11 +10778,15 @@ function bbArrangeModeHud(){
      The old 70dvh inline-important height pushed the entire goals rail below the fold. */
   const compactViewport=window.matchMedia('(max-width: 900px)').matches;
   const phoneViewport=window.matchMedia('(max-width: 520px)').matches;
-  const frameHeight=phoneViewport?'min(49dvh,430px)':compactViewport?'min(54dvh,540px)':'min(70dvh,680px)';
-  const frameMin=phoneViewport?'250px':compactViewport?'270px':'360px';
-  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',width:`min(100%,calc(${frameHeight}*10/23))`,height:frameHeight,minHeight:frameMin,maxHeight:phoneViewport?'430px':compactViewport?'540px':'680px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
+  /* Preserve the full-height playfield. Goals live inside the utility rail, not as a second row below the arena. */
+  const frameHeight=compactViewport?'min(70dvh,680px)':'min(70dvh,680px)';
+  const frameMin=compactViewport?'360px':'360px';
+  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',width:`min(100%,calc(${frameHeight}*10/23))`,height:frameHeight,minHeight:frameMin,maxHeight:'680px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
   const board=frame?.querySelector('.board');
   set(board,{display:'block',width:'auto',height:'100%',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain'});
+  set(rail,{height:frameHeight,maxHeight:frameHeight,overflowY:'auto',overflowX:'hidden',scrollbarGutter:'stable'});
+  const rogueGoals=game.querySelector('#rogueGoals');
+  if(rogueGoals && rail && rogueGoals.parentElement!==rail) rail.appendChild(rogueGoals);
   for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
     set(panel,{gridColumn:'auto',gridRow:'auto',position:'relative',inset:'auto',width:'100%',maxWidth:'100%',minWidth:'0',flex:'0 0 auto',margin:'0',boxSizing:'border-box'});
   }
