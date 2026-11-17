@@ -10755,12 +10755,32 @@ function bbArrangeModeHud(){
   const layout=game?.querySelector('.playlayout');
   const hud=game?.querySelector('.gamehud');
   if(!game||!layout||!hud)return;
-  /* Every mode uses the same four-card HUD above the complete play area. */
+  /* Normalize the actual DOM flow at runtime; legacy desktop grid placements
+     used to move the board into column three and collapse its height. */
   layout.parentNode.insertBefore(hud,layout);
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
   game.classList.remove('block-run-mode');
   hud.classList.add('gamehud-top');
+  const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles))node.style.setProperty(key,value,'important');};
+  set(game,{display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:'12px',width:'min(100%,1280px)',maxWidth:'1280px',minWidth:'0',height:'auto',minHeight:'0',maxHeight:'none',margin:'0 auto',padding:'clamp(12px,2vw,22px)',boxSizing:'border-box',overflow:'visible'});
+  set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gridColumn:'auto',gridRow:'auto',order:'2',width:'100%',minWidth:'0',margin:'0'});
+  set(layout,{display:'grid',gridTemplateColumns:'minmax(0,1fr) clamp(220px,24%,280px)',gridTemplateRows:'minmax(0,1fr)',gridColumn:'auto',gridRow:'auto',order:'3',position:'relative',inset:'auto',width:'100%',minWidth:'0',minHeight:'0',height:'auto',flex:'0 0 auto',margin:'0',boxSizing:'border-box',overflow:'visible'});
+  const boardColumn=Array.from(layout.children).find(node=>!node.classList.contains('gameleftcol')&&!node.classList.contains('sidecol'));
+  const rail=layout.querySelector('.sidecol');
+  const legacy=layout.querySelector('.gameleftcol');
+  set(legacy,{display:'none'});
+  set(boardColumn,{gridColumn:'1',gridRow:'1',display:'flex',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',overflow:'visible'});
+  set(rail,{gridColumn:'2',gridRow:'1',position:'relative',inset:'auto',display:'flex',flexDirection:'column',alignItems:'stretch',gap:'9px',width:'100%',minWidth:'0',minHeight:'0',maxHeight:'100%',overflowY:'auto',overflowX:'hidden',overscrollBehavior:'contain'});
+  const frame=boardColumn?.querySelector('.boardframe');
+  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',width:'min(100%,calc(min(70dvh,680px)*10/23))',height:'min(70dvh,680px)',minHeight:'360px',maxHeight:'680px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
+  const board=frame?.querySelector('.board');
+  set(board,{display:'block',width:'auto',height:'100%',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain'});
+  for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
+    set(panel,{gridColumn:'auto',gridRow:'auto',position:'relative',inset:'auto',width:'100%',maxWidth:'100%',minWidth:'0',flex:'0 0 auto',margin:'0',boxSizing:'border-box'});
+  }
+  const daily=game.querySelector('#dailyMissionGoal');
+  if(daily)set(daily,{gridColumn:'auto',gridRow:'auto',position:'relative',inset:'auto',width:'100%',maxWidth:'100%',flex:'0 0 auto'});
 }
 
 function bbApplyDailyChronoLayout(){
@@ -21266,5 +21286,37 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
  #game.screen:not([hidden])>.gamehud-top .hudbox span{font-size:6px!important}
  #game.screen:not([hidden])>.gamehud-top .hudbox strong{font-size:14px!important}
  #game.screen:not([hidden])>.playlayout{grid-template-columns:minmax(0,1fr) 82px!important;gap:5px!important}
+}
+</style>
+
+
+<style id="bb-kt713-runtime-arena-flow">
+#game.unified-game-layout:not([hidden]){display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;width:min(100%,1280px)!important;max-width:1280px!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+#game.unified-game-layout:not([hidden])>.screenhead{order:1!important;flex:0 0 auto!important;width:100%!important}
+#game.unified-game-layout:not([hidden])>.gamehud-top{order:2!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important;flex:0 0 auto!important}
+#game.unified-game-layout:not([hidden])>.playlayout{order:3!important;display:grid!important;grid-template-columns:minmax(0,1fr) clamp(220px,24%,280px)!important;grid-template-rows:minmax(0,1fr)!important;width:100%!important;min-height:0!important;flex:0 0 auto!important;overflow:visible!important}
+#game.unified-game-layout:not([hidden])>.playlayout>.gameleftcol{display:none!important}
+#game.unified-game-layout:not([hidden])>.playlayout>.sidecol{grid-column:2!important;grid-row:1!important;position:relative!important;inset:auto!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important}
+#game.unified-game-layout:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol){grid-column:1!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;min-height:0!important}
+#game.unified-game-layout:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{width:min(100%,calc(min(70dvh,680px)*10/23))!important;height:min(70dvh,680px)!important;min-height:360px!important;max-height:680px!important;margin:0 auto!important}
+#game.unified-game-layout:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>.board{height:100%!important;width:auto!important;max-width:100%!important;max-height:100%!important;aspect-ratio:10/23!important}
+#game.unified-game-layout:not([hidden])>#rogueGoals,#game.unified-game-layout:not([hidden])>#campaignGoals{order:4!important;position:relative!important;inset:auto!important;width:100%!important;max-width:100%!important;flex:0 0 auto!important;grid-column:auto!important;grid-row:auto!important}
+#game.unified-game-layout:not([hidden])>#dailyMissionGoal:not([hidden]){order:2!important;position:relative!important;inset:auto!important;width:100%!important;flex:0 0 auto!important;grid-column:auto!important;grid-row:auto!important}
+@media(max-width:900px){
+ #game.unified-game-layout:not([hidden]){gap:9px!important;padding:10px!important}
+ #game.unified-game-layout:not([hidden])>.playlayout{grid-template-columns:minmax(0,1fr) clamp(88px,25vw,112px)!important;gap:7px!important;padding:7px!important}
+ #game.unified-game-layout:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{width:min(100%,calc(min(59dvh,560px)*10/23))!important;height:min(59dvh,560px)!important;min-height:270px!important}
+ #game.unified-game-layout:not([hidden])>.playlayout>.sidecol{max-height:100%!important;overflow-y:auto!important;scrollbar-width:thin!important;scrollbar-color:#477b83 transparent!important}
+ #game.unified-game-layout:not([hidden])>.playlayout>.sidecol>.sidecard,
+ #game.unified-game-layout:not([hidden])>.playlayout>.sidecol>.drop-card{flex:0 0 auto!important}
+}
+@media(max-width:520px){
+ #game.unified-game-layout:not([hidden])>.playlayout{grid-template-columns:minmax(0,1fr) 92px!important;gap:6px!important}
+ #game.unified-game-layout:not([hidden])>.gamehud-top{gap:5px!important}
+ #game.unified-game-layout:not([hidden])>.gamehud-top .hudbox{min-height:56px!important;padding:7px 3px!important}
+ #game.unified-game-layout:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{width:min(100%,calc(min(58dvh,510px)*10/23))!important;height:min(58dvh,510px)!important;min-height:260px!important}
+}
+@media(min-width:901px){
+ #game.unified-game-layout:not([hidden])>.playlayout{grid-template-columns:minmax(0,1fr) clamp(220px,24%,280px)!important}
 }
 </style>
