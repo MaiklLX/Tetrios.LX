@@ -20787,3 +20787,80 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   }
 }
 </style>
+
+
+<style id="bb-kt707-shared-blockrun-arena-skin">
+/* KT-707: promote the Block Run arena's restrained teal/navy visual language
+   to every mode. Mode-specific panels and mechanics remain untouched. */
+#game.screen{
+  --arena-ink:#e4eee8;
+  --arena-muted:#91aaa8;
+  --arena-edge:#477d86;
+  --arena-edge-soft:#294c5a;
+  --arena-panel:#10232d;
+  --arena-panel-deep:#0b1a25;
+}
+#game.screen .boardframe{
+  border:1px solid #568b95!important;
+  border-radius:12px!important;
+  padding:4px!important;
+  background:linear-gradient(145deg,#17313a,#0b1d28 62%,#10232d)!important;
+  box-shadow:inset 0 0 0 1px #a8e2df12,0 0 0 1px #07131b,
+    0 0 22px #36c8ff12,0 12px 30px #0006!important;
+}
+#game.screen #board.board{
+  border:1px solid #345b68!important;
+  border-radius:7px!important;
+  background-color:#0b1725!important;
+  background-image:
+    linear-gradient(to right,#6c9ba044 1px,transparent 1px),
+    linear-gradient(to bottom,#6c9ba044 1px,transparent 1px),
+    linear-gradient(to right,#a5c9c52b 1px,transparent 1px),
+    linear-gradient(to bottom,#a5c9c52b 1px,transparent 1px)!important;
+  background-size:10% 4.347826%,20% 8.695652%!important;
+  box-shadow:inset 0 0 24px #2bc9ff0a,0 0 16px #27c9ff0c!important;
+}
+#game.screen .sidecol>.sidecard,
+#game.screen .sidecol>.drop-card{
+  border-color:#345c66!important;
+  background:linear-gradient(150deg,#142c36,#0d202b)!important;
+  box-shadow:inset 0 1px #ffffff0a,0 5px 14px #020a1855!important;
+}
+#game.screen .sidecol>.sidecard>label{
+  color:#a7c5bd!important;
+}
+#game.screen .sidecol .charge-ring{
+  border-color:#43838b!important;
+}
+#game.screen>.gamehud.gamehud-top{
+  border-color:#6d99902a!important;
+  background:linear-gradient(115deg,#10232eef,#0c1b27f5)!important;
+  box-shadow:inset 0 1px #ffffff09,0 8px 18px #0002!important;
+}
+#game.screen>.gamehud.gamehud-top>.hudbox,
+#game.screen>.gamehud.gamehud-top>#gameCoins{
+  border-color:#789a9122!important;
+  background:linear-gradient(145deg,#1a3038aa,#10232d99)!important;
+  box-shadow:inset 0 1px #ffffff08!important;
+}
+#game.screen>.gamehud.gamehud-top .hudbox span{
+  color:#88aaa5!important;
+}
+#game.screen>.gamehud.gamehud-top .hudbox strong{
+  color:#e4e9dc!important;
+}
+#game.screen>.gamehud.gamehud-top>#gameCoins{
+  border-color:#b99b5933!important;
+  background:linear-gradient(145deg,#3b3425aa,#1d2828aa)!important;
+}
+#game.screen .controls .control{
+  border-color:#42616b!important;
+  background:linear-gradient(150deg,#19313b,#10232d)!important;
+  color:#dce9df!important;
+  box-shadow:0 3px 0 #06131b!important;
+}
+@media(max-width:700px){
+  #game.screen .boardframe{border-radius:10px!important;padding:3px!important}
+  #game.screen #board.board{border-radius:6px!important}
+}
+</style>
