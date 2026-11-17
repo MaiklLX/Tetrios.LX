@@ -20945,3 +20945,69 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   #game.screen .bb-hero-skill-slot{border-radius:9px!important}
 }
 </style>
+
+
+<style id="bb-kt710-responsive-goal-clearance">
+/* KT-710: keep objective panels clear of the 10:23 cabinet and give tablet
+   layouts a real content column instead of squeezing the mission rail. */
+@media (max-width:700px) and (orientation:portrait){
+  #game.screen #rogueGoals,
+  #game.screen #campaignGoals{
+    margin-top:18px!important;
+  }
+}
+@media (min-width:701px) and (max-width:900px) and (orientation:portrait){
+  #game.screen .playlayout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) clamp(118px,17vw,136px)!important;
+    grid-template-rows:auto auto!important;
+    column-gap:10px!important;
+    row-gap:12px!important;
+    align-items:start!important;
+  }
+  #game.screen .playlayout>.gameleftcol{
+    grid-column:1 / -1!important;
+    grid-row:2!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:start!important;
+    gap:10px!important;
+  }
+  #game.screen .playlayout>div:first-child{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #game.screen .playlayout>.sidecol{
+    grid-column:2!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    align-self:start!important;
+  }
+  #game.screen .boardframe{
+    height:min(55dvh,570px)!important;
+    min-height:0!important;
+    width:100%!important;
+    max-width:100%!important;
+    padding:3px!important;
+  }
+  #game.screen #board.board{
+    height:100%!important;
+    width:auto!important;
+    max-width:100%!important;
+    aspect-ratio:10 / 23!important;
+  }
+  #game.screen .playlayout>.gameleftcol #rogueGoals,
+  #game.screen .playlayout>.gameleftcol #campaignGoals{
+    grid-column:1 / -1!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+}
+</style>
