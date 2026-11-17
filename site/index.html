@@ -19992,3 +19992,162 @@ html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-car
   html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-card{padding:2px 0!important}
 }
 </style>
+
+<style id="bb-kt698-night-celestial-arena">
+/* KT-698: one composed night-sky visual language for phone, tablet and desktop. */
+:root{
+ --bb-night:#07111d;--bb-panel:#101e2b;--bb-panel-hi:#172b39;
+ --bb-mist:#a9c9c8;--bb-mint:#72d4c7;--bb-amber:#d9b879;
+}
+html,body{background:#07111d!important;background-color:#07111d!important}
+body>.app{background:transparent!important}
+body>.app:has(#game:not([hidden])){
+ background:
+  radial-gradient(ellipse at 50% 8%,#1b485022 0%,transparent 48%),
+  radial-gradient(ellipse at 92% 68%,#b28b4d0b 0%,transparent 34%),
+  linear-gradient(155deg,#0a1723 0%,#07111d 54%,#0b1721 100%)!important;
+}
+#game.screen:not([hidden]){
+ color:#e3eeeb!important;
+ background:
+  radial-gradient(ellipse at 50% 0%,#214b591c 0%,transparent 48%),
+  transparent!important;
+}
+#game.screen>.screenhead{
+ border:1px solid #79bdb322!important;border-radius:14px!important;
+ background:linear-gradient(110deg,#132735dd,#0c1a27cc)!important;
+ box-shadow:inset 0 1px #ffffff0b,0 8px 24px #0002!important;
+}
+#game.screen>.screenhead h2{color:#e6efeb!important;letter-spacing:-.025em!important}
+#game.screen>.screenhead p{color:#91b7b4!important}
+#game.screen>.screenhead .pause-trigger{
+ border:1px solid #73cfc055!important;border-radius:12px!important;
+ background:linear-gradient(145deg,#173541,#0d202d)!important;
+ color:#8de1d2!important;box-shadow:inset 0 1px #ffffff12,0 4px 12px #0003!important;
+}
+#game.screen>.gamehud.gamehud-top{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:0!important;width:min(100%,680px)!important;margin:0 auto 12px!important;
+ height:48px!important;min-height:48px!important;padding:3px!important;
+ border:1px solid #77bdb329!important;border-radius:15px!important;
+ background:linear-gradient(100deg,#10212dcc,#142633c9 52%,#101d2bd9)!important;
+ box-shadow:inset 0 1px #ffffff0b,0 9px 22px #0003!important;
+}
+#game.screen>.gamehud.gamehud-top>.hudbox,
+#game.screen>.gamehud.gamehud-top>#gameCoins{
+ position:relative!important;display:flex!important;flex-direction:column!important;
+ justify-content:center!important;align-items:center!important;gap:3px!important;
+ min-width:0!important;height:40px!important;padding:2px 5px!important;
+ border:0!important;border-right:1px solid #a9d4d01a!important;
+ border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+#game.screen>.gamehud.gamehud-top>.hudbox:last-child,
+#game.screen>.gamehud.gamehud-top>#gameCoins{border-right:0!important}
+#game.screen>.gamehud.gamehud-top .hudbox span,
+#game.screen>.gamehud.gamehud-top #gameCoins span{
+ color:#94b8b5!important;font-size:8px!important;letter-spacing:.12em!important;
+ font-weight:800!important;line-height:1!important;
+}
+#game.screen>.gamehud.gamehud-top .hudbox strong,
+#game.screen>.gamehud.gamehud-top #gameCoins strong{
+ color:#eaf2e9!important;font-size:17px!important;font-weight:850!important;
+ line-height:1!important;text-shadow:none!important;
+}
+#game.screen>.gamehud.gamehud-top .hudbox:nth-child(2) strong{color:#e5c98e!important}
+#game.screen>.gamehud.gamehud-top #gameCoins strong{color:#e5c98e!important}
+#game.screen .playlayout{background:transparent!important}
+#game.screen .boardframe{
+ border:1px solid #6bc7bd55!important;border-radius:11px!important;
+ background:linear-gradient(180deg,#0c1926,#091521)!important;
+ box-shadow:0 0 0 1px #0008,0 16px 36px #0005,0 0 26px #54c9bd0b!important;
+ overflow:hidden!important;
+}
+#game.screen .boardframe #board{filter:drop-shadow(0 0 9px #5bd4c40a)!important}
+#game.screen .sidecol{
+ gap:clamp(10px,1.25vw,17px)!important;
+}
+#game.screen .sidecol>.sidecard,
+#game.screen .sidecol>#bbHeroSkillCard,
+#game.screen .sidecol>.drop-card{
+ position:relative!important;min-width:0!important;
+ padding:7px 5px!important;border:0!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;
+}
+#game.screen .sidecol>.sidecard:not(:last-child):after,
+#game.screen .sidecol>#bbHeroSkillCard:after{
+ content:"";position:absolute;left:12%;right:12%;bottom:-6px;height:1px;
+ background:linear-gradient(90deg,transparent,#6dbcb43b,transparent);
+ pointer-events:none;
+}
+#game.screen .sidecol>.sidecard>label,
+#game.screen #bbHeroSkillCard .bb-hero-skill-copy strong{
+ color:#9fc9c2!important;font-size:8px!important;letter-spacing:.14em!important;
+ font-weight:850!important;
+}
+#game.screen .sidecol .charge-card .charge-ring{
+ filter:drop-shadow(0 0 13px #62cfc51b)!important;
+}
+#game.screen .sidecol .charge-ring-inner{
+ background:radial-gradient(circle at 38% 28%,#1b3440,#0a1723 78%)!important;
+ border:1px solid #70bcb344!important;
+}
+#game.screen .sidecol .charge-ring-inner strong{color:#e8e0c9!important}
+#game.screen .sidecol .charge-caption,
+#game.screen .sidecol .chrono-caption,
+#game.screen .sidecol .run-timer{color:#8eaaa9!important}
+#game.screen .sidecol #next,
+#game.screen .sidecol #holdPreview{
+ background:radial-gradient(ellipse at 50% 50%,#18344288,transparent 76%)!important;
+ border:0!important;border-radius:8px!important;box-shadow:none!important;
+}
+#game.screen .sidecol .boosticon{color:#d8bd82!important;text-shadow:0 0 14px #d8bd8233!important}
+#game.screen .sidecol .boostname{color:#e0e9e4!important;font-weight:750!important}
+#game.screen .sidecol .boostnum{color:#91b8b4!important}
+#game.screen .sidecol #holdBtn{
+ border:1px solid #66bdb45c!important;border-radius:9px!important;
+ background:linear-gradient(180deg,#1b4b53,#12313b)!important;
+ color:#dff2e9!important;box-shadow:0 3px 0 #07151d!important;
+}
+#game.screen .sidecol #bbHeroSkillCard{
+ border:0!important;background:transparent!important;
+}
+#game.screen #bbHeroSkillCard .bb-hero-skill-art{
+ border:1px solid #78bdb344!important;
+ background:radial-gradient(circle,#24434a,#10232d 72%)!important;
+ box-shadow:0 0 18px #6bd5c51a!important;
+}
+#game.screen .sidecol .drop-card .side-drop{
+ min-height:42px!important;border:1px solid #d4b477aa!important;border-radius:12px!important;
+ background:linear-gradient(180deg,#a9824d,#705334)!important;
+ color:#fff0d0!important;box-shadow:inset 0 1px #ffffff2c,0 4px 0 #30271f!important;
+ letter-spacing:.09em!important;
+}
+#game.screen .sidecol .drop-card .side-drop:active{transform:translateY(2px)!important}
+#game.screen #rogueGoals,#game.screen #campaignGoals{
+ border:1px solid #6cb9b32b!important;border-radius:13px!important;
+ background:linear-gradient(120deg,#122532e8,#0d1c28e8)!important;
+ box-shadow:inset 0 1px #ffffff09,0 8px 20px #0002!important;
+ color:#dce9e4!important;
+}
+#game.screen #rogueGoals>strong,#game.screen #campaignGoals>strong{color:#d9bd83!important}
+#game.screen #rogueGoals>div:not(:first-child),
+#game.screen #campaignGoals>div:not(:first-child){
+ border-color:#6dbbb32b!important;background:#0c1b27b8!important;
+}
+@media(min-width:901px){
+ #game.screen>.gamehud.gamehud-top{width:min(100%,560px)!important;margin-left:auto!important;margin-right:auto!important}
+ #game.screen .sidecol{max-width:210px!important}
+}
+@media(max-width:600px){
+ #game.screen>.gamehud.gamehud-top{height:43px!important;min-height:43px!important;margin-bottom:6px!important;border-radius:12px!important}
+ #game.screen>.gamehud.gamehud-top>.hudbox,#game.screen>.gamehud.gamehud-top>#gameCoins{height:35px!important}
+ #game.screen>.gamehud.gamehud-top .hudbox span,#game.screen>.gamehud.gamehud-top #gameCoins span{font-size:7px!important;letter-spacing:.07em!important}
+ #game.screen>.gamehud.gamehud-top .hudbox strong,#game.screen>.gamehud.gamehud-top #gameCoins strong{font-size:15px!important}
+ #game.screen .sidecol{gap:5px!important}
+ #game.screen .sidecol>.sidecard,#game.screen .sidecol>#bbHeroSkillCard{padding:3px 2px!important}
+ #game.screen .sidecol>.sidecard:not(:last-child):after{bottom:-3px}
+}
+@media(prefers-reduced-motion:reduce){
+ #game.screen .sidecol .drop-card .side-drop{transition:none!important}
+}
+</style>
