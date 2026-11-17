@@ -601,8 +601,21 @@ const targets = [
       if (!dailyGoalState.visible) failures.push(target.name + ': daily challenge objective is not visible inside the arena');
       if (!dailyGoalState.text.includes('ЦЕЛЬ ИСПЫТАНИЯ')) failures.push(target.name + ': daily objective label is missing');
       if (!dailyGoalState.text.match(/\d+\s*(?:линий|линии|линия|очков|секунд)/i)) failures.push(target.name + ': daily objective value is missing (' + dailyGoalState.text + ')');
-      if (!target.mobile && !dailyGoalState.parentClass.includes('game-heading-copy')) failures.push(target.name + ': desktop daily objective is not attached to the arena heading');
-      if (target.mobile && dailyGoalState.parentId !== 'game') failures.push(target.name + ': mobile daily objective was moved out of its original layout');
+      const dailyGoalPlacement = await dailyPage.evaluate(() => {
+        const game=document.querySelector('#game');
+        const panel=game?.querySelector('#dailyMissionGoal');
+        const heading=game?.querySelector('.screenhead');
+        const hud=game?.querySelector('.gamehud-top');
+        const r=panel?.getBoundingClientRect(), hr=heading?.getBoundingClientRect(), ur=hud?.getBoundingClientRect();
+        return {
+          parentId:panel?.parentElement?.id||'',
+          isDirectArenaRow:panel?.parentElement===game,
+          followsHeading:!!r&&!!hr&&r.top>=hr.bottom-1,
+          precedesHud:!!r&&!!ur&&r.bottom<=ur.top+2
+        };
+      });
+      if (dailyGoalPlacement.parentId !== 'game' || !dailyGoalPlacement.isDirectArenaRow) failures.push(target.name + ': daily objective is not in its dedicated arena row (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (!dailyGoalPlacement.followsHeading || !dailyGoalPlacement.precedesHud) failures.push(target.name + ': daily objective overlaps the heading or HUD (' + JSON.stringify(dailyGoalPlacement) + ')');
       await dailyPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
       await dailyPage.close();
 
