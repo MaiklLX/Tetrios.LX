@@ -21150,13 +21150,13 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   box-shadow:inset 0 1px #ffffff0b,0 10px 28px #020a124d!important;
 }
 #game.screen:not([hidden])>.playlayout>.gameleftcol{display:none!important}
-#game.screen:not([hidden])>.playlayout>div:first-child{
+#game.screen:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol){
   grid-column:1!important;grid-row:1!important;
   display:flex!important;align-items:center!important;justify-content:center!important;
   width:100%!important;min-width:0!important;min-height:0!important;
   overflow:visible!important;
 }
-#game.screen:not([hidden])>.playlayout>div:first-child>.boardframe{
+#game.screen:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
   display:flex!important;align-items:center!important;justify-content:center!important;
   width:min(100%,calc(min(70dvh,680px)*10/23))!important;
   height:min(70dvh,680px)!important;min-height:360px!important;
@@ -21166,7 +21166,7 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   box-shadow:0 0 0 3px #0b1b25,0 12px 30px #02091088,inset 0 0 24px #72c8b00b!important;
   overflow:hidden!important;
 }
-#game.screen:not([hidden])>.playlayout>div:first-child>.boardframe>.board{
+#game.screen:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe>.board{
   display:block!important;width:auto!important;height:100%!important;
   max-width:100%!important;max-height:100%!important;aspect-ratio:10/23!important;
   object-fit:contain!important;border-radius:7px!important;
@@ -21231,7 +21231,7 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
   grid-template-columns:minmax(0,1fr) clamp(88px,25vw,112px)!important;
   gap:7px!important;padding:7px!important;border-radius:14px!important;
  }
- #game.screen:not([hidden])>.playlayout>div:first-child>.boardframe{
+ #game.screen:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
   width:min(100%,calc(min(61dvh,560px)*10/23))!important;
   height:min(61dvh,560px)!important;min-height:300px!important;padding:3px!important;
  }
@@ -21246,7 +21246,7 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 }
 @media(max-width:520px){
  #game.screen:not([hidden])>.playlayout{grid-template-columns:minmax(0,1fr) 92px!important;gap:6px!important}
- #game.screen:not([hidden])>.playlayout>div:first-child>.boardframe{
+ #game.screen:not([hidden])>.playlayout>div:not(.gameleftcol):not(.sidecol)>.boardframe{
   width:min(100%,calc(min(59dvh,510px)*10/23))!important;
   height:min(59dvh,510px)!important;min-height:270px!important;
  }
