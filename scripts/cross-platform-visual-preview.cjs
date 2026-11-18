@@ -676,8 +676,26 @@ const targets = [
       throw new Error('Block Run hero confirmation did not open the arena: '+JSON.stringify({launchState,pageErrors:pageErrors.slice(-5),consoleErrors:consoleErrors.slice(-5),cause:error.message}));
     }
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
+    await page.locator('#game #rogueGoals').waitFor({state:'visible',timeout:10000});
     await page.waitForTimeout(900);
-
+    const rogueRailState=await page.evaluate(()=>{
+      const rail=document.querySelector('#game .playlayout .sidecol');
+      const goals=document.querySelector('#game #rogueGoals');
+      const rr=rail?.getBoundingClientRect(),gr=goals?.getBoundingClientRect();
+      const overlaps=[];
+      if(rail&&goals)for(const node of Array.from(rail.children)){
+        if(node===goals||getComputedStyle(node).display==='none')continue;
+        const n=node.getBoundingClientRect();
+        if(Math.min(n.right,gr.right)-Math.max(n.left,gr.left)>1&&Math.min(n.bottom,gr.bottom)-Math.max(n.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
+      }
+      const hud=document.querySelector('#game .gamehud-top');
+      const boxes=hud?Array.from(hud.children).filter(n=>getComputedStyle(n).display!=='none').map(n=>n.getBoundingClientRect()):[];
+      const hudOverlap=boxes.some((a,i)=>boxes.slice(i+1).some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1));
+      return {insideRail:!!rail&&goals?.parentElement===rail&&!!rr&&!!gr&&gr.left>=rr.left-1&&gr.right<=rr.right+1&&gr.top>=rr.top-1&&gr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:gr?.height||0};
+    });
+    if(!rogueRailState.insideRail)failures.push(target.name+': Block Run objectives escape the side rail ('+JSON.stringify(rogueRailState)+')');
+    if(rogueRailState.overlaps.length)failures.push(target.name+': Block Run objective overlaps side-rail cards ('+JSON.stringify(rogueRailState)+')');
+    if(rogueRailState.hudOverlap)failures.push(target.name+': Block Run top HUD metrics overlap');
     console.log('[stage:gameplay-ready] ' + target.name);
 
     // KT-576: pause and result overlays must use the Godot cosmic panel language.
