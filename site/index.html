@@ -108,6 +108,17 @@ body {
 }
 
 .brandmark {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  overflow: hidden;
   border-radius: 12px;
   background: linear-gradient(135deg, #5cf5e8, #6f81ff 70%);
   box-shadow: 0 0 28px #5cf5e83b;
@@ -10821,12 +10832,16 @@ function bbArrangeModeHud(){
   const railItems=Array.from(rail.children).filter(node=>getComputedStyle(node).display!=='none');
   set(rail,{display:'flex',gridColumn:'2',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',gap:phone?'5px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflowY:'auto',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box',scrollbarWidth:'thin'});
   for(const card of railItems){
-    if(card.id==='campaignGoals'||card.id==='rogueGoals')set(card,{display:'block',flex:'1 0 auto',minWidth:'0',minHeight:phone?'112px':'128px',height:'auto',maxHeight:'none',margin:'0',padding:phone?'7px 5px':'9px 7px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',overflowWrap:'anywhere'});
-    else if(card.id==='dailyMissionGoal')set(card,{flex:'0 0 auto',minHeight:'88px',height:'auto',maxHeight:'none',overflow:'visible'});
+    if(card.id==='campaignGoals'||card.id==='rogueGoals')set(card,{display:'block',flex:phone?'0 0 104px':'0 0 132px',minWidth:'0',minHeight:phone?'104px':'132px',height:phone?'104px':'132px',maxHeight:phone?'104px':'132px',margin:'0',padding:phone?'6px 4px':'8px 6px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',overflowWrap:'anywhere',scrollbarWidth:'thin'});
+    else if(card.id==='dailyMissionGoal')set(card,{flex:'0 0 auto',minHeight:'64px',height:'64px',maxHeight:'64px',overflow:'hidden'});
     else set(card,{flex:'0 0 auto',minHeight:phone?'52px':'58px',height:'auto',maxHeight:'none'});
   }
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
-    set(card,{display:'flex',minWidth:'0',minHeight:'0',height:'auto',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
+    if(card.hidden || card.getAttribute('aria-hidden')==='true'){
+      set(card,{display:'none',visibility:'hidden',pointerEvents:'none'});
+      continue;
+    }
+    set(card,{display:'flex',visibility:'visible',minWidth:'0',minHeight:'0',height:'auto',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
   }
   set(rail.querySelector('.side-drop'),{display:'none',visibility:'hidden',pointerEvents:'none'});
   set(rail.querySelector('#holdBtn'),{display:'none',visibility:'hidden',pointerEvents:'none'});
@@ -10910,6 +10925,18 @@ function bbArrangeModeHud(){
         #game.unified-game-layout .sidecol .nextcanvas{width:58px!important;height:46px!important}
         #game.unified-game-layout .sidecol .hold-card canvas{width:50px!important;height:34px!important}
         #game.unified-game-layout .sidecol .boostname{font-size:7px!important}
+      }
+      /* KT-731: stable arena anchor; mode-specific panels may scroll but never resize the board. */
+      #game.unified-game-layout>.playlayout{align-items:stretch!important}
+      #game.unified-game-layout>.playlayout>.sidecol{overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important}
+      #game.unified-game-layout>.playlayout>.sidecol>#campaignGoals,
+      #game.unified-game-layout>.playlayout>.sidecol>#rogueGoals{flex:0 0 132px!important;height:132px!important;min-height:132px!important;max-height:132px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:thin!important}
+      #game.unified-game-layout>.playlayout>.sidecol>.bb-daily-goal-pocket{flex:0 0 64px!important;height:64px!important;min-height:64px!important;max-height:64px!important;overflow:hidden!important}
+      #game.unified-game-layout>.playlayout>.sidecol>.sidecard[hidden],
+      #game.unified-game-layout>.playlayout>.sidecol>.bb-hero-skill-slot[hidden]{display:none!important}
+      @media(max-width:600px){
+        #game.unified-game-layout>.playlayout>.sidecol>#campaignGoals,
+        #game.unified-game-layout>.playlayout>.sidecol>#rogueGoals{flex-basis:104px!important;height:104px!important;min-height:104px!important;max-height:104px!important}
       }
     `;document.head.appendChild(skin);
   }
