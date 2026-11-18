@@ -8474,7 +8474,9 @@ function bbRenderGoals() {
       if (rail) rail.appendChild(panel);
     }
 
-    panel.innerHTML = bbRogueRenderEncounter() + '<strong style="font-size:11px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
+    const encounterTop=game.querySelector('#bbRogueEncounterTop') || (()=>{const node=document.createElement('div');node.id='bbRogueEncounterTop';node.className='bb-rogue-encounter-top';const head=game.querySelector('.screenhead');if(head)head.after(node);return node;})();
+    encounterTop.innerHTML=bbRogueRenderEncounter();
+    panel.innerHTML = '<strong style="font-size:11px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
       bbRogueGoals.map(g => {
         const value = g.value();
                 if (!g.claimed && value >= g.target) {
@@ -10779,12 +10781,67 @@ function bbArrangeModeHud(){
   const compactViewport=window.matchMedia('(max-width: 900px)').matches;
   const phoneViewport=window.matchMedia('(max-width: 520px)').matches;
   /* Preserve the full-height playfield. Goals live inside the utility rail, not as a second row below the arena. */
-  const frameHeight=compactViewport?'min(70dvh,680px)':'min(70dvh,680px)';
-  const frameMin=compactViewport?'360px':'360px';
+  const frameHeight=phoneViewport?'calc(100dvh - 230px)':compactViewport?'min(76dvh,720px)':'min(76dvh,760px)';
+  const frameMin=phoneViewport?'0px':compactViewport?'360px':'420px';
   set(frame,{display:'flex',alignItems:'center',justifyContent:'center',width:`min(100%,calc(${frameHeight}*10/23))`,height:frameHeight,minHeight:frameMin,maxHeight:'680px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
   const board=frame?.querySelector('.board');
   set(board,{display:'block',width:'auto',height:'100%',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain'});
   set(rail,{height:frameHeight,maxHeight:frameHeight,overflowY:'auto',overflowX:'hidden',scrollbarGutter:'stable'});
+  if(phoneViewport){
+    const screenhead=game.querySelector('.screenhead');
+    const controls=game.querySelector('.controls');
+    const nextCard=rail?.querySelector('.sidecard:nth-child(2)');
+    if(screenhead && nextCard && !game.querySelector('#bbNextChip')){
+      const chip=document.createElement('div');chip.id='bbNextChip';chip.className='bb-next-chip';
+      chip.innerHTML='<span>ДАЛЕЕ</span>';
+      const preview=nextCard.querySelector('#next');if(preview)chip.appendChild(preview);
+      const pause=screenhead.querySelector('#pauseBtn');if(pause)screenhead.insertBefore(chip,pause);
+    }
+    const hold=rail?.querySelector('#holdBtn');
+    const drop=rail?.querySelector('.side-drop');
+    if(controls && hold && !controls.querySelector('#holdBtn')){hold.classList.remove('smallbtn');hold.classList.add('control','bb-hold-control');hold.textContent='УДЕРЖАТЬ';controls.insertBefore(hold,controls.children[1]||null);}
+    if(controls && drop && !controls.querySelector('.side-drop')){drop.classList.add('bb-drop-control');drop.textContent='↓';controls.appendChild(drop);}
+  }
+  if(!game.querySelector('#bbMobileArenaSkin')){
+    const skin=document.createElement('style');skin.id='bbMobileArenaSkin';skin.textContent=`
+      #game.unified-game-layout{background:radial-gradient(ellipse at 50% 48%,#25346b66 0%,transparent 54%),linear-gradient(180deg,#111b4b 0%,#17265a 48%,#101b43 100%)!important;position:relative;isolation:isolate}
+      #game.unified-game-layout:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(180deg,#111a4a40,#0a153a50),url('./assets/space-nebula-01.png');background-size:cover;background-position:center;opacity:.78}
+      #game.unified-game-layout .boardframe{border:2px solid #d8b76b!important;border-radius:20px!important;padding:5px!important;background:linear-gradient(145deg,#1a2b68d9,#101b4bd9)!important;box-shadow:0 0 0 1px #fff2b344,0 0 18px #7b9aff55,0 12px 32px #02081799!important}
+      #game.unified-game-layout .board{border:1px solid #9eb9ef88!important;border-radius:12px!important;background:linear-gradient(180deg,#1a2b5dcc,#0b1742e8)!important}
+      #game.unified-game-layout .hudbox{border:1px solid #d7b66b99!important;border-radius:13px!important;background:linear-gradient(145deg,#17265dcc,#101a48e8)!important;box-shadow:inset 0 1px #ffffff22,0 4px 12px #02081766!important;color:#fff4d4}
+      #game.unified-game-layout .hudbox span{color:#d8d8ff!important}
+      #game.unified-game-layout .hudbox strong{color:#ffe5a0!important}
+      #game.unified-game-layout .screenhead{border:1px solid #d7b66b88;border-radius:15px;background:#111d4bd9;padding:6px 9px;box-shadow:inset 0 1px #ffffff20}
+      #game.unified-game-layout .screenhead h2{color:#fff0bd;text-shadow:0 1px 8px #d9b76866}
+      #game.unified-game-layout .sidecol{scrollbar-width:thin}
+      #game.unified-game-layout .controls .control{border:1.5px solid #e2bd70!important;border-radius:15px!important;background:linear-gradient(145deg,#1b3980,#10235b)!important;color:#5cf5ff!important;text-shadow:0 0 9px #39e9ff!important;box-shadow:0 4px 0 #08163c,0 0 14px #4bbcff44,inset 0 1px #ffffff33!important;font-size:26px!important;font-weight:900}
+      #game.unified-game-layout .bb-next-chip{display:flex;align-items:center;gap:5px;padding:3px 7px;border:1px solid #d7b66b88;border-radius:11px;background:#18285dcc;color:#ffe5a0;font-size:8px;font-weight:900;letter-spacing:.08em}
+      #game.unified-game-layout .bb-next-chip canvas{width:42px;height:36px;object-fit:contain}
+      @media(max-width:520px){
+        #game.unified-game-layout{height:100dvh!important;min-height:0!important;max-height:100dvh!important;padding:5px 7px 7px!important;gap:6px!important;overflow:hidden!important}
+        #game.unified-game-layout .screenhead{flex:0 0 38px;min-height:38px;margin:0!important;padding:3px 8px!important}
+        #game.unified-game-layout .screenhead h2{font-size:14px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        #game.unified-game-layout .screenhead p{display:none!important}
+        #game.unified-game-layout .pause-trigger{width:34px!important;height:34px!important;min-width:34px!important}
+        #game.unified-game-layout .gamehud{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important;flex:0 0 48px;min-height:48px;margin:0!important}
+        #game.unified-game-layout .hudbox{padding:5px 3px!important;border-radius:10px!important}
+        #game.unified-game-layout .hudbox span{font-size:7px!important;letter-spacing:.04em!important}
+        #game.unified-game-layout .hudbox strong{font-size:15px!important;margin-top:2px!important}
+        #game.unified-game-layout .playlayout{display:flex!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;width:100%!important;margin:0!important;overflow:hidden!important}
+        #game.unified-game-layout .playlayout>div:first-child{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;min-height:0!important;height:100%!important;width:100%!important}
+        #game.unified-game-layout .boardframe{height:100%!important;max-height:100%!important;width:auto!important;max-width:100%!important;aspect-ratio:10/23!important;box-sizing:border-box!important}
+        #game.unified-game-layout .board{height:100%!important;width:auto!important;max-width:100%!important;aspect-ratio:10/23!important}
+        #game.unified-game-layout .sidecol{display:none!important}
+        #game.unified-game-layout .controls{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;flex:0 0 55px!important;height:55px!important;margin:0!important}
+        #game.unified-game-layout .controls .control{height:55px!important;min-width:0!important;padding:0!important;font-size:24px!important}
+        #game.unified-game-layout .controls .bb-hold-control{font-size:9px!important;line-height:1.1!important;white-space:normal!important}
+        #game.unified-game-layout .controls .bb-drop-control{font-size:23px!important}
+        #game.unified-game-layout .hint{display:none!important}
+        #game.unified-game-layout #dailyMissionGoal{flex:0 0 auto;margin:0!important}
+      }
+      @media(min-width:521px){#game.unified-game-layout .controls{max-width:560px;margin:8px auto 0!important;width:100%}}
+    `;document.head.appendChild(skin);
+  }
   const rogueGoals=game.querySelector('#rogueGoals');
   if(rogueGoals && rail && rogueGoals.parentElement!==rail) rail.appendChild(rogueGoals);
   for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
