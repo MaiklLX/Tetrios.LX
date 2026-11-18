@@ -629,6 +629,12 @@ const targets = [
         const panel=game?.querySelector('#dailyMissionGoal');
         const rail=game?.querySelector('.playlayout .sidecol');
         const r=panel?.getBoundingClientRect(), rr=rail?.getBoundingClientRect();
+        const overlaps=[];
+        if(rail&&panel)for(const node of Array.from(rail.children)){
+          if(node===panel||getComputedStyle(node).display==='none')continue;
+          const n=node.getBoundingClientRect();
+          if(Math.min(n.right,r.right)-Math.max(n.left,r.left)>1&&Math.min(n.bottom,r.bottom)-Math.max(n.top,r.top)>1)overlaps.push(node.className||node.id||node.tagName);
+        }
         return {
           parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
           insideSideRail:!!rail&&panel?.parentElement===rail,
@@ -636,12 +642,14 @@ const targets = [
           panelScroll:panel?.scrollHeight||0,
           panelClient:panel?.clientHeight||0,
           railScroll:rail?.scrollHeight||0,
-          railClient:rail?.clientHeight||0
+          railClient:rail?.clientHeight||0,
+          overlaps
         };
       });
       if (!dailyGoalPlacement.insideSideRail) failures.push(target.name + ': daily objective is not integrated into the arena side rail (' + JSON.stringify(dailyGoalPlacement) + ')');
       if (!dailyGoalPlacement.fullyInsideRail) failures.push(target.name + ': daily objective escapes or is clipped by the arena rail (' + JSON.stringify(dailyGoalPlacement) + ')');
       if (dailyGoalPlacement.panelScroll > dailyGoalPlacement.panelClient + 2) failures.push(target.name + ': daily objective content is clipped inside its pocket (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (dailyGoalPlacement.overlaps.length) failures.push(target.name + ': daily objective overlaps other rail elements (' + JSON.stringify(dailyGoalPlacement) + ')');
       await dailyPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
       await dailyPage.close();
 
