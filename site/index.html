@@ -9000,8 +9000,12 @@ function bbSyncDailyGoalPlacement(){
   const panel=$('dailyMissionGoal');
   const screenHead=game?.querySelector('.screenhead');
   if(!game||!panel||!screenHead)return;
-  /* Keep the objective in its own row. Nesting it in the title block caused
-     desktop grid collisions with the heading and pause control. */
+  /* Unified arena owns the daily objective as a compact side-rail pocket. */
+  const rail=game.querySelector('.playlayout .sidecol');
+  if(game.classList.contains('unified-game-layout')&&rail&&!panel.hidden){
+    if(panel.parentElement!==rail)rail.appendChild(panel);
+    return;
+  }
   if(panel.parentElement!==game||panel.previousElementSibling!==screenHead){
     game.insertBefore(panel,screenHead.nextSibling);
   }
@@ -10784,6 +10788,14 @@ function bbArrangeModeHud(){
   for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
     if(panel&&panel.parentElement!==rail)rail.appendChild(panel);
   }
+  /* Campaign objectives and the daily challenge objective are real HUD pockets,
+     not extra full-width rows that squeeze the arena or collide with the heading. */
+  const dailyGoal=game.querySelector('#dailyMissionGoal');
+  if(dailyGoal&&!dailyGoal.hidden&&dailyGoal.parentElement!==rail)rail.appendChild(dailyGoal);
+  if(dailyGoal&&dailyGoal.parentElement===rail){
+    dailyGoal.classList.add('bb-daily-goal-pocket');
+    set(dailyGoal,{display:'flex',flex:'0 0 auto',minWidth:'0',minHeight:'0',width:'100%',height:'auto',margin:'0',padding:phone?'5px 3px':'7px 6px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'4px',textAlign:'center'});
+  }
 
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
@@ -10801,7 +10813,8 @@ function bbArrangeModeHud(){
   const boardHeight=boardWidth*23/10;
   set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:phone?'minmax(0,1fr) 86px':`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
   set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
-  set(rail,{display:'grid',gridColumn:'2',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:'repeat(6,minmax(0,1fr))',gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
+  const railItems=Array.from(rail.children).filter(node=>getComputedStyle(node).display!=='none');
+  set(rail,{display:'grid',gridColumn:'2',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:`repeat(${Math.max(1,railItems.length)},minmax(0,1fr))`,gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
     set(card,{display:'flex',minWidth:'0',minHeight:'0',height:'auto',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
   }
@@ -10829,6 +10842,9 @@ function bbArrangeModeHud(){
       #game.unified-game-layout .hudbox span{font-size:8px!important;color:#a8c1c1!important;white-space:nowrap}
       #game.unified-game-layout .hudbox strong{font-size:clamp(13px,1.4vw,19px)!important;color:#f0d99d!important}
       #game.unified-game-layout #rogueGoals,#game.unified-game-layout #campaignGoals{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;background:transparent!important;border:0!important;padding:2px!important;margin:0!important;color:#d6e5dc!important;font-size:9px!important}
+      #game.unified-game-layout .bb-daily-goal-pocket{border:1px solid rgba(217,185,120,.52)!important;border-radius:9px!important;background:linear-gradient(145deg,rgba(102,79,38,.32),rgba(13,28,38,.88))!important;color:#f0d99d!important;box-shadow:inset 0 1px rgba(255,255,255,.08)!important}
+      #game.unified-game-layout .bb-daily-goal-pocket .daily-mission-label{font-size:7px!important;line-height:1.15;letter-spacing:.05em!important;color:#cbb77e!important;overflow-wrap:anywhere}
+      #game.unified-game-layout .bb-daily-goal-pocket #dailyMissionGoalText{font-size:clamp(9px,1vw,12px)!important;line-height:1.25!important;text-align:center!important;overflow-wrap:anywhere}
       #game.unified-game-layout .controls,#game.unified-game-layout .side-drop,#game.unified-game-layout #holdBtn{display:none!important;visibility:hidden!important;pointer-events:none!important}
       @media(max-width:600px){
         #game.unified-game-layout .screenhead{min-height:34px!important}
