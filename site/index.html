@@ -10762,93 +10762,91 @@ function bbArrangeModeHud(){
   if(!game||!layout||!hud||!head)return;
   const phone=window.matchMedia('(max-width: 600px)').matches;
   const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles))node.style.setProperty(key,value,'important');};
-  const boardColumn=Array.from(layout.children).find(node=>!node.classList.contains('gameleftcol')&&!node.classList.contains('sidecol'));
+  const boardColumn=layout.firstElementChild;
   const rail=layout.querySelector('.sidecol');
   const frame=boardColumn?.querySelector('.boardframe');
   const board=frame?.querySelector('#board');
-  if(!boardColumn||!frame||!board||!rail)return;
+  if(!boardColumn||!rail||!frame||!board)return;
+
+  /* Repair the previous experimental DOM rearrangement: keep the two
+     original playlayout children (board wrapper + utility rail). */
+  const oldLeft=layout.querySelector('.gameleftcol');
+  const oldGoals=game.querySelector('#bbMobileModeGoals');
+  if(oldLeft){
+    const progress=oldLeft.querySelector('.progresswrap');
+    if(progress)game.insertBefore(progress,layout);
+    oldLeft.remove();
+  }
+  if(hud.parentElement!==game)game.insertBefore(hud,layout);
+  const progress=game.querySelector('.progresswrap');
+  if(progress&&progress.parentElement!==game)game.insertBefore(progress,layout);
+  for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
+    if(panel&&panel.parentElement!==rail)rail.appendChild(panel);
+  }
+  oldGoals?.remove();
+
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
   game.classList.toggle('block-run-mode',mode==='rogue');
-  let left=layout.querySelector('.gameleftcol');
-  if(!left){left=document.createElement('aside');left.className='gameleftcol';left.setAttribute('aria-label','Игровые показатели');layout.insertBefore(left,boardColumn);}
-  if(hud.parentElement!==left)left.appendChild(hud);
-  const progress=game.querySelector('.progresswrap');
-  if(progress&&progress.parentElement!==left)left.appendChild(progress);
-  let goals=game.querySelector('#bbMobileModeGoals');
-  if(!goals){goals=document.createElement('div');goals.id='bbMobileModeGoals';}
-  if(goals.parentElement!==left)left.appendChild(goals);
-  for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
-    if(panel&&panel.parentElement!==goals)goals.appendChild(panel);
+  set(game,{display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
+  set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'36px':'44px',margin:'0',width:'100%',boxSizing:'border-box'});
+  set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',order:'2'});
+  set(game.querySelector('#dailyMissionGoal'),{flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',boxSizing:'border-box'});
+  set(layout,{display:'grid',gridTemplateColumns:phone?'minmax(0,1fr) 86px':'minmax(0,1fr) auto minmax(0,1fr)',gridTemplateRows:'minmax(0,1fr)',gap:phone?'7px':'clamp(12px,1.5vw,22px)',alignItems:'stretch',flex:'1 1 0',minHeight:'0',height:'auto',width:'100%',minWidth:'0',margin:'0',overflow:'hidden',order:'5'});
+  set(boardColumn,{display:'flex',gridColumn:phone?'1':'2',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
+  set(rail,{display:'grid',gridColumn:phone?'2':'3',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:'repeat(6,minmax(0,1fr))',gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:phone?'86px':'clamp(190px,17vw,230px)',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
+  set(rail.querySelectorAll?.('.sidecard'),{}); // cards receive skin through the shared rule below
+  for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
+    set(card,{display:'flex',minWidth:'0',minHeight:'0',height:'auto',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
   }
-  const nextCard=rail.querySelector('.sidecard:has(#next)');
-  const next=game.querySelector('#next');
-  if(nextCard&&next&&next.parentElement!==nextCard)nextCard.appendChild(next);
-  const nextChip=head.querySelector('#bbNextChip');if(nextChip)nextChip.remove();
-  set(game,{display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'10px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'auto',minHeight:phone?'0':'min(100dvh,860px)',maxHeight:phone?'100dvh':'none',margin:'0 auto',padding:phone?'6px 7px 8px':'clamp(12px,1.5vw,22px)',boxSizing:'border-box',overflow:phone?'hidden':'visible'});
-  set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'38px':'46px',margin:'0',width:'100%',boxSizing:'border-box'});
-  set(layout,{display:'grid',gridTemplateColumns:phone?'54px minmax(0,1fr) 82px':'minmax(150px,190px) minmax(0,1fr) minmax(190px,230px)',gridTemplateRows:'minmax(0,1fr)',gap:phone?'5px':'clamp(10px,1.3vw,18px)',alignItems:'stretch',flex:'1 1 0',minHeight:'0',height:'auto',width:'100%',minWidth:'0',margin:'0',overflow:'hidden',order:'4'});
-  set(left,{display:'flex',gridColumn:'1',gridRow:'1',flexDirection:'column',gap:phone?'5px':'10px',width:'100%',minWidth:'0',minHeight:'0',maxHeight:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'flex-start'});
-  set(boardColumn,{display:'flex',gridColumn:'2',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden'});
-  set(rail,{display:'flex',gridColumn:'3',gridRow:'1',flexDirection:'column',gap:phone?'5px':'10px',width:'100%',minWidth:'0',minHeight:'0',maxHeight:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'flex-start'});
-  set(hud,{display:'grid',gridTemplateColumns:'minmax(0,1fr)',gap:phone?'4px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',order:'0'});
-  set(goals,{display:'flex',flexDirection:'column',gap:'4px',flex:'0 1 auto',minHeight:'0',overflow:'hidden',width:'100%',boxSizing:'border-box',order:'2'});
-  set(progress,{display:'flex',flex:'0 0 auto',minWidth:'0',maxWidth:'100%',margin:'0',order:'1'});
+  set(rail.querySelector('.side-drop'),{display:'none',visibility:'hidden',pointerEvents:'none'});
+  set(rail.querySelector('#holdBtn'),{display:'none',visibility:'hidden',pointerEvents:'none'});
+  set(rail.querySelector('.drop-card'),{display:'none'});
   set(game.querySelector('.controls'),{display:'none',visibility:'hidden',pointerEvents:'none',width:'0',height:'0',minWidth:'0',minHeight:'0',margin:'0',padding:'0',border:'0',overflow:'hidden'});
   set(game.querySelector('.hint'),{display:'none'});
-  set(rail.querySelector('#holdBtn'),{display:'none',visibility:'hidden',pointerEvents:'none'});
-  set(rail.querySelector('.side-drop'),{display:'none',visibility:'hidden',pointerEvents:'none'});
-  const width=Math.max(1,boardColumn.clientWidth-12);
-  const height=Math.max(1,boardColumn.clientHeight-12);
-  const desiredHeight=phone?Math.min(window.innerHeight*.68,height):Math.min(window.innerHeight*.74,height,760);
-  const boardWidth=Math.min(width,desiredHeight*10/23);
+  const availableWidth=Math.max(1,boardColumn.clientWidth-(phone?8:20));
+  const availableHeight=Math.max(1,boardColumn.clientHeight-12);
+  const targetHeight=Math.min(availableHeight,window.innerHeight*(phone?.64:.76),phone?560:720);
+  const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
   const boardHeight=boardWidth*23/10;
   set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:(boardWidth+10)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
-  set(board,{display:'block',width:'100%',height:'100%',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'fill',boxSizing:'border-box'});
+  set(board,{display:'block',width:'100%',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'fill',boxSizing:'border-box'});
   if(!game.querySelector('#bbUnifiedArenaSkin')){
     const skin=document.createElement('style');skin.id='bbUnifiedArenaSkin';skin.textContent=`
-      #game.unified-game-layout{position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 42%,rgba(44,105,126,.25),transparent 58%),linear-gradient(180deg,#101d30,#080f1c)!important}
-      #game.unified-game-layout:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('./assets/space-nebula-01.png') center/cover no-repeat;opacity:.24}
-      #game.unified-game-layout .playlayout{position:relative;isolation:isolate}
+      #game.unified-game-layout{position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 42%,rgba(44,105,126,.24),transparent 58%),linear-gradient(180deg,#101d30,#080f1c)!important}
+      #game.unified-game-layout:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('./assets/space-nebula-01.png') center/cover no-repeat;opacity:.22}
       #game.unified-game-layout .boardframe{border:2px solid #b9a16b!important;border-radius:13px!important;background:linear-gradient(145deg,#182b3a,#0b1725)!important;box-shadow:0 0 0 1px rgba(255,232,174,.18),0 10px 30px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.12)!important}
       #game.unified-game-layout .board{display:block!important;border:1px solid rgba(158,199,207,.42)!important;border-radius:5px!important;background:#091522!important}
       #game.unified-game-layout .screenhead{border:0!important;border-bottom:1px solid rgba(162,197,199,.2)!important;border-radius:0!important;background:transparent!important;padding:2px 4px!important;box-shadow:none!important}
       #game.unified-game-layout .screenhead h2{font-size:clamp(14px,2vw,20px);color:#e8d6a5;text-shadow:0 2px 12px rgba(0,0,0,.4)}
-      #game.unified-game-layout .gameleftcol,#game.unified-game-layout .sidecol{background:linear-gradient(180deg,rgba(22,42,55,.86),rgba(10,24,35,.88));border:1px solid rgba(151,190,190,.2);border-radius:13px;padding:7px;box-sizing:border-box;box-shadow:0 12px 28px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.07)}
-      #game.unified-game-layout .gamehud{grid-template-columns:minmax(0,1fr)!important}
-      #game.unified-game-layout .gamehud .hudbox{min-width:0;padding:7px 4px!important;border:0!important;border-bottom:1px solid rgba(163,196,193,.16)!important;border-radius:0!important;background:transparent!important;text-align:center;box-sizing:border-box}
+      #game.unified-game-layout .sidecol{background:linear-gradient(180deg,rgba(22,42,55,.78),rgba(10,24,35,.82));border:1px solid rgba(151,190,190,.2);border-radius:13px;box-shadow:0 12px 28px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.07)}
+      #game.unified-game-layout .sidecol .sidecard,#game.unified-game-layout .sidecol .bb-hero-skill-slot{border:0!important;border-bottom:1px solid rgba(163,196,193,.16)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+      #game.unified-game-layout .sidecol label{font-size:8px!important;letter-spacing:.06em;color:#a8c1c1!important}
+      #game.unified-game-layout .sidecol canvas{max-width:100%;height:auto}
+      #game.unified-game-layout .gamehud .hudbox{min-width:0;padding:6px 4px!important;border:0!important;border-bottom:1px solid rgba(163,196,193,.16)!important;border-radius:0!important;background:transparent!important;text-align:center;box-sizing:border-box}
       #game.unified-game-layout .hudbox span{font-size:8px!important;color:#a8c1c1!important;white-space:nowrap}
       #game.unified-game-layout .hudbox strong{font-size:clamp(13px,1.4vw,19px)!important;color:#f0d99d!important}
-      #game.unified-game-layout .sidecol .sidecard{min-width:0;overflow:hidden;border:0!important;border-bottom:1px solid rgba(163,196,193,.16)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:6px 2px!important}
-      #game.unified-game-layout .sidecol label{font-size:7px!important;letter-spacing:.08em;color:#9fb9ba!important}
-      #game.unified-game-layout .sidecol canvas{max-width:100%;height:auto}
-      #game.unified-game-layout #rogueGoals,#game.unified-game-layout #campaignGoals{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;background:transparent!important;border:0!important;padding:0!important;margin:0!important;color:#d6e5dc!important;font-size:9px!important}
-      #game.unified-game-layout #bbMobileModeGoals{background:transparent!important;border:0!important;padding:2px!important;font-size:9px;line-height:1.25}
+      #game.unified-game-layout #rogueGoals,#game.unified-game-layout #campaignGoals{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;background:transparent!important;border:0!important;padding:2px!important;margin:0!important;color:#d6e5dc!important;font-size:9px!important}
       #game.unified-game-layout .controls,#game.unified-game-layout .side-drop,#game.unified-game-layout #holdBtn{display:none!important;visibility:hidden!important;pointer-events:none!important}
-      #game.unified-game-layout .bb-rogue-encounter-top{order:-1;flex:0 0 auto}
-      #game.unified-game-layout .bb-rogue-encounter-top>div{border:0!important;background:transparent!important}
-      #game.unified-game-layout .chrono-card{display:flex;flex-direction:column;align-items:center}
-      #game.unified-game-layout .hold-card{display:flex;flex-direction:column;align-items:center}
-      #game.unified-game-layout .run-timer{font-size:13px;color:#e8d6a5}
       @media(max-width:600px){
-        #game.unified-game-layout .screenhead{min-height:36px!important}
+        #game.unified-game-layout .screenhead{min-height:34px!important}
         #game.unified-game-layout .screenhead h2{font-size:13px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         #game.unified-game-layout .screenhead p{display:none!important}
-        #game.unified-game-layout .gameleftcol,#game.unified-game-layout .sidecol{padding:4px 3px!important;border-radius:10px!important}
-        #game.unified-game-layout .gamehud .hudbox{padding:5px 1px!important}
+        #game.unified-game-layout .gamehud .hudbox{padding:4px 1px!important}
         #game.unified-game-layout .gamehud .hudbox span{font-size:6px!important;letter-spacing:0!important}
         #game.unified-game-layout .gamehud .hudbox strong{font-size:12px!important}
-        #game.unified-game-layout .sidecol .sidecard{padding:4px 1px!important}
+        #game.unified-game-layout .sidecol{padding:3px 2px!important;border-radius:9px!important}
         #game.unified-game-layout .sidecol label{font-size:6px!important}
-        #game.unified-game-layout .bb-next-chip{display:none!important}
-        #game.unified-game-layout .sidecol .nextcanvas{width:58px!important;height:52px!important}
-        #game.unified-game-layout .sidecol .hold-card canvas{width:54px!important;height:40px!important}
+        #game.unified-game-layout .sidecol .sidecard{padding:2px 1px!important}
+        #game.unified-game-layout .sidecol .nextcanvas{width:58px!important;height:46px!important}
+        #game.unified-game-layout .sidecol .hold-card canvas{width:50px!important;height:34px!important}
+        #game.unified-game-layout .sidecol .boostname{font-size:7px!important}
       }
     `;document.head.appendChild(skin);
   }
   if(!game.dataset.bbArenaResizeBound){game.dataset.bbArenaResizeBound='1';window.addEventListener('resize',()=>{if(started&&!game.hidden)bbArrangeModeHud();},{passive:true});}
   const daily=game.querySelector('#dailyMissionGoal');
-  if(daily){if(daily.hidden)daily.style.removeProperty('display');else set(daily,{display:'flex',flex:'0 0 auto',margin:'0',padding:'6px 9px',boxSizing:'border-box'});}
+  if(daily){if(daily.hidden)daily.style.removeProperty('display');else set(daily,{display:'flex',flex:'0 0 auto',margin:'0',padding:'5px 8px',boxSizing:'border-box'});}
 }
 function bbApplyDailyChronoLayout(){
   const game=document.getElementById('game');
