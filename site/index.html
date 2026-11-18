@@ -10788,7 +10788,7 @@ function bbArrangeModeHud(){
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
   game.classList.toggle('block-run-mode',mode==='rogue');
-  set(game,{display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
+  set(game,{display:'flex',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
   set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'36px':'44px',margin:'0',width:'100%',boxSizing:'border-box'});
   set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',order:'2'});
   set(game.querySelector('#dailyMissionGoal'),{flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',boxSizing:'border-box'});
@@ -10814,6 +10814,7 @@ function bbArrangeModeHud(){
   set(board,{display:'block',width:'auto',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain',boxSizing:'border-box',flex:'0 1 auto'});
   if(!game.querySelector('#bbUnifiedArenaSkin')){
     const skin=document.createElement('style');skin.id='bbUnifiedArenaSkin';skin.textContent=`
+      @media(min-width:901px){.app>#game.unified-game-layout{grid-column:1/-1!important;grid-row:auto!important;width:100%!important;max-width:1480px!important}#game.unified-game-layout>.playlayout{grid-column:1/-1!important;width:100%!important}}
       #game.unified-game-layout{position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 42%,rgba(44,105,126,.24),transparent 58%),linear-gradient(180deg,#101d30,#080f1c)!important}
       #game.unified-game-layout:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('./assets/space-nebula-01.png') center/cover no-repeat;opacity:.22}
       #game.unified-game-layout .boardframe{border:2px solid #b9a16b!important;border-radius:13px!important;background:linear-gradient(145deg,#182b3a,#0b1725)!important;box-shadow:0 0 0 1px rgba(255,232,174,.18),0 10px 30px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.12)!important}
