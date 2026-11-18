@@ -559,6 +559,29 @@ const targets = [
     if (campaignMissionState.objectiveRows < 2) failures.push(target.name + ': campaign must show at least two mission objectives');
     if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
+    const campaignRailState = await campaignPage.evaluate(() => {
+      const rail=document.querySelector('#game .playlayout .sidecol');
+      const goals=document.querySelector('#game #campaignGoals');
+      const rr=rail?.getBoundingClientRect(), gr=goals?.getBoundingClientRect();
+      const overlaps=[];
+      if(rail&&goals) for(const node of Array.from(rail.children)){
+        if(node===goals||getComputedStyle(node).display==='none')continue;
+        const r=node.getBoundingClientRect();
+        if(Math.min(r.right,gr.right)-Math.max(r.left,gr.left)>1&&Math.min(r.bottom,gr.bottom)-Math.max(r.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
+      }
+      return {
+        goalsInsideRail:!!rr&&!!gr&&goals?.parentElement===rail&&gr.left>=rr.left-1&&gr.right<=rr.right+1&&gr.top>=rr.top-1&&gr.bottom<=rr.bottom+1,
+        goalHeight:gr?.height||0,
+        goalScroll:goals?.scrollHeight||0,
+        goalClient:goals?.clientHeight||0,
+        overlaps,
+        railScroll:rail?.scrollHeight||0,
+        railClient:rail?.clientHeight||0
+      };
+    });
+    if (!campaignRailState.goalsInsideRail) failures.push(target.name + ': campaign goals are outside the dedicated rail pocket (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.overlaps.length) failures.push(target.name + ': campaign goals overlap other rail elements (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.goalHeight < (target.mobile ? 84 : 100)) failures.push(target.name + ': campaign objective pocket is too small (' + JSON.stringify(campaignRailState) + ')');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     console.log('[stage:campaign-missions] ' + target.name);
