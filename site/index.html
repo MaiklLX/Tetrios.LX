@@ -10792,9 +10792,16 @@ function bbArrangeModeHud(){
   set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'36px':'44px',margin:'0',width:'100%',boxSizing:'border-box'});
   set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',order:'2'});
   set(game.querySelector('#dailyMissionGoal'),{flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',boxSizing:'border-box'});
-  set(layout,{display:'grid',gridTemplateColumns:phone?'minmax(0,1fr) 86px':'minmax(0,1fr) auto minmax(0,1fr)',gridTemplateRows:'minmax(0,1fr)',gap:phone?'7px':'clamp(12px,1.5vw,22px)',alignItems:'stretch',flex:'1 1 0',minHeight:'0',height:'auto',width:'100%',minWidth:'0',margin:'0',overflow:'hidden',order:'5'});
-  set(boardColumn,{display:'flex',gridColumn:phone?'1':'2',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
-  set(rail,{display:'grid',gridColumn:phone?'2':'3',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:'repeat(6,minmax(0,1fr))',gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:phone?'86px':'clamp(190px,17vw,230px)',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
+  const railWidth=phone?86:Math.min(230,Math.max(190,window.innerWidth*.17));
+  const outerGutter=phone?14:36;
+  const columnGap=phone?7:18;
+  const availableWidth=Math.max(120,window.innerWidth-outerGutter-railWidth-columnGap-20);
+  const targetHeight=Math.min(window.innerHeight*(phone?.64:.76),phone?560:720);
+  const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
+  const boardHeight=boardWidth*23/10;
+  set(layout,{display:'grid',gridTemplateColumns:phone?'minmax(0,1fr) 86px':`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',margin:'0',overflow:'hidden',order:'5'});
+  set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
+  set(rail,{display:'grid',gridColumn:'2',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:'repeat(6,minmax(0,1fr))',gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
     set(card,{display:'flex',minWidth:'0',minHeight:'0',height:'auto',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
   }
@@ -10803,11 +10810,6 @@ function bbArrangeModeHud(){
   set(rail.querySelector('.drop-card'),{display:'none'});
   set(game.querySelector('.controls'),{display:'none',visibility:'hidden',pointerEvents:'none',width:'0',height:'0',minWidth:'0',minHeight:'0',margin:'0',padding:'0',border:'0',overflow:'hidden'});
   set(game.querySelector('.hint'),{display:'none'});
-  const availableWidth=Math.max(1,boardColumn.clientWidth-(phone?8:20));
-  const availableHeight=Math.max(1,boardColumn.clientHeight-12);
-  const targetHeight=Math.min(availableHeight,window.innerHeight*(phone?.64:.76),phone?560:720);
-  const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
-  const boardHeight=boardWidth*23/10;
   set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:(boardWidth+10)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
   set(board,{display:'block',width:'100%',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'fill',boxSizing:'border-box'});
   if(!game.querySelector('#bbUnifiedArenaSkin')){
