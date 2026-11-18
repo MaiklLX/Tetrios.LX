@@ -10799,7 +10799,7 @@ function bbArrangeModeHud(){
   const targetHeight=Math.min(window.innerHeight*(phone?.64:.76),phone?560:720);
   const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
   const boardHeight=boardWidth*23/10;
-  set(layout,{display:'grid',gridTemplateColumns:phone?'minmax(0,1fr) 86px':`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',margin:'0',overflow:'hidden',order:'5'});
+  set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:phone?'minmax(0,1fr) 86px':`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
   set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
   set(rail,{display:'grid',gridColumn:'2',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:'repeat(6,minmax(0,1fr))',gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
@@ -10811,7 +10811,7 @@ function bbArrangeModeHud(){
   set(game.querySelector('.controls'),{display:'none',visibility:'hidden',pointerEvents:'none',width:'0',height:'0',minWidth:'0',minHeight:'0',margin:'0',padding:'0',border:'0',overflow:'hidden'});
   set(game.querySelector('.hint'),{display:'none'});
   set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:(boardWidth+10)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
-  set(board,{display:'block',width:'100%',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'fill',boxSizing:'border-box'});
+  set(board,{display:'block',width:'auto',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain',boxSizing:'border-box',flex:'0 1 auto'});
   if(!game.querySelector('#bbUnifiedArenaSkin')){
     const skin=document.createElement('style');skin.id='bbUnifiedArenaSkin';skin.textContent=`
       #game.unified-game-layout{position:relative;isolation:isolate;background:radial-gradient(ellipse at 50% 42%,rgba(44,105,126,.24),transparent 58%),linear-gradient(180deg,#101d30,#080f1c)!important}
