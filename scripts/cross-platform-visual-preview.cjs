@@ -604,18 +604,21 @@ const targets = [
       const dailyGoalPlacement = await dailyPage.evaluate(() => {
         const game=document.querySelector('#game');
         const panel=game?.querySelector('#dailyMissionGoal');
-        const heading=game?.querySelector('.screenhead');
-        const hud=game?.querySelector('.gamehud-top');
-        const r=panel?.getBoundingClientRect(), hr=heading?.getBoundingClientRect(), ur=hud?.getBoundingClientRect();
+        const rail=game?.querySelector('.playlayout .sidecol');
+        const r=panel?.getBoundingClientRect(), rr=rail?.getBoundingClientRect();
         return {
-          parentId:panel?.parentElement?.id||'',
-          isDirectArenaRow:panel?.parentElement===game,
-          followsHeading:!!r&&!!hr&&r.top>=hr.bottom-1,
-          precedesHud:!!r&&!!ur&&r.bottom<=ur.top+2
+          parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
+          insideSideRail:!!rail&&panel?.parentElement===rail,
+          fullyInsideRail:!!r&&!!rr&&r.left>=rr.left-1&&r.right<=rr.right+1&&r.top>=rr.top-1&&r.bottom<=rr.bottom+1,
+          panelScroll:panel?.scrollHeight||0,
+          panelClient:panel?.clientHeight||0,
+          railScroll:rail?.scrollHeight||0,
+          railClient:rail?.clientHeight||0
         };
       });
-      if (dailyGoalPlacement.parentId !== 'game' || !dailyGoalPlacement.isDirectArenaRow) failures.push(target.name + ': daily objective is not in its dedicated arena row (' + JSON.stringify(dailyGoalPlacement) + ')');
-      if (!dailyGoalPlacement.followsHeading || !dailyGoalPlacement.precedesHud) failures.push(target.name + ': daily objective overlaps the heading or HUD (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (!dailyGoalPlacement.insideSideRail) failures.push(target.name + ': daily objective is not integrated into the arena side rail (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (!dailyGoalPlacement.fullyInsideRail) failures.push(target.name + ': daily objective escapes or is clipped by the arena rail (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (dailyGoalPlacement.panelScroll > dailyGoalPlacement.panelClient + 2) failures.push(target.name + ': daily objective content is clipped inside its pocket (' + JSON.stringify(dailyGoalPlacement) + ')');
       await dailyPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
       await dailyPage.close();
 
