@@ -10762,14 +10762,8 @@ function bbArrangeModeHud(){
   if(!game||!layout||!hud||!head)return;
   const phone=window.matchMedia('(max-width: 600px)').matches;
   const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles))node.style.setProperty(key,value,'important');};
-  const boardColumn=layout.firstElementChild;
-  const rail=layout.querySelector('.sidecol');
-  const frame=boardColumn?.querySelector('.boardframe');
-  const board=frame?.querySelector('#board');
-  if(!boardColumn||!rail||!frame||!board)return;
-
-  /* Repair the previous experimental DOM rearrangement: keep the two
-     original playlayout children (board wrapper + utility rail). */
+  /* Repair the previous experimental DOM rearrangement before resolving
+     the board wrapper. The wrapper must remain the first child of playlayout. */
   const oldLeft=layout.querySelector('.gameleftcol');
   const oldGoals=game.querySelector('#bbMobileModeGoals');
   if(oldLeft){
@@ -10780,10 +10774,16 @@ function bbArrangeModeHud(){
   if(hud.parentElement!==game)game.insertBefore(hud,layout);
   const progress=game.querySelector('.progresswrap');
   if(progress&&progress.parentElement!==game)game.insertBefore(progress,layout);
+  oldGoals?.remove();
+
+  const boardColumn=layout.firstElementChild;
+  const rail=layout.querySelector('.sidecol');
+  const frame=boardColumn?.querySelector('.boardframe');
+  const board=frame?.querySelector('#board');
+  if(!boardColumn||!rail||!frame||!board)return;
   for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
     if(panel&&panel.parentElement!==rail)rail.appendChild(panel);
   }
-  oldGoals?.remove();
 
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
