@@ -10759,6 +10759,8 @@ function bbArrangeModeHud(){
   const layout=game?.querySelector('.playlayout');
   const hud=game?.querySelector('.gamehud');
   if(!game||!layout||!hud)return;
+  const compactViewport=window.matchMedia('(max-width: 900px)').matches;
+  const phoneViewport=window.matchMedia('(max-width: 520px)').matches;
   /* Normalize the actual DOM flow at runtime; legacy desktop grid placements
      used to move the board into column three and collapse its height. */
   layout.parentNode.insertBefore(hud,layout);
@@ -10779,8 +10781,6 @@ function bbArrangeModeHud(){
   const frame=boardColumn?.querySelector('.boardframe');
   /* On phones the board must share the viewport with the HUD and Block Run goals.
      The old 70dvh inline-important height pushed the entire goals rail below the fold. */
-  const compactViewport=window.matchMedia('(max-width: 900px)').matches;
-  const phoneViewport=window.matchMedia('(max-width: 520px)').matches;
   /* Preserve the full-height playfield. Goals live inside the utility rail, not as a second row below the arena. */
   const frameHeight=phoneViewport?'calc(100dvh - 230px)':compactViewport?'min(76dvh,720px)':'min(76dvh,760px)';
   const frameMin=phoneViewport?'0px':compactViewport?'360px':'420px';
