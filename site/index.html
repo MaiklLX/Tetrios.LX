@@ -10852,7 +10852,10 @@ function bbArrangeModeHud(){
   }
   if(!game.dataset.bbArenaResizeBound){game.dataset.bbArenaResizeBound='1';window.addEventListener('resize',()=>{if(started&&!game.hidden)bbArrangeModeHud();},{passive:true});}
   const daily=game.querySelector('#dailyMissionGoal');
-  if(daily)set(daily,{display:daily.hidden?'none':'flex',flex:'0 0 auto',margin:'0',padding:'6px 9px',boxSizing:'border-box'});
+  if(daily){
+    if(daily.hidden)daily.style.removeProperty('display');
+    else set(daily,{display:'flex',flex:'0 0 auto',margin:'0',padding:'6px 9px',boxSizing:'border-box'});
+  }
 }
 
 function bbApplyDailyChronoLayout(){
