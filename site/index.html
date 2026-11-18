@@ -10807,7 +10807,7 @@ function bbArrangeModeHud(){
   game.classList.toggle('block-run-mode',mode==='rogue');
   set(game,{display:'flex',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
   set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'36px':'44px',margin:'0',width:'100%',boxSizing:'border-box'});
-  set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',order:'2'});
+  set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gridTemplateRows:'minmax(0,1fr)',gridAutoFlow:'column',gridAutoColumns:'minmax(0,1fr)',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',order:'2'});
   set(game.querySelector('#dailyMissionGoal'),{flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',boxSizing:'border-box'});
   const railWidth=phone?108:Math.min(250,Math.max(210,window.innerWidth*.19));
   const outerGutter=phone?14:36;
@@ -10856,6 +10856,9 @@ function bbArrangeModeHud(){
       #game.unified-game-layout .bb-daily-goal-pocket .daily-mission-label{font-size:7px!important;line-height:1.15;letter-spacing:.05em!important;color:#cbb77e!important;overflow-wrap:anywhere}
       #game.unified-game-layout .bb-daily-goal-pocket #dailyMissionGoalText{font-size:clamp(9px,1vw,12px)!important;line-height:1.25!important;text-align:center!important;overflow-wrap:anywhere}
       #game.unified-game-layout .controls,#game.unified-game-layout .side-drop,#game.unified-game-layout #holdBtn{display:none!important;visibility:hidden!important;pointer-events:none!important}
+      /* KT-730: neutralize legacy desktop HUD grid placement that forced every stat into column one. */
+      #game.unified-game-layout>.gamehud-top{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:minmax(0,1fr)!important;grid-auto-flow:column!important;grid-auto-columns:minmax(0,1fr)!important;}
+      #game.unified-game-layout>.gamehud-top>.hudbox,#game.unified-game-layout>.gamehud-top>#gameCoins{grid-column:auto!important;grid-row:1!important;width:auto!important;min-width:0!important;max-width:none!important;}
       /* KT-727: one continuous arena chassis — no floating dashboard tiles. */
       #game.unified-game-layout{background:radial-gradient(ellipse at 50% 35%,rgba(30,126,143,.22),transparent 56%),linear-gradient(155deg,#101d2b 0%,#09121e 58%,#07101a 100%)!important}
       #game.unified-game-layout:after{content:"";position:absolute;inset:5px;z-index:-1;pointer-events:none;border:1px solid rgba(105,196,190,.14);border-radius:22px;box-shadow:inset 0 0 70px rgba(25,123,135,.08)}
