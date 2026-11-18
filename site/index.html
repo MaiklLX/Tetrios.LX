@@ -8497,7 +8497,9 @@ toast('Цель выполнена! +' + g.reward + ' монет');
       }).join('');
     const goalsLayout=game.querySelector('.playlayout');
     const goalsRail=goalsLayout?.querySelector('.sidecol');
-    const mobileGoals=game.querySelector('#bbMobileModeGoals');const target=window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:goalsRail;if(target&&panel.parentElement!==target)target.appendChild(panel);
+    const mobileGoals=game.querySelector('#bbMobileModeGoals');
+    const target=game.classList.contains('unified-game-layout')?goalsRail:(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:goalsRail);
+    if(target&&panel.parentElement!==target)target.appendChild(panel);
     return;
   }
   if (mode !== 'campaign') {
@@ -8545,7 +8547,10 @@ toast('Цель выполнена! +' + g.reward + ' монет');
         percent + '%"></span></div></div>';
     }).join('') + '</div>';
   const campaignLayout=game.querySelector('.playlayout');
-  const mobileGoals=game.querySelector('#bbMobileModeGoals');const target=window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:game;if(target&&panel.parentElement!==target){if(target===game)campaignLayout?.after(panel);else target.appendChild(panel);}
+  const campaignRail=campaignLayout?.querySelector('.sidecol');
+  const mobileGoals=game.querySelector('#bbMobileModeGoals');
+  const target=game.classList.contains('unified-game-layout')?campaignRail:(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:game);
+  if(target&&panel.parentElement!==target){if(target===game)campaignLayout?.after(panel);else target.appendChild(panel);}
 
   bbCheckCampaignCompletion();
 }
@@ -10814,12 +10819,12 @@ function bbArrangeModeHud(){
   set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:phone?'minmax(0,1fr) 108px':`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
   set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
   const railItems=Array.from(rail.children).filter(node=>getComputedStyle(node).display!=='none');
-  const railRows=railItems.map(node=>node.id==='campaignGoals'||node.id==='rogueGoals'||node.id==='dailyMissionGoal'?'minmax(104px,1.8fr)':node.classList.contains('bb-hero-skill-slot')?'minmax(58px,1.15fr)':'minmax(48px,1fr)');
-  set(rail,{display:'grid',gridColumn:'2',gridRow:'1',gridTemplateColumns:'1fr',gridTemplateRows:railRows.length?railRows.join(' '):'minmax(0,1fr)',gridAutoRows:'minmax(0,1fr)',flexDirection:'column',gap:phone?'4px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflow:'hidden',alignItems:'stretch',justifyContent:'stretch',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box'});
-  for(const panel of [rail.querySelector('#campaignGoals'),rail.querySelector('#rogueGoals')]){
-    set(panel,{display:'block',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',margin:'0',padding:phone?'7px 5px':'9px 7px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',justifySelf:'stretch',overflowWrap:'anywhere'});
+  set(rail,{display:'flex',gridColumn:'2',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',gap:phone?'5px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflowY:'auto',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box',scrollbarWidth:'thin'});
+  for(const card of railItems){
+    if(card.id==='campaignGoals'||card.id==='rogueGoals')set(card,{display:'block',flex:'1 0 auto',minWidth:'0',minHeight:phone?'112px':'128px',height:'auto',maxHeight:'none',margin:'0',padding:phone?'7px 5px':'9px 7px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',overflowWrap:'anywhere'});
+    else if(card.id==='dailyMissionGoal')set(card,{flex:'0 0 auto',minHeight:'88px',height:'auto',maxHeight:'none',overflow:'visible'});
+    else set(card,{flex:'0 0 auto',minHeight:phone?'52px':'58px',height:'auto',maxHeight:'none'});
   }
-  set(rail.querySelector('#dailyMissionGoal'),{minHeight:'0',height:'100%',maxHeight:'100%',overflowY:'auto'});
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
     set(card,{display:'flex',minWidth:'0',minHeight:'0',height:'auto',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
   }
