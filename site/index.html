@@ -6677,8 +6677,90 @@ body>.app.bb-home-visible{
 }
 </style>
 
+<style id="bb-kt733-reference-architecture">
+/* KT-733 — fixed mode-independent arena + compact reference-led home hub. */
+#game.unified-game-layout>.playlayout{grid-template-rows:minmax(0,1fr)!important;align-items:stretch!important}
+#game.unified-game-layout>.playlayout>.sidecol{gap:3px!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+#game.unified-game-layout>.playlayout>.sidecol>.sidecard,
+#game.unified-game-layout>.playlayout>.sidecol>.bb-hero-skill-slot{flex-shrink:0!important}
+#game.unified-game-layout>.playlayout>.sidecol>.bb-mode-goals-pocket{flex:0 0 54px!important;height:54px!important;min-height:54px!important;max-height:54px!important;overflow:hidden!important}
+#game.unified-game-layout .sidecol .charge-ring{width:34px!important;height:34px!important;margin:1px auto!important}
+#game.unified-game-layout .sidecol .charge-ring-inner strong{font-size:12px!important}
+#game.unified-game-layout .sidecol .charge-ring-inner small{font-size:6px!important}
+#game.unified-game-layout .sidecol .charge-caption{font-size:6px!important;line-height:1.05!important;margin-top:1px!important}
+#game.unified-game-layout .sidecol .nextcanvas{width:54px!important;height:38px!important;margin:1px auto!important}
+#game.unified-game-layout .sidecol .hold-card canvas{width:44px!important;height:28px!important}
+#game.unified-game-layout .sidecol .hold-empty{font-size:7px!important}
+#game.unified-game-layout .sidecol .boosticon{font-size:16px!important;margin:0!important}
+#game.unified-game-layout .sidecol .sidecard label{font-size:7px!important;line-height:1.05!important}
+#game.unified-game-layout .sidecol .bb-mode-goals-pocket:empty:after{content:"ЦЕЛИ РЕЖИМА";display:grid;place-items:center;width:100%;height:100%;font-size:7px;font-weight:900;letter-spacing:.06em;color:#9ab8c4}
+#game.unified-game-layout .sidecol .bb-mode-goals-pocket #campaignGoals,
+#game.unified-game-layout .sidecol .bb-mode-goals-pocket #rogueGoals,
+#game.unified-game-layout .sidecol .bb-mode-goals-pocket #dailyMissionGoal{height:100%!important;min-height:0!important;max-height:100%!important;overflow:auto!important}
+#game.unified-game-layout .boardframe{flex:0 0 auto!important}
+#game.unified-game-layout .board{aspect-ratio:10/23!important;object-fit:contain!important}
+#menu.home-dashboard{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ grid-template-areas:"hero" "profile" "play" "campaign" "rogue" "daily" "quests" "streak" "heroes" "rpg" "currency" "stats" "library" "apk" "shop" "reset"!important;
+ gap:9px!important;align-content:start!important;
+}
+#menu.home-dashboard>.hero{grid-area:hero!important;height:82px!important;min-height:82px!important;padding:7px 8px!important;margin:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid #39749b!important;border-radius:17px!important;background:radial-gradient(ellipse at 50% 0%,#4eaaff35,transparent 70%),linear-gradient(145deg,#123e78,#0a2450)!important;box-shadow:inset 0 1px #ffffff24,0 5px 0 #061b3d!important}
+#menu.home-dashboard>.hero:before,#menu.home-dashboard>.hero:after{display:none!important}
+#menu.home-dashboard>.hero .eyebrow{display:block!important;font-size:7px!important;line-height:1!important;margin:0!important}
+#menu.home-dashboard>.hero .hero-brand-lockup{margin:2px 0!important;gap:8px!important}
+#menu.home-dashboard>.hero .hero-app-mark{width:31px!important;height:31px!important;flex:0 0 31px!important;padding:5px!important}
+#menu.home-dashboard>.hero h1{font-size:clamp(23px,6vw,31px)!important;line-height:1!important}
+#menu.home-dashboard>.hero p{font-size:9px!important;line-height:1!important;margin:0!important}
+#menu.home-dashboard>#bbHomeProfile{grid-area:profile!important;grid-row:auto!important;min-height:52px!important;height:52px!important;margin:0!important;padding:5px 9px!important;border-radius:14px!important}
+#menu.home-dashboard>.bb-home-collection{grid-column:1!important;margin:0!important;min-height:50px!important;height:50px!important;padding:5px 9px!important}
+#menu.home-dashboard>.bb-home-play{grid-area:play!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;width:min(100%,330px)!important;height:58px!important;min-height:58px!important;margin:1px auto 3px!important;border:1px solid #ffe19a!important;border-radius:30px!important;background:linear-gradient(180deg,#ffc95d,#e88a24)!important;color:#fff8e6!important;font-size:20px!important;font-weight:1000!important;letter-spacing:.09em!important;box-shadow:0 5px 0 #965018,0 10px 22px #020b1d66,inset 0 1px #fff8c8!important}
+#menu.home-dashboard>.bb-home-play:active{transform:translateY(3px)!important;box-shadow:0 2px 0 #965018,inset 0 1px #fff8c8!important}
+.bb-home-play-icon{width:28px;height:28px;display:grid;place-items:center;border:2px solid #fff4ce;border-radius:50%;font-size:12px}
+.bb-home-play-caption{display:none}
+#menu.home-dashboard>.sectionlabel{display:none!important}
+#menu.home-dashboard>.modes{display:contents!important}
+#menu.home-dashboard>.modes>.mode{position:relative!important;inset:auto!important;transform:none!important;display:grid!important;grid-template-columns:46px minmax(0,1fr) 18px!important;grid-template-rows:minmax(0,1fr)!important;align-items:center!important;justify-content:stretch!important;gap:10px!important;width:100%!important;height:76px!important;min-height:76px!important;margin:0!important;padding:8px 11px!important;border-radius:16px!important;overflow:hidden!important;text-align:left!important}
+#menu.home-dashboard>.modes>.mode[data-mode="campaign"]{grid-area:campaign!important}
+#menu.home-dashboard>.modes>.mode[data-mode="rogue"]{grid-area:rogue!important}
+#menu.home-dashboard>.modes>.mode[data-mode="daily"]{grid-area:daily!important}
+#menu.home-dashboard>.modes>.mode .modeicon{grid-column:1!important;grid-row:1!important;width:42px!important;height:42px!important;min-width:42px!important;flex:none!important}
+#menu.home-dashboard>.modes>.mode .modetext{grid-column:2!important;grid-row:1!important;display:flex!important;position:static!important;inset:auto!important;transform:none!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:2px!important;width:100%!important;min-width:0!important;text-align:left!important}
+#menu.home-dashboard>.modes>.mode .modetitle{position:static!important;display:block!important;margin:0!important;font-size:15px!important;line-height:1.1!important;transform:none!important}
+#menu.home-dashboard>.modes>.mode .modesub{position:static!important;display:-webkit-box!important;margin:0!important;font-size:9px!important;line-height:1.2!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+#menu.home-dashboard>.modes>.mode .tag{display:none!important}
+#menu.home-dashboard>.modes>.mode .modearrow{grid-column:3!important;grid-row:1!important;position:static!important;transform:none!important;font-size:23px!important}
+#menu.home-dashboard>#dailyQuestsPanel{grid-area:quests!important;margin:0!important;padding:10px!important;border-radius:15px!important}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;margin-top:7px!important}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div{min-width:0!important;margin:0!important;padding:7px!important}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:first-child{font-size:8px!important;line-height:1.2!important}
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:nth-child(2),
+#menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList>div>div:last-child{font-size:7px!important}
+#menu.home-dashboard>#bbVisitStreak{grid-area:streak!important}
+#menu.home-dashboard>#openHeroes{grid-area:heroes!important}
+#menu.home-dashboard>#rpgPanel{grid-area:rpg!important}
+#menu.home-dashboard>.currency-panel{grid-area:currency!important}
+#menu.home-dashboard>.bottomstats{grid-area:stats!important}
+#menu.home-dashboard>#bbOpenCardLibrary{grid-area:library!important}
+#menu.home-dashboard>.apk-download{grid-area:apk!important}
+#menu.home-dashboard>.shopbuttons{grid-area:shop!important}
+#menu.home-dashboard>.home-reset{grid-area:reset!important}
+@media(max-width:600px){
+ #menu.home-dashboard>.modes>.mode{height:70px!important;min-height:70px!important}
+ #menu.home-dashboard>#dailyQuestsPanel #dailyQuestsList{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(min-width:761px){
+ #menu.home-dashboard{max-width:1080px!important;margin:0 auto!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"hero hero" "profile profile" "play play" "campaign rogue" "daily daily" "quests quests" "streak streak" "heroes heroes" "rpg rpg" "currency currency" "stats stats" "library library" "apk apk" "shop shop" "reset reset"!important}
+ #menu.home-dashboard>.modes>.mode{height:112px!important;min-height:112px!important;grid-template-columns:56px minmax(0,1fr) 18px!important}
+ #menu.home-dashboard>.modes>.mode .modeicon{width:52px!important;height:52px!important}
+}
+@media(max-height:700px) and (orientation:landscape){
+ #menu.home-dashboard{gap:6px!important}
+ #menu.home-dashboard>.hero{height:66px!important;min-height:66px!important}
+ #menu.home-dashboard>.modes>.mode{height:60px!important;min-height:60px!important}
+}
+</style>
 </head>
-<body><div class="stars"></div><main class="app"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
+<body><div class="stars"></div><main class="app"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><button class="bb-home-play" id="bbHomePlay" type="button"><span class="bb-home-play-icon">▶</span><span>ИГРАТЬ</span><span class="bb-home-play-caption">ПРОДОЛЖИТЬ ПУТЕШЕСТВИЕ</span></button><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
     <div class="modeicon" aria-hidden="true">🗺️</div>
     <div class="modetext">
@@ -6895,7 +6977,7 @@ body>.app.bb-home-visible{
 <audio id="bgmTrack" preload="none" loop src="./audio/chills.mp3"></audio>
 <script>
 (()=>{'use strict';
-const $=id=>document.getElementById(id);let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,holdType=null,combo=0,lastClear=0,modeStart=0,hapticsOn=localStorage.bb_haptics!=='0';let bbVoidLastAppliedLevel=1;
+const $=id=>document.getElementById(id);document.getElementById('bbHomePlay')?.addEventListener('click',()=>document.querySelector('#menu .mode[data-mode="campaign"]')?.click());let mode='rogue',board=[],piece=null,nextType=null,score=0,lines=0,level=1,levelLines=0,needLines=5,runSeconds=0,tickTimer=null,dropTimer=null,dropMs=760,paused=false,gameOver=false,started=false,soundOn=true,musicOn=true,audio=null,oscillators=[],boosts=[],runCount=+(localStorage.nrRuns||0),best=+(localStorage.nrBest||0),relicCount=+(localStorage.nrRelics||0),campaignNode=+(localStorage.nrNode||1),dailyDone=localStorage.nrDailyDone||'',holdUsed=0,holdType=null,combo=0,lastClear=0,modeStart=0,hapticsOn=localStorage.bb_haptics!=='0';let bbVoidLastAppliedLevel=1;
 // Раннее подключение кнопки сброса прогресса
 document.addEventListener('click', function(event) {
 const button = event.target.closest('#resetProgressBtn');
@@ -10822,39 +10904,42 @@ function bbArrangeModeHud(){
   set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gridTemplateRows:'minmax(0,1fr)',gridAutoFlow:'column',gridAutoColumns:'minmax(0,1fr)',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',height:phone?'46px':'62px',minHeight:phone?'46px':'62px',maxHeight:phone?'46px':'62px',margin:'0',order:'2'});
   for(const metric of hud.querySelectorAll('.hudbox,#gameCoins'))set(metric,{display:'flex',gridColumn:'auto',gridRow:'1',width:'100%',minWidth:'0',height:'100%',minHeight:'0',maxHeight:'100%',padding:phone?'4px 2px':'7px 6px',boxSizing:'border-box',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden'});
   set(game.querySelector('#dailyMissionGoal'),{flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',boxSizing:'border-box'});
-  const railWidth=phone?108:Math.min(250,Math.max(210,window.innerWidth*.19));
+  const railWidth=phone?96:Math.min(220,Math.max(184,window.innerWidth*.17));
   const outerGutter=phone?14:36;
-  const columnGap=phone?7:18;
+  const columnGap=phone?7:16;
   const availableWidth=Math.max(120,window.innerWidth-outerGutter-railWidth-columnGap-20);
-  const targetHeight=Math.min(window.innerHeight*(phone?.64:.68),phone?560:600);
+  /* One deterministic 10:23 board size per viewport. Optional mode content
+     never participates in this calculation. */
+  const targetHeight=Math.min(window.innerHeight*(phone?.62:.66),phone?540:600);
   const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
   const boardHeight=boardWidth*23/10;
-  set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:phone?'minmax(0,1fr) 108px':`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
-  set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0'});
+  set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
+  set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0',position:'relative'});
   const railItems=Array.from(rail.children).filter(node=>getComputedStyle(node).display!=='none');
-  set(rail,{display:'flex',gridColumn:'2',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',gap:phone?'5px':'7px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflowY:'auto',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',padding:phone?'4px 3px':'7px',boxSizing:'border-box',scrollbarWidth:'thin'});
+  set(rail,{display:'flex',gridColumn:'2',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',gap:phone?'3px':'5px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflowY:'auto',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',scrollbarWidth:'thin'});
   for(const card of railItems){
     if(card.id==='campaignGoals'||card.id==='rogueGoals')set(card,{display:'block',flex:phone?'0 0 104px':'0 0 132px',minWidth:'0',minHeight:phone?'104px':'132px',height:phone?'104px':'132px',maxHeight:phone?'104px':'132px',margin:'0',padding:phone?'6px 4px':'8px 6px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',overflowWrap:'anywhere',scrollbarWidth:'thin'});
     else if(card.id==='dailyMissionGoal')set(card,{flex:'0 0 auto',minHeight:'64px',height:'64px',maxHeight:'64px',overflow:'hidden'});
     else set(card,{flex:'0 0 auto',minHeight:phone?'52px':'58px',height:'auto',maxHeight:'none'});
   }
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
-    if(card.hidden || card.getAttribute('aria-hidden')==='true'){
-      if(card.classList.contains('chrono-card'))set(card,{display:'flex',visibility:'hidden',pointerEvents:'none',flex:'0 0 52px',height:'52px',minHeight:'52px',maxHeight:'52px'});
-      else set(card,{display:'none',visibility:'hidden',pointerEvents:'none'});
-      continue;
-    }
-    const compact=card.classList.contains('charge-card')? (phone?64:70):
-      card.classList.contains('hold-card')? (phone?62:70):
-      card.id==='boostCard'? (phone?48:54):
-      card.id==='bbHeroSkillCard'? (phone?44:48):
-      card.classList.contains('chrono-card')?52: (phone?76:88);
-    set(card,{display:'flex',visibility:'visible',flex:'0 0 '+compact+'px',minWidth:'0',minHeight:compact+'px',height:compact+'px',maxHeight:compact+'px',margin:'0',padding:phone?'3px 2px':'5px 4px',boxSizing:'border-box',overflow:'hidden',flexDirection:'column',alignItems:'center',justifyContent:'center'});
+    const compact=card.classList.contains('charge-card')? (phone?58:64):
+      card.classList.contains('hold-card')? (phone?54:60):
+      card.id==='boostCard'? (phone?44:48):
+      card.id==='bbHeroSkillCard'? (phone?42:46):
+      card.classList.contains('chrono-card')?46: (phone?66:74);
+    const absent=card.hidden || card.getAttribute('aria-hidden')==='true';
+    /* Reserve the same pocket in every mode. Hidden mode widgets become quiet
+       placeholders rather than collapsing the rail and shifting the arena. */
+    set(card,{display:'flex',visibility:absent?'hidden':'visible',pointerEvents:absent?'none':'auto',
+      flex:'0 0 '+compact+'px',minWidth:'0',minHeight:compact+'px',height:compact+'px',maxHeight:compact+'px',
+      margin:'0',padding:phone?'3px 2px':'5px 4px',boxSizing:'border-box',overflow:'hidden',
+      flexDirection:'column',alignItems:'center',justifyContent:'center'});
   }
   const skillCard=rail.querySelector('#bbHeroSkillCard');
   if(skillCard){set(skillCard,{flexDirection:'row',justifyContent:'center'});set(skillCard.querySelector('.bb-hero-skill-copy'),{display:'none'});set(skillCard.querySelector('.bb-hero-skill-art'),{flex:'0 0 34px',width:'34px',height:'34px'});set(skillCard.querySelector('.bb-hero-skill-pulse'),{display:'none'});}
   const goalPanel=goalPocket;
-  set(goalPanel,{display:'flex',flex:'0 0 '+(phone?'62px':'68px'),width:'100%',minWidth:'0',minHeight:phone?'62px':'68px',height:phone?'62px':'68px',maxHeight:phone?'62px':'68px',margin:'0',padding:phone?'3px':'5px',boxSizing:'border-box',overflow:'hidden',border:'1px solid rgba(151,190,190,.24)',borderRadius:'9px',background:'rgba(7,20,31,.55)'});
+  set(goalPanel,{display:'flex',flex:'0 0 '+(phone?'54px':'60px'),width:'100%',minWidth:'0',minHeight:phone?'54px':'60px',height:phone?'54px':'60px',maxHeight:phone?'54px':'60px',margin:'0',padding:phone?'2px':'4px',boxSizing:'border-box',overflow:'hidden',border:'1px solid rgba(151,190,190,.2)',borderRadius:'9px',background:'rgba(7,20,31,.42)'});
   for(const panel of goalPanel.children)set(panel,{display:'block',width:'100%',height:'100%',minWidth:'0',minHeight:'0',maxHeight:'100%',margin:'0',padding:'3px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',fontSize:phone?'8px':'9px',lineHeight:'1.2'});
   set(rail.querySelector('.side-drop'),{display:'none',visibility:'hidden',pointerEvents:'none'});
   set(rail.querySelector('#holdBtn'),{display:'none',visibility:'hidden',pointerEvents:'none'});
