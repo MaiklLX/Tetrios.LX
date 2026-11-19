@@ -3004,3 +3004,43 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 
 /* TETRIOS LX — full desktop home parity with mobile menu (checkpoint 333). */
 
+
+
+/* KT-739 — keep primary home navigation reachable without scrolling to the end
+   of the long dashboard. Fixed positioning also respects iOS safe-area insets. */
+#menu.home-dashboard > .bb-home-dock {
+  position: fixed !important;
+  z-index: 1200 !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+  transform: translateX(-50%) !important;
+  width: min(680px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  border: 1px solid rgba(122, 211, 224, .42) !important;
+  border-radius: 20px !important;
+  background: linear-gradient(145deg, rgba(10, 24, 43, .96), rgba(17, 31, 55, .94)) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .48), inset 0 1px rgba(255,255,255,.08) !important;
+  backdrop-filter: blur(18px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+}
+#menu.home-dashboard > .bb-home-dock > * {
+  min-width: 0 !important;
+}
+#menu.home-dashboard {
+  padding-bottom: max(104px, calc(env(safe-area-inset-bottom, 0px) + 96px)) !important;
+}
+@media (min-width: 901px) {
+  #menu.home-dashboard > .bb-home-dock {
+    width: min(620px, calc(100vw - 48px)) !important;
+    bottom: 18px !important;
+  }
+  #menu.home-dashboard {
+    padding-bottom: 112px !important;
+  }
+}
