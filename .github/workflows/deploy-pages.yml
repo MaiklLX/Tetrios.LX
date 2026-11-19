@@ -109,11 +109,15 @@ jobs:
       - name: Upload web game
         uses: actions/upload-pages-artifact@v3
         with:
+          # Keep each retry attempt isolated; deploy-pages must never see duplicate artifacts.
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: site
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
+          # Match the unique artifact for this exact workflow attempt.
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           # Large offline-first assets can keep Pages in syncing_files longer than the default 10 minutes.
           timeout: 1200000
