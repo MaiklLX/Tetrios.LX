@@ -6759,6 +6759,73 @@ body>.app.bb-home-visible{
  #menu.home-dashboard>.modes>.mode{height:60px!important;min-height:60px!important}
 }
 </style>
+
+<style id="bb-kt734-fixed-rail-and-goals">
+/* KT-734 — mode-independent rail slots; compact expandable objectives. */
+#game.unified-game-layout>.playlayout>.sidecol>.sidecard[hidden],
+#game.unified-game-layout>.playlayout>.sidecol>.bb-hero-skill-slot[hidden]{
+  display:flex!important;visibility:hidden!important;pointer-events:none!important;
+}
+#game.unified-game-layout>.playlayout>.sidecol>.bb-mode-goals-pocket{
+  flex:0 0 58px!important;width:100%!important;height:58px!important;
+  min-height:58px!important;max-height:58px!important;overflow:hidden!important;
+  cursor:pointer!important;position:relative!important;
+}
+#game.unified-game-layout>.playlayout>.sidecol>.bb-mode-goals-pocket.is-expanded{
+  flex-basis:148px!important;height:148px!important;min-height:148px!important;max-height:148px!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket #campaignGoals,
+#game.unified-game-layout .bb-mode-goals-pocket #rogueGoals{
+  display:block!important;width:100%!important;height:100%!important;min-height:0!important;
+  max-height:100%!important;margin:0!important;padding:3px!important;overflow:auto!important;
+  border:0!important;background:transparent!important;box-sizing:border-box!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goals-heading{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:3px!important;font-size:8px!important;line-height:1.1!important;white-space:nowrap!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goals-summary{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:3px!important;margin-top:3px!important;font-size:7px!important;line-height:1.1!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goals-list{display:none!important}
+#game.unified-game-layout .bb-mode-goals-pocket.is-expanded .bb-goals-list{
+  display:block!important;margin-top:5px!important;font-size:7px!important;line-height:1.2!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket #rogueGoals>div:not(:first-child){display:none!important}
+#game.unified-game-layout .bb-mode-goals-pocket.is-expanded #rogueGoals>div:not(:first-child){display:block!important}
+#game.unified-game-layout .bb-mode-goals-pocket:after{
+  content:"⌄";position:absolute;right:5px;bottom:1px;font-size:10px;color:#82d7d4;pointer-events:none;
+}
+#game.unified-game-layout .bb-mode-goals-pocket.is-expanded:after{content:"⌃"}
+@media(max-width:600px){
+ #game.unified-game-layout>.playlayout>.sidecol>.bb-mode-goals-pocket{flex-basis:58px!important;height:58px!important;min-height:58px!important;max-height:58px!important}
+ #game.unified-game-layout>.playlayout>.sidecol>.bb-mode-goals-pocket.is-expanded{flex-basis:148px!important;height:148px!important;min-height:148px!important;max-height:148px!important}
+}
+</style>
+<script id="bb-kt734-goals-expand">
+(()=>{
+ const bind=()=>{
+  const pocket=document.querySelector('#game.unified-game-layout .bb-mode-goals-pocket');
+  if(!pocket||pocket.dataset.bbExpandBound)return;
+  pocket.dataset.bbExpandBound='1';
+  pocket.setAttribute('role','button');
+  pocket.setAttribute('tabindex','0');
+  pocket.setAttribute('aria-label','Показать или скрыть цели режима');
+  const toggle=()=>{
+   pocket.classList.toggle('is-expanded');
+   pocket.setAttribute('aria-expanded',String(pocket.classList.contains('is-expanded')));
+  };
+  pocket.addEventListener('click',toggle);
+  pocket.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle();}});
+ };
+ document.addEventListener('click',()=>requestAnimationFrame(bind),{passive:true});
+ const observer=new MutationObserver(bind);
+ observer.observe(document.documentElement,{childList:true,subtree:true});
+ bind();
+})();
+</script>
+
 </head>
 <body><div class="stars"></div><main class="app"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><button class="bb-home-play" id="bbHomePlay" type="button"><span class="bb-home-play-icon">▶</span><span>ИГРАТЬ</span><span class="bb-home-play-caption">ПРОДОЛЖИТЬ ПУТЕШЕСТВИЕ</span></button><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -10915,7 +10982,7 @@ function bbArrangeModeHud(){
   const boardHeight=boardWidth*23/10;
   set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
   set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0',position:'relative'});
-  const railItems=Array.from(rail.children).filter(node=>getComputedStyle(node).display!=='none');
+  const railItems=Array.from(rail.children); // Include hidden mode widgets so every mode keeps identical rail slots.
   set(rail,{display:'flex',gridColumn:'2',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',gap:phone?'3px':'5px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflowY:'auto',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',scrollbarWidth:'thin'});
   for(const card of railItems){
     if(card.id==='campaignGoals'||card.id==='rogueGoals')set(card,{display:'block',flex:phone?'0 0 104px':'0 0 132px',minWidth:'0',minHeight:phone?'104px':'132px',height:phone?'104px':'132px',maxHeight:phone?'104px':'132px',margin:'0',padding:phone?'6px 4px':'8px 6px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',overflowWrap:'anywhere',scrollbarWidth:'thin'});
