@@ -211,6 +211,10 @@ const targets = [
     }
 
     console.log('[stage:card-library] ' + target.name);
+    // The compact dashboard keeps secondary destinations inside the More drawer.
+    // Open it explicitly so the archive remains reachable without cluttering the home screen.
+    const moreToggle = page.locator('#menu [data-home-dock="more"]');
+    if (await moreToggle.count()) await moreToggle.click();
     // The complete card archive must be available before starting a run on every platform.
     await page.locator('#bbOpenCardLibrary').click();
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
