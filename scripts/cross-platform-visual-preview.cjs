@@ -561,16 +561,17 @@ const targets = [
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     const campaignRailState = await campaignPage.evaluate(() => {
       const rail=document.querySelector('#game .playlayout .sidecol');
+      const pocket=rail?.querySelector('.bb-mode-goals-pocket');
       const goals=document.querySelector('#game #campaignGoals');
-      const rr=rail?.getBoundingClientRect(), gr=goals?.getBoundingClientRect();
+      const rr=rail?.getBoundingClientRect(), pr=pocket?.getBoundingClientRect(), gr=goals?.getBoundingClientRect();
       const overlaps=[];
       if(rail&&goals) for(const node of Array.from(rail.children)){
-        if(node===goals||getComputedStyle(node).display==='none')continue;
+        if(node===pocket||getComputedStyle(node).display==='none')continue;
         const r=node.getBoundingClientRect();
         if(Math.min(r.right,gr.right)-Math.max(r.left,gr.left)>1&&Math.min(r.bottom,gr.bottom)-Math.max(r.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
       }
       return {
-        goalsInsideRail:!!rr&&!!gr&&goals?.parentElement===rail&&gr.left>=rr.left-1&&gr.right<=rr.right+1&&gr.top>=rr.top-1&&gr.bottom<=rr.bottom+1,
+        goalsInsideRail:!!rr&&!!pr&&!!gr&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,
         goalHeight:gr?.height||0,
         goalScroll:goals?.scrollHeight||0,
         goalClient:goals?.clientHeight||0,
@@ -581,7 +582,7 @@ const targets = [
     });
     if (!campaignRailState.goalsInsideRail) failures.push(target.name + ': campaign goals are outside the dedicated rail pocket (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.overlaps.length) failures.push(target.name + ': campaign goals overlap other rail elements (' + JSON.stringify(campaignRailState) + ')');
-    if (campaignRailState.goalHeight < (target.mobile ? 84 : 100)) failures.push(target.name + ': campaign objective pocket is too small (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.goalHeight < 50 || campaignRailState.goalHeight > 76) failures.push(target.name + ': campaign objective pocket is not compact (' + JSON.stringify(campaignRailState) + ')');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     console.log('[stage:campaign-missions] ' + target.name);
@@ -680,18 +681,19 @@ const targets = [
     await page.waitForTimeout(900);
     const rogueRailState=await page.evaluate(()=>{
       const rail=document.querySelector('#game .playlayout .sidecol');
+      const pocket=rail?.querySelector('.bb-mode-goals-pocket');
       const goals=document.querySelector('#game #rogueGoals');
-      const rr=rail?.getBoundingClientRect(),gr=goals?.getBoundingClientRect();
+      const rr=rail?.getBoundingClientRect(),pr=pocket?.getBoundingClientRect(),gr=goals?.getBoundingClientRect();
       const overlaps=[];
       if(rail&&goals)for(const node of Array.from(rail.children)){
-        if(node===goals||getComputedStyle(node).display==='none')continue;
+        if(node===pocket||getComputedStyle(node).display==='none')continue;
         const n=node.getBoundingClientRect();
         if(Math.min(n.right,gr.right)-Math.max(n.left,gr.left)>1&&Math.min(n.bottom,gr.bottom)-Math.max(n.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
       }
       const hud=document.querySelector('#game .gamehud-top');
       const boxes=hud?Array.from(hud.children).filter(n=>getComputedStyle(n).display!=='none').map(n=>n.getBoundingClientRect()):[];
       const hudOverlap=boxes.some((a,i)=>boxes.slice(i+1).some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1));
-      return {insideRail:!!rail&&goals?.parentElement===rail&&!!rr&&!!gr&&gr.left>=rr.left-1&&gr.right<=rr.right+1&&gr.top>=rr.top-1&&gr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:gr?.height||0};
+      return {insideRail:!!rail&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&!!rr&&!!pr&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:pr?.height||0};
     });
     if(!rogueRailState.insideRail)failures.push(target.name+': Block Run objectives escape the side rail ('+JSON.stringify(rogueRailState)+')');
     if(rogueRailState.overlaps.length)failures.push(target.name+': Block Run objective overlaps side-rail cards ('+JSON.stringify(rogueRailState)+')');
@@ -1002,11 +1004,8 @@ const targets = [
       if (!boardGestureState.boardFound || !boardGestureState.boardVisible || boardGestureState.touchAction !== 'none') {
         failures.push(target.name + ': gesture-first board touch surface is missing or does not suppress browser gestures (' + JSON.stringify(boardGestureState) + ')');
       }
-      if (!geometry.drop || geometry.drop.width < 40 || geometry.drop.height < 36) {
-        failures.push(target.name + ': Hard Drop control is missing or too small');
-      }
-      if (!geometry.hold || geometry.hold.width < 30 || geometry.hold.height < 24) {
-        failures.push(target.name + ': Hold control is missing or too small');
+      if (geometry.controlVisibility.display !== 'none' || geometry.controlVisibility.visibility !== 'hidden') {
+        failures.push(target.name + ': legacy touch buttons should stay hidden; gameplay uses gestures');
       }
       if (geometry.goals && geometry.goals.bottom > target.height + 2) {
         failures.push(target.name + ': Block Run goals extend beyond the viewport');
@@ -1024,12 +1023,7 @@ const targets = [
       if (!geometry.utilityCardsFit) {
         failures.push(target.name + ': one or more utility HUD cards are clipped outside the rail');
       }
-      if (geometry.drop && geometry.side && (geometry.drop.bottom > geometry.side.bottom + 1 || geometry.drop.top < geometry.side.top - 1)) {
-        failures.push(target.name + ': Hard Drop control is clipped by the utility rail');
-      }
-      if (geometry.hold && geometry.side && (geometry.hold.bottom > geometry.side.bottom + 1 || geometry.hold.top < geometry.side.top - 1)) {
-        failures.push(target.name + ': Hold control is clipped by the utility rail');
-      }
+      /* Gesture-first mode intentionally has no visible drop/hold buttons. */
       if (geometry.frame && geometry.frame.right > target.width + 2) {
         failures.push(target.name + ': arena extends beyond the right viewport edge');
       }
