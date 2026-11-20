@@ -130,6 +130,7 @@ const targets = [
       const cards=[...document.querySelectorAll('#menu .modes .mode')];
       return {
         count:cards.length,
+        shortLandscape:innerWidth>innerHeight&&innerHeight<=600,
         cards:cards.map(card=>{
           const style=getComputedStyle(card),icon=card.querySelector('.modeicon');
           const iconStyle=icon?getComputedStyle(icon):null;
@@ -146,7 +147,7 @@ const targets = [
       };
     });
     if(modeCardVisualState.count!==3||modeCardVisualState.cards.some(card=>
-      card.radius<14||card.borderWidth<1||card.background==='none'||card.iconWidth<56||
+      card.radius<14||card.borderWidth<1||card.background==='none'||card.iconWidth<(modeCardVisualState.shortLandscape?44:56)||
       card.iconBorder==='rgba(0, 0, 0, 0)')){
       failures.push(target.name+': KT-750 home mode cards are not sufficiently prominent ('+JSON.stringify(modeCardVisualState)+')');
     }
@@ -194,7 +195,8 @@ const targets = [
         : Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4);
     if(!modesAreProminent) failures.push(target.name+': KT-750 mode cards are too small or arranged incorrectly ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
     if(!homePanelsOrdered||!profileVisible||!sigilsFit||
-       homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2){
+       (!shortLandscape&&(homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2))||
+       (shortLandscape&&homeHubLayoutState.dock.width>0)){
       failures.push(target.name+': KT-750 home hub, pilot profile or dock geometry is incorrect ('+JSON.stringify(homeHubLayoutState)+')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
