@@ -6806,7 +6806,7 @@ body>.app.bb-home-visible{
 <script id="bb-kt734-goals-expand">
 (()=>{
  const bind=()=>{
-  const pocket=document.querySelector('#game.unified-game-layout .bb-mode-goals-pocket');
+  const pocket=document.querySelector('#game.unified-game-layout .sidecol .bb-mode-goals-pocket');
   if(!pocket||pocket.dataset.bbExpandBound)return;
   pocket.dataset.bbExpandBound='1';
   pocket.setAttribute('role','button');
@@ -8685,7 +8685,7 @@ function bbRenderGoals() {
         return bbGoalEmblem('rogue-'+g.id,g.label,value,g.target,g.claimed,false,'🪙 '+g.reward);
       }).join('') + '</div>';
     const goalsLayout=game.querySelector('.playlayout');
-    const goalsRail=goalsLayout?.querySelector('.sidecol');
+    const goalsRail=goalsLayout?.querySelector('.gameleftcol');
     const mobileGoals=game.querySelector('#bbMobileModeGoals');
     const target=game.classList.contains('unified-game-layout')?(goalsRail?.querySelector('.bb-mode-goals-pocket')||goalsRail):(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:goalsRail);
     if(target&&panel.parentElement!==target)target.appendChild(panel);
