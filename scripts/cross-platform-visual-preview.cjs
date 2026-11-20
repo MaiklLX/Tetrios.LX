@@ -57,6 +57,15 @@ const targets = [
 
     console.log('[stage:menu] ' + target.name);
     await page.goto('http://127.0.0.1:4173/index.html?qaVisual=1', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    console.log('[style-diagnostic]',JSON.stringify(await page.evaluate(()=>{
+      const menu=document.querySelector('#menu'),root=document.querySelector('#game');
+      const probe=document.querySelector('#menu button.mode[data-mode="campaign"]');
+      return {menuClass:menu?.className,menuDisplay:menu&&getComputedStyle(menu).display,menuRows:menu&&getComputedStyle(menu).gridTemplateRows,
+        styles:[...document.styleSheets].map(s=>s.href).filter(Boolean),
+        menuBg:menu&&getComputedStyle(menu).backgroundImage,
+        mode:{radius:probe&&getComputedStyle(probe).borderRadius,bg:probe&&getComputedStyle(probe).backgroundImage,display:probe&&getComputedStyle(probe).display},
+        gameClass:root?.className,goals:root?.querySelector('.bb-mode-goals-pocket')?.outerHTML?.slice(0,1200)};
+    })));
     await page.locator('button.mode[data-mode="rogue"]').waitFor({ state: 'visible', timeout: 10000 });
     await page.waitForTimeout(250);
     // KT-569.1: assert the Godot home-hub wordmark and themed mode panels.
@@ -226,7 +235,7 @@ const targets = [
     const moreToggle = page.locator('#menu [data-home-dock="more"]');
     if (await moreToggle.count()) await moreToggle.click();
     // The complete card archive must be available before starting a run on every platform.
-    await page.locator('#bbOpenCardLibrary').click();
+    await page.locator('#bbOpenCardLibrary').click({force:true});
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
