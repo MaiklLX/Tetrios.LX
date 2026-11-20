@@ -8811,8 +8811,8 @@ function bbRenderGoals() {
       /* The goals pocket must use the full lower ribbon width; its inherited
          desktop card padding was leaving a large empty inset on portrait phones. */
       setRibbon(target,{
-        display:'flex',width:'100%',minWidth:'0',height:'100%',minHeight:'0',
-        margin:'0',padding:'0',border:'0',boxSizing:'border-box',
+        display:'flex',width:'calc(100% + 20px)',minWidth:'0',height:'100%',minHeight:'0',
+        margin:'0 0 0 -17px',padding:'0',border:'0',boxSizing:'border-box',
         overflow:'hidden',background:'transparent'
       });
       /* KT-749.19: keep the three live emblems in one readable row.
