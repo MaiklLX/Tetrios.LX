@@ -57,3 +57,13 @@ The KT-752 mobile screenshots exposed clipping inside the right utility rail: th
 - Cross-platform Visual Preview #1011 failed on that same pre-KT-754 head. The report recorded: cosmic-backdrop assertion mismatch (dark surface and grid layer were present, but the test expected gradient layers), galaxy art width below 150px, goal-help pause state reported false despite the help modal appearing, mobile objective-ribbon/board-width checks failing on iOS/Android, and desktop Daily objective content clipped.
 - KT-754 code and this checkpoint were subsequently committed to the same PR branch. No fresh workflow run is associated with the updated head yet, so neither KT-754 nor the overall PR is accepted.
 - No merge to `main`, Pages deployment, APK build or release.
+
+
+## KT-755 — restore minimum mobile HOLD target
+
+Mobile Arena Visual Preview #522 failed after KT-754 because the HOLD action rendered at 21.8–22px high on both 375×812 and 412×915, below the test's minimum usable control size. The 10×23 board geometry and DROP placement were intact; the report contained no JavaScript page errors.
+
+- Restore HOLD action height/minimum height to 28px in both rail-level and card-level sizing.
+- Increase the compact HOLD card from 56px to 64px so the label, preview and usable action fit without clipping.
+- Keep Buddy skill icon sizing and portrait board geometry unchanged.
+- Fresh mobile and cross-platform previews must pass before this checkpoint is accepted.
