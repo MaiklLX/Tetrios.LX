@@ -10952,7 +10952,7 @@ function bbArrangeModeHud(){
   const head=game?.querySelector('.screenhead');
   if(!game||!layout||!hud||!head)return;
   const phone=window.matchMedia('(max-width: 600px)').matches;
-  const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles))node.style.setProperty(key,value,'important');};
+  const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles)){const cssKey=key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());node.style.setProperty(cssKey,String(value),'important');}};
   /* Keep the real left HUD rail. The old layout removed it and moved all
      objectives into the right utility rail, which created the scroll-window UI. */
   const oldGoals=game.querySelector('#bbMobileModeGoals');
