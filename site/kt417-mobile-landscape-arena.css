@@ -365,3 +365,201 @@ html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-car
   }
   html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-card{padding:2px 0!important}
 }
+
+
+/* KT-746 — final design authority (this stylesheet is the last linked layer).
+   Recompose the actual Godot home DOM and the real shared arena rail here. */
+html body .app section#menu.screen.home-dashboard {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"hero" "profile" "collection" "launch" "modes"!important;
+  grid-template-rows:118px 48px 36px 58px 88px!important;
+  align-content:start!important;
+  gap:7px!important;
+  min-height:0!important;height:auto!important;max-height:none!important;
+  margin:0 auto!important;padding:0 0 94px!important;overflow:visible!important;
+}
+html body .app section#menu.screen.home-dashboard > .hero {
+  grid-area:hero!important;grid-column:1!important;
+  display:grid!important;place-items:center!important;
+  height:118px!important;min-height:118px!important;max-height:118px!important;
+  margin:0!important;padding:8px 12px!important;overflow:hidden!important;
+  border:1px solid rgba(117,230,222,.42)!important;border-radius:22px!important;
+  background:
+    radial-gradient(circle at 16% 20%,rgba(119,226,232,.18) 0 2px,transparent 4px),
+    radial-gradient(circle at 84% 74%,rgba(244,200,123,.18) 0 2px,transparent 5px),
+    radial-gradient(ellipse at 50% 0%,rgba(82,202,210,.22),transparent 66%),
+    linear-gradient(145deg,#1c4657,#0b1b2e 78%)!important;
+  box-shadow:0 6px 0 #061522,0 12px 22px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.2)!important;
+}
+html body .app section#menu.screen.home-dashboard > .hero:before {
+  inset:5px!important;border:1px solid rgba(195,249,239,.14)!important;border-radius:17px!important;
+  background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 38%,transparent 72%,rgba(255,208,135,.07))!important;
+}
+html body .app section#menu.screen.home-dashboard > .hero .hero-brand-lockup {gap:3px!important}
+html body .app section#menu.screen.home-dashboard > .hero .hero-app-mark {
+  width:43px!important;height:43px!important;border-radius:14px!important;
+  box-shadow:0 0 0 3px rgba(94,230,225,.1),0 7px 15px rgba(0,0,0,.32),inset 0 2px rgba(255,255,255,.45)!important;
+}
+html body .app section#menu.screen.home-dashboard > .hero h1 {
+  font-size:clamp(23px,6.5vw,33px)!important;line-height:1!important;margin:1px 0!important;
+}
+html body .app section#menu.screen.home-dashboard > .hero p {font-size:8px!important;letter-spacing:.1em!important;margin:1px 0!important}
+html body .app section#menu.screen.home-dashboard > #bbHomeProfile {
+  grid-area:profile!important;display:flex!important;align-items:center!important;
+  min-height:48px!important;height:48px!important;margin:0!important;padding:4px 10px!important;
+  border:1px solid rgba(132,210,214,.32)!important;border-radius:14px!important;
+  background:linear-gradient(110deg,rgba(35,77,88,.82),rgba(12,30,45,.9))!important;
+  box-shadow:0 3px 0 #071522,inset 0 1px rgba(255,255,255,.12)!important;
+}
+html body .app section#menu.screen.home-dashboard > #bbHomeCollectionCard {
+  grid-area:collection!important;display:flex!important;align-items:center!important;
+  min-height:36px!important;height:36px!important;margin:0!important;padding:3px 10px!important;
+  border:1px solid rgba(132,210,214,.28)!important;border-radius:12px!important;
+  background:linear-gradient(100deg,rgba(32,73,86,.78),rgba(10,27,43,.9))!important;
+  box-shadow:0 3px 0 #071522,inset 0 1px rgba(255,255,255,.1)!important;
+}
+html body .app section#menu.screen.home-dashboard > #bbHomePlay {
+  grid-area:launch!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  min-height:58px!important;height:58px!important;margin:0!important;padding:5px 14px!important;
+  border:1px solid #ffe2a1!important;border-radius:19px!important;
+  background:linear-gradient(180deg,#ffe5a5 0%,#e4b35f 62%,#a96d36 100%)!important;
+  box-shadow:0 5px 0 #684425,0 10px 18px rgba(0,0,0,.3),inset 0 2px rgba(255,255,255,.52)!important;
+  color:#1b2b3a!important;font-size:clamp(19px,5vw,25px)!important;font-weight:1000!important;letter-spacing:.12em!important;
+}
+html body .app section#menu.screen.home-dashboard > .sectionlabel {display:none!important}
+html body .app section#menu.screen.home-dashboard > .modes {
+  grid-area:modes!important;display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:88px!important;
+  gap:4px!important;min-height:88px!important;height:88px!important;
+  margin:0!important;padding:2px 0!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode {
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;width:100%!important;min-width:0!important;height:100%!important;min-height:0!important;
+  margin:0!important;padding:2px!important;overflow:visible!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  text-align:center!important;
+}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode:before,
+html body .app section#menu.screen.home-dashboard > .modes > button.mode:after {display:none!important;content:none!important}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode .modeicon {
+  display:grid!important;place-items:center!important;flex:0 0 50px!important;
+  width:46px!important;height:50px!important;
+  border:2px solid rgba(222,253,246,.78)!important;border-radius:16px 16px 22px 22px!important;
+  clip-path:polygon(50% 0,91% 15%,100% 52%,50% 100%,0 52%,9% 15%)!important;
+  background:linear-gradient(145deg,#a6f0e6,#327f90 38%,#15374e 82%)!important;
+  box-shadow:0 4px 0 #061a2a,0 8px 16px rgba(0,0,0,.36),inset 0 2px rgba(255,255,255,.42)!important;
+  font-size:21px!important;filter:drop-shadow(0 4px 5px rgba(0,0,0,.3))!important;
+}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode[data-mode="campaign"] .modeicon {background:linear-gradient(145deg,#c2edff,#498fc9 38%,#1c4265)!important}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode[data-mode="rogue"] .modeicon {background:linear-gradient(145deg,#f8d89a,#bb8051 38%,#50334f)!important}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode[data-mode="daily"] .modeicon {background:linear-gradient(145deg,#e0f7bd,#69b57b 38%,#205b4a)!important}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode .modetext {width:100%!important;min-width:0!important;text-align:center!important}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode .modetitle {font-size:9px!important;line-height:1.1!important;color:#f6ffff!important;text-shadow:0 2px 3px #000!important}
+html body .app section#menu.screen.home-dashboard > .modes > button.mode .modesub,
+html body .app section#menu.screen.home-dashboard > .modes > button.mode .tag,
+html body .app section#menu.screen.home-dashboard > .modes > button.mode .modearrow {display:none!important}
+html body .app section#menu.screen.home-dashboard > #dailyQuestsPanel,
+html body .app section#menu.screen.home-dashboard > #bbVisitStreak,
+html body .app section#menu.screen.home-dashboard > #openHeroes,
+html body .app section#menu.screen.home-dashboard > #rpgPanel,
+html body .app section#menu.screen.home-dashboard > .currency-panel,
+html body .app section#menu.screen.home-dashboard > .bottomstats,
+html body .app section#menu.screen.home-dashboard > #bbOpenCardLibrary,
+html body .app section#menu.screen.home-dashboard > .apk-download,
+html body .app section#menu.screen.home-dashboard > .shopbuttons,
+html body .app section#menu.screen.home-dashboard > .home-reset {display:none!important}
+html body .app section#menu.screen.home-dashboard > .bb-home-dock {
+  position:fixed!important;z-index:1200!important;left:50%!important;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;
+  transform:translateX(-50%)!important;width:min(620px,calc(100vw - 20px))!important;
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important;
+  margin:0!important;padding:6px!important;border:1px solid rgba(137,226,224,.5)!important;border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(20,53,68,.97),rgba(7,22,38,.98))!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.16)!important;
+  backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;
+}
+html body .app section#menu.screen.home-dashboard > .bb-home-dock > * {
+  min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important;
+}
+@media(max-width:600px) and (orientation:portrait) {
+  html body .app section#menu.screen.home-dashboard {grid-template-rows:116px 44px 34px 56px 84px!important;gap:6px!important;padding-bottom:90px!important}
+  html body .app section#menu.screen.home-dashboard > .hero {height:116px!important;min-height:116px!important}
+  html body .app section#menu.screen.home-dashboard > #bbHomeProfile {height:44px!important;min-height:44px!important}
+  html body .app section#menu.screen.home-dashboard > #bbHomeCollectionCard {height:34px!important;min-height:34px!important}
+  html body .app section#menu.screen.home-dashboard > #bbHomePlay {height:56px!important;min-height:56px!important}
+  html body .app section#menu.screen.home-dashboard > .modes {height:84px!important;min-height:84px!important;grid-template-rows:84px!important}
+}
+@media(orientation:landscape) and (pointer:coarse) and (max-height:600px) {
+  html body .app section#menu.screen.home-dashboard {grid-template-columns:1fr 1fr!important;grid-template-areas:"hero profile" "collection launch" "modes modes"!important;grid-template-rows:84px 46px 82px!important;gap:5px!important}
+  html body .app section#menu.screen.home-dashboard > .hero {height:84px!important;min-height:84px!important}
+}
+
+/* Shared arena objective ribbon — absolute to the stage, never in the side rail flow. */
+html body .app section#game.screen .playlayout {
+  position:relative!important;box-sizing:border-box!important;
+}
+html body .app section#game.screen .playlayout > aside.sidecol {
+  position:static!important;overflow:visible!important;padding-top:0!important;
+}
+html body .app section#game.screen .playlayout > aside.sidecol > .bb-mode-goals-pocket {
+  position:absolute!important;z-index:80!important;top:0!important;left:0!important;right:0!important;
+  width:100%!important;height:52px!important;min-height:52px!important;max-height:52px!important;
+  box-sizing:border-box!important;margin:0!important;padding:3px 8px!important;
+  display:flex!important;align-items:center!important;overflow:hidden!important;
+  border:1px solid rgba(122,229,226,.52)!important;border-radius:14px!important;
+  background:radial-gradient(ellipse at 12% 0%,rgba(110,236,222,.2),transparent 45%),radial-gradient(ellipse at 90% 100%,rgba(255,202,120,.14),transparent 42%),linear-gradient(180deg,#214d60,#0b2035)!important;
+  box-shadow:0 4px 0 #071725,0 8px 18px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.2)!important;
+}
+html body .app section#game.screen .playlayout > aside.sidecol > .bb-mode-goals-pocket #rogueGoals,
+html body .app section#game.screen .playlayout > aside.sidecol > .bb-mode-goals-pocket #campaignGoals {
+  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;
+  gap:7px!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;background:transparent!important;box-shadow:none!important;
+}
+html body .app section#game.screen .bb-mode-goals-pocket .bb-goals-heading {
+  flex:0 0 auto!important;margin:0 8px 0 0!important;color:#aaf4ed!important;font-size:8px!important;font-weight:1000!important;letter-spacing:.1em!important;white-space:nowrap!important;
+}
+html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem-grid {
+  display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:space-evenly!important;gap:8px!important;min-width:0!important;height:100%!important;overflow:hidden!important;
+}
+html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem {
+  display:flex!important;flex:0 1 76px!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:4px!important;min-width:0!important;overflow:hidden!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem-ring {
+  flex:0 0 30px!important;width:30px!important;height:30px!important;border:1px solid rgba(210,255,245,.5)!important;
+  box-shadow:0 3px 0 #071725,0 0 10px rgba(92,236,222,.22),inset 0 1px rgba(255,255,255,.22)!important;
+}
+html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem-count {font-size:8px!important;font-weight:950!important;white-space:nowrap!important}
+html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem-extra {display:none!important}
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) {
+  box-sizing:border-box!important;padding-top:58px!important;min-height:0!important;
+}
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe {
+  box-sizing:border-box!important;height:calc(100% - 58px)!important;max-height:calc(100% - 58px)!important;min-height:0!important;
+  border:3px solid #4d8998!important;border-radius:19px!important;
+  background:linear-gradient(145deg,#9ce6df 0%,#397b8b 12%,#16364c 43%,#091a2c 100%)!important;
+  box-shadow:0 6px 0 #061321,0 13px 25px rgba(0,0,0,.38),inset 0 2px rgba(255,255,255,.34),inset 0 -4px rgba(0,0,0,.3)!important;
+}
+html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe:before {display:block!important;content:""!important}
+html body .app section#game.screen .gamehud > .hudbox,
+html body .app section#game.screen .gamehud > #gameCoins {
+  border:1px solid rgba(130,213,219,.4)!important;border-radius:12px!important;
+  background:linear-gradient(180deg,#2a5668,#142f45 72%,#0e2439)!important;
+  box-shadow:0 4px 0 #071725,0 7px 12px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.18)!important;
+}
+html body .app section#game.screen .playlayout aside.sidecol > .sidecard,
+html body .app section#game.screen .playlayout aside.sidecol > .drop-card,
+html body .app section#game.screen .playlayout aside.sidecol > #bbHeroSkillCard {
+  border:1px solid rgba(130,213,219,.38)!important;border-radius:13px!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(126,224,222,.13),transparent 65%),linear-gradient(155deg,#244b5c,#102a40 76%,#0b1c30)!important;
+  box-shadow:0 4px 0 #061522,0 8px 14px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.16)!important;
+}
+@media(max-width:600px) and (orientation:portrait) {
+  html body .app section#game.screen .playlayout > aside.sidecol > .bb-mode-goals-pocket {height:48px!important;min-height:48px!important;max-height:48px!important;padding:2px 4px!important}
+  html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) {padding-top:54px!important}
+  html body .app section#game.screen .playlayout > div:not(.gameleftcol):not(.sidecol) > .boardframe {height:calc(100% - 54px)!important;max-height:calc(100% - 54px)!important}
+  html body .app section#game.screen .bb-mode-goals-pocket .bb-goals-heading {font-size:7px!important;letter-spacing:.04em!important}
+  html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem-ring {width:26px!important;height:26px!important;flex-basis:26px!important}
+  html body .app section#game.screen .bb-mode-goals-pocket .bb-goal-emblem-count {font-size:7px!important}
+}
