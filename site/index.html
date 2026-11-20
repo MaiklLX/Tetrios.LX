@@ -7958,6 +7958,7 @@ function bbDailyCalendarOpen(){
   <div class="bb-cal-legend"><span class="done"><i></i>Пройдено</span><span class="now"><i></i>Сегодня</span><span class="miss"><i></i>Пропущено</span><span class="next"><i></i>Предстоит</span></div>
   <button class="action secondary" id="bbDailyCalendarClose">ЗАКРЫТЬ</button>`;
   overlayEl.classList.add('show');
+  if(typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout();
   $('bbCalendarPrev').onclick=()=>{bbDailyCalendarMonth=new Date(year,month-1,1);bbDailyCalendarOpen()};
   $('bbCalendarNext').onclick=()=>{bbDailyCalendarMonth=new Date(year,month+1,1);bbDailyCalendarOpen()};
   $('bbDailyCalendarClose').onclick=closeOverlay;
@@ -10521,7 +10522,7 @@ function bbRefresh() {
   }
 }
 
-function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('show')}
+function bbModal(html){$('modal').innerHTML=html;$('overlay').classList.add('show');if(typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout()}
 
 function bbShop(){
   $('shopCoins').textContent = bbCoins;
