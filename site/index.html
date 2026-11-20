@@ -10952,36 +10952,47 @@ function bbArrangeModeHud(){
   if(!game||!layout||!hud||!head)return;
   const phone=window.matchMedia('(max-width: 600px)').matches;
   const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles))node.style.setProperty(key,value,'important');};
-  /* Repair the previous experimental DOM rearrangement before resolving
-     the board wrapper. The wrapper must remain the first child of playlayout. */
-  const oldLeft=layout.querySelector('.gameleftcol');
+  /* Keep the real left HUD rail. The old layout removed it and moved all
+     objectives into the right utility rail, which created the scroll-window UI. */
   const oldGoals=game.querySelector('#bbMobileModeGoals');
-  if(oldLeft){
-    const progress=oldLeft.querySelector('.progresswrap');
-    if(progress)game.insertBefore(progress,layout);
-    oldLeft.remove();
-  }
   if(hud.parentElement!==game)game.insertBefore(hud,layout);
   const progress=game.querySelector('.progresswrap');
   if(progress&&progress.parentElement!==game)game.insertBefore(progress,layout);
   oldGoals?.remove();
 
-  const boardColumn=layout.firstElementChild;
+  let leftRail=layout.querySelector('.gameleftcol');
+  if(!leftRail){
+    leftRail=document.createElement('aside');
+    leftRail.className='gameleftcol';
+    leftRail.setAttribute('aria-label','Цели и прогресс режима');
+    layout.insertBefore(leftRail,layout.firstElementChild);
+  }
+  const boardColumn=Array.from(layout.children).find(node=>node!==leftRail&&!node.classList.contains('sidecol'));
   const rail=layout.querySelector('.sidecol');
   const frame=boardColumn?.querySelector('.boardframe');
   const board=frame?.querySelector('#board');
   if(!boardColumn||!rail||!frame||!board)return;
-  /* A permanent objective pocket keeps the rail geometry identical in every mode. */
-  let goalPocket=rail.querySelector('.bb-mode-goals-pocket');
-  if(!goalPocket){goalPocket=document.createElement('div');goalPocket.className='bb-mode-goals-pocket';goalPocket.setAttribute('aria-label','Цели режима');rail.appendChild(goalPocket);}
+
+  /* Campaign and Block Run emblems belong to the dedicated left rail.
+     Daily challenge objective remains a compact marker in the right utility rail. */
+  let goalPocket=leftRail.querySelector('.bb-mode-goals-pocket');
+  if(!goalPocket){
+    goalPocket=document.createElement('div');
+    goalPocket.className='bb-mode-goals-pocket';
+    goalPocket.setAttribute('aria-label','Цели режима');
+    leftRail.appendChild(goalPocket);
+  }
   for(const panel of [game.querySelector('#rogueGoals'),game.querySelector('#campaignGoals')]){
     if(panel&&panel.parentElement!==goalPocket)goalPocket.appendChild(panel);
   }
   const dailyGoal=game.querySelector('#dailyMissionGoal');
-  if(dailyGoal&&!dailyGoal.hidden&&dailyGoal.parentElement!==goalPocket)goalPocket.appendChild(dailyGoal);
-  if(dailyGoal&&dailyGoal.parentElement===goalPocket){
+  if(dailyGoal&&dailyGoal.parentElement!==rail)rail.appendChild(dailyGoal);
+  if(dailyGoal){
     dailyGoal.classList.add('bb-daily-goal-pocket');
-    set(dailyGoal,{display:'flex',flex:'1 1 auto',minWidth:'0',minHeight:'0',width:'100%',height:'100%',maxHeight:'100%',margin:'0',padding:phone?'3px 3px':'5px 5px',boxSizing:'border-box',overflow:'auto',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'2px',textAlign:'center'});
+    set(dailyGoal,{display:'flex',visibility:dailyGoal.hidden?'hidden':'visible',pointerEvents:dailyGoal.hidden?'none':'auto',
+      flex:'0 0 52px',minWidth:'0',minHeight:'52px',width:'100%',height:'52px',maxHeight:'52px',
+      margin:'0',padding:phone?'3px 3px':'5px 5px',boxSizing:'border-box',overflow:'hidden',
+      flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'2px',textAlign:'center'});
   }
 
   game.classList.add('unified-game-layout');
@@ -10993,21 +11004,34 @@ function bbArrangeModeHud(){
   for(const metric of hud.querySelectorAll('.hudbox,#gameCoins'))set(metric,{display:'flex',gridColumn:'auto',gridRow:'1',width:'100%',minWidth:'0',height:'100%',minHeight:'0',maxHeight:'100%',padding:phone?'4px 2px':'7px 6px',boxSizing:'border-box',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden'});
   set(game.querySelector('#dailyMissionGoal'),{flex:'0 0 auto',width:'100%',minWidth:'0',margin:'0',boxSizing:'border-box'});
   const railWidth=phone?96:Math.min(220,Math.max(184,window.innerWidth*.17));
+  const leftRailWidth=phone?0:Math.min(180,Math.max(140,window.innerWidth*.13));
   const outerGutter=phone?14:36;
   const columnGap=phone?7:16;
-  const availableWidth=Math.max(120,window.innerWidth-outerGutter-railWidth-columnGap-20);
+  const availableWidth=Math.max(120,window.innerWidth-outerGutter-railWidth-columnGap-(phone?0:leftRailWidth+columnGap)-20);
   /* One deterministic 10:23 board size per viewport. Optional mode content
      never participates in this calculation. */
-  const targetHeight=Math.min(window.innerHeight*(phone?.62:.66),phone?540:600);
+  const targetHeight=Math.min(window.innerHeight*(phone?.54:.66),phone?500:600);
   const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
   const boardHeight=boardWidth*23/10;
-  set(layout,{display:'grid',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:`minmax(0,1fr) ${railWidth}px`,gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',height:(boardHeight+12)+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
-  set(boardColumn,{display:'flex',gridColumn:'1',gridRow:'1',alignItems:'center',justifyContent:'center',minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',padding:'0',position:'relative'});
-  const railItems=Array.from(rail.children); // Include hidden mode widgets so every mode keeps identical rail slots.
-  set(rail,{display:'flex',gridColumn:'2',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',gap:phone?'3px':'5px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',overflowY:'auto',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',scrollbarWidth:'thin'});
+  set(layout,{display:'grid',position:'relative',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',
+    gridTemplateColumns:phone?`minmax(0,1fr) ${railWidth}px`:`${leftRailWidth}px minmax(0,1fr) ${railWidth}px`,
+    gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',
+    height:(boardHeight+12+(phone?60:0))+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
+  set(leftRail,{display:'flex',position:phone?'absolute':'relative',gridColumn:phone?'auto':'1',gridRow:'1',
+    top:phone?'0':'auto',left:phone?'0':'auto',right:phone?'0':'auto',zIndex:phone?'50':'auto',
+    flexDirection:phone?'row':'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'4px':'8px',
+    width:phone?'100%':leftRailWidth+'px',height:phone?'54px':'100%',minWidth:'0',minHeight:phone?'54px':'0',
+    maxHeight:phone?'54px':'100%',margin:'0',padding:phone?'3px 5px':'6px 4px',boxSizing:'border-box',overflow:'hidden'});
+  set(boardColumn,{display:'flex',gridColumn:phone?'1':'2',gridRow:'1',alignItems:'center',justifyContent:'center',
+    minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',
+    padding:phone?'56px 0 0':'0',boxSizing:'border-box',position:'relative'});
+  const railItems=Array.from(rail.children); // Hidden mode widgets keep stable utility slots.
+  set(rail,{display:'flex',gridColumn:phone?'2':'3',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',
+    flexDirection:'column',gap:phone?'3px':'5px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',
+    overflowY:'hidden',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',
+    padding:phone?'60px 2px 3px':'6px 4px',boxSizing:'border-box',scrollbarWidth:'none'});
   for(const card of railItems){
-    if(card.id==='campaignGoals'||card.id==='rogueGoals')set(card,{display:'block',flex:phone?'0 0 104px':'0 0 132px',minWidth:'0',minHeight:phone?'104px':'132px',height:phone?'104px':'132px',maxHeight:phone?'104px':'132px',margin:'0',padding:phone?'6px 4px':'8px 6px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',alignSelf:'stretch',overflowWrap:'anywhere',scrollbarWidth:'thin'});
-    else if(card.id==='dailyMissionGoal')set(card,{flex:'0 0 auto',minHeight:'64px',height:'64px',maxHeight:'64px',overflow:'hidden'});
+    if(card.id==='dailyMissionGoal')set(card,{display:'flex',flex:'0 0 52px',minWidth:'0',minHeight:'52px',height:'52px',maxHeight:'52px',overflow:'hidden',padding:'4px'});
     else set(card,{flex:'0 0 auto',minHeight:phone?'52px':'58px',height:'auto',maxHeight:'none'});
   }
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
@@ -11027,8 +11051,16 @@ function bbArrangeModeHud(){
   const skillCard=rail.querySelector('#bbHeroSkillCard');
   if(skillCard){set(skillCard,{flexDirection:'row',justifyContent:'center'});set(skillCard.querySelector('.bb-hero-skill-copy'),{display:'none'});set(skillCard.querySelector('.bb-hero-skill-art'),{flex:'0 0 34px',width:'34px',height:'34px'});set(skillCard.querySelector('.bb-hero-skill-pulse'),{display:'none'});}
   const goalPanel=goalPocket;
-  set(goalPanel,{display:'flex',flex:'0 0 '+(phone?'54px':'60px'),width:'100%',minWidth:'0',minHeight:phone?'54px':'60px',height:phone?'54px':'60px',maxHeight:phone?'54px':'60px',margin:'0',padding:phone?'2px':'4px',boxSizing:'border-box',overflow:'hidden',border:'1px solid rgba(151,190,190,.2)',borderRadius:'9px',background:'rgba(7,20,31,.42)'});
-  for(const panel of goalPanel.children)set(panel,{display:'block',width:'100%',height:'100%',minWidth:'0',minHeight:'0',maxHeight:'100%',margin:'0',padding:'3px',boxSizing:'border-box',overflowY:'auto',overflowX:'hidden',fontSize:phone?'8px':'9px',lineHeight:'1.2'});
+  set(goalPanel,{display:'flex',position:'relative',flex:phone?'1 1 auto':'0 0 auto',flexDirection:phone?'row':'column',
+    alignItems:'stretch',justifyContent:'center',gap:phone?'2px':'5px',width:'100%',minWidth:'0',
+    minHeight:phone?'0':'92px',height:phone?'100%':'92px',maxHeight:phone?'100%':'92px',
+    margin:'0',padding:phone?'0':'5px',boxSizing:'border-box',overflow:'hidden',
+    border:'1px solid rgba(151,190,190,.26)',borderRadius:phone?'10px':'13px',
+    background:phone?'rgba(7,20,31,.08)':'linear-gradient(145deg,rgba(28,56,68,.76),rgba(7,21,32,.82))'});
+  for(const panel of goalPanel.children)set(panel,{display:'flex',flex:'1 1 auto',flexDirection:phone?'row':'column',
+    alignItems:'center',justifyContent:'space-between',gap:'3px',width:'100%',height:'100%',minWidth:'0',
+    minHeight:'0',maxHeight:'100%',margin:'0',padding:'2px',boxSizing:'border-box',overflow:'hidden',
+    fontSize:phone?'7px':'8px',lineHeight:'1.1'});
   set(rail.querySelector('.side-drop'),{display:'none',visibility:'hidden',pointerEvents:'none'});
   set(rail.querySelector('#holdBtn'),{display:'none',visibility:'hidden',pointerEvents:'none'});
   set(rail.querySelector('.drop-card'),{display:'none'});
@@ -11144,6 +11176,40 @@ function bbArrangeModeHud(){
       @media(max-width:600px){
         #game.unified-game-layout>.playlayout>.sidecol>#campaignGoals,
         #game.unified-game-layout>.playlayout>.sidecol>#rogueGoals{flex-basis:104px!important;height:104px!important;min-height:104px!important;max-height:104px!important}
+      }
+      /* KT-749 — authoritative left objective rail and compact mobile mission ribbon. */
+      #game.unified-game-layout>.playlayout>.gameleftcol{box-sizing:border-box!important;min-width:0!important;min-height:0!important;border:1px solid rgba(114,193,190,.34)!important;border-radius:14px!important;background:linear-gradient(155deg,rgba(26,55,67,.82),rgba(8,22,34,.9))!important;box-shadow:0 6px 16px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.12)!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;gap:5px!important;width:100%!important;min-width:0!important;overflow:hidden!important;border:0!important;background:transparent!important;box-shadow:none!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol #rogueGoals,
+      #game.unified-game-layout>.playlayout>.gameleftcol #campaignGoals{box-sizing:border-box!important;display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;gap:4px!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:3px!important;overflow:hidden!important;border:0!important;background:transparent!important;box-shadow:none!important;color:#e9dfbf!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-heading{display:flex!important;align-items:center!important;justify-content:space-between!important;flex:0 0 auto!important;width:100%!important;margin:0!important;padding:0 2px!important;color:#a9e8df!important;font-size:8px!important;line-height:1!important;letter-spacing:.08em!important;white-space:nowrap!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-summary{display:none!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-grid{display:flex!important;flex:1 1 auto!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;gap:3px!important;width:100%!important;min-width:0!important;height:100%!important;overflow:hidden!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem{display:flex!important;flex:0 1 58px!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;min-width:0!important;overflow:hidden!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-ring{flex:0 0 32px!important;width:32px!important;height:32px!important;border:1px solid rgba(206,247,237,.48)!important;box-shadow:0 3px 0 #071725,0 0 10px rgba(92,236,222,.18),inset 0 1px rgba(255,255,255,.22)!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-count{font-size:8px!important;font-weight:950!important;white-space:nowrap!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-extra{display:none!important}
+      #game.unified-game-layout>.playlayout>.sidecol>.bb-daily-goal-pocket{flex:0 0 52px!important;width:100%!important;height:52px!important;min-height:52px!important;max-height:52px!important;overflow:hidden!important}
+      #game.unified-game-layout>.playlayout>.sidecol>.bb-daily-goal-pocket .daily-mission-label{font-size:7px!important;line-height:1!important;white-space:nowrap!important}
+      #game.unified-game-layout>.playlayout>.sidecol>.bb-daily-goal-pocket strong{font-size:12px!important;line-height:1!important;white-space:nowrap!important}
+      @media(max-width:600px){
+        #game.unified-game-layout>.playlayout>.gameleftcol{position:absolute!important;top:0!important;left:0!important;right:0!important;z-index:50!important;display:flex!important;flex-direction:row!important;align-items:center!important;height:54px!important;min-height:54px!important;max-height:54px!important;padding:3px 5px!important;border-radius:13px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{flex:1 1 auto!important;flex-direction:row!important;height:100%!important;min-height:0!important;padding:0!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol #rogueGoals,
+        #game.unified-game-layout>.playlayout>.gameleftcol #campaignGoals{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:3px!important;padding:0!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-heading{flex:0 0 auto!important;width:auto!important;max-width:54px!important;font-size:6px!important;letter-spacing:.03em!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-grid{gap:2px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem{flex:0 1 48px!important;flex-direction:row!important;gap:2px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-ring{flex-basis:26px!important;width:26px!important;height:26px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-ring b{font-size:12px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-count{font-size:6px!important}
+        #game.unified-game-layout>.playlayout>.sidecol>.bb-daily-goal-pocket{flex-basis:48px!important;height:48px!important;min-height:48px!important;max-height:48px!important}
+      }
+      @media(min-width:901px){
+        #game.unified-game-layout>.playlayout{grid-template-columns:180px minmax(0,1fr) minmax(190px,230px)!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol{grid-column:1!important;grid-row:1!important}
+        #game.unified-game-layout>.playlayout>div:first-child{grid-column:2!important;grid-row:1!important}
+        #game.unified-game-layout>.playlayout>.sidecol{grid-column:3!important;grid-row:1!important}
       }
     `;document.head.appendChild(skin);
   }
@@ -21728,4 +21794,31 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 #menu.home-dashboard .modes .modearrow{position:relative!important;z-index:3!important;flex:0 0 18px!important;}
 #menu.home-dashboard .modes .modesub{display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:2!important;overflow:hidden!important;}
 @media(max-width:650px){#menu.home-dashboard .modes .mode{min-height:90px!important;}#menu.home-dashboard .modes .modetext{max-width:calc(100% - 76px)!important;}#menu.home-dashboard .modes .modeicon{z-index:2!important;}}
+</style>
+
+<style id="bb-kt749-final-menu-composition">
+/* Final menu authority: replace legacy vertical mode tiles with a compact game-space layout. */
+#menu.home-dashboard{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:12px!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;margin:0 auto!important;padding:0 0 94px!important;grid-template:none!important;grid-template-areas:none!important;grid-template-rows:none!important;overflow:visible!important}
+#menu.home-dashboard>.hero{order:1!important;flex:0 0 164px!important;width:100%!important;height:164px!important;min-height:164px!important;max-height:164px!important;margin:0!important;padding:14px 12px!important;border:1px solid rgba(122,226,220,.44)!important;border-radius:25px!important;background:radial-gradient(circle at 12% 20%,rgba(130,240,231,.28) 0 2px,transparent 6px),radial-gradient(circle at 84% 72%,rgba(255,211,143,.24) 0 3px,transparent 8px),radial-gradient(ellipse at 50% 0%,rgba(79,209,218,.24),transparent 65%),linear-gradient(145deg,#24556a,#0b2135 78%,#081a2c)!important;box-shadow:0 7px 0 #061522,0 15px 26px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.24)!important}
+#menu.home-dashboard>.hero:before{inset:6px!important;border:1px solid rgba(214,251,240,.16)!important;border-radius:19px!important}
+#menu.home-dashboard>.hero .hero-brand-lockup{gap:8px!important}
+#menu.home-dashboard>.hero .hero-app-mark{width:56px!important;height:56px!important}
+#menu.home-dashboard>.hero h1{font-size:clamp(27px,5vw,42px)!important;line-height:1!important}
+#menu.home-dashboard>#bbHomeProfile,#menu.home-dashboard>#bbHomeCollectionCard{display:none!important}
+#menu.home-dashboard>#bbHomePlay{order:2!important;position:relative!important;inset:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 58px!important;width:100%!important;height:58px!important;min-height:58px!important;max-height:58px!important;margin:0!important;padding:5px 14px!important;border:1px solid #ffe2a1!important;border-radius:18px!important;background:linear-gradient(180deg,#ffe5a5 0%,#e4b35f 62%,#a96d36 100%)!important;box-shadow:0 5px 0 #684425,0 9px 17px rgba(0,0,0,.28),inset 0 2px rgba(255,255,255,.5)!important;color:#1b2b3a!important;font-size:21px!important;font-weight:1000!important;letter-spacing:.12em!important}
+#menu.home-dashboard>.sectionlabel{display:none!important}
+#menu.home-dashboard>.modes{order:3!important;position:relative!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:space-between!important;flex:0 0 124px!important;width:100%!important;height:124px!important;min-height:124px!important;max-height:124px!important;margin:0!important;padding:4px 0!important;gap:8px!important;grid-template:none!important;grid-template-columns:none!important;grid-template-rows:none!important;overflow:visible!important;background:radial-gradient(ellipse at 50% 45%,rgba(83,207,206,.13),transparent 70%)!important;border:0!important;box-shadow:none!important}
+#menu.home-dashboard>.modes>button.mode{position:relative!important;display:flex!important;flex:1 1 0!important;flex-basis:0!important;width:0!important;min-width:0!important;max-width:none!important;height:100%!important;min-height:0!important;max-height:124px!important;margin:0!important;padding:4px 2px!important;grid-area:auto!important;grid-row:auto!important;grid-column:auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:7px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible!important;text-align:center!important}
+#menu.home-dashboard>.modes>button.mode:before,#menu.home-dashboard>.modes>button.mode:after{display:none!important;content:none!important}
+#menu.home-dashboard>.modes>button.mode .modeicon{display:grid!important;place-items:center!important;flex:0 0 66px!important;width:62px!important;height:66px!important;border:2px solid rgba(221,252,244,.82)!important;border-radius:21px 21px 28px 28px!important;clip-path:polygon(50% 0,91% 15%,100% 52%,50% 100%,0 52%,9% 15%)!important;background:linear-gradient(145deg,#a7f0e5,#347f91 36%,#14364e 82%)!important;box-shadow:0 5px 0 #061a2a,0 9px 18px rgba(0,0,0,.35),inset 0 2px rgba(255,255,255,.42)!important;font-size:27px!important}
+#menu.home-dashboard>.modes>button.mode[data-mode="campaign"] .modeicon{background:linear-gradient(145deg,#c5efff,#4b92ca 38%,#1b4266)!important}
+#menu.home-dashboard>.modes>button.mode[data-mode="rogue"] .modeicon{background:linear-gradient(145deg,#f8d99b,#bc8052 38%,#503450)!important}
+#menu.home-dashboard>.modes>button.mode[data-mode="daily"] .modeicon{background:linear-gradient(145deg,#e0f7be,#6ab77d 38%,#205b4b)!important}
+#menu.home-dashboard>.modes>button.mode .modetext{display:block!important;width:100%!important;min-width:0!important;text-align:center!important}
+#menu.home-dashboard>.modes>button.mode .modetitle{font-size:10px!important;line-height:1.1!important;font-weight:1000!important;color:#f5ffff!important;text-shadow:0 2px 3px #000!important}
+#menu.home-dashboard>.modes>button.mode .modesub,#menu.home-dashboard>.modes>button.mode .tag,#menu.home-dashboard>.modes>button.mode .modearrow{display:none!important}
+#menu.home-dashboard>#dailyQuestsPanel,#menu.home-dashboard>#bbVisitStreak,#menu.home-dashboard>#openHeroes,#menu.home-dashboard>#rpgPanel,#menu.home-dashboard>.currency-panel,#menu.home-dashboard>.bottomstats,#menu.home-dashboard>#bbOpenCardLibrary,#menu.home-dashboard>.apk-download,#menu.home-dashboard>.shopbuttons,#menu.home-dashboard>.home-reset{display:none!important}
+#menu.home-dashboard>.bb-home-dock{position:fixed!important;z-index:1200!important;left:50%!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;transform:translateX(-50%)!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;width:min(620px,calc(100vw - 20px))!important;max-width:620px!important;height:62px!important;min-height:62px!important;margin:0!important;padding:5px!important;gap:5px!important;border:1px solid rgba(137,226,224,.5)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(20,53,68,.97),rgba(7,22,38,.98))!important;box-shadow:0 10px 30px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.16)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
+#menu.home-dashboard>.bb-home-dock button{min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important}
+@media(max-width:900px){#menu.home-dashboard{gap:9px!important;padding-bottom:84px!important}#menu.home-dashboard>.hero{flex-basis:146px!important;height:146px!important;min-height:146px!important;max-height:146px!important}#menu.home-dashboard>#bbHomePlay{flex-basis:54px!important;height:54px!important;min-height:54px!important;max-height:54px!important}#menu.home-dashboard>.modes{flex-basis:104px!important;height:104px!important;min-height:104px!important;max-height:104px!important;gap:5px!important}#menu.home-dashboard>.modes>button.mode .modeicon{flex-basis:54px!important;width:50px!important;height:54px!important;font-size:23px!important}#menu.home-dashboard>.modes>button.mode .modetitle{font-size:8px!important}}
 </style>
