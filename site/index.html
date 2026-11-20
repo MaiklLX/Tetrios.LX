@@ -7713,6 +7713,7 @@ function show(id){
   activeScreen.classList.remove('screen');
   void activeScreen.offsetWidth;
   activeScreen.classList.add('screen');
+  if(id==='menu'&&typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout();
   if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
   if(typeof bbSyncMusic==='function')bbSyncMusic();
 }
@@ -21833,9 +21834,11 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
     const heroHeight=compact?146:164;
     const launchHeight=compact?54:58;
     const modesHeight=compact?104:124;
-    set(menu,{display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:compact?'9px':'12px',
+    const rootStyle={flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:compact?'9px':'12px',
       width:'100%',height:'auto',minHeight:'0',maxHeight:'none',margin:'0 auto',paddingBottom:compact?'84px':'94px',
-      gridTemplateColumns:'none',gridTemplateRows:'none',gridTemplateAreas:'none',overflow:'visible'});
+      gridTemplateColumns:'none',gridTemplateRows:'none',gridTemplateAreas:'none',overflow:'visible'};
+    if(!menu.hidden&&menu.getAttribute('aria-hidden')!=='true')rootStyle.display='flex';
+    set(menu,rootStyle);
     set(menu.querySelector(':scope > .hero'),{order:'1',flex:'0 0 '+heroHeight+'px',width:'100%',height:heroHeight+'px',
       minHeight:heroHeight+'px',maxHeight:heroHeight+'px',margin:'0',position:'relative'});
     set(menu.querySelector(':scope > #bbHomeProfile'),{display:'none'});
@@ -21871,6 +21874,7 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
       display:'grid',gridTemplateColumns:'repeat(5,minmax(0,1fr))',width:'min(620px,calc(100vw - 20px))',
       maxWidth:'620px',height:'62px',minHeight:'62px',margin:'0',padding:'5px',gap:'5px'});
   };
+  window.bbApplyHomeMenuLayout=apply;
   apply();
   document.addEventListener('DOMContentLoaded',apply,{once:true});
   window.addEventListener('resize',apply,{passive:true});
