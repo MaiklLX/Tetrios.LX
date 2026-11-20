@@ -9240,6 +9240,14 @@ function bbSyncDailyGoalPlacement(){
   if(game.classList.contains('unified-game-layout')&&pocket&&!panel.hidden){
     if(panel.parentElement!==pocket)pocket.appendChild(panel);
     panel.classList.add('bb-daily-goal-pocket');
+    const setGoal=(node,styles)=>{if(!node)return;for(const [name,value] of Object.entries(styles))node.style.setProperty(name,value,'important');};
+    setGoal(panel,{display:'flex',flex:'1 1 auto',flexDirection:'row',alignItems:'center',justifyContent:'space-between',
+      width:'100%',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',margin:'0',padding:'3px 6px',
+      boxSizing:'border-box',overflow:'hidden',gap:'6px',textAlign:'left'});
+    setGoal(panel.querySelector('.daily-mission-label'),{display:'block',flex:'1 1 auto',minWidth:'0',maxWidth:'100%',
+      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontSize:'7px',lineHeight:'1.1',margin:'0'});
+    setGoal(panel.querySelector('strong'),{display:'block',flex:'0 0 auto',minWidth:'34px',minHeight:'28px',
+      padding:'4px 6px',fontSize:'11px',lineHeight:'1',whiteSpace:'nowrap',textAlign:'center',boxSizing:'border-box'});
     return;
   }
   if(panel.parentElement!==game||panel.previousElementSibling!==screenHead){
@@ -21929,27 +21937,53 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
     if(!menu)return;
     const set=(node,values)=>{if(!node)return;for(const [key,value] of Object.entries(values)){const cssKey=key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());node.style.setProperty(cssKey,String(value),'important');}};
     const compact=innerWidth<=900;
-    const heroHeight=compact?146:164;
-    const launchHeight=compact?54:58;
-    const modesHeight=compact?104:124;
-    const rootStyle={flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:compact?'9px':'12px',
-      width:'100%',height:'auto',minHeight:'0',maxHeight:'none',margin:'0 auto',paddingBottom:compact?'84px':'94px',
+    const shortLandscape=innerWidth>innerHeight&&innerHeight<=600;
+    const heroHeight=shortLandscape?68:compact?146:164;
+    const profileHeight=shortLandscape?24:compact?38:50;
+    const launchHeight=shortLandscape?34:compact?54:58;
+    const modesHeight=shortLandscape?54:compact?104:124;
+    const gap=shortLandscape?'4px':compact?'9px':'12px';
+    const rootStyle={flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap,
+      width:'100%',height:'auto',minHeight:shortLandscape?'0':'72svh',maxHeight:'none',margin:'0 auto',
+      paddingBottom:shortLandscape?'8px':'12px',boxSizing:'border-box',
       gridTemplateColumns:'none',gridTemplateRows:'none',gridTemplateAreas:'none',overflow:'visible'};
     if(!menu.hidden&&menu.getAttribute('aria-hidden')!=='true')rootStyle.display='flex';
     set(menu,rootStyle);
-    set(menu.querySelector(':scope > .hero'),{order:'1',flex:'0 0 '+heroHeight+'px',width:'100%',height:heroHeight+'px',
-      minHeight:heroHeight+'px',maxHeight:heroHeight+'px',margin:'0',position:'relative'});
-    set(menu.querySelector(':scope > #bbHomeProfile'),{display:'none'});
+    const hero=menu.querySelector(':scope > .hero');
+    set(hero,{order:'1',flex:'0 0 '+heroHeight+'px',width:'100%',height:heroHeight+'px',
+      minHeight:heroHeight+'px',maxHeight:heroHeight+'px',margin:'0',position:'relative',
+      padding:shortLandscape?'4px 8px':'',boxSizing:'border-box'});
+    if(shortLandscape){
+      set(hero.querySelector('.eyebrow'),{display:'none'});
+      set(hero.querySelector('.hero-app-mark'),{width:'32px',height:'32px'});
+      set(hero.querySelector('h1'),{fontSize:'21px',lineHeight:'1'});
+      set(hero.querySelector('p'),{display:'none'});
+    }
+    const profile=menu.querySelector(':scope > #bbHomeProfile');
+    set(profile,{display:'grid',order:'2',flex:'0 0 '+profileHeight+'px',width:'100%',
+      height:profileHeight+'px',minHeight:profileHeight+'px',maxHeight:profileHeight+'px',
+      margin:'0',padding:shortLandscape?'2px 6px':compact?'4px 9px':'6px 13px',
+      gridTemplateColumns:shortLandscape?'26px minmax(0,1fr) auto':compact?'34px minmax(0,1fr) auto':'46px minmax(0,1fr) auto',
+      gap:shortLandscape?'4px':compact?'8px':'11px',boxSizing:'border-box',alignItems:'center'});
+    const profileAvatar=profile?.querySelector('.bb-home-profile-avatar');
+    const avatarSize=shortLandscape?'22px':compact?'30px':'42px';
+    set(profileAvatar,{width:avatarSize,height:avatarSize});
+    set(profileAvatar?.querySelector('svg'),{width:shortLandscape?'20px':compact?'28px':'38px',height:shortLandscape?'20px':compact?'28px':'38px'});
+    set(profile?.querySelector('.bb-home-profile-copy strong'),{fontSize:shortLandscape?'7px':compact?'10px':'13px'});
+    set(profile?.querySelector('.bb-home-profile-copy small'),{fontSize:shortLandscape?'5px':compact?'7px':'8px'});
+    set(profile?.querySelector('.bb-home-profile-wallet'),{padding:shortLandscape?'2px 4px':compact?'4px 6px':'7px 10px',gap:shortLandscape?'3px':'6px'});
+    set(profile?.querySelector('.bb-home-profile-wallet strong'),{fontSize:shortLandscape?'8px':compact?'10px':'13px'});
     set(menu.querySelector(':scope > #bbHomeCollectionCard'),{display:'none'});
-    set(menu.querySelector(':scope > #bbHomePlay'),{order:'2',position:'relative',inset:'auto',display:'flex',
+    set(menu.querySelector(':scope > #bbHomePlay'),{order:'3',position:'relative',inset:'auto',display:'flex',
       alignItems:'center',justifyContent:'center',flex:'0 0 '+launchHeight+'px',width:'100%',height:launchHeight+'px',
       minHeight:launchHeight+'px',maxHeight:launchHeight+'px',margin:'0'});
     set(menu.querySelector(':scope > .sectionlabel'),{display:'none'});
     const modes=menu.querySelector(':scope > .modes');
-    set(modes,{order:'3',position:'relative',display:'flex',flexDirection:'row',flexWrap:'nowrap',
+    set(modes,{order:'4',position:'relative',display:'flex',flexDirection:'row',flexWrap:'nowrap',
       alignItems:'stretch',justifyContent:'space-between',flex:'0 0 '+modesHeight+'px',width:'100%',
-      height:modesHeight+'px',minHeight:modesHeight+'px',maxHeight:modesHeight+'px',margin:'0',
-      padding:'4px 0',gap:compact?'5px':'8px',gridTemplateColumns:'none',gridTemplateRows:'none',overflow:'visible'});
+      height:modesHeight+'px',minHeight:modesHeight+'px',maxHeight:modesHeight+'px',
+      margin:shortLandscape?'0':'auto 0 0',padding:'4px 0',gap:compact?'5px':'8px',
+      gridTemplateColumns:'none',gridTemplateRows:'none',overflow:'visible'});
     for(const mode of modes?.querySelectorAll(':scope > button.mode')||[]){
       set(mode,{position:'relative',display:'flex',flex:'1 1 0',flexBasis:'0',width:'0',minWidth:'0',maxWidth:'none',
         height:'100%',minHeight:'0',maxHeight:modesHeight+'px',margin:'0',padding:'4px 2px',
