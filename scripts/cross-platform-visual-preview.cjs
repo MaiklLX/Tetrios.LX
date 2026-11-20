@@ -284,6 +284,19 @@ const targets = [
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="home"]').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
+    // KT-750.7: every dock route must work from another screen, not only from the home DOM.
+    await page.locator('.bb-home-dock-global [data-home-dock="shop"]').click();
+    await page.locator('#shopScreen:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('.bb-home-dock-global [data-home-dock="heroes"]').click();
+    await page.locator('#heroes:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('.bb-home-dock-global [data-home-dock="collection"]').click();
+    await page.locator('#collection:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('#bbGlobalBack').click();
+    await page.locator('#heroes:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('#bbGlobalBack').click();
+    await page.locator('#shopScreen:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('#bbGlobalBack').click();
+    await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
 
     console.log('[stage:card-library] ' + target.name);
     await page.locator('.bb-home-dock-global [data-home-dock="library"]').click();
