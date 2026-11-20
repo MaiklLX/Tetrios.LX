@@ -667,7 +667,9 @@ const targets = [
     await campaignPage.waitForTimeout(900);
     const firstGoalEmblem=campaignPage.locator('#game #campaignGoals .bb-goal-emblem').first();
     await firstGoalEmblem.waitFor({state:'visible',timeout:10000});
-    await firstGoalEmblem.click();
+    // Goal emblems are refreshed as progress changes; dispatch the real DOM click
+    // directly so Playwright's two-frame stability wait cannot race that refresh.
+    await firstGoalEmblem.evaluate(button=>button.click());
     await campaignPage.locator('#overlay.show #resumeGoalInfo').waitFor({state:'visible',timeout:10000});
     const goalHelpState=await campaignPage.evaluate(()=>({
       paused:typeof paused!=='undefined'&&paused,
