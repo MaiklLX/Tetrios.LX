@@ -61,6 +61,8 @@ const targets = [
       const menu=document.querySelector('#menu'),root=document.querySelector('#game');
       const probe=document.querySelector('#menu button.mode[data-mode="campaign"]');
       return {menuClass:menu?.className,menuDisplay:menu&&getComputedStyle(menu).display,menuRows:menu&&getComputedStyle(menu).gridTemplateRows,
+        menuChildren:[...(menu?.children||[])].map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==='string'?el.className:'',text:(el.innerText||'').trim().replace(/\\s+/g,' ').slice(0,48)})),
+        modeParent:probe?.parentElement?.className,
         styles:[...document.styleSheets].map(s=>s.href).filter(Boolean),
         menuBg:menu&&getComputedStyle(menu).backgroundImage,
         mode:{radius:probe&&getComputedStyle(probe).borderRadius,bg:probe&&getComputedStyle(probe).backgroundImage,display:probe&&getComputedStyle(probe).display},
