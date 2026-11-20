@@ -6888,6 +6888,13 @@ body>.app.bb-home-visible{
 }
 @media(prefers-reduced-motion:reduce){#game.bb-godot-arena *{transition:none!important}}
 </style>
+<style id="bb-kt752-goal-help">
+#game button.bb-goal-emblem{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;color:inherit;border:0;background:transparent;touch-action:manipulation;transition:filter .15s ease,transform .15s ease}
+#game button.bb-goal-emblem:focus-visible{outline:2px solid #70e8df;outline-offset:3px;border-radius:10px}
+#game button.bb-goal-emblem:active{filter:brightness(1.25);transform:scale(.96)}
+.bb-goal-info-progress{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 14px;border:1px solid #5edbd455;border-radius:12px;background:linear-gradient(135deg,#183343,#101d2b);color:#b8d9dc;font-size:10px;font-weight:900;letter-spacing:.08em}
+.bb-goal-info-progress strong{color:#73eee1;font-size:16px;letter-spacing:0}
+</style>
 </head>
 <body><div class="stars"></div><main class="app"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><button class="bb-home-play" id="bbHomePlay" type="button"><span class="bb-home-play-icon">▶</span><span>ИГРАТЬ</span><span class="bb-home-play-caption">ПРОДОЛЖИТЬ ПУТЕШЕСТВИЕ</span></button><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -8708,14 +8715,48 @@ function bbGoalEmblem(id,label,value,target,complete=false,failed=false,extra=''
   const pct=Math.max(0,Math.min(100,current/total*100));
   const status=failed?'failed':complete?'complete':'active';
   const safeLabel=String(label||'Цель').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  return '<div class="bb-goal-emblem '+status+'" data-goal="'+String(id||'goal')+'" title="'+safeLabel+'" aria-label="'+safeLabel+': '+current+' из '+total+'" style="--goal-progress:'+pct+'%">' +
+  const descriptions=[
+    [/lines|очистить линии/i,'Очищай горизонтальные ряды, полностью заполняя их фигурами. Каждый очищенный ряд приближает выполнение этой цели.'],
+    [/score|набрать очки/i,'Набери указанное количество очков. Очки начисляются за размещение фигур и очистку линий.'],
+    [/time|продержаться/i,'Продержись в игре указанное время. Следи за высотой стопки и не допускай заполнения поля.'],
+    [/level|достичь уровня/i,'Повышай уровень, очищая линии. Продолжай играть, пока не достигнешь указанной отметки.'],
+    [/single|одиночную/i,'Очисти ровно один ряд за один ход.'],
+    [/pieces|установить фигур/i,'Размести на игровом поле указанное количество фигур.'],
+    [/rotations|повернуть/i,'Поворачивай падающие фигуры перед размещением, пока не наберёшь нужное количество поворотов.'],
+    [/hold|удержание/i,'Используй кнопку удержания, чтобы отложить текущую фигуру и поменять её на запасную.'],
+    [/doubles|двойную/i,'Очисти два ряда одновременно одним размещением фигуры.'],
+    [/triple|тройную/i,'Очисти три ряда одновременно одним размещением фигуры.'],
+    [/tetris|4 линии/i,'Очисти четыре ряда одновременно — это называется «Тетрис».'],
+    [/noHardDrop|жёсткого сброса/i,'Заверши забег, ни разу не используя мгновенный жёсткий сброс фигуры.'],
+    [/noHold|без удержания/i,'Заверши забег, не используя запасную ячейку удержания фигур.'],
+    [/streak|серию/i,'Выполняй последовательные действия без потери темпа, чтобы собрать нужную серию.']
+  ];
+  const description=descriptions.find(([pattern])=>pattern.test(source))?.[1]||'Выполни условие этой задачи во время забега. Следи за счётчиком под значком — он показывает текущий прогресс.';
+  const safeDescription=description.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  return '<button type="button" class="bb-goal-emblem '+status+'" data-goal="'+String(id||'goal')+'" data-goal-label="'+safeLabel+'" data-goal-description="'+safeDescription+'" title="Нажми, чтобы узнать о цели: '+safeLabel+'" aria-label="Описание цели: '+safeLabel+', '+current+' из '+total+'" style="--goal-progress:'+pct+'%">' +
     '<span class="bb-goal-emblem-ring"><b>'+match[1]+'</b></span>' +
     '<span class="bb-goal-emblem-count">'+(failed?'×':current+'/'+total)+'</span>' +
     (extra?'<span class="bb-goal-emblem-extra">'+extra+'</span>':'')+
-    '</div>';
+    '</button>';
 }
 
+
+document.addEventListener('click',event=>{
+  const emblem=event.target.closest('#game .bb-goal-emblem[data-goal]');
+  if(!emblem||!started||paused||gameOver)return;
+  event.preventDefault();event.stopPropagation();paused=true;bbSyncMusic();
+  const label=emblem.dataset.goalLabel||'Цель забега';
+  const description=emblem.dataset.goalDescription||'Выполни условие этой задачи во время забега.';
+  const icon=emblem.querySelector('.bb-goal-emblem-ring b')?.textContent||'✦';
+  const progress=emblem.querySelector('.bb-goal-emblem-count')?.textContent||'';
+  overlay('<div class="modalhead"><div class="bigicon">'+icon+'</div><div class="eyebrow">ПОЯСНЕНИЕ ЦЕЛИ</div><h3>'+label+'</h3><p>'+description+'</p></div><div class="bb-goal-info-progress"><span>ТЕКУЩИЙ ПРОГРЕСС</span><strong>'+progress+'</strong></div><button class="action" id="resumeGoalInfo">▶ ПРОДОЛЖИТЬ ИГРУ</button>','pause');
+  const resume=$('resumeGoalInfo');
+  if(resume)resume.onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};
+});
+
 function bbRenderGoals() {
+  const rogueEncounterTop = $('bbRogueEncounterTop');
+  if (mode !== 'rogue' && rogueEncounterTop) rogueEncounterTop.remove();
   const rogueOld = $('rogueGoals');
   const campaignOld = $('campaignGoals');
 
