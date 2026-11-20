@@ -21934,7 +21934,7 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 
 <style id="bb-kt750-screen-navigation-redesign">
 /* KT-750: independent catalogue screens, persistent navigation dock and readable mode cards. */
-#bbGlobalBack{display:none;position:fixed;z-index:1400;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;
+#bbGlobalBack{display:none;position:fixed;z-index:1400;top:calc(env(safe-area-inset-top,0px) + 68px);left:12px;
   width:88px;height:42px;grid-template-columns:22px 1fr;align-items:center;justify-items:center;gap:2px;
   padding:0 8px;border:1px solid rgba(132,214,208,.72);border-radius:13px;
   color:#eaf8f2;background:linear-gradient(145deg,rgba(28,72,86,.98),rgba(8,27,43,.98));
@@ -21951,6 +21951,7 @@ body.bb-dock-visible #menu.home-dashboard{padding-bottom:96px!important}
 #cardLibraryScreen .bb-upgrade-library-page{display:flex;flex-direction:column;max-height:none;min-height:0;overflow:visible;
   width:100%;border:2px solid #c7a66c;border-radius:20px;background:radial-gradient(ellipse at 50% -20%,#fff9e9 0,#f2ead8 55%,#e9dfca 100%);
   box-shadow:0 8px 0 #102a3a,0 16px 36px #07182755}
+#cardLibraryScreen .bb-library-heading{padding-top:62px}
 #cardLibraryScreen .bb-library-grid{overflow:visible;overscroll-behavior:auto}
 #cardLibraryScreen .bb-library-footer{position:static}
 #collection .bb-shelf-modal{width:100%;max-width:920px;margin:0 auto;max-height:none;overflow:visible}
@@ -22113,7 +22114,9 @@ body.bb-dock-visible #menu.home-dashboard{padding-bottom:96px!important}
     if(dock&&dock.parentElement!==document.body){dock.classList.add('bb-home-dock-global');document.body.appendChild(dock);}
     const screenIds=['menu','shopScreen','heroes','campaign','collection','cardLibraryScreen','daily','game'];
     const current=screenIds.find(id=>{const screen=document.getElementById(id);return screen&&!screen.hidden&&screen.getAttribute('aria-hidden')!=='true';})||'menu';
-    const dockVisible=current!=='game';
+    const orientationGuard=document.getElementById('bbPhoneLandscapeGuard');
+    const orientationBlocked=!!orientationGuard&&getComputedStyle(orientationGuard).display!=='none'&&Number(getComputedStyle(orientationGuard).opacity)>0;
+    const dockVisible=current!=='game'&&!orientationBlocked;
     const activeTab=({menu:'home',heroes:'heroes',collection:'collection',shopScreen:'shop',cardLibraryScreen:'library'})[current]||'';
     document.body.classList.toggle('bb-dock-visible',dockVisible);
     document.body.classList.toggle('bb-has-global-back',dockVisible&&current!=='menu');
