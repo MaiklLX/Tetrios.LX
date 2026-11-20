@@ -3140,3 +3140,144 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
     font-size: 8px !important;
   }
 }
+
+
+/* KT-741 — replace objective copy with compact, semantic game emblems. */
+#game #rogueGoals,
+#game #campaignGoals {
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:5px!important;
+  min-width:0!important;
+  padding:5px!important;
+  overflow:visible!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#game #rogueGoals .bb-goals-heading,
+#game #campaignGoals .bb-goals-heading {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  min-height:12px!important;
+  margin:0!important;
+  padding:0 3px!important;
+  color:#91dcd8!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  font-size:8px!important;
+  line-height:1!important;
+  letter-spacing:.14em!important;
+}
+#game #rogueGoals .bb-goals-heading b,
+#game #campaignGoals .bb-goals-heading b {
+  color:#f5d58e!important;
+  font-size:9px!important;
+}
+#game #campaignGoals .bb-goals-summary {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  min-height:12px!important;
+  padding:0 3px!important;
+  color:#9cb9c5!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  font-size:8px!important;
+}
+#game #campaignGoals .bb-goals-summary strong {color:#f5d58e!important;font-size:9px!important}
+#game .bb-goal-emblem-grid {
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px 5px!important;
+  align-items:start!important;
+  min-width:0!important;
+  width:100%!important;
+  margin:0!important;
+  padding:3px 1px 5px!important;
+  overflow:visible!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#game .bb-goal-emblem {
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:3px!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  color:#e9f8f5!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  text-align:center!important;
+  font-size:8px!important;
+  line-height:1!important;
+}
+#game .bb-goal-emblem-ring {
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:34px!important;
+  height:34px!important;
+  border-radius:50%!important;
+  background:conic-gradient(#79e1d2 var(--goal-progress),rgba(119,157,174,.2) 0)!important;
+  box-shadow:0 0 12px rgba(87,213,198,.12),inset 0 0 0 1px rgba(205,255,249,.12)!important;
+}
+#game .bb-goal-emblem-ring:before {
+  content:""!important;
+  position:absolute!important;
+  inset:3px!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle at 35% 25%,#254d59,#102433 75%)!important;
+  border:1px solid rgba(172,235,226,.22)!important;
+}
+#game .bb-goal-emblem-ring b {
+  position:relative!important;
+  z-index:1!important;
+  color:#f7e6b2!important;
+  font-size:16px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  text-shadow:0 1px 4px #000!important;
+}
+#game .bb-goal-emblem-count {
+  display:block!important;
+  max-width:100%!important;
+  color:#e7f7f3!important;
+  font-size:8px!important;
+  font-weight:900!important;
+  font-variant-numeric:tabular-nums!important;
+  white-space:nowrap!important;
+}
+#game .bb-goal-emblem-extra {
+  display:block!important;
+  color:#e9c77d!important;
+  font-size:7px!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+}
+#game .bb-goal-emblem.complete .bb-goal-emblem-ring {
+  background:conic-gradient(#f4d17e 100%,rgba(119,157,174,.2) 0)!important;
+  box-shadow:0 0 14px rgba(244,209,126,.24)!important;
+}
+#game .bb-goal-emblem.complete .bb-goal-emblem-ring b {color:#fff0bd!important}
+#game .bb-goal-emblem.failed .bb-goal-emblem-ring {
+  background:conic-gradient(#e97878 100%,rgba(119,157,174,.2) 0)!important;
+}
+@media(max-width:600px) {
+  #game .bb-goal-emblem-grid {grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px 3px!important}
+  #game .bb-goal-emblem-ring {width:31px!important;height:31px!important}
+  #game .bb-goal-emblem-ring b {font-size:15px!important}
+  #game .bb-goal-emblem-count {font-size:7px!important}
+}
