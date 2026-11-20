@@ -134,6 +134,7 @@ const targets = [
         return r?{top:r.top,bottom:r.bottom,width:r.width,height:r.height}:null;
       };
       const menu=document.querySelector('#menu');
+      console.log('[home-dom]',JSON.stringify({menuClass:menu?.className,children:[...(menu?.children||[])].map(el=>({tag:el.tagName,id:el.id,className:typeof el.className==='string'?el.className:'',text:(el.innerText||'').trim().replace(/\\s+/g,' ').slice(0,64)}))}));
       const children=[...(menu?.children||[])].map(el=>({
         tag:el.tagName,id:el.id,className:typeof el.className==='string'?el.className:'',
         text:(el.innerText||'').trim().replace(/\\s+/g,' ').slice(0,72),
