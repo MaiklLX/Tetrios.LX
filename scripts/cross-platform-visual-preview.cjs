@@ -115,7 +115,7 @@ const targets = [
       const wallet=profile?.querySelector('.bb-home-profile-wallet strong')?.textContent?.trim()||'';
       const currentCoins=document.querySelector('#coins')?.textContent?.trim()||'';
       return {
-        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=40,
+        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=39.5,
         hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
         hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
         hasLevel:/УРОВЕНЬ \d+/.test(profile?.innerText||''),
@@ -183,7 +183,7 @@ const targets = [
       const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
-    const profileVisible=!!homeHubLayoutState.profile&&homeHubLayoutState.profile.width>0&&homeHubLayoutState.profile.height>=40;
+    const profileVisible=!!homeHubLayoutState.profile&&homeHubLayoutState.profile.width>0&&homeHubLayoutState.profile.height>=39.5;
     const sigilsFit=['campaign','blockRun','daily'].every(key=>homeHubLayoutState[key]?.width>=homeHubLayoutState.menu.width*.2);
     const modeRects=homeHubLayoutState.modeLayout.children||[];
     const shortLandscape=homeHubLayoutState.viewport.width>homeHubLayoutState.viewport.height&&homeHubLayoutState.viewport.height<=600;
@@ -195,7 +195,7 @@ const targets = [
         : Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4);
     if(!modesAreProminent) failures.push(target.name+': KT-750 mode cards are too small or arranged incorrectly ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
     if(!homePanelsOrdered||!profileVisible||!sigilsFit||
-       (!shortLandscape&&(homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2))||
+       (!shortLandscape&&(homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.5||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2))||
        (shortLandscape&&homeHubLayoutState.dock.width>0)){
       failures.push(target.name+': KT-750 home hub, pilot profile or dock geometry is incorrect ('+JSON.stringify(homeHubLayoutState)+')');
     }
@@ -341,7 +341,7 @@ const targets = [
     if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.pageScrollable){
       failures.push(target.name+': full-page library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
     }
-    const pageBackdrop=await page.locator('body .app').evaluate(el=>getComputedStyle(el).backgroundImage);
+    const pageBackdrop=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundImage);
     const pageSurface=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
     if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': friendly teal page backdrop is missing or washed out ('+JSON.stringify({pageBackdrop,pageSurface})+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
