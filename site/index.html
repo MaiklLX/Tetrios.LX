@@ -11146,8 +11146,8 @@ function bbArrangeModeHud(){
   set(leftRail,{display:'flex',position:'relative',gridColumn:phone?'1 / -1':'1',gridRow:phone?'2':'1',
     top:'auto',left:'auto',right:'auto',zIndex:'auto',
     flexDirection:phone?'row':'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'4px':'8px',
-    width:phone?'100%':leftRailWidth+'px',height:phone?'54px':'100%',minWidth:'0',minHeight:phone?'54px':'0',
-    maxHeight:phone?'54px':'100%',margin:'0',padding:phone?'3px 5px':'6px 4px',boxSizing:'border-box',overflow:'hidden'});
+    width:phone?'calc(100% + 14px)':leftRailWidth+'px',height:phone?'54px':'100%',minWidth:'0',minHeight:phone?'54px':'0',
+    maxHeight:phone?'54px':'100%',margin:phone?'0 0 0 -7px':'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden'});
   set(boardColumn,{display:'flex',gridColumn:phone?'1':'2',gridRow:'1',alignItems:'center',justifyContent:'center',
     minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',
     padding:'0',boxSizing:'border-box',position:'relative'});
@@ -11162,7 +11162,7 @@ function bbArrangeModeHud(){
   }
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
     const compact=card.classList.contains('charge-card')? (phone?58:64):
-      card.classList.contains('hold-card')? (phone?54:60):
+      card.classList.contains('hold-card')? (phone?60:60):
       card.id==='boostCard'? (phone?44:48):
       card.id==='bbHeroSkillCard'? (phone?42:46):
       card.classList.contains('chrono-card')?46: (phone?66:74);
@@ -11189,11 +11189,11 @@ function bbArrangeModeHud(){
     fontSize:phone?'7px':'8px',lineHeight:'1.1'});
   /* HOLD and hard-drop remain available in the utility rail on portrait devices. */
   set(rail.querySelector('.side-drop'),{display:'flex',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'40px',height:'40px'});
-  set(rail.querySelector('#holdBtn'),{display:'block',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'24px',height:'24px'});
+  set(rail.querySelector('#holdBtn'),{display:'block',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'28px',height:'28px'});
   set(rail.querySelector('.drop-card'),{display:'flex',visibility:'visible',pointerEvents:'auto',minHeight:'48px',height:'48px'});
   set(game.querySelector('.controls'),{display:'none',visibility:'hidden',pointerEvents:'none',width:'0',height:'0',minWidth:'0',minHeight:'0',margin:'0',padding:'0',border:'0',overflow:'hidden'});
   set(game.querySelector('.hint'),{display:'none'});
-  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:(boardWidth+10)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
+  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:((boardHeight+10)*10/23)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
   set(board,{display:'block',width:'auto',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain',boxSizing:'border-box',flex:'0 1 auto'});
   if(!game.querySelector('#bbUnifiedArenaSkin')){
     const skin=document.createElement('style');skin.id='bbUnifiedArenaSkin';skin.textContent=`
