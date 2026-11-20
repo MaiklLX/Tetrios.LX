@@ -21976,6 +21976,24 @@ body.bb-dock-visible #menu.home-dashboard{padding-bottom:96px!important}
 #menu.home-dashboard>.modes>button.mode .modearrow{display:block!important;position:absolute!important;right:13px!important;top:10px!important;
   font-size:25px!important;color:var(--glow)!important}
 #menu.home-dashboard>#bbHomeProfile{visibility:visible!important;opacity:1!important}
+@media(min-width:601px){
+  #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{
+    flex-direction:row!important;justify-content:space-evenly!important;gap:4px!important;padding:1px 2px!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{
+    flex:0 0 30px!important;width:30px!important;height:30px!important;font-size:17px!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{
+    flex:0 1 38px!important;width:38px!important;max-width:38px!important;font-size:0!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label:after{
+    font-size:7px!important;white-space:nowrap!important;
+  }
+  #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{
+    flex:0 0 54px!important;min-width:54px!important;min-height:30px!important;height:30px!important;
+    padding:3px 6px!important;font-size:10px!important;
+  }
+}
 @media(max-width:900px){
   #menu.home-dashboard>.modes{grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
   #menu.home-dashboard>.modes>button.mode{flex-direction:row!important;justify-content:flex-start!important;align-items:center!important;
@@ -22012,7 +22030,7 @@ body.bb-dock-visible #menu.home-dashboard{padding-bottom:96px!important}
     const compact=innerWidth<=900;
     const shortLandscape=innerWidth>innerHeight&&innerHeight<=600;
     const heroHeight=shortLandscape?68:compact?146:164;
-    const profileHeight=shortLandscape?24:compact?38:50;
+    const profileHeight=shortLandscape?40:compact?44:50;
     const launchHeight=shortLandscape?34:compact?54:58;
     const modesHeight=shortLandscape?130:compact?116:190;
     const gap=shortLandscape?'4px':compact?'9px':'12px';
