@@ -6826,6 +6826,76 @@ body>.app.bb-home-visible{
 })();
 </script>
 
+<style id="bb-kt752-godot-arena-restoration">
+/* KT-752: Godot-era board-first hierarchy, translated to the existing web runtime.
+   The 2D canvas remains the sole gameplay surface; mechanics and saves are untouched. */
+#game.bb-godot-arena{display:block!important;width:100%;max-width:1120px;margin:0 auto;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+#game.bb-godot-arena>.screenhead{margin:0 0 8px;min-height:42px}
+#game.bb-godot-arena>.gamehud{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 10px}
+#game.bb-godot-arena .hudbox{min-width:0;padding:8px 10px;border:1px solid #2f628b;border-radius:11px 4px 11px 4px;background:linear-gradient(145deg,#153a5b,#0b213a);box-shadow:inset 0 1px #e0f6ff18,0 3px 0 #071426,0 7px 16px #0005}
+#game.bb-godot-arena .hudbox span{font-size:9px;letter-spacing:.09em;color:#9dcce6}
+#game.bb-godot-arena .hudbox strong{font-size:19px;color:#f3f9ff}
+#game.bb-godot-arena>.playlayout{display:grid!important;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:auto auto;gap:10px 12px;align-items:start}
+#game.bb-godot-arena>.playlayout>.gameleftcol{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr);min-width:0;width:100%;margin:0}
+#game.bb-godot-arena>.playlayout>div:first-child{grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;min-width:0}
+#game.bb-godot-arena .sidecol{grid-column:2;grid-row:1;display:flex!important;flex-direction:column;align-items:stretch;gap:7px;min-width:0;width:100%}
+#game.bb-godot-arena .boardframe{display:flex;align-items:center;justify-content:center;width:auto;height:min(64dvh,calc(100dvh - 340px));min-height:300px;max-height:620px;aspect-ratio:10/23;box-sizing:border-box;margin:0 auto;padding:8px;overflow:hidden;border:1px solid #5bafe0;border-radius:18px 6px 18px 6px;background:radial-gradient(ellipse at 50% 18%,#164b78 0%,#0b2548 50%,#07162d 100%);box-shadow:inset 0 0 0 3px #16375d,inset 0 0 24px #42b5f033,0 0 0 3px #0b1d37,0 0 25px #36a8ff2b}
+#game.bb-godot-arena .board{display:block;width:auto;height:100%;max-width:100%;aspect-ratio:10/23;flex:0 1 auto;object-fit:contain;image-rendering:pixelated}
+#game.bb-godot-arena .sidecard,#game.bb-godot-arena .bb-hero-skill-slot{box-sizing:border-box;min-width:0;border:1px solid #315f87;border-radius:12px 5px 12px 5px;background:linear-gradient(155deg,#153755 0%,#102942 58%,#0b1e34 100%);box-shadow:inset 0 1px #d8f4ff16,0 3px 0 #071426,0 7px 14px #0005}
+#game.bb-godot-arena .sidecard{padding:6px 5px;overflow:hidden}#game.bb-godot-arena .hold-card,#game.bb-godot-arena .drop-card{display:flex!important;flex-direction:column;visibility:visible!important}#game.bb-godot-arena .hold-card #holdBtn,#game.bb-godot-arena .drop-card .side-drop{display:block!important;visibility:visible!important;opacity:1!important}
+#game.bb-godot-arena .sidecard>label{font-size:8px;letter-spacing:.07em;color:#9ccfe8}
+#game.bb-godot-arena .charge-ring{width:42px;height:42px;margin:3px auto}
+#game.bb-godot-arena .boosticon{margin:2px 0;font-size:18px}
+#game.bb-godot-arena .boostname,#game.bb-godot-arena .boostnum{font-size:8px;line-height:1.2}
+#game.bb-godot-arena .nextcanvas,#game.bb-godot-arena #holdPreview{display:block;width:auto;max-width:100%;height:38px;margin:2px auto;object-fit:contain}
+#game.bb-godot-arena .hold-card .smallbtn{min-height:28px;padding:4px 5px;margin:2px 0 0;font-size:8px}
+#game.bb-godot-arena .bb-hero-skill-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;min-height:88px;margin:0;padding:7px;text-align:center}
+#game.bb-godot-arena .bb-hero-skill-art{width:38px;height:38px}
+#game.bb-godot-arena .bb-hero-skill-copy{min-width:0}
+#game.bb-godot-arena .bb-hero-skill-copy strong{font-size:9px}
+#game.bb-godot-arena .bb-hero-skill-copy small,#game.bb-godot-arena .bb-hero-skill-copy em{font-size:7px;line-height:1.2}
+#game.bb-godot-arena .drop-card{min-height:66px;padding:5px}
+#game.bb-godot-arena .drop-card>label{display:none}
+#game.bb-godot-arena .drop-card .side-drop{width:100%;min-height:54px;margin:0;padding:6px 2px;font-size:10px}
+#game.bb-godot-arena #rogueGoals,#game.bb-godot-arena #campaignGoals{width:100%;box-sizing:border-box;margin:8px 0 0;padding:8px 10px;border:1px solid #4b83aa;border-radius:11px 4px 11px 4px;background:linear-gradient(145deg,#102d49,#0b1e35);color:#e5f4ff}
+#game.bb-godot-arena>.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 0;padding:0}
+#game.bb-godot-arena>.controls .control{height:46px;min-width:0}
+#game.bb-godot-arena>.hint{margin:7px 0 0;text-align:center;color:#9dbbd0;font-size:10px}
+#game.bb-godot-arena #bbRogueEncounterTop{margin:0 0 8px}
+@media(min-width:900px){
+#game.bb-godot-arena{padding:18px 20px 28px}
+#game.bb-godot-arena>.playlayout{grid-template-columns:minmax(150px,190px) minmax(280px,1fr) minmax(150px,190px);grid-template-rows:auto;gap:14px 18px;align-items:stretch}
+#game.bb-godot-arena>.playlayout>.gameleftcol{grid-column:1;grid-row:1;align-self:stretch}
+#game.bb-godot-arena>.playlayout>div:first-child{grid-column:2;grid-row:1;align-self:center}
+#game.bb-godot-arena .sidecol{grid-column:3;grid-row:1;gap:9px}
+#game.bb-godot-arena .boardframe{height:min(72dvh,620px);min-height:420px}
+#game.bb-godot-arena .sidecard{padding:9px;min-height:82px}
+#game.bb-godot-arena .bb-hero-skill-slot{min-height:110px}
+#game.bb-godot-arena .drop-card{min-height:76px}
+#game.bb-godot-arena .drop-card>label{display:block}
+#game.bb-godot-arena .drop-card .side-drop{min-height:52px}
+#game.bb-godot-arena>.controls{max-width:560px;margin:12px auto 0}
+#game.bb-godot-arena>.playlayout:not(:has(>.gameleftcol)){grid-template-columns:minmax(0,1fr) 190px}
+#game.bb-godot-arena>.playlayout:not(:has(>.gameleftcol))>div:first-child{grid-column:1}
+#game.bb-godot-arena>.playlayout:not(:has(>.gameleftcol))>.sidecol{grid-column:2}
+}
+@media(max-width:380px){
+#game.bb-godot-arena{padding-inline:8px}
+#game.bb-godot-arena>.playlayout{grid-template-columns:minmax(0,1fr) 92px;gap:8px}
+#game.bb-godot-arena .boardframe{height:min(60dvh,calc(100dvh - 330px));min-height:285px}
+#game.bb-godot-arena .sidecard{padding:5px 4px}
+#game.bb-godot-arena .sidecard>label{font-size:7px}
+}
+@media(prefers-reduced-motion:reduce){#game.bb-godot-arena *{transition:none!important}}
+</style>
+<style id="bb-kt752-goal-help">
+#game button.bb-goal-emblem{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;color:inherit;border:0;background:transparent;touch-action:manipulation;transition:filter .15s ease,transform .15s ease}
+#game button.bb-goal-emblem:focus-visible{outline:2px solid #70e8df;outline-offset:3px;border-radius:10px}
+#game button.bb-goal-emblem:active{filter:brightness(1.25);transform:scale(.96)}
+.bb-goal-info-progress{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px 14px;border:1px solid #5edbd455;border-radius:12px;background:linear-gradient(135deg,#183343,#101d2b);color:#b8d9dc;font-size:10px;font-weight:900;letter-spacing:.08em}
+.bb-goal-info-progress strong{color:#73eee1;font-size:16px;letter-spacing:0}
+@media(max-width:600px){#game.bb-godot-arena{padding-right:2px!important}}
+</style>
 </head>
 <body><div class="stars"></div><main class="app"><canvas class="hero-arena-canvas" aria-hidden="true"></canvas><header class="topbar"><div class="brand"><div class="brandmark">🧊</div><div><div class="brandname">BLOCK BUDDIES</div><div class="edition">ТВОЯ ВСЕЛЕННАЯ ПРИКЛЮЧЕНИЙ</div></div></div><button class="iconbtn" id="soundBtn" aria-label="Звук" hidden>♫</button><button class="iconbtn" id="hapticBtn" aria-label="Вибрация" title="Тактильная отдача" aria-pressed="true" hidden>〰</button><button class="iconbtn menu-trigger" id="menuBtn" aria-label="Настройки" title="Настройки">☰</button></header><section id="menu" class="screen home-dashboard"><div class="hero" aria-label="BLOCK BUDDIES — космическая игра-головоломка"><div class="eyebrow">★ ИГРАЙ • СОЗДАВАЙ • ПОБЕЖДАЙ ★</div><div class="hero-brand-lockup"><div class="hero-app-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div><h1 aria-label="BLOCK BUDDIES">BLOCK BUDDIES</h1></div><p>Собирай фигуры. Побеждай.</p></div><div id="bbHomeProfile" class="bb-home-profile" aria-label="Профиль пилота"></div><button class="bb-home-play" id="bbHomePlay" type="button"><span class="bb-home-play-icon">▶</span><span>ИГРАТЬ</span><span class="bb-home-play-caption">ПРОДОЛЖИТЬ ПУТЕШЕСТВИЕ</span></button><div class="sectionlabel">ВЫБЕРИ РЕЖИМ ИГРЫ</div><div class="modes">
   <button class="mode" style="--glow:#5cf5e8;--iconbg:#5cf5e81c" data-mode="campaign">
@@ -7036,7 +7106,7 @@ body>.app.bb-home-visible{
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
-<section id="game" class="screen" hidden><div class="screenhead"><div class="game-heading-copy" style="flex:1;min-width:0"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" type="button" aria-label="Пауза" title="Пауза"><!-- Tabler Icons: Pause Circle, MIT; adapted to the TETRIOS LX cyan HUD. --><svg class="pause-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".78"/><path d="M9.25 8.5v7M14.75 8.5v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
+<section id="game" class="screen bb-godot-arena" hidden><div class="screenhead"><div class="game-heading-copy" style="flex:1;min-width:0"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" type="button" aria-label="Пауза" title="Пауза"><!-- Tabler Icons: Pause Circle, MIT; adapted to the TETRIOS LX cyan HUD. --><svg class="pause-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".78"/><path d="M9.25 8.5v7M14.75 8.5v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
 <div id="dailyMissionGoal" hidden>
   <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
   <strong id="dailyMissionGoalText">12 линий</strong>
@@ -7717,7 +7787,11 @@ function show(id){
   activeScreen.classList.remove('screen');
   void activeScreen.offsetWidth;
   activeScreen.classList.add('screen');
+  activeScreen.classList.toggle('bb-godot-arena',id==='game');
   if(typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout();
+  // Render screen-owned content whenever navigation opens the screen,
+  // including routes from the fixed dock and restored back-stack entries.
+  if(id==='heroes'){if(typeof bbSelectedHero!=='undefined')bbPreviewHero=bbSelectedHero;if(typeof bbRenderHeroes==='function')bbRenderHeroes();}
   if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
   if(typeof bbSyncMusic==='function')bbSyncMusic();
 }
@@ -8642,14 +8716,48 @@ function bbGoalEmblem(id,label,value,target,complete=false,failed=false,extra=''
   const pct=Math.max(0,Math.min(100,current/total*100));
   const status=failed?'failed':complete?'complete':'active';
   const safeLabel=String(label||'Цель').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  return '<div class="bb-goal-emblem '+status+'" data-goal="'+String(id||'goal')+'" title="'+safeLabel+'" aria-label="'+safeLabel+': '+current+' из '+total+'" style="--goal-progress:'+pct+'%">' +
+  const descriptions=[
+    [/lines|очистить линии/i,'Очищай горизонтальные ряды, полностью заполняя их фигурами. Каждый очищенный ряд приближает выполнение этой цели.'],
+    [/score|набрать очки/i,'Набери указанное количество очков. Очки начисляются за размещение фигур и очистку линий.'],
+    [/time|продержаться/i,'Продержись в игре указанное время. Следи за высотой стопки и не допускай заполнения поля.'],
+    [/level|достичь уровня/i,'Повышай уровень, очищая линии. Продолжай играть, пока не достигнешь указанной отметки.'],
+    [/single|одиночную/i,'Очисти ровно один ряд за один ход.'],
+    [/pieces|установить фигур/i,'Размести на игровом поле указанное количество фигур.'],
+    [/rotations|повернуть/i,'Поворачивай падающие фигуры перед размещением, пока не наберёшь нужное количество поворотов.'],
+    [/hold|удержание/i,'Используй кнопку удержания, чтобы отложить текущую фигуру и поменять её на запасную.'],
+    [/doubles|двойную/i,'Очисти два ряда одновременно одним размещением фигуры.'],
+    [/triple|тройную/i,'Очисти три ряда одновременно одним размещением фигуры.'],
+    [/tetris|4 линии/i,'Очисти четыре ряда одновременно — это называется «Тетрис».'],
+    [/noHardDrop|жёсткого сброса/i,'Заверши забег, ни разу не используя мгновенный жёсткий сброс фигуры.'],
+    [/noHold|без удержания/i,'Заверши забег, не используя запасную ячейку удержания фигур.'],
+    [/streak|серию/i,'Выполняй последовательные действия без потери темпа, чтобы собрать нужную серию.']
+  ];
+  const description=descriptions.find(([pattern])=>pattern.test(source))?.[1]||'Выполни условие этой задачи во время забега. Следи за счётчиком под значком — он показывает текущий прогресс.';
+  const safeDescription=description.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  return '<button type="button" class="bb-goal-emblem '+status+'" data-goal="'+String(id||'goal')+'" data-goal-label="'+safeLabel+'" data-goal-description="'+safeDescription+'" title="Нажми, чтобы узнать о цели: '+safeLabel+'" aria-label="Описание цели: '+safeLabel+', '+current+' из '+total+'" style="--goal-progress:'+pct+'%">' +
     '<span class="bb-goal-emblem-ring"><b>'+match[1]+'</b></span>' +
     '<span class="bb-goal-emblem-count">'+(failed?'×':current+'/'+total)+'</span>' +
     (extra?'<span class="bb-goal-emblem-extra">'+extra+'</span>':'')+
-    '</div>';
+    '</button>';
 }
 
+
+document.addEventListener('click',event=>{
+  const emblem=event.target.closest('#game .bb-goal-emblem[data-goal]');
+  if(!emblem||!started||paused||gameOver)return;
+  event.preventDefault();event.stopPropagation();paused=true;bbSyncMusic();
+  const label=emblem.dataset.goalLabel||'Цель забега';
+  const description=emblem.dataset.goalDescription||'Выполни условие этой задачи во время забега.';
+  const icon=emblem.querySelector('.bb-goal-emblem-ring b')?.textContent||'✦';
+  const progress=emblem.querySelector('.bb-goal-emblem-count')?.textContent||'';
+  overlay('<div class="modalhead"><div class="bigicon">'+icon+'</div><div class="eyebrow">ПОЯСНЕНИЕ ЦЕЛИ</div><h3>'+label+'</h3><p>'+description+'</p></div><div class="bb-goal-info-progress"><span>ТЕКУЩИЙ ПРОГРЕСС</span><strong>'+progress+'</strong></div><button class="action" id="resumeGoalInfo">▶ ПРОДОЛЖИТЬ ИГРУ</button>','pause');
+  const resume=$('resumeGoalInfo');
+  if(resume)resume.onclick=()=>{closeOverlay();paused=false;restartDrop();bbSyncMusic()};
+});
+
 function bbRenderGoals() {
+  const rogueEncounterTop = $('bbRogueEncounterTop');
+  if (mode !== 'rogue' && rogueEncounterTop) rogueEncounterTop.remove();
   const rogueOld = $('rogueGoals');
   const campaignOld = $('campaignGoals');
 
@@ -8697,16 +8805,23 @@ function bbRenderGoals() {
     const target=game.classList.contains('unified-game-layout')?(goalsRail?.querySelector('.bb-mode-goals-pocket')||goalsRail):(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:goalsRail);
     if(target&&panel.parentElement!==target)target.appendChild(panel);
     if(target?.classList.contains('bb-mode-goals-pocket')&&window.matchMedia('(max-width:600px)').matches){
-      /* KT-749.19: keep the three live emblems in one readable row.
-         The old fixed 58px card split its width between a long heading and
-         the emblem grid, leaving too little room for all three counters. */
       const setRibbon=(node,styles)=>{
         if(!node)return;
         for(const [name,value] of Object.entries(styles))node.style.setProperty(name,value,'important');
       };
+      /* The goals pocket must use the full lower ribbon width; its inherited
+         desktop card padding was leaving a large empty inset on portrait phones. */
+      setRibbon(target,{
+        display:'flex',width:'100%',minWidth:'0',height:'100%',minHeight:'0',
+        margin:'0',padding:'0',border:'0',boxSizing:'border-box',
+        overflow:'hidden',background:'transparent'
+      });
+      /* KT-749.19: keep the three live emblems in one readable row.
+         The old fixed 58px card split its width between a long heading and
+         the emblem grid, leaving too little room for all three counters. */
       setRibbon(panel,{
         display:'flex',flex:'1 1 0',flexDirection:'row',alignItems:'center',justifyContent:'center',
-        width:'auto',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',
+        width:'100%',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',
         margin:'0',padding:'0 2px',border:'0',borderRadius:'0',background:'transparent',
         boxShadow:'none',overflow:'hidden',gap:'2px',boxSizing:'border-box'
       });
@@ -10420,11 +10535,6 @@ function bbRenderHeroes(){
  roster.querySelectorAll('[data-hero-card]').forEach(btn=>btn.addEventListener('click',()=>bbOpenHeroShowcase(btn.dataset.heroCard)));
 }
 
-document.getElementById('openHeroes')?.addEventListener('click', () => {
-  bbPreviewHero = bbSelectedHero;
-  bbRenderHeroes();
-});
-
 document.getElementById('confirmHero')?.addEventListener('click', () => {
   bbSelectedHero = bbPreviewHero;
   localStorage.setItem('bbSelectedHero', bbSelectedHero);
@@ -11062,7 +11172,7 @@ function bbArrangeModeHud(){
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
   game.classList.toggle('block-run-mode',mode==='rogue');
-  set(game,{display:'flex',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
+  set(game,{display:'flex',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 0 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
   set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'36px':'44px',margin:'0',width:'100%',boxSizing:'border-box'});
   set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gridTemplateRows:'minmax(0,1fr)',gridAutoFlow:'column',gridAutoColumns:'minmax(0,1fr)',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',height:phone?'46px':'62px',minHeight:phone?'46px':'62px',maxHeight:phone?'46px':'62px',margin:'0',order:'2'});
   for(const metric of hud.querySelectorAll('.hudbox,#gameCoins'))set(metric,{display:'flex',gridColumn:'auto',gridRow:'1',width:'100%',minWidth:'0',height:'100%',minHeight:'0',maxHeight:'100%',padding:phone?'4px 2px':'7px 6px',boxSizing:'border-box',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden'});
@@ -11074,33 +11184,34 @@ function bbArrangeModeHud(){
   const availableWidth=Math.max(120,window.innerWidth-outerGutter-railWidth-columnGap-(phone?0:leftRailWidth+columnGap)-20);
   /* One deterministic 10:23 board size per viewport. Optional mode content
      never participates in this calculation. */
-  const targetHeight=Math.min(window.innerHeight*(phone?.54:.66),phone?500:600);
+  const targetHeight=phone?Math.min(window.innerWidth*.53*2.3,window.innerHeight*.566,520):Math.min(window.innerHeight*.66,600);
   const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
   const boardHeight=boardWidth*23/10;
   set(layout,{display:'grid',position:'relative',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',
     gridTemplateColumns:phone?`minmax(0,1fr) ${railWidth}px`:`${leftRailWidth}px minmax(0,1fr) ${railWidth}px`,
-    gridTemplateRows:'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',
-    height:(boardHeight+12+(phone?60:0))+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
-  set(leftRail,{display:'flex',position:phone?'absolute':'relative',gridColumn:phone?'auto':'1',gridRow:'1',
-    top:phone?'0':'auto',left:phone?'0':'auto',right:phone?'0':'auto',zIndex:phone?'50':'auto',
+    gridTemplateRows:phone?'minmax(0,1fr) 54px':'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',
+    height:(boardHeight+10+(phone?54+columnGap:0))+'px',width:phone?'calc(100% + 2px)':'100%',minWidth:'0',maxWidth:phone?'calc(100% + 2px)':'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
+  /* Portrait objectives occupy a dedicated second row, never an overlay above the board. */
+  set(leftRail,{display:'flex',position:'relative',gridColumn:phone?'1 / -1':'1',gridRow:phone?'2':'1',
+    top:'auto',left:'auto',right:'auto',zIndex:'auto',
     flexDirection:phone?'row':'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'4px':'8px',
-    width:phone?'100%':leftRailWidth+'px',height:phone?'54px':'100%',minWidth:'0',minHeight:phone?'54px':'0',
-    maxHeight:phone?'54px':'100%',margin:'0',padding:phone?'3px 5px':'6px 4px',boxSizing:'border-box',overflow:'hidden'});
+    width:phone?'calc(100% + 32px)':leftRailWidth+'px',height:phone?'54px':'100%',minWidth:'0',minHeight:phone?'54px':'0',
+    maxHeight:phone?'54px':'100%',margin:phone?'0 0 0 -7px':'0',padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',overflow:'hidden'});
   set(boardColumn,{display:'flex',gridColumn:phone?'1':'2',gridRow:'1',alignItems:'center',justifyContent:'center',
     minWidth:'0',minHeight:'0',width:'100%',height:'100%',overflow:'hidden',margin:'0',
-    padding:phone?'56px 0 0':'0',boxSizing:'border-box',position:'relative'});
+    padding:'0',boxSizing:'border-box',position:'relative'});
   const railItems=Array.from(rail.children); // Hidden mode widgets keep stable utility slots.
   set(rail,{display:'flex',gridColumn:phone?'2':'3',gridRow:'1',gridTemplateColumns:'none',gridTemplateRows:'none',
     flexDirection:'column',gap:phone?'3px':'5px',width:railWidth+'px',minWidth:'0',minHeight:'0',maxHeight:'100%',height:'100%',
     overflowY:'hidden',overflowX:'hidden',alignItems:'stretch',justifyContent:'flex-start',margin:'0',
-    padding:phone?'60px 2px 3px':'6px 4px',boxSizing:'border-box',scrollbarWidth:'none'});
+    padding:phone?'3px 2px':'6px 4px',boxSizing:'border-box',scrollbarWidth:'none'});
   for(const card of railItems){
     if(card.id==='dailyMissionGoal')set(card,{display:'flex',flex:'0 0 52px',minWidth:'0',minHeight:'52px',height:'52px',maxHeight:'52px',overflow:'hidden',padding:'4px'});
     else set(card,{flex:'0 0 auto',minHeight:phone?'52px':'58px',height:'auto',maxHeight:'none'});
   }
   for(const card of rail.querySelectorAll('.sidecard,.bb-hero-skill-slot')){
     const compact=card.classList.contains('charge-card')? (phone?58:64):
-      card.classList.contains('hold-card')? (phone?54:60):
+      card.classList.contains('hold-card')? (phone?60:60):
       card.id==='boostCard'? (phone?44:48):
       card.id==='bbHeroSkillCard'? (phone?42:46):
       card.classList.contains('chrono-card')?46: (phone?66:74);
@@ -11125,12 +11236,30 @@ function bbArrangeModeHud(){
     alignItems:'center',justifyContent:'space-between',gap:'3px',width:'100%',height:'100%',minWidth:'0',
     minHeight:'0',maxHeight:'100%',margin:'0',padding:'2px',boxSizing:'border-box',overflow:'hidden',
     fontSize:phone?'7px':'8px',lineHeight:'1.1'});
-  set(rail.querySelector('.side-drop'),{display:'none',visibility:'hidden',pointerEvents:'none'});
-  set(rail.querySelector('#holdBtn'),{display:'none',visibility:'hidden',pointerEvents:'none'});
-  set(rail.querySelector('.drop-card'),{display:'none'});
+  /* HOLD and hard-drop remain available in the utility rail on portrait devices. */
+  set(rail.querySelector('.side-drop'),{display:'flex',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'40px',height:'40px'});
+  set(rail.querySelector('#holdBtn'),{display:'block',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'28px',height:'28px'});
+  /* KT-754: compact HOLD contents so the preview, action and Buddy skill never overlap
+     on narrow portrait rails. The elapsed timer remains available in the mode HUD. */
+  const holdCard=rail.querySelector('.hold-card');
+  if(holdCard){
+    set(holdCard,{display:'flex',flexDirection:'column',alignItems:'stretch',gap:'1px',width:'100%',minHeight:'64px',height:'64px',maxHeight:'64px',padding:'3px 4px',overflow:'hidden'});
+    set(holdCard.querySelector('label'),{display:'block',flex:'0 0 7px',height:'7px',minHeight:'7px',margin:'0',fontSize:'6px',lineHeight:'7px'});
+    set(holdCard.querySelector('#holdPreview'),{display:'block',flex:'0 0 18px',width:'100%',height:'18px',minHeight:'18px',maxHeight:'18px',margin:'0 auto'});
+    set(holdCard.querySelector('.hold-empty'),{top:'15px',left:'3px',right:'3px',fontSize:'5px',lineHeight:'1'});
+    set(holdCard.querySelector('#holdBtn'),{display:'flex',flex:'0 0 28px',alignItems:'center',justifyContent:'center',width:'100%',minHeight:'28px',height:'28px',maxHeight:'28px',margin:'0',padding:'1px 2px',fontSize:'6px',lineHeight:'1',whiteSpace:'nowrap'});
+    set(holdCard.querySelector('.run-timer'),{display:'none'});
+  }
+  const heroSkill=rail.querySelector('#bbHeroSkillCard');
+  if(heroSkill){
+    set(heroSkill,{minHeight:'50px',height:'50px',maxHeight:'50px',padding:'3px',gap:'2px',overflow:'hidden'});
+    set(heroSkill.querySelector('.bb-hero-skill-art'),{width:'32px',height:'32px',flex:'0 0 32px'});
+    set(heroSkill.querySelector('.bb-hero-skill-copy'),{display:'none'});
+  }
+  set(rail.querySelector('.drop-card'),{display:'flex',visibility:'visible',pointerEvents:'auto',minHeight:'48px',height:'48px'});
   set(game.querySelector('.controls'),{display:'none',visibility:'hidden',pointerEvents:'none',width:'0',height:'0',minWidth:'0',minHeight:'0',margin:'0',padding:'0',border:'0',overflow:'hidden'});
   set(game.querySelector('.hint'),{display:'none'});
-  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:(boardWidth+10)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
+  set(frame,{display:'flex',alignItems:'center',justifyContent:'center',flex:'0 0 auto',width:((boardHeight+10)*10/23)+'px',height:(boardHeight+10)+'px',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',padding:'4px',margin:'0 auto',boxSizing:'border-box',overflow:'hidden'});
   set(board,{display:'block',width:'auto',height:'100%',minWidth:'0',minHeight:'0',maxWidth:'100%',maxHeight:'100%',aspectRatio:'10 / 23',objectFit:'contain',boxSizing:'border-box',flex:'0 1 auto'});
   if(!game.querySelector('#bbUnifiedArenaSkin')){
     const skin=document.createElement('style');skin.id='bbUnifiedArenaSkin';skin.textContent=`
@@ -11261,7 +11390,7 @@ function bbArrangeModeHud(){
         #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{flex:1 1 auto!important;flex-direction:row!important;height:100%!important;min-height:0!important;padding:0!important}
         #game.unified-game-layout>.playlayout>.gameleftcol #rogueGoals,
         #game.unified-game-layout>.playlayout>.gameleftcol #campaignGoals{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:3px!important;padding:0!important}
-        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-heading{flex:0 0 auto!important;width:auto!important;max-width:54px!important;font-size:6px!important;letter-spacing:.03em!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-heading{flex:0 0 auto!important;width:auto!important;max-width:88px!important;font-size:7px!important;letter-spacing:.03em!important}
         #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-grid{gap:2px!important}
         #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem{flex:0 1 48px!important;flex-direction:row!important;gap:2px!important}
         #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-ring{flex-basis:26px!important;width:26px!important;height:26px!important}
@@ -11297,7 +11426,7 @@ function bbArrangeModeHud(){
       }
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket:after{display:none!important;content:none!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{cursor:default!important}
-      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:2px 5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5e3b4!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;max-width:none!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:2px 5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5e3b4!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{display:block!important;flex:0 1 auto!important;max-width:150px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#b5e8df!important;font-size:8px!important;font-weight:950!important;letter-spacing:.08em!important;line-height:1!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{display:grid!important;place-items:center!important;flex:0 0 auto!important;min-width:58px!important;min-height:34px!important;padding:4px 9px!important;border:1px solid rgba(255,221,154,.62)!important;border-radius:999px!important;background:linear-gradient(145deg,#496b72,#19394b)!important;box-shadow:0 3px 0 #071725,inset 0 1px rgba(255,255,255,.2)!important;color:#ffe4a8!important;font-size:12px!important;font-weight:1000!important;line-height:1!important;white-space:nowrap!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{content:"✦";display:block;flex:0 0 auto;color:#f6d28b;font-size:18px;text-shadow:0 0 9px rgba(255,210,128,.4)}
@@ -18945,6 +19074,7 @@ html body main.app #game.screen .sidecol .drop-card .side-drop{
   color:#fff1ce!important;box-shadow:0 3px 0 #3b2b20!important;
 }
 </style>
+<!-- KT-753.2: goal-help pause/resume and Block Run-only monster panel regression coverage. -->
 </body></html>
 
 <style id="bb-kt634-arena-unification">

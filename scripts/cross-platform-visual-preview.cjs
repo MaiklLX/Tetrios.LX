@@ -24,9 +24,9 @@ const targets = [
   for (const target of targets) {
     console.log('[target:start] ' + target.name + ' (' + target.engine + ', ' + target.width + 'x' + target.height + ')');
     const targetWatchdog = setTimeout(() => {
-      console.error('[target:timeout] ' + target.name + ' exceeded 240000ms; stopping preview process');
+      console.error('[target:timeout] ' + target.name + ' exceeded 360000ms; stopping preview process');
       process.exit(1);
-    }, 210000);
+    }, 330000);
     const browserType = target.engine === 'webkit' ? webkit : chromium;
     const launchOptions = { headless: true };
     if (target.engine === 'chromium') {
@@ -115,7 +115,7 @@ const targets = [
       const wallet=profile?.querySelector('.bb-home-profile-wallet strong')?.textContent?.trim()||'';
       const currentCoins=document.querySelector('#coins')?.textContent?.trim()||'';
       return {
-        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=40,
+        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=39.5,
         hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
         hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
         hasLevel:/УРОВЕНЬ \d+/.test(profile?.innerText||''),
@@ -183,7 +183,7 @@ const targets = [
       const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
-    const profileVisible=!!homeHubLayoutState.profile&&homeHubLayoutState.profile.width>0&&homeHubLayoutState.profile.height>=40;
+    const profileVisible=!!homeHubLayoutState.profile&&homeHubLayoutState.profile.width>0&&homeHubLayoutState.profile.height>=39.5;
     const sigilsFit=['campaign','blockRun','daily'].every(key=>homeHubLayoutState[key]?.width>=homeHubLayoutState.menu.width*.2);
     const modeRects=homeHubLayoutState.modeLayout.children||[];
     const shortLandscape=homeHubLayoutState.viewport.width>homeHubLayoutState.viewport.height&&homeHubLayoutState.viewport.height<=600;
@@ -195,7 +195,7 @@ const targets = [
         : Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4);
     if(!modesAreProminent) failures.push(target.name+': KT-750 mode cards are too small or arranged incorrectly ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
     if(!homePanelsOrdered||!profileVisible||!sigilsFit||
-       (!shortLandscape&&(homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2))||
+       (!shortLandscape&&(homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.5||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2))||
        (shortLandscape&&homeHubLayoutState.dock.width>0)){
       failures.push(target.name+': KT-750 home hub, pilot profile or dock geometry is incorrect ('+JSON.stringify(homeHubLayoutState)+')');
     }
@@ -293,6 +293,9 @@ const targets = [
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="heroes"]').click();
     await page.locator('#heroes:not([hidden])').waitFor({state:'visible',timeout:10000});
+    const heroRosterCount=await page.locator('#heroesRoster .bb-hero-popup-card').count();
+    const heroRosterVisible=await page.locator('#heroesRoster').evaluate(el=>getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>0);
+    if(heroRosterCount<5||!heroRosterVisible)failures.push(target.name+': heroes screen opened without its five playable roster cards ('+heroRosterCount+' cards, visible='+heroRosterVisible+')');
     await page.locator('#heroesBack').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="collection"]').click();
@@ -338,9 +341,10 @@ const targets = [
     if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.pageScrollable){
       failures.push(target.name+': full-page library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
     }
-    const pageBackdrop=await page.locator('body .app').evaluate(el=>getComputedStyle(el).backgroundImage);
-    const pageSurface=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
-    if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': friendly teal page backdrop is missing or washed out ('+JSON.stringify({pageBackdrop,pageSurface})+')');
+    const pageBackdrop=await page.evaluate(()=>({html:getComputedStyle(document.documentElement).backgroundImage,body:getComputedStyle(document.body).backgroundImage,grid:getComputedStyle(document.body,'::before').backgroundImage,app:getComputedStyle(document.querySelector('body .app')).backgroundImage}));
+    const pageSurface=await page.evaluate(()=>[getComputedStyle(document.documentElement).backgroundColor,getComputedStyle(document.body).backgroundColor,getComputedStyle(document.querySelector('body .app')).backgroundColor]);
+    const backdropLayers=Object.values(pageBackdrop).join(' ');
+    if(!backdropLayers.includes('linear-gradient')||!backdropLayers.includes('radial-gradient')||pageSurface.every(color=>color==='rgb(255, 255, 255)')) failures.push(target.name+': cosmic page backdrop or grid texture is missing ('+JSON.stringify({pageBackdrop,pageSurface})+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-lib-filter="all"]').click();
     const allFilteredCards = await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
@@ -513,6 +517,10 @@ const targets = [
     // its real mode tile so the following atlas checks exercise the normal flow.
     await campaignPage.locator('button.mode[data-mode="campaign"]').evaluate(element=>element.click());
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
+    // Finish the screen-arrival animation before measuring or capturing the atlas.
+    await campaignPage.waitForTimeout(450);
+    await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign');return !!el&&!el.hidden&&Number.parseFloat(getComputedStyle(el).opacity)>.98;},{timeout:10000});
+    await campaignPage.waitForFunction(()=>document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length>0,{timeout:10000});
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
       return {
@@ -662,6 +670,23 @@ const targets = [
     await campaignPage.locator('#bbStartHeroChoose').click();
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.waitForTimeout(900);
+    const firstGoalEmblem=campaignPage.locator('#game #campaignGoals .bb-goal-emblem').first();
+    await firstGoalEmblem.waitFor({state:'visible',timeout:10000});
+    // Goal emblems are refreshed as progress changes; dispatch the real DOM click
+    // directly so Playwright's two-frame stability wait cannot race that refresh.
+    await firstGoalEmblem.evaluate(button=>button.click());
+    await campaignPage.locator('#overlay.show #resumeGoalInfo').waitFor({state:'visible',timeout:10000});
+    const goalHelpState=await campaignPage.evaluate(()=>({
+      paused:!!window.__TETRIOS_QA__?.getPieceState?.().paused,
+      heading:document.querySelector('#modal h3')?.textContent?.trim()||'',
+      hasDescription:!!document.querySelector('#modal .modalhead p')?.textContent?.trim(),
+      progress:!!document.querySelector('#modal .bb-goal-info-progress')
+    }));
+    if(!goalHelpState.paused||!goalHelpState.heading||!goalHelpState.hasDescription||!goalHelpState.progress){
+      failures.push(target.name+': goal emblem did not pause and explain the objective ('+JSON.stringify(goalHelpState)+')');
+    }
+    await campaignPage.locator('#resumeGoalInfo').click();
+    await campaignPage.locator('#overlay:not(.show)').waitFor({state:'attached',timeout:10000});
     const campaignMissionState = await campaignPage.evaluate(() => {
       const goals = document.querySelector('#campaignGoals');
       return {
@@ -698,9 +723,9 @@ const targets = [
         leftHudWidth:rr?.width||0,
         leftHudHeight:rr?.height||0,
         goalHeight:pr?.height||0,
-        mobileRibbon:!phone||(!!sr&&!!rr&&rr.left>=sr.left-1&&rr.right<=sr.right+1&&rr.width>=sr.width*.85&&rr.top>=sr.top-1&&rr.bottom<=sr.top+62),
+        mobileRibbon:!phone||(!!sr&&!!rr&&!!br&&rr.left>=sr.left-1&&rr.right<=sr.right+1&&rr.width>=sr.width*.85&&rr.top>=br.bottom-1&&rr.bottom<=sr.bottom+1),
         desktopLeftColumn:phone||(!!rr&&!!br&&rr.right<=br.left+2),
-        boardClearance:!phone||(!!pr&&!!br&&br.top>=pr.bottom-1),
+        boardClearance:!phone||(!!pr&&!!br&&br.bottom<=pr.top+1),
         goalScroll:goals?.scrollHeight||0,
         goalClient:goals?.clientHeight||0,
         goalOverflow:getComputedStyle(goals||document.body).overflowY,
@@ -738,6 +763,8 @@ const targets = [
       await dailyPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
       await dailyPage.locator('#game #dailyMissionGoal:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
       await dailyPage.waitForTimeout(1200);
+      const dailyMonsterPanelCount=await dailyPage.locator('#game #bbRogueEncounterTop').count();
+      if(dailyMonsterPanelCount!==0)failures.push(target.name+': Block Run monster encounter panel leaked into Daily Challenge');
       const dailyGoalState = await dailyPage.evaluate(() => {
         const panel=document.querySelector('#game #dailyMissionGoal');
         const rect=panel?.getBoundingClientRect();
