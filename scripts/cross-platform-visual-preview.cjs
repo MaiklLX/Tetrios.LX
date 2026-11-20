@@ -404,8 +404,9 @@ const targets = [
     // Use the real campaign back control and home tile; preserve campaign as the
     // shelf return destination so the atlas assertions below remain meaningful.
     await campaignPage.locator('#campaignBack').click();
-    await campaignPage.locator('#bbHomeCollectionCard').waitFor({state:'visible',timeout:10000});
-    await campaignPage.locator('#bbHomeCollectionCard').click();
+    const collectionNav=campaignPage.locator('.bb-home-dock > :nth-child(3)');
+    await collectionNav.waitFor({state:'visible',timeout:10000});
+    await collectionNav.click({force:true});
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
       cardCount:rail.querySelectorAll('.bb-shelf-item').length,
