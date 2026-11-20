@@ -11213,6 +11213,25 @@ function bbArrangeModeHud(){
         #game.unified-game-layout>.playlayout>.sidecol{grid-column:3!important;grid-row:1!important}
       }
       /* Daily objective joins the same emblem ribbon instead of occupying a separate right-side card. */
+      /* KT-749.18 — compact emblem strip: readable labels, icon-first progress, no dropdown affordance. */
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{flex:0 0 58px!important;width:100%!important;height:58px!important;min-height:58px!important;max-height:58px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;gap:5px!important;padding:4px 7px!important;overflow:hidden!important;border-radius:16px!important;cursor:default!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket #campaignGoals,
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket #rogueGoals{display:flex!important;flex:1 1 auto!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;gap:5px!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;background:transparent!important;box-sizing:border-box!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket #campaignGoals>*,
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket #rogueGoals>*{display:flex!important;flex:0 1 auto!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;gap:4px!important;min-width:0!important;max-width:50%!important;margin:0!important;padding:0 4px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket .bb-goals-heading{flex:0 0 auto!important;max-width:34%!important;min-width:0!important;font-size:8px!important;line-height:1!important;white-space:nowrap!important;letter-spacing:.04em!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket .bb-goals-summary{display:flex!important;flex:1 1 auto!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;gap:6px!important;min-width:0!important;margin:0!important;font-size:9px!important;line-height:1!important;white-space:nowrap!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket .bb-goals-list{display:none!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket:before{content:"✦";display:block;flex:0 0 auto;color:#ffdc9a;font-size:15px;text-shadow:0 0 8px rgba(255,213,135,.45)}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{flex:0 0 auto!important;width:auto!important;max-width:34%!important;height:100%!important;min-height:0!important;max-height:100%!important;gap:3px!important;padding:0 3px!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{max-width:100%!important;font-size:7px!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{min-width:38px!important;min-height:30px!important;padding:3px 6px!important;font-size:10px!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{display:none!important}
+      @media(max-width:600px){
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{gap:3px!important;padding:3px 5px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket .bb-goals-heading{font-size:7px!important;max-width:32%!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket .bb-goals-summary{gap:3px!important;font-size:8px!important}
+      }
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket:after{display:none!important;content:none!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{cursor:default!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:2px 5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5e3b4!important}
