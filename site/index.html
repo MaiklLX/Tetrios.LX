@@ -10990,7 +10990,7 @@ function bbArrangeModeHud(){
   if(dailyGoal&&dailyGoal.parentElement!==rail)rail.appendChild(dailyGoal);
   if(dailyGoal){
     dailyGoal.classList.add('bb-daily-goal-pocket');
-    set(dailyGoal,{display:'flex',visibility:dailyGoal.hidden?'hidden':'visible',pointerEvents:dailyGoal.hidden?'none':'auto',
+    set(dailyGoal,{display:'flex',
       flex:'0 0 52px',minWidth:'0',minHeight:'52px',width:'100%',height:'52px',maxHeight:'52px',
       margin:'0',padding:phone?'3px 3px':'5px 5px',boxSizing:'border-box',overflow:'hidden',
       flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'2px',textAlign:'center'});
