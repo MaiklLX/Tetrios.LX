@@ -591,35 +591,41 @@ const targets = [
     if (campaignMissionState.boostLabel !== 'Только в Block Run') failures.push(target.name + ': campaign HUD must not expose upgrade cards');
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     const campaignRailState = await campaignPage.evaluate(() => {
-      const rail=document.querySelector('#game .playlayout .sidecol');
-      const stage=document.querySelector('#game .playlayout');
+      const game=document.querySelector('#game');
+      const stage=game?.querySelector('.playlayout');
+      const rail=stage?.querySelector('.gameleftcol');
       const pocket=rail?.querySelector('.bb-mode-goals-pocket');
-      const goals=document.querySelector('#game #campaignGoals');
-      const board=document.querySelector('#game .boardframe');
-      const sr=stage?.getBoundingClientRect(), pr=pocket?.getBoundingClientRect(), gr=goals?.getBoundingClientRect(), br=board?.getBoundingClientRect();
-      const overlaps=[];
-      if(rail&&goals) for(const node of Array.from(rail.children)){
+      const goals=game?.querySelector('#campaignGoals');
+      const board=game?.querySelector('.boardframe');
+      const sr=stage?.getBoundingClientRect(), rr=rail?.getBoundingClientRect(), pr=pocket?.getBoundingClientRect(), gr=goals?.getBoundingClientRect(), br=board?.getBoundingClientRect();
+      const phone=innerWidth<=600;
+      const siblings=[];
+      if(rail&&pocket)for(const node of Array.from(rail.children)){
         if(node===pocket||getComputedStyle(node).display==='none')continue;
         const r=node.getBoundingClientRect();
-        if(Math.min(r.right,gr.right)-Math.max(r.left,gr.left)>1&&Math.min(r.bottom,gr.bottom)-Math.max(r.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
+        if(Math.min(r.right,pr.right)-Math.max(r.left,pr.left)>1&&Math.min(r.bottom,pr.bottom)-Math.max(r.top,pr.top)>1)siblings.push(node.className||node.id||node.tagName);
       }
       return {
-        goalsInArenaBand:!!sr&&!!pr&&!!gr&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&pr.left>=sr.left-1&&pr.right<=sr.right+1&&pr.width>=sr.width*.85&&pr.top>=sr.top-1&&pr.bottom<=sr.top+82,
+        goalsInLeftHud:!!rr&&!!pr&&!!gr&&pocket?.parentElement===rail&&goals?.parentElement===pocket,
+        leftHudWidth:rr?.width||0,
+        leftHudHeight:rr?.height||0,
         goalHeight:pr?.height||0,
-        boardClearance:!!pr&&!!br&&br.top>=pr.bottom-1,
+        mobileRibbon:!phone||(!!sr&&!!rr&&rr.left>=sr.left-1&&rr.right<=sr.right+1&&rr.width>=sr.width*.85&&rr.top>=sr.top-1&&rr.bottom<=sr.top+62),
+        desktopLeftColumn:phone||(!!rr&&!!br&&rr.right<=br.left+2),
+        boardClearance:!phone||(!!pr&&!!br&&br.top>=pr.bottom-1),
         goalScroll:goals?.scrollHeight||0,
         goalClient:goals?.clientHeight||0,
         goalOverflow:getComputedStyle(goals||document.body).overflowY,
-        overlaps,
-        railScroll:rail?.scrollHeight||0,
-        railClient:rail?.clientHeight||0
+        pocketOverflow:getComputedStyle(pocket||document.body).overflowY,
+        siblings,
+        leftScroll:rail?.scrollHeight||0,
+        leftClient:rail?.clientHeight||0
       };
     });
-    if (!campaignRailState.goalsInArenaBand) failures.push(target.name + ': campaign objectives are not arranged as a full-width arena ribbon (' + JSON.stringify(campaignRailState) + ')');
-    if (campaignRailState.overlaps.length) failures.push(target.name + ': campaign goals overlap other rail elements (' + JSON.stringify(campaignRailState) + ')');
-    if (!campaignRailState.boardClearance) failures.push(target.name + ': campaign objective ribbon overlaps the playfield (' + JSON.stringify(campaignRailState) + ')');
-    if (campaignRailState.goalHeight < 44 || campaignRailState.goalHeight > 76) failures.push(target.name + ': campaign objective ribbon is outside its compact height range (' + JSON.stringify(campaignRailState) + ')');
-    if (campaignRailState.goalScroll > campaignRailState.goalClient + 2 || campaignRailState.goalOverflow === 'auto' || campaignRailState.goalOverflow === 'scroll') failures.push(target.name + ': campaign objectives must be visible without an internal scroll window (' + JSON.stringify(campaignRailState) + ')');
+    if (!campaignRailState.goalsInLeftHud) failures.push(target.name + ': campaign objectives are not mounted in the dedicated left HUD rail (' + JSON.stringify(campaignRailState) + ')');
+    if (!campaignRailState.mobileRibbon||!campaignRailState.desktopLeftColumn) failures.push(target.name + ': left objective HUD does not respect the mobile ribbon / desktop left-column architecture (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.siblings.length) failures.push(target.name + ': campaign goals overlap other left HUD elements (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.goalScroll > campaignRailState.goalClient + 2 || campaignRailState.goalOverflow === 'auto' || campaignRailState.goalOverflow === 'scroll' || campaignRailState.pocketOverflow === 'auto' || campaignRailState.pocketOverflow === 'scroll') failures.push(target.name + ': campaign objectives must never use an internal scroll window (' + JSON.stringify(campaignRailState) + ')');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     console.log('[stage:campaign-missions] ' + target.name);
