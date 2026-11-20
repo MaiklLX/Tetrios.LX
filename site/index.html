@@ -11224,6 +11224,15 @@ function bbArrangeModeHud(){
         #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{max-width:100%!important;font-size:7px!important}
         #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{min-width:66px!important;min-height:40px!important;font-size:13px!important}
       }
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket[hidden]{display:none!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{font-size:0!important;line-height:1!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label:after{content:"ЦЕЛЬ";display:block!important;color:#b5e8df!important;font-size:7px!important;font-weight:1000!important;letter-spacing:.12em!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{content:"▤"!important;display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;border:1px solid rgba(199,239,226,.45)!important;border-radius:11px 11px 14px 14px!important;background:linear-gradient(145deg,#4b8b91,#163b4c)!important;box-shadow:0 3px 0 #071725,inset 0 1px rgba(255,255,255,.22)!important;color:#e8fff1!important;font-size:20px!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{clip-path:polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%)!important;min-width:64px!important;min-height:38px!important;padding:4px 12px!important}
+      @media(min-width:601px){
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{flex-basis:40px!important;width:40px!important;height:40px!important;font-size:23px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label:after{font-size:8px!important}
+      }
     `;document.head.appendChild(skin);
   }
   if(!game.dataset.bbArenaResizeBound){game.dataset.bbArenaResizeBound='1';window.addEventListener('resize',()=>{if(started&&!game.hidden)bbArrangeModeHud();},{passive:true});}
