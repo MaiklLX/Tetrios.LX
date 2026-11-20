@@ -8804,6 +8804,10 @@ function bbRenderGoals() {
     const target=game.classList.contains('unified-game-layout')?(goalsRail?.querySelector('.bb-mode-goals-pocket')||goalsRail):(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:goalsRail);
     if(target&&panel.parentElement!==target)target.appendChild(panel);
     if(target?.classList.contains('bb-mode-goals-pocket')&&window.matchMedia('(max-width:600px)').matches){
+      const setRibbon=(node,styles)=>{
+        if(!node)return;
+        for(const [name,value] of Object.entries(styles))node.style.setProperty(name,value,'important');
+      };
       /* The goals pocket must use the full lower ribbon width; its inherited
          desktop card padding was leaving a large empty inset on portrait phones. */
       setRibbon(target,{
@@ -8814,10 +8818,6 @@ function bbRenderGoals() {
       /* KT-749.19: keep the three live emblems in one readable row.
          The old fixed 58px card split its width between a long heading and
          the emblem grid, leaving too little room for all three counters. */
-      const setRibbon=(node,styles)=>{
-        if(!node)return;
-        for(const [name,value] of Object.entries(styles))node.style.setProperty(name,value,'important');
-      };
       setRibbon(panel,{
         display:'flex',flex:'1 1 0',flexDirection:'row',alignItems:'center',justifyContent:'center',
         width:'100%',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',
