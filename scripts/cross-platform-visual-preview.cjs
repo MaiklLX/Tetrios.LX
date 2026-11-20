@@ -352,7 +352,7 @@ const targets = [
     await campaignPage.locator('button.mode[data-mode="campaign"]').click();
     await campaignPage.locator('#campaignStart').waitFor({ state: 'visible', timeout: 15000 });
     const campaignScreenState=await campaignPage.evaluate(()=>Object.fromEntries(
-      ['menu','shopScreen','heroes','campaign','collection','daily','game'].map(id=>{
+      ['menu','shopScreen','heroes','campaign','collection','cardLibraryScreen','daily','game'].map(id=>{
         const el=document.getElementById(id);
         return [id,{hidden:!!el?.hidden,display:el?getComputedStyle(el).display:'missing'}];
       })
@@ -487,7 +487,7 @@ const targets = [
     const collectionDetail=await shelfModal.locator('.bb-shelf-detail').innerText();
     if(!collectionDetail.includes('Корона дальнего пути')||!collectionDetail.includes('ЕЩЁ ВПЕРЕДИ')) failures.push(target.name+': KT-554 final crown detail or locked state is incorrect ('+collectionDetail+')');
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-reward-shelf.png',fullPage:false});
-    await campaignPage.locator('#bbCampaignCollectionClose').click();
+    await campaignPage.locator('#bbGlobalBack').click();
     // The shelf correctly returns to the home hub. Re-enter the campaign through
     // its real mode tile so the following atlas checks exercise the normal flow.
     await campaignPage.locator('button.mode[data-mode="campaign"]').evaluate(element=>element.click());
