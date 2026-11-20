@@ -11127,8 +11127,6 @@ function bbArrangeModeHud(){
   if(!game||!layout||!hud||!head)return;
   const phone=window.matchMedia('(max-width: 600px)').matches;
   const set=(node,styles)=>{if(!node)return;for(const [key,value] of Object.entries(styles)){const cssKey=key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase());node.style.setProperty(cssKey,String(value),'important');}};
-  /* Give the lower portrait objective rail the same right gutter as the viewport. */
-  set(game,{paddingRight:phone?'2px':'12px'});
   /* Keep the real left HUD rail. The old layout removed it and moved all
      objectives into the right utility rail, which created the scroll-window UI. */
   const oldGoals=game.querySelector('#bbMobileModeGoals');
@@ -11174,7 +11172,7 @@ function bbArrangeModeHud(){
   game.classList.add('unified-game-layout');
   game.dataset.mode=mode;
   game.classList.toggle('block-run-mode',mode==='rogue');
-  set(game,{display:'flex',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
+  set(game,{display:'flex',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',gridTemplateColumns:'none',gridTemplateRows:'none',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:phone?'5px':'8px',width:'100%',maxWidth:'1480px',minWidth:'0',height:phone?'100dvh':'100%',minHeight:'0',maxHeight:phone?'100dvh':'100%',margin:'0 auto',padding:phone?'5px 7px 7px 0':'clamp(10px,1.2vw,18px)',boxSizing:'border-box',overflow:'hidden'});
   set(head,{display:'flex',alignItems:'center',gap:'8px',flex:'0 0 auto',minHeight:phone?'36px':'44px',margin:'0',width:'100%',boxSizing:'border-box'});
   set(hud,{display:'grid',gridTemplateColumns:'repeat(4,minmax(0,1fr))',gridTemplateRows:'minmax(0,1fr)',gridAutoFlow:'column',gridAutoColumns:'minmax(0,1fr)',gap:phone?'3px':'8px',flex:'0 0 auto',width:'100%',minWidth:'0',height:phone?'46px':'62px',minHeight:phone?'46px':'62px',maxHeight:phone?'46px':'62px',margin:'0',order:'2'});
   for(const metric of hud.querySelectorAll('.hudbox,#gameCoins'))set(metric,{display:'flex',gridColumn:'auto',gridRow:'1',width:'100%',minWidth:'0',height:'100%',minHeight:'0',maxHeight:'100%',padding:phone?'4px 2px':'7px 6px',boxSizing:'border-box',flexDirection:'column',alignItems:'center',justifyContent:'center',overflow:'hidden'});
@@ -11192,7 +11190,7 @@ function bbArrangeModeHud(){
   set(layout,{display:'grid',position:'relative',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',
     gridTemplateColumns:phone?`minmax(0,1fr) ${railWidth}px`:`${leftRailWidth}px minmax(0,1fr) ${railWidth}px`,
     gridTemplateRows:phone?'minmax(0,1fr) 54px':'minmax(0,1fr)',gap:columnGap+'px',alignItems:'stretch',flex:'0 0 auto',minHeight:'0',
-    height:(boardHeight+10+(phone?54+columnGap:0))+'px',width:'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
+    height:(boardHeight+10+(phone?54+columnGap:0))+'px',width:phone?'calc(100% + 2px)':'100%',minWidth:'0',maxWidth:'100%',margin:'0',overflow:'hidden',order:'5',justifySelf:'stretch'});
   /* Portrait objectives occupy a dedicated second row, never an overlay above the board. */
   set(leftRail,{display:'flex',position:'relative',gridColumn:phone?'1 / -1':'1',gridRow:phone?'2':'1',
     top:'auto',left:'auto',right:'auto',zIndex:'auto',
