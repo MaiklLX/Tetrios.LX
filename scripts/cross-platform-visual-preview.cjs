@@ -146,9 +146,9 @@ const targets = [
       };
     });
     if(modeCardVisualState.count!==3||modeCardVisualState.cards.some(card=>
-      card.radius>1||card.borderWidth>0.1||card.background!=='none'||card.iconWidth<40||
+      card.radius<14||card.borderWidth<1||card.background==='none'||card.iconWidth<56||
       card.iconBorder==='rgba(0, 0, 0, 0)')){
-      failures.push(target.name+': KT-746 home mode sigils are still rendered as rectangular cards ('+JSON.stringify(modeCardVisualState)+')');
+      failures.push(target.name+': KT-750 home mode cards are not sufficiently prominent ('+JSON.stringify(modeCardVisualState)+')');
     }
     // KT-581: verify the actual Godot home-hub hierarchy, not only card colors.
     const homeHubLayoutState=await page.evaluate(()=>{
@@ -182,16 +182,20 @@ const targets = [
       const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
-    const redundantHomeCardsHidden=(!homeHubLayoutState.profile||homeHubLayoutState.profile.width===0)&&
-      (!homeHubLayoutState.collection||homeHubLayoutState.collection.width===0);
+    const profileVisible=!!homeHubLayoutState.profile&&homeHubLayoutState.profile.width>0&&homeHubLayoutState.profile.height>=40;
     const sigilsFit=['campaign','blockRun','daily'].every(key=>homeHubLayoutState[key]?.width>=homeHubLayoutState.menu.width*.2);
     const modeRects=homeHubLayoutState.modeLayout.children||[];
-    const modesShareRow=modeRects.length===3&&modeRects.every(item=>item.w>=homeHubLayoutState.menu.width*.2)&&
-      Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4;
-    if(!modesShareRow) failures.push(target.name+': three primary modes must form one horizontal portal row ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
-    if(!homePanelsOrdered||!redundantHomeCardsHidden||!sigilsFit||homeHubLayoutState.menu.height>homeHubLayoutState.viewport.height*.72||
+    const shortLandscape=homeHubLayoutState.viewport.width>homeHubLayoutState.viewport.height&&homeHubLayoutState.viewport.height<=600;
+    const stackedModes=homeHubLayoutState.viewport.width<=900&&!shortLandscape;
+    const modesAreProminent=modeRects.length===3&&modeRects.every(item=>
+      item.w>=homeHubLayoutState.menu.width*(stackedModes?.55:.2)&&item.h>=(stackedModes?100:125))&&
+      (stackedModes
+        ? Math.max(...modeRects.map(item=>item.x))-Math.min(...modeRects.map(item=>item.x))<=4
+        : Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4);
+    if(!modesAreProminent) failures.push(target.name+': KT-750 mode cards are too small or arranged incorrectly ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
+    if(!homePanelsOrdered||!profileVisible||!sigilsFit||
        homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2){
-      failures.push(target.name+': KT-746 home hub must fit as a compact game space with a quick dock ('+JSON.stringify(homeHubLayoutState)+')');
+      failures.push(target.name+': KT-750 home hub, pilot profile or dock geometry is incorrect ('+JSON.stringify(homeHubLayoutState)+')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
@@ -250,40 +254,80 @@ const targets = [
       await page.mouse.up();
     }
 
+    console.log('[stage:catalogue-navigation] ' + target.name);
+    // KT-750: the dock must remain attached after being moved to body and open real screens.
+    await page.locator('.bb-home-dock-global [data-home-dock="collection"]').click();
+    await page.locator('#collection:not([hidden])').waitFor({state:'visible',timeout:10000});
+    const collectionPageState=await page.evaluate(()=>{
+      const page=document.querySelector('#collection'),shelf=page?.querySelector('#bbCollectionScreenContent .bb-shelf-modal');
+      const dock=document.querySelector('.bb-home-dock-global'),back=document.querySelector('#bbGlobalBack');
+      return {
+        visible:!!page&&!page.hidden&&getComputedStyle(page).display!=='none',
+        shelfCards:shelf?.querySelectorAll('.bb-shelf-item').length||0,
+        dockVisible:!!dock&&getComputedStyle(dock).display!=='none',
+        backVisible:!!back&&getComputedStyle(back).display!=='none',
+        overlayOpen:document.querySelector('#overlay')?.classList.contains('show')||false
+      };
+    });
+    if(!collectionPageState.visible||collectionPageState.shelfCards!==9||
+       !collectionPageState.dockVisible||!collectionPageState.backVisible||collectionPageState.overlayOpen){
+      failures.push(target.name+': KT-750 collection must open as a complete screen with dock/back ('+JSON.stringify(collectionPageState)+')');
+    }
+    await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+    const fixedBack=await page.locator('#bbGlobalBack').evaluate(el=>({top:el.getBoundingClientRect().top,display:getComputedStyle(el).display}));
+    if(fixedBack.display==='none'||fixedBack.top>innerHeight*.25){
+      failures.push(target.name+': KT-750 fixed Back control is not available after scrolling ('+JSON.stringify(fixedBack)+')');
+    }
+    await page.locator('#bbGlobalBack').click();
+    await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
+
     console.log('[stage:card-library] ' + target.name);
-    // The compact dashboard keeps secondary destinations inside the More drawer.
-    // Open it explicitly so the archive remains reachable without cluttering the home screen.
-    const moreToggle = page.locator('#menu [data-home-dock="more"]');
-    if (await moreToggle.count()) await moreToggle.click();
-    // The complete card archive must be available before starting a run on every platform.
-    await page.locator('.bb-home-dock-global').getByText('КАРТЫ',{exact:true}).click();
-    await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
-    const allCards = await page.locator('#bbCardLibraryList article').count();
+    await page.locator('.bb-home-dock-global [data-home-dock="library"]').click();
+    await page.locator('#cardLibraryScreen:not([hidden])').waitFor({state:'visible',timeout:10000});
+    const libraryPageState=await page.evaluate(()=>{
+      const page=document.querySelector('#cardLibraryScreen'),dock=document.querySelector('.bb-home-dock-global');
+      const back=document.querySelector('#bbGlobalBack'),overlay=document.querySelector('#overlay');
+      return {
+        visible:!!page&&!page.hidden&&getComputedStyle(page).display!=='none',
+        dockVisible:!!dock&&getComputedStyle(dock).display!=='none',
+        backVisible:!!back&&getComputedStyle(back).display!=='none',
+        overlayOpen:!!overlay?.classList.contains('show')
+      };
+    });
+    if(!libraryPageState.visible||!libraryPageState.dockVisible||!libraryPageState.backVisible||libraryPageState.overlayOpen){
+      failures.push(target.name+': KT-750 card library must be a standalone screen, not an overlay ('+JSON.stringify(libraryPageState)+')');
+    }
+    const allCards = await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
-    // The live archive uses thematic category tabs; every card is Block Run-only.
-    const libraryHeading = await page.locator('.bb-library-heading').innerText();
+    const libraryHeading = await page.locator('#cardLibraryScreen .bb-library-heading').innerText();
     if (!libraryHeading.includes('Все карты относятся к рогалик-системе и работают только в режиме Block Run')) {
       failures.push(target.name + ': Block Run-only archive scope is not explained in the library');
     }
-    const libraryLayout = await page.locator('#modal.bb-upgrade-library-modal').evaluate(modal => {
-      const grid=modal.querySelector('.bb-library-grid'),cards=[...modal.querySelectorAll('.bb-library-card')];
+    const libraryLayout = await page.locator('#cardLibraryScreen .bb-upgrade-library-page').evaluate(pageRoot => {
+      const grid=pageRoot.querySelector('.bb-library-grid'),cards=[...pageRoot.querySelectorAll('.bb-library-card')];
       const r=grid?.getBoundingClientRect(),first=cards[0]?.getBoundingClientRect(),styles=grid?getComputedStyle(grid):null;
-      return {visible:!!r&&r.width>0&&r.height>0,columns:styles?.gridTemplateColumns||'',scrollable:!!grid&&grid.scrollHeight>=grid.clientHeight,cardCount:cards.length,cardWidth:first?.width||0,cardHeight:first?.height||0};
+      return {
+        visible:!!r&&r.width>0&&r.height>0,
+        columns:styles?.gridTemplateColumns||'',
+        pageScrollable:document.documentElement.scrollHeight>innerHeight+2,
+        cardCount:cards.length,cardWidth:first?.width||0,cardHeight:first?.height||0,
+        gridOverflow:styles?.overflowY||''
+      };
     });
-    if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.scrollable){
-      failures.push(target.name+': library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
+    if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.pageScrollable){
+      failures.push(target.name+': full-page library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
     }
     const pageBackdrop=await page.locator('body .app').evaluate(el=>getComputedStyle(el).backgroundImage);
     const pageSurface=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
     if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': friendly teal page backdrop is missing or washed out ('+JSON.stringify({pageBackdrop,pageSurface})+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-lib-filter="all"]').click();
-    const allFilteredCards = await page.locator('#bbCardLibraryList article').count();
+    const allFilteredCards = await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
     if (allFilteredCards !== 35) failures.push(target.name + ': the All category must retain all 35 cards, got ' + allFilteredCards);
     const categoryCounts={};
     for (const [filter,expected] of [['attack',12],['defense',7],['control',11],['anomaly',5]]) {
       await page.locator('[data-bb-lib-filter="'+filter+'"]').click();
-      const count=await page.locator('#bbCardLibraryList article').count();
+      const count=await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
       categoryCounts[filter]=count;
       if(count!==expected) failures.push(target.name+': '+filter+' archive should contain '+expected+' unique cards, got '+count);
     }
@@ -292,7 +336,8 @@ const targets = [
     if (await page.locator('[data-bb-card-filter="standard"], [data-bb-lib-filter="standard"]').count() !== 0) {
       failures.push(target.name + ': shared/standard card filter must not exist');
     }
-    await page.locator('#bbCloseCardLibrary').click();
+    await page.locator('#bbGlobalBack').click();
+    await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
 
     console.log('[stage:campaign-atlas] ' + target.name);
     // Campaign is a standard ruleset: show its own mission objectives, never card picks.
@@ -736,6 +781,8 @@ const targets = [
       throw new Error('Block Run hero confirmation did not open the arena: '+JSON.stringify({launchState,pageErrors:pageErrors.slice(-5),consoleErrors:consoleErrors.slice(-5),cause:error.message}));
     }
     await page.locator('#game .boardframe').waitFor({ state: 'visible', timeout: 10000 });
+    const arenaDockState=await page.locator('.bb-home-dock-global').evaluate(el=>getComputedStyle(el).display);
+    if(arenaDockState!=='none') failures.push(target.name+': KT-750 navigation dock must be hidden on the game arena (display='+arenaDockState+')');
     await page.locator('#game #rogueGoals').waitFor({state:'visible',timeout:10000});
     await page.waitForTimeout(900);
     const rogueRailState=await page.evaluate(()=>{
