@@ -21815,12 +21815,15 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 #menu.home-dashboard>.modes>button.mode[data-mode="campaign"] .modeicon{background:linear-gradient(145deg,#c5efff,#4b92ca 38%,#1b4266)!important}
 #menu.home-dashboard>.modes>button.mode[data-mode="rogue"] .modeicon{background:linear-gradient(145deg,#f8d99b,#bc8052 38%,#503450)!important}
 #menu.home-dashboard>.modes>button.mode[data-mode="daily"] .modeicon{background:linear-gradient(145deg,#e0f7be,#6ab77d 38%,#205b4b)!important}
-#menu.home-dashboard>.modes>button.mode .modetext{display:block!important;width:100%!important;min-width:0!important;text-align:center!important}
+#menu.home-dashboard>.modes>button.mode .modetext{display:block!important;width:100%!important;min-width:0!important;max-width:none!important;text-align:center!important;order:2!important}
+#menu.home-dashboard>.modes>button.mode .modeicon{order:1!important;align-self:center!important}
+#menu.home-dashboard>.modes>button.mode{flex-direction:column!important;align-items:center!important;justify-content:center!important}
 #menu.home-dashboard>.modes>button.mode .modetitle{font-size:10px!important;line-height:1.1!important;font-weight:1000!important;color:#f5ffff!important;text-shadow:0 2px 3px #000!important}
 #menu.home-dashboard>.modes>button.mode .modesub,#menu.home-dashboard>.modes>button.mode .tag,#menu.home-dashboard>.modes>button.mode .modearrow{display:none!important}
 #menu.home-dashboard>#dailyQuestsPanel,#menu.home-dashboard>#bbVisitStreak,#menu.home-dashboard>#openHeroes,#menu.home-dashboard>#rpgPanel,#menu.home-dashboard>.currency-panel,#menu.home-dashboard>.bottomstats,#menu.home-dashboard>#bbOpenCardLibrary,#menu.home-dashboard>.apk-download,#menu.home-dashboard>.shopbuttons,#menu.home-dashboard>.home-reset{display:none!important}
 #menu.home-dashboard>.bb-home-dock{position:fixed!important;z-index:1200!important;left:50%!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;transform:translateX(-50%)!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;width:min(620px,calc(100vw - 20px))!important;max-width:620px!important;height:62px!important;min-height:62px!important;margin:0!important;padding:5px!important;gap:5px!important;border:1px solid rgba(137,226,224,.5)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(20,53,68,.97),rgba(7,22,38,.98))!important;box-shadow:0 10px 30px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.16)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-#menu.home-dashboard>.bb-home-dock button,.bb-home-dock-global button{min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important;color:#a8cbd0!important;border:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;padding:5px 2px!important}
+#menu.home-dashboard>.bb-home-dock button,.bb-home-dock-global{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-template-rows:1fr!important;align-items:stretch!important;justify-content:stretch!important;overflow:hidden!important}
+.bb-home-dock-global button{min-width:0!important;width:100%!important;height:100%!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important;color:#a8cbd0!important;border:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;padding:5px 2px!important}
 .bb-home-dock-global button>span{font-size:20px!important;line-height:1!important}
 .bb-home-dock-global button>small{font-size:8px!important;font-weight:900!important;letter-spacing:.08em!important}
 .bb-home-dock-global button.is-active{background:linear-gradient(145deg,#2b5a65,#183847)!important;color:#ffe0a0!important}
@@ -21837,32 +21840,32 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
     const heroHeight=compact?146:164;
     const launchHeight=compact?54:58;
     const modesHeight=compact?104:124;
-    const rootStyle={flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:compact?'9px':'12px',
-      width:'100%',height:'auto',minHeight:'0',maxHeight:'none',margin:'0 auto',paddingBottom:compact?'84px':'94px',
-      gridTemplateColumns:'none',gridTemplateRows:'none',gridTemplateAreas:'none',overflow:'visible'};
+    const rootStyle={flex-direction:'column',align-items:'stretch',justify-content:'flex-start',gap:compact?'9px':'12px',
+      width:'100%',height:'auto',min-height:'0',max-height:'none',margin:'0 auto',padding-bottom:compact?'84px':'94px',
+      grid-template-columns:'none',grid-template-rows:'none',grid-template-areas:'none',overflow:'visible'};
     if(!menu.hidden&&menu.getAttribute('aria-hidden')!=='true')rootStyle.display='flex';
     set(menu,rootStyle);
     set(menu.querySelector(':scope > .hero'),{order:'1',flex:'0 0 '+heroHeight+'px',width:'100%',height:heroHeight+'px',
-      minHeight:heroHeight+'px',maxHeight:heroHeight+'px',margin:'0',position:'relative'});
+      min-height:heroHeight+'px',max-height:heroHeight+'px',margin:'0',position:'relative'});
     set(menu.querySelector(':scope > #bbHomeProfile'),{display:'none'});
     set(menu.querySelector(':scope > #bbHomeCollectionCard'),{display:'none'});
     set(menu.querySelector(':scope > #bbHomePlay'),{order:'2',position:'relative',inset:'auto',display:'flex',
-      alignItems:'center',justifyContent:'center',flex:'0 0 '+launchHeight+'px',width:'100%',height:launchHeight+'px',
-      minHeight:launchHeight+'px',maxHeight:launchHeight+'px',margin:'0'});
+      align-items:'center',justify-content:'center',flex:'0 0 '+launchHeight+'px',width:'100%',height:launchHeight+'px',
+      min-height:launchHeight+'px',max-height:launchHeight+'px',margin:'0'});
     set(menu.querySelector(':scope > .sectionlabel'),{display:'none'});
     const modes=menu.querySelector(':scope > .modes');
-    set(modes,{order:'3',position:'relative',display:'flex',flexDirection:'row',flexWrap:'nowrap',
-      alignItems:'stretch',justifyContent:'space-between',flex:'0 0 '+modesHeight+'px',width:'100%',
-      height:modesHeight+'px',minHeight:modesHeight+'px',maxHeight:modesHeight+'px',margin:'0',
-      padding:'4px 0',gap:compact?'5px':'8px',gridTemplateColumns:'none',gridTemplateRows:'none',overflow:'visible'});
+    set(modes,{order:'3',position:'relative',display:'flex',flex-direction:'row',flexWrap:'nowrap',
+      align-items:'stretch',justify-content:'space-between',flex:'0 0 '+modesHeight+'px',width:'100%',
+      height:modesHeight+'px',min-height:modesHeight+'px',max-height:modesHeight+'px',margin:'0',
+      padding:'4px 0',gap:compact?'5px':'8px',grid-template-columns:'none',grid-template-rows:'none',overflow:'visible'});
     for(const mode of modes?.querySelectorAll(':scope > button.mode')||[]){
-      set(mode,{position:'relative',display:'flex',flex:'1 1 0',flexBasis:'0',width:'0',minWidth:'0',maxWidth:'none',
-        height:'100%',minHeight:'0',maxHeight:modesHeight+'px',margin:'0',padding:'4px 2px',
-        gridArea:'auto',gridRow:'auto',gridColumn:'auto',flexDirection:'column',alignItems:'center',
-        justifyContent:'center',gap:compact?'5px':'7px',border:'0',borderRadius:'0',
-        background:'transparent',boxShadow:'none',overflow:'visible',textAlign:'center'});
-      set(mode.querySelector('.modetext'),{display:'block',width:'100%',minWidth:'0',textAlign:'center'});
-      set(mode.querySelector('.modetitle'),{fontSize:compact?'8px':'10px',lineHeight:'1.1',fontWeight:'1000',whiteSpace:'normal'});
+      set(mode,{position:'relative',display:'flex',flex:'1 1 0',flex-basis:'0',width:'0',min-width:'0',max-width:'none',
+        height:'100%',min-height:'0',max-height:modesHeight+'px',margin:'0',padding:'4px 2px',
+        grid-area:'auto',grid-row:'auto',grid-column:'auto',flex-direction:'column',align-items:'center',
+        justify-content:'center',gap:compact?'5px':'7px',border:'0',borderRadius:'0',
+        background:'transparent',boxShadow:'none',overflow:'visible',text-align:'center'});
+      set(mode.querySelector('.modetext'),{display:'block',width:'100%',min-width:'0',text-align:'center'});
+      set(mode.querySelector('.modetitle'),{font-size:compact?'8px':'10px',line-height:'1.1',font-weight:'1000',white-space:'normal'});
       set(mode.querySelector('.modesub'),{display:'none'});
       set(mode.querySelector('.tag'),{display:'none'});
       set(mode.querySelector('.modearrow'),{display:'none'});
@@ -21876,8 +21879,8 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
     const active=!menu.hidden&&menu.getAttribute('aria-hidden')!=='true';
     set(dock,{position:'fixed',zIndex:'1200',left:'50%',right:'auto',top:'auto',
       bottom:'calc(env(safe-area-inset-bottom, 0px) + 8px)',transform:'translateX(-50%)',
-      display:active?'grid':'none',gridTemplateColumns:'repeat(5,minmax(0,1fr))',width:'min(620px,calc(100vw - 20px))',
-      maxWidth:'620px',height:'62px',minHeight:'62px',margin:'0',padding:'5px',gap:'5px'});
+      display:active?'grid':'none',grid-template-columns:'repeat(5,minmax(0,1fr))',width:'min(620px,calc(100vw - 20px))',
+      max-width:'620px',height:'62px',min-height:'62px',margin:'0',padding:'5px',gap:'5px'});
   };
   window.bbApplyHomeMenuLayout=apply;
   apply();
