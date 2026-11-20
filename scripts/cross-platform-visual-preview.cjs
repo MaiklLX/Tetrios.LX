@@ -65,6 +65,7 @@ const targets = [
         modeParent:probe?.parentElement?.className,
         styles:[...document.styleSheets].map(s=>s.href).filter(Boolean),
         menuBg:menu&&getComputedStyle(menu).backgroundImage,
+        rects:Object.fromEntries(['#menu','#menu>.hero','#bbHomeProfile','#bbHomeCollectionCard','#bbHomePlay','#menu>.modes','#menu button.mode[data-mode="campaign"]','#menu button.mode[data-mode="rogue"]','#menu button.mode[data-mode="daily"]','#menu .bb-home-dock'].map(sel=>{const el=document.querySelector(sel),r=el?.getBoundingClientRect();return [sel,r?{x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),bottom:Math.round(r.bottom)}:null]})),
         mode:{radius:probe&&getComputedStyle(probe).borderRadius,bg:probe&&getComputedStyle(probe).backgroundImage,display:probe&&getComputedStyle(probe).display},
         gameClass:root?.className,goals:root?.querySelector('.bb-mode-goals-pocket')?.outerHTML?.slice(0,1200)};
     })));
