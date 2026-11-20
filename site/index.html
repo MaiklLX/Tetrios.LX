@@ -8611,6 +8611,37 @@ function bbGoalsRail(game) {
   return rail;
 }
 
+function bbGoalEmblem(id,label,value,target,complete=false,failed=false,extra='') {
+  const source=String(id||'')+' '+String(label||'');
+  const rules=[
+    [/lines|очистить линии/i,'▤','ЛИНИИ'],
+    [/score|набрать очки/i,'✧','ОЧКИ'],
+    [/time|продержаться/i,'⌛','ВРЕМЯ'],
+    [/level|достичь уровня/i,'⬆','УРОВЕНЬ'],
+    [/single|одиночную/i,'Ⅰ','ОДНА ЛИНИЯ'],
+    [/pieces|установить фигур/i,'▦','ФИГУРЫ'],
+    [/rotations|повернуть/i,'↻','ПОВОРОТ'],
+    [/hold|удержание/i,'⇄','ХОЛД'],
+    [/doubles|двойную/i,'Ⅱ','ДВОЙНАЯ'],
+    [/triple|тройную/i,'Ⅲ','ТРОЙНАЯ'],
+    [/tetris|4 линии/i,'▣','ТЕТРИС'],
+    [/noHardDrop|жёсткого сброса/i,'◇','БЕЗ СБРОСА'],
+    [/noHold|без удержания/i,'◈','БЕЗ ХОЛДА'],
+    [/streak|серию/i,'⚡','СЕРИЯ']
+  ];
+  const match=rules.find(([pattern])=>pattern.test(source))||[/./,'✦','ЦЕЛЬ'];
+  const current=Math.max(0,Math.min(Number(value)||0,Number(target)||1));
+  const total=Math.max(1,Number(target)||1);
+  const pct=Math.max(0,Math.min(100,current/total*100));
+  const status=failed?'failed':complete?'complete':'active';
+  const safeLabel=String(label||'Цель').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return '<div class="bb-goal-emblem '+status+'" data-goal="'+String(id||'goal')+'" title="'+safeLabel+'" aria-label="'+safeLabel+': '+current+' из '+total+'" style="--goal-progress:'+pct+'%">' +
+    '<span class="bb-goal-emblem-ring"><b>'+match[1]+'</b></span>' +
+    '<span class="bb-goal-emblem-count">'+(failed?'×':current+'/'+total)+'</span>' +
+    (extra?'<span class="bb-goal-emblem-extra">'+extra+'</span>':'')+
+    '</div>';
+}
+
 function bbRenderGoals() {
   const rogueOld = $('rogueGoals');
   const campaignOld = $('campaignGoals');
@@ -8638,24 +8669,21 @@ function bbRenderGoals() {
     const encounterTop=game.querySelector('#bbRogueEncounterTop') || (()=>{const node=document.createElement('div');node.id='bbRogueEncounterTop';node.className='bb-rogue-encounter-top';const head=game.querySelector('.screenhead');if(head)head.after(node);return node;})();
     encounterTop.innerHTML=bbRogueRenderEncounter();
     encounterTop.style.cssText='display:flex;flex:0 0 auto;min-width:0;';
-    panel.innerHTML = '<strong style="font-size:11px">✧ ЦЕЛИ БЛОК-РАНА</strong>' +
-      bbRogueGoals.map(g => {
+    panel.innerHTML = '<div class="bb-goals-heading"><span>ЭМБЛЕМЫ БЛОК-РАНА</span><b>✦</b></div>' +
+      '<div class="bb-goal-emblem-grid bb-rogue-emblem-grid">' + bbRogueGoals.map(g => {
         const value = g.value();
-                if (!g.claimed && value >= g.target) {
+        if (!g.claimed && value >= g.target) {
           g.claimed = true;
-bbCoins += g.reward;
-bbPut('coins', bbCoins);
-const coinsValue = $('gameCoinsValue');
-if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');
-bbRewardFloat(g.reward);
-toast('Цель выполнена! +' + g.reward + ' монет');
+          bbCoins += g.reward;
+          bbPut('coins', bbCoins);
+          const coinsValue = $('gameCoinsValue');
+          if (coinsValue) coinsValue.textContent = bbCoins.toLocaleString('ru-RU');
+          bbRewardFloat(g.reward);
+          toast('Цель выполнена! +' + g.reward + ' монет');
           bbRogueGoals[bbRogueGoals.indexOf(g)] = bbCreateRogueGoal();
         }
-        return '<div style="margin:6px 0">' +
-          (g.claimed ? '✅ ' : '◯ ') + g.label +
-          '<span style="float:right">' + Math.min(value, g.target) + '/' + g.target +
-          ' · 🪙 ' + g.reward + '</span></div>';
-      }).join('');
+        return bbGoalEmblem('rogue-'+g.id,g.label,value,g.target,g.claimed,false,'🪙 '+g.reward);
+      }).join('') + '</div>';
     const goalsLayout=game.querySelector('.playlayout');
     const goalsRail=goalsLayout?.querySelector('.sidecol');
     const mobileGoals=game.querySelector('#bbMobileModeGoals');
@@ -8688,24 +8716,16 @@ toast('Цель выполнена! +' + g.reward + ' монет');
   const done = goals.filter(g => g.value() >= g.target).length;
 
   panel.innerHTML =
-    '<div class="bb-goals-heading"><span>🎯 ЦЕЛИ УЗЛА</span><b>' +
+    '<div class="bb-goals-heading"><span>ЭМБЛЕМЫ МИССИИ</span><b>' +
     String(campaignNode).padStart(3, '0') + '</b></div>' +
-    '<div class="bb-goals-summary"><span>Прогресс миссии</span><strong>' +
+    '<div class="bb-goals-summary"><span>ЗАДАНИЯ</span><strong>' +
     done + ' / ' + goals.length + '</strong></div>' +
-    '<div class="bb-goals-list">' +
+    '<div class="bb-goal-emblem-grid bb-campaign-emblem-grid">' +
     goals.map(g => {
       const value = g.value();
       const complete = value >= g.target;
       const failed = typeof g.failed === 'function' && g.failed();
-      const percent = Math.min(100, value / g.target * 100);
-      return '<div class="bb-campaign-goal' +
-        (complete ? ' is-complete' : '') + (failed ? ' is-failed' : '') + '">' +
-        '<div class="bb-campaign-goal-top"><span class="bb-campaign-goal-label">' +
-        (failed ? '× ' : complete ? '✓ ' : '') + g.label +
-        '</span><strong class="bb-campaign-goal-count">' +
-        (failed ? 'НЕ ВЫПОЛНЕНО' : Math.min(value, g.target) + ' / ' + g.target) +
-        '</strong></div><div class="bb-campaign-goal-track"><span style="width:' +
-        percent + '%"></span></div></div>';
+      return bbGoalEmblem(g.id,g.label,value,g.target,complete,failed);
     }).join('') + '</div>';
   const campaignLayout=game.querySelector('.playlayout');
   const campaignRail=campaignLayout?.querySelector('.sidecol');
