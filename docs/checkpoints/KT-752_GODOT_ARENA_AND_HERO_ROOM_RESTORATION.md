@@ -48,3 +48,12 @@ The KT-752 mobile screenshots exposed clipping inside the right utility rail: th
 - Keep the 10×23 board, objectives ribbon, gameplay actions, and desktop layout unchanged.
 
 **Validation gate:** rerun Mobile Arena Visual Preview at 375×812 and 412×915, inspect screenshots for zero overlap/clipping and working HOLD/DROP taps, then rerun Cross-platform Visual Preview. This follow-up is not accepted until both fresh runs pass and screenshots are inspected.
+
+
+## KT-754 verification note — 20 Nov 2026
+
+- Mobile Arena Visual Preview #518 passed on the pre-KT-754 head `d2a63a77fd7b91ce3115d41f7ec3f43542db1d63` (375×812 and 412×915).
+- Manual inspection of both screenshots found the HOLD card's content extending beyond its slot and the Buddy skill icon clipped. KT-754 was added after that run; the screenshots do not validate KT-754.
+- Cross-platform Visual Preview #1011 failed on that same pre-KT-754 head. The report recorded: cosmic-backdrop assertion mismatch (dark surface and grid layer were present, but the test expected gradient layers), galaxy art width below 150px, goal-help pause state reported false despite the help modal appearing, mobile objective-ribbon/board-width checks failing on iOS/Android, and desktop Daily objective content clipped.
+- KT-754 code and this checkpoint were subsequently committed to the same PR branch. No fresh workflow run is associated with the updated head yet, so neither KT-754 nor the overall PR is accepted.
+- No merge to `main`, Pages deployment, APK build or release.
