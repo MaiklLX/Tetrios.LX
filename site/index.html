@@ -8804,6 +8804,13 @@ function bbRenderGoals() {
     const target=game.classList.contains('unified-game-layout')?(goalsRail?.querySelector('.bb-mode-goals-pocket')||goalsRail):(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:goalsRail);
     if(target&&panel.parentElement!==target)target.appendChild(panel);
     if(target?.classList.contains('bb-mode-goals-pocket')&&window.matchMedia('(max-width:600px)').matches){
+      /* The goals pocket must use the full lower ribbon width; its inherited
+         desktop card padding was leaving a large empty inset on portrait phones. */
+      setRibbon(target,{
+        display:'flex',width:'100%',minWidth:'0',height:'100%',minHeight:'0',
+        margin:'0',padding:'0',border:'0',boxSizing:'border-box',
+        overflow:'hidden',background:'transparent'
+      });
       /* KT-749.19: keep the three live emblems in one readable row.
          The old fixed 58px card split its width between a long heading and
          the emblem grid, leaving too little room for all three counters. */
@@ -8813,7 +8820,7 @@ function bbRenderGoals() {
       };
       setRibbon(panel,{
         display:'flex',flex:'1 1 0',flexDirection:'row',alignItems:'center',justifyContent:'center',
-        width:'auto',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',
+        width:'100%',minWidth:'0',minHeight:'0',height:'100%',maxHeight:'100%',
         margin:'0',padding:'0 2px',border:'0',borderRadius:'0',background:'transparent',
         boxShadow:'none',overflow:'hidden',gap:'2px',boxSizing:'border-box'
       });
