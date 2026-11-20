@@ -372,8 +372,8 @@ html body .app section#game.screen[data-daily-mechanic="chronoRift"] .chrono-car
 html body .app section#menu.screen.home-dashboard {
   display:grid!important;
   grid-template-columns:minmax(0,1fr)!important;
-  grid-template-areas:"hero" "profile" "collection" "launch" "modes"!important;
-  grid-template-rows:118px 48px 36px 58px 88px!important;
+  grid-template-areas:"hero" "profile" "collection" "launch" "modes" "dock"!important;
+  grid-template-rows:118px 48px 36px 58px 88px 62px!important;
   align-content:start!important;
   gap:7px!important;
   min-height:0!important;height:auto!important;max-height:none!important;
@@ -438,6 +438,7 @@ html body .app section#menu.screen.home-dashboard > .modes > button.mode {
   display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
   gap:4px!important;width:100%!important;min-width:0!important;height:100%!important;min-height:0!important;
   margin:0!important;padding:2px!important;overflow:visible!important;
+  grid-area:auto!important;grid-row:auto!important;grid-column:auto!important;align-self:stretch!important;
   border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
   text-align:center!important;
 }
@@ -471,8 +472,8 @@ html body .app section#menu.screen.home-dashboard > .apk-download,
 html body .app section#menu.screen.home-dashboard > .shopbuttons,
 html body .app section#menu.screen.home-dashboard > .home-reset {display:none!important}
 html body .app section#menu.screen.home-dashboard > .bb-home-dock {
-  position:fixed!important;z-index:1200!important;left:50%!important;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;
-  transform:translateX(-50%)!important;width:min(620px,calc(100vw - 20px))!important;
+  grid-area:dock!important;position:relative!important;z-index:10!important;left:auto!important;bottom:auto!important;
+  transform:none!important;width:100%!important;max-width:620px!important;justify-self:center!important;
   display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important;
   margin:0!important;padding:6px!important;border:1px solid rgba(137,226,224,.5)!important;border-radius:18px!important;
   background:linear-gradient(145deg,rgba(20,53,68,.97),rgba(7,22,38,.98))!important;
@@ -483,7 +484,7 @@ html body .app section#menu.screen.home-dashboard > .bb-home-dock > * {
   min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important;
 }
 @media(max-width:600px) and (orientation:portrait) {
-  html body .app section#menu.screen.home-dashboard {grid-template-rows:116px 44px 34px 56px 84px!important;gap:6px!important;padding-bottom:90px!important}
+  html body .app section#menu.screen.home-dashboard {grid-template-rows:116px 44px 34px 56px 84px 60px!important;gap:6px!important;padding-bottom:8px!important}
   html body .app section#menu.screen.home-dashboard > .hero {height:116px!important;min-height:116px!important}
   html body .app section#menu.screen.home-dashboard > #bbHomeProfile {height:44px!important;min-height:44px!important}
   html body .app section#menu.screen.home-dashboard > #bbHomeCollectionCard {height:34px!important;min-height:34px!important}
