@@ -165,18 +165,20 @@ const targets = [
         modeLayout:(()=>{const parent=document.querySelector('#menu .modes');const modes=[...document.querySelectorAll('#menu .modes > button.mode')];return {display:parent?getComputedStyle(parent).display:'',flexDirection:parent?getComputedStyle(parent).flexDirection:'',columns:parent?getComputedStyle(parent).gridTemplateColumns:'',children:modes.map(el=>{const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return {mode:el.dataset.mode,x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),gridRow:cs.gridRow,gridColumn:cs.gridColumn,flex:cs.flex}})}})()
       };
     });
-    const orderedHomePanels=['title','profile','collection','launch','modes'];
+    const orderedHomePanels=['title','launch','modes'];
     const homePanelsOrdered=orderedHomePanels.every((key,index,all)=>{
       const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
+    const redundantHomeCardsHidden=(!homeHubLayoutState.profile||homeHubLayoutState.profile.width===0)&&
+      (!homeHubLayoutState.collection||homeHubLayoutState.collection.width===0);
     const sigilsFit=['campaign','blockRun','daily'].every(key=>homeHubLayoutState[key]?.width>=homeHubLayoutState.menu.width*.2);
     const modeRects=homeHubLayoutState.modeLayout.children||[];
     const modesShareRow=modeRects.length===3&&modeRects.every(item=>item.w>=homeHubLayoutState.menu.width*.2)&&
       Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4;
     if(!modesShareRow) failures.push(target.name+': three primary modes must form one horizontal portal row ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
-    if(!homePanelsOrdered||!sigilsFit||homeHubLayoutState.menu.height>homeHubLayoutState.viewport.height*.72||
-       homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8){
+    if(!homePanelsOrdered||!redundantHomeCardsHidden||!sigilsFit||homeHubLayoutState.menu.height>homeHubLayoutState.viewport.height*.72||
+       homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8||homeHubLayoutState.dock.top<homeHubLayoutState.modes.bottom-2){
       failures.push(target.name+': KT-746 home hub must fit as a compact game space with a quick dock ('+JSON.stringify(homeHubLayoutState)+')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
