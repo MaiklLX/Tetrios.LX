@@ -36,3 +36,15 @@ No merge, main update, Pages deployment or APK build/release is performed from t
 ## KT-752.3 — portrait layout correction
 
 The first visual run exposed that the runtime layout function was explicitly pinning the objectives rail above the board and hiding both HOLD and hard-drop controls with inline `!important` styles. The follow-up changes the portrait grid to two rows: board + utility rail in row one, objectives across the full width in row two. The utility rail now retains visible HOLD and DROP actions. Desktop three-zone placement remains unchanged. Fresh mobile and cross-platform visual runs are required before acceptance.
+
+
+## KT-754 — compact mobile HOLD and hero utility cards
+
+The KT-752 mobile screenshots exposed clipping inside the right utility rail: the HOLD card's preview/action/timer exceeded its fixed portrait height, and the Buddy skill art was clipped by its 42px slot.
+
+- Compact the HOLD card to a 56px portrait slot with an 18px preview and a 22px action button.
+- Hide the duplicate elapsed-run timer inside HOLD on portrait phones; the mode HUD remains the timer/status surface.
+- Resize Buddy skill art to 32px and give its slot 50px so the complete icon remains visible.
+- Keep the 10×23 board, objectives ribbon, gameplay actions, and desktop layout unchanged.
+
+**Validation gate:** rerun Mobile Arena Visual Preview at 375×812 and 412×915, inspect screenshots for zero overlap/clipping and working HOLD/DROP taps, then rerun Cross-platform Visual Preview. This follow-up is not accepted until both fresh runs pass and screenshots are inspected.
