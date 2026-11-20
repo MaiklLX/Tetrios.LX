@@ -7783,7 +7783,7 @@ function show(id){
   if(typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout();
   // Render screen-owned content whenever navigation opens the screen,
   // including routes from the fixed dock and restored back-stack entries.
-  if(id==='heroes'&&typeof bbRenderHeroes==='function')bbRenderHeroes();
+  if(id==='heroes'){if(typeof bbSelectedHero!=='undefined')bbPreviewHero=bbSelectedHero;if(typeof bbRenderHeroes==='function')bbRenderHeroes();}
   if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
   if(typeof bbSyncMusic==='function')bbSyncMusic();
 }
