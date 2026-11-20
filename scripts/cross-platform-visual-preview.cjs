@@ -683,30 +683,31 @@ const targets = [
       const dailyGoalPlacement = await dailyPage.evaluate(() => {
         const game=document.querySelector('#game');
         const panel=game?.querySelector('#dailyMissionGoal');
-        const rail=game?.querySelector('.playlayout .sidecol');
-        const r=panel?.getBoundingClientRect(), rr=rail?.getBoundingClientRect();
+        const rail=game?.querySelector('.playlayout .gameleftcol');
+        const pocket=rail?.querySelector('.bb-mode-goals-pocket');
+        const r=panel?.getBoundingClientRect(), rr=rail?.getBoundingClientRect(), pr=pocket?.getBoundingClientRect();
         const overlaps=[];
-        if(rail&&panel)for(const node of Array.from(rail.children)){
+        if(pocket&&panel)for(const node of Array.from(pocket.children)){
           if(node===panel||getComputedStyle(node).display==='none')continue;
           const n=node.getBoundingClientRect();
           if(Math.min(n.right,r.right)-Math.max(n.left,r.left)>1&&Math.min(n.bottom,r.bottom)-Math.max(n.top,r.top)>1)overlaps.push(node.className||node.id||node.tagName);
         }
         return {
           parentClass:typeof panel?.parentElement?.className==='string'?panel.parentElement.className:'',
-          insideSideRail:!!rail&&panel?.parentElement===rail,
-          fullyInsideRail:!!r&&!!rr&&r.left>=rr.left-1&&r.right<=rr.right+1&&r.top>=rr.top-1&&r.bottom<=rr.bottom+1,
+          insideLeftHud:!!rail&&!!pocket&&pocket.parentElement===rail&&panel?.parentElement===pocket,
+          fullyInsideHud:!!r&&!!pr&&r.left>=pr.left-1&&r.right<=pr.right+1&&r.top>=pr.top-1&&r.bottom<=pr.bottom+1,
           panelScroll:panel?.scrollHeight||0,
           panelClient:panel?.clientHeight||0,
           railScroll:rail?.scrollHeight||0,
           railClient:rail?.clientHeight||0,
           overlaps,
-          leftRailChildren:Array.from(game?.querySelector('.gameleftcol')?.children||[]).map(node=>({id:node.id||'',cls:typeof node.className==='string'?node.className:'',tag:node.tagName,rect:(()=>{const b=node.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height}})()})),
+          leftRailChildren:Array.from(rail?.children||[]).map(node=>({id:node.id||'',cls:typeof node.className==='string'?node.className:'',tag:node.tagName,rect:(()=>{const b=node.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height}})()})),
           goalParentChain:(()=>{const chain=[];let node=panel;while(node&&chain.length<6){chain.push({tag:node.tagName,id:node.id||'',cls:typeof node.className==='string'?node.className:''});node=node.parentElement}return chain})()
         };
       });
       console.log('[daily-goal-layout]',JSON.stringify(dailyGoalPlacement));
-      if (!dailyGoalPlacement.insideSideRail) failures.push(target.name + ': daily objective is not integrated into the arena side rail (' + JSON.stringify(dailyGoalPlacement) + ')');
-      if (!dailyGoalPlacement.fullyInsideRail) failures.push(target.name + ': daily objective escapes or is clipped by the arena rail (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (!dailyGoalPlacement.insideLeftHud) failures.push(target.name + ': daily objective is not integrated into the shared left HUD goal ribbon (' + JSON.stringify(dailyGoalPlacement) + ')');
+      if (!dailyGoalPlacement.fullyInsideHud) failures.push(target.name + ': daily objective escapes or is clipped by the shared goal ribbon (' + JSON.stringify(dailyGoalPlacement) + ')');
       if (dailyGoalPlacement.panelScroll > dailyGoalPlacement.panelClient + 2) failures.push(target.name + ': daily objective content is clipped inside its pocket (' + JSON.stringify(dailyGoalPlacement) + ')');
       if (dailyGoalPlacement.overlaps.length) failures.push(target.name + ': daily objective overlaps other rail elements (' + JSON.stringify(dailyGoalPlacement) + ')');
       await dailyPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-daily-challenge-arena.png', fullPage: false });
