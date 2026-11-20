@@ -579,6 +579,7 @@ const targets = [
         goalHeight:gr?.height||0,
         goalScroll:goals?.scrollHeight||0,
         goalClient:goals?.clientHeight||0,
+        goalOverflow:getComputedStyle(goals||document.body).overflowY,
         overlaps,
         railScroll:rail?.scrollHeight||0,
         railClient:rail?.clientHeight||0
@@ -587,6 +588,7 @@ const targets = [
     if (!campaignRailState.goalsInsideRail) failures.push(target.name + ': campaign goals are outside the dedicated rail pocket (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.overlaps.length) failures.push(target.name + ': campaign goals overlap other rail elements (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.goalHeight < 50 || campaignRailState.goalHeight > 76) failures.push(target.name + ': campaign objective pocket is not compact (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.goalScroll > campaignRailState.goalClient + 2 || campaignRailState.goalOverflow === 'auto' || campaignRailState.goalOverflow === 'scroll') failures.push(target.name + ': campaign objectives must be visible without an internal scroll window (' + JSON.stringify(campaignRailState) + ');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     console.log('[stage:campaign-missions] ' + target.name);
@@ -697,11 +699,12 @@ const targets = [
       const hud=document.querySelector('#game .gamehud-top');
       const boxes=hud?Array.from(hud.children).filter(n=>getComputedStyle(n).display!=='none').map(n=>n.getBoundingClientRect()):[];
       const hudOverlap=boxes.some((a,i)=>boxes.slice(i+1).some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1));
-      return {insideRail:!!rail&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&!!rr&&!!pr&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:pr?.height||0};
+      return {insideRail:!!rail&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&!!rr&&!!pr&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:pr?.height||0,goalScroll:goals?.scrollHeight||0,goalClient:goals?.clientHeight||0,goalOverflow:getComputedStyle(goals||document.body).overflowY};
     });
     if(!rogueRailState.insideRail)failures.push(target.name+': Block Run objectives escape the side rail ('+JSON.stringify(rogueRailState)+')');
     if(rogueRailState.overlaps.length)failures.push(target.name+': Block Run objective overlaps side-rail cards ('+JSON.stringify(rogueRailState)+')');
     if(rogueRailState.hudOverlap)failures.push(target.name+': Block Run top HUD metrics overlap');
+    if(rogueRailState.goalScroll>rogueRailState.goalClient+2||rogueRailState.goalOverflow==='auto'||rogueRailState.goalOverflow==='scroll')failures.push(target.name+': Block Run objectives must be visible without an internal scroll window ('+JSON.stringify(rogueRailState)+')');
     console.log('[stage:gameplay-ready] ' + target.name);
 
     // KT-576: pause and result overlays must use the Godot cosmic panel language.
