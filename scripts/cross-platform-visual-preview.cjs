@@ -588,7 +588,7 @@ const targets = [
     if (!campaignRailState.goalsInsideRail) failures.push(target.name + ': campaign goals are outside the dedicated rail pocket (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.overlaps.length) failures.push(target.name + ': campaign goals overlap other rail elements (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.goalHeight < 50 || campaignRailState.goalHeight > 76) failures.push(target.name + ': campaign objective pocket is not compact (' + JSON.stringify(campaignRailState) + ')');
-    if (campaignRailState.goalScroll > campaignRailState.goalClient + 2 || campaignRailState.goalOverflow === 'auto' || campaignRailState.goalOverflow === 'scroll') failures.push(target.name + ': campaign objectives must be visible without an internal scroll window (' + JSON.stringify(campaignRailState) + ');
+    if (campaignRailState.goalScroll > campaignRailState.goalClient + 2 || campaignRailState.goalOverflow === 'auto' || campaignRailState.goalOverflow === 'scroll') failures.push(target.name + ': campaign objectives must be visible without an internal scroll window (' + JSON.stringify(campaignRailState) + ')');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
     console.log('[stage:campaign-missions] ' + target.name);
