@@ -32,3 +32,7 @@ Restore the Godot-era composition as a web presentation/layout, not an engine re
 Fresh Cross-platform and Mobile Arena previews must run on this branch. Inspect desktop Chromium and mobile portrait screenshots, including the actual 10×23 frame, side-rail alignment, visible HOLD/DROP controls, and goals placement. A green workflow alone is not visual acceptance.
 
 No merge, main update, Pages deployment or APK build/release is performed from this branch.
+
+## KT-752.3 — portrait layout correction
+
+The first visual run exposed that the runtime layout function was explicitly pinning the objectives rail above the board and hiding both HOLD and hard-drop controls with inline `!important` styles. The follow-up changes the portrait grid to two rows: board + utility rail in row one, objectives across the full width in row two. The utility rail now retains visible HOLD and DROP actions. Desktop three-zone placement remains unchanged. Fresh mobile and cross-platform visual runs are required before acceptance.
