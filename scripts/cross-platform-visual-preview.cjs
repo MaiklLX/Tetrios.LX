@@ -102,7 +102,7 @@ const targets = [
       const wallet=profile?.querySelector('.bb-home-profile-wallet strong')?.textContent?.trim()||'';
       const currentCoins=document.querySelector('#coins')?.textContent?.trim()||'';
       return {
-        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=50,
+        visible:!!profile&&getComputedStyle(profile).display!=='none'&&profile.getBoundingClientRect().height>=40,
         hasHeroEmblem:!!profile?.querySelector('.bb-home-profile-avatar svg'),
         hasPilotName:!!profile?.querySelector('.bb-home-profile-copy strong')?.textContent?.trim(),
         hasLevel:/УРОВЕНЬ \d+/.test(profile?.innerText||''),
@@ -133,10 +133,9 @@ const targets = [
       };
     });
     if(modeCardVisualState.count!==3||modeCardVisualState.cards.some(card=>
-      card.radius<16||card.borderWidth<1||!card.background.includes('radial-gradient')||
-      !card.background.includes('linear-gradient')||!card.accent||card.iconWidth<40||
+      card.radius>1||card.borderWidth>0.1||card.background!=='none'||card.iconWidth<40||
       card.iconBorder==='rgba(0, 0, 0, 0)')){
-      failures.push(target.name+': KT-577 Godot home mode-card styling mismatch ('+JSON.stringify(modeCardVisualState)+')');
+      failures.push(target.name+': KT-746 home mode sigils are still rendered as rectangular cards ('+JSON.stringify(modeCardVisualState)+')');
     }
     // KT-581: verify the actual Godot home-hub hierarchy, not only card colors.
     const homeHubLayoutState=await page.evaluate(()=>{
@@ -157,22 +156,22 @@ const targets = [
         viewport:{width:innerWidth,height:innerHeight},
         menuChildren:children,
         menu:rect('#menu'),title:rect('#menu .hero h1'),profile:rect('#bbHomeProfile'),
+        collection:rect('#bbHomeCollectionCard'),launch:rect('#bbHomePlay'),modes:rect('#menu .modes'),
         campaign:rect('#menu button.mode[data-mode="campaign"]'),
         blockRun:rect('#menu button.mode[data-mode="rogue"]'),
         daily:rect('#menu button.mode[data-mode="daily"]'),
-        quests:rect('#dailyQuestsPanel')
+        dock:rect('#menu .bb-home-dock')
       };
     });
-    const orderedHomePanels=['title','profile','campaign','blockRun','daily','quests'];
+    const orderedHomePanels=['title','profile','collection','launch','modes'];
     const homePanelsOrdered=orderedHomePanels.every((key,index,all)=>{
       const current=homeHubLayoutState[key],previous=index?homeHubLayoutState[all[index-1]]:null;
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
-    if(!homePanelsOrdered||
-       homeHubLayoutState.profile.width<homeHubLayoutState.menu.width*.55||
-       homeHubLayoutState.campaign.width<homeHubLayoutState.menu.width*.78||
-       homeHubLayoutState.blockRun.width<homeHubLayoutState.menu.width*.78){
-      failures.push(target.name+': KT-581 Godot home-hub composition/order/width mismatch ('+JSON.stringify(homeHubLayoutState)+')');
+    const sigilsFit=['campaign','blockRun','daily'].every(key=>homeHubLayoutState[key]?.width>=homeHubLayoutState.menu.width*.2);
+    if(!homePanelsOrdered||!sigilsFit||homeHubLayoutState.menu.height>homeHubLayoutState.viewport.height*.72||
+       homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8){
+      failures.push(target.name+': KT-746 home hub must fit as a compact game space with a quick dock ('+JSON.stringify(homeHubLayoutState)+')');
     }
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-menu.png', fullPage: false });
 
@@ -237,7 +236,7 @@ const targets = [
     const moreToggle = page.locator('#menu [data-home-dock="more"]');
     if (await moreToggle.count()) await moreToggle.click();
     // The complete card archive must be available before starting a run on every platform.
-    await page.locator('#bbOpenCardLibrary').click({force:true});
+    await page.locator('#menu .bb-home-dock').getByText('КАРТЫ',{exact:true}).click();
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
