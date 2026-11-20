@@ -3679,3 +3679,216 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
 @media(prefers-reduced-motion:reduce) {
   #menu.home-dashboard > .modes > .mode .modeicon {transition:none!important}
 }
+
+
+/* KT-745 — last-in-cascade override for the real #menu and live arena DOM.
+   Earlier passes targeted the legacy .home-dashboard root and lost to later
+   mobile/desktop rules. The current root is #menu; style the actual elements. */
+#menu {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"hero" "profile" "collection" "modes"!important;
+  grid-template-rows:auto auto auto auto!important;
+  align-content:start!important;
+  gap:8px!important;
+  min-height:0!important;height:auto!important;
+  padding:0 0 106px!important;
+  overflow:visible!important;
+}
+#menu > .hero {
+  grid-area:hero!important;
+  height:132px!important;min-height:132px!important;
+  margin:0!important;padding:9px 12px!important;
+  display:grid!important;place-items:center!important;
+  border:1px solid rgba(113,228,226,.38)!important;
+  border-radius:22px!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(92,225,222,.22),transparent 65%),linear-gradient(145deg,#1a4052,#0b1b2d 78%)!important;
+  box-shadow:0 6px 0 #061522,0 13px 22px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.2)!important;
+}
+#menu > .hero .hero-brand-lockup {gap:3px!important}
+#menu > .hero .hero-app-mark {width:52px!important;height:52px!important}
+#menu > .hero h1 {font-size:clamp(25px,7vw,36px)!important;margin:1px 0!important}
+#menu > .hero p {font-size:9px!important;margin:1px 0!important}
+#menu > #bbHomeProfile {
+  grid-area:profile!important;
+  height:44px!important;min-height:44px!important;
+  margin:0!important;padding:4px 10px!important;
+  border-radius:14px!important;
+}
+#menu > #bbOpenCardLibrary {
+  grid-area:collection!important;
+  height:36px!important;min-height:36px!important;
+  margin:0!important;padding:3px 9px!important;
+  border-radius:12px!important;
+  background:linear-gradient(100deg,rgba(34,78,91,.8),rgba(12,29,45,.9))!important;
+}
+#menu > .modes {
+  grid-area:modes!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:90px!important;
+  gap:4px!important;
+  min-height:90px!important;height:90px!important;
+  margin:0!important;padding:2px 0!important;
+  background:radial-gradient(ellipse at 50% 40%,rgba(83,207,206,.14),transparent 70%)!important;
+  border:0!important;box-shadow:none!important;
+}
+#menu .modes > button.mode {
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  gap:4px!important;width:100%!important;min-width:0!important;
+  min-height:0!important;height:100%!important;margin:0!important;
+  padding:3px 2px!important;overflow:visible!important;
+  border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;
+  text-align:center!important;
+}
+#menu .modes > button.mode:before,
+#menu .modes > button.mode:after {display:none!important;content:none!important}
+#menu .modes > button.mode .modeicon {
+  display:grid!important;place-items:center!important;
+  width:49px!important;height:54px!important;flex:0 0 54px!important;
+  border:2px solid rgba(215,250,243,.76)!important;
+  border-radius:18px 18px 23px 23px!important;
+  clip-path:polygon(50% 0,91% 15%,100% 52%,50% 100%,0 52%,9% 15%)!important;
+  background:linear-gradient(145deg,#9be9df,#317e8e 34%,#14364d 78%)!important;
+  box-shadow:0 4px 0 #061a2a,0 8px 15px rgba(0,0,0,.34),inset 0 2px rgba(255,255,255,.38)!important;
+  font-size:21px!important;
+}
+#menu .modes > button.mode[data-mode="campaign"] .modeicon {background:linear-gradient(145deg,#b9eaff,#458fc9 38%,#19395e)!important}
+#menu .modes > button.mode[data-mode="rogue"] .modeicon {background:linear-gradient(145deg,#f4d18b,#b7774c 38%,#46314e)!important}
+#menu .modes > button.mode[data-mode="daily"] .modeicon {background:linear-gradient(145deg,#d7f6b5,#65b27a 38%,#1d584a)!important}
+#menu .modes > button.mode .modetext {width:100%!important;min-width:0!important;text-align:center!important}
+#menu .modes > button.mode .modetitle {font-size:9px!important;line-height:1.1!important;color:#f4fbff!important;text-shadow:0 2px 3px #000!important}
+#menu .modes > button.mode .modesub,
+#menu .modes > button.mode .tag,
+#menu .modes > button.mode .modearrow {display:none!important}
+#menu > #dailyQuestsPanel,
+#menu > #bbVisitStreak,
+#menu > .currency-panel,
+#menu > .bottomstats,
+#menu > .apk-download,
+#menu > .sectionlabel,
+#menu > .shopbuttons,
+#menu > .home-reset,
+#menu > #openHeroes,
+#menu > #rpgPanel {display:none!important}
+#menu > .bb-home-dock {
+  position:fixed!important;z-index:1200!important;
+  left:50%!important;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;
+  transform:translateX(-50%)!important;
+  width:min(620px,calc(100vw - 20px))!important;
+  margin:0!important;padding:6px!important;gap:5px!important;
+  border:1px solid rgba(132,226,225,.48)!important;border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(20,53,68,.97),rgba(7,22,38,.98))!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.16)!important;
+  backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;
+}
+#menu > .bb-home-dock > * {border-radius:12px!important}
+@media(max-width:600px) and (orientation:portrait) {
+  #menu {gap:7px!important;padding-bottom:94px!important}
+  #menu > .hero {height:118px!important;min-height:118px!important}
+  #menu > .hero .hero-app-mark {width:46px!important;height:46px!important}
+  #menu > #bbHomeProfile {height:40px!important;min-height:40px!important}
+  #menu > #bbOpenCardLibrary {height:34px!important;min-height:34px!important}
+  #menu > .modes {height:84px!important;min-height:84px!important;grid-template-rows:84px!important}
+  #menu .modes > button.mode .modeicon {width:44px!important;height:49px!important;flex-basis:49px!important}
+}
+@media(orientation:landscape) and (pointer:coarse) and (max-height:600px) {
+  #menu {grid-template-columns:1fr 1fr!important;grid-template-areas:"hero profile" "collection collection" "modes modes"!important;gap:5px!important}
+  #menu > .hero {height:84px!important;min-height:84px!important}
+}
+
+/* Arena: the objective rail is taken out of the side-column flow and placed
+   as a single HUD ribbon above the board and utilities. */
+#game.unified-game-layout .playlayout,
+#game.daily-chrono-layout .playlayout {
+  position:relative!important;box-sizing:border-box!important;
+}
+#game.unified-game-layout .playlayout > .sidecol,
+#game.daily-chrono-layout .playlayout > .sidecol {
+  position:static!important;overflow:visible!important;padding-top:0!important;
+}
+#game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket,
+#game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket {
+  position:absolute!important;z-index:40!important;top:0!important;left:0!important;right:0!important;
+  width:100%!important;height:54px!important;min-height:54px!important;max-height:54px!important;
+  box-sizing:border-box!important;margin:0!important;padding:3px 8px!important;
+  display:flex!important;align-items:center!important;overflow:hidden!important;
+  border:1px solid rgba(122,229,226,.5)!important;border-radius:14px!important;
+  background:radial-gradient(ellipse at 12% 0%,rgba(110,236,222,.2),transparent 45%),radial-gradient(ellipse at 90% 100%,rgba(255,202,120,.14),transparent 42%),linear-gradient(180deg,#214d60,#0b2035)!important;
+  box-shadow:0 4px 0 #071725,0 8px 18px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.2)!important;
+  scrollbar-width:none!important;
+}
+#game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket #rogueGoals,
+#game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket #campaignGoals,
+#game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket #rogueGoals,
+#game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket #campaignGoals {
+  display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-evenly!important;
+  gap:7px!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;border:0!important;background:transparent!important;box-shadow:none!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goals-heading,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goals-heading {
+  flex:0 0 auto!important;margin:0 8px 0 0!important;color:#aaf4ed!important;
+  font-size:8px!important;font-weight:1000!important;letter-spacing:.1em!important;white-space:nowrap!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-grid,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-grid {
+  display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:space-evenly!important;
+  gap:8px!important;min-width:0!important;height:100%!important;overflow:hidden!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem {
+  display:flex!important;flex:0 1 76px!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;min-width:0!important;overflow:hidden!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-ring,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-ring {
+  flex:0 0 31px!important;width:31px!important;height:31px!important;
+  border:1px solid rgba(210,255,245,.5)!important;box-shadow:0 3px 0 #071725,0 0 10px rgba(92,236,222,.22),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-count,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-count {font-size:8px!important;font-weight:950!important;white-space:nowrap!important}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-extra,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-extra {display:none!important}
+#game.unified-game-layout .playlayout > div:first-child,
+#game.daily-chrono-layout .playlayout > div:first-child {
+  box-sizing:border-box!important;padding-top:61px!important;min-height:0!important;
+}
+#game.unified-game-layout .playlayout > div:first-child .boardframe,
+#game.daily-chrono-layout .playlayout > div:first-child .boardframe {
+  box-sizing:border-box!important;height:calc(100% - 61px)!important;max-height:calc(100% - 61px)!important;min-height:0!important;
+}
+#game.unified-game-layout .boardframe,
+#game.daily-chrono-layout .boardframe {
+  border:3px solid #4d8998!important;border-radius:19px!important;
+  background:linear-gradient(145deg,#9ce6df 0%,#397b8b 12%,#16364c 43%,#091a2c 100%)!important;
+  box-shadow:0 6px 0 #061321,0 13px 25px rgba(0,0,0,.38),inset 0 2px rgba(255,255,255,.34),inset 0 -4px rgba(0,0,0,.3)!important;
+}
+#game.unified-game-layout .sidecol > .sidecard,
+#game.daily-chrono-layout .sidecol > .sidecard,
+#game.unified-game-layout .sidecol > #bbHeroSkillCard,
+#game.daily-chrono-layout .sidecol > #bbHeroSkillCard {
+  border:1px solid rgba(130,213,219,.38)!important;border-radius:13px!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(126,224,222,.13),transparent 65%),linear-gradient(155deg,#244b5c,#102a40 76%,#0b1c30)!important;
+  box-shadow:0 4px 0 #061522,0 8px 14px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#game.unified-game-layout .gamehud .hudbox,
+#game.daily-chrono-layout .gamehud .hudbox {
+  border:1px solid rgba(130,213,219,.4)!important;border-radius:12px!important;
+  background:linear-gradient(180deg,#2a5668,#142f45 72%,#0e2439)!important;
+  box-shadow:0 4px 0 #071725,0 7px 12px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.18)!important;
+}
+@media(max-width:600px) and (orientation:portrait) {
+  #game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket,
+  #game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket {height:48px!important;min-height:48px!important;max-height:48px!important;padding:2px 4px!important}
+  #game.unified-game-layout .playlayout > div:first-child,
+  #game.daily-chrono-layout .playlayout > div:first-child {padding-top:55px!important}
+  #game.unified-game-layout .playlayout > div:first-child .boardframe,
+  #game.daily-chrono-layout .playlayout > div:first-child .boardframe {height:calc(100% - 55px)!important;max-height:calc(100% - 55px)!important}
+  #game.unified-game-layout .bb-mode-goals-pocket .bb-goals-heading,
+  #game.daily-chrono-layout .bb-mode-goals-pocket .bb-goals-heading {font-size:7px!important;letter-spacing:.04em!important}
+  #game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-ring,
+  #game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-ring {width:27px!important;height:27px!important;flex-basis:27px!important}
+}
