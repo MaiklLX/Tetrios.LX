@@ -7164,7 +7164,7 @@ function bbOpenCardLibrary(){
   };
   renderCards('all');
   page.querySelectorAll('[data-bb-lib-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbLibFilter)));
-  page.querySelector('#bbCardLibraryBack')?.addEventListener('click',()=>show('menu'));
+  page.querySelector('#bbCardLibraryBack')?.addEventListener('click',()=>window.bbNavigateBack?.());
   show('cardLibraryScreen');
 }
 window.bbOpenCardLibraryScreen=bbOpenCardLibrary;
@@ -21948,7 +21948,7 @@ body.bb-dock-visible .bb-home-dock-global{
   box-shadow:0 10px 30px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.12)!important;
   isolation:isolate!important;opacity:1!important;
 }
-#cardLibraryScreen{width:100%;max-width:1120px;margin:0 auto;padding:0 0 14px;min-height:calc(100dvh - 90px)}
+#cardLibraryScreen{position:relative;width:100%;max-width:1120px;margin:0 auto;padding:0 0 14px;min-height:calc(100dvh - 90px)}
 #cardLibraryScreen .bb-library-back{position:absolute;top:14px;left:14px;z-index:4;display:grid;place-items:center;
   width:42px;height:38px;padding:0;border:1px solid #79b8bb;border-radius:12px;
   color:#eaf8f2;background:linear-gradient(145deg,#24576a,#102d42);
