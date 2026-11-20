@@ -721,7 +721,7 @@ const targets = [
     // The hero showcase has an intentional entrance animation. Finish it in
     // the visual test so Playwright does not mistake the animation for a stuck UI.
     await page.locator('#bbConfirmStartHero').evaluate(el=>el.getAnimations({subtree:true}).forEach(animation=>animation.finish()));
-    await page.locator('#bbConfirmStartHero').click({force:true});
+    await page.locator('#bbConfirmStartHero').evaluate(element=>element.click());
     try {
       await page.locator('#game:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
     } catch (error) {
@@ -739,23 +739,23 @@ const targets = [
     await page.locator('#game #rogueGoals').waitFor({state:'visible',timeout:10000});
     await page.waitForTimeout(900);
     const rogueRailState=await page.evaluate(()=>{
-      const rail=document.querySelector('#game .playlayout .sidecol');
+      const rail=document.querySelector('#game .playlayout .gameleftcol');
       const pocket=rail?.querySelector('.bb-mode-goals-pocket');
       const goals=document.querySelector('#game #rogueGoals');
       const rr=rail?.getBoundingClientRect(),pr=pocket?.getBoundingClientRect(),gr=goals?.getBoundingClientRect();
       const overlaps=[];
-      if(rail&&goals)for(const node of Array.from(rail.children)){
-        if(node===pocket||getComputedStyle(node).display==='none')continue;
+      if(pocket&&goals)for(const node of Array.from(pocket.children)){
+        if(node===goals||getComputedStyle(node).display==='none')continue;
         const n=node.getBoundingClientRect();
         if(Math.min(n.right,gr.right)-Math.max(n.left,gr.left)>1&&Math.min(n.bottom,gr.bottom)-Math.max(n.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
       }
       const hud=document.querySelector('#game .gamehud-top');
       const boxes=hud?Array.from(hud.children).filter(n=>getComputedStyle(n).display!=='none').map(n=>n.getBoundingClientRect()):[];
       const hudOverlap=boxes.some((a,i)=>boxes.slice(i+1).some(b=>Math.min(a.right,b.right)-Math.max(a.left,b.left)>1&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>1));
-      return {insideRail:!!rail&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&!!rr&&!!pr&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:pr?.height||0,goalScroll:goals?.scrollHeight||0,goalClient:goals?.clientHeight||0,goalOverflow:getComputedStyle(goals||document.body).overflowY};
+      return {insideLeftHud:!!rail&&!!pocket&&pocket.parentElement===rail&&goals?.parentElement===pocket&&!!rr&&!!pr&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,overlaps,hudOverlap,goalHeight:pr?.height||0,goalScroll:goals?.scrollHeight||0,goalClient:goals?.clientHeight||0,goalOverflow:getComputedStyle(goals||document.body).overflowY};
     });
-    if(!rogueRailState.insideRail)failures.push(target.name+': Block Run objectives escape the side rail ('+JSON.stringify(rogueRailState)+')');
-    if(rogueRailState.overlaps.length)failures.push(target.name+': Block Run objective overlaps side-rail cards ('+JSON.stringify(rogueRailState)+')');
+    if(!rogueRailState.insideLeftHud)failures.push(target.name+': Block Run objectives escape the shared left HUD ribbon ('+JSON.stringify(rogueRailState)+')');
+    if(rogueRailState.overlaps.length)failures.push(target.name+': Block Run objective overlaps other left HUD markers ('+JSON.stringify(rogueRailState)+')');
     if(rogueRailState.hudOverlap)failures.push(target.name+': Block Run top HUD metrics overlap');
     if(rogueRailState.goalScroll>rogueRailState.goalClient+2||rogueRailState.goalOverflow==='auto'||rogueRailState.goalOverflow==='scroll')failures.push(target.name+': Block Run objectives must be visible without an internal scroll window ('+JSON.stringify(rogueRailState)+')');
     console.log('[stage:gameplay-ready] ' + target.name);
