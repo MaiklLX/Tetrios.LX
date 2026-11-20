@@ -7713,7 +7713,7 @@ function show(id){
   activeScreen.classList.remove('screen');
   void activeScreen.offsetWidth;
   activeScreen.classList.add('screen');
-  if(id==='menu'&&typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout();
+  if(typeof window.bbApplyHomeMenuLayout==='function')window.bbApplyHomeMenuLayout();
   if(id==='menu'&&typeof bbRenderDailyQuests==='function')bbRenderDailyQuests();
   if(typeof bbSyncMusic==='function')bbSyncMusic();
 }
@@ -21820,7 +21820,10 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 #menu.home-dashboard>.modes>button.mode .modesub,#menu.home-dashboard>.modes>button.mode .tag,#menu.home-dashboard>.modes>button.mode .modearrow{display:none!important}
 #menu.home-dashboard>#dailyQuestsPanel,#menu.home-dashboard>#bbVisitStreak,#menu.home-dashboard>#openHeroes,#menu.home-dashboard>#rpgPanel,#menu.home-dashboard>.currency-panel,#menu.home-dashboard>.bottomstats,#menu.home-dashboard>#bbOpenCardLibrary,#menu.home-dashboard>.apk-download,#menu.home-dashboard>.shopbuttons,#menu.home-dashboard>.home-reset{display:none!important}
 #menu.home-dashboard>.bb-home-dock{position:fixed!important;z-index:1200!important;left:50%!important;right:auto!important;top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)!important;transform:translateX(-50%)!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;width:min(620px,calc(100vw - 20px))!important;max-width:620px!important;height:62px!important;min-height:62px!important;margin:0!important;padding:5px!important;gap:5px!important;border:1px solid rgba(137,226,224,.5)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(20,53,68,.97),rgba(7,22,38,.98))!important;box-shadow:0 10px 30px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.16)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}
-#menu.home-dashboard>.bb-home-dock button{min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important}
+#menu.home-dashboard>.bb-home-dock button,.bb-home-dock-global button{min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important;color:#a8cbd0!important;border:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;padding:5px 2px!important}
+.bb-home-dock-global button>span{font-size:20px!important;line-height:1!important}
+.bb-home-dock-global button>small{font-size:8px!important;font-weight:900!important;letter-spacing:.08em!important}
+.bb-home-dock-global button.is-active{background:linear-gradient(145deg,#2b5a65,#183847)!important;color:#ffe0a0!important}
 @media(max-width:900px){#menu.home-dashboard{gap:9px!important;padding-bottom:84px!important}#menu.home-dashboard>.hero{flex-basis:146px!important;height:146px!important;min-height:146px!important;max-height:146px!important}#menu.home-dashboard>#bbHomePlay{flex-basis:54px!important;height:54px!important;min-height:54px!important;max-height:54px!important}#menu.home-dashboard>.modes{flex-basis:104px!important;height:104px!important;min-height:104px!important;max-height:104px!important;gap:5px!important}#menu.home-dashboard>.modes>button.mode .modeicon{flex-basis:54px!important;width:50px!important;height:54px!important;font-size:23px!important}#menu.home-dashboard>.modes>button.mode .modetitle{font-size:8px!important}}
 </style>
 
@@ -21868,10 +21871,12 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
       '#bbOpenCardLibrary','.apk-download','.shopbuttons','.home-reset']){
       set(menu.querySelector(':scope > '+selector),{display:'none'});
     }
-    const dock=menu.querySelector(':scope > .bb-home-dock');
+    const dock=menu.querySelector(':scope > .bb-home-dock')||document.querySelector('.bb-home-dock-global');
+    if(dock&&dock.parentElement!==document.body){dock.classList.add('bb-home-dock-global');document.body.appendChild(dock);}
+    const active=!menu.hidden&&menu.getAttribute('aria-hidden')!=='true';
     set(dock,{position:'fixed',zIndex:'1200',left:'50%',right:'auto',top:'auto',
       bottom:'calc(env(safe-area-inset-bottom, 0px) + 8px)',transform:'translateX(-50%)',
-      display:'grid',gridTemplateColumns:'repeat(5,minmax(0,1fr))',width:'min(620px,calc(100vw - 20px))',
+      display:active?'grid':'none',gridTemplateColumns:'repeat(5,minmax(0,1fr))',width:'min(620px,calc(100vw - 20px))',
       maxWidth:'620px',height:'62px',minHeight:'62px',margin:'0',padding:'5px',gap:'5px'});
   };
   window.bbApplyHomeMenuLayout=apply;
