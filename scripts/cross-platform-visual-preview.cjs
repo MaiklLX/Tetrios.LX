@@ -133,8 +133,17 @@ const targets = [
         const el=document.querySelector(selector),r=el?.getBoundingClientRect();
         return r?{top:r.top,bottom:r.bottom,width:r.width,height:r.height}:null;
       };
+      const menu=document.querySelector('#menu');
+      const children=[...(menu?.children||[])].map(el=>({
+        tag:el.tagName,id:el.id,className:typeof el.className==='string'?el.className:'',
+        text:(el.innerText||'').trim().replace(/\\s+/g,' ').slice(0,72),
+        display:getComputedStyle(el).display,
+        area:getComputedStyle(el).gridArea,
+        rect:(()=>{const r=el.getBoundingClientRect();return {x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height)}})()
+      }));
       return {
         viewport:{width:innerWidth,height:innerHeight},
+        menuChildren:children,
         menu:rect('#menu'),title:rect('#menu .hero h1'),profile:rect('#bbHomeProfile'),
         campaign:rect('#menu button.mode[data-mode="campaign"]'),
         blockRun:rect('#menu button.mode[data-mode="rogue"]'),
