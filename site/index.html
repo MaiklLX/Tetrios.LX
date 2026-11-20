@@ -8728,7 +8728,7 @@ function bbRenderGoals() {
       return bbGoalEmblem(g.id,g.label,value,g.target,complete,failed);
     }).join('') + '</div>';
   const campaignLayout=game.querySelector('.playlayout');
-  const campaignRail=campaignLayout?.querySelector('.sidecol');
+  const campaignRail=campaignLayout?.querySelector('.gameleftcol');
   const mobileGoals=game.querySelector('#bbMobileModeGoals');
   const target=game.classList.contains('unified-game-layout')?(campaignRail?.querySelector('.bb-mode-goals-pocket')||campaignRail):(window.matchMedia('(max-width: 600px)').matches&&mobileGoals?mobileGoals:game);
   if(target&&panel.parentElement!==target){if(target===game)campaignLayout?.after(panel);else target.appendChild(panel);}
