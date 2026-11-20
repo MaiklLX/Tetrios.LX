@@ -7166,6 +7166,7 @@ function bbOpenCardLibrary(){
   page.querySelectorAll('[data-bb-lib-filter]').forEach(button=>button.addEventListener('click',()=>renderCards(button.dataset.bbLibFilter)));
   show('cardLibraryScreen');
 }
+window.bbOpenCardLibraryScreen=bbOpenCardLibrary;
 $('bbOpenCardLibrary').onclick=()=>{try{bbOpenCardLibrary()}catch(error){console.error('Upgrade library failed:',error);toast('Не удалось открыть библиотеку. Попробуй ещё раз.')}};
 function bbRogueHasSynergy(){
   const r=bbRogueCardRanks;
@@ -8196,6 +8197,7 @@ function bbOpenCampaignCollection(selectedId, pageIndex=0) {
   $('bbShelfPrev').onclick=()=>bbOpenCampaignCollection(items[ Math.max(0,page*pageSize-1) ].id);
   $('bbShelfNext').onclick=()=>bbOpenCampaignCollection(items[Math.min(items.length-1,(page+1)*pageSize)].id);
 }
+window.bbOpenCollectionScreen=()=>{bbCollectionReturnScreen=bbLastShownScreen||'menu';bbOpenCampaignCollection();};
 const bbHomeProfileNode=$('bbHomeProfile');
 if(bbHomeProfileNode&&!$('bbHomeCollectionCard')){
   bbHomeProfileNode.insertAdjacentHTML('afterend',
@@ -10822,6 +10824,7 @@ function bbExchangeCollectionFragments(){
 $('bbExchangeFragments')?.addEventListener('click',bbExchangeCollectionFragments);
 
 $('openShop').onclick = bbShop;
+window.bbOpenShopScreen=bbShop;
 
 const bbOldEnd = endGame;
 endGame = function() {
@@ -21883,7 +21886,7 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 #menu.home-dashboard .bb-home-dock button>small{font-size:8px!important;font-weight:900!important;letter-spacing:.08em!important}
 #menu.home-dashboard .bb-home-dock button.is-active{background:linear-gradient(145deg,#2b5a65,#183847)!important;color:#ffe0a0!important}
 @media(max-width:650px){#menu.home-dashboard{padding:15px 12px 102px!important}#menu.home-dashboard .hero h1{font-size:clamp(24px,7vw,32px)!important}#menu.home-dashboard .modes{grid-template-columns:1fr!important;gap:8px!important}#menu.home-dashboard .modes .mode{min-height:82px!important;padding:11px 13px!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important}#menu.home-dashboard .modes .modeicon{width:42px!important;height:42px!important;flex:0 0 42px!important}#menu.home-dashboard .modes .modetext{flex:1!important}#menu.home-dashboard .modes .modetitle{font-size:14px!important}#menu.home-dashboard .modes .modesub{font-size:9px!important}#menu.home-dashboard .modes .tag{font-size:7px!important}#menu.home-dashboard .modes .modearrow{display:block!important;margin-left:auto!important;font-size:23px!important;color:#9fc9c4!important}#menu.home-dashboard .bb-home-play{min-height:62px!important;margin-bottom:14px!important}#menu.home-dashboard .bb-home-dock{min-height:62px!important}#menu.home-dashboard .bb-home-dock button>span{font-size:18px!important}}
-</style><script id="bb-kt735-home-navigation">(()=>{const m=document.getElementById('menu');if(!m)return;const d=m.querySelector('.bb-home-dock');if(!d||d.dataset.bbDockBound)return;d.dataset.bbDockBound='1';d.addEventListener('click',e=>{const b=e.target.closest('[data-home-dock]');if(!b)return;const a=b.dataset.homeDock;if(a==='home'){window.bbShowScreen?.('menu');window.scrollTo(0,0);return;}if(a==='heroes'){document.getElementById('openHeroes')?.click();return;}if(a==='collection'){document.getElementById('bbHomeCollectionCard')?.click();return;}if(a==='shop'){document.getElementById('openShop')?.click();return;}if(a==='library'){document.getElementById('bbOpenCardLibrary')?.click();return;}});})();</script>
+</style><script id="bb-kt735-home-navigation">(()=>{const m=document.getElementById('menu');if(!m)return;const d=m.querySelector('.bb-home-dock');if(!d||d.dataset.bbDockBound)return;d.dataset.bbDockBound='1';d.addEventListener('click',e=>{const b=e.target.closest('[data-home-dock]');if(!b)return;const a=b.dataset.homeDock;if(a==='home'){window.bbShowScreen?.('menu');window.scrollTo(0,0);return;}if(a==='heroes'){window.bbShowScreen?.('heroes');return;}if(a==='collection'){window.bbOpenCollectionScreen?.();return;}if(a==='shop'){window.bbOpenShopScreen?.();return;}if(a==='library'){window.bbOpenCardLibraryScreen?.();return;}});})();</script>
 
 <style id="bb-kt736-menu-fit-and-brand-lock">
 /* Brand marks must stay square at every responsive breakpoint. */
