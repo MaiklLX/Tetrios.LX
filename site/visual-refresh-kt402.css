@@ -1040,3 +1040,327 @@ body{background-color:#070b19}
   #game.unified-game-layout .playlayout,
   #game.daily-chrono-layout .playlayout{grid-template-columns:minmax(0,1fr) minmax(118px,37%) !important;column-gap:6px !important}
 }
+
+
+/* KT-744 — authoritative final layer.
+   KT-743 was appended to visual-overhaul.css, but this file is loaded later and
+   KT-402/405.5 re-established the old layouts. These rules intentionally live
+   after those legacy rules so the new composition actually wins. */
+#game.unified-game-layout .playlayout,
+#game.daily-chrono-layout .playlayout {
+  position:relative!important;
+  box-sizing:border-box!important;
+}
+#game.unified-game-layout .playlayout > .sidecol,
+#game.daily-chrono-layout .playlayout > .sidecol {
+  position:static!important;
+  overflow:visible!important;
+  padding-top:0!important;
+}
+#game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket,
+#game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket {
+  position:absolute!important;
+  z-index:30!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  width:100%!important;
+  height:58px!important;
+  min-height:58px!important;
+  max-height:58px!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:4px 10px!important;
+  display:flex!important;
+  align-items:center!important;
+  overflow:hidden!important;
+  border:1px solid rgba(122,229,226,.48)!important;
+  border-radius:15px!important;
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(110,236,222,.2),transparent 45%),
+    radial-gradient(ellipse at 90% 100%,rgba(255,202,120,.15),transparent 42%),
+    linear-gradient(180deg,#214d60,#0b2035)!important;
+  box-shadow:0 4px 0 #071725,0 9px 20px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.2)!important;
+  scrollbar-width:none!important;
+}
+#game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket #rogueGoals,
+#game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket #campaignGoals,
+#game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket #rogueGoals,
+#game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket #campaignGoals {
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-evenly!important;
+  gap:clamp(5px,1.5vw,16px)!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  scrollbar-width:none!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goals-heading,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goals-heading {
+  flex:0 0 auto!important;
+  margin:0 8px 0 0!important;
+  color:#aaf4ed!important;
+  font-size:8px!important;
+  font-weight:1000!important;
+  letter-spacing:.12em!important;
+  white-space:nowrap!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-grid,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-grid {
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-evenly!important;
+  gap:clamp(5px,1.4vw,14px)!important;
+  min-width:0!important;
+  height:100%!important;
+  overflow:hidden!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem {
+  display:flex!important;
+  flex:0 1 70px!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:5px!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-ring,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-ring {
+  flex:0 0 34px!important;
+  width:34px!important;height:34px!important;
+  border:1px solid rgba(210,255,245,.48)!important;
+  box-shadow:0 3px 0 #071725,0 0 12px rgba(92,236,222,.2),inset 0 1px rgba(255,255,255,.22)!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-count,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-count {
+  font-size:9px!important;font-weight:950!important;white-space:nowrap!important;
+}
+#game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-extra,
+#game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-extra {display:none!important}
+#game.unified-game-layout .playlayout > div:first-child,
+#game.daily-chrono-layout .playlayout > div:first-child {
+  box-sizing:border-box!important;
+  padding-top:66px!important;
+  min-height:0!important;
+}
+#game.unified-game-layout .playlayout > div:first-child .boardframe,
+#game.daily-chrono-layout .playlayout > div:first-child .boardframe {
+  box-sizing:border-box!important;
+  max-height:calc(100% - 66px)!important;
+  height:calc(100% - 66px)!important;
+  min-height:0!important;
+}
+#game.unified-game-layout .playlayout > div:first-child canvas#board,
+#game.daily-chrono-layout .playlayout > div:first-child canvas#board {
+  max-height:100%!important;
+}
+#game.unified-game-layout .boardframe,
+#game.daily-chrono-layout .boardframe {
+  border:3px solid #4d8998!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#9ce6df 0%,#397b8b 12%,#16364c 43%,#091a2c 100%)!important;
+  box-shadow:0 6px 0 #061321,0 13px 25px rgba(0,0,0,.38),inset 0 2px rgba(255,255,255,.34),inset 0 -4px rgba(0,0,0,.3)!important;
+}
+#game.unified-game-layout .sidecol > .sidecard,
+#game.daily-chrono-layout .sidecol > .sidecard,
+#game.unified-game-layout .sidecol > #bbHeroSkillCard,
+#game.daily-chrono-layout .sidecol > #bbHeroSkillCard {
+  border:1px solid rgba(130,213,219,.35)!important;
+  border-radius:14px!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(126,224,222,.13),transparent 65%),linear-gradient(155deg,#244b5c,#102a40 76%,#0b1c30)!important;
+  box-shadow:0 4px 0 #061522,0 8px 14px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#game.unified-game-layout .gamehud .hudbox,
+#game.daily-chrono-layout .gamehud .hudbox {
+  border:1px solid rgba(130,213,219,.38)!important;
+  border-radius:13px!important;
+  background:linear-gradient(180deg,#2a5668,#142f45 72%,#0e2439)!important;
+  box-shadow:0 4px 0 #071725,0 7px 12px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.18)!important;
+}
+@media(max-width:600px) and (orientation:portrait) {
+  #game.unified-game-layout .playlayout,
+  #game.daily-chrono-layout .playlayout {padding-top:0!important}
+  #game.unified-game-layout .playlayout > .sidecol > .bb-mode-goals-pocket,
+  #game.daily-chrono-layout .playlayout > .sidecol > .bb-mode-goals-pocket {
+    height:54px!important;min-height:54px!important;max-height:54px!important;
+    padding:3px 5px!important;border-radius:13px!important;
+  }
+  #game.unified-game-layout .playlayout > div:first-child,
+  #game.daily-chrono-layout .playlayout > div:first-child {padding-top:61px!important}
+  #game.unified-game-layout .playlayout > div:first-child .boardframe,
+  #game.daily-chrono-layout .playlayout > div:first-child .boardframe {height:calc(100% - 61px)!important;max-height:calc(100% - 61px)!important}
+  #game.unified-game-layout .bb-mode-goals-pocket .bb-goals-heading,
+  #game.daily-chrono-layout .bb-mode-goals-pocket .bb-goals-heading {font-size:7px!important;letter-spacing:.06em!important}
+  #game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-ring,
+  #game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-ring {width:29px!important;height:29px!important;flex-basis:29px!important}
+  #game.unified-game-layout .bb-mode-goals-pocket .bb-goal-emblem-count,
+  #game.daily-chrono-layout .bb-mode-goals-pocket .bb-goal-emblem-count {font-size:7px!important}
+  #game.unified-game-layout .playlayout > .sidecol,
+  #game.daily-chrono-layout .playlayout > .sidecol {padding-top:0!important}
+}
+
+/* A real home hub: one hero stage, one launch action, three mode sigils,
+   and the fixed quick-navigation dock. Secondary dashboard cards stay out
+   of the first screen instead of stacking into a long settings-like feed. */
+#menu.home-dashboard {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-areas:"hero" "profile" "collection" "launch" "modes"!important;
+  grid-template-rows:auto auto auto auto auto!important;
+  align-content:start!important;
+  gap:clamp(8px,1.5vh,14px)!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:0 0 112px!important;
+  overflow:visible!important;
+}
+#menu.home-dashboard > .hero {
+  grid-area:hero!important;
+  min-height:138px!important;
+  height:138px!important;
+  margin:0!important;
+  padding:12px 14px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(104,220,222,.32)!important;
+  border-radius:23px!important;
+  background:radial-gradient(ellipse at 50% 0%,rgba(92,224,224,.2),transparent 60%),linear-gradient(145deg,#17394d,#0b1b30 78%)!important;
+  box-shadow:0 7px 0 #061725,0 14px 24px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.18)!important;
+}
+#menu.home-dashboard > .hero .orb {height:56px!important;min-height:56px!important;margin:0 auto!important}
+#menu.home-dashboard > .hero .orb:before {width:48px!important;height:48px!important;border-radius:15px!important}
+#menu.home-dashboard > .hero .orb:after {width:78px!important;height:28px!important}
+#menu.home-dashboard > .hero .relic {font-size:28px!important}
+#menu.home-dashboard > .hero h1 {font-size:clamp(24px,6vw,34px)!important;margin:2px 0!important;line-height:1!important}
+#menu.home-dashboard > .hero p {font-size:9px!important;margin:2px 0 0!important}
+#menu.home-dashboard > #bbHomeProfile {
+  grid-area:profile!important;
+  min-height:46px!important;height:46px!important;
+  margin:0!important;padding:5px 10px!important;
+  border-radius:14px!important;
+}
+#menu.home-dashboard > #bbOpenCardLibrary {
+  grid-area:collection!important;
+  min-height:40px!important;height:40px!important;
+  margin:0!important;padding:4px 10px!important;
+  border-radius:13px!important;
+  background:linear-gradient(100deg,rgba(30,73,88,.85),rgba(12,29,46,.9))!important;
+}
+#menu.home-dashboard > #playBtn,
+#menu.home-dashboard > .play-cta,
+#menu.home-dashboard > [data-action="play"] {
+  grid-area:launch!important;
+  min-height:64px!important;height:64px!important;
+  margin:0!important;border-radius:20px!important;
+  background:linear-gradient(180deg,#ffe29a,#e4ad54 60%,#a66c32)!important;
+  box-shadow:0 6px 0 #644322,0 12px 20px rgba(0,0,0,.28),inset 0 2px rgba(255,255,255,.5)!important;
+  color:#1a2a3b!important;
+}
+#menu.home-dashboard > .modes {
+  grid-area:modes!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:1fr!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:5px!important;
+  min-height:106px!important;
+  height:106px!important;
+  margin:0!important;padding:3px 0!important;
+  background:radial-gradient(ellipse at 50% 40%,rgba(84,196,204,.14),transparent 70%)!important;
+  border:0!important;box-shadow:none!important;
+}
+#menu.home-dashboard > .modes > button.mode {
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;min-width:0!important;height:100%!important;min-height:0!important;
+  margin:0!important;padding:4px 2px!important;gap:5px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  text-align:center!important;overflow:visible!important;
+}
+#menu.home-dashboard > .modes > button.mode:before,
+#menu.home-dashboard > .modes > button.mode:after {display:none!important;content:none!important}
+#menu.home-dashboard > .modes > button.mode .modeicon {
+  display:grid!important;place-items:center!important;
+  width:54px!important;height:58px!important;flex:0 0 58px!important;
+  border:2px solid rgba(218,251,244,.72)!important;
+  border-radius:18px 18px 23px 23px!important;
+  clip-path:polygon(50% 0,91% 15%,100% 52%,50% 100%,0 52%,9% 15%)!important;
+  background:linear-gradient(145deg,#9be9df,#317e8e 34%,#14364d 78%)!important;
+  box-shadow:0 5px 0 #061a2a,0 9px 17px rgba(0,0,0,.35),inset 0 2px rgba(255,255,255,.4)!important;
+  font-size:23px!important;
+}
+#menu.home-dashboard > .modes > button.mode[data-mode="campaign"] .modeicon {background:linear-gradient(145deg,#b9eaff,#458fc9 38%,#19395e)!important}
+#menu.home-dashboard > .modes > button.mode[data-mode="rogue"] .modeicon {background:linear-gradient(145deg,#f4d18b,#b7774c 38%,#46314e)!important}
+#menu.home-dashboard > .modes > button.mode[data-mode="daily"] .modeicon {background:linear-gradient(145deg,#d7f6b5,#65b27a 38%,#1d584a)!important}
+#menu.home-dashboard > .modes > button.mode .modetext {width:100%!important;min-width:0!important;text-align:center!important}
+#menu.home-dashboard > .modes > button.mode .modetitle {font-size:9px!important;line-height:1.1!important;color:#f4fbff!important;text-shadow:0 2px 3px #000!important}
+#menu.home-dashboard > .modes > button.mode .modesub,
+#menu.home-dashboard > .modes > button.mode .tag,
+#menu.home-dashboard > .modes > button.mode .modearrow {display:none!important}
+#menu.home-dashboard > #dailyQuestsPanel,
+#menu.home-dashboard > #bbVisitStreak,
+#menu.home-dashboard > .currency-panel,
+#menu.home-dashboard > .bottomstats,
+#menu.home-dashboard > .apk-download,
+#menu.home-dashboard > .sectionlabel,
+#menu.home-dashboard > .shopbuttons,
+#menu.home-dashboard > .home-reset {
+  display:none!important;
+}
+#menu.home-dashboard > #openHeroes,
+#menu.home-dashboard > #rpgPanel {
+  display:none!important;
+}
+#menu.home-dashboard > .bb-home-dock {
+  position:fixed!important;z-index:1200!important;
+  left:50%!important;bottom:calc(env(safe-area-inset-bottom,0px) + 9px)!important;
+  transform:translateX(-50%)!important;
+  width:min(620px,calc(100vw - 20px))!important;
+  padding:6px!important;gap:5px!important;
+  border:1px solid rgba(132,226,225,.46)!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(20,53,68,.96),rgba(7,22,38,.97))!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.16)!important;
+}
+#menu.home-dashboard > .bb-home-dock > * {
+  border-radius:12px!important;
+  background:linear-gradient(145deg,rgba(71,130,143,.32),rgba(12,35,51,.42))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.12)!important;
+}
+@media(max-width:600px) and (orientation:portrait) {
+  #menu.home-dashboard {gap:7px!important;padding-bottom:96px!important}
+  #menu.home-dashboard > .hero {height:126px!important;min-height:126px!important}
+  #menu.home-dashboard > #bbHomeProfile {height:42px!important;min-height:42px!important}
+  #menu.home-dashboard > #bbOpenCardLibrary {height:36px!important;min-height:36px!important}
+  #menu.home-dashboard > #playBtn,
+  #menu.home-dashboard > .play-cta,
+  #menu.home-dashboard > [data-action="play"] {height:58px!important;min-height:58px!important}
+  #menu.home-dashboard > .modes {height:94px!important;min-height:94px!important}
+  #menu.home-dashboard > .modes > button.mode .modeicon {width:47px!important;height:51px!important;flex-basis:51px!important}
+}
+@media(orientation:landscape) and (pointer:coarse) and (max-height:600px) {
+  #menu.home-dashboard {grid-template-areas:"hero profile" "collection launch" "modes modes"!important;grid-template-columns:1fr 1fr!important;gap:5px!important}
+  #menu.home-dashboard > .hero {height:84px!important;min-height:84px!important}
+  #menu.home-dashboard > .hero .orb {display:none!important}
+  #menu.home-dashboard > .modes {height:84px!important;min-height:84px!important}
+}
+@media(prefers-reduced-motion:reduce) {
+  #menu.home-dashboard > .modes > button.mode .modeicon {transition:none!important}
+}
