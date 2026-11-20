@@ -11238,16 +11238,16 @@ function bbArrangeModeHud(){
     fontSize:phone?'7px':'8px',lineHeight:'1.1'});
   /* HOLD and hard-drop remain available in the utility rail on portrait devices. */
   set(rail.querySelector('.side-drop'),{display:'flex',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'40px',height:'40px'});
-  set(rail.querySelector('#holdBtn'),{display:'block',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'22px',height:'22px'});
+  set(rail.querySelector('#holdBtn'),{display:'block',visibility:'visible',pointerEvents:'auto',width:'100%',minHeight:'28px',height:'28px'});
   /* KT-754: compact HOLD contents so the preview, action and Buddy skill never overlap
      on narrow portrait rails. The elapsed timer remains available in the mode HUD. */
   const holdCard=rail.querySelector('.hold-card');
   if(holdCard){
-    set(holdCard,{display:'flex',flexDirection:'column',alignItems:'stretch',gap:'1px',width:'100%',minHeight:'56px',height:'56px',maxHeight:'56px',padding:'3px 4px',overflow:'hidden'});
+    set(holdCard,{display:'flex',flexDirection:'column',alignItems:'stretch',gap:'1px',width:'100%',minHeight:'64px',height:'64px',maxHeight:'64px',padding:'3px 4px',overflow:'hidden'});
     set(holdCard.querySelector('label'),{display:'block',flex:'0 0 7px',height:'7px',minHeight:'7px',margin:'0',fontSize:'6px',lineHeight:'7px'});
     set(holdCard.querySelector('#holdPreview'),{display:'block',flex:'0 0 18px',width:'100%',height:'18px',minHeight:'18px',maxHeight:'18px',margin:'0 auto'});
     set(holdCard.querySelector('.hold-empty'),{top:'15px',left:'3px',right:'3px',fontSize:'5px',lineHeight:'1'});
-    set(holdCard.querySelector('#holdBtn'),{display:'flex',flex:'0 0 22px',alignItems:'center',justifyContent:'center',width:'100%',minHeight:'22px',height:'22px',maxHeight:'22px',margin:'0',padding:'1px 2px',fontSize:'6px',lineHeight:'1',whiteSpace:'nowrap'});
+    set(holdCard.querySelector('#holdBtn'),{display:'flex',flex:'0 0 28px',alignItems:'center',justifyContent:'center',width:'100%',minHeight:'28px',height:'28px',maxHeight:'28px',margin:'0',padding:'1px 2px',fontSize:'6px',lineHeight:'1',whiteSpace:'nowrap'});
     set(holdCard.querySelector('.run-timer'),{display:'none'});
   }
   const heroSkill=rail.querySelector('#bbHeroSkillCard');
