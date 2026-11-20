@@ -1369,3 +1369,5 @@ body{background-color:#070b19}
 /* KT-753.12: keep the campaign atlas artwork legible across viewport sizes. */
 #campaign .bb-galaxy-art{width:156px!important;max-width:100%;}
 @media(min-width:901px){#campaign .bb-galaxy-art{width:170px!important;}}
+
+/* KT-753.13: regression preview uses the body-level cosmic background layer. */
