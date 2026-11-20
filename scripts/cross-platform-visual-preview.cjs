@@ -277,7 +277,7 @@ const targets = [
     }
     await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
     const fixedBack=await page.locator('#bbGlobalBack').evaluate(el=>({top:el.getBoundingClientRect().top,display:getComputedStyle(el).display}));
-    if(fixedBack.display==='none'||fixedBack.top>innerHeight*.25){
+    if(fixedBack.display==='none'||fixedBack.top>target.height*.25){
       failures.push(target.name+': KT-750 fixed Back control is not available after scrolling ('+JSON.stringify(fixedBack)+')');
     }
     await page.locator('#bbGlobalBack').click();
