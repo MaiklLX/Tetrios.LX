@@ -565,9 +565,11 @@ const targets = [
     if (campaignMissionState.cardChoices !== 0) failures.push(target.name + ': campaign must not open card choices');
     const campaignRailState = await campaignPage.evaluate(() => {
       const rail=document.querySelector('#game .playlayout .sidecol');
+      const stage=document.querySelector('#game .playlayout');
       const pocket=rail?.querySelector('.bb-mode-goals-pocket');
       const goals=document.querySelector('#game #campaignGoals');
-      const rr=rail?.getBoundingClientRect(), pr=pocket?.getBoundingClientRect(), gr=goals?.getBoundingClientRect();
+      const board=document.querySelector('#game .boardframe');
+      const sr=stage?.getBoundingClientRect(), pr=pocket?.getBoundingClientRect(), gr=goals?.getBoundingClientRect(), br=board?.getBoundingClientRect();
       const overlaps=[];
       if(rail&&goals) for(const node of Array.from(rail.children)){
         if(node===pocket||getComputedStyle(node).display==='none')continue;
@@ -575,8 +577,9 @@ const targets = [
         if(Math.min(r.right,gr.right)-Math.max(r.left,gr.left)>1&&Math.min(r.bottom,gr.bottom)-Math.max(r.top,gr.top)>1)overlaps.push(node.className||node.id||node.tagName);
       }
       return {
-        goalsInsideRail:!!rr&&!!pr&&!!gr&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&pr.left>=rr.left-1&&pr.right<=rr.right+1&&pr.top>=rr.top-1&&pr.bottom<=rr.bottom+1,
-        goalHeight:gr?.height||0,
+        goalsInArenaBand:!!sr&&!!pr&&!!gr&&pocket?.parentElement===rail&&goals?.parentElement===pocket&&pr.left>=sr.left-1&&pr.right<=sr.right+1&&pr.width>=sr.width*.85&&pr.top>=sr.top-1&&pr.bottom<=sr.top+82,
+        goalHeight:pr?.height||0,
+        boardClearance:!!pr&&!!br&&br.top>=pr.bottom-1,
         goalScroll:goals?.scrollHeight||0,
         goalClient:goals?.clientHeight||0,
         goalOverflow:getComputedStyle(goals||document.body).overflowY,
@@ -585,9 +588,10 @@ const targets = [
         railClient:rail?.clientHeight||0
       };
     });
-    if (!campaignRailState.goalsInsideRail) failures.push(target.name + ': campaign goals are outside the dedicated rail pocket (' + JSON.stringify(campaignRailState) + ')');
+    if (!campaignRailState.goalsInArenaBand) failures.push(target.name + ': campaign objectives are not arranged as a full-width arena ribbon (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.overlaps.length) failures.push(target.name + ': campaign goals overlap other rail elements (' + JSON.stringify(campaignRailState) + ')');
-    if (campaignRailState.goalHeight < 50 || campaignRailState.goalHeight > 76) failures.push(target.name + ': campaign objective pocket is not compact (' + JSON.stringify(campaignRailState) + ')');
+    if (!campaignRailState.boardClearance) failures.push(target.name + ': campaign objective ribbon overlaps the playfield (' + JSON.stringify(campaignRailState) + ')');
+    if (campaignRailState.goalHeight < 44 || campaignRailState.goalHeight > 76) failures.push(target.name + ': campaign objective ribbon is outside its compact height range (' + JSON.stringify(campaignRailState) + ')');
     if (campaignRailState.goalScroll > campaignRailState.goalClient + 2 || campaignRailState.goalOverflow === 'auto' || campaignRailState.goalOverflow === 'scroll') failures.push(target.name + ': campaign objectives must be visible without an internal scroll window (' + JSON.stringify(campaignRailState) + ')');
     if (target.mobile && campaignMissionState.missionBottom > campaignMissionState.viewportHeight + 2) failures.push(target.name + ': campaign mission rail extends beyond the viewport');
     await campaignPage.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-campaign-missions.png', fullPage: false });
