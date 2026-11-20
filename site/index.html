@@ -9187,10 +9187,11 @@ function bbSyncDailyGoalPlacement(){
   const panel=$('dailyMissionGoal');
   const screenHead=game?.querySelector('.screenhead');
   if(!game||!panel||!screenHead)return;
-  /* Unified arena owns the daily objective as a compact side-rail pocket. */
-  const rail=game.querySelector('.playlayout .sidecol');
-  if(game.classList.contains('unified-game-layout')&&rail&&!panel.hidden){
-    if(panel.parentElement!==rail)rail.appendChild(panel);
+  /* All mode objectives share one stable left HUD pocket; the right rail is for play utilities. */
+  const pocket=game.querySelector('.playlayout .gameleftcol .bb-mode-goals-pocket');
+  if(game.classList.contains('unified-game-layout')&&pocket&&!panel.hidden){
+    if(panel.parentElement!==pocket)pocket.appendChild(panel);
+    panel.classList.add('bb-daily-goal-pocket');
     return;
   }
   if(panel.parentElement!==game||panel.previousElementSibling!==screenHead){
@@ -10987,13 +10988,12 @@ function bbArrangeModeHud(){
     if(panel&&panel.parentElement!==goalPocket)goalPocket.appendChild(panel);
   }
   const dailyGoal=game.querySelector('#dailyMissionGoal');
-  if(dailyGoal&&dailyGoal.parentElement!==rail)rail.appendChild(dailyGoal);
+  if(dailyGoal&&dailyGoal.parentElement!==goalPocket)goalPocket.appendChild(dailyGoal);
   if(dailyGoal){
     dailyGoal.classList.add('bb-daily-goal-pocket');
-    set(dailyGoal,{display:'flex',
-      flex:'0 0 52px',minWidth:'0',minHeight:'52px',width:'100%',height:'52px',maxHeight:'52px',
-      margin:'0',padding:phone?'3px 3px':'5px 5px',boxSizing:'border-box',overflow:'hidden',
-      flexDirection:'column',alignItems:'center',justifyContent:'center',gap:'2px',textAlign:'center'});
+    set(dailyGoal,{display:'flex',flex:'1 1 auto',minWidth:'0',minHeight:'0',width:'100%',height:'100%',maxHeight:'100%',
+      margin:'0',padding:phone?'2px 4px':'5px',boxSizing:'border-box',overflow:'hidden',
+      flexDirection:phone?'row':'column',alignItems:'center',justifyContent:'center',gap:phone?'8px':'5px',textAlign:'center'});
   }
 
   game.classList.add('unified-game-layout');
@@ -11212,11 +11212,27 @@ function bbArrangeModeHud(){
         #game.unified-game-layout>.playlayout>div:first-child{grid-column:2!important;grid-row:1!important}
         #game.unified-game-layout>.playlayout>.sidecol{grid-column:3!important;grid-row:1!important}
       }
+      /* Daily objective joins the same emblem ribbon instead of occupying a separate right-side card. */
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket:after{display:none!important;content:none!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{cursor:default!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:2px 5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5e3b4!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{display:block!important;flex:0 1 auto!important;max-width:150px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#b5e8df!important;font-size:8px!important;font-weight:950!important;letter-spacing:.08em!important;line-height:1!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{display:grid!important;place-items:center!important;flex:0 0 auto!important;min-width:58px!important;min-height:34px!important;padding:4px 9px!important;border:1px solid rgba(255,221,154,.62)!important;border-radius:999px!important;background:linear-gradient(145deg,#496b72,#19394b)!important;box-shadow:0 3px 0 #071725,inset 0 1px rgba(255,255,255,.2)!important;color:#ffe4a8!important;font-size:12px!important;font-weight:1000!important;line-height:1!important;white-space:nowrap!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{content:"✦";display:block;flex:0 0 auto;color:#f6d28b;font-size:18px;text-shadow:0 0 9px rgba(255,210,128,.4)}
+      @media(min-width:601px){
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{flex-direction:column!important;gap:7px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{max-width:100%!important;font-size:7px!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{min-width:66px!important;min-height:40px!important;font-size:13px!important}
+      }
     `;document.head.appendChild(skin);
   }
   if(!game.dataset.bbArenaResizeBound){game.dataset.bbArenaResizeBound='1';window.addEventListener('resize',()=>{if(started&&!game.hidden)bbArrangeModeHud();},{passive:true});}
   const daily=game.querySelector('#dailyMissionGoal');
-  if(daily){if(daily.hidden)daily.style.removeProperty('display');else set(daily,{display:'flex',flex:'0 0 auto',margin:'0',padding:'5px 8px',boxSizing:'border-box'});}
+  if(daily){
+    if(daily.hidden)daily.style.removeProperty('display');
+    else set(daily,{display:'flex',flex:'1 1 auto',minWidth:'0',minHeight:'0',width:'100%',height:'100%',maxHeight:'100%',margin:'0',
+      padding:phone?'2px 4px':'5px',boxSizing:'border-box',overflow:'hidden'});
+  }
 }
 function bbApplyDailyChronoLayout(){
   const game=document.getElementById('game');
