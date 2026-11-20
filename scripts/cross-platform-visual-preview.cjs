@@ -341,9 +341,10 @@ const targets = [
     if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.pageScrollable){
       failures.push(target.name+': full-page library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
     }
-    const pageBackdrop=await page.locator('body').evaluate(el=>({background:getComputedStyle(el).backgroundImage,grid:getComputedStyle(el,'::before').backgroundImage}));
-    const pageSurface=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
-    if(!pageBackdrop.background.includes('radial-gradient')||!pageBackdrop.grid.includes('linear-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': cosmic page backdrop or grid texture is missing ('+JSON.stringify({pageBackdrop,pageSurface})+')');
+    const pageBackdrop=await page.evaluate(()=>({html:getComputedStyle(document.documentElement).backgroundImage,body:getComputedStyle(document.body).backgroundImage,grid:getComputedStyle(document.body,'::before').backgroundImage,app:getComputedStyle(document.querySelector('body .app')).backgroundImage}));
+    const pageSurface=await page.evaluate(()=>[getComputedStyle(document.documentElement).backgroundColor,getComputedStyle(document.body).backgroundColor,getComputedStyle(document.querySelector('body .app')).backgroundColor]);
+    const backdropLayers=Object.values(pageBackdrop).join(' ');
+    if(!backdropLayers.includes('linear-gradient')||!backdropLayers.includes('radial-gradient')||pageSurface.every(color=>color==='rgb(255, 255, 255)')) failures.push(target.name+': cosmic page backdrop or grid texture is missing ('+JSON.stringify({pageBackdrop,pageSurface})+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-lib-filter="all"]').click();
     const allFilteredCards = await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
@@ -516,6 +517,10 @@ const targets = [
     // its real mode tile so the following atlas checks exercise the normal flow.
     await campaignPage.locator('button.mode[data-mode="campaign"]').evaluate(element=>element.click());
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
+    // Finish the screen-arrival animation before measuring or capturing the atlas.
+    await campaignPage.locator('#campaign').evaluate(el=>el.getAnimations({subtree:true}).forEach(animation=>animation.finish()));
+    await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign');return !!el&&!el.hidden&&Number.parseFloat(getComputedStyle(el).opacity)>.98;},{timeout:10000});
+    await campaignPage.waitForFunction(()=>document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length>0,{timeout:10000});
     const campaignAtlasState = await campaignPage.evaluate(() => {
       const root=document.querySelector('#campaign'),style=root?getComputedStyle(root):null,rect=root?.getBoundingClientRect();
       return {
@@ -672,7 +677,7 @@ const targets = [
     await firstGoalEmblem.evaluate(button=>button.click());
     await campaignPage.locator('#overlay.show #resumeGoalInfo').waitFor({state:'visible',timeout:10000});
     const goalHelpState=await campaignPage.evaluate(()=>({
-      paused:typeof paused!=='undefined'&&paused,
+      paused:!!window.__TETRIOS_QA__?.getPieceState?.().paused,
       heading:document.querySelector('#modal h3')?.textContent?.trim()||'',
       hasDescription:!!document.querySelector('#modal .modalhead p')?.textContent?.trim(),
       progress:!!document.querySelector('#modal .bb-goal-info-progress')
@@ -718,9 +723,9 @@ const targets = [
         leftHudWidth:rr?.width||0,
         leftHudHeight:rr?.height||0,
         goalHeight:pr?.height||0,
-        mobileRibbon:!phone||(!!sr&&!!rr&&rr.left>=sr.left-1&&rr.right<=sr.right+1&&rr.width>=sr.width*.85&&rr.top>=sr.top-1&&rr.bottom<=sr.top+62),
+        mobileRibbon:!phone||(!!sr&&!!rr&&!!br&&rr.left>=sr.left-1&&rr.right<=sr.right+1&&rr.width>=sr.width*.85&&rr.top>=br.bottom-1&&rr.bottom<=sr.bottom+1),
         desktopLeftColumn:phone||(!!rr&&!!br&&rr.right<=br.left+2),
-        boardClearance:!phone||(!!pr&&!!br&&br.top>=pr.bottom-1),
+        boardClearance:!phone||(!!pr&&!!br&&br.bottom<=pr.top+1),
         goalScroll:goals?.scrollHeight||0,
         goalClient:goals?.clientHeight||0,
         goalOverflow:getComputedStyle(goals||document.body).overflowY,

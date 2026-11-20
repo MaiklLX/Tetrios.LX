@@ -8812,8 +8812,8 @@ function bbRenderGoals() {
       /* The goals pocket must use the full lower ribbon width; its inherited
          desktop card padding was leaving a large empty inset on portrait phones. */
       setRibbon(target,{
-        display:'flex',width:'calc(100% + 20px)',minWidth:'0',height:'100%',minHeight:'0',
-        margin:'0 0 0 -17px',padding:'0',border:'0',boxSizing:'border-box',
+        display:'flex',width:'100%',minWidth:'0',height:'100%',minHeight:'0',
+        margin:'0',padding:'0',border:'0',boxSizing:'border-box',
         overflow:'hidden',background:'transparent'
       });
       /* KT-749.19: keep the three live emblems in one readable row.
@@ -11184,7 +11184,7 @@ function bbArrangeModeHud(){
   const availableWidth=Math.max(120,window.innerWidth-outerGutter-railWidth-columnGap-(phone?0:leftRailWidth+columnGap)-20);
   /* One deterministic 10:23 board size per viewport. Optional mode content
      never participates in this calculation. */
-  const targetHeight=Math.min(window.innerHeight*(phone?.54:.66),phone?500:600);
+  const targetHeight=phone?Math.min(window.innerWidth*.53*2.3,window.innerHeight*.566,520):Math.min(window.innerHeight*.66,600);
   const boardWidth=Math.min(availableWidth,targetHeight*10/23,phone?250:430);
   const boardHeight=boardWidth*23/10;
   set(layout,{display:'grid',position:'relative',gridColumn:phone?'auto':'1 / -1',gridRow:'auto',
@@ -11373,7 +11373,7 @@ function bbArrangeModeHud(){
         #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{flex:1 1 auto!important;flex-direction:row!important;height:100%!important;min-height:0!important;padding:0!important}
         #game.unified-game-layout>.playlayout>.gameleftcol #rogueGoals,
         #game.unified-game-layout>.playlayout>.gameleftcol #campaignGoals{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:3px!important;padding:0!important}
-        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-heading{flex:0 0 auto!important;width:auto!important;max-width:54px!important;font-size:6px!important;letter-spacing:.03em!important}
+        #game.unified-game-layout>.playlayout>.gameleftcol .bb-goals-heading{flex:0 0 auto!important;width:auto!important;max-width:88px!important;font-size:7px!important;letter-spacing:.03em!important}
         #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-grid{gap:2px!important}
         #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem{flex:0 1 48px!important;flex-direction:row!important;gap:2px!important}
         #game.unified-game-layout>.playlayout>.gameleftcol .bb-goal-emblem-ring{flex-basis:26px!important;width:26px!important;height:26px!important}
@@ -11409,7 +11409,7 @@ function bbArrangeModeHud(){
       }
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket:after{display:none!important;content:none!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket{cursor:default!important}
-      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:2px 5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5e3b4!important}
+      #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:8px!important;width:100%!important;max-width:none!important;height:100%!important;min-width:0!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:2px 5px!important;overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5e3b4!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket .daily-mission-label{display:block!important;flex:0 1 auto!important;max-width:150px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#b5e8df!important;font-size:8px!important;font-weight:950!important;letter-spacing:.08em!important;line-height:1!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket strong{display:grid!important;place-items:center!important;flex:0 0 auto!important;min-width:58px!important;min-height:34px!important;padding:4px 9px!important;border:1px solid rgba(255,221,154,.62)!important;border-radius:999px!important;background:linear-gradient(145deg,#496b72,#19394b)!important;box-shadow:0 3px 0 #071725,inset 0 1px rgba(255,255,255,.2)!important;color:#ffe4a8!important;font-size:12px!important;font-weight:1000!important;line-height:1!important;white-space:nowrap!important}
       #game.unified-game-layout>.playlayout>.gameleftcol>.bb-mode-goals-pocket>.bb-daily-goal-pocket:before{content:"✦";display:block;flex:0 0 auto;color:#f6d28b;font-size:18px;text-shadow:0 0 9px rgba(255,210,128,.4)}
