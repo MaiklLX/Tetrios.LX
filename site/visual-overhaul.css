@@ -3044,3 +3044,99 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
     padding-bottom: 112px !important;
   }
 }
+
+
+/* KT-740 — objectives are in-game HUD markers, never a scrollable admin panel. */
+#game .bb-mode-goals-pocket {
+  box-sizing: border-box !important;
+  height: auto !important;
+  min-height: 68px !important;
+  max-height: none !important;
+  padding: 5px 6px !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, rgba(18,42,57,.72), rgba(8,21,34,.46)) !important;
+  box-shadow: inset 0 1px rgba(154,239,235,.12), 0 5px 16px rgba(0,0,0,.18) !important;
+  scrollbar-width: none !important;
+}
+#game .bb-mode-goals-pocket::-webkit-scrollbar,
+#game #rogueGoals::-webkit-scrollbar,
+#game #campaignGoals::-webkit-scrollbar { display: none !important; }
+#game .bb-mode-goals-pocket #rogueGoals,
+#game .bb-mode-goals-pocket #campaignGoals {
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-flow: row !important;
+  align-content: center !important;
+  align-items: stretch !important;
+  gap: 4px !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 58px !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  overscroll-behavior: auto !important;
+  scrollbar-width: none !important;
+}
+#game .bb-mode-goals-pocket #rogueGoals > div:first-child,
+#game .bb-mode-goals-pocket #campaignGoals > div:first-child {
+  grid-column: 1 / -1 !important;
+  min-height: 12px !important;
+  margin: 0 !important;
+  padding: 0 2px !important;
+  color: #8ce9e3 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-size: 8px !important;
+  line-height: 1.1 !important;
+  letter-spacing: .12em !important;
+  text-align: left !important;
+  text-transform: uppercase !important;
+}
+#game .bb-mode-goals-pocket #rogueGoals > div:not(:first-child),
+#game .bb-mode-goals-pocket #campaignGoals > div:not(:first-child) {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  min-height: 25px !important;
+  max-height: 34px !important;
+  margin: 0 !important;
+  padding: 4px 6px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(100,218,216,.22) !important;
+  border-radius: 8px !important;
+  background: linear-gradient(145deg, rgba(27,67,78,.82), rgba(12,31,47,.9)) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.06), 0 2px 5px rgba(0,0,0,.18) !important;
+  color: #e6f7f4 !important;
+  font-size: 9px !important;
+  line-height: 1.15 !important;
+  text-overflow: ellipsis !important;
+}
+#game .bb-mode-goals-pocket #rogueGoals > div:not(:first-child) *,
+#game .bb-mode-goals-pocket #campaignGoals > div:not(:first-child) * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+@media (max-width: 600px) {
+  #game .bb-mode-goals-pocket {
+    min-height: 64px !important;
+    padding: 3px 4px !important;
+  }
+  #game .bb-mode-goals-pocket #rogueGoals,
+  #game .bb-mode-goals-pocket #campaignGoals {
+    min-height: 58px !important;
+    gap: 3px !important;
+  }
+  #game .bb-mode-goals-pocket #rogueGoals > div:not(:first-child),
+  #game .bb-mode-goals-pocket #campaignGoals > div:not(:first-child) {
+    min-height: 24px !important;
+    padding: 3px 4px !important;
+    font-size: 8px !important;
+  }
+}
