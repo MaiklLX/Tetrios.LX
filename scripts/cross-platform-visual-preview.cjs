@@ -74,7 +74,7 @@ const targets = [
         modeParent:probe?.parentElement?.className,
         styles:[...document.styleSheets].map(s=>s.href).filter(Boolean),
         menuBg:menu&&getComputedStyle(menu).backgroundImage,
-        rects:Object.fromEntries(['#menu','#menu>.hero','#bbHomeProfile','#bbHomeCollectionCard','#bbHomePlay','#menu>.modes','#menu button.mode[data-mode="campaign"]','#menu button.mode[data-mode="rogue"]','#menu button.mode[data-mode="daily"]','#menu .bb-home-dock'].map(sel=>{const el=document.querySelector(sel),r=el?.getBoundingClientRect();return [sel,r?{x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),bottom:Math.round(r.bottom)}:null]})),
+        rects:Object.fromEntries(['#menu','#menu>.hero','#bbHomeProfile','#bbHomeCollectionCard','#bbHomePlay','#menu>.modes','#menu button.mode[data-mode="campaign"]','#menu button.mode[data-mode="rogue"]','#menu button.mode[data-mode="daily"]','.bb-home-dock-global'].map(sel=>{const el=document.querySelector(sel),r=el?.getBoundingClientRect();return [sel,r?{x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),bottom:Math.round(r.bottom)}:null]})),
         mode:{radius:probe&&getComputedStyle(probe).borderRadius,bg:probe&&getComputedStyle(probe).backgroundImage,display:probe&&getComputedStyle(probe).display},
         gameClass:root?.className,goals:root?.querySelector('.bb-mode-goals-pocket')?.outerHTML?.slice(0,1200)};
     })));
@@ -170,7 +170,7 @@ const targets = [
         campaign:rect('#menu button.mode[data-mode="campaign"]'),
         blockRun:rect('#menu button.mode[data-mode="rogue"]'),
         daily:rect('#menu button.mode[data-mode="daily"]'),
-        dock:rect('#menu .bb-home-dock'),
+        dock:rect('.bb-home-dock-global'),
         modeLayout:(()=>{const parent=document.querySelector('#menu .modes');const modes=[...document.querySelectorAll('#menu .modes > button.mode')];return {display:parent?getComputedStyle(parent).display:'',flexDirection:parent?getComputedStyle(parent).flexDirection:'',columns:parent?getComputedStyle(parent).gridTemplateColumns:'',children:modes.map(el=>{const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return {mode:el.dataset.mode,x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),gridRow:cs.gridRow,gridColumn:cs.gridColumn,flex:cs.flex}})}})()
       };
     });
@@ -253,7 +253,7 @@ const targets = [
     const moreToggle = page.locator('#menu [data-home-dock="more"]');
     if (await moreToggle.count()) await moreToggle.click();
     // The complete card archive must be available before starting a run on every platform.
-    await page.locator('#menu .bb-home-dock').getByText('КАРТЫ',{exact:true}).click();
+    await page.locator('.bb-home-dock-global').getByText('КАРТЫ',{exact:true}).click();
     await page.locator('#bbCardLibraryList article').first().waitFor({ state: 'visible' });
     const allCards = await page.locator('#bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
