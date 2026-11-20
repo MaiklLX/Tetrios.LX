@@ -3299,3 +3299,383 @@ button:focus-visible{outline:2px solid var(--cyan)!important;outline-offset:3px}
   background:transparent!important;
   box-shadow:none!important;
 }
+
+
+/* KT-743 — unified arena world: objectives become a full-width mission ribbon,
+   the playfield and utility rail share one responsive stage, and HUD surfaces
+   use a tactile 2D arcade-toy language instead of stacked admin cards. */
+#game:not([hidden]) > .playlayout {
+  position:relative!important;
+  isolation:isolate!important;
+  padding-top:78px!important;
+  overflow:hidden!important;
+}
+#game:not([hidden]) > .playlayout > div:first-child {
+  box-sizing:border-box!important;
+  padding-top:78px!important;
+  min-height:0!important;
+}
+#game:not([hidden]) > .playlayout > .sidecol {
+  position:static!important;
+  box-sizing:border-box!important;
+  padding-top:78px!important;
+  overflow:visible!important;
+}
+#game:not([hidden]) > .playlayout > .sidecol > .bb-mode-goals-pocket {
+  position:absolute!important;
+  z-index:12!important;
+  top:5px!important;
+  left:0!important;
+  right:0!important;
+  width:auto!important;
+  height:66px!important;
+  min-height:66px!important;
+  max-height:66px!important;
+  margin:0!important;
+  padding:5px 12px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:stretch!important;
+  overflow:hidden!important;
+  border:1px solid rgba(117,224,232,.42)!important;
+  border-radius:18px!important;
+  background:
+    radial-gradient(ellipse at 14% 0%,rgba(116,232,224,.16),transparent 45%),
+    radial-gradient(ellipse at 90% 100%,rgba(255,197,108,.12),transparent 42%),
+    linear-gradient(180deg,rgba(30,61,79,.96),rgba(9,24,42,.97))!important;
+  box-shadow:0 5px 0 rgba(3,10,22,.82),0 10px 22px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.17),inset 0 -3px rgba(0,0,0,.2)!important;
+  backdrop-filter:blur(8px) saturate(1.15)!important;
+  -webkit-backdrop-filter:blur(8px) saturate(1.15)!important;
+}
+#game:not([hidden]) > .playlayout > .sidecol > .bb-mode-goals-pocket:before {
+  content:"";
+  position:absolute;
+  inset:4px;
+  border:1px solid rgba(194,248,244,.12);
+  border-radius:13px;
+  pointer-events:none;
+}
+#game #rogueGoals,
+#game #campaignGoals {
+  position:relative!important;
+  z-index:1!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:minmax(58px,.22fr) minmax(0,1fr)!important;
+  grid-template-rows:1fr 1fr!important;
+  align-items:center!important;
+  align-content:center!important;
+  gap:1px 8px!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 5px!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#game #rogueGoals .bb-goals-heading,
+#game #campaignGoals .bb-goals-heading {
+  grid-column:1!important;
+  grid-row:1!important;
+  align-self:end!important;
+  justify-content:flex-start!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  color:#a9e9e6!important;
+  font-size:8px!important;
+  line-height:1!important;
+  letter-spacing:.12em!important;
+  white-space:nowrap!important;
+}
+#game #campaignGoals .bb-goals-summary {
+  grid-column:1!important;
+  grid-row:2!important;
+  justify-content:flex-start!important;
+  align-self:start!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:1px 0 0!important;
+  color:#f5d58e!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+#game .bb-goal-emblem-grid,
+#game #rogueGoals > .bb-goal-emblem-grid,
+#game #campaignGoals > .bb-goal-emblem-grid {
+  grid-column:2!important;
+  grid-row:1 / 3!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-auto-flow:column!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:4px!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0 2px!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#game .bb-goal-emblem {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:2px!important;
+  width:100%!important;
+  min-width:0!important;
+  max-height:100%!important;
+  padding:0!important;
+  overflow:hidden!important;
+  text-align:center!important;
+}
+#game .bb-goal-emblem-ring {
+  width:35px!important;
+  height:35px!important;
+  flex:0 0 35px!important;
+  border:1px solid rgba(203,250,244,.28)!important;
+  box-shadow:0 3px 0 rgba(3,12,24,.62),0 0 12px rgba(90,225,214,.18),inset 0 1px rgba(255,255,255,.2)!important;
+}
+#game .bb-goal-emblem-ring:before {
+  inset:3px!important;
+  background:radial-gradient(circle at 35% 22%,#3c7180,#102d3d 76%)!important;
+  border:1px solid rgba(216,255,248,.24)!important;
+}
+#game .bb-goal-emblem-ring b {
+  font-size:15px!important;
+  text-shadow:0 2px 2px rgba(0,0,0,.8)!important;
+}
+#game .bb-goal-emblem-count {
+  font-size:8px!important;
+  line-height:1!important;
+  text-shadow:0 1px 2px #06121e!important;
+}
+#game .bb-goal-emblem-extra {display:none!important}
+#game .bb-goal-emblem.complete .bb-goal-emblem-ring {
+  border-color:rgba(255,224,151,.72)!important;
+  box-shadow:0 3px 0 rgba(3,12,24,.62),0 0 14px rgba(255,205,111,.3),inset 0 1px rgba(255,255,255,.24)!important;
+}
+
+/* The board is a physical toy cabinet: thick rim, soft corners, bright inner glass. */
+#game .boardframe {
+  border:3px solid #477f91!important;
+  border-radius:22px!important;
+  background:linear-gradient(145deg,#a1d9d6 0%,#376b7e 12%,#142d43 42%,#071626 100%)!important;
+  box-shadow:0 7px 0 #06111e,0 14px 30px rgba(0,0,0,.38),inset 0 2px rgba(255,255,255,.34),inset 0 -5px rgba(0,0,0,.3)!important;
+}
+#game .boardframe:before {
+  content:"";
+  position:absolute;
+  z-index:3;
+  inset:4px;
+  border:1px solid rgba(194,250,244,.18);
+  border-radius:14px;
+  pointer-events:none;
+}
+#game canvas#board.board {
+  border-radius:11px!important;
+  background:#071421!important;
+  box-shadow:inset 0 0 0 1px rgba(152,230,230,.12),0 0 16px rgba(69,201,203,.09)!important;
+}
+#game > .gamehud {
+  align-items:center!important;
+  gap:clamp(5px,1vw,12px)!important;
+}
+#game .gamehud .hudbox,
+#game .gamehud #gameCoins {
+  position:relative!important;
+  min-width:0!important;
+  border:1px solid rgba(134,213,218,.42)!important;
+  border-radius:13px!important;
+  background:linear-gradient(180deg,#2b5668,#142f45 70%,#0e2539)!important;
+  box-shadow:0 4px 0 #071725,0 7px 13px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.2),inset 0 -2px rgba(0,0,0,.22)!important;
+}
+#game .gamehud .hudbox span,
+#game .gamehud #gameCoins span {
+  color:#a9d4db!important;
+  letter-spacing:.1em!important;
+  font-weight:900!important;
+}
+#game .gamehud .hudbox strong,
+#game .gamehud #gameCoins strong {
+  color:#fff0bd!important;
+  text-shadow:0 1px 0 #6c4e2c,0 0 10px rgba(255,213,127,.18)!important;
+}
+#game .sidecol > .sidecard {
+  position:relative!important;
+  border:1px solid rgba(117,197,207,.34)!important;
+  border-radius:16px 16px 12px 12px!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(125,220,220,.13),transparent 60%),
+    linear-gradient(160deg,#254a5d,#10283c 75%,#0b1c30)!important;
+  box-shadow:0 4px 0 #061522,0 8px 15px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.14),inset 0 -2px rgba(0,0,0,.22)!important;
+}
+#game .sidecol > .sidecard label {
+  color:#a9d5dc!important;
+  font-weight:900!important;
+  letter-spacing:.08em!important;
+}
+#game .sidecol .charge-ring,
+#game .sidecol .chrono-ring {
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))!important;
+}
+#game .sidecol .nextcanvas {
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))!important;
+}
+#game .sidecol .side-drop {
+  border:1px solid #f5d18b!important;
+  border-radius:11px!important;
+  background:linear-gradient(180deg,#e2b76e,#9d693c)!important;
+  color:#fff5d8!important;
+  box-shadow:0 3px 0 #51351f,inset 0 1px rgba(255,255,255,.35)!important;
+}
+
+/* Main menu: remove rectangular mode tiles; use a playful constellation of portals. */
+#menu.home-dashboard > .modes {
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:minmax(112px,1fr)!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:clamp(8px,2vw,22px)!important;
+  padding:8px 2px!important;
+  background:radial-gradient(ellipse at 50% 45%,rgba(79,183,215,.1),transparent 70%)!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+#menu.home-dashboard > .modes > .mode {
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:108px!important;
+  height:100%!important;
+  margin:0!important;
+  padding:5px 3px!important;
+  overflow:visible!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-align:center!important;
+  transform:none!important;
+}
+#menu.home-dashboard > .modes > .mode:before,
+#menu.home-dashboard > .modes > .mode:after {display:none!important}
+#menu.home-dashboard > .modes > .mode .modeicon {
+  position:relative!important;
+  display:grid!important;
+  place-items:center!important;
+  width:clamp(52px,7vw,72px)!important;
+  height:clamp(58px,7.5vw,78px)!important;
+  flex:0 0 auto!important;
+  border:2px solid rgba(213,248,243,.68)!important;
+  border-radius:22px 22px 27px 27px!important;
+  clip-path:polygon(50% 0,91% 15%,100% 52%,50% 100%,0 52%,9% 15%)!important;
+  background:linear-gradient(145deg,#9ce9e0 0%,#317e8f 25%,#17394f 72%,#10273e 100%)!important;
+  box-shadow:0 5px 0 #071b2a,0 9px 20px rgba(0,0,0,.34),inset 0 2px rgba(255,255,255,.38),inset 0 -5px rgba(0,0,0,.24)!important;
+  font-size:clamp(22px,3vw,32px)!important;
+  filter:drop-shadow(0 5px 6px rgba(0,0,0,.32))!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="rogue"] .modeicon {
+  background:linear-gradient(145deg,#f3d18b,#b77948 28%,#68405b 72%,#332b53)!important;
+  border-color:#ffe2a6!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="campaign"] .modeicon {
+  background:linear-gradient(145deg,#b6e9ff,#458cc7 32%,#28508c 72%,#172b5b)!important;
+  border-color:#b9e9ff!important;
+}
+#menu.home-dashboard > .modes > .mode[data-mode="daily"] .modeicon {
+  background:linear-gradient(145deg,#d6f6b0,#66ad75 32%,#2c745e 72%,#17433e)!important;
+  border-color:#d8f6bd!important;
+}
+#menu.home-dashboard > .modes > .mode .modetext {
+  width:100%!important;
+  min-width:0!important;
+  text-align:center!important;
+}
+#menu.home-dashboard > .modes > .mode .modetitle {
+  color:#f3fbff!important;
+  font-size:clamp(10px,1.05vw,13px)!important;
+  line-height:1.1!important;
+  font-weight:1000!important;
+  text-shadow:0 2px 3px rgba(0,0,0,.8)!important;
+}
+#menu.home-dashboard > .modes > .mode .modesub,
+#menu.home-dashboard > .modes > .mode .tag,
+#menu.home-dashboard > .modes > .mode .modearrow {display:none!important}
+#menu.home-dashboard > .modes > .mode:hover .modeicon,
+#menu.home-dashboard > .modes > .mode:focus-visible .modeicon {
+  transform:translateY(-4px) scale(1.06)!important;
+  filter:drop-shadow(0 0 12px rgba(109,237,232,.42))!important;
+}
+#menu.home-dashboard > #openHeroes,
+#menu.home-dashboard > #bbOpenCardLibrary,
+#menu.home-dashboard > #rpgPanel > #openShop {
+  border:0!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(33,72,91,.84),rgba(12,29,47,.94))!important;
+  box-shadow:0 4px 0 #061522,0 9px 18px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.15)!important;
+}
+@media(max-width:760px) {
+  #game:not([hidden]) > .playlayout {padding-top:72px!important}
+  #game:not([hidden]) > .playlayout > div:first-child {padding-top:72px!important}
+  #game:not([hidden]) > .playlayout > .sidecol {padding-top:72px!important}
+  #game:not([hidden]) > .playlayout > .sidecol > .bb-mode-goals-pocket {
+    top:3px!important;height:64px!important;min-height:64px!important;max-height:64px!important;
+    padding:4px 6px!important;border-radius:15px!important;
+  }
+  #game #rogueGoals,#game #campaignGoals {
+    grid-template-columns:minmax(48px,.2fr) minmax(0,1fr)!important;
+    gap:1px 4px!important;padding:0 2px!important;
+  }
+  #game #rogueGoals .bb-goals-heading,#game #campaignGoals .bb-goals-heading {font-size:7px!important;letter-spacing:.08em!important}
+  #game #campaignGoals .bb-goals-summary {font-size:9px!important}
+  #game .bb-goal-emblem-grid,#game #rogueGoals > .bb-goal-emblem-grid,#game #campaignGoals > .bb-goal-emblem-grid {
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:2px!important;padding:0!important;
+  }
+  #game .bb-goal-emblem-ring {width:31px!important;height:31px!important;flex-basis:31px!important}
+  #game .bb-goal-emblem-ring b {font-size:13px!important}
+  #game .bb-goal-emblem-count {font-size:7px!important}
+  #game .boardframe {border-radius:17px!important;padding:4px!important}
+  #game canvas#board.board {border-radius:9px!important}
+  #menu.home-dashboard > .modes {
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:minmax(96px,1fr)!important;
+    gap:4px!important;padding:4px 0!important;
+  }
+  #menu.home-dashboard > .modes > .mode {min-height:94px!important;padding:3px 1px!important}
+  #menu.home-dashboard > .modes > .mode .modeicon {width:52px!important;height:58px!important;font-size:22px!important}
+  #menu.home-dashboard > .modes > .mode .modetitle {font-size:9px!important}
+}
+@media(orientation:landscape) and (pointer:coarse) and (max-width:960px) and (max-height:600px) {
+  #game:not([hidden]) > .playlayout {padding-top:52px!important}
+  #game:not([hidden]) > .playlayout > div:first-child {padding-top:52px!important}
+  #game:not([hidden]) > .playlayout > .sidecol {padding-top:52px!important}
+  #game:not([hidden]) > .playlayout > .sidecol > .bb-mode-goals-pocket {
+    top:2px!important;height:46px!important;min-height:46px!important;max-height:46px!important;
+    padding:2px 5px!important;border-radius:11px!important;
+  }
+  #game #rogueGoals,#game #campaignGoals {grid-template-columns:minmax(42px,.16fr) minmax(0,1fr)!important}
+  #game .bb-goal-emblem-ring {width:25px!important;height:25px!important;flex-basis:25px!important}
+  #game .bb-goal-emblem-ring b {font-size:11px!important}
+  #game .bb-goal-emblem-count {font-size:6px!important}
+}
+@media(prefers-reduced-motion:reduce) {
+  #menu.home-dashboard > .modes > .mode .modeicon {transition:none!important}
+}
