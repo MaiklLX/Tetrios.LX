@@ -518,7 +518,7 @@ const targets = [
     await campaignPage.locator('button.mode[data-mode="campaign"]').evaluate(element=>element.click());
     await campaignPage.locator('#campaign .bb-galaxy-card').first().waitFor({state:'visible',timeout:10000});
     // Finish the screen-arrival animation before measuring or capturing the atlas.
-    await campaignPage.locator('#campaign').evaluate(el=>el.getAnimations({subtree:true}).forEach(animation=>animation.finish()));
+    await campaignPage.waitForTimeout(450);
     await campaignPage.waitForFunction(()=>{const el=document.querySelector('#campaign');return !!el&&!el.hidden&&Number.parseFloat(getComputedStyle(el).opacity)>.98;},{timeout:10000});
     await campaignPage.waitForFunction(()=>document.querySelectorAll('#campaign [data-universe-model].is-model-fallback').length>0,{timeout:10000});
     const campaignAtlasState = await campaignPage.evaluate(() => {
