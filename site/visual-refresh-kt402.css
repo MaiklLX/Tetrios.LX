@@ -1371,3 +1371,10 @@ body{background-color:#070b19}
 @media(min-width:901px){#campaign .bb-galaxy-art{width:170px!important;}}
 
 /* KT-753.13: regression preview uses the body-level cosmic background layer. */
+
+
+/* KT-753.14: give the portrait 10x23 cabinet the intended 53vw playfield width. */
+@media(max-width:600px) and (orientation:portrait){
+  #game.bb-godot-arena>.playlayout{height:calc(121.9vw + 67px)!important;grid-template-rows:minmax(0,1fr) 54px!important;}
+  #game.bb-godot-arena .boardframe{width:calc(53vw + 6px)!important;height:calc(121.9vw + 6px)!important;padding:3px!important;}
+}
