@@ -293,6 +293,9 @@ const targets = [
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="heroes"]').click();
     await page.locator('#heroes:not([hidden])').waitFor({state:'visible',timeout:10000});
+    const heroRosterCount=await page.locator('#heroesRoster .bb-hero-popup-card').count();
+    const heroRosterVisible=await page.locator('#heroesRoster').evaluate(el=>getComputedStyle(el).display!=='none'&&el.getBoundingClientRect().height>0);
+    if(heroRosterCount<5||!heroRosterVisible)failures.push(target.name+': heroes screen opened without its five playable roster cards ('+heroRosterCount+' cards, visible='+heroRosterVisible+')');
     await page.locator('#heroesBack').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="collection"]').click();
