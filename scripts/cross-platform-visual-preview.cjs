@@ -466,7 +466,7 @@ const targets = [
     // The campaign relic shelf now opens from the dedicated home collection tile.
     // Use the real campaign back control and home tile; preserve campaign as the
     // shelf return destination so the atlas assertions below remain meaningful.
-    await campaignPage.locator('#campaignBack').click();
+    await campaignPage.locator('#bbGlobalBack').click();
     await campaignPage.locator('#bbHomeCollectionCard').evaluate(element => element.click());
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
