@@ -24,9 +24,9 @@ const targets = [
   for (const target of targets) {
     console.log('[target:start] ' + target.name + ' (' + target.engine + ', ' + target.width + 'x' + target.height + ')');
     const targetWatchdog = setTimeout(() => {
-      console.error('[target:timeout] ' + target.name + ' exceeded 240000ms; stopping preview process');
+      console.error('[target:timeout] ' + target.name + ' exceeded 360000ms; stopping preview process');
       process.exit(1);
-    }, 210000);
+    }, 330000);
     const browserType = target.engine === 'webkit' ? webkit : chromium;
     const launchOptions = { headless: true };
     if (target.engine === 'chromium') {
