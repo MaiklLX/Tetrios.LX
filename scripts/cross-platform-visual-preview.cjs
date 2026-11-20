@@ -280,6 +280,8 @@ const targets = [
     }
     await page.locator('#bbGlobalBack').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('.bb-home-dock-global [data-home-dock="home"]').click();
+    await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
 
     console.log('[stage:card-library] ' + target.name);
     await page.locator('.bb-home-dock-global [data-home-dock="library"]').click();
