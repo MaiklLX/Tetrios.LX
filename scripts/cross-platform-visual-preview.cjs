@@ -268,7 +268,7 @@ const targets = [
         visible:!!page&&!page.hidden&&getComputedStyle(page).display!=='none',
         shelfCards:shelf?.querySelectorAll('.bb-shelf-item').length||0,
         dockVisible:!!dock&&getComputedStyle(dock).display!=='none',
-        dockOpaque:!!dockStyle&&dockStyle.backdropFilter==='none',
+        dockOpaque:!!dockStyle&&dockStyle.backdropFilter==='none'&&dockStyle.opacity==='1'&&dockStyle.backgroundImage.includes('linear-gradient')&&dockStyle.position==='fixed',
         nativeBackVisible:!!page?.querySelector('#bbCollectionBack')&&getComputedStyle(page.querySelector('#bbCollectionBack')).display!=='none',
         overlayOpen:document.querySelector('#overlay')?.classList.contains('show')||false
       };
@@ -310,7 +310,7 @@ const targets = [
       return {
         visible:!!page&&!page.hidden&&getComputedStyle(page).display!=='none',
         dockVisible:!!dock&&getComputedStyle(dock).display!=='none',
-        dockOpaque:!!dockStyle&&dockStyle.backdropFilter==='none',
+        dockOpaque:!!dockStyle&&dockStyle.backdropFilter==='none'&&dockStyle.opacity==='1'&&dockStyle.backgroundImage.includes('linear-gradient')&&dockStyle.position==='fixed',
         nativeBackVisible:!!back&&getComputedStyle(back).display!=='none',
         overlayOpen:!!overlay?.classList.contains('show')
       };
