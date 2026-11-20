@@ -6842,7 +6842,7 @@ body>.app.bb-home-visible{
 #game.bb-godot-arena .boardframe{display:flex;align-items:center;justify-content:center;width:auto;height:min(64dvh,calc(100dvh - 340px));min-height:300px;max-height:620px;aspect-ratio:10/23;box-sizing:border-box;margin:0 auto;padding:8px;overflow:hidden;border:1px solid #5bafe0;border-radius:18px 6px 18px 6px;background:radial-gradient(ellipse at 50% 18%,#164b78 0%,#0b2548 50%,#07162d 100%);box-shadow:inset 0 0 0 3px #16375d,inset 0 0 24px #42b5f033,0 0 0 3px #0b1d37,0 0 25px #36a8ff2b}
 #game.bb-godot-arena .board{display:block;width:auto;height:100%;max-width:100%;aspect-ratio:10/23;flex:0 1 auto;object-fit:contain;image-rendering:pixelated}
 #game.bb-godot-arena .sidecard,#game.bb-godot-arena .bb-hero-skill-slot{box-sizing:border-box;min-width:0;border:1px solid #315f87;border-radius:12px 5px 12px 5px;background:linear-gradient(155deg,#153755 0%,#102942 58%,#0b1e34 100%);box-shadow:inset 0 1px #d8f4ff16,0 3px 0 #071426,0 7px 14px #0005}
-#game.bb-godot-arena .sidecard{padding:6px 5px;overflow:hidden}
+#game.bb-godot-arena .sidecard{padding:6px 5px;overflow:hidden}#game.bb-godot-arena .hold-card,#game.bb-godot-arena .drop-card{display:flex!important;flex-direction:column;visibility:visible!important}#game.bb-godot-arena .hold-card #holdBtn,#game.bb-godot-arena .drop-card .side-drop{display:block!important;visibility:visible!important;opacity:1!important}
 #game.bb-godot-arena .sidecard>label{font-size:8px;letter-spacing:.07em;color:#9ccfe8}
 #game.bb-godot-arena .charge-ring{width:42px;height:42px;margin:3px auto}
 #game.bb-godot-arena .boosticon{margin:2px 0;font-size:18px}
@@ -7098,7 +7098,7 @@ body>.app.bb-home-visible{
 <button class="action" id="dailyStart">Начать испытание</button>
 <button class="action secondary" id="dailyCalendarOpen">📅 КАЛЕНДАРЬ ВЫЗОВОВ</button>
 </section>
-<section id="game" class="screen" hidden><div class="screenhead"><div class="game-heading-copy" style="flex:1;min-width:0"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" type="button" aria-label="Пауза" title="Пауза"><!-- Tabler Icons: Pause Circle, MIT; adapted to the TETRIOS LX cyan HUD. --><svg class="pause-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".78"/><path d="M9.25 8.5v7M14.75 8.5v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
+<section id="game" class="screen bb-godot-arena" hidden><div class="screenhead"><div class="game-heading-copy" style="flex:1;min-width:0"><h2 id="gameTitle">Весёлый блок-ран</h2><p id="gameSub">Собирай линии. Становись сильнее.</p></div><button class="iconbtn pause-trigger" id="pauseBtn" type="button" aria-label="Пауза" title="Пауза"><!-- Tabler Icons: Pause Circle, MIT; adapted to the TETRIOS LX cyan HUD. --><svg class="pause-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".78"/><path d="M9.25 8.5v7M14.75 8.5v7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
 <div id="dailyMissionGoal" hidden>
   <span class="daily-mission-label">ЦЕЛЬ ИСПЫТАНИЯ</span>
   <strong id="dailyMissionGoalText">12 линий</strong>
