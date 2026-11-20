@@ -21822,3 +21822,58 @@ html body .app section#game.screen > .gamehud #gameCoins strong{color:#e5c98e!im
 #menu.home-dashboard>.bb-home-dock button{min-width:0!important;border-radius:12px!important;background:linear-gradient(145deg,rgba(71,130,143,.3),rgba(12,35,51,.4))!important}
 @media(max-width:900px){#menu.home-dashboard{gap:9px!important;padding-bottom:84px!important}#menu.home-dashboard>.hero{flex-basis:146px!important;height:146px!important;min-height:146px!important;max-height:146px!important}#menu.home-dashboard>#bbHomePlay{flex-basis:54px!important;height:54px!important;min-height:54px!important;max-height:54px!important}#menu.home-dashboard>.modes{flex-basis:104px!important;height:104px!important;min-height:104px!important;max-height:104px!important;gap:5px!important}#menu.home-dashboard>.modes>button.mode .modeicon{flex-basis:54px!important;width:50px!important;height:54px!important;font-size:23px!important}#menu.home-dashboard>.modes>button.mode .modetitle{font-size:8px!important}}
 </style>
+
+<script id="bb-kt749-menu-layout-runtime">
+(()=> {
+  const apply=()=>{
+    const menu=document.querySelector('#menu.home-dashboard');
+    if(!menu)return;
+    const set=(node,values)=>{if(!node)return;for(const [key,value] of Object.entries(values))node.style.setProperty(key,String(value),'important');};
+    const compact=innerWidth<=900;
+    const heroHeight=compact?146:164;
+    const launchHeight=compact?54:58;
+    const modesHeight=compact?104:124;
+    set(menu,{display:'flex',flexDirection:'column',alignItems:'stretch',justifyContent:'flex-start',gap:compact?'9px':'12px',
+      width:'100%',height:'auto',minHeight:'0',maxHeight:'none',margin:'0 auto',paddingBottom:compact?'84px':'94px',
+      gridTemplateColumns:'none',gridTemplateRows:'none',gridTemplateAreas:'none',overflow:'visible'});
+    set(menu.querySelector(':scope > .hero'),{order:'1',flex:'0 0 '+heroHeight+'px',width:'100%',height:heroHeight+'px',
+      minHeight:heroHeight+'px',maxHeight:heroHeight+'px',margin:'0',position:'relative'});
+    set(menu.querySelector(':scope > #bbHomeProfile'),{display:'none'});
+    set(menu.querySelector(':scope > #bbHomeCollectionCard'),{display:'none'});
+    set(menu.querySelector(':scope > #bbHomePlay'),{order:'2',position:'relative',inset:'auto',display:'flex',
+      alignItems:'center',justifyContent:'center',flex:'0 0 '+launchHeight+'px',width:'100%',height:launchHeight+'px',
+      minHeight:launchHeight+'px',maxHeight:launchHeight+'px',margin:'0'});
+    set(menu.querySelector(':scope > .sectionlabel'),{display:'none'});
+    const modes=menu.querySelector(':scope > .modes');
+    set(modes,{order:'3',position:'relative',display:'flex',flexDirection:'row',flexWrap:'nowrap',
+      alignItems:'stretch',justifyContent:'space-between',flex:'0 0 '+modesHeight+'px',width:'100%',
+      height:modesHeight+'px',minHeight:modesHeight+'px',maxHeight:modesHeight+'px',margin:'0',
+      padding:'4px 0',gap:compact?'5px':'8px',gridTemplateColumns:'none',gridTemplateRows:'none',overflow:'visible'});
+    for(const mode of modes?.querySelectorAll(':scope > button.mode')||[]){
+      set(mode,{position:'relative',display:'flex',flex:'1 1 0',flexBasis:'0',width:'0',minWidth:'0',maxWidth:'none',
+        height:'100%',minHeight:'0',maxHeight:modesHeight+'px',margin:'0',padding:'4px 2px',
+        gridArea:'auto',gridRow:'auto',gridColumn:'auto',flexDirection:'column',alignItems:'center',
+        justifyContent:'center',gap:compact?'5px':'7px',border:'0',borderRadius:'0',
+        background:'transparent',boxShadow:'none',overflow:'visible',textAlign:'center'});
+      set(mode.querySelector('.modetext'),{display:'block',width:'100%',minWidth:'0',textAlign:'center'});
+      set(mode.querySelector('.modetitle'),{fontSize:compact?'8px':'10px',lineHeight:'1.1',fontWeight:'1000',whiteSpace:'normal'});
+      set(mode.querySelector('.modesub'),{display:'none'});
+      set(mode.querySelector('.tag'),{display:'none'});
+      set(mode.querySelector('.modearrow'),{display:'none'});
+    }
+    for(const selector of ['#dailyQuestsPanel','#bbVisitStreak','#openHeroes','#rpgPanel','.currency-panel','.bottomstats',
+      '#bbOpenCardLibrary','.apk-download','.shopbuttons','.home-reset']){
+      set(menu.querySelector(':scope > '+selector),{display:'none'});
+    }
+    const dock=menu.querySelector(':scope > .bb-home-dock');
+    set(dock,{position:'fixed',zIndex:'1200',left:'50%',right:'auto',top:'auto',
+      bottom:'calc(env(safe-area-inset-bottom, 0px) + 8px)',transform:'translateX(-50%)',
+      display:'grid',gridTemplateColumns:'repeat(5,minmax(0,1fr))',width:'min(620px,calc(100vw - 20px))',
+      maxWidth:'620px',height:'62px',minHeight:'62px',margin:'0',padding:'5px',gap:'5px'});
+  };
+  apply();
+  document.addEventListener('DOMContentLoaded',apply,{once:true});
+  window.addEventListener('resize',apply,{passive:true});
+  requestAnimationFrame(()=>requestAnimationFrame(apply));
+})();
+</script>
