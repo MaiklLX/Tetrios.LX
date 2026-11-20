@@ -262,40 +262,42 @@ const targets = [
     await page.locator('#collection:not([hidden])').waitFor({state:'visible',timeout:10000});
     const collectionPageState=await page.evaluate(()=>{
       const page=document.querySelector('#collection'),shelf=page?.querySelector('#bbCollectionScreenContent .bb-shelf-modal');
-      const dock=document.querySelector('.bb-home-dock-global'),back=document.querySelector('#bbGlobalBack');
+      const dock=document.querySelector('.bb-home-dock-global');
+      const dockStyle=dock&&getComputedStyle(dock);
       return {
         visible:!!page&&!page.hidden&&getComputedStyle(page).display!=='none',
         shelfCards:shelf?.querySelectorAll('.bb-shelf-item').length||0,
         dockVisible:!!dock&&getComputedStyle(dock).display!=='none',
-        backVisible:!!back&&getComputedStyle(back).display!=='none',
+        dockOpaque:!!dockStyle&&dockStyle.backdropFilter==='none',
+        nativeBackVisible:!!page?.querySelector('#bbCollectionBack')&&getComputedStyle(page.querySelector('#bbCollectionBack')).display!=='none',
         overlayOpen:document.querySelector('#overlay')?.classList.contains('show')||false
       };
     });
     if(!collectionPageState.visible||collectionPageState.shelfCards!==9||
-       !collectionPageState.dockVisible||!collectionPageState.backVisible||collectionPageState.overlayOpen){
-      failures.push(target.name+': KT-750 collection must open as a complete screen with dock/back ('+JSON.stringify(collectionPageState)+')');
+       !collectionPageState.dockVisible||!collectionPageState.dockOpaque||!collectionPageState.nativeBackVisible||collectionPageState.overlayOpen){
+      failures.push(target.name+': KT-751 collection must open as a complete screen with an opaque dock and its own return button ('+JSON.stringify(collectionPageState)+')');
     }
     await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
-    const fixedBack=await page.locator('#bbGlobalBack').evaluate(el=>({top:el.getBoundingClientRect().top,display:getComputedStyle(el).display}));
-    if(fixedBack.display==='none'||fixedBack.top>target.height*.25){
-      failures.push(target.name+': KT-750 fixed Back control is not available after scrolling ('+JSON.stringify(fixedBack)+')');
+    const nativeCollectionBack=await page.locator('#bbCollectionBack').evaluate(el=>({display:getComputedStyle(el).display}));
+    if(nativeCollectionBack.display==='none'){
+      failures.push(target.name+': KT-751 collection native back control disappeared after scrolling ('+JSON.stringify(nativeCollectionBack)+')');
     }
-    await page.locator('#bbGlobalBack').click();
+    await page.locator('#bbCollectionBack').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="home"]').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     // KT-750.7: every dock route must work from another screen, not only from the home DOM.
     await page.locator('.bb-home-dock-global [data-home-dock="shop"]').click();
     await page.locator('#shopScreen:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('#shopBack').click();
+    await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="heroes"]').click();
     await page.locator('#heroes:not([hidden])').waitFor({state:'visible',timeout:10000});
+    await page.locator('#heroesBack').click();
+    await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
     await page.locator('.bb-home-dock-global [data-home-dock="collection"]').click();
     await page.locator('#collection:not([hidden])').waitFor({state:'visible',timeout:10000});
-    await page.locator('#bbGlobalBack').click();
-    await page.locator('#heroes:not([hidden])').waitFor({state:'visible',timeout:10000});
-    await page.locator('#bbGlobalBack').click();
-    await page.locator('#shopScreen:not([hidden])').waitFor({state:'visible',timeout:10000});
-    await page.locator('#bbGlobalBack').click();
+    await page.locator('#bbCollectionBack').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
 
     console.log('[stage:card-library] ' + target.name);
@@ -303,16 +305,18 @@ const targets = [
     await page.locator('#cardLibraryScreen:not([hidden])').waitFor({state:'visible',timeout:10000});
     const libraryPageState=await page.evaluate(()=>{
       const page=document.querySelector('#cardLibraryScreen'),dock=document.querySelector('.bb-home-dock-global');
-      const back=document.querySelector('#bbGlobalBack'),overlay=document.querySelector('#overlay');
+      const back=document.querySelector('#bbCardLibraryBack'),overlay=document.querySelector('#overlay');
+      const dockStyle=dock&&getComputedStyle(dock);
       return {
         visible:!!page&&!page.hidden&&getComputedStyle(page).display!=='none',
         dockVisible:!!dock&&getComputedStyle(dock).display!=='none',
-        backVisible:!!back&&getComputedStyle(back).display!=='none',
+        dockOpaque:!!dockStyle&&dockStyle.backdropFilter==='none',
+        nativeBackVisible:!!back&&getComputedStyle(back).display!=='none',
         overlayOpen:!!overlay?.classList.contains('show')
       };
     });
-    if(!libraryPageState.visible||!libraryPageState.dockVisible||!libraryPageState.backVisible||libraryPageState.overlayOpen){
-      failures.push(target.name+': KT-750 card library must be a standalone screen, not an overlay ('+JSON.stringify(libraryPageState)+')');
+    if(!libraryPageState.visible||!libraryPageState.dockVisible||!libraryPageState.dockOpaque||!libraryPageState.nativeBackVisible||libraryPageState.overlayOpen){
+      failures.push(target.name+': KT-751 card library must be a standalone screen with an opaque dock and native return control ('+JSON.stringify(libraryPageState)+')');
     }
     const allCards = await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
     if (allCards !== 35) failures.push(target.name + ': expected 35 catalog cards, got ' + allCards);
@@ -353,7 +357,7 @@ const targets = [
     if (await page.locator('[data-bb-card-filter="standard"], [data-bb-lib-filter="standard"]').count() !== 0) {
       failures.push(target.name + ': shared/standard card filter must not exist');
     }
-    await page.locator('#bbGlobalBack').click();
+    await page.locator('#bbCardLibraryBack').click();
     await page.locator('#menu:not([hidden])').waitFor({state:'visible',timeout:10000});
 
     console.log('[stage:campaign-atlas] ' + target.name);
@@ -479,7 +483,7 @@ const targets = [
     // The campaign relic shelf now opens from the dedicated home collection tile.
     // Use the real campaign back control and home tile; preserve campaign as the
     // shelf return destination so the atlas assertions below remain meaningful.
-    await campaignPage.locator('#bbGlobalBack').click();
+    await campaignPage.locator('#campaignBack').click();
     await campaignPage.locator('#bbHomeCollectionCard').evaluate(element => element.click());
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
@@ -504,7 +508,7 @@ const targets = [
     const collectionDetail=await shelfModal.locator('.bb-shelf-detail').innerText();
     if(!collectionDetail.includes('Корона дальнего пути')||!collectionDetail.includes('ЕЩЁ ВПЕРЕДИ')) failures.push(target.name+': KT-554 final crown detail or locked state is incorrect ('+collectionDetail+')');
     await campaignPage.screenshot({timeout:45000,path:outputDir+'/'+target.name+'-campaign-reward-shelf.png',fullPage:false});
-    await campaignPage.locator('#bbGlobalBack').click();
+    await campaignPage.locator('#bbCollectionBack').click();
     // The shelf correctly returns to the home hub. Re-enter the campaign through
     // its real mode tile so the following atlas checks exercise the normal flow.
     await campaignPage.locator('button.mode[data-mode="campaign"]').evaluate(element=>element.click());
@@ -646,15 +650,14 @@ const targets = [
       continue;
     }
     const modalNavigationState=await campaignPage.evaluate(()=>{
-      const dock=document.querySelector('.bb-home-dock-global'),back=document.querySelector('#bbGlobalBack');
+      const dock=document.querySelector('.bb-home-dock-global');
       return {
         overlayOpen:document.querySelector('#overlay')?.classList.contains('show')||false,
-        dockDisplay:dock?getComputedStyle(dock).display:'missing',
-        backDisplay:back?getComputedStyle(back).display:'missing'
+        dockDisplay:dock?getComputedStyle(dock).display:'missing'
       };
     });
-    if(!modalNavigationState.overlayOpen||modalNavigationState.dockDisplay!=='none'||modalNavigationState.backDisplay!=='none'){
-      failures.push(target.name+': KT-750 dock/back must yield to modal actions ('+JSON.stringify(modalNavigationState)+')');
+    if(!modalNavigationState.overlayOpen||modalNavigationState.dockDisplay!=='none'){
+      failures.push(target.name+': KT-751 dock must yield to modal actions ('+JSON.stringify(modalNavigationState)+')');
     }
     await campaignPage.locator('#bbStartHeroChoose').click();
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
