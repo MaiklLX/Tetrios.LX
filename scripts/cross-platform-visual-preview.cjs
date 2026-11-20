@@ -665,6 +665,21 @@ const targets = [
     await campaignPage.locator('#bbStartHeroChoose').click();
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.waitForTimeout(900);
+    const firstGoalEmblem=campaignPage.locator('#game #campaignGoals .bb-goal-emblem').first();
+    await firstGoalEmblem.waitFor({state:'visible',timeout:10000});
+    await firstGoalEmblem.click();
+    await campaignPage.locator('#overlay.show #resumeGoalInfo').waitFor({state:'visible',timeout:10000});
+    const goalHelpState=await campaignPage.evaluate(()=>({
+      paused:typeof paused!=='undefined'&&paused,
+      heading:document.querySelector('#modal h3')?.textContent?.trim()||'',
+      hasDescription:!!document.querySelector('#modal .modalhead p')?.textContent?.trim(),
+      progress:!!document.querySelector('#modal .bb-goal-info-progress')
+    }));
+    if(!goalHelpState.paused||!goalHelpState.heading||!goalHelpState.hasDescription||!goalHelpState.progress){
+      failures.push(target.name+': goal emblem did not pause and explain the objective ('+JSON.stringify(goalHelpState)+')');
+    }
+    await campaignPage.locator('#resumeGoalInfo').click();
+    await campaignPage.locator('#overlay:not(.show)').waitFor({state:'attached',timeout:10000});
     const campaignMissionState = await campaignPage.evaluate(() => {
       const goals = document.querySelector('#campaignGoals');
       return {
@@ -741,6 +756,8 @@ const targets = [
       await dailyPage.locator('#bbStartHeroChoose').evaluate(element => element.click());
       await dailyPage.locator('#game #dailyMissionGoal:not([hidden])').waitFor({ state: 'visible', timeout: 15000 });
       await dailyPage.waitForTimeout(1200);
+      const dailyMonsterPanelCount=await dailyPage.locator('#game #bbRogueEncounterTop').count();
+      if(dailyMonsterPanelCount!==0)failures.push(target.name+': Block Run monster encounter panel leaked into Daily Challenge');
       const dailyGoalState = await dailyPage.evaluate(() => {
         const panel=document.querySelector('#game #dailyMissionGoal');
         const rect=panel?.getBoundingClientRect();
