@@ -61,6 +61,10 @@ const targets = [
       const menu=document.querySelector('#menu'),root=document.querySelector('#game');
       const probe=document.querySelector('#menu button.mode[data-mode="campaign"]');
       return {menuClass:menu?.className,menuDisplay:menu&&getComputedStyle(menu).display,menuRows:menu&&getComputedStyle(menu).gridTemplateRows,
+        menuInlineStyle:menu?.getAttribute('style')||'',finalMenuStylePresent:!!document.querySelector('#bb-kt749-final-menu-composition'),
+        finalMenuRuleCount:document.querySelector('#bb-kt749-final-menu-composition')?.sheet?.cssRules?.length||0,
+        modesInlineStyle:document.querySelector('#menu .modes')?.getAttribute('style')||'',
+        modesDisplay:document.querySelector('#menu .modes')?getComputedStyle(document.querySelector('#menu .modes')).display:'',
         menuChildren:[...(menu?.children||[])].map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==='string'?el.className:'',text:(el.innerText||'').trim().replace(/\\s+/g,' ').slice(0,48)})),
         modeParent:probe?.parentElement?.className,
         styles:[...document.styleSheets].map(s=>s.href).filter(Boolean),
@@ -406,9 +410,7 @@ const targets = [
     // Use the real campaign back control and home tile; preserve campaign as the
     // shelf return destination so the atlas assertions below remain meaningful.
     await campaignPage.locator('#campaignBack').click();
-    const collectionNav=campaignPage.locator('.bb-home-dock > :nth-child(3)');
-    await collectionNav.waitFor({state:'visible',timeout:10000});
-    await collectionNav.click({force:true});
+    await campaignPage.locator('#bbHomeCollectionCard').evaluate(element => element.click());
     const shelfModal=campaignPage.locator('.bb-collection-modal');
     const emblemState=await shelfModal.evaluate(rail=>({
       cardCount:rail.querySelectorAll('.bb-shelf-item').length,
