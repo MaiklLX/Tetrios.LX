@@ -341,9 +341,9 @@ const targets = [
     if(!libraryLayout.visible||libraryLayout.cardCount!==35||libraryLayout.cardWidth<90||libraryLayout.cardHeight<150||!libraryLayout.pageScrollable){
       failures.push(target.name+': full-page library catalogue layout is not calibrated ('+JSON.stringify(libraryLayout)+')');
     }
-    const pageBackdrop=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundImage);
+    const pageBackdrop=await page.locator('body').evaluate(el=>({background:getComputedStyle(el).backgroundImage,grid:getComputedStyle(el,'::before').backgroundImage}));
     const pageSurface=await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
-    if(!pageBackdrop.includes('linear-gradient')||!pageBackdrop.includes('radial-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': friendly teal page backdrop is missing or washed out ('+JSON.stringify({pageBackdrop,pageSurface})+')');
+    if(!pageBackdrop.background.includes('radial-gradient')||!pageBackdrop.grid.includes('linear-gradient')||pageSurface==='rgb(255, 255, 255)') failures.push(target.name+': cosmic page backdrop or grid texture is missing ('+JSON.stringify({pageBackdrop,pageSurface})+')');
     await page.screenshot({ timeout:45000, path: outputDir + '/' + target.name + '-card-library.png', fullPage: false });
     await page.locator('[data-bb-lib-filter="all"]').click();
     const allFilteredCards = await page.locator('#cardLibraryScreen #bbCardLibraryList article').count();
