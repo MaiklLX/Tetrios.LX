@@ -645,6 +645,17 @@ const targets = [
       await campaignPage.close();
       continue;
     }
+    const modalNavigationState=await campaignPage.evaluate(()=>{
+      const dock=document.querySelector('.bb-home-dock-global'),back=document.querySelector('#bbGlobalBack');
+      return {
+        overlayOpen:document.querySelector('#overlay')?.classList.contains('show')||false,
+        dockDisplay:dock?getComputedStyle(dock).display:'missing',
+        backDisplay:back?getComputedStyle(back).display:'missing'
+      };
+    });
+    if(!modalNavigationState.overlayOpen||modalNavigationState.dockDisplay!=='none'||modalNavigationState.backDisplay!=='none'){
+      failures.push(target.name+': KT-750 dock/back must yield to modal actions ('+JSON.stringify(modalNavigationState)+')');
+    }
     await campaignPage.locator('#bbStartHeroChoose').click();
     await campaignPage.locator('#game #campaignGoals').waitFor({ state: 'visible', timeout: 15000 });
     await campaignPage.waitForTimeout(900);
