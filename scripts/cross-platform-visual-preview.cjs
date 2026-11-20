@@ -161,7 +161,8 @@ const targets = [
         campaign:rect('#menu button.mode[data-mode="campaign"]'),
         blockRun:rect('#menu button.mode[data-mode="rogue"]'),
         daily:rect('#menu button.mode[data-mode="daily"]'),
-        dock:rect('#menu .bb-home-dock')
+        dock:rect('#menu .bb-home-dock'),
+        modeLayout:(()=>{const parent=document.querySelector('#menu .modes');const modes=[...document.querySelectorAll('#menu .modes > button.mode')];return {display:parent?getComputedStyle(parent).display:'',flexDirection:parent?getComputedStyle(parent).flexDirection:'',columns:parent?getComputedStyle(parent).gridTemplateColumns:'',children:modes.map(el=>{const r=el.getBoundingClientRect(),cs=getComputedStyle(el);return {mode:el.dataset.mode,x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height),gridRow:cs.gridRow,gridColumn:cs.gridColumn,flex:cs.flex}})}})()
       };
     });
     const orderedHomePanels=['title','profile','collection','launch','modes'];
@@ -170,6 +171,10 @@ const targets = [
       return !!current&&current.width>0&&current.height>0&&(!previous||current.top>=previous.bottom-2);
     });
     const sigilsFit=['campaign','blockRun','daily'].every(key=>homeHubLayoutState[key]?.width>=homeHubLayoutState.menu.width*.2);
+    const modeRects=homeHubLayoutState.modeLayout.children||[];
+    const modesShareRow=modeRects.length===3&&modeRects.every(item=>item.w>=homeHubLayoutState.menu.width*.2)&&
+      Math.max(...modeRects.map(item=>item.y))-Math.min(...modeRects.map(item=>item.y))<=4;
+    if(!modesShareRow) failures.push(target.name+': three primary modes must form one horizontal portal row ('+JSON.stringify(homeHubLayoutState.modeLayout)+')');
     if(!homePanelsOrdered||!sigilsFit||homeHubLayoutState.menu.height>homeHubLayoutState.viewport.height*.72||
        homeHubLayoutState.dock.width<homeHubLayoutState.menu.width*.8){
       failures.push(target.name+': KT-746 home hub must fit as a compact game space with a quick dock ('+JSON.stringify(homeHubLayoutState)+')');
@@ -675,9 +680,12 @@ const targets = [
           panelClient:panel?.clientHeight||0,
           railScroll:rail?.scrollHeight||0,
           railClient:rail?.clientHeight||0,
-          overlaps
+          overlaps,
+          leftRailChildren:Array.from(game?.querySelector('.gameleftcol')?.children||[]).map(node=>({id:node.id||'',cls:typeof node.className==='string'?node.className:'',tag:node.tagName,rect:(()=>{const b=node.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height}})()})),
+          goalParentChain:(()=>{const chain=[];let node=panel;while(node&&chain.length<6){chain.push({tag:node.tagName,id:node.id||'',cls:typeof node.className==='string'?node.className:''});node=node.parentElement}return chain})()
         };
       });
+      console.log('[daily-goal-layout]',JSON.stringify(dailyGoalPlacement));
       if (!dailyGoalPlacement.insideSideRail) failures.push(target.name + ': daily objective is not integrated into the arena side rail (' + JSON.stringify(dailyGoalPlacement) + ')');
       if (!dailyGoalPlacement.fullyInsideRail) failures.push(target.name + ': daily objective escapes or is clipped by the arena rail (' + JSON.stringify(dailyGoalPlacement) + ')');
       if (dailyGoalPlacement.panelScroll > dailyGoalPlacement.panelClient + 2) failures.push(target.name + ': daily objective content is clipped inside its pocket (' + JSON.stringify(dailyGoalPlacement) + ')');
@@ -688,7 +696,7 @@ const targets = [
     }
 
     console.log('[stage:block-run-start] ' + target.name);
-    await page.locator('button.mode[data-mode="rogue"]').click();
+    await page.locator('button.mode[data-mode="rogue"]').evaluate(element => element.click());
     await page.locator('#bbConfirmStartHero').waitFor({ state: 'visible', timeout: 15000 });
     // The hero showcase has an intentional entrance animation. Finish it in
     // the visual test so Playwright does not mistake the animation for a stuck UI.
